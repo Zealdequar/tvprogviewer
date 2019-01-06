@@ -1,0 +1,109 @@
+﻿@using TVProgViewer.BusinessLogic.ProgObjs;
+@model Genre[]
+@{
+    ViewBag.Title = "Настройка жанров";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mainwindow">
+<div id="genreTabs">
+    <ul>
+        <li><a href="#tabGenre">Типы передач</a></li>
+        <li><a href="#tabClassifGenres">Ключевые слова (фразы)</a></li>
+    </ul>
+	<div id="tabGenre">
+       <table id="tblUserGenres"></table>
+       <table id="userGenresPager"></table>
+    </div> 
+	<div id="tabClassifGenres">
+	  <div class="panelUpDown"> 
+	   <button id="btnDown" class="downArrow fg-button ui-button ui-widget ui-corner-all"></button>
+	   <button id="btnUp" class="upArrow fg-button ui-button ui-widget ui-corner-all" ></button>
+	 </div> 
+	 <div id="classifDiv" style="overflow-y: scroll; height: 590px;">
+	   <table id="tblClassifGenres"></table>
+	   <table id="classifGenresPager"></table>
+	 </div>
+	</div>
+</div>
+</div>
+<div style="clear: both"></div>
+@section scripts {
+
+    <link href="~/Content/themes/base/all.css" rel="stylesheet" />
+	<link href="~/Content/Site.css" rel="stylesheet" />
+    <style type="text/css">
+        td {
+            border-top-color: transparent !important;
+            border-bottom-color: transparent !important
+        }
+
+        #gbox_tblClassifGenres {
+            width: 100% !important;
+        }
+
+        #gview_TVProgrammeNowGrid {
+            width: 100% !important;
+        }
+		
+        .ui-jqgrid-bdiv {
+            width: 100% !important;
+        }
+
+        #gbox_TVProgrammeNextGrid {
+            width: 100% !important;
+        }
+
+        #gview_tblClassifGenres {
+            width: 100% !important;
+        }
+
+        #gbox_SearchedTVProgramme {
+            width: 100% !important;
+        }
+
+        #gview_SearchedTVProgramme {
+            width: 100% !important;
+        }
+
+        #pg_TVProgrammePager {
+            width: 100% !important;
+        }
+
+        
+
+        #pg_TVProgrammeSearchPager {
+            width: 100% !important;
+        }
+
+        .ui-jqgrid-hdiv {
+            width: 100% !important;
+        }
+
+        #TVProgrammePager {
+            width: 100% !important;
+        }
+
+        #classifGenresPager {
+            width: 100% !important;
+        }
+	    
+		option.avatar {
+		  background-repeat: no-repeat !important;
+		  padding-left: 25px;
+		  padding-bottom: 5px;
+		  } 
+
+		.avatar  {
+		  background-position: left top;
+		  width: 25px !important;
+		  height: 25px !important;
+		}
+	
+    </style>
+
+    <script type="text/javascript">
+        $.jgrid.useJSON = true;
+    </script>
+    <script src="~/Scripts/user-genres.js"></script>
+}

@@ -1,0 +1,47 @@
+2017-10-29 18:16:20.1936 INFO  =========== Начало обновления ============ 
+2017-10-29 18:16:20.4975 INFO Начало получения ресурсов из базы.
+2017-10-29 18:16:21.0785 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2017-10-29 18:16:21.0785 INFO Обновление для ID='1'
+2017-10-29 18:16:26.0500 INFO Каналы и тв-программа ID='1' подготовлены к запуску обработки в базе
+2017-10-29 18:16:33.6144 INFO Обновление для ID='1' успешно завершено. Затрачено '12,531' сек.
+2017-10-29 18:16:33.6144 INFO Обновление для ID='2'
+2017-10-29 18:16:36.9954 INFO Каналы и тв-программа ID='2' подготовлены к запуску обработки в базе
+2017-10-29 18:16:56.1328 INFO Обработка каналов и тв-программы ID='2' завершена. Начало загрузки пиктограмм.
+2017-10-29 18:17:15.2894 INFO Загрузка пиктограмм завершена. Потребовалось 19,153 сек.
+2017-10-29 18:17:15.2894 INFO Обновление для ID='2' успешно завершено. Затрачено '41,675' сек.
+2017-10-29 18:17:15.2894 INFO Обновление для ID='3'
+2017-10-29 18:17:18.6741 INFO Каналы и тв-программа ID='3' подготовлены к запуску обработки в базе
+2017-10-29 18:17:25.9444 INFO Обновление для ID='3' успешно завершено. Затрачено '10,649' сек.
+2017-10-29 18:17:25.9504 INFO Обновление для ID='4'
+2017-10-29 18:17:26.1867 INFO Каналы и тв-программа ID='4' подготовлены к запуску обработки в базе
+2017-10-29 18:17:26.2544 INFO Обновление для ID='4' успешно завершено. Затрачено '0,302' сек.
+2017-10-29 18:17:26.2544 INFO Обновление для ID='6'
+2017-10-29 18:17:26.7457 ERROR Обновление тв-программы прошло неуспешно: ErrMessage='Ссылка на объект не указывает на экземпляр объекта.', StackTrace='   в TVProgUpdater.WebPart.ReformatXDoc(XDocument xDoc) в K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\WebPart.cs:строка 249
+   в TVProgUpdater.Program.Main(String[] args) в K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\Program.cs:строка 83'
+2017-10-29 18:17:26.7457 INFO  ========== Обновление завершено ========== (Затрачено: 66,527 сек.)
+2017-10-29 18:25:23.1575 INFO  =========== Начало обновления ============ 
+2017-10-29 18:25:23.4010 INFO Начало получения ресурсов из базы.
+2017-10-29 18:25:24.0168 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2017-10-29 18:25:24.0168 INFO Обновление для ID='6'
+2017-10-29 18:26:09.1625 ERROR Обновление тв-программы прошло неуспешно: ErrMessage='Ссылка на объект не указывает на экземпляр объекта.', StackTrace='   в TVProgUpdater.WebPart.ReformatXDoc(XDocument xDoc) в K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\WebPart.cs:строка 249
+   в TVProgUpdater.Program.Main(String[] args) в K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\Program.cs:строка 84'
+2017-10-29 18:26:09.1650 INFO  ========== Обновление завершено ========== (Затрачено: 45,985 сек.)
+2017-10-29 18:26:16.2139 INFO  =========== Начало обновления ============ 
+2017-10-29 18:26:16.3650 INFO Начало получения ресурсов из базы.
+2017-10-29 18:26:16.7128 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2017-10-29 18:26:16.7128 INFO Обновление для ID='6'
+2017-10-29 18:26:20.4261 INFO Каналы и тв-программа ID='6' подготовлены к запуску обработки в базе
+2017-10-29 18:26:22.1698 INFO Обновление для ID='6' успешно завершено. Затрачено '5,454' сек.
+2017-10-29 18:26:22.1698 INFO  ========== Обновление завершено ========== (Затрачено: 5,933 сек.)
+2017-10-29 18:27:13.8211 INFO  =========== Начало обновления ============ 
+2017-10-29 18:27:13.9702 INFO Начало получения ресурсов из базы.
+2017-10-29 18:27:14.3325 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2017-10-29 18:27:14.3325 INFO Обновление для ID='6'
+2017-10-29 18:27:35.9155 INFO Каналы и тв-программа ID='6' подготовлены к запуску обработки в базе
+2017-10-29 18:27:58.8806 INFO Обновление для ID='6' успешно завершено. Затрачено '44,116' сек.
+2017-10-29 18:27:59.9968 INFO  ========== Обновление завершено ========== (Затрачено: 46,153 сек.)
+2017-10-29 18:28:33.0960 INFO  =========== Начало обновления ============ 
+2017-10-29 18:28:33.2300 INFO Начало получения ресурсов из базы.
+2017-10-29 18:28:33.5818 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2017-10-29 18:28:33.5818 INFO Обновление для ID='6'
+2017-10-29 18:28:43.0536 INFO Каналы и тв-программа ID='6' подготовлены к запуску обработки в базе

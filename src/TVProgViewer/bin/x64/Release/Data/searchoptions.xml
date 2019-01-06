@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<Config>
+  <SearchSettings>
+    <LoadSettings>true</LoadSettings>
+    <Match />
+    <DontMatch />
+    <InAnons>false</InAnons>
+    <InTime>false</InTime>
+    <TsFinalFrom>0</TsFinalFrom>
+    <TsFinalTo>0</TsFinalTo>
+    <TrackBarValueFrom>0</TrackBarValueFrom>
+    <TrackBarValueTo>144</TrackBarValueTo>
+  </SearchSettings>
+</Config>

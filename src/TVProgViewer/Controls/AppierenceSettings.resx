@@ -1,0 +1,1428 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="fontDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="fontDialog2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>133, 17</value>
+  </metadata>
+  <metadata name="colDlgLastCast.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>249, 17</value>
+  </metadata>
+  <metadata name="colDlgCurCast.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>380, 17</value>
+  </metadata>
+  <metadata name="colDlgFutCast.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>509, 17</value>
+  </metadata>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="tlpFonts.ColumnCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="lblInterface.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="lblInterface.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="lblInterface.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 7</value>
+  </data>
+  <data name="lblInterface.Size" type="System.Drawing.Size, System.Drawing">
+    <value>91, 18</value>
+  </data>
+  <data name="lblInterface.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="lblInterface.Text" xml:space="preserve">
+    <value>Интерфейс:</value>
+  </data>
+  <data name="&gt;&gt;lblInterface.Name" xml:space="preserve">
+    <value>lblInterface</value>
+  </data>
+  <data name="&gt;&gt;lblInterface.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblInterface.Parent" xml:space="preserve">
+    <value>tlpFonts</value>
+  </data>
+  <data name="&gt;&gt;lblInterface.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblTables.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="lblTables.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblTables.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 39</value>
+  </data>
+  <data name="lblTables.Size" type="System.Drawing.Size, System.Drawing">
+    <value>74, 18</value>
+  </data>
+  <data name="lblTables.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="lblTables.Text" xml:space="preserve">
+    <value>Таблицы:</value>
+  </data>
+  <data name="&gt;&gt;lblTables.Name" xml:space="preserve">
+    <value>lblTables</value>
+  </data>
+  <data name="&gt;&gt;lblTables.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblTables.Parent" xml:space="preserve">
+    <value>tlpFonts</value>
+  </data>
+  <data name="&gt;&gt;lblTables.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="tbInterfaceFont.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left, Right</value>
+  </data>
+  <data name="tbInterfaceFont.Location" type="System.Drawing.Point, System.Drawing">
+    <value>122, 4</value>
+  </data>
+  <data name="tbInterfaceFont.Size" type="System.Drawing.Size, System.Drawing">
+    <value>281, 24</value>
+  </data>
+  <data name="tbInterfaceFont.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;tbInterfaceFont.Name" xml:space="preserve">
+    <value>tbInterfaceFont</value>
+  </data>
+  <data name="&gt;&gt;tbInterfaceFont.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbInterfaceFont.Parent" xml:space="preserve">
+    <value>tlpFonts</value>
+  </data>
+  <data name="&gt;&gt;tbInterfaceFont.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="tbTablesFont.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left, Right</value>
+  </data>
+  <data name="tbTablesFont.Location" type="System.Drawing.Point, System.Drawing">
+    <value>122, 36</value>
+  </data>
+  <data name="tbTablesFont.Size" type="System.Drawing.Size, System.Drawing">
+    <value>281, 24</value>
+  </data>
+  <data name="tbTablesFont.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;tbTablesFont.Name" xml:space="preserve">
+    <value>tbTablesFont</value>
+  </data>
+  <data name="&gt;&gt;tbTablesFont.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbTablesFont.Parent" xml:space="preserve">
+    <value>tlpFonts</value>
+  </data>
+  <data name="&gt;&gt;tbTablesFont.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="btnChangeInterfaceFont.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnChangeInterfaceFont.Location" type="System.Drawing.Point, System.Drawing">
+    <value>409, 3</value>
+  </data>
+  <data name="btnChangeInterfaceFont.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 26</value>
+  </data>
+  <data name="btnChangeInterfaceFont.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="btnChangeInterfaceFont.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnChangeInterfaceFont.Name" xml:space="preserve">
+    <value>btnChangeInterfaceFont</value>
+  </data>
+  <data name="&gt;&gt;btnChangeInterfaceFont.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnChangeInterfaceFont.Parent" xml:space="preserve">
+    <value>tlpFonts</value>
+  </data>
+  <data name="&gt;&gt;btnChangeInterfaceFont.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="btnTableFont.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnTableFont.Location" type="System.Drawing.Point, System.Drawing">
+    <value>409, 35</value>
+  </data>
+  <data name="btnTableFont.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 27</value>
+  </data>
+  <data name="btnTableFont.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="btnTableFont.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnTableFont.Name" xml:space="preserve">
+    <value>btnTableFont</value>
+  </data>
+  <data name="&gt;&gt;btnTableFont.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnTableFont.Parent" xml:space="preserve">
+    <value>tlpFonts</value>
+  </data>
+  <data name="&gt;&gt;btnTableFont.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="tlpFonts.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tlpFonts.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 21</value>
+  </data>
+  <data name="tlpFonts.RowCount" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="tlpFonts.Size" type="System.Drawing.Size, System.Drawing">
+    <value>550, 65</value>
+  </data>
+  <data name="tlpFonts.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tlpFonts.Name" xml:space="preserve">
+    <value>tlpFonts</value>
+  </data>
+  <data name="&gt;&gt;tlpFonts.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tlpFonts.Parent" xml:space="preserve">
+    <value>gbFont</value>
+  </data>
+  <data name="&gt;&gt;tlpFonts.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tlpFonts.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="lblInterface" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblTables" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="tbInterfaceFont" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="tbTablesFont" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="btnChangeInterfaceFont" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="btnTableFont" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,21,63636,Percent,52,18182,Percent,25,86445" /&gt;&lt;Rows Styles="Percent,50,Percent,50" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="gbFont.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11.25pt</value>
+  </data>
+  <data name="gbFont.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 4</value>
+  </data>
+  <data name="gbFont.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gbFont.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gbFont.Size" type="System.Drawing.Size, System.Drawing">
+    <value>558, 90</value>
+  </data>
+  <data name="gbFont.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="gbFont.Text" xml:space="preserve">
+    <value>Шрифт</value>
+  </data>
+  <data name="&gt;&gt;gbFont.Name" xml:space="preserve">
+    <value>gbFont</value>
+  </data>
+  <data name="&gt;&gt;gbFont.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbFont.Parent" xml:space="preserve">
+    <value>flpShare</value>
+  </data>
+  <data name="&gt;&gt;gbFont.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tlpColorText.ColumnCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="btnChangeColorFut.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnChangeColorFut.Location" type="System.Drawing.Point, System.Drawing">
+    <value>412, 67</value>
+  </data>
+  <data name="btnChangeColorFut.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 26</value>
+  </data>
+  <data name="btnChangeColorFut.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="btnChangeColorFut.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorFut.Name" xml:space="preserve">
+    <value>btnChangeColorFut</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorFut.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorFut.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorFut.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="btnChangeColorCur.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnChangeColorCur.Location" type="System.Drawing.Point, System.Drawing">
+    <value>412, 35</value>
+  </data>
+  <data name="btnChangeColorCur.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 26</value>
+  </data>
+  <data name="btnChangeColorCur.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="btnChangeColorCur.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorCur.Name" xml:space="preserve">
+    <value>btnChangeColorCur</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorCur.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorCur.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorCur.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnChangeColorLast.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnChangeColorLast.Location" type="System.Drawing.Point, System.Drawing">
+    <value>412, 3</value>
+  </data>
+  <data name="btnChangeColorLast.Size" type="System.Drawing.Size, System.Drawing">
+    <value>138, 26</value>
+  </data>
+  <data name="btnChangeColorLast.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="btnChangeColorLast.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorLast.Name" xml:space="preserve">
+    <value>btnChangeColorLast</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorLast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorLast.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;btnChangeColorLast.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="lblLastTelecast.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="lblLastTelecast.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblLastTelecast.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 0</value>
+  </data>
+  <data name="lblLastTelecast.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 32</value>
+  </data>
+  <data name="lblLastTelecast.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="lblLastTelecast.Text" xml:space="preserve">
+    <value>Для прошедших передач:</value>
+  </data>
+  <data name="&gt;&gt;lblLastTelecast.Name" xml:space="preserve">
+    <value>lblLastTelecast</value>
+  </data>
+  <data name="&gt;&gt;lblLastTelecast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblLastTelecast.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;lblLastTelecast.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lblCurTelecast.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="lblCurTelecast.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblCurTelecast.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 39</value>
+  </data>
+  <data name="lblCurTelecast.Size" type="System.Drawing.Size, System.Drawing">
+    <value>162, 18</value>
+  </data>
+  <data name="lblCurTelecast.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="lblCurTelecast.Text" xml:space="preserve">
+    <value>Для текущих передач:</value>
+  </data>
+  <data name="&gt;&gt;lblCurTelecast.Name" xml:space="preserve">
+    <value>lblCurTelecast</value>
+  </data>
+  <data name="&gt;&gt;lblCurTelecast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblCurTelecast.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;lblCurTelecast.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="lblFutTelecast.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="lblFutTelecast.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblFutTelecast.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 71</value>
+  </data>
+  <data name="lblFutTelecast.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 18</value>
+  </data>
+  <data name="lblFutTelecast.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="lblFutTelecast.Text" xml:space="preserve">
+    <value>Для будущих передач:</value>
+  </data>
+  <data name="&gt;&gt;lblFutTelecast.Name" xml:space="preserve">
+    <value>lblFutTelecast</value>
+  </data>
+  <data name="&gt;&gt;lblFutTelecast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblFutTelecast.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;lblFutTelecast.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="pbLastCast.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbLastCast.Location" type="System.Drawing.Point, System.Drawing">
+    <value>184, 3</value>
+  </data>
+  <data name="pbLastCast.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 26</value>
+  </data>
+  <data name="pbLastCast.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;pbLastCast.Name" xml:space="preserve">
+    <value>pbLastCast</value>
+  </data>
+  <data name="&gt;&gt;pbLastCast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbLastCast.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;pbLastCast.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="pbCurCast.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbCurCast.Location" type="System.Drawing.Point, System.Drawing">
+    <value>184, 35</value>
+  </data>
+  <data name="pbCurCast.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 26</value>
+  </data>
+  <data name="pbCurCast.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;pbCurCast.Name" xml:space="preserve">
+    <value>pbCurCast</value>
+  </data>
+  <data name="&gt;&gt;pbCurCast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbCurCast.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;pbCurCast.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="pbFutCast.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbFutCast.Location" type="System.Drawing.Point, System.Drawing">
+    <value>184, 67</value>
+  </data>
+  <data name="pbFutCast.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 26</value>
+  </data>
+  <data name="pbFutCast.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;pbFutCast.Name" xml:space="preserve">
+    <value>pbFutCast</value>
+  </data>
+  <data name="&gt;&gt;pbFutCast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbFutCast.Parent" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;pbFutCast.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="tlpColorText.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tlpColorText.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 20</value>
+  </data>
+  <data name="tlpColorText.RowCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="tlpColorText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>553, 96</value>
+  </data>
+  <data name="tlpColorText.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;tlpColorText.Name" xml:space="preserve">
+    <value>tlpColorText</value>
+  </data>
+  <data name="&gt;&gt;tlpColorText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tlpColorText.Parent" xml:space="preserve">
+    <value>gbColorText</value>
+  </data>
+  <data name="&gt;&gt;tlpColorText.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tlpColorText.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="btnChangeColorFut" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="btnChangeColorCur" Row="1" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="btnChangeColorLast" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="lblLastTelecast" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblCurTelecast" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblFutTelecast" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="pbLastCast" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="pbCurCast" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="pbFutCast" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,32,73056,Percent,41,22966,Percent,25,7931" /&gt;&lt;Rows Styles="Percent,33,33333,Percent,33,33333,Percent,33,33333" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="gbColorText.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 101</value>
+  </data>
+  <data name="gbColorText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>559, 119</value>
+  </data>
+  <data name="gbColorText.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="gbColorText.Text" xml:space="preserve">
+    <value>Цвет текста (по времени)</value>
+  </data>
+  <data name="&gt;&gt;gbColorText.Name" xml:space="preserve">
+    <value>gbColorText</value>
+  </data>
+  <data name="&gt;&gt;gbColorText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbColorText.Parent" xml:space="preserve">
+    <value>flpShare</value>
+  </data>
+  <data name="&gt;&gt;gbColorText.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnOpenPic.Location" type="System.Drawing.Point, System.Drawing">
+    <value>410, 68</value>
+  </data>
+  <data name="btnOpenPic.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 29</value>
+  </data>
+  <data name="btnOpenPic.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="btnOpenPic.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnOpenPic.Name" xml:space="preserve">
+    <value>btnOpenPic</value>
+  </data>
+  <data name="&gt;&gt;btnOpenPic.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnOpenPic.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;btnOpenPic.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tbBackPicture.Location" type="System.Drawing.Point, System.Drawing">
+    <value>184, 71</value>
+  </data>
+  <data name="tbBackPicture.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 24</value>
+  </data>
+  <data name="tbBackPicture.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;tbBackPicture.Name" xml:space="preserve">
+    <value>tbBackPicture</value>
+  </data>
+  <data name="&gt;&gt;tbBackPicture.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tbBackPicture.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;tbBackPicture.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="rbMonotone.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbMonotone.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 3</value>
+  </data>
+  <data name="rbMonotone.Size" type="System.Drawing.Size, System.Drawing">
+    <value>115, 22</value>
+  </data>
+  <data name="rbMonotone.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="rbMonotone.Text" xml:space="preserve">
+    <value>Однотонный</value>
+  </data>
+  <data name="&gt;&gt;rbMonotone.Name" xml:space="preserve">
+    <value>rbMonotone</value>
+  </data>
+  <data name="&gt;&gt;rbMonotone.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbMonotone.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;rbMonotone.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="cbGradientMode.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="cbGradientMode.Items" xml:space="preserve">
+    <value>Горизонтальный</value>
+  </data>
+  <data name="cbGradientMode.Items1" xml:space="preserve">
+    <value>Вертикальный</value>
+  </data>
+  <data name="cbGradientMode.Items2" xml:space="preserve">
+    <value>Передне-диагональный</value>
+  </data>
+  <data name="cbGradientMode.Items3" xml:space="preserve">
+    <value>Задне-диагональный</value>
+  </data>
+  <data name="cbGradientMode.Location" type="System.Drawing.Point, System.Drawing">
+    <value>184, 42</value>
+  </data>
+  <data name="cbGradientMode.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 26</value>
+  </data>
+  <data name="cbGradientMode.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;cbGradientMode.Name" xml:space="preserve">
+    <value>cbGradientMode</value>
+  </data>
+  <data name="&gt;&gt;cbGradientMode.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbGradientMode.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;cbGradientMode.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="rbStriped.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbStriped.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 25</value>
+  </data>
+  <data name="rbStriped.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 22</value>
+  </data>
+  <data name="rbStriped.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="rbStriped.Text" xml:space="preserve">
+    <value>Полосатый</value>
+  </data>
+  <data name="&gt;&gt;rbStriped.Name" xml:space="preserve">
+    <value>rbStriped</value>
+  </data>
+  <data name="&gt;&gt;rbStriped.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbStriped.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;rbStriped.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="rbPicture.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbPicture.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 71</value>
+  </data>
+  <data name="rbPicture.Size" type="System.Drawing.Size, System.Drawing">
+    <value>122, 22</value>
+  </data>
+  <data name="rbPicture.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="rbPicture.Text" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="&gt;&gt;rbPicture.Name" xml:space="preserve">
+    <value>rbPicture</value>
+  </data>
+  <data name="&gt;&gt;rbPicture.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbPicture.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;rbPicture.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="rbGradient.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbGradient.Location" type="System.Drawing.Point, System.Drawing">
+    <value>7, 48</value>
+  </data>
+  <data name="rbGradient.Size" type="System.Drawing.Size, System.Drawing">
+    <value>91, 22</value>
+  </data>
+  <data name="rbGradient.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="rbGradient.Text" xml:space="preserve">
+    <value>Градиент</value>
+  </data>
+  <data name="&gt;&gt;rbGradient.Name" xml:space="preserve">
+    <value>rbGradient</value>
+  </data>
+  <data name="&gt;&gt;rbGradient.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbGradient.Parent" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;rbGradient.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="panel1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="panel1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 20</value>
+  </data>
+  <data name="panel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>553, 98</value>
+  </data>
+  <data name="panel1.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;panel1.Name" xml:space="preserve">
+    <value>panel1</value>
+  </data>
+  <data name="&gt;&gt;panel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panel1.Parent" xml:space="preserve">
+    <value>gbFon</value>
+  </data>
+  <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tlpColorBack.ColumnCount" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="btnBack1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnBack1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>407, 81</value>
+  </data>
+  <data name="btnBack1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>137, 33</value>
+  </data>
+  <data name="btnBack1.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="btnBack1.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnBack1.Name" xml:space="preserve">
+    <value>btnBack1</value>
+  </data>
+  <data name="&gt;&gt;btnBack1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnBack1.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;btnBack1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="pbDefault.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbDefault.Location" type="System.Drawing.Point, System.Drawing">
+    <value>182, 3</value>
+  </data>
+  <data name="pbDefault.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 33</value>
+  </data>
+  <data name="pbDefault.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;pbDefault.Name" xml:space="preserve">
+    <value>pbDefault</value>
+  </data>
+  <data name="&gt;&gt;pbDefault.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbDefault.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;pbDefault.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="pbSystemColor.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbSystemColor.Location" type="System.Drawing.Point, System.Drawing">
+    <value>182, 42</value>
+  </data>
+  <data name="pbSystemColor.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 33</value>
+  </data>
+  <data name="pbSystemColor.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;pbSystemColor.Name" xml:space="preserve">
+    <value>pbSystemColor</value>
+  </data>
+  <data name="&gt;&gt;pbSystemColor.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbSystemColor.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;pbSystemColor.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="pbColBack1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbColBack1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>182, 81</value>
+  </data>
+  <data name="pbColBack1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 33</value>
+  </data>
+  <data name="pbColBack1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;pbColBack1.Name" xml:space="preserve">
+    <value>pbColBack1</value>
+  </data>
+  <data name="&gt;&gt;pbColBack1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbColBack1.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;pbColBack1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="rbDefault.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="rbDefault.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbDefault.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 8</value>
+  </data>
+  <data name="rbDefault.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 22</value>
+  </data>
+  <data name="rbDefault.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="rbDefault.Text" xml:space="preserve">
+    <value>По умолчанию</value>
+  </data>
+  <data name="&gt;&gt;rbDefault.Name" xml:space="preserve">
+    <value>rbDefault</value>
+  </data>
+  <data name="&gt;&gt;rbDefault.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbDefault.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;rbDefault.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="rbSystem.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="rbSystem.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbSystem.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 47</value>
+  </data>
+  <data name="rbSystem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>106, 22</value>
+  </data>
+  <data name="rbSystem.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="rbSystem.Text" xml:space="preserve">
+    <value>Системный</value>
+  </data>
+  <data name="&gt;&gt;rbSystem.Name" xml:space="preserve">
+    <value>rbSystem</value>
+  </data>
+  <data name="&gt;&gt;rbSystem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbSystem.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;rbSystem.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="rbArbitary.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="rbArbitary.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="rbArbitary.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 86</value>
+  </data>
+  <data name="rbArbitary.Size" type="System.Drawing.Size, System.Drawing">
+    <value>131, 22</value>
+  </data>
+  <data name="rbArbitary.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="rbArbitary.Text" xml:space="preserve">
+    <value>Произвольный</value>
+  </data>
+  <data name="&gt;&gt;rbArbitary.Name" xml:space="preserve">
+    <value>rbArbitary</value>
+  </data>
+  <data name="&gt;&gt;rbArbitary.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rbArbitary.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;rbArbitary.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="lblColorBack2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="lblColorBack2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblColorBack2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 117</value>
+  </data>
+  <data name="lblColorBack2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>145, 72</value>
+  </data>
+  <data name="lblColorBack2.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="lblColorBack2.Text" xml:space="preserve">
+    <value>Цвет фона 2 (используется при полосатом и градиентном фоне)</value>
+  </data>
+  <data name="&gt;&gt;lblColorBack2.Name" xml:space="preserve">
+    <value>lblColorBack2</value>
+  </data>
+  <data name="&gt;&gt;lblColorBack2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblColorBack2.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;lblColorBack2.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="pbColBack2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbColBack2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>182, 120</value>
+  </data>
+  <data name="pbColBack2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 66</value>
+  </data>
+  <data name="pbColBack2.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;pbColBack2.Name" xml:space="preserve">
+    <value>pbColBack2</value>
+  </data>
+  <data name="&gt;&gt;pbColBack2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbColBack2.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;pbColBack2.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="btnColBack2.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnColBack2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>407, 120</value>
+  </data>
+  <data name="btnColBack2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>137, 66</value>
+  </data>
+  <data name="btnColBack2.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="btnColBack2.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnColBack2.Name" xml:space="preserve">
+    <value>btnColBack2</value>
+  </data>
+  <data name="&gt;&gt;btnColBack2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnColBack2.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;btnColBack2.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="lblSelRow.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="lblSelRow.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblSelRow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 199</value>
+  </data>
+  <data name="lblSelRow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>172, 18</value>
+  </data>
+  <data name="lblSelRow.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="lblSelRow.Text" xml:space="preserve">
+    <value>Строки при выделении:</value>
+  </data>
+  <data name="&gt;&gt;lblSelRow.Name" xml:space="preserve">
+    <value>lblSelRow</value>
+  </data>
+  <data name="&gt;&gt;lblSelRow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblSelRow.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;lblSelRow.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="pbSelRow.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="pbSelRow.Location" type="System.Drawing.Point, System.Drawing">
+    <value>182, 192</value>
+  </data>
+  <data name="pbSelRow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 33</value>
+  </data>
+  <data name="pbSelRow.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;pbSelRow.Name" xml:space="preserve">
+    <value>pbSelRow</value>
+  </data>
+  <data name="&gt;&gt;pbSelRow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.PictureBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pbSelRow.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;pbSelRow.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="btnSelRowColor.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="btnSelRowColor.Location" type="System.Drawing.Point, System.Drawing">
+    <value>407, 192</value>
+  </data>
+  <data name="btnSelRowColor.Size" type="System.Drawing.Size, System.Drawing">
+    <value>137, 33</value>
+  </data>
+  <data name="btnSelRowColor.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="btnSelRowColor.Text" xml:space="preserve">
+    <value>Изменить...</value>
+  </data>
+  <data name="&gt;&gt;btnSelRowColor.Name" xml:space="preserve">
+    <value>btnSelRowColor</value>
+  </data>
+  <data name="&gt;&gt;btnSelRowColor.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnSelRowColor.Parent" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;btnSelRowColor.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="tlpColorBack.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="tlpColorBack.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 20</value>
+  </data>
+  <data name="tlpColorBack.RowCount" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="tlpColorBack.Size" type="System.Drawing.Size, System.Drawing">
+    <value>547, 228</value>
+  </data>
+  <data name="tlpColorBack.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;tlpColorBack.Name" xml:space="preserve">
+    <value>tlpColorBack</value>
+  </data>
+  <data name="&gt;&gt;tlpColorBack.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TableLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;tlpColorBack.Parent" xml:space="preserve">
+    <value>gbColorBack</value>
+  </data>
+  <data name="&gt;&gt;tlpColorBack.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="tlpColorBack.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="btnBack1" Row="2" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="pbDefault" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="pbSystemColor" Row="1" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="pbColBack1" Row="2" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="rbDefault" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="rbSystem" Row="1" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="rbArbitary" Row="2" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="lblColorBack2" Row="3" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="pbColBack2" Row="3" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="btnColBack2" Row="3" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="lblSelRow" Row="4" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="pbSelRow" Row="4" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="btnSelRowColor" Row="4" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="Percent,32,72395,Percent,41,13345,Percent,25,7931" /&gt;&lt;Rows Styles="Percent,20,67705,Percent,20,67705,Percent,20,67705,Percent,37,96885,Absolute,37" /&gt;&lt;/TableLayoutSettings&gt;</value>
+  </data>
+  <data name="gbColorBack.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Bottom</value>
+  </data>
+  <data name="gbColorBack.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 118</value>
+  </data>
+  <data name="gbColorBack.Size" type="System.Drawing.Size, System.Drawing">
+    <value>553, 251</value>
+  </data>
+  <data name="gbColorBack.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="gbColorBack.Text" xml:space="preserve">
+    <value>Цвет фона</value>
+  </data>
+  <data name="&gt;&gt;gbColorBack.Name" xml:space="preserve">
+    <value>gbColorBack</value>
+  </data>
+  <data name="&gt;&gt;gbColorBack.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbColorBack.Parent" xml:space="preserve">
+    <value>gbFon</value>
+  </data>
+  <data name="&gt;&gt;gbColorBack.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="gbFon.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 226</value>
+  </data>
+  <data name="gbFon.Size" type="System.Drawing.Size, System.Drawing">
+    <value>559, 372</value>
+  </data>
+  <data name="gbFon.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="gbFon.Text" xml:space="preserve">
+    <value>Фон</value>
+  </data>
+  <data name="&gt;&gt;gbFon.Name" xml:space="preserve">
+    <value>gbFon</value>
+  </data>
+  <data name="&gt;&gt;gbFon.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbFon.Parent" xml:space="preserve">
+    <value>flpShare</value>
+  </data>
+  <data name="&gt;&gt;gbFon.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="flpShare.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="flpShare.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="flpShare.Size" type="System.Drawing.Size, System.Drawing">
+    <value>570, 604</value>
+  </data>
+  <data name="flpShare.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;flpShare.Name" xml:space="preserve">
+    <value>flpShare</value>
+  </data>
+  <data name="&gt;&gt;flpShare.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FlowLayoutPanel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;flpShare.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;flpShare.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="colDlgBack1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>636, 17</value>
+  </metadata>
+  <metadata name="colDlgBack2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>754, 17</value>
+  </metadata>
+  <metadata name="colDlgSelRow.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>872, 17</value>
+  </metadata>
+  <metadata name="openPicDlg.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>998, 17</value>
+  </metadata>
+  <data name="openPicDlg.Filter" xml:space="preserve">
+    <value>Файлы JPEG; JPG|*.jpeg;*.jpg|Файлы Bitmaps|*.bmp|Файлы PNG|*.png|Файлы GIF|*.gif|Все файлы|*.*</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>9, 18</value>
+  </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 11.25pt</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="$this.Size" type="System.Drawing.Size, System.Drawing">
+    <value>570, 604</value>
+  </data>
+  <data name="&gt;&gt;fontDialog1.Name" xml:space="preserve">
+    <value>fontDialog1</value>
+  </data>
+  <data name="&gt;&gt;fontDialog1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FontDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;fontDialog2.Name" xml:space="preserve">
+    <value>fontDialog2</value>
+  </data>
+  <data name="&gt;&gt;fontDialog2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.FontDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colDlgLastCast.Name" xml:space="preserve">
+    <value>colDlgLastCast</value>
+  </data>
+  <data name="&gt;&gt;colDlgLastCast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colDlgCurCast.Name" xml:space="preserve">
+    <value>colDlgCurCast</value>
+  </data>
+  <data name="&gt;&gt;colDlgCurCast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colDlgFutCast.Name" xml:space="preserve">
+    <value>colDlgFutCast</value>
+  </data>
+  <data name="&gt;&gt;colDlgFutCast.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colDlgBack1.Name" xml:space="preserve">
+    <value>colDlgBack1</value>
+  </data>
+  <data name="&gt;&gt;colDlgBack1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colDlgBack2.Name" xml:space="preserve">
+    <value>colDlgBack2</value>
+  </data>
+  <data name="&gt;&gt;colDlgBack2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;colDlgSelRow.Name" xml:space="preserve">
+    <value>colDlgSelRow</value>
+  </data>
+  <data name="&gt;&gt;colDlgSelRow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColorDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;openPicDlg.Name" xml:space="preserve">
+    <value>openPicDlg</value>
+  </data>
+  <data name="&gt;&gt;openPicDlg.Type" xml:space="preserve">
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>AppierenceSettings</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.UserControl, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+</root>

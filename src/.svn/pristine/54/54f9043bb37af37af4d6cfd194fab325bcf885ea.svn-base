@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Configuration;
+using System.Data.Common;
+
+namespace TVProgViewer.DataAccess.Adapters
+{
+    public class AdapterBase
+    {
+        public static DbConnection GetTvProgMainConnection()
+        {
+           return GetConnection("tvProgBase.Main"); 
+        }
+
+        public static DbConnection GetTvProgSecureConnection()
+        {
+           return GetConnection("tvProgBase.Secure");
+        }
+
+        private static DbConnection GetConnection(string name)
+        {
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings[name];
+            DbProviderFactory factory = DbProviderFactories.GetFactory(settings.ProviderName);
+            DbConnection conn = factory.CreateConnection();
+            conn.ConnectionString = settings.ConnectionString;
+            return conn;
+        }
+
+    }
+}

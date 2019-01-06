@@ -1,0 +1,246 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="TVProgBaseModelStoreContainer" CdmEntityContainer="TVProgBaseEntities">
+    <EntitySetMapping Name="Channels">
+      <EntityTypeMapping TypeName="TVProgBaseModel.Channels">
+        <MappingFragment StoreEntitySet="Channels">
+          <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+          <ScalarProperty Name="ChannelID" ColumnName="ChannelID" />
+          <ScalarProperty Name="TVProgProviderID" ColumnName="TVProgProviderID" />
+          <ScalarProperty Name="InternalID" ColumnName="InternalID" />
+          <ScalarProperty Name="IconID" ColumnName="IconID" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="TitleChannel" ColumnName="TitleChannel" />
+          <ScalarProperty Name="IconWebSrc" ColumnName="IconWebSrc" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ExtUserSettings">
+      <EntityTypeMapping TypeName="TVProgBaseModel.ExtUserSettings">
+        <MappingFragment StoreEntitySet="ExtUserSettings">
+          <ScalarProperty Name="ExtUserSettingsID" ColumnName="ExtUserSettingsID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="TVProgProviderID" ColumnName="TVProgProviderID" />
+          <ScalarProperty Name="UncheckedChannels" ColumnName="UncheckedChannels" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="GenreClassificator">
+      <EntityTypeMapping TypeName="TVProgBaseModel.GenreClassificator">
+        <MappingFragment StoreEntitySet="GenreClassificator">
+          <ScalarProperty Name="GenreClassificatorID" ColumnName="GenreClassificatorID" />
+          <ScalarProperty Name="GID" ColumnName="GID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="ContainPhrases" ColumnName="ContainPhrases" />
+          <ScalarProperty Name="NonContainPhrases" ColumnName="NonContainPhrases" />
+          <ScalarProperty Name="OrderCol" ColumnName="OrderCol" />
+          <ScalarProperty Name="DeleteAfterDate" ColumnName="DeleteAfterDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Genres">
+      <EntityTypeMapping TypeName="TVProgBaseModel.Genres">
+        <MappingFragment StoreEntitySet="Genres">
+          <ScalarProperty Name="DeleteDate" ColumnName="DeleteDate" />
+          <ScalarProperty Name="GenreID" ColumnName="GenreID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="IconID" ColumnName="IconID" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="GenreName" ColumnName="GenreName" />
+          <ScalarProperty Name="Visible" ColumnName="Visible" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LogActions">
+      <EntityTypeMapping TypeName="TVProgBaseModel.LogActions">
+        <MappingFragment StoreEntitySet="LogActions">
+          <ScalarProperty Name="LogID" ColumnName="LogID" />
+          <ScalarProperty Name="Login" ColumnName="Login" />
+          <ScalarProperty Name="TsAction" ColumnName="TsAction" />
+          <ScalarProperty Name="TypeAction" ColumnName="TypeAction" />
+          <ScalarProperty Name="MessageAction" ColumnName="MessageAction" />
+          <ScalarProperty Name="IP" ColumnName="IP" />
+          <ScalarProperty Name="UserAgent" ColumnName="UserAgent" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MediaPic">
+      <EntityTypeMapping TypeName="TVProgBaseModel.MediaPic">
+        <MappingFragment StoreEntitySet="MediaPic">
+          <ScalarProperty Name="Path25" ColumnName="Path25" />
+          <ScalarProperty Name="PathOrig" ColumnName="PathOrig" />
+          <ScalarProperty Name="IconID" ColumnName="IconID" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="ContentType" ColumnName="ContentType" />
+          <ScalarProperty Name="ContentCoding" ColumnName="ContentCoding" />
+          <ScalarProperty Name="Length" ColumnName="Length" />
+          <ScalarProperty Name="Length25" ColumnName="Length25" />
+          <ScalarProperty Name="IsSystem" ColumnName="IsSystem" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Programmes">
+      <EntityTypeMapping TypeName="TVProgBaseModel.Programmes">
+        <MappingFragment StoreEntitySet="Programmes">
+          <ScalarProperty Name="ProgrammesID" ColumnName="ProgrammesID" />
+          <ScalarProperty Name="TID" ColumnName="TID" />
+          <ScalarProperty Name="CID" ColumnName="CID" />
+          <ScalarProperty Name="InternalChanID" ColumnName="InternalChanID" />
+          <ScalarProperty Name="TsStart" ColumnName="TsStart" />
+          <ScalarProperty Name="TsStop" ColumnName="TsStop" />
+          <ScalarProperty Name="TsStartMO" ColumnName="TsStartMO" />
+          <ScalarProperty Name="TsStopMO" ColumnName="TsStopMO" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Descr" ColumnName="Descr" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RatingClassificator">
+      <EntityTypeMapping TypeName="TVProgBaseModel.RatingClassificator">
+        <MappingFragment StoreEntitySet="RatingClassificator">
+          <ScalarProperty Name="RatingClassificatorID" ColumnName="RatingClassificatorID" />
+          <ScalarProperty Name="RID" ColumnName="RID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="ContainPhrases" ColumnName="ContainPhrases" />
+          <ScalarProperty Name="NonContainPhrases" ColumnName="NonContainPhrases" />
+          <ScalarProperty Name="OrderCol" ColumnName="OrderCol" />
+          <ScalarProperty Name="DeleteAfterDate" ColumnName="DeleteAfterDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Ratings">
+      <EntityTypeMapping TypeName="TVProgBaseModel.Ratings">
+        <MappingFragment StoreEntitySet="Ratings">
+          <ScalarProperty Name="RatingID" ColumnName="RatingID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="IconID" ColumnName="IconID" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="RatingName" ColumnName="RatingName" />
+          <ScalarProperty Name="Visible" ColumnName="Visible" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SearchSettings">
+      <EntityTypeMapping TypeName="TVProgBaseModel.SearchSettings">
+        <MappingFragment StoreEntitySet="SearchSettings">
+          <ScalarProperty Name="SearchSettingsID" ColumnName="SearchSettingsID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="LoadSettings" ColumnName="LoadSettings" />
+          <ScalarProperty Name="Match" ColumnName="Match" />
+          <ScalarProperty Name="NotMatch" ColumnName="NotMatch" />
+          <ScalarProperty Name="InAnons" ColumnName="InAnons" />
+          <ScalarProperty Name="TsFinalFrom" ColumnName="TsFinalFrom" />
+          <ScalarProperty Name="TsFinalTo" ColumnName="TsFinalTo" />
+          <ScalarProperty Name="TrackBarFrom" ColumnName="TrackBarFrom" />
+          <ScalarProperty Name="TrackBarTo" ColumnName="TrackBarTo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SystemUsers">
+      <EntityTypeMapping TypeName="TVProgBaseModel.SystemUsers">
+        <MappingFragment StoreEntitySet="SystemUsers">
+          <ScalarProperty Name="Catalog" ColumnName="Catalog" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="PassHash" ColumnName="PassHash" />
+          <ScalarProperty Name="PassExtend" ColumnName="PassExtend" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+          <ScalarProperty Name="BirthDate" ColumnName="BirthDate" />
+          <ScalarProperty Name="Gender" ColumnName="Gender" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="MobPhoneNumber" ColumnName="MobPhoneNumber" />
+          <ScalarProperty Name="OtherPhoneNumber1" ColumnName="OtherPhoneNumber1" />
+          <ScalarProperty Name="OtherPhoneNumber2" ColumnName="OtherPhoneNumber2" />
+          <ScalarProperty Name="DateBegin" ColumnName="DateBegin" />
+          <ScalarProperty Name="DateEnd" ColumnName="DateEnd" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="GmtZone" ColumnName="GmtZone" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TVProgProviders">
+      <EntityTypeMapping TypeName="TVProgBaseModel.TVProgProviders">
+        <MappingFragment StoreEntitySet="TVProgProviders">
+          <ScalarProperty Name="Rss" ColumnName="Rss" />
+          <ScalarProperty Name="TVProgProviderID" ColumnName="TVProgProviderID" />
+          <ScalarProperty Name="ProviderName" ColumnName="ProviderName" />
+          <ScalarProperty Name="ProviderWebSite" ColumnName="ProviderWebSite" />
+          <ScalarProperty Name="ContactName" ColumnName="ContactName" />
+          <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TypeProg">
+      <EntityTypeMapping TypeName="TVProgBaseModel.TypeProg">
+        <MappingFragment StoreEntitySet="TypeProg">
+          <ScalarProperty Name="TypeProgID" ColumnName="TypeProgID" />
+          <ScalarProperty Name="TVProgProviderID" ColumnName="TVProgProviderID" />
+          <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+          <ScalarProperty Name="FileFormat" ColumnName="FileFormat" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UpdateProgLog">
+      <EntityTypeMapping TypeName="TVProgBaseModel.UpdateProgLog">
+        <MappingFragment StoreEntitySet="UpdateProgLog">
+          <ScalarProperty Name="UpdateProgLogID" ColumnName="UpdateProgLogID" />
+          <ScalarProperty Name="WRID" ColumnName="WRID" />
+          <ScalarProperty Name="TsUpdateStart" ColumnName="TsUpdateStart" />
+          <ScalarProperty Name="TsUpdateEnd" ColumnName="TsUpdateEnd" />
+          <ScalarProperty Name="UdtElapsedSec" ColumnName="UdtElapsedSec" />
+          <ScalarProperty Name="MinProgDate" ColumnName="MinProgDate" />
+          <ScalarProperty Name="MaxProgDate" ColumnName="MaxProgDate" />
+          <ScalarProperty Name="QtyChans" ColumnName="QtyChans" />
+          <ScalarProperty Name="QtyProgrammes" ColumnName="QtyProgrammes" />
+          <ScalarProperty Name="QtyNewChans" ColumnName="QtyNewChans" />
+          <ScalarProperty Name="QtyNewProgrammes" ColumnName="QtyNewProgrammes" />
+          <ScalarProperty Name="IsSuccess" ColumnName="IsSuccess" />
+          <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserChannels">
+      <EntityTypeMapping TypeName="TVProgBaseModel.UserChannels">
+        <MappingFragment StoreEntitySet="UserChannels">
+          <ScalarProperty Name="UserChannelID" ColumnName="UserChannelID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="CID" ColumnName="CID" />
+          <ScalarProperty Name="IconID" ColumnName="IconID" />
+          <ScalarProperty Name="DisplayName" ColumnName="DisplayName" />
+          <ScalarProperty Name="OrderCol" ColumnName="OrderCol" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UsersPrograms">
+      <EntityTypeMapping TypeName="TVProgBaseModel.UsersPrograms">
+        <MappingFragment StoreEntitySet="UsersPrograms">
+          <ScalarProperty Name="UserProgramsID" ColumnName="UserProgramsID" />
+          <ScalarProperty Name="UID" ColumnName="UID" />
+          <ScalarProperty Name="UCID" ColumnName="UCID" />
+          <ScalarProperty Name="PID" ColumnName="PID" />
+          <ScalarProperty Name="GID" ColumnName="GID" />
+          <ScalarProperty Name="RID" ColumnName="RID" />
+          <ScalarProperty Name="Anons" ColumnName="Anons" />
+          <ScalarProperty Name="Remind" ColumnName="Remind" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WebResources">
+      <EntityTypeMapping TypeName="TVProgBaseModel.WebResources">
+        <MappingFragment StoreEntitySet="WebResources">
+          <ScalarProperty Name="WebResourceID" ColumnName="WebResourceID" />
+          <ScalarProperty Name="TPID" ColumnName="TPID" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="ResourceName" ColumnName="ResourceName" />
+          <ScalarProperty Name="ResourceUrl" ColumnName="ResourceUrl" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

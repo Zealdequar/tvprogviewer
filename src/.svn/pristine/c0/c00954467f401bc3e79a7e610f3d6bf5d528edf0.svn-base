@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TVProgViewer.BusinessLogic.ProgObjs;
+
+namespace TVProgViewer.TVProgApp.Controllers
+{
+    internal class TvProgController : BaseController
+    {
+        internal static Task<ProviderType[]> GetProviderTypeAsyncList()
+        {
+            return TvProgService.GetProviderTypeListAsync();
+        }
+
+        internal static Task<SystemChannel[]> GetSystemChannelAsyncList(int tvProgProviderID)
+        {
+            return TvProgService.GetSystemChannelListAsync(tvProgProviderID);
+        
+        }
+
+        internal static Task<SystemProgramme[]> GetSystemProgrammesAtNowAsycList(int typeProgID, DateTimeOffset dateTimeOffset)
+        {
+
+            return TvProgService.GetSystemProgrammeListAsync(typeProgID, dateTimeOffset, 1);
+        }
+
+        internal static Task<SystemProgramme[]> GetSystemProgrammesAtNextAsycList(int typeProgID, DateTimeOffset dateTimeOffset)
+        {
+            return TvProgService.GetSystemProgrammeListAsync(typeProgID, dateTimeOffset, 2);
+        }
+
+        internal static ProgPeriod GetSystemProgrammePeriod(int typeProgID)
+        {
+            return TvProgService.GetSystemProgrammePeriod(typeProgID);
+        }
+
+        internal static Task<SystemProgramme[]> GetSystemProgrammesOfDayAsyncList(int typeProgID, int cid, 
+            DateTime tsStart, DateTime tsStop)
+        {
+            return TvProgService.GetSystemProgrammeDayListAsync(typeProgID, cid, tsStart, tsStop);
+        }
+    }
+}

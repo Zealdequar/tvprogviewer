@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TVProgViewer.BusinessLogic.ProgObjs;
+
+namespace TVProgViewer.TVProgApp.Controllers
+{
+    internal class TvProgController : BaseController
+    {
+        async internal static Task<ProviderType[]> GetProviderTypeAsyncList()
+        {
+            return await TvProgService.GetProviderTypeListAsync();
+        }
+    }
+}

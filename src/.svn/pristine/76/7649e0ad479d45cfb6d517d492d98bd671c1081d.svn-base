@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="TVProgService.Service1" CodeBehind="ITvProgService.svc.cs" %>

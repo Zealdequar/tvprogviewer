@@ -1,0 +1,17 @@
+2018-11-18 17:41:57.0643 INFO  =========== Начало обновления ============ 
+2018-11-18 17:41:58.5702 INFO Начало получения ресурсов из базы.
+2018-11-18 17:41:59.7096 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2018-11-18 17:42:04.6934 INFO Обновление для ID='1'
+2018-11-18 17:42:16.6890 ERROR Обновление тв-программы прошло неуспешно: ErrMessage='Файл 'K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Debug\2018-11-18\TGXmlTvOld.xml' не найден.', StackTrace='   в System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   в System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   в System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize)
+   в System.Xml.XmlDownloadManager.GetStream(Uri uri, ICredentials credentials, IWebProxy proxy, RequestCachePolicy cachePolicy)
+   в System.Xml.XmlUrlResolver.GetEntity(Uri absoluteUri, String role, Type ofObjectToReturn)
+   в System.Xml.XmlTextReaderImpl.FinishInitUriString()
+   в System.Xml.XmlTextReaderImpl..ctor(String uriStr, XmlReaderSettings settings, XmlParserContext context, XmlResolver uriResolver)
+   в System.Xml.XmlReaderSettings.CreateReader(String inputUri, XmlParserContext inputContext)
+   в System.Xml.XmlReader.Create(String inputUri, XmlReaderSettings settings, XmlParserContext inputContext)
+   в System.Xml.Linq.XDocument.Load(String uri, LoadOptions options)
+   в TVProgUpdater.Program.Main(String[] args) в K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\Program.cs:строка 84'
+2018-11-18 17:42:31.0623 INFO Обновление для ID='2'
+2018-11-18 17:44:55.6549 INFO Каналы и тв-программа ID='2' подготовлены к запуску обработки в базе

@@ -1,0 +1,988 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{62C9B18D-8158-4036-9D84-ABB88D7180AE}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TVProgViewer.TVProgApp</RootNamespace>
+    <AssemblyName>TVProgApp</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ProductName>TVProgViewer</ProductName>
+    <PublisherName>Karpeshin E.N.</PublisherName>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.1</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>TVProgViewer.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Eduard Karpeshin.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>0D5CF908A94335DD418F8FCECA4D7F76C6EB63A8</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>Eduard Karpeshin.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\TVProgViewer.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;G:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;G:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\TVProgViewer.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;G:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;G:\Program Files\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FlexCel, Version=5.3.0.0, Culture=neutral, PublicKeyToken=cb8f6080e6d5a4d6, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\FlexCel.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\ColumnOrderItem.cs" />
+    <Compile Include="Classes\TVEnvironment.cs" />
+    <Compile Include="Classes\UserSettings.cs" />
+    <Compile Include="Classes\ExcelExport.cs" />
+    <Compile Include="Classes\ExportBuilder.cs" />
+    <Compile Include="Classes\Statics.cs" />
+    <Compile Include="Classes\Util.cs" />
+    <Compile Include="Classes\Win32API.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ControllerExtensions.cs" />
+    <Compile Include="Controllers\TvProgController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controls\AppierenceSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AppierenceSettings.Designer.cs">
+      <DependentUpon>AppierenceSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CountryDep.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CountryDep.Designer.cs">
+      <DependentUpon>CountryDep.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlOk.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlOk.Designer.cs">
+      <DependentUpon>ctrlOk.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlOkCancel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlOkCancel.Designer.cs">
+      <DependentUpon>ctrlOkCancel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlYesNo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlYesNo.Designer.cs">
+      <DependentUpon>ctrlYesNo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AudioSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AudioSettings.Designer.cs">
+      <DependentUpon>AudioSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OnRunningSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OnRunningSettings.Designer.cs">
+      <DependentUpon>OnRunningSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OtherSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OtherSettings.Designer.cs">
+      <DependentUpon>OtherSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ReminderSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ReminderSettings.Designer.cs">
+      <DependentUpon>ReminderSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\VideoDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\VideoDialog.Designer.cs">
+      <DependentUpon>VideoDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\VideoSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\VideoSettings.Designer.cs">
+      <DependentUpon>VideoSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\VisibleSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\VisibleSettings.Designer.cs">
+      <DependentUpon>VisibleSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ChannelsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChannelsForm.Designer.cs">
+      <DependentUpon>ChannelsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\ClassifFavorite.cs" />
+    <Compile Include="Classes\ClassifGenre.cs" />
+    <Compile Include="Controls\ClassifGenreControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ClassifGenreControl.Designer.cs">
+      <DependentUpon>ClassifGenreControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\AsfForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\AsfForm.Designer.cs">
+      <DependentUpon>AsfForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ClassifGenreDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ClassifGenreDialog.Designer.cs">
+      <DependentUpon>ClassifGenreDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ClassifFavoriteControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ClassifFavoriteControl.Designer.cs">
+      <DependentUpon>ClassifFavoriteControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ClassifFavoriteDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\ClassifFavoriteDialog.Designer.cs">
+      <DependentUpon>ClassifFavoriteDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CtrlRating.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CtrlRating.Designer.cs">
+      <DependentUpon>CtrlRating.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FavoriteDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FavoriteDialog.Designer.cs">
+      <DependentUpon>FavoriteDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FileNameDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\FileNameDialog.Designer.cs">
+      <DependentUpon>FileNameDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MessageDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\MessageDialog.Designer.cs">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\OptionsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\OptionsDialog.Designer.cs">
+      <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Registration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\Registration.Designer.cs">
+      <DependentUpon>Registration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\RemindDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\RemindDialog.Designer.cs">
+      <DependentUpon>RemindDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Logger\ExceptionLogger.cs" />
+    <Compile Include="Logger\TextFileLogger.cs" />
+    <Compile Include="Properties\FileNameSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>FileNameSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RatingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RatingForm.Designer.cs">
+      <DependentUpon>RatingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FavoriteControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\FavoriteControl.Designer.cs">
+      <DependentUpon>FavoriteControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CtrlChannel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CtrlChannel.Designer.cs">
+      <DependentUpon>CtrlChannel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CtrlDays.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CtrlDays.Designer.cs">
+      <DependentUpon>CtrlDays.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\CtrlGenre.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CtrlGenre.Designer.cs">
+      <DependentUpon>CtrlGenre.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\DataGridViewExtentions.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Dialogs\EditChannelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\EditChannelDialog.Designer.cs">
+      <DependentUpon>EditChannelDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\Favorite.cs" />
+    <Compile Include="Classes\Favorites.cs" />
+    <Compile Include="Classes\Genre.cs" />
+    <Compile Include="Controls\GenreControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\GenreControl.Designer.cs">
+      <DependentUpon>GenreControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\GenreDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GenreDialog.Designer.cs">
+      <DependentUpon>GenreDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GenreForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GenreForm.Designer.cs">
+      <DependentUpon>GenreForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\Genres.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\OptChannelsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\OptChannelsDialog.Designer.cs">
+      <DependentUpon>OptChannelsDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OrientedTextLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PleaseWaitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PleaseWaitForm.Designer.cs">
+      <DependentUpon>PleaseWaitForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\Preferences.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Registration.Designer.cs">
+      <DependentUpon>Registration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Reminder.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Reminder.settings</DependentUpon>
+    </Compile>
+    <Compile Include="RemindForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RemindForm.Designer.cs">
+      <DependentUpon>RemindForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\SearchDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\SearchDialog.Designer.cs">
+      <DependentUpon>SearchDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SearchResultsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SearchResultsForm.Designer.cs">
+      <DependentUpon>SearchResultsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\SerializableDataClass.cs" />
+    <Compile Include="Classes\TVProgClass.cs" />
+    <Compile Include="Service References\TvProgServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Welcome.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Welcome.Designer.cs">
+      <DependentUpon>Welcome.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="ChannelsForm.en.resx">
+      <DependentUpon>ChannelsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AppierenceSettings.en.resx">
+      <DependentUpon>AppierenceSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AppierenceSettings.resx">
+      <DependentUpon>AppierenceSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AudioSettings.en.resx">
+      <DependentUpon>AudioSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ClassifFavoriteControl.en.resx">
+      <DependentUpon>ClassifFavoriteControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ClassifGenreControl.en.resx">
+      <DependentUpon>ClassifGenreControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CountryDep.en.resx">
+      <DependentUpon>CountryDep.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CountryDep.resx">
+      <DependentUpon>CountryDep.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlChannel.en.resx">
+      <DependentUpon>CtrlChannel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlDays.en.resx">
+      <DependentUpon>CtrlDays.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlGenre.en.resx">
+      <DependentUpon>CtrlGenre.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ctrlOk.resx">
+      <DependentUpon>ctrlOk.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ctrlOkCancel.resx">
+      <DependentUpon>ctrlOkCancel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlRating.en.resx">
+      <DependentUpon>CtrlRating.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ctrlYesNo.en.resx">
+      <DependentUpon>ctrlYesNo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ctrlYesNo.resx">
+      <DependentUpon>ctrlYesNo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AudioSettings.resx">
+      <DependentUpon>AudioSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FavoriteControl.en.resx">
+      <DependentUpon>FavoriteControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\GenreControl.en.resx">
+      <DependentUpon>GenreControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OnRunningSettings.en.resx">
+      <DependentUpon>OnRunningSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OnRunningSettings.resx">
+      <DependentUpon>OnRunningSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OtherSettings.en.resx">
+      <DependentUpon>OtherSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OtherSettings.resx">
+      <DependentUpon>OtherSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ReminderSettings.en.resx">
+      <DependentUpon>ReminderSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ReminderSettings.resx">
+      <DependentUpon>ReminderSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VideoDialog.en.resx">
+      <DependentUpon>VideoDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VideoDialog.resx">
+      <DependentUpon>VideoDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VideoSettings.en.resx">
+      <DependentUpon>VideoSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VideoSettings.resx">
+      <DependentUpon>VideoSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VisibleSettings.en.resx">
+      <DependentUpon>VisibleSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VisibleSettings.resx">
+      <DependentUpon>VisibleSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AboutForm.en.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ChannelsForm.resx">
+      <DependentUpon>ChannelsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ClassifGenreControl.resx">
+      <DependentUpon>ClassifGenreControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AsfForm.en.resx">
+      <DependentUpon>AsfForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\AsfForm.resx">
+      <DependentUpon>AsfForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ClassifFavoriteDialog.en.resx">
+      <DependentUpon>ClassifFavoriteDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ClassifGenreDialog.en.resx">
+      <DependentUpon>ClassifGenreDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ClassifGenreDialog.resx">
+      <DependentUpon>ClassifGenreDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ClassifFavoriteControl.resx">
+      <DependentUpon>ClassifFavoriteControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\ClassifFavoriteDialog.resx">
+      <DependentUpon>ClassifFavoriteDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlRating.resx">
+      <DependentUpon>CtrlRating.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\EditChannelDialog.en.resx">
+      <DependentUpon>EditChannelDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FavoriteDialog.en.resx">
+      <DependentUpon>FavoriteDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FavoriteDialog.resx">
+      <DependentUpon>FavoriteDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FileNameDialog.en.resx">
+      <DependentUpon>FileNameDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\FileNameDialog.resx">
+      <DependentUpon>FileNameDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\GenreDialog.en.resx">
+      <DependentUpon>GenreDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\MessageDialog.resx">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\OptChannelsDialog.en.resx">
+      <DependentUpon>OptChannelsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\OptionsDialog.en.resx">
+      <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\OptionsDialog.resx">
+      <DependentUpon>OptionsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\Registration.en.resx">
+      <DependentUpon>Registration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\Registration.resx">
+      <DependentUpon>Registration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RemindDialog.en.resx">
+      <DependentUpon>RemindDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\RemindDialog.resx">
+      <DependentUpon>RemindDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SearchDialog.en.resx">
+      <DependentUpon>SearchDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GenreForm.en.resx">
+      <DependentUpon>GenreForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.en.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.ru.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RatingForm.en.resx">
+      <DependentUpon>RatingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RatingForm.resx">
+      <DependentUpon>RatingForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\FavoriteControl.resx">
+      <DependentUpon>FavoriteControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlChannel.resx">
+      <DependentUpon>CtrlChannel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlDays.resx">
+      <DependentUpon>CtrlDays.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CtrlGenre.resx">
+      <DependentUpon>CtrlGenre.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\EditChannelDialog.resx">
+      <DependentUpon>EditChannelDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\GenreControl.resx">
+      <DependentUpon>GenreControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\GenreDialog.resx">
+      <DependentUpon>GenreDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GenreForm.resx">
+      <DependentUpon>GenreForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\OptChannelsDialog.resx">
+      <DependentUpon>OptChannelsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PleaseWaitForm.resx">
+      <DependentUpon>PleaseWaitForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Registration.resx">
+      <DependentUpon>Registration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemindForm.en.resx">
+      <DependentUpon>RemindForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RemindForm.resx">
+      <DependentUpon>RemindForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Dialogs\SearchDialog.resx">
+      <DependentUpon>SearchDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchResultsForm.en.resx">
+      <DependentUpon>SearchResultsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SearchResultsForm.resx">
+      <DependentUpon>SearchResultsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Welcome.resx">
+      <DependentUpon>Welcome.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Eduard Karpeshin.pfx" />
+    <None Include="EduardKarpeshin.cer" />
+    <None Include="Media\add_to_favorite.psd" />
+    <None Include="Media\add_to_genres.psd" />
+    <None Include="Media\LCD-TV-Panel.psd" />
+    <None Include="Media\MessageWindowFone.psd" />
+    <None Include="Properties\DataSources\TVProgViewer.BusinessLogic.ProgObjs.ProgPeriod.datasource" />
+    <None Include="Properties\DataSources\TVProgViewer.BusinessLogic.ProgObjs.ProviderType.datasource" />
+    <None Include="Properties\DataSources\TVProgViewer.BusinessLogic.ProgObjs.SystemChannel.datasource" />
+    <None Include="Properties\DataSources\TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme.datasource" />
+    <None Include="Properties\DataSources\TVProgViewer.BusinessLogic.Users.SecureData.datasource" />
+    <None Include="Properties\DataSources\TVProgViewer.BusinessLogic.Users.User.datasource" />
+    <None Include="Properties\FileNameSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>FileNameSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\TunerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>TunerSettings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\TunerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TunerSettings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Reminder.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Reminder.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\TvProgServiceReference\MainService.wsdl" />
+    <None Include="Service References\TvProgServiceReference\MainService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TvProgServiceReference\MainService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TvProgServiceReference\MainService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TvProgServiceReference\MainService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TvProgServiceReference\MainService31.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TvProgServiceReference\MainService4.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\TvProgServiceReference\TVProgViewer.TVProgApp.TvProgServiceReference.GetUserResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Templates\exp_template1.xls">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\RemoveOldProg.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\MergeXmltv.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Data\UniqKey.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Data\RemoveManyChans.xslt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="FlexCel.dll" />
+    <Content Include="ICSharpCode.SharpZipLib.dll" />
+    <Content Include="Media\add_to_favorite.png" />
+    <Content Include="Media\add_to_genres.png" />
+    <Content Include="Media\Alert.png" />
+    <Content Include="Media\All.png" />
+    <None Include="Media\All_eng.png" />
+    <Content Include="Media\apple_flat_panel_tv__3_.jpg" />
+    <Content Include="Media\arrow_down.png" />
+    <Content Include="Media\arrow_up.png" />
+    <Content Include="Media\BannerBmp.jpg" />
+    <Content Include="Media\bell.png" />
+    <Content Include="Media\bellempty.png" />
+    <Content Include="Media\bellFilt.png" />
+    <Content Include="Media\bellheader.jpg" />
+    <Content Include="Media\bellheader.png" />
+    <Content Include="Media\calendar.png" />
+    <Content Include="Media\Cancel32.png" />
+    <Content Include="Media\cancelGreen.png" />
+    <Content Include="Media\cancelGreen18.png" />
+    <Content Include="Media\capture.png" />
+    <Content Include="Media\capturempty.png" />
+    <Content Include="Media\capture_header.png" />
+    <Content Include="Media\check2.png" />
+    <Content Include="Media\checkAll.png" />
+    <Content Include="Media\checkAll2.png" />
+    <Content Include="Media\checkInvert.png" />
+    <Content Include="Media\clock.jpg" />
+    <Content Include="Media\color_mixer_search_256.png" />
+    <Content Include="Media\copy.png" />
+    <Content Include="Media\cross.gif" />
+    <Content Include="Media\cross2.gif" />
+    <Content Include="Media\DialogBmp.jpg" />
+    <Content Include="Media\document-save.png" />
+    <Content Include="Media\Download.png" />
+    <Content Include="Media\exit.png" />
+    <Content Include="Media\favblue.png" />
+    <Content Include="Media\favempty.png" />
+    <Content Include="Media\favFilt.png" />
+    <Content Include="Media\favgreen.png" />
+    <Content Include="Media\favorites.png" />
+    <Content Include="Media\favorites25.png" />
+    <Content Include="Media\favorites_class.png" />
+    <Content Include="Media\favorites_class32.png" />
+    <Content Include="Media\favorite_blue.png" />
+    <Content Include="Media\favorite_red.png" />
+    <Content Include="Media\favpink.png" />
+    <Content Include="Media\favpurple.png" />
+    <Content Include="Media\favyellow.png" />
+    <Content Include="Media\Fri.png" />
+    <None Include="Media\Fri_eng.png" />
+    <Content Include="Media\Fri_exp.png" />
+    <None Include="Media\Fri_exp_eng.png" />
+    <Content Include="Media\GenreClass.png" />
+    <Content Include="Media\GenreClass32.png" />
+    <Content Include="Media\GenreEditor.png" />
+    <Content Include="Media\GenreEditor25.png" />
+    <Content Include="Media\GenreEditor32.png" />
+    <Content Include="Media\GenreEditorFilt.png" />
+    <Content Include="Media\GreenAnons.png" />
+    <Content Include="Media\GreenAnonsFilt.png" />
+    <Content Include="Media\import_export_excel_256.png" />
+    <Content Include="Media\import_export_excel_36.png" />
+    <Content Include="Media\Information.png" />
+    <Content Include="Media\LCD-TV-Panel-Loader.jpg" />
+    <Content Include="Media\LCD-TV-Panel-Loader.png" />
+    <Content Include="Media\LCD-TV-Panel-Loader2.jpg" />
+    <None Include="Media\LCD-TV-Panel-Loader2.png" />
+    <Content Include="Media\LCD-TV-Panel.jpg" />
+    <Content Include="Media\LCD-TV-Panel.png" />
+    <Content Include="Media\LCD-TV-Panel128x128.png" />
+    <Content Include="Media\LCD-TV-Panel256x256.png" />
+    <Content Include="Media\LCD-TV-Panel50x37.png" />
+    <Content Include="Media\MessageWindowFone.png" />
+    <Content Include="Media\Mon.png" />
+    <Content Include="Media\Monitor.png" />
+    <None Include="Media\Mon_eng.png" />
+    <Content Include="Media\Mon_exp.png" />
+    <None Include="Media\Mon_exp_eng.png" />
+    <Content Include="Media\nail_cutters_256.png" />
+    <Content Include="Media\New Add32.png" />
+    <Content Include="Media\New Edit32.png" />
+    <Content Include="Media\New Remove32.png" />
+    <Content Include="Media\OK25.png" />
+    <Content Include="Media\OK32.png" />
+    <Content Include="Media\Open Folder.png" />
+    <Content Include="Media\pause_256.png" />
+    <Content Include="Media\Pink6 %28Custom%29.png" />
+    <Content Include="Media\point.png" />
+    <Content Include="Media\preferences-system.png" />
+    <Content Include="Media\QuestionCloud.png" />
+    <Content Include="Media\record_25.png" />
+    <Content Include="Media\record_256.png" />
+    <Content Include="Media\Red6 %28Custom%29.png" />
+    <Content Include="Media\refresh.png" />
+    <Content Include="Media\Sat.png" />
+    <Content Include="Media\satellite.jpg" />
+    <Content Include="Media\satellite_dish.png" />
+    <Content Include="Media\satellite_dish2.png" />
+    <Content Include="Media\satellite_dish25.png" />
+    <Content Include="Media\satellite_dish3.png" />
+    <None Include="Media\Sat_eng.png" />
+    <Content Include="Media\Sat_exp.png" />
+    <None Include="Media\Sat_exp_eng.png" />
+    <Content Include="Media\savegreen.gif" />
+    <Content Include="Media\savegreen18.png" />
+    <Content Include="Media\stop_25.png" />
+    <Content Include="Media\stop_256.png" />
+    <Content Include="Media\Sun.png" />
+    <None Include="Media\Sun_eng.png" />
+    <Content Include="Media\Sun_exp.png" />
+    <None Include="Media\Sun_exp_eng.png" />
+    <Content Include="Media\Ths.png" />
+    <None Include="Media\Ths_eng.png" />
+    <Content Include="Media\Ths_exp.png" />
+    <None Include="Media\Ths_exp_eng.png" />
+    <Content Include="Media\Tue.png" />
+    <None Include="Media\Tue_eng_exp.png" />
+    <None Include="Media\Tue_eng.png" />
+    <Content Include="Media\Tue_exp.png" />
+    <Content Include="Media\tvProgViewer.ico" />
+    <Content Include="Media\UncheckAll.png" />
+    <Content Include="Media\Untype.png" />
+    <Content Include="Media\volume-high.png" />
+    <Content Include="Media\volume-muted.png" />
+    <Content Include="Media\Wen.png" />
+    <None Include="Media\Wen_eng.png" />
+    <Content Include="Media\Wen_exp.png" />
+    <None Include="Media\Wen_exp_eng.png" />
+    <Content Include="Media\window_dialog.png" />
+    <Content Include="Media\window_dialog_none.png" />
+    <None Include="Service References\TvProgServiceReference\MainService.disco" />
+    <None Include="Service References\TvProgServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\TvProgServiceReference\configuration.svcinfo" />
+    <None Include="Service References\TvProgServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="TVProgViewer.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj">
+      <Project>{f6f67817-5d76-4fc0-b46c-c1c4b82e5142}</Project>
+      <Name>BusinessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{d29070e9-6088-4eb4-aac5-319fd85e42cd}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CryptoService\CryptoService.csproj">
+      <Project>{fd2b3c57-7107-4f56-a17e-f0251a8c5016}</Project>
+      <Name>CryptoService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DirectX.Capture\DirectX.Capture.csproj">
+      <Project>{8C0015DB-69E1-46E7-8705-3A4F8BE2E5E7}</Project>
+      <Name>DirectX.Capture</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DShowNET\DShowNET.csproj">
+      <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
+      <Name>DShowNET</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\TvProgServiceReference\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

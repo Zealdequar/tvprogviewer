@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TVProgViewer.BusinessLogic.ProgObjs
+{
+    public struct ProgPeriod
+    {
+        public DateTimeOffset dtStart;
+        public DateTimeOffset dtEnd;
+    }
+}

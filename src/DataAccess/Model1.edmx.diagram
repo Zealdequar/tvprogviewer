@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="874dace0b7a243819c83b9c5298a53bf" Name="Diagram1">
+        <EntityTypeShape EntityType="TVProgBaseModel.Channels" Width="1.5" PointX="3.75" PointY="21.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.ExtUserSettings" Width="1.5" PointX="3" PointY="13.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.GenreClassificator" Width="1.5" PointX="6" PointY="13" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.Genres" Width="1.5" PointX="3" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.LogActions" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.MediaPic" Width="1.5" PointX="0.75" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.Programmes" Width="1.5" PointX="6" PointY="22.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.RatingClassificator" Width="1.5" PointX="3" PointY="17" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.Ratings" Width="1.5" PointX="6" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.SearchSettings" Width="1.5" PointX="3" PointY="30.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.SystemUsers" Width="1.5" PointX="0.75" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.TVProgProviders" Width="1.5" PointX="1.5" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.TypeProg" Width="1.5" PointX="3.75" PointY="25.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.UpdateProgLog" Width="1.5" PointX="8.25" PointY="27.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.UserChannels" Width="1.5" PointX="6" PointY="17" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.UsersPrograms" Width="1.5" PointX="8.25" PointY="12.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="TVProgBaseModel.WebResources" Width="1.5" PointX="6" PointY="28.125" IsExpanded="true" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Channels__IconID__6DA2FB28" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Channels__TVProg__6CAED6EF" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Programmes__CID__11E05B9E" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UserChannel__CID__03923C47" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__ExtUserSe__TVPro__2216C367" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__ExtUserSett__UID__21229F2E" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__GenreClassi__GID__76384129" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__GenreClassi__UID__772C6562" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Genres__IconID__7267B045" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Genres__UID__71738C0C" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UsersProgra__GID__179934F4" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Ratings__IconID__7AFCF646" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UserChann__IconI__04866080" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Programmes__TID__10EC3765" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UsersProgra__PID__16A510BB" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__RatingClass__RID__7ECD872A" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__RatingClass__UID__7FC1AB63" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__Ratings__UID__7A08D20D" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UsersProgra__RID__188D592D" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__SearchSetti__UID__1E463283" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UserChannel__UID__029E180E" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UsersProgra__UID__14BCC849" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__TypeProg__TVProg__0762CD2B" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__WebResourc__TPID__0A3F39D6" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UpdateProg__WRID__0D1BA681" ManuallyRouted="false" />
+        <AssociationConnector Association="TVProgBaseModel.FK__UsersProgr__UCID__15B0EC82" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

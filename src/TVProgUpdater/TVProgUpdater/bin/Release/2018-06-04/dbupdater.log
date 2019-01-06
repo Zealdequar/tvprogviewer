@@ -1,0 +1,15 @@
+2018-06-04 21:08:30.3611 INFO  =========== Начало обновления ============ 
+2018-06-04 21:08:31.0261 INFO Начало получения ресурсов из базы.
+2018-06-04 21:08:32.6935 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2018-06-04 21:08:32.9683 INFO Актуальная программа есть только за 04 июня 2018
+2018-06-04 21:08:32.9683 INFO Актуальная программа есть только за 10 июня 2018
+2018-06-04 21:08:33.0577 INFO Актуальная программа есть только за 04 июня 2018
+2018-06-04 21:08:33.0577 INFO Актуальная программа есть только за 10 июня 2018
+2018-06-04 21:08:33.1635 INFO Актуальная программа есть только за 04 июня 2018
+2018-06-04 21:08:33.1635 INFO Актуальная программа есть только за 10 июня 2018
+2018-06-04 21:08:33.2325 INFO Актуальная программа есть только за 04 июня 2018
+2018-06-04 21:08:33.2325 INFO Актуальная программа есть только за 10 июня 2018
+2018-06-04 21:08:33.2325 INFO Обновление для ID='6'
+2018-06-04 21:08:34.1299 INFO Каналы и тв-программа ID='6' подготовлены к запуску обработки в базе
+2018-06-04 21:08:35.2273 INFO Обновление для ID='6' успешно завершено. Затрачено '1,986' сек.
+2018-06-04 21:08:35.2273 INFO  ========== Обновление завершено ========== (Затрачено: 4,839 сек.)

@@ -1,0 +1,6 @@
+H:\Projects\TVProgViewer\src\DShowNET\bin\Release\DShowNET.dll
+H:\Projects\TVProgViewer\src\DShowNET\obj\Release\DShowNET.dll
+K:\Projects\TVProgViewer\src\DShowNET\bin\Release\DShowNET.dll
+K:\Projects\TVProgViewer\src\DShowNET\obj\Release\DShowNET.csproj.CoreCompileInputs.cache
+K:\Projects\TVProgViewer\src\DShowNET\obj\Release\DShowNET.dll
+K:\Projects\TVProgViewer\src\DShowNET\obj\Release\DShowNET.csprojResolveAssemblyReference.cache

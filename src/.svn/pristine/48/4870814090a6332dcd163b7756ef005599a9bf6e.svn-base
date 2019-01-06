@@ -1,0 +1,52 @@
+﻿<?xml version="1.0"?>
+<configuration>
+  <appSettings>
+    <add key="aspnet:UseTaskFriendlySynchronizationContext" value="true" />
+  </appSettings>
+  <system.web>
+     <compilation debug="true" targetFramework="4.5" />
+    <httpRuntime targetFramework="4.5"/>
+  </system.web>
+  <connectionStrings>
+    <add name="tvProgBase.Main" providerName="System.Data.SqlClient" connectionString="DATA SOURCE=.; Integrated Security = True; Initial Catalog = TVProgBase; "/>
+    <add name="tvProgBase.Secure" providerName="System.Data.SqlClient" connectionString="DATA SOURCE=.; Integrated Security = True; Initial Catalog = TVProgBase;"/>
+  </connectionStrings>
+  <system.serviceModel>
+    <behaviors>
+      <serviceBehaviors>
+        <behavior name="MainServiceBehavior">
+          <!-- To avoid disclosing metadata information, set the values below to false before deployment -->
+          <serviceMetadata httpGetEnabled="true" httpsGetEnabled="true"  />
+          <!-- To receive exception details in faults for debugging purposes, set the value below to true.  Set to false before deployment to avoid disclosing exception information -->
+          <serviceDebug includeExceptionDetailInFaults="false" />
+        </behavior>
+      </serviceBehaviors>
+    </behaviors>
+    <bindings>
+      <basicHttpBinding>
+        <binding name="basicHttpBindingConfig"  maxReceivedMessageSize="2147483647"  maxBufferSize="2147483647"  
+                 receiveTimeout="00:03:00" sendTimeout="00:10:00"
+                 />
+      </basicHttpBinding>  
+    </bindings>
+    <services>
+      <service name="TVProgViewer.TVProgService.MainService" behaviorConfiguration="MainServiceBehavior">
+        <endpoint address="http://localhost:3999/MainService.svc" contract="TVProgViewer.TVProgService.IMainService" binding="basicHttpBinding"
+                  bindingConfiguration="basicHttpBindingConfig"></endpoint>
+      </service>
+    </services>
+    <protocolMapping>
+        <add binding="basicHttpsBinding"  scheme="https"  />
+    </protocolMapping>     
+    <serviceHostingEnvironment aspNetCompatibilityEnabled="true" multipleSiteBindingsEnabled="false"  />
+  </system.serviceModel>
+  <system.webServer>
+    <modules runAllManagedModulesForAllRequests="true" />
+    <!--
+        To browse web app root directory during debugging, set the value below to true.
+        Set to false before deployment to avoid disclosing web app folder information.
+      -->
+    <directoryBrowse enabled="true"/>
+  </system.webServer>
+
+</configuration>

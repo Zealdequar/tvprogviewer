@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TVProgViewer.DataAccess
+{
+    public static class DataReaderExtentions
+    {
+        public static string GetStringOrDefault(this DbDataReader reader, string fieldName)
+        {
+            return !reader.IsDBNull(reader.GetOrdinal(fieldName)) ? reader.GetString(reader.GetOrdinal(fieldName)) : default(string);
+        }
+
+        public static long GetLongOrDefault(this DbDataReader reader, string fieldName)
+        {
+            return !reader.IsDBNull(reader.GetOrdinal(fieldName)) ? reader.GetInt64(reader.GetOrdinal(fieldName)) : default(Int64);
+        }
+
+        public static DateTime GetDateTimeOrDefault(this DbDataReader reader, string fieldName)
+        {
+            return !reader.IsDBNull(reader.GetOrdinal(fieldName)) ? reader.GetDateTime(reader.GetOrdinal(fieldName)) : default(DateTime);
+        }
+
+        public static bool? GetBooleanOrNull(this DbDataReader reader, string fieldName)
+        {
+            if (!reader.IsDBNull(reader.GetOrdinal(fieldName)))
+                return reader.GetBoolean(reader.GetOrdinal(fieldName));
+            else return null;
+        }
+
+        public static int GetIntOrDefault(this DbDataReader reader, string fieldName)
+        {
+            return !reader.IsDBNull(reader.GetOrdinal(fieldName)) ? reader.GetInt32(reader.GetOrdinal(fieldName)) : default(int);
+        }
+
+        public static short GetShortOrDefault(this DbDataReader reader, string fieldName)
+        {
+            return !reader.IsDBNull(reader.GetOrdinal(fieldName)) ? (short)reader.GetValue(reader.GetOrdinal(fieldName)) : default(short);
+        }
+
+        public static byte[] GetBytesOrDefault(this DbDataReader reader, string fieldName)
+        {
+            return !reader.IsDBNull(reader.GetOrdinal(fieldName)) ? (byte[]) reader[fieldName] : default(byte[]);
+        }
+
+        public static DateTimeOffset GetDateTimeOffsetOrDefault(this DbDataReader reader, string fieldName)
+        {
+            SqlDataReader sqlReader = (SqlDataReader) reader;
+            return !sqlReader.IsDBNull(reader.GetOrdinal(fieldName)) ?  sqlReader.GetDateTimeOffset(sqlReader.GetOrdinal(fieldName)) : default(DateTimeOffset);
+        }
+    }
+}

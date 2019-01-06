@@ -1,0 +1,33 @@
+2018-10-04 16:55:57.3459 INFO  =========== Начало обновления ============ 
+2018-10-04 16:55:57.6443 INFO Начало получения ресурсов из базы.
+2018-10-04 16:55:58.1647 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip';WRID = '6', FileName = 'TPXmlTvNew.xml', ResourceName = 'Ресурс tele.perm.ru (XMLTV)', ResourceUrl ='http://tele.perm.ru/download/tvguide.xml.gz'
+2018-10-04 16:55:58.9582 INFO Актуальная программа есть только за 01 октября 2018
+2018-10-04 16:55:58.9582 INFO Обновление для ID='1'
+2018-10-04 16:56:08.1400 INFO Каналы и тв-программа ID='1' подготовлены к запуску обработки в базе
+2018-10-04 16:56:16.2964 INFO Обновление для ID='1' успешно завершено. Затрачено '17,335' сек.
+2018-10-04 16:56:16.4435 INFO Актуальная программа есть только за 01 октября 2018
+2018-10-04 16:56:16.4435 INFO Обновление для ID='2'
+2018-10-04 16:56:23.0575 INFO Каналы и тв-программа ID='2' подготовлены к запуску обработки в базе
+2018-10-04 16:56:30.8810 INFO Обработка каналов и тв-программы ID='2' завершена. Начало загрузки пиктограмм.
+2018-10-04 16:57:25.4406 INFO Загрузка пиктограмм завершена. Потребовалось 54,557 сек.
+2018-10-04 16:57:25.4406 INFO Обновление для ID='2' успешно завершено. Затрачено '68,988' сек.
+2018-10-04 16:57:25.5905 INFO Актуальная программа есть только за 01 октября 2018
+2018-10-04 16:57:25.5935 INFO Обновление для ID='3'
+2018-10-04 16:57:50.9158 INFO Каналы и тв-программа ID='3' подготовлены к запуску обработки в базе
+2018-10-04 16:57:57.2412 INFO Обновление для ID='3' успешно завершено. Затрачено '31,646' сек.
+2018-10-04 16:57:57.4106 INFO Актуальная программа есть только за 01 октября 2018
+2018-10-04 16:57:57.4106 INFO Обновление для ID='4'
+2018-10-04 16:58:02.7389 INFO Каналы и тв-программа ID='4' подготовлены к запуску обработки в базе
+2018-10-04 16:58:08.9413 INFO Обновление для ID='4' успешно завершено. Затрачено '11,526' сек.
+2018-10-04 16:58:08.9413 INFO Обновление для ID='6'
+2018-10-04 16:58:09.6288 ERROR Обновление тв-программы прошло неуспешно: ErrMessage='Знак """, шестнадцатеричное значение 0x22, не может использоваться в именах., строка 32600, позиция 66.', StackTrace='   в System.Xml.XmlTextReaderImpl.Throw(Exception e)
+   в System.Xml.XmlTextReaderImpl.Throw(String res, String[] args)
+   в System.Xml.XmlTextReaderImpl.Throw(Int32 pos, String res, String[] args)
+   в System.Xml.XmlTextReaderImpl.ParseElement()
+   в System.Xml.XmlTextReaderImpl.ParseElementContent()
+   в System.Xml.XmlTextReaderImpl.Read()
+   в System.Xml.Linq.XContainer.ReadContentFrom(XmlReader r, LoadOptions o)
+   в System.Xml.Linq.XDocument.Load(XmlReader reader, LoadOptions options)
+   в System.Xml.Linq.XDocument.Load(String uri, LoadOptions options)
+   в TVProgUpdater.Program.Main(String[] args) в K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\Program.cs:строка 81'
+2018-10-04 16:58:09.6288 INFO  ========== Обновление завершено ========== (Затрачено: 132,166 сек.)

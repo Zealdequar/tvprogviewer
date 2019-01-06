@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using TVProgViewer.TVProgApp.Properties;
+
+namespace TVProgViewer.TVProgApp
+{
+    public partial class CtrlChannel : UserControl
+    {
+        public CtrlChannel(DataRow[] channels)
+        {
+            InitializeComponent();
+            listViewChannels.Items.Clear();
+            foreach (DataRow dataRow in channels)
+            {
+                if (String.IsNullOrEmpty(dataRow["visible"].ToString())) dataRow["visible"] = false;
+                if ((bool) dataRow["visible"])
+                {
+                    imgList.Images.Add(dataRow["display-name"].ToString(), (Image) dataRow["icon"]);
+                    listViewChannels.Items.Add(dataRow["id"].ToString(),
+                                               dataRow["display-name"].ToString(),
+                                               dataRow["display-name"].ToString()).
+                    Checked = true;
+                }
+            }
+        }
+
+        private void CtrlChannel_Load(object sender, EventArgs e)
+        {
+            Preferences.SetFonts(Settings.Default.InterfaceFont, Settings.Default.TableFont);
+        }
+    }
+}

@@ -1,0 +1,430 @@
+insert dbo.SystemUsers (UserName, PassHash, LastName, FirstName, MiddleName, BirthDate, Gender, Email,
+MobPhoneNumber,
+OtherPhoneNumber1,
+OtherPhoneNumber2,
+Address,
+GmtZone,
+Status)
+values ('Root', HASHBYTES('sha1', ''), 'Зарезервировано', '', '', '2014-10-17', 1,
+'tvprogviewer@gmail.com', '', '', '', '', '+04:00', 1);
+
+insert dbo.SystemUsers (UserName, PassHash, LastName, FirstName, MiddleName, BirthDate, Gender, Email,
+MobPhoneNumber,
+OtherPhoneNumber1,
+OtherPhoneNumber2,
+Address,
+GmtZone,
+Status)
+values ('edkarpeshin', HASHBYTES('sha1', ''), 'Karpeshin', 'Eduard', 'Nikolaevich', '1987-02-14', 1,
+'edkarpeshin@gmail.com', '', '', '', '', '+04:00', 1);
+go
+
+
+/*insert dbo.ExtUserSettings (UID, TVProgProviderID,  UncheckedChannels)
+values (2, 1, 1)
+go*/
+insert dbo.TVProgProviders (ProviderName, ProviderWebSite, ContactName, ContactEmail)
+values ('ТелеГид.ИНФО', 'http://www.teleguide.info', '', '');
+
+insert dbo.TypeProg (TVProgProviderID, TypeName, FileFormat) values (1, 'Формат XMLTV', 'xml');
+insert dbo.TypeProg (TVProgProviderID, TypeName, FileFormat) values (1, 'Формат Интер-ТВ', 'txt');
+go
+
+insert dbo.WebResources(TPID, ResourceName, ResourceUrl)
+values (1, 'Ресурс teleguide.info старой телепрограммы (XMLTV)', 'http://www.teleguide.info/download/old/xmltv.xml.gz');
+insert dbo.WebResources(TPID, ResourceName, ResourceUrl)
+values (1, 'Ресурс teleguide.info новой телепрограммы (XMLTV)', 'http://www.teleguide.info/download/new3/xmltv.xml.gz');
+insert dbo.WebResources(TPID, ResourceName, ResourceUrl)
+values (2, 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', 'http://www.teleguide.info/download/old/inter-tv.zip');
+insert dbo.WebResources(TPID, ResourceName, ResourceUrl)
+values (2, 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', 'http://www.teleguide.info/download/new3/inter-tv.zip');
+go
+
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Без типа' 				 	, 'untype.png'      ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\untype.png'    , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Художественный фильм'    	, 'hudFilm.gif'     ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\hudFilm.gif'       , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Сериал'                  	, 'teleserial.png'  ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\teleserial.png'    , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Детям' 					 	, 'balloons.gif'    ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\balloons.gif'  , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Спорт'					 	, 'sport.png' 	    ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\sport.png' 	  , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Документальный фильм'    	, 'docs.png'        ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\docs.png'          , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Информ. программа'       	, 'info.png'        ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\info.png'          , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Юмор'                    	, 'humor.png'       ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\humor.png'         , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Теле-шоу'				 	, 'teleshow.png'    ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\teleshow.png'      , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Теле-игра' 				 	, 'telegames.png'   ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\telegames.png' , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Театр и кино'			 	, 'theater.png'     ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\theater.png'       , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Мультфильм' 			 	, 'multfilm.png'    ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\multfilm.png'      , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Криминал' 				 	, 'criminal.png'    ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\criminal.png'  , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Музыка' 				 	, 'music.png'       ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\music.png'         , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Интернет' 				 	, 'web.png'         ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\web.png'       , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'О животных' 			 	, 'animals.png'     ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\animals.png'       , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Погода' 				 	, 'weather.png'     ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\weather.png'       , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Искусство и культура' 	 	, 'art.png'         ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\art.png'       , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Политика и социология' 	 	, 'politic.png'     ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\politic.png'   , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Научно-популярная передача' , 'science.png'     ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\science.png'     , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Путешествие и краеведение'  , 'travel.png'      ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\travel.png'      , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Персона' 					, 'people.png'      ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\people.png'        , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Техника' 					, 'tech.png'        ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\tech.png'          , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Мода' 						, 'fashion.png'     ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\fashion.png'   , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Авто'						, 'auto.png'	    ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\auto.png'	      , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Здоровье' 					, 'medicine.png'    ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\medicine.png'  , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Религия' 					, 'religion.png'    ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\religion.png'      , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Садоводство' 				, 'gardening.png'   ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\gardening.png'     , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Реклама' 					, 'advertize.png'   ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\advertize.png'     , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Женские' 					, 'female.png'      ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\female.png'        , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Кулинария' 					, 'cooking.png'     ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\cooking.png'   , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Экстрим' 					, 'extrime.png'     ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\extrime.png'       , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Экономика и бизнес'    		, 'finance.png'     ,  *, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\finance.png'   , SINGLE_BLOB) as Import;
+insert dbo.Genres (UID, GenreName, GenreIconName, GenreIcon, Visible) select NULL,   'Эротика' 					, 'erotic.png'      ,  * 	, 1	from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Genres\erotic.png'        , SINGLE_BLOB) as Import;
+go
+		   
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'фильм', 'мульт;док;Д/ф', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'х.ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'х. ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'т. ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'драм', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'х/ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'х\\ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (2, NULL, 'Режиссер', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (3, NULL, 'т/с', 'м/с', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (3, NULL, 'Теленовелла', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (3, NULL, 'Сери', 'М/;мульт;турнир', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'Детям', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'детск', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'дете', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'сказка', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'Спокойной ночи, малыши', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'До 16', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'Ералаш', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (4, NULL, 'АБВГДейка', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'чемпион','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'гран-при','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'турнир','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'первенство','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Футбол','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Кубок','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'атлет','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'стадион','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'хоккей','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'спартак','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Физра','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Бои без правил','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Пенальти','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Трюкачи','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'НХЛ','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'матч','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'волейбол','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'бокс','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'НБА','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'ринг','оринг', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'рекорд','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'физкульт','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'баскетбол','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'корт','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'ралли','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'гонки','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'олимп','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'финал', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Боевые искус', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (5, NULL, 'Спорт', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (6, NULL, 'Док.', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (6, NULL, 'д. ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (6, NULL, 'документ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (6, NULL, 'репор', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (6, NULL, 'т. ж.', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (6, NULL, 'Д/ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (6, NULL, 'Д/с', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'информац', 'тайна', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Новост', 'в перерыве', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Время', 'муз;личное', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Вести', 'палаты', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Итоговая программа', '', NULL)
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Сегодня', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'хроник', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'События', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Афиша', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'News', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Настроен', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Доброе утро', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'День за днем', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Доска', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, '24', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Неделя', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Личный вклад', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Постскриптум', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'Страна и мир', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (7, NULL, 'ньюс', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'комеди', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'юмор', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'КВН', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Клуб Веселых и Находчивых', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Городок;городке', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Жванецкий', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Задорнов', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Смех', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Аншлаг', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'О. С. П.', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Большая разница', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Каламбур', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'фитиль', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'шутка', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'розыгрыш', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (8, NULL, 'Смешн', '', NULL);
+                                                                          
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'Шоу', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'конкурс', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'Сам себе режиссер', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'Модный приговор', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'Давай поженимся!', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'Пусть говорят', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'Дом 2', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'Час суда', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (9, NULL, 'НТВшники', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'игра', 'гармонь;тигра;концерт', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'Поле чудес', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'лото', 'олото', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'Умницы и умники', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'Десять миллионов', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'Кто хочет стать миллионером', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'Что? Где? Когда?', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (10, NULL, 'Своя игра', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'артист', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'театр', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'Опера', 'операб;операц', NULL)
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'спектакл', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'балет', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'актер', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'кино', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'Stop! Снято!', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'Третий звонок', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'Большой экран', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'сп.', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'кумиры', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (11, NULL, 'Синемания', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'М/', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'М. ф', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'М/ сериал', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'Дисней', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'мульт', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'Футурама', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'Симпсоны', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (12, NULL, 'Fox Kids', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'детектив', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'комиссар', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'Боевик', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'ужас', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'триллер', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'криминал', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'Дорожный патруль', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'Дорожная часть', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'Чрезвычайное происшествие',  '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'Петровка', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'Телеспецназ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'следствие', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'расследование', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'убийств', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (13, NULL, 'Чистосердечное признание', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Муз', 'музе', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Концерт', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Диск', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'фестивал', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'песн', 'чудес', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'поют', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'джаз', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'БКЗ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'гармонь', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Утренняя почта', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Два рояля', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'оркестр', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'хит', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'романс', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'клип', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'шансон', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Танцпол', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Русская 10-ка', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Мобильная 10-ка', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Танцкласс', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Зажигай!', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Extra', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Impulse', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'чарт', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Горячая десятка', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, 'Утренняя звезда', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (14, NULL, '10 наших', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (15, NULL, 'Интернет', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (15, NULL, '.Ru', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (15, NULL, 'Глобаль', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (15, NULL, 'Всемирная паутина', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (15, NULL, 'сеть', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (15, NULL, 'www', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'животн', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'зоо', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'звер', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'природ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'я и моя собака', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'диалоги о рыбалке', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'Рыболов', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'сами с усами', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'динозавр', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'пород', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'ветерин', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (16, NULL, 'хищник', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (17, NULL, 'Погод', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (17, NULL, 'Солнечный прогноз', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'искусств', 'боев', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'музе', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'культур', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'интерьер', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'Артэкспресс', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'Архтектур', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'Дворцовые тайны', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'Царская ложа', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (18, NULL, 'эрмитаж', '', NULL);
+ 
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (19, NULL, 'полити', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (19, NULL, 'Международ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (19, NULL, 'Съезд', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (19, NULL, 'Федерация', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (19, NULL, 'Парламентский', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (19, NULL, 'зеркало', 'Петросян', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (20, NULL, 'Xфактор', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (20, NULL, 'Цивилизац', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (20, NULL, 'Наук', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (20, NULL, 'Экологи', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (20, NULL, 'Космос', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (20, NULL, 'тайна', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'город','', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Путе', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Непутевые заметки', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Хочу всё знать', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Турбюро', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Знаменитые замки', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Планета Земля', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Вокруг света', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Вояж без саквояжа', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Чудес', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Приключени', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Гербы России', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Окно в мир', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'История', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Поля сражений', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'Их нравы', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (21, NULL, 'экспедиц', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'в гостях', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Антропология', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Пока все дома', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Голливуд', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Женский взгляд', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Встреча с', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Жизнь замечательных людей', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'мужчина и женщина', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'завтрак', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Без протокола', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (22, NULL, 'Момент истины', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (23, NULL, 'компьютер', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (23, NULL, 'Авиац', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (23, NULL, 'изобрет', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (23, NULL, 'монитор', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (23, NULL, 'PRO-новости', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'мода', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'моды', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'fashion', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'Мир красоты', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'Шпилька', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'Видеомода', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'Стильные штучки', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (24, NULL, 'Стилиссимо', '', NULL);
+ 
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (25, NULL, 'Авто;мото', 'Автор;стаи', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (25, NULL, 'Карданный вал', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (25, NULL, 'Фаркоп', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (25, NULL, 'Машин', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (25, NULL, 'Top Gear', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (26, NULL, 'здоров', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (26, NULL, 'Без рецепта', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (26, NULL, 'доктор', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (26, NULL, 'мед.', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (26, NULL, 'медиц', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'пастыря', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'религ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Православ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Победоносный голос верующего', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Библ', 'мания', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Из библейсиких пророчеств', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Благая весть', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Коран', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Воскресная школа', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'христ', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Патриарх', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Муфтий', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Час силы духа', '', NULL);
+
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (28, NULL, 'сад', 'кольцо' , NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (28, NULL, 'Растительная жизнь', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (28, NULL, 'урожай', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (28, NULL, 'даче', 'передаче', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (29, NULL, 'магазин', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (29, NULL, 'реклам', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (29, NULL, 'телепокупка', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (30, NULL, 'Из жизни женщины', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (30, NULL, 'Дамский клуб', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (30, NULL, 'Женские истории', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (30, NULL, 'Для женщин', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (30, NULL, 'мама;мать', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'Кухня', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'Вкусные истории', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'Сладкие истории', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'Вкус', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'деликатес', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'кулинар', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'смак', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'Лакомый кусочек', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (31, NULL, 'блюд', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (32, NULL, 'экстр', 'машин', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (32, NULL, 'Служба спасения', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (32, NULL, 'Катастрофы недели', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (32, NULL, 'Дорожные войны', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (32, NULL, 'каскаде', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (33, NULL, 'Деньги', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (33, NULL, 'Бизнес', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (33, NULL, 'Инвестиции', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (33, NULL, 'Финанс', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (33, NULL, 'Делов', '', NULL);
+
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (34, NULL, 'Секс', '', NULL);
+insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (34, NULL, 'Эрот', '', NULL);
+go
+    
+insert dbo.Ratings (uid, RatingName, RatingIconName, RatingIcon, Visible) select NULL, 'Без рейтинга'	  ,'favempty.png'     , *, 1 from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Favorites\favempty.png', SINGLE_BLOB) as ImportFav;
+insert dbo.Ratings (uid, RatingName, RatingIconName, RatingIcon, Visible) select NULL, 'Можно посмотреть','favblue.png'      ,  *, 1 from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Favorites\favblue.png', SINGLE_BLOB) as ImportFav;
+insert dbo.Ratings (uid, RatingName, RatingIconName, RatingIcon, Visible) select NULL, 'Приличные'		  ,'favpurple.png'    , *, 1 from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Favorites\favpurple.png', SINGLE_BLOB) as ImportFav;
+insert dbo.Ratings (uid, RatingName, RatingIconName, RatingIcon, Visible) select NULL, 'Нормальные'	  ,'favgreen.png'     ,     *, 1 from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Favorites\favgreen.png', SINGLE_BLOB) as ImportFav;
+insert dbo.Ratings (uid, RatingName, RatingIconName, RatingIcon, Visible) select NULL, 'Хорошие' 		  ,'favyellow.png'    , *, 1 from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Favorites\favyellow.png', SINGLE_BLOB) as ImportFav;
+insert dbo.Ratings (uid, RatingName, RatingIconName, RatingIcon, Visible) select NULL, 'Отличные'		  ,'favpink.png'      , *, 1 from OPENROWSET(BULK N'H:\Projects\TVProgViewer\src\TVProgViewer\Dialogs\Media\Favorites\favpink.png', SINGLE_BLOB) as ImportFav;
+go  

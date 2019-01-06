@@ -1,0 +1,10 @@
+H:\Projects\TVProgViewer\src\CryptoService\bin\Release\CryptoService.dll
+H:\Projects\TVProgViewer\src\CryptoService\bin\Release\CryptoService.pdb
+H:\Projects\TVProgViewer\src\CryptoService\obj\Release\CryptoService.dll
+H:\Projects\TVProgViewer\src\CryptoService\obj\Release\CryptoService.pdb
+K:\Projects\TVProgViewer\src\CryptoService\bin\Release\CryptoService.dll
+K:\Projects\TVProgViewer\src\CryptoService\bin\Release\CryptoService.pdb
+K:\Projects\TVProgViewer\src\CryptoService\obj\Release\CryptoService.csproj.CoreCompileInputs.cache
+K:\Projects\TVProgViewer\src\CryptoService\obj\Release\CryptoService.dll
+K:\Projects\TVProgViewer\src\CryptoService\obj\Release\CryptoService.pdb
+K:\Projects\TVProgViewer\src\CryptoService\obj\Release\CryptoService.csprojResolveAssemblyReference.cache

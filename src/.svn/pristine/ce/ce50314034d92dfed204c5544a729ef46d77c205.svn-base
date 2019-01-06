@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TVProgViewer.DataAccess
+{
+    public static class DataReaderExtentions
+    {
+        public static string GetString(this DbDataReader reader, string fieldName)
+        {
+            return reader.GetString(reader.GetOrdinal(fieldName));
+        }
+
+        public static long GetLong(this DbDataReader reader, string fieldName)
+        {
+            return reader.GetInt64(reader.GetOrdinal(fieldName));
+        }
+
+        public static DateTime GetDateTime(this DbDataReader reader, string fieldName)
+        {
+            return reader.GetDateTime(reader.GetOrdinal(fieldName));
+        }
+
+        public static bool? GetBoolean(this DbDataReader reader, string fieldName)
+        {
+            return reader.GetBoolean(reader.GetOrdinal(fieldName));
+        }
+
+        public static int GetInt(this DbDataReader reader, string fieldName)
+        {
+            return reader.GetInt32(reader.GetOrdinal(fieldName));
+        }
+    }
+}

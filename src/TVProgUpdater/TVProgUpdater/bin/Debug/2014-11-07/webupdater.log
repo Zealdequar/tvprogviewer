@@ -1,0 +1,40 @@
+2014-11-07 22:09:56.3818 INFO Начало получения телеканалов с тв-программой
+urid='http://www.teleguide.info/download/old/xmltv.xml.gz';
+outputfile='TGXmlTvOld.xml'
+2014-11-07 22:09:56.4101 TRACE Определен каталог для сохранения: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Debug\2014-11-07'
+2014-11-07 22:09:56.4101 INFO Начало запроса ресурса.
+2014-11-07 22:09:57.8701 TRACE Ресурс успешно получен в поток.
+2014-11-07 22:09:57.8701 INFO Content-Encoding неопределен, пробуем распаковать по заголовку ContentType:
+2014-11-07 22:09:57.8701 TRACE Content-Type = 'application/octet-stream'
+2014-11-07 22:10:30.4033 TRACE GZip-архив octet-stream успешно распакован.
+2014-11-07 22:10:30.4062 INFO Получение каналов и тв-программы успешно завершено.
+2014-11-07 22:10:30.4062 INFO Начало получения телеканалов с тв-программой
+urid='http://www.teleguide.info/download/new3/xmltv.xml.gz';
+outputfile='TGXmlTvNew.xml'
+2014-11-07 22:10:30.4062 TRACE Определен каталог для сохранения: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Debug\2014-11-07'
+2014-11-07 22:10:30.4062 INFO Начало запроса ресурса.
+2014-11-07 22:10:31.2958 TRACE Ресурс успешно получен в поток.
+2014-11-07 22:10:31.2968 INFO Content-Encoding неопределен, пробуем распаковать по заголовку ContentType:
+2014-11-07 22:10:31.2968 TRACE Content-Type = 'application/octet-stream'
+2014-11-07 22:11:05.8417 TRACE GZip-архив octet-stream успешно распакован.
+2014-11-07 22:11:05.8437 INFO Получение каналов и тв-программы успешно завершено.
+2014-11-07 22:11:05.8437 INFO Начало получения телеканалов с тв-программой
+urid='http://www.teleguide.info/download/old/inter-tv.zip';
+outputfile='TGInterTVOld.txt'
+2014-11-07 22:11:05.8437 TRACE Определен каталог для сохранения: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Debug\2014-11-07'
+2014-11-07 22:11:05.8603 INFO Начало запроса ресурса.
+2014-11-07 22:11:06.2128 TRACE Ресурс успешно получен в поток.
+2014-11-07 22:11:06.2128 INFO Content-Encoding неопределен, пробуем распаковать по заголовку ContentType:
+2014-11-07 22:11:06.2216 TRACE Content-Type = 'application/zip'
+2014-11-07 22:11:43.6552 TRACE Zip-архив успешно распакован.
+2014-11-07 22:11:43.6562 INFO Получение каналов и тв-программы успешно завершено.
+2014-11-07 22:11:43.6562 INFO Начало получения телеканалов с тв-программой
+urid='http://www.teleguide.info/download/new3/inter-tv.zip';
+outputfile='TGInterTVNew.txt'
+2014-11-07 22:11:43.6562 TRACE Определен каталог для сохранения: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Debug\2014-11-07'
+2014-11-07 22:11:43.6728 INFO Начало запроса ресурса.
+2014-11-07 22:11:44.0380 TRACE Ресурс успешно получен в поток.
+2014-11-07 22:11:44.0380 INFO Content-Encoding неопределен, пробуем распаковать по заголовку ContentType:
+2014-11-07 22:11:44.0380 TRACE Content-Type = 'application/zip'
+2014-11-07 22:12:13.9404 TRACE Zip-архив успешно распакован.
+2014-11-07 22:12:13.9404 INFO Получение каналов и тв-программы успешно завершено.

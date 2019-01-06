@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TVProgViewer.BusinessLogic.Updater;
+
+namespace TVProgViewer.DataAccess.Adapters
+{
+    public class UpdaterAdapter : AdapterBase
+    {
+        private static Func<DbDataReader, WebResource> getWebResourcesFunc = r =>
+        {
+            return new WebResource()
+            {
+                WebResourceID = r.GetIntOrDefault("WebResourceID"),
+                FileName = r.GetStringOrDefault("FileName"),
+                ResourceName = r.GetStringOrDefault("ResourceName"),
+                WrUri = new Uri(r.GetStringOrDefault("ResourceUrl"))
+            };
+        };
+        
+        public static List<WebResource> GetWebResource()
+        {
+            return DataAccess.ExecReaderCommand<WebResource>(
+                GetTvProgMainConnection(), "spGetWebResources", (DbParameter) null, getWebResourcesFunc);
+        }
+    }
+}

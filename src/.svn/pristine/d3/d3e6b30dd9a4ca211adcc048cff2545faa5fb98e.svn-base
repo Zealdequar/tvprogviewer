@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.ProgObjs" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.ProgObjs" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:5856/MainService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/TVProgViewer.Common" />
+  <xs:complexType name="ArrayOfProviderType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProviderType" nillable="true" type="tns:ProviderType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProviderType" nillable="true" type="tns:ArrayOfProviderType" />
+  <xs:complexType name="ProviderType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FileFormat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProviderName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProviderUri" nillable="true" type="xs:anyURI" />
+      <xs:element minOccurs="0" name="TVProgProviderID" type="xs:int" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/TVProgViewer.Common" minOccurs="0" name="TypeEnum" type="q1:Enums.TypeProg" />
+      <xs:element minOccurs="0" name="TypeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TypeProgID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProviderType" nillable="true" type="tns:ProviderType" />
+</xs:schema>

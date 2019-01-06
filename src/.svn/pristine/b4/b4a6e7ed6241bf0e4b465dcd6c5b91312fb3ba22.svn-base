@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TVProgViewer.BusinessLogic.Users
+{
+    [DataContract]
+    public class SecureData
+    {
+        [DataMember]
+        public long UID { get; private set; }
+        
+        [DataMember]
+        public string PassHash {get; private set;}
+
+        [DataMember]
+        public string PassExtend { get; private set; }
+
+        public SecureData(long uid, string passHash, string passExtend)
+        {
+            UID = uid;
+            PassHash = passHash;
+            PassExtend = passExtend;
+        }
+
+    }
+}

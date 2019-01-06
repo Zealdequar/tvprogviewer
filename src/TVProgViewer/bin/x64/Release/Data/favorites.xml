@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="yes"?>
+<DocumentElement>
+  <Favorites>
+    <id>1</id>
+    <visible>true</visible>
+    <imagename>favempty.png</imagename>
+    <favname>Без рейтинга</favname>
+  </Favorites>
+  <Favorites>
+    <id>2</id>
+    <visible>true</visible>
+    <imagename>favblue.png</imagename>
+    <favname>Можно посмотреть</favname>
+  </Favorites>
+  <Favorites>
+    <id>3</id>
+    <visible>true</visible>
+    <imagename>favpurple.png</imagename>
+    <favname>Приличные</favname>
+  </Favorites>
+  <Favorites>
+    <id>4</id>
+    <visible>true</visible>
+    <imagename>favgreen.png</imagename>
+    <favname>Нормальные</favname>
+  </Favorites>
+  <Favorites>
+    <id>5</id>
+    <visible>true</visible>
+    <imagename>favyellow.png</imagename>
+    <favname>Хорошие</favname>
+  </Favorites>
+  <Favorites>
+    <id>6</id>
+    <visible>true</visible>
+    <imagename>favpink.png</imagename>
+    <favname>Отличные</favname>
+  </Favorites>
+</DocumentElement>

@@ -1,0 +1,622 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AndToText" xml:space="preserve">
+    <value>and to ...</value>
+  </data>
+  <data name="AudioCapabilitiesText" xml:space="preserve">
+    <value>Audio Capabilities \n</value>
+  </data>
+  <data name="AudioChannelsNotSupportText" xml:space="preserve">
+    <value>Number of channels not supported \n\n</value>
+  </data>
+  <data name="AudioCodecNotSupportText" xml:space="preserve">
+    <value>Audio compressor does not supported.</value>
+  </data>
+  <data name="AudioDeviceNotSupportText" xml:space="preserve">
+    <value>Audiodevice does not supported.</value>
+  </data>
+  <data name="AudioMaxSizeLinesText" xml:space="preserve">
+    <value>Max Sample Size:\t\t{4}\n</value>
+  </data>
+  <data name="AudioMinSizeLinesText" xml:space="preserve">
+    <value>Min Sample Size:\t\t{3}\n</value>
+  </data>
+  <data name="AudioRateNotSupportText" xml:space="preserve">
+    <value>Audio sampling rate not supported \n\n</value>
+  </data>
+  <data name="AudioSizeNotSupportText" xml:space="preserve">
+    <value>Audio size does not supported \n\n</value>
+  </data>
+  <data name="AudioSourceNotSupportText" xml:space="preserve">
+    <value>Unable to set audio source. \n\n Please submit bug report.\n\n</value>
+  </data>
+  <data name="BackwardDiagonalText" xml:space="preserve">
+    <value>BackwardDiagonal</value>
+  </data>
+  <data name="BitText" xml:space="preserve">
+    <value>bits</value>
+  </data>
+  <data name="ChannelsGranularityText" xml:space="preserve">
+    <value>Channels Granularity:\t{2}\n</value>
+  </data>
+  <data name="ConfirmChoiceText" xml:space="preserve">
+    <value>Confirm choice</value>
+  </data>
+  <data name="ConnectionFailedText" xml:space="preserve">
+    <value>Tryed connection failed. Report of the bug generated.</value>
+  </data>
+  <data name="CurrentRecsText" xml:space="preserve">
+    <value>Current records...</value>
+  </data>
+  <data name="CurrentRemindsText" xml:space="preserve">
+    <value>Current reminds</value>
+  </data>
+  <data name="DateText" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="DownloadNewProgText" xml:space="preserve">
+    <value>Download the latest tv-program?</value>
+  </data>
+  <data name="DownloadTVProgText" xml:space="preserve">
+    <value>Downloading TV program from Web...</value>
+  </data>
+  <data name="ErrorText" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ExportFileName" xml:space="preserve">
+    <value>Export_TVprog_{0}.xls</value>
+  </data>
+  <data name="ExportFileOpenText" xml:space="preserve">
+    <value>Export file {0} was opened. \n\n Necessary to close file.</value>
+  </data>
+  <data name="ForwardDiagonalText" xml:space="preserve">
+    <value>ForwardDiagonal</value>
+  </data>
+  <data name="GenreText" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="HorizontalText" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="ImpossibleRecText" xml:space="preserve">
+    <value>Can not to record the \n\ncovering telecasts!</value>
+  </data>
+  <data name="InformationText" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="KhzText" xml:space="preserve">
+    <value>kHz</value>
+  </data>
+  <data name="LogoText" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="MaxNumberChannelsText" xml:space="preserve">
+    <value>Max Channels:\t\t{1}\n</value>
+  </data>
+  <data name="MaxSamplingRateText" xml:space="preserve">
+    <value>Max Sampling Rate:\t\t{7}\n</value>
+  </data>
+  <data name="MinNumberChannelsText" xml:space="preserve">
+    <value>Min Channels:\t\t{0}\n</value>
+  </data>
+  <data name="MinSamplingRateText" xml:space="preserve">
+    <value>Min Sampling Rate:\t\t{6}\n</value>
+  </data>
+  <data name="MonoText" xml:space="preserve">
+    <value>Mono</value>
+  </data>
+  <data name="NextText" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="NoRecordsText" xml:space="preserve">
+    <value>No records</value>
+  </data>
+  <data name="NoRemindsText" xml:space="preserve">
+    <value>No reminds</value>
+  </data>
+  <data name="NoSettersRecordsText" xml:space="preserve">
+    <value>Doesn't planned reminds</value>
+  </data>
+  <data name="NoSettersRemindsText" xml:space="preserve">
+    <value>No set reminds</value>
+  </data>
+  <data name="NoText" xml:space="preserve">
+    <value>&lt;No&gt;</value>
+  </data>
+  <data name="NoticeText" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="NowText" xml:space="preserve">
+    <value>Now</value>
+  </data>
+  <data name="PlannedRecsText" xml:space="preserve">
+    <value>Planned records</value>
+  </data>
+  <data name="PleaseSetChannelsText" xml:space="preserve">
+    <value>Please, set the channels</value>
+  </data>
+  <data name="ProgramText" xml:space="preserve">
+    <value>Program</value>
+  </data>
+  <data name="PtText" xml:space="preserve">
+    <value> pt</value>
+  </data>
+  <data name="RatingText" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="RecorderText" xml:space="preserve">
+    <value>Recorder...</value>
+  </data>
+  <data name="RecordsText" xml:space="preserve">
+    <value>Records: </value>
+  </data>
+  <data name="RecText" xml:space="preserve">
+    <value>Rec</value>
+  </data>
+  <data name="ReminderWindowOff" xml:space="preserve">
+    <value>Reminder window: off</value>
+  </data>
+  <data name="ReminderWindowOn" xml:space="preserve">
+    <value>Reminder window: on</value>
+  </data>
+  <data name="RemindsText" xml:space="preserve">
+    <value>Reminds: </value>
+  </data>
+  <data name="SamplingRateGranularityText" xml:space="preserve">
+    <value>Sampling Rate Granularity:\t{8}\n</value>
+  </data>
+  <data name="SetStylesText" xml:space="preserve">
+    <value>Set styles...</value>
+  </data>
+  <data name="ShowAllProgramText" xml:space="preserve">
+    <value>Show TV-program per week</value>
+  </data>
+  <data name="ShowChannelText" xml:space="preserve">
+    <value>View channel...</value>
+  </data>
+  <data name="SizeGranularityText" xml:space="preserve">
+    <value>Sample Size Granularity:\t{5}\n</value>
+  </data>
+  <data name="SoundOffText" xml:space="preserve">
+    <value>Sound: off</value>
+  </data>
+  <data name="SoundOnText" xml:space="preserve">
+    <value>Sound: on</value>
+  </data>
+  <data name="StatusCreatingTreesText" xml:space="preserve">
+    <value>Status: creating treeviewers...</value>
+  </data>
+  <data name="StatusDeleteChanText" xml:space="preserve">
+    <value>Status: deleting too many channels...</value>
+  </data>
+  <data name="StatusFormingDataSetText" xml:space="preserve">
+    <value>Status: forming dataset...</value>
+  </data>
+  <data name="StatusInitText" xml:space="preserve">
+    <value>Status: initialization components of applictn...</value>
+  </data>
+  <data name="StatusLastsText" xml:space="preserve">
+    <value>Status: final settings...</value>
+  </data>
+  <data name="StatusLoadingAppText" xml:space="preserve">
+    <value>Status: loading application...</value>
+  </data>
+  <data name="StatusPrepText" xml:space="preserve">
+    <value>Status: preparation channels and tv-prog...</value>
+  </data>
+  <data name="StatusSetOptionsText" xml:space="preserve">
+    <value>Status: setting options of application...</value>
+  </data>
+  <data name="StatusSetTVTunerText" xml:space="preserve">
+    <value>Status: setting parameters of TV Tuner...</value>
+  </data>
+  <data name="StereoText" xml:space="preserve">
+    <value>Stereo</value>
+  </data>
+  <data name="Telecasts" xml:space="preserve">
+    <value>Qty telecasts: </value>
+  </data>
+  <data name="TelecastText" xml:space="preserve">
+    <value>Telecast</value>
+  </data>
+  <data name="TimeText" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ToRemindText" xml:space="preserve">
+    <value>To remind</value>
+  </data>
+  <data name="UnableDisplayAudioCapText" xml:space="preserve">
+    <value>Unable display audio capabilities. \n\n</value>
+  </data>
+  <data name="VerticalText" xml:space="preserve">
+    <value>Vertical</value>
+  </data>
+  <data name="WarningText" xml:space="preserve">
+    <value>Warning!</value>
+  </data>
+  <data name="WithoutRatingText" xml:space="preserve">
+    <value>Without rating</value>
+  </data>
+  <data name="WithoutTypeText" xml:space="preserve">
+    <value>Without genre</value>
+  </data>
+  <data name="AcceptTimeDiffText" xml:space="preserve">
+    <value>Apply the offset adjustment time for time zone?</value>
+  </data>
+  <data name="AccetuationText" xml:space="preserve">
+    <value>Accetuation</value>
+  </data>
+  <data name="AntennaText" xml:space="preserve">
+    <value>Antenna</value>
+  </data>
+  <data name="AppAlreadyRunText" xml:space="preserve">
+    <value>Applicaiton already run</value>
+  </data>
+  <data name="AudioText" xml:space="preserve">
+    <value>Audio</value>
+  </data>
+  <data name="CableText" xml:space="preserve">
+    <value>Cable</value>
+  </data>
+  <data name="CheckedText" xml:space="preserve">
+    <value>Checked: </value>
+  </data>
+  <data name="CommaText" xml:space="preserve">
+    <value>Comma</value>
+  </data>
+  <data name="ConfirmDeleteChannelsText" xml:space="preserve">
+    <value>Do you want to delete all \nunchecked channels?</value>
+  </data>
+  <data name="DateTimeProgramTelecastText" xml:space="preserve">
+    <value>DateTimeProgramTelecast</value>
+  </data>
+  <data name="DeleteAllRowsText" xml:space="preserve">
+    <value>Do you want to delete selected rows?</value>
+  </data>
+  <data name="DetailsFrameSizeText" xml:space="preserve">
+    <value>Frame Size Granularity X:\t{6}\n</value>
+  </data>
+  <data name="DetailsFrameSizeYText" xml:space="preserve">
+    <value>Frame Size Granularity Y:\t{7}\n</value>
+  </data>
+  <data name="DontShowExportResText1" xml:space="preserve">
+    <value>Unable to open export file '</value>
+  </data>
+  <data name="DontShowExportResText2" xml:space="preserve">
+    <value>'.\n Maybe file already was opened.</value>
+  </data>
+  <data name="DotText" xml:space="preserve">
+    <value>Dot</value>
+  </data>
+  <data name="EmptyText" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="ExportErrorText" xml:space="preserve">
+    <value>Export error</value>
+  </data>
+  <data name="ExportResFileText" xml:space="preserve">
+    <value>Export_tvprog_searching_result.xls</value>
+  </data>
+  <data name="FilmText" xml:space="preserve">
+    <value> (Film)</value>
+  </data>
+  <data name="FormatNotLoadedText" xml:space="preserve">
+    <value>Fromats Windows Media does not loaded, nothing choice!</value>
+  </data>
+  <data name="FormatNotSupportText" xml:space="preserve">
+    <value>Fromat not support.\n</value>
+  </data>
+  <data name="FoundText" xml:space="preserve">
+    <value>Found </value>
+  </data>
+  <data name="FrameRateNotSupportText" xml:space="preserve">
+    <value>Frame rate not support.\n</value>
+  </data>
+  <data name="FrameSizeNotSupportText" xml:space="preserve">
+    <value>Frame size not support.\n</value>
+  </data>
+  <data name="FreqComparedSuccessText" xml:space="preserve">
+    <value>Frequency compare is success.</value>
+  </data>
+  <data name="FreqCompareNotSuccessText" xml:space="preserve">
+    <value>Frequency compare doesn't success.</value>
+  </data>
+  <data name="FromText" xml:space="preserve">
+    <value>from </value>
+  </data>
+  <data name="KadraText" xml:space="preserve">
+    <value>fps</value>
+  </data>
+  <data name="KadrovText" xml:space="preserve">
+    <value>fps</value>
+  </data>
+  <data name="KbitText" xml:space="preserve">
+    <value>KBit/s</value>
+  </data>
+  <data name="KeywordsText" xml:space="preserve">
+    <value>Keywords (phrase)</value>
+  </data>
+  <data name="MaxFrameSizeText" xml:space="preserve">
+    <value>Max Frame Size:\t{4} x {5}\n</value>
+  </data>
+  <data name="MaxRateVideoStreamText" xml:space="preserve">
+    <value>Max Rate Videostream:\t{9:0.000} fps\n</value>
+  </data>
+  <data name="MinFrameSizeText" xml:space="preserve">
+    <value>Min Frame Size:\t{2} x {3}\n</value>
+  </data>
+  <data name="MinRateVideoStreamText" xml:space="preserve">
+    <value>Min Rate Videostream:\t{8:0.000} fps\n</value>
+  </data>
+  <data name="NoFoundText" xml:space="preserve">
+    <value>Found nothing. Will you change creteria of search?</value>
+  </data>
+  <data name="OpacityProcText" xml:space="preserve">
+    <value>Opacity {0}%</value>
+  </data>
+  <data name="PleaseSetVADeviceText" xml:space="preserve">
+    <value>Please set video or audio device</value>
+  </data>
+  <data name="RatingsText" xml:space="preserve">
+    <value>Ratings</value>
+  </data>
+  <data name="SaveAllChangesText" xml:space="preserve">
+    <value>Do you want to save all changes?</value>
+  </data>
+  <data name="SharpText" xml:space="preserve">
+    <value>Sharp</value>
+  </data>
+  <data name="SpaceText" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="TimeFromText" xml:space="preserve">
+    <value>Time from</value>
+  </data>
+  <data name="TotalChannelsText" xml:space="preserve">
+    <value>Total channels: </value>
+  </data>
+  <data name="TotalSettingsText" xml:space="preserve">
+    <value>Total Settings: </value>
+  </data>
+  <data name="ToText" xml:space="preserve">
+    <value> to </value>
+  </data>
+  <data name="TVTunerText" xml:space="preserve">
+    <value>TV Tuner...</value>
+  </data>
+  <data name="TypesOfTelecastsText" xml:space="preserve">
+    <value>Types of telecasts</value>
+  </data>
+  <data name="UnablePreviewText" xml:space="preserve">
+    <value>Unable enable/disable \npreview</value>
+  </data>
+  <data name="UnableSetColorSpaceText" xml:space="preserve">
+    <value>Unable to set color space.\n</value>
+  </data>
+  <data name="UnableShowPropText" xml:space="preserve">
+    <value>Unable display properties</value>
+  </data>
+  <data name="UnableShowVideoCapText" xml:space="preserve">
+    <value>Unable display video\ncapabilities.\n\n</value>
+  </data>
+  <data name="UnableSizeFrameText" xml:space="preserve">
+    <value>Size of frame is not support</value>
+  </data>
+  <data name="UnableVideoStandardText" xml:space="preserve">
+    <value>Unable to set Video Standard.\n</value>
+  </data>
+  <data name="VideoCapabilitiesText" xml:space="preserve">
+    <value>Video Capabilities\n</value>
+  </data>
+  <data name="VideoCompressorNotSupportText" xml:space="preserve">
+    <value>Video compressor does not support</value>
+  </data>
+  <data name="VideoDeviceNotSupportText" xml:space="preserve">
+    <value>Video device does not support</value>
+  </data>
+  <data name="VideoInputSizeText" xml:space="preserve">
+    <value>Input Size:\t\t{0} x {1}\n</value>
+  </data>
+  <data name="VideoModesText" xml:space="preserve">
+    <value>Video Modes: {10}\n</value>
+  </data>
+  <data name="VideoSourceNotSupportText" xml:space="preserve">
+    <value>Unable to set this video source. Please submit bug report \n\n</value>
+  </data>
+  <data name="VideoText" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="VideoVariableBitrateText" xml:space="preserve">
+    <value>Video (variable bitrate)</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="All" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\All_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Fri" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Fri_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Fri_exp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Fri_exp_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Mon_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mon_exp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Mon_exp_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Sat_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sat_exp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Sat_exp_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Sun_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sun_exp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Sun_exp_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Ths" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Ths_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Ths_exp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Ths_exp_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Tue_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tue_eng" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Tue_eng_exp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Wen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Wen_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Wen_exp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Media\Wen_exp_eng.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StatusConvertingProgText" xml:space="preserve">
+    <value>Status: converting tv-prog...</value>
+  </data>
+  <data name="StatusMergingProg" xml:space="preserve">
+    <value>Status: centralization tv-prog...</value>
+  </data>
+  <data name="InvalidForamtInterTV" xml:space="preserve">
+    <value>The content of inter-tv file was incorrect! </value>
+  </data>
+  <data name="PleaseCheckCorrectFormat" xml:space="preserve">
+    <value>Please, check the file to correct format.</value>
+  </data>
+  <data name="ColumnOrder" xml:space="preserve">
+    <value>ColumnOrder</value>
+  </data>
+  <data name="DeletingOldCasts" xml:space="preserve">
+    <value>Status: removing old tv-casts...</value>
+  </data>
+  <data name="SearchingOldCasts" xml:space="preserve">
+    <value>Status: searching old tv-casts...</value>
+  </data>
+  <data name="LoadFail" xml:space="preserve">
+    <value>Load the tv-prog was fail</value>
+  </data>
+  <data name="LoadSuccess" xml:space="preserve">
+    <value>Load the tv-prog was succeeded!</value>
+  </data>
+</root>

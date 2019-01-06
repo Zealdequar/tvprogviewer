@@ -1,0 +1,6 @@
+K:\Projects\TVProgViewer\src\TVProgMvc\TVProgViewer.Common\bin\Debug\TVProgViewer.Common.dll
+K:\Projects\TVProgViewer\src\TVProgMvc\TVProgViewer.Common\bin\Debug\TVProgViewer.Common.pdb
+K:\Projects\TVProgViewer\src\TVProgMvc\TVProgViewer.Common\obj\Debug\Common.csprojResolveAssemblyReference.cache
+K:\Projects\TVProgViewer\src\TVProgMvc\TVProgViewer.Common\obj\Debug\Common.csproj.CoreCompileInputs.cache
+K:\Projects\TVProgViewer\src\TVProgMvc\TVProgViewer.Common\obj\Debug\TVProgViewer.Common.dll
+K:\Projects\TVProgViewer\src\TVProgMvc\TVProgViewer.Common\obj\Debug\TVProgViewer.Common.pdb

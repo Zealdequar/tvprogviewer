@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using TVProgViewer.BusinessLogic.Updater;
+using TVProgViewer.DataAccess.Adapters;
+using NLog;
+using System.Diagnostics;
+using System.Xml.XPath;
+
+namespace TVProgUpdater
+{
+    class Program
+    {
+        private static Logger _logger = LogManager.GetLogger("dbupdate");
+        private static Dictionary<string, string> _dictChanCodeOld = new Dictionary<string, string>();
+        private static Dictionary<string, string> _dictChanCodeNew = new Dictionary<string,string>();  
+        static void Main(string[] args)
+        {                  
+            _logger.Info(" =========== Начало обновления ============ ");
+            Stopwatch sw = Stopwatch.StartNew();
+            List<WebResource> listWebResources = DataBasePart.GetWebResources();
+            foreach (WebResource wr in listWebResources)
+            {
+                try
+                {
+                    _logger.Info("Обновление для ID='{0}'", wr.WebResourceID);
+                    Stopwatch swLoc = Stopwatch.StartNew();
+                    string fileName = wr.FileName;
+                    WebPart.GetWebTVProgramm(wr.WrUri, ref fileName);
+                    wr.FileName = fileName;
+                    XDocument xDoc = new XDocument();
+                    if (wr.SourceType == TypeProg.XMLTV)
+                    {
+                        xDoc = XDocument.Load(wr.FileName, LoadOptions.SetLineInfo);
+                        xDoc = WebPart.ReformatXDoc(xDoc);
+                        if (wr.WebResourceID == 1)
+                            foreach (XElement xChan in xDoc.XPathSelectElements("tv/channel"))
+                               _dictChanCodeOld[xChan.Element("display-name").Value] = xChan.Attribute("id").Value;
+                        else if (wr.WebResourceID == 2)
+                            foreach (XElement xChan in xDoc.XPathSelectElements("tv/channel"))
+                                _dictChanCodeNew[xChan.Element("display-name").Value] = xChan.Attribute("id").Value;
+                    }
+                    else if (wr.SourceType == TypeProg.InterTV)
+                    {
+                        if (wr.WebResourceID == 3)
+                            xDoc = ConverterProg.InterToXml(wr.FileName, _dictChanCodeOld);
+                        else if (wr.WebResourceID == 4)
+                            xDoc = ConverterProg.InterToXml(wr.FileName, _dictChanCodeNew);
+                    }
+                    wr.xmlDoc = xDoc.ToString();
+                    _logger.Info("Каналы и тв-программа ID='{0}' подготовлены к запуску обработки в базе", wr.WebResourceID);
+                    UpdaterAdapter.ExecWebResource(wr.WebResourceID, wr.xmlDoc);
+                    swLoc.Stop();
+                    _logger.Info("Обновление для ID='{0}' успешно завершено. Затрачено '{1}' сек.", wr.WebResourceID, swLoc.ElapsedMilliseconds/1000.0);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("Обновление тв-программы прошло неуспешно: ErrMessage='{0}', StackTrace='{1}'", ex.Message, ex.StackTrace);
+                }
+            }
+            sw.Stop();
+            _logger.Info(" ========== Обновление завершено ========== (Затрачено: {0} сек.)", sw.ElapsedMilliseconds/1000.0);
+        }
+
+
+    }
+}

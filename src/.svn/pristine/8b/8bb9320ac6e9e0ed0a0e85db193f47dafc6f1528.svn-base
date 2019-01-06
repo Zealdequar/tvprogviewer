@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TVProgViewer.BusinessLogic.Updater;
+
+namespace TVProgUpdater
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<WebResource> listWebResources = DataBasePart.GetWebResources();
+            foreach (WebResource wr in listWebResources)
+            {
+                WebPart.GetWebTVProgramm(wr.WrUri, wr.FileName);
+            }
+        }
+    }
+}

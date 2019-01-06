@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using TVProgViewer.CryptoService;
+using TVProgViewer.TVProgApp.Controllers;
+using servRef = TVProgViewer.TVProgApp.TvProgServiceReference;
+
+namespace TVProgViewer.TVProgApp
+{
+    public partial class Welcome : Form
+    {
+        Registration registrationForm = new Registration();
+        public Welcome()
+        {
+            InitializeComponent();
+            lblMessage.Visible = false;
+        }
+
+        private void btnRegistration_Click(object sender, EventArgs e)
+        {
+            registrationForm.ShowDialog();
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void btnEnter_Click(object sender, EventArgs e)
+        {
+            lblMessage.Visible = false;
+            servRef.SecureData secureData = UserController.GetHashes(tbLogin.Text.Trim());
+            PBKDF2 pbkdf2 = new PBKDF2();
+            string hash = pbkdf2.Compute(tbPass.Text.Trim(), secureData.PassExtend);
+            if (pbkdf2.Compare(hash, secureData.PassHash))
+            {
+                this.Visible = false;
+                MainForm mainForm = new MainForm();
+                mainForm.Show();
+            }
+            else
+            {
+                lblMessage.Text = "Логин и Пароль введены неверно! Укажите правильный Логин и Пароль.";
+                lblMessage.Visible = true;
+            }
+        }
+    }
+}

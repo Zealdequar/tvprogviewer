@@ -1,0 +1,128 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Data;
+using System.Data.Common;
+
+namespace TVProgViewer.DataAccess
+{
+    public static class DataAccess 
+    {
+
+        public static void ExecCommand(DbConnection conn, string cmdName, List<DbParameter> pars)
+        {
+            using (DbCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = cmdName;
+                cmd.CommandType = CommandType.StoredProcedure;
+                if (pars != null)
+                    cmd.Parameters.AddRange((from p in pars where p != null select p).ToArray<DbParameter>());
+                try
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+        }
+
+        public static void ExecCommand(DbConnection conn, string cmdName, DbParameter par)
+        {
+            ExecCommand(conn, cmdName, new List<DbParameter>() { par });
+        }
+
+        public static List<T> ExecReaderCommand<T>(DbConnection conn, string cmdName, List<DbParameter> pars,
+            Func<DbDataReader, T> func)
+        {
+            List<T> listResult = new List<T>();
+            using (DbCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = cmdName;
+                cmd.CommandType = CommandType.StoredProcedure;
+                if (pars != null)
+                    cmd.Parameters.AddRange((from p in pars where p != null select p).ToArray<DbParameter>());
+                try
+                {
+                    conn.Open();
+                    using (DbDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader != null)
+                        {
+                            while (reader.Read())
+                            {
+                                listResult.Add(func(reader));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            return listResult;
+        }
+
+        public static List<T> ExecReaderCommand<T>(
+            DbConnection conn, 
+            string cmdName, 
+            DbParameter par,
+            Func<DbDataReader, T> func)
+        {
+            return ExecReaderCommand<T>(conn, cmdName, new List<DbParameter>() { par }, func);
+        }
+
+        public static T ExecReaderCommandReturnOne<T>(
+            DbConnection conn,
+            string cmdName,
+            List<DbParameter> pars,
+            Func<DbDataReader, T> func)
+        {
+            return ExecReaderCommand<T>(conn, cmdName, pars, func).FirstOrDefault();
+        }
+
+
+        public static T ExecReaderCommandReturnOne<T>(
+            DbConnection conn,
+            string cmdName,
+            DbParameter par,
+            Func<DbDataReader, T> func)
+        {
+            return ExecReaderCommand<T>(conn, cmdName, new List<DbParameter>() { par }, func).FirstOrDefault();
+        }
+
+        public static object ExecScalar(DbConnection conn, string cmdName, params DbParameter[] pars)
+        {
+            object scalarResult = null;
+            using (DbCommand cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = cmdName;
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddRange(pars);
+                try
+                {
+                    conn.Open();
+                    scalarResult = cmd.ExecuteScalar();
+                }
+                catch (Exception ex)
+                {
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
+            return scalarResult;
+        }
+    }
+}

@@ -1,0 +1,98 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
+using TVProgViewer.BusinessLogic.ProgInterfaces;
+using System.IO;
+
+namespace TVProgViewer.BusinessLogic.ProgObjs
+{
+    [DataContract]
+    public class SystemChannel: IChannel
+    {
+        [DataMember]
+        public int ChannelID { get; set; }
+
+        [DataMember]
+        public int TVProgViewerID { get; set; }
+
+        [DataMember]
+        public int InternalID { get; set; }
+
+        [DataMember]
+        public long IconID { get; set; }
+
+        [DataMember]
+        public byte[] Emblem { get; set; }
+
+        [DataMember]
+        public string Title { get; set; }
+
+        [DataMember]
+        public string ImageWebSrc { get; set; }
+
+      
+        #region IChannel Members
+
+        private bool _visible;
+        private string _diff;
+
+        public bool Visible
+        {
+            get
+            {
+                return true;
+            }
+            set
+            {
+               _visible  = value;
+            }
+        }
+
+        public string SystemTitle
+        {
+            get
+            {
+                return Title;
+            }
+            set
+            {
+                Title = value;
+            }
+        }
+
+        public int OrderCol {get; set; }
+        
+
+        public string UserTitle
+        {
+            get 
+            {
+                return Title;
+            }
+            set 
+            {
+                Title = value;
+            }
+        }
+
+        public string Diff
+        {
+            get
+            {
+                return "+03:00";
+            }
+           set
+           {
+               _diff = value;
+           }
+        }
+
+        public int Freq {get; set;}
+
+        #endregion
+    }
+}

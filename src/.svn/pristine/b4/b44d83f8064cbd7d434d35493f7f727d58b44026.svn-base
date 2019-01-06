@@ -1,0 +1,253 @@
+use [master]
+go
+
+create database [TVProgBase] on primary
+(NAME = 'TVProgBase_data', FILENAME = N'H:\TEMP\Warehouse\TVProgHome\TVProgBase_data.mdf', SIZE = 2304KB, MAXSIZE=UNLIMITED, FILEGROWTH=1024KB)
+LOG ON
+(NAME = 'TVProgBase_log', FILENAME = N'H:\TEMP\Warehouse\TVProgHome\TVProgBase_log.ldf', SIZE = 1024KB, MAXSIZE=2GB, FILEGROWTH=10%) 
+GO
+
+alter database [TVProgBase] set COMPATIBILITY_LEVEL = 100
+go
+
+use TVProgBase
+go
+
+if (exists(select * from sys.tables where name = 'UsersPrograms'))
+drop table dbo.UsersPrograms
+if (exists(select * from sys.tables where name = 'GenreClassificator'))
+drop table dbo.GenreClassificator
+if (exists(select * from sys.tables where name = 'Genres'))
+drop table dbo.Genres
+if (exists(select * from sys.tables where name = 'RatingClassificator'))
+drop table dbo.RatingClassificator
+if (exists(select * from sys.tables where name = 'Ratings'))
+drop table dbo.Ratings 
+if (exists(select * from sys.tables where name = 'UserChannels'))
+drop table dbo.UserChannels
+if (exists(select * from sys.tables where name = 'Programmes'))
+drop table dbo.Programmes
+if (exists(select * from sys.tables where name = 'Channels'))
+drop table dbo.Channels
+if (exists(select * from sys.tables where name = 'SystemUsers'))
+drop table dbo.SystemUsers
+if (exists(select * from sys.tables where name = 'UpdateProgLog'))
+drop table dbo.UpdateProgLog
+if (exists(select * from sys.tables where name = 'WebResources'))
+drop table dbo.WebResources
+if (exists(select * from sys.tables where name = 'TypeProg'))
+drop table dbo.TypeProg
+if (exists(select * from sys.tables where name = 'LogActions'))
+drop table dbo.LogActions
+go
+-- Пользователи
+create table dbo.SystemUsers
+(
+	UserID int IDENTITY(1,1),
+	UserName nvarchar(70) not null,
+	PassHash nvarchar (30) not null,
+	LastName nvarchar(150) not null,
+	FirstName nvarchar (150) not null,
+	MiddleName nvarchar (150) null,
+	BirthDate datetime not null,
+	Gender bit null,
+	Email nvarchar(300) not null,
+	MobPhoneNumber nvarchar(15) null,
+	OtherPhoneNumber1 nvarchar(15) null,
+	OtherPhoneNumber2 nvarchar(15) null,
+	Address nvarchar(1000) null,
+	GmtZone nvarchar(10) null,
+	Status smallint not null,
+	Constraint PK_SystemUsers Primary Key Clustered
+	(
+	UserID Asc
+	)
+)
+go
+
+--Каналы
+create table dbo.Channels
+(
+	ChannelID int IDENTITY(1,1),
+	TitleChannel nvarchar(300) not null,
+	IconWebSrc nvarchar(550) null,
+	ChannelIconName nvarchar(300) null,
+	ChannelIcon varbinary(7168) null,
+	Constraint PK_Channels Primary Key Clustered
+	(
+	ChannelID ASC
+	)
+)
+go
+
+-- Пользовательские жанры
+create table dbo.Genres
+(
+	GenreID int IDENTITY(1,1),
+	UID int null references dbo.SystemUsers(UserID),
+	GenreName nvarchar(150) not null,
+	GenreIconName nvarchar(300) null,
+	GenreIcon varbinary(7168) null,
+	Visible bit not null,
+	Constraint PK_Genres Primary Key Clustered
+	(
+	GenreID Asc
+	)
+)
+GO
+
+-- Классификатор жанров
+create table dbo.GenreClassificator
+(
+	GenreClassificatorID int IDENTITY(1,1),
+	GID int not null references dbo.Genres(GenreID),
+	UID int null references dbo.SystemUsers(UserID),
+	ContainPhrases nvarchar(350) null,
+	NonContainPhrases nvarchar(350) null,
+	Priority int null,
+	DeleteAfterDate datetime null
+	Constraint PK_GenreClassificator Primary Key Clustered
+	(
+	GenreClassificatorID Asc
+	)
+)
+GO
+
+-- Пользовательские рейтинги
+create table dbo.Ratings
+(
+	RatingID int IDENTITY(1,1),
+	UID int null references dbo.Systemusers(UserID),
+	RatingName nvarchar(150) not null,
+	RatingIconName nvarchar(300) null, 
+	RatingIcon varbinary(7168) null,
+	Visible bit not null,
+	Constraint PK_Ratings Primary Key Clustered
+	(
+	RatingID Asc
+	)
+)
+GO
+
+-- Классификатор рейтнгов
+create table dbo.RatingClassificator
+(
+	RatingClassificatorID int IDENTITY(1,1),
+	RID int  not null references dbo.Ratings(RatingID),
+	UID int null references dbo.Systemusers(UserID),
+	ContainPhrases nvarchar(350) not null,
+	NonContainPhrases nvarchar(350) null,
+	Priority int null,
+	DeleteAfterDate datetime null,
+	Constraint PK_RatingClassificator Primary Key Clustered
+	(
+		RatingClassificatorID Asc
+	)
+)
+GO
+-- Пользовательские каналы
+create table dbo.UserChannels
+(
+	UserChannelID int IDENTITY(1,1),
+	UID int not null references dbo.SystemUsers(UserID),
+	CID int not null references dbo.Channels(ChannelID),
+	DisplayName nvarchar(300) null,
+	CustomIconName nvarchar(300) null,
+	CustomIcon varbinary(7168) null,
+	Priority int null,
+	Constraint PK_UserChannels Primary Key Clustered
+	(
+	UserChannelID Asc
+	)
+)
+GO
+
+-- Типы телепрограмм
+create table dbo.TypeProg
+(
+	TypeProgID int Identity(1,1),
+	TypeName nvarchar(150) not null,
+	FileFormat nvarchar(5) null,
+	Constraint PK_TypeProg Primary Key Clustered
+	(
+	TypeProgID Asc
+	)
+)
+GO
+-- Веб-источники телепрограмм
+create table dbo.WebResources
+(
+	WebResourceID int IDENTITY(1,1),
+	TPID int references dbo.TypeProg(TypeProgID) not null,
+	ResourceName nvarchar(150) not null,
+	ResourceUrl nvarchar(500) not null
+	Constraint PK_WebResources Primary Key Clustered
+	(
+	WebResourceID Asc
+	)
+)
+GO
+-- Логи обновлений телепрограммы с каналами
+create table dbo.UpdateProgLog
+(
+	UpdateProgLogID int IDENTITY(1,1),
+	WRID int references dbo.WebResources(WebResourceID) not null,
+	TsUpdate datetimeoffset default GetDate(),
+	IsSuccess bit not null,
+	Constraint PK_UpdateProgLog Primary Key Clustered
+	(
+		UpdateProgLogID Asc
+	)
+)
+GO
+-- Программы
+create table dbo.Programmes
+(
+	ProgrammesID int IDENTITY(1,1),
+	TID int references dbo.TypeProg(TypeProgID) not null,
+	CID int references dbo.Channels(ChannelID) not null,
+	TsStart datetimeoffset not null,
+	TsStop datetimeoffset not null,
+	TsStartMO datetime not null,
+	TsStopMO datetime not null,
+	Title nvarchar(300) not null,
+	Descr nvarchar(1000) null,
+	Category nvarchar(500) null,
+	Constraint PK_Programmes Primary Key Clustered
+	(
+		ProgrammesID Asc
+	)
+)
+GO
+-- Программы с настройками пользователей
+create table dbo.UsersPrograms 
+(
+	UserProgramsID int IDENTITY(1,1),
+	UID int references dbo.SystemUsers(UserID) not null,
+	PID int references dbo.Programmes(ProgrammesID) not null,
+	GID int references dbo.Genres(GenreID) null,
+	RID int references dbo.Ratings(RatingID) null,
+	Anons nvarchar(1000) null,
+	Remind bit not null
+	Constraint PK_UsersPrograms Primary Key Clustered
+	(
+		UserProgramsID Asc
+	)
+)
+GO
+-- Лог действий пользователей
+create table dbo.LogActions
+(
+	LogID int Identity(1,1),
+	Login nvarchar(70) not null,
+	TsAction datetimeoffset default GetDate(),
+	TypeAction smallint not null,
+	MessageAction nvarchar(1000) not null,
+	IP nvarchar(50) not null,
+	UserAgent nvarchar(500) null,
+	Constraint PK_LogActions Primary Key Clustered
+	(
+	LogID Asc
+	)
+)
+GO

@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TVProgViewer.BusinessLogic.ProgInterfaces
+{
+    public interface IChannel
+    {
+        int ChannelID { get;  }
+        bool Visible { get;  }
+        string SystemTitle { get;  }
+        int InternalID { get; }
+        int OrderCol { get;  }
+        string UserTitle { get;  }
+        byte[] EmblemOrig { get;  }
+        byte[] Emblem25 { get; }
+        string Diff { get; }
+        int Freq { get;  }
+    }
+}

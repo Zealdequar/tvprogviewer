@@ -1,0 +1,226 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
+using System.Linq;
+using TVProgViewer.BusinessLogic.Users;
+
+
+namespace TVProgViewer.DataAccess.Adapters
+{
+    public class UsersAdapter: AdapterBase
+    {
+        
+        public static int UserStart(
+            string username,
+            string hash,
+            string extendHash,
+            string lastName,
+            string firstName,
+            string middleName,
+            DateTime birthDate,
+            bool? gender,
+            string email,
+            string mobPhone,
+            string otherPhone1,
+            string otherPhone2,
+            string address,
+            string gmtZone)
+        {
+            int result = 0;
+            object genderObj ;
+            if (gender == null)
+                genderObj = DBNull.Value;
+            else genderObj = gender;
+            List<SqlParameter> pars = new List<SqlParameter>()
+            {
+                new SqlParameter("@UserName", SqlDbType.NVarChar, 70){Value = username},
+                new SqlParameter("@PassHash", SqlDbType.NVarChar, 100) {Value = hash},
+                new SqlParameter("@PassExtend", SqlDbType.NVarChar, 100) {Value = extendHash},
+                new SqlParameter("@LastName", SqlDbType.NVarChar,   150) {Value = lastName},
+                new SqlParameter("@FirstName", SqlDbType.NVarChar,  150) {Value = firstName},
+                new SqlParameter("@MiddleName", SqlDbType.NVarChar, 150) {Value = middleName},
+                new SqlParameter("@BirthDate", SqlDbType.DateTime) {Value = birthDate},
+                new SqlParameter("@Gender", SqlDbType.Bit) {Value = genderObj, IsNullable=true},
+                new SqlParameter("@Email", SqlDbType.NVarChar, 300) {Value = email},
+                new SqlParameter("@MobPhoneNumber", SqlDbType.NVarChar, 25) {Value = mobPhone},
+                new SqlParameter("@OtherPhoneNumber1", SqlDbType.NVarChar, 25) {Value = otherPhone1},
+                new SqlParameter("@OtherPhoneNumber2", SqlDbType.NVarChar, 25) {Value = otherPhone2},
+                new SqlParameter("@Address", SqlDbType.NVarChar, 1000) {Value = address},
+                new SqlParameter("@GmtZone", SqlDbType.NVarChar, 10) {Value = gmtZone}
+            };
+            SqlParameter outRes = new SqlParameter("@ErrCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            pars.Add(outRes);
+            DataAccess.ExecCommand(GetTvProgSecureConnection(), "spUserStart", pars.Cast<DbParameter>().ToList<DbParameter>());
+            result = (outRes.Value != DBNull.Value) ? int.Parse(outRes.Value.ToString()) : -1;
+            return result;
+        }
+
+
+        private static Func<DbDataReader, SecureData> getHashesFunc = r =>
+        {
+            long uid = r.GetLongOrDefault("UserID");
+            string h1 = r.GetStringOrDefault("PassHash");
+            string h2 = r.GetStringOrDefault("PassExtend");
+            return new SecureData(uid, h1, h2);
+        };
+
+        public static SecureData GetHashes(string username)
+        {
+            return DataAccess.ExecReaderCommandReturnOne<SecureData> (
+                GetTvProgMainConnection(), "spGetHashesByUserName", 
+                new SqlParameter("@UserName", SqlDbType.NVarChar, 70) { Value = username },
+                getHashesFunc);
+        }
+
+        public static int ChangeUserName(string oldUserName, string newUserName)
+        {
+            int result = 0;
+            List<SqlParameter> pars = new List<SqlParameter>() {
+                new SqlParameter("@OldUserName", SqlDbType.NVarChar, 70) {Value = oldUserName},
+                new SqlParameter("@NewUserName", SqlDbType.NVarChar, 70) {Value = newUserName},
+            };
+            SqlParameter outRes = new SqlParameter("@ErrCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            pars.Add(outRes);   
+            DataAccess.ExecCommand(GetTvProgSecureConnection(), "spChangeUserName", pars.Cast<DbParameter>().ToList<DbParameter>());
+            result = (outRes.Value != DBNull.Value) ? int.Parse(outRes.Value.ToString()) : -1;
+            return result;
+        }
+
+        public static int ChangeHashes(string userName, string newHashExtend, string newHash)
+        {
+            int result = 0;
+            List<SqlParameter> pars = new List<SqlParameter>(){
+                new SqlParameter("@UserName", SqlDbType.NVarChar, 70) { Value = userName },
+                new SqlParameter("@NewPassExtend", SqlDbType.NVarChar, 100) {Value = newHashExtend},
+                new SqlParameter("@NewPassHash", SqlDbType.NVarChar, 100) {Value = newHash}
+            };
+            SqlParameter outRes = new SqlParameter("@ErrCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            pars.Add(outRes);
+            DataAccess.ExecCommand(GetTvProgSecureConnection(), "spChangePass", pars.Cast<DbParameter>().ToList<DbParameter>());
+            result = (outRes.Value != DBNull.Value) ? Convert.ToInt32(outRes.Value) : -1;
+            return result;
+        }
+
+        /// <summary>
+        /// Смена контактных данных
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="firstName"></param>
+        /// <param name="middleName"></param>
+        /// <param name="birthDate"></param>
+        /// <param name="gender"></param>
+        /// <param name="email"></param>
+        /// <param name="mobPhone"></param>
+        /// <param name="otherPhone1"></param>
+        /// <param name="otherPhone2"></param>
+        /// <param name="address"></param>
+        /// <param name="gmtZone"></param>
+        /// <returns></returns>
+        public static int ChangeContacts(
+            long uid,
+            string lastName,
+            string firstName,
+            string middleName,
+            DateTime birthDate,
+            bool? gender,
+            string email,
+            string mobPhone,
+            string otherPhone1,
+            string otherPhone2,
+            string address,
+            string gmtZone)
+        {
+            int result = 0;
+            List<SqlParameter> pars = new List<SqlParameter>()
+            {
+                new SqlParameter("@UID", SqlDbType.BigInt){Value = uid},
+                new SqlParameter("@LastName", SqlDbType.NVarChar,   150) {Value = lastName},
+                new SqlParameter("@FirstName", SqlDbType.NVarChar,  150) {Value = firstName},
+                new SqlParameter("@MiddleName", SqlDbType.NVarChar, 150) {Value = middleName},
+                new SqlParameter("@BirthDate", SqlDbType.DateTime) {Value = birthDate},
+                new SqlParameter("@Gender", SqlDbType.Bit) {Value = gender},
+                new SqlParameter("@Email", SqlDbType.NVarChar, 300) {Value = email},
+                new SqlParameter("@MobPhoneNumber", SqlDbType.NVarChar, 25) {Value = mobPhone},
+                new SqlParameter("@OtherPhoneNumber1", SqlDbType.NVarChar, 25) {Value = otherPhone1},
+                new SqlParameter("@OtherPhoneNumber2", SqlDbType.NVarChar, 25) {Value = otherPhone2},
+                new SqlParameter("@Address", SqlDbType.NVarChar, 1000) {Value = address},
+                new SqlParameter("@GmtZone", SqlDbType.NVarChar, 10) {Value = gmtZone}
+            };
+            SqlParameter outRes = new SqlParameter("@ErrCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            pars.Add(outRes);
+            DataAccess.ExecCommand(GetTvProgMainConnection(), "spChangeContacts", pars.Cast<DbParameter>().ToList<DbParameter>());
+            result = (outRes.Value != DBNull.Value) ? Convert.ToInt32(outRes.Value) : -1;
+            return result;
+        }
+        
+        /// <summary>
+        /// Блокирование пользователем навечно
+        /// </summary>
+        /// <param name="uid"></param>
+        public static void BlockUserOwn(long uid)
+        {
+            SqlParameter uidParam = new SqlParameter("@UID", SqlDbType.BigInt) {Value = uid};
+            DataAccess.ExecCommand(GetTvProgSecureConnection(), "spBlockUserOwn", uidParam); 
+        }
+        
+
+        /// <summary>
+        /// Блокирование пользователем до определенной даты
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="endBlockDate">дата, после которой пользователь разблокируется</param>
+        public static void BlockUserToDate(long uid, DateTime endBlockDate)
+        {
+            List<SqlParameter> pars = new List<SqlParameter>()
+            {
+                new SqlParameter("@UID", SqlDbType.BigInt) { Value = uid },
+                new SqlParameter("@EndDate", SqlDbType.DateTime) {Value = endBlockDate}
+            };
+
+            DataAccess.ExecCommand(GetTvProgSecureConnection(), "spBlockUserToDate", pars.Cast<DbParameter>().ToList<DbParameter>());
+        }
+
+        private static Func<DbDataReader, User> userFunc = r =>
+        {
+            return new User()
+            {
+                UserID = r.GetLongOrDefault("UserID"),
+                UserName = r.GetStringOrDefault("UserName"),
+                LastName = r.GetStringOrDefault("LastName"),
+                FirstName = r.GetStringOrDefault("FirstName"),
+                MiddleName = r.GetStringOrDefault("MiddleName"),
+                BirthDate = r.GetDateTimeOrDefault("BirthDate"),
+                Gender = r.GetBooleanOrNull("Gender"),
+                Email = r.GetStringOrDefault("Email"),
+                MobilePhone = r.GetStringOrDefault("MobPhoneNumber"),
+                OtherPhone1 = r.GetStringOrDefault("OtherPhoneNumber1"),
+                OtherPhone2 = r.GetStringOrDefault("OtherPhoneNumber2"),
+                Address = r.GetStringOrDefault("Address"),
+                GmtZone = r.GetStringOrDefault("GmtZone"),
+                Status = r.GetShortOrDefault("Status")
+            };
+        };
+
+        public static User GetUser(long uid, out int errCode)
+        {
+            errCode = 0;
+            List<SqlParameter> pars = new List<SqlParameter>();
+            SqlParameter uidParam = new SqlParameter("@UID", SqlDbType.BigInt) { Value = uid };
+            SqlParameter outRes = new SqlParameter("@ErrCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
+            pars.Add(uidParam);
+            pars.Add(outRes);
+            User user = DataAccess.ExecReaderCommandReturnOne<User>(
+                GetTvProgMainConnection(), 
+                "spGetUserByID", 
+                pars.Cast<DbParameter>().ToList<DbParameter>(), 
+                userFunc);
+            errCode = (outRes.Value != DBNull.Value) ? Convert.ToInt32(outRes.Value) : -1;
+            return user;
+        }
+
+        
+    }
+}

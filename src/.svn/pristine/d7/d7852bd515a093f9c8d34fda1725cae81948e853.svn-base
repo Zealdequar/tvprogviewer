@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using TVProgViewer.BusinessLogic.Users;
+using TVProgViewer.CryptoService;
+using TVProgViewer.TVProgApp.Classes;
+using TVProgViewer.TVProgApp.Controllers;
+using servRef = TVProgViewer.TVProgApp.TvProgServiceReference;
+
+namespace TVProgViewer.TVProgApp
+{
+    public partial class Welcome : Form
+    {
+        Registration registrationForm = new Registration();
+        public Welcome()
+        {
+            InitializeComponent();
+            lblMessage.Visible = false;
+        }
+
+        private void btnRegistration_Click(object sender, EventArgs e)
+        {
+            registrationForm.ShowDialog();
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void btnEnter_Click(object sender, EventArgs e)
+        {
+            lblMessage.Visible = false;
+            SecureData secureData = UserController.GetHashes(tbLogin.Text.Trim());
+            PBKDF2 pbkdf2 = new PBKDF2();
+            if (secureData == null)
+            {
+                lblMessage.Text = "Логин и Пароль введены неверно! Укажите правильный Логин и Пароль.";
+                lblMessage.Visible = true;
+                return;
+            };
+
+            string hash = pbkdf2.Compute(tbPass.Text.Trim(), secureData.PassExtend);
+            if (pbkdf2.Compare(hash, secureData.PassHash))
+            {
+                
+                int errCode = 0;
+                TVEnvironment.currentUser = UserController.GetUser(secureData.UID, out errCode);
+                if (errCode != 0)
+                {
+                    lblMessage.Text = Common.Enums.ErrorsWorkWithUsers[errCode].Key;
+                    lblMessage.Visible = true;
+                    return;
+                }
+                this.Visible = false;
+                MainForm mainForm = new MainForm();
+                mainForm.Show();
+            }
+            else
+            {
+                lblMessage.Text = "Логин и Пароль введены неверно! Укажите правильный Логин и Пароль.";
+                lblMessage.Visible = true;
+            }
+        }
+
+        private void btnNonRegEnter_Click(object sender, EventArgs e)
+        {
+            this.Visible = false;
+            MainForm mainForm = new MainForm();
+            mainForm.Show();
+        }
+    }
+}

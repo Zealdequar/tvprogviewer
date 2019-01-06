@@ -1,0 +1,24 @@
+2015-04-11 22:11:41.2822 INFO Начало конвертации Интер-ТВ в XMLTV
+2015-04-11 22:11:41.2998 TRACE Открываем файл с телепрограммой в формате Интер-ТВ: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Release\2015-04-11\TGInterTVOld.txt'
+2015-04-11 22:11:41.3330 ERROR При парсинге каналов и тв-программы произошло исключение: ErrMessage='Файл 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Release\2015-04-11\TGInterTVOld.txt' не найден.',
+StackTrace='   в System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   в System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   в System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share)
+   в TVProgUpdater.ConverterProg.InterToXml(String interFile, Dictionary`2 dictChans) в h:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\ConverterProg.cs:строка 49'
+2015-04-11 22:12:03.5830 INFO Начало конвертации Интер-ТВ в XMLTV
+2015-04-11 22:12:03.5937 TRACE Открываем файл с телепрограммой в формате Интер-ТВ: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Release\2015-04-11\TGInterTVNew.txt'
+2015-04-11 22:12:03.5937 ERROR При парсинге каналов и тв-программы произошло исключение: ErrMessage='Файл 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Release\2015-04-11\TGInterTVNew.txt' не найден.',
+StackTrace='   в System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   в System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   в System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share)
+   в TVProgUpdater.ConverterProg.InterToXml(String interFile, Dictionary`2 dictChans) в h:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\ConverterProg.cs:строка 49'
+2015-04-11 22:19:40.6787 INFO Начало конвертации Интер-ТВ в XMLTV
+2015-04-11 22:19:40.7353 TRACE Открываем файл с телепрограммой в формате Интер-ТВ: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Release\2015-04-11\TGInterTVOld.txt'
+2015-04-11 22:19:41.3105 TRACE Парсинг каналов
+2015-04-11 22:19:42.7939 TRACE Парсинг тв-программ
+2015-04-11 22:19:47.9072 TRACE Парсинг каналов и тв-программы прошёл успешно. Затрачено '7,171' сек.
+2015-04-11 22:21:05.2431 INFO Начало конвертации Интер-ТВ в XMLTV
+2015-04-11 22:21:05.2792 TRACE Открываем файл с телепрограммой в формате Интер-ТВ: 'H:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Release\2015-04-11\TGInterTVNew.txt'
+2015-04-11 22:21:05.3183 TRACE Парсинг каналов
+2015-04-11 22:21:05.8798 TRACE Парсинг тв-программ
+2015-04-11 22:21:10.7929 TRACE Парсинг каналов и тв-программы прошёл успешно. Затрачено '5,513' сек.

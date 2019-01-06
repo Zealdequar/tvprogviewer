@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TVProgViewer.TVProgApp.Controllers
+{
+    public class BaseController
+    {
+        public static TvProgServiceReference.MainServiceClient TvProgService
+        {
+            get
+            {
+                return new TvProgServiceReference.MainServiceClient();
+            }
+        }
+    }
+}

@@ -1,0 +1,160 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+using TVProgViewer.BusinessLogic.ProgInterfaces;
+
+namespace TVProgViewer.BusinessLogic.ProgObjs
+{
+    [DataContract]
+    public class SystemProgramme   : IProgramme
+    {
+        [DataMember]
+        public long ProgrammesID { get; set; }
+
+        [DataMember]
+        public int CID { get; set; }
+
+        [DataMember]
+        public string TitleChannel { get; set; }
+
+        [DataMember]
+        public Image ChannelImage { get; set; }
+
+        [DataMember]
+        public int InternalChanID { get; set; }
+
+        [DataMember]
+        public DateTimeOffset TsStart { get; set; }
+
+        [DataMember]
+        public int Remain { get; set; }
+
+        [DataMember]
+        public DateTimeOffset TsStop { get; set; }
+
+        [DataMember]
+        public DateTimeOffset TsStartMO { get; set; }
+
+        [DataMember]
+        public DateTimeOffset TsStopMO { get; set; }
+
+        [DataMember]
+        public string TitleProgramme { get; set; }
+
+        [DataMember]
+        public string TelecastDescr { get; set; }
+
+        [DataMember]
+        public string Category { get; set; }
+
+        private long _programmeID;
+        private int _channelNumber;
+        private string _channelName;
+
+        
+        #region IProgramme Members
+        [DataMember]
+        public long ProgrammeID
+        {
+            get
+            {
+                return ProgrammesID;
+            }
+            set
+            {
+                _programmeID = value;
+            }
+        }
+
+        [DataMember]
+        public int ChannelNumber
+        {
+            get
+            {
+                return CID;
+            }
+            set 
+            {
+                _channelNumber = value;
+            }
+        }
+
+        [DataMember]
+        public string ChannelName
+        {
+            get
+            {
+                return TitleChannel;
+            }
+            set
+            {
+                _channelName = value;
+            }
+        }
+
+        private DateTimeOffset _start;
+        [DataMember]
+        public DateTimeOffset Start
+        {
+            get
+            {
+                return TsStart;
+            }
+            set
+            {
+                _start = value;
+            }
+
+        }
+
+        private DateTimeOffset _stop;
+        [DataMember]
+        public DateTimeOffset Stop
+        {
+            get
+            {
+                return TsStop;
+            }
+            set
+            {
+                _stop = value;
+            }
+        }
+
+        private string _telecastTitle;
+        [DataMember]
+        public string TelecastTitle
+        {
+            get
+            {
+                return TitleProgramme;
+            }
+            set
+            {
+                _telecastTitle = value;
+            }
+        }
+
+       
+
+        private string _telecastCategory;
+        [DataMember]
+        public string TelecastCategory
+        {
+            get
+            {
+                return Category;
+            }
+            set
+            {
+                _telecastCategory = value;
+            }
+        }
+
+        #endregion
+    }
+}
