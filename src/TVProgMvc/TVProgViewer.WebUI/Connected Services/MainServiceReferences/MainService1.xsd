@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.ProgObjs" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.ProgObjs" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/TVProgViewer.Common" />
+  <xs:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/System" />
+  <xs:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="ArrayOfProviderType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ProviderType" nillable="true" type="tns:ProviderType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfProviderType" nillable="true" type="tns:ArrayOfProviderType" />
+  <xs:complexType name="ProviderType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FileFormat" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProviderName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ProviderUri" nillable="true" type="xs:anyURI" />
+      <xs:element minOccurs="0" name="TVProgProviderID" type="xs:int" />
+      <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/TVProgViewer.Common" minOccurs="0" name="TypeEnum" type="q1:Enums.TypeProg" />
+      <xs:element minOccurs="0" name="TypeName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TypeProgID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProviderType" nillable="true" type="tns:ProviderType" />
+  <xs:complexType name="ArrayOfSystemChannel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SystemChannel" nillable="true" type="tns:SystemChannel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSystemChannel" nillable="true" type="tns:ArrayOfSystemChannel" />
+  <xs:complexType name="SystemChannel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ChannelID" type="xs:int" />
+      <xs:element minOccurs="0" name="Diff" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FileName25" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FileNameOrig" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IconID" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="ImageWebSrc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="InternalID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="OrderCol" type="xs:int" />
+      <xs:element minOccurs="0" name="SystemTitle" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TVProgViewerID" type="xs:int" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserChannelID" type="xs:int" />
+      <xs:element minOccurs="0" name="UserTitle" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Visible" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SystemChannel" nillable="true" type="tns:SystemChannel" />
+  <xs:complexType name="ArrayOfUserChannel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UserChannel" nillable="true" type="tns:UserChannel" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUserChannel" nillable="true" type="tns:ArrayOfUserChannel" />
+  <xs:complexType name="UserChannel">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ChannelID" type="xs:int" />
+      <xs:element minOccurs="0" name="FileName25" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FileNameOrig" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IconID" nillable="true" type="xs:long" />
+      <xs:element minOccurs="0" name="ImageWebSrc" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="InternalID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="OrderCol" type="xs:int" />
+      <xs:element minOccurs="0" name="TVProgViewerID" type="xs:int" />
+      <xs:element minOccurs="0" name="Title" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UserChannelID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UserChannel" nillable="true" type="tns:UserChannel" />
+  <xs:complexType name="ArrayOfSystemProgramme">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SystemProgramme" nillable="true" type="tns:SystemProgramme" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSystemProgramme" nillable="true" type="tns:ArrayOfSystemProgramme" />
+  <xs:complexType name="SystemProgramme">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AnonsContent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CID" type="xs:int" />
+      <xs:element minOccurs="0" name="Category" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ChannelContent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ChannelName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ChannelNumber" type="xs:int" />
+      <xs:element minOccurs="0" name="DayMonth" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GenreContent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GenreName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GenrePath" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="InternalChanID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="OrderCol" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ProgrammeID" type="xs:long" />
+      <xs:element minOccurs="0" name="ProgrammesID" type="xs:long" />
+      <xs:element minOccurs="0" name="RatingContent" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RatingName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Remain" type="xs:int" />
+      <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="Start" type="q2:DateTimeOffset" />
+      <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="Stop" type="q3:DateTimeOffset" />
+      <xs:element minOccurs="0" name="TelecastCategory" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TelecastDescr" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TelecastTitle" nillable="true" type="xs:string" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="TsStart" type="q4:DateTimeOffset" />
+      <xs:element minOccurs="0" name="TsStartMO" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="TsStopMO" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SystemProgramme" nillable="true" type="tns:SystemProgramme" />
+  <xs:complexType name="ProgPeriod">
+    <xs:annotation>
+      <xs:appinfo>
+        <IsValueType xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsValueType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="dtEnd" type="q5:DateTimeOffset" />
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="dtStart" type="q6:DateTimeOffset" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ProgPeriod" nillable="true" type="tns:ProgPeriod" />
+  <xs:complexType name="ArrayOfGenre">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Genre" nillable="true" type="tns:Genre" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfGenre" nillable="true" type="tns:ArrayOfGenre" />
+  <xs:complexType name="Genre">
+    <xs:sequence>
+      <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="CreateDate" type="q7:DateTimeOffset" />
+      <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="DeleteDate" type="q8:DateTimeOffset" />
+      <xs:element minOccurs="0" name="GenreID" type="xs:int" />
+      <xs:element minOccurs="0" name="GenreName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GenrePath" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="IconID" type="xs:int" />
+      <xs:element minOccurs="0" name="UID" type="xs:long" />
+      <xs:element minOccurs="0" name="Visible" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Genre" nillable="true" type="tns:Genre" />
+  <xs:complexType name="ArrayOfGenreClassif">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="GenreClassif" nillable="true" type="tns:GenreClassif" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfGenreClassif" nillable="true" type="tns:ArrayOfGenreClassif" />
+  <xs:complexType name="GenreClassif">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ContainPhrases" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DeleteAfterDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="GID" type="xs:long" />
+      <xs:element minOccurs="0" name="GenreClassificatorID" type="xs:long" />
+      <xs:element minOccurs="0" name="GenreName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="GenrePath" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NonContainPhrases" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OrderCol" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="UID" nillable="true" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GenreClassif" nillable="true" type="tns:GenreClassif" />
+  <xs:complexType name="ArrayOfRating">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Rating" nillable="true" type="tns:Rating" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRating" nillable="true" type="tns:ArrayOfRating" />
+  <xs:complexType name="Rating">
+    <xs:sequence>
+      <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="CreateDate" type="q9:DateTimeOffset" />
+      <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/System" minOccurs="0" name="DeleteDate" type="q10:DateTimeOffset" />
+      <xs:element minOccurs="0" name="IconID" type="xs:int" />
+      <xs:element minOccurs="0" name="RatingID" type="xs:int" />
+      <xs:element minOccurs="0" name="RatingName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RatingPath" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UID" type="xs:long" />
+      <xs:element minOccurs="0" name="Visible" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Rating" nillable="true" type="tns:Rating" />
+  <xs:complexType name="ArrayOfRatingClassif">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="RatingClassif" nillable="true" type="tns:RatingClassif" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRatingClassif" nillable="true" type="tns:ArrayOfRatingClassif" />
+  <xs:complexType name="RatingClassif">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ContainPhrases" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="DeleteAfterDate" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="NonContainPhrases" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OrderCol" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="RID" type="xs:long" />
+      <xs:element minOccurs="0" name="RatingClassificatorID" type="xs:long" />
+      <xs:element minOccurs="0" name="RatingName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RatingPath" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="UID" type="xs:long" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="RatingClassif" nillable="true" type="tns:RatingClassif" />
+</xs:schema>

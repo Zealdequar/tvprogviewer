@@ -1,0 +1,229 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using TVProgViewer.TVProgApp.Properties;
+
+namespace TVProgViewer.TVProgApp.Controls
+{
+    public partial class VisibleSettings : UserControl
+    {
+        public VisibleSettings()
+        {
+            InitializeComponent();
+            InitSettings();
+        }
+        private void VisibleSettings_Load(object sender, EventArgs e)
+        {
+            InitSettings();
+        }
+        /// <summary>
+        /// Инициализация настроек
+        /// </summary>
+        private void InitSettings()
+        {
+            chbMainMenu.Checked = Settings.Default.FlagMainMenu;
+            chbToolPanel.Checked = Settings.Default.FlagToolStrip;
+            chbStatusStrip.Checked = Settings.Default.FlagStatusStrip;
+            chbHorizGrid.Checked = Settings.Default.FlagHorizGrid;
+            chbVertGrid.Checked = Settings.Default.FlagVertGrid;
+            chbPicTree.Checked = Settings.Default.FlagPictTree;
+            chbNodeSelect.Checked = Settings.Default.FlagNodeSelect;
+            chbLogoTable.Checked = Settings.Default.FlagLogoTable;
+            chbNumberChannel.Checked = Settings.Default.FlagNumChan;
+            Preferences.AllWeekShown allWeekShown =
+                (Preferences.AllWeekShown) Enum.Parse(typeof (Preferences.AllWeekShown), Settings.Default.AllWeekMode);
+            switch (allWeekShown)
+            {
+                  case  Preferences.AllWeekShown.Never:
+                    rbNever.Checked = true;
+                    rbAlways.Checked = false;
+                    rbQuery.Checked = false;
+                    break;
+                    case Preferences.AllWeekShown.Always:
+                    rbNever.Checked = false;
+                    rbAlways.Checked = true;
+                    rbQuery.Checked = false;
+                    break;
+                    case Preferences.AllWeekShown.Query:
+                    rbNever.Checked = false;
+                    rbAlways.Checked = false;
+                    rbQuery.Checked = true;
+                    break;
+            }
+            Preferences.ShowAnons showAnons =
+                (Preferences.ShowAnons) Enum.Parse(typeof (Preferences.ShowAnons), Settings.Default.AnonsMode);
+            switch (showAnons)
+            {
+                case Preferences.ShowAnons.Never:
+                    rbAnonsNever.Checked = true;
+                    rbAnonsAlways.Checked = false;
+                    rbAnonsIfitis.Checked = false;
+                    break;
+                case Preferences.ShowAnons.Always:
+                    rbAnonsNever.Checked = false;
+                    rbAnonsAlways.Checked = true;
+                    rbAnonsIfitis.Checked = false;
+                    break;
+                case Preferences.ShowAnons.Ifitis:
+                    rbAnonsNever.Checked = false;
+                    rbAnonsAlways.Checked = false;
+                    rbAnonsIfitis.Checked = true;
+                    break;
+            }
+        }
+        
+        /// <summary>
+        /// При изменении статуса отображения основного меню
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbMainMenu_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagMainMenu = chbMainMenu.Checked;
+        }
+        /// <summary>
+        /// При изменении статуса отображения панели инструментов
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbToolPanel_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagToolStrip = chbToolPanel.Checked;
+        }
+
+        /// <summary>
+        /// При изменении статуса отображения строки состояния
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbStatusStrip_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagStatusStrip = chbStatusStrip.Checked;
+        }
+
+        /// <summary>
+        /// При изменении статуса отображения горизотальной сетки таблицы
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbHorizGrid_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagHorizGrid = chbHorizGrid.Checked;
+        }
+        
+        /// <summary>
+        /// При изменении статуса отображения вертикальной сетки таблицы
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbVertGrid_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagVertGrid = chbVertGrid.Checked;
+        }
+
+        /// <summary>
+        /// при изменении статуса отображения картинок в дереве
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbPicTree_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagPictTree = chbPicTree.Checked;
+        }
+        
+        /// <summary>
+        /// При изменении режима отображения узлов деревьев
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbNodeSelect_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagNodeSelect = chbNodeSelect.Checked;
+        }
+
+        /// <summary>
+        /// При изменении режима отображения логотипов в таблицах
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbLogoTable_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagLogoTable = chbLogoTable.Checked;
+        }
+
+        /// <summary>
+        /// При изменении режима оторбажения номеров каналов
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void chbNumberChannel_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.FlagNumChan = chbNumberChannel.Checked;
+        }
+
+        /// <summary>
+        /// При изменении режима выделения узла "Все": никогда не показывать телепередачи
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void rbNever_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbNever.Checked) Settings.Default.AllWeekMode = "Never";
+        }
+
+        /// <summary>
+        /// При изменении режима выделения узла "Все": всегда показывать телепередачи
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void rbAlways_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbAlways.Checked) Settings.Default.AllWeekMode = "Always";
+        }
+
+        /// <summary>
+        /// При изменении режима выделения узла "Все": показывать по запросу
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void rbQuery_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbQuery.Checked) Settings.Default.AllWeekMode = "Query";
+        }
+         /// <summary>
+         /// При изменении режима отображения анонсов: никогда не показывать
+         /// </summary>
+         /// <param name="sender"></param>
+         /// <param name="e"></param>
+        private void rbAnonsNever_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbAnonsNever.Checked) Settings.Default.AnonsMode = "Never";
+        }
+        
+        /// <summary>
+        /// При изменении режима отображения анонсов: показывать всегда
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void rbAnonsAlways_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbAnonsAlways.Checked) Settings.Default.AnonsMode = "Always";
+        }
+
+        /// <summary>
+        /// При изменении режима отображения анонсов: показывать если есть
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void rbAnonsIfitis_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbAnonsIfitis.Checked) Settings.Default.AnonsMode = "Ifitis";
+        }
+
+    }
+}

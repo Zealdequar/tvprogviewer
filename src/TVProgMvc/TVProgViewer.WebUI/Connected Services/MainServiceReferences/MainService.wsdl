@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="MainService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.Users" />
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.ProgObjs" />
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/TVProgViewer.Common" />
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd5" namespace="http://schemas.datacontract.org/2004/07/System" />
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/System.Collections.Generic" />
+      <xsd:import schemaLocation="http://localhost:3999/MainService.svc?xsd=xsd7" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IMainService_AddUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddUser" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetHashes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetHashes" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetHashes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetHashesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUser_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUser" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUser_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetProviderTypeList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetProviderTypeList" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetProviderTypeList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetProviderTypeListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemChannelList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemChannelList" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemChannelList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemChannelListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserChannelList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserChannelList" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserChannelList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserChannelListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserInSystemChannels_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserInSystemChannels" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserInSystemChannels_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserInSystemChannelsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemProgrammeList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemProgrammeList" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemProgrammeList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemProgrammeListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemProgrammePeriod_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemProgrammePeriod" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemProgrammePeriod_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemProgrammePeriodResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemProgrammeDayList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemProgrammeDayList" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetSystemProgrammeDayList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSystemProgrammeDayListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_InsertUserChannel_InputMessage">
+    <wsdl:part name="parameters" element="tns:InsertUserChannel" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_InsertUserChannel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:InsertUserChannelResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteUserChannel_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteUserChannel" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteUserChannel_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteUserChannelResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserProgrammeList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserProgrammeList" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserProgrammeList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserProgrammeListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserProgrammeDayList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserProgrammeDayList" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetUserProgrammeDayList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserProgrammeDayListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetCategories_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCategories" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetCategories_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCategoriesResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_SearchProgramme_InputMessage">
+    <wsdl:part name="parameters" element="tns:SearchProgramme" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_SearchProgramme_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SearchProgrammeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_SearchUserProgramme_InputMessage">
+    <wsdl:part name="parameters" element="tns:SearchUserProgramme" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_SearchUserProgramme_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SearchUserProgrammeResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateCatalog_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCatalog" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateCatalog_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCatalogResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_ChangeChannelImage_InputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeChannelImage" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_ChangeChannelImage_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeChannelImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetGenres_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGenres" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetGenres_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGenresResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddGenre_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddGenre" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddGenre_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddGenreResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateGenre_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateGenre" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateGenre_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateGenreResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteGenre_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteGenre" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteGenre_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteGenreResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_ChangeGenreImage_InputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeGenreImage" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_ChangeGenreImage_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeGenreImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetGenreClassificators_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetGenreClassificators" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetGenreClassificators_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetGenreClassificatorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddGenreClassificator_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddGenreClassificator" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddGenreClassificator_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddGenreClassificatorResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateGenreClassificator_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateGenreClassificator" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateGenreClassificator_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateGenreClassificatorResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteGenreClassificator_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteGenreClassificator" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteGenreClassificator_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteGenreClassificatorResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpGenreClassificateElem_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpGenreClassificateElem" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpGenreClassificateElem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpGenreClassificateElemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DownGenreClassificateElem_InputMessage">
+    <wsdl:part name="parameters" element="tns:DownGenreClassificateElem" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DownGenreClassificateElem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DownGenreClassificateElemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetRatings_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRatings" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetRatings_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRatingsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddRating_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddRating" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddRating_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddRatingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateRating_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateRating" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateRating_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateRatingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteRating_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteRating" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteRating_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteRatingResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_ChangeRatingImage_InputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeRatingImage" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_ChangeRatingImage_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ChangeRatingImageResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetRatingClassificators_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetRatingClassificators" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_GetRatingClassificators_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetRatingClassificatorsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddRatingClassificator_InputMessage">
+    <wsdl:part name="parameters" element="tns:AddRatingClassificator" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_AddRatingClassificator_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AddRatingClassificatorResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateRatingClassificator_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateRatingClassificator" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpdateRatingClassificator_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpdateRatingClassificatorResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteRatingClassificator_InputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteRatingClassificator" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DeleteRatingClassificator_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DeleteRatingClassificatorResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpRatingClassificateElem_InputMessage">
+    <wsdl:part name="parameters" element="tns:UpRatingClassificateElem" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_UpRatingClassificateElem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:UpRatingClassificateElemResponse" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DownRatingClassificateElem_InputMessage">
+    <wsdl:part name="parameters" element="tns:DownRatingClassificateElem" />
+  </wsdl:message>
+  <wsdl:message name="IMainService_DownRatingClassificateElem_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DownRatingClassificateElemResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IMainService">
+    <wsdl:operation name="AddUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/AddUser" message="tns:IMainService_AddUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/AddUserResponse" message="tns:IMainService_AddUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetHashes">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetHashes" message="tns:IMainService_GetHashes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetHashesResponse" message="tns:IMainService_GetHashes_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUser">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetUser" message="tns:IMainService_GetUser_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetUserResponse" message="tns:IMainService_GetUser_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetProviderTypeList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetProviderTypeList" message="tns:IMainService_GetProviderTypeList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetProviderTypeListResponse" message="tns:IMainService_GetProviderTypeList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemChannelList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetSystemChannelList" message="tns:IMainService_GetSystemChannelList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetSystemChannelListResponse" message="tns:IMainService_GetSystemChannelList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserChannelList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetUserChannelList" message="tns:IMainService_GetUserChannelList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetUserChannelListResponse" message="tns:IMainService_GetUserChannelList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserInSystemChannels">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetUserInSystemChannels" message="tns:IMainService_GetUserInSystemChannels_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetUserInSystemChannelsResponse" message="tns:IMainService_GetUserInSystemChannels_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemProgrammeList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetSystemProgrammeList" message="tns:IMainService_GetSystemProgrammeList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetSystemProgrammeListResponse" message="tns:IMainService_GetSystemProgrammeList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemProgrammePeriod">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetSystemProgrammePeriod" message="tns:IMainService_GetSystemProgrammePeriod_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetSystemProgrammePeriodResponse" message="tns:IMainService_GetSystemProgrammePeriod_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemProgrammeDayList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetSystemProgrammeDayList" message="tns:IMainService_GetSystemProgrammeDayList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetSystemProgrammeDayListResponse" message="tns:IMainService_GetSystemProgrammeDayList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="InsertUserChannel">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/InsertUserChannel" message="tns:IMainService_InsertUserChannel_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/InsertUserChannelResponse" message="tns:IMainService_InsertUserChannel_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteUserChannel">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/DeleteUserChannel" message="tns:IMainService_DeleteUserChannel_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/DeleteUserChannelResponse" message="tns:IMainService_DeleteUserChannel_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProgrammeList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetUserProgrammeList" message="tns:IMainService_GetUserProgrammeList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetUserProgrammeListResponse" message="tns:IMainService_GetUserProgrammeList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProgrammeDayList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetUserProgrammeDayList" message="tns:IMainService_GetUserProgrammeDayList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetUserProgrammeDayListResponse" message="tns:IMainService_GetUserProgrammeDayList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCategories">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetCategories" message="tns:IMainService_GetCategories_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetCategoriesResponse" message="tns:IMainService_GetCategories_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchProgramme">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/SearchProgramme" message="tns:IMainService_SearchProgramme_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/SearchProgrammeResponse" message="tns:IMainService_SearchProgramme_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SearchUserProgramme">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/SearchUserProgramme" message="tns:IMainService_SearchUserProgramme_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/SearchUserProgrammeResponse" message="tns:IMainService_SearchUserProgramme_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCatalog">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/UpdateCatalog" message="tns:IMainService_UpdateCatalog_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/UpdateCatalogResponse" message="tns:IMainService_UpdateCatalog_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeChannelImage">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/ChangeChannelImage" message="tns:IMainService_ChangeChannelImage_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/ChangeChannelImageResponse" message="tns:IMainService_ChangeChannelImage_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGenres">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetGenres" message="tns:IMainService_GetGenres_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetGenresResponse" message="tns:IMainService_GetGenres_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddGenre">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/AddGenre" message="tns:IMainService_AddGenre_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/AddGenreResponse" message="tns:IMainService_AddGenre_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateGenre">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/UpdateGenre" message="tns:IMainService_UpdateGenre_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/UpdateGenreResponse" message="tns:IMainService_UpdateGenre_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteGenre">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/DeleteGenre" message="tns:IMainService_DeleteGenre_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/DeleteGenreResponse" message="tns:IMainService_DeleteGenre_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeGenreImage">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/ChangeGenreImage" message="tns:IMainService_ChangeGenreImage_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/ChangeGenreImageResponse" message="tns:IMainService_ChangeGenreImage_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetGenreClassificators">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetGenreClassificators" message="tns:IMainService_GetGenreClassificators_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetGenreClassificatorsResponse" message="tns:IMainService_GetGenreClassificators_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddGenreClassificator">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/AddGenreClassificator" message="tns:IMainService_AddGenreClassificator_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/AddGenreClassificatorResponse" message="tns:IMainService_AddGenreClassificator_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateGenreClassificator">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/UpdateGenreClassificator" message="tns:IMainService_UpdateGenreClassificator_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/UpdateGenreClassificatorResponse" message="tns:IMainService_UpdateGenreClassificator_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteGenreClassificator">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/DeleteGenreClassificator" message="tns:IMainService_DeleteGenreClassificator_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/DeleteGenreClassificatorResponse" message="tns:IMainService_DeleteGenreClassificator_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpGenreClassificateElem">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/UpGenreClassificateElem" message="tns:IMainService_UpGenreClassificateElem_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/UpGenreClassificateElemResponse" message="tns:IMainService_UpGenreClassificateElem_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DownGenreClassificateElem">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/DownGenreClassificateElem" message="tns:IMainService_DownGenreClassificateElem_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/DownGenreClassificateElemResponse" message="tns:IMainService_DownGenreClassificateElem_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRatings">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetRatings" message="tns:IMainService_GetRatings_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetRatingsResponse" message="tns:IMainService_GetRatings_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddRating">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/AddRating" message="tns:IMainService_AddRating_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/AddRatingResponse" message="tns:IMainService_AddRating_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateRating">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/UpdateRating" message="tns:IMainService_UpdateRating_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/UpdateRatingResponse" message="tns:IMainService_UpdateRating_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteRating">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/DeleteRating" message="tns:IMainService_DeleteRating_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/DeleteRatingResponse" message="tns:IMainService_DeleteRating_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ChangeRatingImage">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/ChangeRatingImage" message="tns:IMainService_ChangeRatingImage_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/ChangeRatingImageResponse" message="tns:IMainService_ChangeRatingImage_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRatingClassificators">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/GetRatingClassificators" message="tns:IMainService_GetRatingClassificators_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/GetRatingClassificatorsResponse" message="tns:IMainService_GetRatingClassificators_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AddRatingClassificator">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/AddRatingClassificator" message="tns:IMainService_AddRatingClassificator_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/AddRatingClassificatorResponse" message="tns:IMainService_AddRatingClassificator_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateRatingClassificator">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/UpdateRatingClassificator" message="tns:IMainService_UpdateRatingClassificator_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/UpdateRatingClassificatorResponse" message="tns:IMainService_UpdateRatingClassificator_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DeleteRatingClassificator">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/DeleteRatingClassificator" message="tns:IMainService_DeleteRatingClassificator_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/DeleteRatingClassificatorResponse" message="tns:IMainService_DeleteRatingClassificator_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="UpRatingClassificateElem">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/UpRatingClassificateElem" message="tns:IMainService_UpRatingClassificateElem_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/UpRatingClassificateElemResponse" message="tns:IMainService_UpRatingClassificateElem_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DownRatingClassificateElem">
+      <wsdl:input wsaw:Action="http://tempuri.org/IMainService/DownRatingClassificateElem" message="tns:IMainService_DownRatingClassificateElem_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IMainService/DownRatingClassificateElemResponse" message="tns:IMainService_DownRatingClassificateElem_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IMainService" type="tns:IMainService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="AddUser">
+      <soap:operation soapAction="http://tempuri.org/IMainService/AddUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetHashes">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetHashes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUser">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetUser" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetProviderTypeList">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetProviderTypeList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemChannelList">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetSystemChannelList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserChannelList">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetUserChannelList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserInSystemChannels">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetUserInSystemChannels" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemProgrammeList">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetSystemProgrammeList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemProgrammePeriod">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetSystemProgrammePeriod" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSystemProgrammeDayList">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetSystemProgrammeDayList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="InsertUserChannel">
+      <soap:operation soapAction="http://tempuri.org/IMainService/InsertUserChannel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteUserChannel">
+      <soap:operation soapAction="http://tempuri.org/IMainService/DeleteUserChannel" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProgrammeList">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetUserProgrammeList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserProgrammeDayList">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetUserProgrammeDayList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCategories">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetCategories" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchProgramme">
+      <soap:operation soapAction="http://tempuri.org/IMainService/SearchProgramme" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SearchUserProgramme">
+      <soap:operation soapAction="http://tempuri.org/IMainService/SearchUserProgramme" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateCatalog">
+      <soap:operation soapAction="http://tempuri.org/IMainService/UpdateCatalog" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeChannelImage">
+      <soap:operation soapAction="http://tempuri.org/IMainService/ChangeChannelImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGenres">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetGenres" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddGenre">
+      <soap:operation soapAction="http://tempuri.org/IMainService/AddGenre" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateGenre">
+      <soap:operation soapAction="http://tempuri.org/IMainService/UpdateGenre" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteGenre">
+      <soap:operation soapAction="http://tempuri.org/IMainService/DeleteGenre" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeGenreImage">
+      <soap:operation soapAction="http://tempuri.org/IMainService/ChangeGenreImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetGenreClassificators">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetGenreClassificators" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddGenreClassificator">
+      <soap:operation soapAction="http://tempuri.org/IMainService/AddGenreClassificator" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateGenreClassificator">
+      <soap:operation soapAction="http://tempuri.org/IMainService/UpdateGenreClassificator" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteGenreClassificator">
+      <soap:operation soapAction="http://tempuri.org/IMainService/DeleteGenreClassificator" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpGenreClassificateElem">
+      <soap:operation soapAction="http://tempuri.org/IMainService/UpGenreClassificateElem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DownGenreClassificateElem">
+      <soap:operation soapAction="http://tempuri.org/IMainService/DownGenreClassificateElem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRatings">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetRatings" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddRating">
+      <soap:operation soapAction="http://tempuri.org/IMainService/AddRating" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateRating">
+      <soap:operation soapAction="http://tempuri.org/IMainService/UpdateRating" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteRating">
+      <soap:operation soapAction="http://tempuri.org/IMainService/DeleteRating" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ChangeRatingImage">
+      <soap:operation soapAction="http://tempuri.org/IMainService/ChangeRatingImage" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRatingClassificators">
+      <soap:operation soapAction="http://tempuri.org/IMainService/GetRatingClassificators" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AddRatingClassificator">
+      <soap:operation soapAction="http://tempuri.org/IMainService/AddRatingClassificator" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateRatingClassificator">
+      <soap:operation soapAction="http://tempuri.org/IMainService/UpdateRatingClassificator" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DeleteRatingClassificator">
+      <soap:operation soapAction="http://tempuri.org/IMainService/DeleteRatingClassificator" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpRatingClassificateElem">
+      <soap:operation soapAction="http://tempuri.org/IMainService/UpRatingClassificateElem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DownRatingClassificateElem">
+      <soap:operation soapAction="http://tempuri.org/IMainService/DownRatingClassificateElem" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MainService">
+    <wsdl:port name="BasicHttpBinding_IMainService" binding="tns:BasicHttpBinding_IMainService">
+      <soap:address location="http://localhost:3999/MainService.svc" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,859 @@
+use TVProgBase;
+GO
+
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'fnIsUserNameExists'))
+drop function fnIsUserNameExists;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'fnIsEmailExists'))
+drop function fnIsEmailExists;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spUserStart'))
+drop procedure spUserStart;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spGetHashesByUserName'))
+drop procedure spGetHashesByUserName;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'fnUserIsBlockByUserName'))
+drop function fnUserIsBlockByUserName;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'fnUserIsBlockByUID'))
+drop function fnUserIsBlockByUID;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spChangeUserName'))
+drop procedure spChangeUserName;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spChangePass'))
+drop procedure spChangePass;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spChangeContacts'))
+drop procedure spChangeContacts;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'fnGetUserIDByUserName'))
+drop function fnGetUserIDByUserName;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spBlockUser'))
+drop procedure spBlockUser;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spBlockUserOwn'))
+drop procedure spBlockUserOwn;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spBlockUserToDate'))
+drop procedure spBlockUserToDate;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spSystemUserUnblock'))
+drop procedure spSystemUserUnblock;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spUserOwnUnblock'))
+drop procedure spUserOwnUnblock;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spGetUserByID'))
+drop procedure spGetUserByID;
+GO
+
+-- Проверка пользовательского имени на совпадение в системе
+create function fnIsUserNameExists (@UserName nvarchar(70))
+returns bit
+as 
+begin
+	if (exists(select 1	
+	from dbo.SystemUsers su
+	where su.UserName Like @UserName))
+		return 1;
+	else
+		return 0;
+	return 0;
+end
+go
+
+-- Проверка на совпадение такого же email в системе
+create function fnIsEmailExists(@Email nvarchar(300))
+returns bit
+as
+begin
+	if (exists(select 1
+	from dbo.SystemUsers su
+	where su.Email Like @Email))
+		return 1;
+	else 
+	return 0;
+	return 0;		
+end;
+go
+
+-- Процедура регистрации нового пользователя в системе 
+create procedure spUserStart (
+@UserName nvarchar(70), 
+@PassHash nvarchar(100),
+@PassExtend nvarchar(100),
+@LastName nvarchar(150),
+@FirstName nvarchar(150),
+@MiddleName nvarchar(150),
+@BirthDate datetime,
+@Gender bit,
+@Email nvarchar(300),
+@MobPhoneNumber nvarchar(25),
+@OtherPhoneNumber1 nvarchar(25),
+@OtherPhoneNumber2 nvarchar(25),
+@Address nvarchar(1000),
+@GmtZone nvarchar(10),
+@ErrCode int out
+)
+as 
+declare 
+@cntEmail int,
+@UID bigint,
+@GID bigint
+begin
+/*ErrCodes: 2 - Такое имя пользователя уже существует. Укажите другое имя пользователя.;
+			3 - Пользователь с таким e-mail уже зарегистрирован в системе. Укажите другой e-mail. 
+			70 — Произошла ошибка при регистрации в системе. Попробуйте совершить регистрацию позднее. 
+			72 - Ошибка при вставке жанров или классов жанров
+			73 - Ошибка при вставке рейтингов или классов рейтингов
+			*/	
+	set @ErrCode = 0;			
+	if (dbo.fnIsUserNameExists(@UserName) = 1)
+	begin
+		set @ErrCode = 2;
+		return;
+	end;	
+	
+	if (dbo.fnIsEmailExists(@Email) = 1)
+	begin
+		set @ErrCode = 3;
+		return;
+	end;
+	
+	begin try
+	insert into dbo.SystemUsers (
+	UserName, 
+	PassHash, 
+	PassExtend, 
+	LastName, 
+	FirstName, 
+	MiddleName, 
+	BirthDate,
+	Gender,
+	Email,
+	MobPhoneNumber,
+	OtherPhoneNumber1,
+	OtherPhoneNumber2,
+	Address,
+	GmtZone,
+	Status)
+	values
+	(
+	@UserName,
+	@PassHash,
+	@PassExtend,
+	@LastName,
+	@FirstName,
+	@MiddleName,
+	@BirthDate,
+	@Gender,
+	@Email,
+	@MobPhoneNumber,
+	@OtherPhoneNumber1,
+	@OtherPhoneNumber2,
+	@Address,
+	@GmtZone,
+	3
+	);
+	end try
+	begin catch
+		select @ErrCode = 70;
+	end catch
+	set @UID = SCOPE_IDENTITY();
+	
+	begin try
+	insert dbo.ExtUserSettings (UID, TVProgProviderID, UncheckedChannels)
+	values (@UID, 1, 1);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 1, 'Без типа', 1);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 2, 'Художественный фильм', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'фильм', 'мульт;док;Д/ф', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'х.ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'х. ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'т. ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'драм', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'х/ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'х\\ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Режиссер', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 3, 'Сериал', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'т/с', 'м/с', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Теленовелла', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Сери', 'М/;мульт;турнир', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 4, 'Детям', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Детям', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'детск', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'дете', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'сказка', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Спокойной ночи, малыши', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'До 16', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Ералаш', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'АБВГДейка', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 5, 'Спорт', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'чемпион','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'гран-при','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'турнир','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'первенство','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Футбол','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Кубок','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'атлет','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'стадион','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'хоккей','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'спартак','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Физра','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Бои без правил','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Пенальти','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Трюкачи','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'НХЛ','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'матч','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'волейбол','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'бокс','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'НБА','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'ринг','оринг', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'рекорд','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'физкульт','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'баскетбол','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'корт','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'ралли','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'гонки','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'олимп','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'финал', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Боевые искус', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Спорт', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 6, 'Документальный фильм', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Док.', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'д. ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'документ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'репор', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'т. ж.', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Д/ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Д/с', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 7, 'Информ. программа', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'информац', 'тайна', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Новост', 'в перерыве', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Время', 'муз;личное', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Вести', 'палаты', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Итоговая программа', '', NULL)
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Сегодня', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'хроник', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'События', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Афиша', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'News', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Настроен', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Доброе утро', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'День за днем', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Доска', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, '24', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Неделя', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Личный вклад', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Постскриптум', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Страна и мир', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'ньюс', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 8, 'Юмор', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'комеди', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'юмор', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'КВН', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Клуб Веселых и Находчивых', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Городок;городке', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Жванецкий', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Задорнов', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Смех', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Аншлаг', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'О. С. П.', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Большая разница', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Каламбур', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'фитиль', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'шутка', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'розыгрыш', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Смешн', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 9, 'Теле-шоу', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Шоу', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'конкурс', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Сам себе режиссер', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Модный приговор', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Давай поженимся!', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Пусть говорят', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Дом 2', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Час суда', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'НТВшники', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 10, 'Теле-игра', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'игра', 'гармонь;тигра;концерт', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Поле чудес', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'лото', 'олото', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Умницы и умники', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Десять миллионов', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Кто хочет стать миллионером', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Что? Где? Когда?', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Своя игра', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 11, 'Театр и кино', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'артист', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'театр', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Опера', 'операб;операц', NULL)
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'спектакл', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'балет', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'актер', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'кино', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Stop! Снято!', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Третий звонок', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Большой экран', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'сп.', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'кумиры', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Синемания', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 12, 'Мультфильм', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'М/', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'М. ф', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'М/ сериал', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Дисней', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'мульт', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Футурама', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Симпсоны', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Fox Kids', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 13, 'Криминал', 1	);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'детектив', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'комиссар', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Боевик', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'ужас', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'триллер', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'криминал', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Дорожный патруль', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Дорожная часть', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Чрезвычайное происшествие',  '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Петровка', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Телеспецназ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'следствие', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'расследование', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'убийств', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Чистосердечное признание', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 14, 'Музыка', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Муз', 'музе', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Концерт', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Диск', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'фестивал', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'песн', 'чудес', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'поют', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'джаз', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'БКЗ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'гармонь', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Утренняя почта', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Два рояля', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'оркестр', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'хит', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'романс', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'клип', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'шансон', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Танцпол', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Русская 10-ка', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Мобильная 10-ка', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Танцкласс', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Зажигай!', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Extra', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Impulse', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'чарт', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Горячая десятка', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Утренняя звезда', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, '10 наших', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 15, 'Интернет', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Интернет', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, '.Ru', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, '.NET', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Глобаль', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Всемирная паутина', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'сеть', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'www', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 16, 'О животных', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'животн', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'зоо', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'звер', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'природ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'я и моя собака', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'диалоги о рыбалке', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Рыболов', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'сами с усами', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'динозавр', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'пород', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'ветерин', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'хищник', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 17, 'Погода', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Погод', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Солнечный прогноз', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 18, 'Искусство и культура', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'искусств', 'боев', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'музе', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'культур', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'интерьер', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Артэкспресс', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Архтектур', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Дворцовые тайны', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Царская ложа', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'эрмитаж', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 19, 'Политика и социология', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'полити', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Международ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Съезд', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Федерация', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Парламентский', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'зеркало', 'Петросян', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 20, 'Научно-популярная передача', 1);
+	set @GID = SCOPE_IDENTITY(); 	
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Xфактор', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Цивилизац', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Наук', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Экологи', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Космос', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'тайна', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 21, 'Путешествие и краеведение', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'город','', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Путе', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Непутевые заметки', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Хочу всё знать', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Турбюро', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Знаменитые замки', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Планета Земля', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Вокруг света', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Вояж без саквояжа', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Чудес', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Приключени', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Гербы России', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Окно в мир', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'История', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Поля сражений', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Их нравы', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'экспедиц', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 22, 'Персона', 1); 
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'в гостях', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Антропология', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Пока все дома', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Голливуд', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Женский взгляд', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Встреча с', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Жизнь замечательных людей', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'мужчина и женщина', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'завтрак', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Без протокола', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Момент истины', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 23, 'Техника', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'компьютер', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Авиац', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'изобрет', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'монитор', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'PRO-новости', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 24, 'Мода', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'мода', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'моды', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'fashion', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Мир красоты', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Шпилька', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Видеомода', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Стильные штучки', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Стилиссимо', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 25, 'Авто', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Авто;мото', 'Автор;стаи', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Карданный вал', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Фаркоп', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Машин', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Top Gear', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 26, 'Здоровье', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'здоров', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Без рецепта', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'доктор', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'мед.', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'медиц', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 27, 'Религия', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'пастыря', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'религ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Православ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Победоносный голос верующего', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Библ', 'мания', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Из библейсиких пророчеств', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Благая весть', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Коран', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Воскресная школа', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'христ', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Патриарх', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Муфтий', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Час силы духа', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 28, 'Садоводство', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'сад', 'кольцо' , NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Растительная жизнь', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'урожай', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'даче', 'передаче', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 29, 'Реклама', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'магазин', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'реклам', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'телепокупка', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 30, 'Женские', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Из жизни женщины', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Дамский клуб', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Женские истории', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Для женщин', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'мама;мать', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 31, 'Кулинария', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Кухня', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Вкусные истории', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Сладкие истории', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Вкус', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'деликатес', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'кулинар', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'смак', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Лакомый кусочек', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'блюд', '', NULL);
+	
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 32, 'Экстрим', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'экстр', 'машин', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Служба спасения', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Катастрофы недели', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Дорожные войны', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'каскаде', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 33, 'Экономика и бизнес', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Деньги', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Бизнес', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Инвестиции', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Финанс', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Делов', '', NULL);
+
+	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 34, 'Эротика', 1);
+	set @GID = SCOPE_IDENTITY(); 
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Секс', '', NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (@GID, @UID, 'Эрот', '', NULL);
+	end try
+	begin catch
+		set @ErrCode = 72;
+	end catch 
+	
+	begin try    
+		insert dbo.Ratings (uid, IconID, RatingName, Visible) 
+		values (@UID, 35, 'Без рейтинга', 1),
+		(@UID, 36, 'Можно посмотреть', 1),
+		(@UID, 37, 'Приличные', 1),
+		(@UID, 38, 'Нормальные',1),
+		(@UID, 39, 'Хорошие', 1),
+		(@UID, 40, 'Отличные',1);
+	end try
+	begin catch
+		set @ErrCode = 73;
+	end catch 
+end;
+GO
+
+-- Получение хешей для сверки
+create procedure spGetHashesByUserName (@UserName nvarchar(70))
+as
+begin
+	select su.UserID, su.PassHash, su.PassExtend 
+	from dbo.SystemUsers su
+	where su.UserName Like @UserName;
+end
+GO
+
+-- Пользователь заблокирован? (по логину)
+create function fnUserIsBlockByUserName (@UserName nvarchar(70))
+returns bit
+as
+begin 
+declare @sts int;
+   select @sts = su.status 
+   from dbo.SystemUsers su
+   where su.UserName = @UserName;
+   
+   if (@sts = 6 or (not exists (select 1 
+							   from dbo.SystemUsers su
+							   where su.UserName = @UserName 
+							   and su.DateBegin < GetDate() and GetDate() < su.DateEnd)))
+	return 1;
+   return 0;
+end
+go
+
+-- Пользователь заблокирован? (по UserID)
+create function fnUserIsBlockByUID(@UID bigint)
+returns bit
+as
+begin
+	declare @sts int;
+	select @sts = su.status
+	from dbo.SystemUsers su
+	where su.UserID = @UID;
+	
+	if (@sts = 6 or (not exists (select 1
+								from dbo.SystemUsers su
+								where su.UserID = @UID
+								and su.DateBegin < GetDate() and GetDate() < su.DateEnd)))
+								return 1;
+	return 0;
+end;
+go
+
+-- Изменение логина
+create procedure spChangeUserName (@OldUserName nvarchar(70), @NewUserName nvarchar(70), @ErrCode int out)
+as 
+begin
+    /* ErrCode: 1 - веденный логин не отличается от предшествующего,
+				2 - введенный логин уже есть в системе, выберите другой логин
+				5 - пользователь заблокирован и ему неположено менять логин
+				71 - другая ошибка, связанная при обновлении записи */
+	set @ErrCode = 0;
+	if (@OldUserName = @NewUserName)
+	begin 
+	   set @ErrCode = 1;
+	   return;
+	end
+	
+	if (dbo.fnIsUserNameExists(@NewUserName) = 1)
+	begin
+		set @ErrCode = 2;
+		return;
+	end;
+	
+	if (dbo.fnUserIsBlock(@OldUserName) = 1)
+	begin 
+		set @ErrCode = 5;
+		return;
+	end;
+	begin try
+		update dbo.SystemUsers set UserName = @NewUserName
+		where UserName Like @OldUserName;
+	end try
+	begin catch
+		set @ErrCode = 71;
+		return;
+	end catch
+end
+go
+
+-- Изменение пароля 
+create procedure spChangePass(
+@UserName nvarchar(70), 
+@NewPassExtend nvarchar(100), 
+@NewPassHash nvarchar(100),
+@ErrCode int out)
+as 
+begin
+	/*ErrCodes: 2 - введенный логин уже есть в системе,
+				5 - пользователь заблокирован и ему неположено менять пароль
+				71 - другая ошибка, связанная при обновлении записи */
+	set @ErrCode = 0;
+	if (dbo.fnIsUserNameExists(@UserName) = 1)
+	begin
+		set @ErrCode = 2;
+		return;
+	end;
+	
+	if (dbo.fnUserIsBlock(@UserName) = 1)
+	begin 
+		set @ErrCode = 5;
+		return;
+	end;
+	
+	begin try
+		update dbo.SystemUsers set PassExtend = @NewPassExtend,
+								   PassHash = @NewPassHash
+		where UserName Like @UserName;
+	end try
+	begin catch
+		set @ErrCode = 71;
+		return;
+	end catch
+end;
+go
+
+-- Получение UserID по UserNanme
+create function fnGetUserIDByUserName(@UserName nvarchar(70))
+returns int
+as
+begin
+	declare @UserID int;
+	select @UserID = su.UserID 
+	from dbo.SystemUsers su
+	where su.UserName Like @UserName;
+	return @UserID;
+end;
+go
+
+-- Изменение контактных данных
+create procedure spChangeContacts(
+@UID bigint, 
+@LastName nvarchar(150),
+@FirstName nvarchar(150),
+@MiddleName nvarchar(150),
+@BirthDate datetime,
+@Gender bit,
+@Email nvarchar(300),
+@MobPhoneNumber nvarchar(25),
+@OtherPhoneNumber1 nvarchar(25),
+@OtherPhoneNumber2 nvarchar(25),
+@Address nvarchar(1000),
+@GmtZone nvarchar(10),
+@ErrCode int out)
+as
+begin
+	/*ErrCodes: 2 - введенный логин уже есть в системе,
+				3 - указанный почтовый адрес есть у другого пользователя,
+				5 - пользователь заблокирован и ему неположено менять контактные данные
+				71 - другая ошибка, связанная при обновлении записи */
+	set @ErrCode = 0;			
+		
+	if (exists(select * 
+			  from dbo.SystemUsers su
+			  where su.UserID <> @UID and su.Email Like @Email))
+	begin 
+		set @ErrCode = 3;
+		return;
+	end;
+		
+	if (dbo.fnUserIsBlockByUID(@UID) = 1)
+	begin 
+		set @ErrCode = 5;
+		return;
+	end;
+	
+	begin try
+		update dbo.SystemUsers set 
+		LastName = @LastName,
+		FirstName = @FirstName,
+		MiddleName = @MiddleName,
+		BirthDate = @BirthDate,
+		Gender = @Gender,
+		Email = @Email,
+		MobPhoneNumber = @MobPhoneNumber,
+		OtherPhoneNumber1 = @OtherPhoneNumber1,
+		OtherPhoneNumber2 = @OtherPhoneNumber2,
+		Address = @Address,
+		GmtZone = @GmtZone
+		where UserID = @UID;
+	end try
+	begin catch
+		set @ErrCode = 71;
+		return;
+	end catch
+end;
+go
+
+-- Блокирование пользователя (изменение статуса)
+create procedure spBlockUser (@UserName nvarchar(70))
+as 
+begin
+	update dbo.SystemUsers set status = 6
+	where UserName = @UserName;
+end;
+go
+
+-- Самоличное блокирование пользователем
+create procedure spBlockUserOwn (@UID bigint)
+as 
+begin
+	update dbo.SystemUsers set DateBegin = '2900-01-01', DateEnd = '0001-01-01'
+	where UserID = @UID;
+end;
+go
+
+-- Блокирование пользоателя до определенной даты
+create procedure spBlockUserToDate(@UID bigint, @EndDate datetime)
+as
+begin
+	update dbo.SystemUsers set DateEnd = @EndDate
+	where UserID = @UID;
+end
+go
+
+-- Системное разблокирование пользователя
+create procedure spSystemUserUnblock(@UserName nvarchar(70))
+as
+begin 
+	update dbo.SystemUsers set DateBegin = '0001-01-01', DateEnd = '2900-01-01', status = 3
+	where UserName = @UserName;
+end
+go
+
+-- Самоличное разблокирование пользователем
+create procedure spUserOwnUnblock(@UID bigint)
+as
+begin 
+	update dbo.SystemUsers set DateBegin = '0001-01-01', DateEnd = '2900-01-01'
+	where UserID = @UID;
+end;
+go
+
+-- Получение учетки пользователя по ID
+create procedure spGetUserByID(@UID bigint, @ErrCode int out)
+as
+begin
+	set @ErrCode = 0;
+	if (dbo.fnUserIsBlockByUID(@UID) = 1)
+	begin 
+		set @ErrCode = 5;
+		return;
+	end;
+	
+	begin try
+		select
+		su.UserID,
+		su.UserName, 
+		su.LastName, 
+		su.FirstName, 
+		su.MiddleName, 
+		su.BirthDate,
+		su.Gender,
+		su.Email,
+		su.MobPhoneNumber,
+		su.OtherPhoneNumber1,
+		su.OtherPhoneNumber2,
+		su.Address,
+		su.GmtZone,
+		su.Status
+		from dbo.SystemUsers su
+		where su.UserID = @UID; 
+	end try
+	begin catch
+		set @ErrCode = 71;	
+	end catch
+end;
+go
