@@ -1,9 +1,0 @@
-2017-10-07 15:08:59.8646 INFO Начало получения телеканалов с тв-программой
-urid='http://www.teleguide.info/download/old/xmltv.xml.gz';
-outputfile='TGXmlTvOld.xml'
-2017-10-07 15:08:59.8646 TRACE Определен каталог для сохранения: 'K:\Projects\TVProgViewer\src\TVProgUpdater\TVProgUpdater\bin\Debug\2017-10-07'
-2017-10-07 15:08:59.8646 TRACE Требуется загрузка из интернета
-2017-10-07 15:08:59.8646 INFO Начало запроса ресурса.
-2017-10-07 15:09:00.4095 TRACE Ресурс успешно получен в поток.
-2017-10-07 15:09:00.4095 INFO Content-Encoding неопределен, пробуем распаковать по заголовку ContentType:
-2017-10-07 15:09:00.4095 TRACE Content-Type = 'application/octet-stream'

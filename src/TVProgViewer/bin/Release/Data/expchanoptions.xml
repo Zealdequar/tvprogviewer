@@ -1,8 +1,0 @@
-<?xml version="1.0" standalone="yes"?>
-<Config>
-  <ChanSettings>
-    <UncheckedChannels>DontShow</UncheckedChannels>
-    <Diff>+04:00</Diff>
-    <AcceptChanges>Immidiatly</AcceptChanges>
-  </ChanSettings>
-</Config>

@@ -1,5 +1,0 @@
-select ch.TitleChannel, pr.TsStartMO, pr.TsStopMO, pr.Title
-from dbo.Programmes pr
-join dbo.Channels ch
-on pr.CID = ch.ChannelID
-where pr.Title like '%1/2%' and pr.TsStartMO > getdate();

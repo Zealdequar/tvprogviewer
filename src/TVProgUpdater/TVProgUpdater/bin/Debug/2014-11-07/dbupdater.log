@@ -1,5 +1,0 @@
-2014-11-07 21:10:49.7578 INFO Начало получения ресурсов из базы.
-2014-11-07 21:10:50.2060 TRACE Ресурсы из базы успешно получены: 
-2014-11-07 21:11:40.1494 INFO Начало получения ресурсов из базы.
-2014-11-07 22:09:48.2519 INFO Начало получения ресурсов из базы.
-2014-11-07 22:09:56.3730 TRACE Ресурсы из базы успешно получены: WRID = '1', FileName = 'TGXmlTvOld.xml', ResourceName = 'Ресурс teleguide.info старой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/old/xmltv.xml.gz';WRID = '2', FileName = 'TGXmlTvNew.xml', ResourceName = 'Ресурс teleguide.info новой телепрограммы (XMLTV)', ResourceUrl ='http://www.teleguide.info/download/new3/xmltv.xml.gz';WRID = '3', FileName = 'TGInterTVOld.txt', ResourceName = 'Ресурс teleguide.info старой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/old/inter-tv.zip';WRID = '4', FileName = 'TGInterTVNew.txt', ResourceName = 'Ресурс teleguide.info новой телепрограммы (Интер-ТВ)', ResourceUrl ='http://www.teleguide.info/download/new3/inter-tv.zip'
