@@ -467,38 +467,38 @@ namespace TVProgViewer.DataAccess.Adapters
                                , CID = pr2.CID
                              }).Select(mapper.Map<TsStopForRemain>).ToList();
                             DateTime afterTwoDays = DateTime.Now.AddDays(2);
-                            var sp2 = (from pr in dataContext.Programmes.AsNoTracking()
-                                               join ch in dataContext.Channels.AsNoTracking() on pr.CID equals ch.ChannelID
+                            var sp2 = (from pr3 in dataContext.Programmes.AsNoTracking()
+                                               join ch in dataContext.Channels.AsNoTracking() on pr3.CID equals ch.ChannelID
                                                join mp in dataContext.MediaPic.AsNoTracking() on ch.IconID equals mp.IconID into chmp
                                                from mp in chmp.DefaultIfEmpty()
-                                               where pr.TID == typeProgID
-                                               && pr.TsStartMO >= DateTime.Now && afterTwoDays > pr.TsStopMO
-                                               && pr.Category != "Для взрослых"  && !pr.Title.Contains("(18+)")
+                                               where pr3.TID == typeProgID
+                                               && pr3.TsStartMO >= DateTime.Now && afterTwoDays > pr3.TsStopMO
+                                               && pr3.Category != "Для взрослых"  && !pr3.Title.Contains("(18+)")
                                                && ch.Deleted == null &&
-                                                 (category == null || pr.Category == category)
-                                               orderby pr.InternalChanID, pr.TsStartMO
+                                                 (category == null || pr3.Category == category)
+                                               orderby pr3.InternalChanID, pr3.TsStartMO
                                                select new
                                                {
-                                                   ProgrammesID = pr.ProgrammesID,
-                                                   CID = pr.CID,
+                                                   ProgrammesID = pr3.ProgrammesID,
+                                                   CID = pr3.CID,
                                                    ChannelName = ch.TitleChannel,
                                                    ChannelContent = mp.Path25 + mp.FileName,
-                                                   InternalChanID = pr.InternalChanID,
-                                                   Start = pr.TsStart,
-                                                   Stop = pr.TsStop,
-                                                   TsStartMO = pr.TsStartMO,
-                                                   TsStopMO = pr.TsStopMO,
-                                                   TelecastTitle = pr.Title,
-                                                   TelecastDescr = pr.Descr,
-                                                   AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
+                                                   InternalChanID = pr3.InternalChanID,
+                                                   Start = pr3.TsStart,
+                                                   Stop = pr3.TsStop,
+                                                   TsStartMO = pr3.TsStartMO,
+                                                   TsStopMO = pr3.TsStopMO,
+                                                   TelecastTitle = pr3.Title,
+                                                   TelecastDescr = pr3.Descr,
+                                                   AnonsContent = ((pr3.Descr != null && pr3.Descr != string.Empty) ?
                                                    dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 + dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
                                                    null),
-                                                   Category = pr.Category,
-                                                   Remain = (int)DbFunctions.DiffSeconds(DateTime.Now, pr.TsStartMO)
+                                                   Category = pr3.Category,
+                                                   Remain = (int)DbFunctions.DiffSeconds(DateTime.Now, pr3.TsStartMO)
                                                }
                                                ).AsNoTracking();
 
-                            var sp3 = (from pr in sp2
+                            var sp3 = (from pr in sp2.ToList()
                                   join prin in stopAfter on pr.CID equals prin.CID
                                   where pr.TsStartMO <= prin.TsStopMOAfter && prin.TsStopMOAfter < pr.TsStopMO
                                   select new SystemProgramme()
@@ -517,9 +517,11 @@ namespace TVProgViewer.DataAccess.Adapters
                                       AnonsContent = pr.AnonsContent,
                                       Category = pr.Category,
                                       Remain = pr.Remain
-                                  }).Select(mapper.Map<SystemProgramme>);
+                                  }).Select(mapper.Map<SystemProgramme>).ToList();
                             count = sp3.Count();
-                            systemProgramme = LinqExtensions.OrderBy(sp3.AsQueryable(), sidx, sord).Take(rows).Skip((page - 1) * rows).ToList<SystemProgramme>();
+                            if (!string.IsNullOrWhiteSpace(sidx))
+                                systemProgramme = LinqExtensions.OrderBy(sp3.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
+                            else systemProgramme = sp3.Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
                             SetGenres(systemProgramme, null);
                         }
                         else if (dateTime > minDate)
@@ -554,7 +556,9 @@ namespace TVProgViewer.DataAccess.Adapters
                                            Remain = (int)DbFunctions.DiffSeconds(DateTime.Now, pr.TsStartMO)
                                        });
                             count = sp4.Count();
-                            systemProgramme = LinqExtensions.OrderBy(sp4.AsQueryable(), sidx, sord).Take(rows).Skip((page - 1)*rows).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
+                            if (!string.IsNullOrWhiteSpace(sidx))
+                                systemProgramme = LinqExtensions.OrderBy(sp4.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
+                            else systemProgramme = sp4.Skip((page - 1) * rows).Take(rows).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
 
                             SetGenres(systemProgramme, null);
                         }

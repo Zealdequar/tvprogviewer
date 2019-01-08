@@ -67,7 +67,19 @@ namespace TVProgViewer.WebUI.Controllers
                 return Json(await repository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null)
                      , JsonRequestBehavior.AllowGet);
             }
-            return Json(await repository.GetSystemProgrammesAtNextAsyncList(progType, new DateTimeOffset(new DateTime(1800,1,1)), (category != "null") ? category : null, sidx, sord, page, rows), JsonRequestBehavior.AllowGet);
+            KeyValuePair<int, SystemProgramme[]> result = await repository.GetSystemProgrammesAtNextAsyncList(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null, sidx, sord, page, rows);
+            int pageIndex = page - 1;
+            int pageSize = rows;
+            int totalRecords = result.Key;
+            int totalPages = (int)Math.Ceiling((float)totalRecords / (float)pageSize);
+            var jsonData = new
+            {
+                total = totalPages,
+                page = page,
+                records = totalRecords,
+                rows = result.Value.ToArray()
+            };
+            return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> GetTvProviderList()

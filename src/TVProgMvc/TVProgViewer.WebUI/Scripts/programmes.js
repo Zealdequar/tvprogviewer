@@ -276,14 +276,6 @@ function setGrids() {
             viewrecords: true,
             caption: 'Программа передач',
             emptyrecords: 'Программа передач не обнаружена',
-            /*jsonReader:
-            {
-                repeatitems: false,
-                root: function (obj) { return obj; },
-                page: function (obj) { return 1; },
-                total: function (obj) { return obj.rowNum / obj.height; },
-                records: function (obj) { return obj.length; }
-            },*/
             pager: '#TVProgrammePager',
             loadonce: false,
             forceClientSorting: true,
@@ -388,16 +380,16 @@ function setGrids() {
             viewrecords: true,
             caption: 'Программа передач',
             emptyrecords: 'Программа передач не обнаружена',
-            jsonReader:
+            /*jsonReader:
             {
                 repeatitems: false,
                 root: function (obj) { return obj; },
                 page: function (obj) { return 1; },
                 total: function (obj) { return obj.rowNum / obj.height; },
                 records: function (obj) { return obj.length; }
-            },
+            },*/
             pager: '#TVProgrammeNextPager',
-            loadonce: true,
+            loadonce: false,
             multiselect: true,
         }).navGrid('#TVProgrammeNextPager',
         {
