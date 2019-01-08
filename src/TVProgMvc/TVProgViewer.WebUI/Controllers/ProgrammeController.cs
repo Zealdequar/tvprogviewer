@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using System.Web.Security;
 using TVProgViewer.WebUI.Infrastructure;
 using TVProgViewer.BusinessLogic.ProgObjs;
+using TVProgViewer.Common;
+
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -46,17 +48,7 @@ namespace TVProgViewer.WebUI.Controllers
             KeyValuePair<int, SystemProgramme[]> result = await repository.GetSystemProgrammesAtNowAsyncList(progType, DateTimeOffset.Now, (category != "null") ? category : null,
                  sidx, sord, page, rows);
 
-            int pageIndex = page - 1;
-            int pageSize = rows;
-            int totalRecords = result.Key;
-            int totalPages = (int)Math.Ceiling((float)totalRecords / (float)pageSize);
-            var jsonData = new
-            {
-                total = totalPages,
-                page = page,
-                records = totalRecords,
-                rows = result.Value.ToArray()
-            };
+            var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
@@ -67,18 +59,10 @@ namespace TVProgViewer.WebUI.Controllers
                 return Json(await repository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null)
                      , JsonRequestBehavior.AllowGet);
             }
+
             KeyValuePair<int, SystemProgramme[]> result = await repository.GetSystemProgrammesAtNextAsyncList(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null, sidx, sord, page, rows);
-            int pageIndex = page - 1;
-            int pageSize = rows;
-            int totalRecords = result.Key;
-            int totalPages = (int)Math.Ceiling((float)totalRecords / (float)pageSize);
-            var jsonData = new
-            {
-                total = totalPages,
-                page = page,
-                records = totalRecords,
-                rows = result.Value.ToArray()
-            };
+            
+            var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 

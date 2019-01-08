@@ -1308,6 +1308,10 @@
       <Project>{f6f67817-5d76-4fc0-b46c-c1c4b82e5142}</Project>
       <Name>BusinessLogic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{d29070e9-6088-4eb4-aac5-319fd85e42cd}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\CryptoService\CryptoService.csproj">
       <Project>{FD2B3C57-7107-4F56-A17E-F0251A8C5016}</Project>
       <Name>CryptoService</Name>
