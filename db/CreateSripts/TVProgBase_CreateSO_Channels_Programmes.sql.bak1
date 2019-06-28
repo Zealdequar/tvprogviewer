@@ -78,10 +78,8 @@ begin
 				set @ErrCode = 79;
 				return;
 			end;
-	        insert into dbo.MediaPic (FileName, ContentType, ContentCoding, ContentOrig, Length, 
-			                                                                Content25, Length25, IsSystem)
-			values (@ChannelIconName, @ContentType, @ContentCoding, @ChannelOrigIcon, @LengthIcon, 
-			                                        @ChannelIcon25, @Length25Icon, @IsSystem);
+	        insert into dbo.MediaPic (FileName, ContentType, ContentCoding, Length, Length25, IsSystem)
+			values (@ChannelIconName, @ContentType, @ContentCoding, @LengthIcon, @Length25Icon, @IsSystem);
 	    end try
 	    begin catch
 			set @ErrCode = 75;

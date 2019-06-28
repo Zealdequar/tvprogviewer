@@ -11,6 +11,7 @@ namespace TVProgViewer.DataAccess
     /// </summary>
     public class DataAccess 
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Выполнить хранимку
         /// </summary>
@@ -34,6 +35,7 @@ namespace TVProgViewer.DataAccess
                 catch (Exception ex)
                 {
                     string errMsg = ex.Message;
+                    Logger.Error(ex, errMsg);
                 }
                 finally
                 {

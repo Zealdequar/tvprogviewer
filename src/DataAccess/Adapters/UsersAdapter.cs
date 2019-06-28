@@ -13,6 +13,7 @@ namespace TVProgViewer.DataAccess.Adapters
     /// </summary>
     public class UsersAdapter: AdapterBase
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Заведение пользователя
         /// </summary>
@@ -47,6 +48,7 @@ namespace TVProgViewer.DataAccess.Adapters
             string gmtZone
             )
         {
+            Logger.Debug("Старт заведения пользователя");
             int result = 0;
             object genderObj ;
             if (gender == null)

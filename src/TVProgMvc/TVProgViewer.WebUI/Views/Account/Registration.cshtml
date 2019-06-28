@@ -1,4 +1,5 @@
-﻿@model TVProgViewer.BusinessLogic.Users.User
+﻿@using reCaptcha
+@model TVProgViewer.BusinessLogic.Users.User
 @{
     ViewBag.Title = "Регистрация нового пользователя";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,6 +9,7 @@
 @Html.ValidationSummary(true)
 @using (Html.BeginForm())
 {
+@Html.AntiForgeryToken()
      <div class="panel-body">
         <div class="col-md-5">
             <div class="form-group">
@@ -43,6 +45,15 @@
                 <label>@Html.DisplayNameFor(model => model.BirthDate)</label>
                 @Html.TextBoxFor(model => model.BirthDate, null, new { @class = "form-control" })
             </div>
+			<div class="form-group">
+			     @ReCaptcha.GetHtml(@ViewBag.publicKey)
+
+				 @if (ViewBag.RecaptchaLastErrors != null)
+				 {
+				    <div class="text-danger"> Ошибка! Неверная ReCaptcha </div>
+				 }
+		         @Html.ValidationMessage("ReCaptcha")
+		    </div>
         </div>
         <div class="col-md-5">
             <div class="form-group">
@@ -62,17 +73,14 @@
                 @Html.TextBoxFor(model => model.OtherPhone1, null, new { @class = "form-control" })
             </div>
             <div class="form-group">
-                <label>@Html.DisplayNameFor(model => model.OtherPhone2)</label>
-                @Html.TextBoxFor(model => model.OtherPhone2, null, new { @class = "form-control" })
-            </div>
-            <div class="form-group">
                 <label>@Html.DisplayNameFor(model => model.Address)</label>
                 @Html.TextAreaFor(model => model.Address, new { @class = "form-control" })
             </div>
         </div>
     </div>
+	
     <div class="panel-footer">
-        <input type="submit" value="Сохранить" class="btn btn-primary" />
+	    <input type="submit" value="Сохранить" class="btn btn-primary" />
         @Html.ActionLink("Отмена", "List", "Programme", null, null, null, null, new { @class = "btn btn-default" })
     </div>
 }
@@ -100,12 +108,13 @@
     <link href="~/Content/themes/base/all.css" rel="stylesheet" />
     <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
     <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/datepicker-ru.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
     <script type="text/javascript">
         $(function () {
             $.datepicker.setDefaults($.datepicker.regional['ru']);
-            $('#BirthDate').datepicker({
-                defaultDate: "-18y",
+            $('#BirthDate').datepicker().datepicker("setDate", new Date(new Date().setFullYear(new Date().getFullYear() - 18)));
+            $('#BirthDate').datepicker().datepicker({
                 dateFormat: "dd.mm.yy",
             });
             $.validator.addMethod('date',

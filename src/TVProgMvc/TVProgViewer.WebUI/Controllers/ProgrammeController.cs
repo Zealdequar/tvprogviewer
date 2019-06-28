@@ -23,6 +23,7 @@ namespace TVProgViewer.WebUI.Controllers
         /// Репозиторий для телепрограммы
         /// </summary>
         private IProgrammesRepository repository;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private long? UserId { get { return LazyGlobalist.Instance.UserId(System.Web.HttpContext.Current); } }
 
         public ProgrammeController(IProgrammesRepository programmeRepository)

@@ -81,7 +81,7 @@ namespace TVProgViewer.BusinessLogic.Users
         [DataMember]
         public string MobilePhone { get; set; }
 
-        [DisplayName("Доп. номер телефона 1")]
+        [DisplayName("Доп. номер телефона")]
         [DataMember]
         public string OtherPhone1 { get; set; }
 

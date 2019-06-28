@@ -18,7 +18,7 @@ namespace TVProgViewer.DataAccess.Adapters
     public class TvProgAdapter: AdapterBase
     {
         #region Служебные методы
-
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         /// <summary>
         /// Получение списка типов телепрограммы
         /// </summary>
@@ -27,7 +27,7 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                return (from tpp in dataContext.TVProgProviders.AsNoTracking()
+            return (from tpp in dataContext.TVProgProviders.AsNoTracking()
                         join tp in dataContext.TypeProg.AsNoTracking() on tpp.TVProgProviderID equals tp.TVProgProviderID
                         select new
                         {
@@ -82,13 +82,14 @@ namespace TVProgViewer.DataAccess.Adapters
         #endregion
 
         #region Работа с телеканалами
-
+       
         /// <summary>
         /// Получение системных каналов
         /// </summary>
         /// <param name="tvProgProviderID">Провайдер телепрограммы</param>
         public List<SystemChannel> GetSystemChannels(int tvProgProviderID)
         {
+           
             List<SystemChannel> listSystemChannels = new List<SystemChannel>();
             try
             {
@@ -439,8 +440,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                             TelecastTitle = pr.Title,
                                             TelecastDescr = pr.Descr,
                                             AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                            dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 +
-                                            dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                            dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                            dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                             null),
                                             Category = pr.Category,
                                             Remain = (int)(DbFunctions.DiffSeconds(pr.TsStopMO, dateTime) * 1.0 / (DbFunctions.DiffSeconds(pr.TsStopMO, pr.TsStartMO) * 1.0) * 100.0)
@@ -491,7 +492,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                                    TelecastTitle = pr3.Title,
                                                    TelecastDescr = pr3.Descr,
                                                    AnonsContent = ((pr3.Descr != null && pr3.Descr != string.Empty) ?
-                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 + dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 + dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                                    null),
                                                    Category = pr3.Category,
                                                    Remain = (int)DbFunctions.DiffSeconds(DateTime.Now, pr3.TsStartMO)
@@ -549,8 +550,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                            TelecastTitle = pr.Title,
                                            TelecastDescr = pr.Descr,
                                            AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                           dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 +
-                                           dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                           dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                           dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                            null),
                                            Category = pr.Category,
                                            Remain = (int)DbFunctions.DiffSeconds(DateTime.Now, pr.TsStartMO)
@@ -606,8 +607,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                         TelecastTitle = pr.Title,
                                         TelecastDescr = pr.Descr,
                                         AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                        dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 +
-                                        dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName:
+                                        dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                        dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName:
                                                    null),
                                         Category = pr.Category,
                                     }).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
@@ -661,8 +662,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                                TelecastDescr = pr.Descr,
                                                OrderCol = uch.OrderCol,
                                                AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                               dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 +
-                                               dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                               dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                               dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                                null),
                                                Category = pr.Category,
                                                Remain = (int)(DbFunctions.DiffSeconds(pr.TsStopMO, dateTime) * 1.0 / (DbFunctions.DiffSeconds(pr.TsStopMO, pr.TsStartMO) * 1.0) * 100.0),
@@ -708,8 +709,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                                    Title = pr.Title,
                                                    TelecastDescr = pr.Descr,
                                                    AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 +
-                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                                    null),
                                                    OrderCol = uch.OrderCol,
                                                    Category = pr.Category,
@@ -765,8 +766,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                                    TelecastTitle = pr.Title,
                                                    TelecastDescr = pr.Descr,
                                                    AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 +
-                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                                   dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                                    null),
                                                    OrderCol = uch.OrderCol,
                                                    Category = pr.Category,
@@ -823,8 +824,8 @@ namespace TVProgViewer.DataAccess.Adapters
                         TelecastTitle = pr.Title,
                         TelecastDescr = pr.Descr,
                         AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                        dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 +
-                        dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                        dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                        dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                                     null),
                         OrderCol = uch.OrderCol,
                         Category = pr.Category,
@@ -867,8 +868,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                        TelecastTitle = pr.Title,
                                        TelecastDescr = pr.Descr,
                                        AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                       dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 + 
-                                       dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                       dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 + 
+                                       dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                  null),
                                        Category = pr.Category,
                                        Remain = 1
@@ -921,8 +922,8 @@ namespace TVProgViewer.DataAccess.Adapters
                                        TelecastTitle = pr.Title,
                                        TelecastDescr = pr.Descr,
                                        AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                       dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).Path25 + 
-                                       dataContext.MediaPic.FirstOrDefault(mp => mp.IconID == 35).FileName :
+                                       dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 + 
+                                       dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                  null),
                                        Category = pr.Category,
                                        Remain = 1

@@ -15,6 +15,9 @@ using TVProgViewer.WebUI.Concrete;
 using TVProgViewer.CryptoService;
 using TVProgViewer.WebUI.Abstract;
 using TVProgViewer.BusinessLogic.Users;
+using reCaptcha;
+using System.Configuration;
+using System.Net;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -27,6 +30,7 @@ namespace TVProgViewer.WebUI.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private IUsersRepository _repository;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public AccountController()  {}
         
@@ -37,6 +41,7 @@ namespace TVProgViewer.WebUI.Controllers
         public AccountController(IUsersRepository usersRepository)
         {
             _repository = usersRepository;
+            ViewBag.publicKey = ConfigurationManager.AppSettings["ReCaptcha:SiteKey"];
         }
 
         /// <summary>
@@ -56,29 +61,41 @@ namespace TVProgViewer.WebUI.Controllers
         /// <param name="user">Пользователь</param>
         [HttpPost]
         [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public ActionResult Register(LogicUsers.User user)
         {
-            if (ModelState.IsValidField("UserName") && ModelState.IsValidField("Pass") &&
-                ModelState.IsValidField("PassRepeate") && user.Pass != user.PassRepeate)
+            try
             {
-                ModelState.AddModelError("", "Указанные строки пароля и подтверждения пароля должны совпадать");
+                if (ModelState.IsValidField("UserName") && ModelState.IsValidField("Pass") &&
+                    ModelState.IsValidField("PassRepeate") && user.Pass != user.PassRepeate)
+                {
+                    ModelState.AddModelError("", "Указанные строки пароля и подтверждения пароля должны совпадать");
+                }
+                if (ModelState.IsValidField("BirthDate") && user.BirthDate > DateTime.Now)
+                {
+                    ModelState.AddModelError("", "Укажите дату рождения в прошлом");
+                }
+#if !DEBUG
+                if (ModelState.IsValid && ReCaptcha.Validate(ConfigurationManager.AppSettings["ReCaptcha:SecretKey"]))
+                {
+#endif
+                    PBKDF2 pbkdf2 = new PBKDF2();
+                    string passHash = pbkdf2.Compute(user.PassRepeate);
+                    Logger.Debug("Создание пользователя");
+                    _repository.UserRegister(user.UserName, passHash, pbkdf2.Salt, user.LastName, user.FirstName, user.MiddleName, user.BirthDate,
+                                             user.Gender, user.Email, user.MobilePhone, "", "", user.Address, user.GmtZone);
+                    TempData["message"] = $"{user.UserName} успешно зарегистрирован.";
+                    return RedirectToAction("List", "Programme", null);
+#if !DEBUG
             }
-            if (ModelState.IsValidField("BirthDate") && user.BirthDate > DateTime.Now)
-            {
-                ModelState.AddModelError("", "Укажите дату рождения в прошлом");
-            }
-            if (ModelState.IsValid)
-            {
-                PBKDF2 pbkdf2 = new PBKDF2();
-                string passHash = pbkdf2.Compute(user.PassRepeate);
-                _repository.UserRegister(user.UserName, passHash, pbkdf2.Salt, user.LastName, user.FirstName, user.MiddleName, user.BirthDate,
-                                         user.Gender, user.Email, user.MobilePhone, user.OtherPhone1, user.OtherPhone2, user.Address, user.GmtZone);
-                TempData["message"] = $"{user.UserName} успешно зарегистрирован.";
-                return RedirectToAction("List", "Programme", null);
-            }
-            else
-            {
+#endif
+                ViewBag.RecaptchaLastErrors = ReCaptcha.GetLastErrors(this.HttpContext);
+                ViewBag.publicKey = ConfigurationManager.AppSettings["ReCaptcha:SiteKey"];
                 return View("Registration", user);
+            }
+            catch (Exception)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
             }
         }
        
@@ -100,15 +117,17 @@ namespace TVProgViewer.WebUI.Controllers
         /// <param name="returnUrl">Возвращаемый URL</param>
         /// <returns></returns>
         [HttpPost]
-        [AllowAnonymous]
+        [AllowAnonymous] 
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LogicUsers.LoginViewModel model, string returnUrl)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !ReCaptcha.Validate(ConfigurationManager.AppSettings["ReCaptcha:SecretKey"]))
             {
+                ViewBag.RecaptchaLastErrors = ReCaptcha.GetLastErrors(this.HttpContext);
+                ViewBag.publicKey = ConfigurationManager.AppSettings["ReCaptcha:SiteKey"];
                 return View(model);
             }
-
+           
             LogicUsers.User user = new LogicUsers.User() { UserName = model.Login, Pass = model.Password };
 
             SecureData secureData = await _repository.GetHashes(user.UserName);
@@ -118,7 +137,7 @@ namespace TVProgViewer.WebUI.Controllers
                 ModelState.AddModelError("", "Логин и Пароль введены неверно! Укажите правильные Логин и Пароль.");
                 return View(model);
             }
-
+           
             string hash = pbkdf2.Compute(user.Pass, secureData.PassExtend);
             if (pbkdf2.Compare(hash, secureData.PassHash))
             {
@@ -161,5 +180,14 @@ namespace TVProgViewer.WebUI.Controllers
             System.Web.HttpContext.Current.Session["ClientCode"] = null;
             return RedirectToAction("List", "Programme");
         }
+
+        [HttpGet]
+        public ActionResult RegisterCaptcha()
+        {
+            ViewBag.Recaptcha = ReCaptcha.GetHtml(ConfigurationManager.AppSettings["ReCaptcha:SiteKey"]);
+            ViewBag.publicKey = ConfigurationManager.AppSettings["ReCaptcha:SiteKey"];
+            return View("Registration");
+        }
+
     }
 }
