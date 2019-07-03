@@ -29,8 +29,10 @@
 else
 {
         <ul class="nav navbar-nav navbar-right">
+            <li>@Html.ActionLink("Главная", "List", "Programme", routeValues: null, htmlAttributes: new { id = "mainLink" })</li>
             <li>@Html.ActionLink("Вход", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
             <li>@Html.ActionLink("Зарегистрироваться", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            <li>@Html.ActionLink("О TVProgViewer", "About", "Programme", routeValues: null, htmlAttributes: new { id = "aboutLink" })</li>
         </ul>
     }
 }

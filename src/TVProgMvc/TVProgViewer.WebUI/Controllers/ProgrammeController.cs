@@ -37,6 +37,11 @@ namespace TVProgViewer.WebUI.Controllers
             return View();
         }
 
+        public ActionResult About()
+        {
+            return View();
+        }
+
         [AllowAnonymous]
         public async Task<ActionResult> GetSystemProgrammeAtNow(int progType, string category, string sidx, string sord, int page, int rows)
         {           

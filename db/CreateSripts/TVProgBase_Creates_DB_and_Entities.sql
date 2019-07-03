@@ -141,7 +141,7 @@ go
 create table dbo.Genres
 (
 	GenreID bigint IDENTITY(1,1),
-	UID bigint not null references dbo.SystemUsers(UserID),
+	UID bigint null references dbo.SystemUsers(UserID),
 	IconID bigint null references dbo.MediaPic(IconID),
 	CreateDate datetimeoffset default SysDateTimeOffset() not null,
 	GenreName nvarchar(150) not null,
@@ -159,7 +159,7 @@ create table dbo.GenreClassificator
 (
 	GenreClassificatorID bigint IDENTITY(1,1),
 	GID bigint not null references dbo.Genres(GenreID),
-	UID bigint not null references dbo.SystemUsers(UserID),
+	UID bigint null references dbo.SystemUsers(UserID),
 	ContainPhrases nvarchar(350) null,
 	NonContainPhrases nvarchar(350) null,
 	OrderCol int null,
@@ -175,7 +175,7 @@ GO
 create table dbo.Ratings
 (
 	RatingID bigint IDENTITY(1,1),
-	UID bigint not null references dbo.Systemusers(UserID),
+	UID bigint null references dbo.Systemusers(UserID),
 	IconID bigint null references dbo.MediaPic(IconID),
 	CreateDate datetimeoffset default SysDateTimeOffset() not null,
 	RatingName nvarchar(150) not null,
@@ -192,7 +192,7 @@ create table dbo.RatingClassificator
 (
 	RatingClassificatorID bigint IDENTITY(1,1),
 	RID bigint not null references dbo.Ratings(RatingID),
-	UID bigint not null references dbo.Systemusers(UserID),
+	UID bigint null references dbo.Systemusers(UserID),
 	ContainPhrases nvarchar(350) not null,
 	NonContainPhrases nvarchar(350) null,
 	OrderCol int null,

@@ -277,7 +277,7 @@ function setGrids() {
                 $("tr.jqgrow td input", "#TVProgrammeNowGrid").click(function () {
                     if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
                         $("#anonsTool").show(50);
-                        $("#anonsDescr").html($(this).closest('tr').find('td:nth-child(11)').attr('title'));
+                        $("#anonsDescr").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
                     }
                     else {
                         $("#anonsTool").hide(50);
@@ -381,7 +381,7 @@ function setGrids() {
                 $("tr.jqgrow td input", "#TVProgrammeNextGrid").click(function () {
                     if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
                         $("#anonsToolNext").show(50);
-                        $("#anonsDescrNext").html($(this).closest('tr').find('td:nth-child(11)').attr('title'));
+                        $("#anonsDescrNext").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
                     }
                     else {
                         $("#anonsToolNext").hide(50);

@@ -154,6 +154,7 @@ namespace TVProgViewer.DataAccess.Adapters
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, ex.Message);
             }
             return listUserChannels;
         }
@@ -615,6 +616,7 @@ namespace TVProgViewer.DataAccess.Adapters
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, ex.Message);
             }
             return systemProgrammes;
         }
@@ -782,6 +784,7 @@ namespace TVProgViewer.DataAccess.Adapters
             }
             catch (Exception ex)
             {
+                Logger.Error(ex, ex.Message);
             }
             return systemProgramme;
         }
@@ -797,41 +800,50 @@ namespace TVProgViewer.DataAccess.Adapters
         /// <param name="category">Категория телепередач</param>
         public List<SystemProgramme> GetUserProgrammeOfDay(long uid, int typeProgID, int cid, DateTime tsStart, DateTime tsStop, string category)
         {
-            List<SystemProgramme> systemProgramme = (from pr in dataContext.Programmes.AsNoTracking()
-                    join ch in dataContext.Channels.AsNoTracking() on pr.CID equals ch.ChannelID
-                    join uch in dataContext.UserChannels.AsNoTracking() on ch.ChannelID equals uch.CID
-                    join mp in dataContext.MediaPic.AsNoTracking() on uch.IconID equals mp.IconID into mpch
-                    from mp in mpch.DefaultIfEmpty()
-                    where pr.TID == typeProgID &&
-                          ch.ChannelID == cid &&
-                          pr.TsStartMO >= tsStart &&
-                          pr.TsStopMO < tsStop &&
-                          uch.UID == uid
-                          && ch.Deleted == null
-                          && (category == null || pr.Category == category)
-                    orderby uch.OrderCol, pr.TsStartMO
-                    select new
-                    {
-                        ProgrammesID = pr.ProgrammesID,
-                        CID = pr.CID,
-                        ChannelName = ch.TitleChannel,
-                        InternalChanID = pr.InternalChanID,
-                        ChannelContent = mp.Path25 + mp.FileName,
-                        Start = pr.TsStart,
-                        TsStartMO = pr.TsStartMO,
-                        Stop = pr.TsStop,
-                        TsStopMO = pr.TsStopMO,
-                        TelecastTitle = pr.Title,
-                        TelecastDescr = pr.Descr,
-                        AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                        dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
-                        dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
-                                                    null),
-                        OrderCol = uch.OrderCol,
-                        Category = pr.Category,
-                    }).ToList().DistinctBy(x => x.ProgrammesID).Select(mapper.Map<SystemProgramme>).ToList();
-            SetGenres(systemProgramme, uid);
-            SetRatings(systemProgramme, uid);
+            List<SystemProgramme> systemProgramme = null;
+
+            try
+            {
+                systemProgramme = (from pr in dataContext.Programmes.AsNoTracking()
+                                   join ch in dataContext.Channels.AsNoTracking() on pr.CID equals ch.ChannelID
+                                   join uch in dataContext.UserChannels.AsNoTracking() on ch.ChannelID equals uch.CID
+                                   join mp in dataContext.MediaPic.AsNoTracking() on uch.IconID equals mp.IconID into mpch
+                                   from mp in mpch.DefaultIfEmpty()
+                                   where pr.TID == typeProgID &&
+                                         ch.ChannelID == cid &&
+                                         pr.TsStartMO >= tsStart &&
+                                         pr.TsStopMO < tsStop &&
+                                         uch.UID == uid
+                                         && ch.Deleted == null
+                                         && (category == null || pr.Category == category)
+                                   orderby uch.OrderCol, pr.TsStartMO
+                                   select new
+                                   {
+                                       ProgrammesID = pr.ProgrammesID,
+                                       CID = pr.CID,
+                                       ChannelName = ch.TitleChannel,
+                                       InternalChanID = pr.InternalChanID,
+                                       ChannelContent = mp.Path25 + mp.FileName,
+                                       Start = pr.TsStart,
+                                       TsStartMO = pr.TsStartMO,
+                                       Stop = pr.TsStop,
+                                       TsStopMO = pr.TsStopMO,
+                                       TelecastTitle = pr.Title,
+                                       TelecastDescr = pr.Descr,
+                                       AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
+                                       dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                       dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
+                                                                   null),
+                                       OrderCol = uch.OrderCol,
+                                       Category = pr.Category,
+                                   }).ToList().DistinctBy(x => x.ProgrammesID).Select(mapper.Map<SystemProgramme>).ToList();
+                SetGenres(systemProgramme, uid);
+                SetRatings(systemProgramme, uid);
+            }
+            catch(Exception ex)
+            {
+                Logger.Error(ex, ex.Message);
+            }
             return systemProgramme;
         }
 

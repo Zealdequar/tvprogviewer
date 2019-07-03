@@ -82,8 +82,8 @@ namespace TVProgViewer.WebUI.Controllers
                     PBKDF2 pbkdf2 = new PBKDF2();
                     string passHash = pbkdf2.Compute(user.PassRepeate);
                     Logger.Debug("Создание пользователя");
-                    _repository.UserRegister(user.UserName, passHash, pbkdf2.Salt, user.LastName, user.FirstName, user.MiddleName, user.BirthDate,
-                                             user.Gender, user.Email, user.MobilePhone, "", "", user.Address, user.GmtZone);
+                    _repository.UserRegister(user.UserName, passHash, pbkdf2.Salt, user.LastName, user.FirstName, user.MiddleName ?? "", user.BirthDate,
+                                             user.Gender, user.Email, user.MobilePhone, user.OtherPhone1 ?? "", user.OtherPhone2 ?? "", user.Address ?? "", user.GmtZone);
                     TempData["message"] = $"{user.UserName} успешно зарегистрирован.";
                     return RedirectToAction("List", "Programme", null);
 #if !DEBUG
