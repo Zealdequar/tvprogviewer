@@ -48,7 +48,7 @@ namespace TVProgViewer.DataAccess.Adapters
             string gmtZone
             )
         {
-            Logger.Debug("Старт заведения пользователя");
+            
             int result = 0;
             object genderObj ;
             if (gender == null)
@@ -78,8 +78,10 @@ namespace TVProgViewer.DataAccess.Adapters
             };
             SqlParameter outRes = new SqlParameter("@ErrCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
             pars.Add(outRes);
+            Logger.Debug("Старт заведения пользователя");
             da.ExecCommand(GetTvProgSecureConnection(), "spUserStart", pars.Cast<DbParameter>().ToList<DbParameter>());
             result = (outRes.Value != DBNull.Value) ? int.Parse(outRes.Value.ToString()) : -1;
+            Logger.Debug("result = " + result);
             return result;
         }
 

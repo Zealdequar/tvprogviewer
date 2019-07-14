@@ -180,6 +180,7 @@ create table dbo.Ratings
 	CreateDate datetimeoffset default SysDateTimeOffset() not null,
 	RatingName nvarchar(150) not null,
 	Visible bit not null,
+	DeleteDate datetimeoffset null,
 	Constraint PK_Ratings Primary Key Clustered
 	(
 	RatingID Asc

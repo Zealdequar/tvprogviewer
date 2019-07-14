@@ -10,6 +10,7 @@ namespace TVProgViewer.BusinessLogic.Users
     /// <summary>
     /// Пользователь
     /// </summary>
+  
     [DataContract]
     public class User 
     {
@@ -25,7 +26,23 @@ namespace TVProgViewer.BusinessLogic.Users
         }
 
         #endregion
+        [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+        public class MustBeTrueAttribute : ValidationAttribute, IClientValidatable
+        {
+            public override bool IsValid(object value)
+            {
+                return value != null && value is bool && (bool)value;
+            }
 
+            public IEnumerable<ModelClientValidationRule> GetClientValidationRules(ModelMetadata metadata, ControllerContext context)
+            {
+                yield return new ModelClientValidationRule
+                {
+                    ErrorMessage = this.ErrorMessage,
+                    ValidationType = "mustbetrue"
+                };
+            }
+        }
         /// <summary>
         /// Идентификатор пользователя
         /// </summary>
@@ -41,6 +58,10 @@ namespace TVProgViewer.BusinessLogic.Users
         [Required(ErrorMessage = "Укажите пароль")]
         [DisplayName("Пароль")]
         public string Pass { get; set; }
+
+        [MustBeTrue(ErrorMessage = "Для регистрации необходимо согласиться с условиями обработки персональных данных")]
+        [DisplayName("Я согласен(а) на обработку моих персональных данных. В соответствии со статьей 9 ФЗ-152 от 27 июля 2006 года «О персональных данных», даю согласие на обработку в документальной и/или электронной форме моих персональных данных сайту TVProgViewer.Ru")]
+        public bool Aggree { get; set; }
 
         [Required(ErrorMessage = "Укажите подтверждение пароля")]
         [DisplayName("Подтверждение пароля")]

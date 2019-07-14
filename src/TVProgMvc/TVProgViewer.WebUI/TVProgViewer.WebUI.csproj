@@ -360,6 +360,7 @@
     <Content Include="imgs\i\Tue_eng.png" />
     <Content Include="imgs\i\Tue_eng_exp.png" />
     <Content Include="imgs\i\Tue_exp.png" />
+    <Content Include="imgs\i\TVProgUser.png" />
     <Content Include="imgs\i\tvProgViewer.ico" />
     <Content Include="imgs\i\UncheckAll.png" />
     <Content Include="imgs\i\volume-high.png" />
@@ -1034,6 +1035,7 @@
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
     <None Include="Properties\PublishProfiles\TVProgPublish.pubxml" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\datepicker-ru.js" />
@@ -1269,6 +1271,7 @@
     <Content Include="Scripts\user-channels.js" />
     <Content Include="Scripts\user-genres.js" />
     <Content Include="Scripts\user-ratings.js" />
+    <Content Include="sitemap.xml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

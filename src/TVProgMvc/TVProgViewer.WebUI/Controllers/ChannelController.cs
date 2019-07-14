@@ -22,6 +22,7 @@ namespace TVProgViewer.WebUI.Controllers
     [Authorize]
     public class ChannelController : Controller
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         const long Max_Length = (long)8 * 1024 * 1024 * 1024;
         /// <summary>
         /// Репозиторий для каналов
@@ -102,6 +103,7 @@ namespace TVProgViewer.WebUI.Controllers
         [HttpPost]
         public async Task<ActionResult> UploadFile(HttpPostedFileBase file, int userChannelId)
         {
+            Logger.Debug("Загрузка файла");
             List<string> errors = new List<string>();
             if (file == null)
                 return Json("Нет файла!", JsonRequestBehavior.AllowGet);
@@ -162,7 +164,7 @@ namespace TVProgViewer.WebUI.Controllers
             }
             catch (Exception ex)
             {
-                //Лог
+                Logger.Error(ex, ex.StackTrace);
             }
                         
             return Json(errors, JsonRequestBehavior.AllowGet); 

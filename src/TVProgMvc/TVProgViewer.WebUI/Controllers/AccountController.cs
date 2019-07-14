@@ -121,13 +121,16 @@ namespace TVProgViewer.WebUI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LogicUsers.LoginViewModel model, string returnUrl)
         {
+#if !DEBUG
             if (!ModelState.IsValid || !ReCaptcha.Validate(ConfigurationManager.AppSettings["ReCaptcha:SecretKey"]))
             {
+
                 ViewBag.RecaptchaLastErrors = ReCaptcha.GetLastErrors(this.HttpContext);
                 ViewBag.publicKey = ConfigurationManager.AppSettings["ReCaptcha:SiteKey"];
                 return View(model);
             }
-           
+#endif
+
             LogicUsers.User user = new LogicUsers.User() { UserName = model.Login, Pass = model.Password };
 
             SecureData secureData = await _repository.GetHashes(user.UserName);

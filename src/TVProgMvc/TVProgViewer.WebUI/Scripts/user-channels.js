@@ -140,10 +140,11 @@ function setGrid()
             closeOnEscape: true,
             closeAfterEdit: true,
             reloadAfterSubmit: true,
-            afterSubmit: function () {
+            afterSubmit: function (response, postData) {
+                UploadImage(response, postData);
                 $(this).jqGrid("setGridParam", { datatype: 'json' });
                 return [true];
-            },
+            }
         },
         jsonReader:
             {
@@ -157,7 +158,12 @@ function setGrid()
         editurl: '/Channel/UpdateChannel?tvProgProviderID=' + $('#TVProgProvider option:selected').val(),
         loadonce: true,
         reloadAfterSubmit: true,
-        afterSubmit: UploadImage
+         afterSubmit: UploadImage,
+         onInitializeForm: function (formid) {
+             $(formid).attr('method', 'POST');
+             $(formid).attr('action', '');
+             $(formid).attr('enctype', 'multipart/form-data');
+         }
     }).navGrid('#userChannelsPager',
         {
             edit: true, add: false, del: false, search: true,

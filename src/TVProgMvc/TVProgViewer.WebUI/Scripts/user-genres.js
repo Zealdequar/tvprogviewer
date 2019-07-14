@@ -59,7 +59,8 @@ function GetGenresForSelect() {
                 var gn = data[i].GenreName;
                 arr += '"' + gid + '": "' + gn + '", ';
             }
-            arr = arr.substring(0, arr.length - 2);
+            if (arr.length > 1)
+              arr = arr.substring(0, arr.length - 2);
             arr += '}';
             genresForSelect = $.parseJSON(arr);
         }
@@ -189,7 +190,6 @@ function setGrids()
                 records: function (obj) { return obj.length; }
             },
         pager: '#userGenresPager',
-        loadonce: true,
         reloadAfterSubmit: true,
         editurl: "/Genre/UpdateGenre",
         afterSubmit: UploadImage

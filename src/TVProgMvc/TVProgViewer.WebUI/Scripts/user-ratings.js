@@ -59,7 +59,8 @@ function GetRatingsForSelect() {
                 var gn = data[i].RatingName;
                 arr += '"' + gid + '": "' + gn + '", ';
             }
-            arr = arr.substring(0, arr.length - 2);
+            if (arr.length > 1)
+              arr = arr.substring(0, arr.length - 2);
             arr += '}';
             ratingsForSelect = $.parseJSON(arr);
         }
@@ -188,7 +189,6 @@ function setGrids() {
                 records: function (obj) { return obj.length; }
             },
         pager: '#userRatingsPager',
-        loadonce: true,
         reloadAfterSubmit: true,
         editurl: "/Rating/UpdateRating",
         afterSubmit: UploadImage
