@@ -311,6 +311,7 @@
     <Content Include="imgs\i\LCD-TV-Panel128x128.png" />
     <Content Include="imgs\i\LCD-TV-Panel256x256.png" />
     <Content Include="imgs\i\LCD-TV-Panel50x37.png" />
+    <Content Include="imgs\i\LCD-TV-Panel_404.png" />
     <Content Include="imgs\i\MessageWindowFone.png" />
     <Content Include="imgs\i\Mon.png" />
     <Content Include="imgs\i\Monitor.png" />
@@ -1305,6 +1306,7 @@
     <Compile Include="Controllers\GenreController.cs" />
     <Compile Include="Controllers\ProgrammeController.cs" />
     <Compile Include="Controllers\RatingController.cs" />
+    <Compile Include="Controllers\StaticContentController.cs" />
     <Compile Include="Controllers\TreeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -1338,6 +1340,7 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Programme\About.cshtml" />
+    <Content Include="Views\StaticContent\PageNotFound.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

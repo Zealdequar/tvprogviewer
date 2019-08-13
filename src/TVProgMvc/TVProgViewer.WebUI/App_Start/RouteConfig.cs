@@ -18,6 +18,12 @@ namespace TVProgViewer.WebUI
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Programme", action = "List", id = UrlParameter.Optional }
             );
+
+            routes.MapRoute(
+               name: "404-PageNotFound",
+               url: "*{url}",
+               defaults: new { controller = "StaticContent", action = "PageNotFound" });
+
         }
     }
 }

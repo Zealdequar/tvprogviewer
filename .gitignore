@@ -217,3 +217,7 @@ project.lock.json
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
+src/TVProgMvc/TVProgViewer.WebUI/file.txt
+src/TVProgMvc/TVProgViewer.WebUI/imgs/469DA11A-5CE2-4C9A-9EAA-13D5A1106443/large/E757E701-2339-45F3-AB88-4CD8CA11EC48.jpeg
+src/TVProgMvc/TVProgViewer.WebUI/imgs/469DA11A-5CE2-4C9A-9EAA-13D5A1106443/small/E757E701-2339-45F3-AB88-4CD8CA11EC48.jpeg
+src/TVProgMvc/TVProgViewer.WebUI/file.txt
