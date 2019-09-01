@@ -598,7 +598,7 @@ function fillUserByDay(date, channelId) {
                 {
                     key: false, name: 'Stop', index: 'Stop', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
                 },
-                { key: false, name: 'TelecastTitle', index: 'TelecastTitle', width: 850, sortable: true },
+                {   key: false, name: 'TelecastTitle', index: 'TelecastTitle', width: 850, sortable: true },
                 {
                     key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
                 }
@@ -634,7 +634,7 @@ function fillUserByDay(date, channelId) {
                 $("tr.jqgrow td input", "#TVProgrammeByDaysGrid").click(function () {
                     if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
                         $("#anonsToolByDays").show(50);
-                        $("#anonsDescrByDays").html($(this).closest('tr').find('td:nth-child(8)').attr('title'));
+                        $("#anonsDescrByDays").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
                     }
                     else {
                         $("#anonsToolByDays").hide(50);
@@ -751,7 +751,7 @@ function fillUserByChannels(date, channelId) {
                 $("tr.jqgrow td input", "#TVProgrammeByChannelsGrid").click(function () {
                     if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
                         $("#anonsToolByChannels").show(50);
-                        $("#anonsDescrByChannels").html($(this).closest('tr').find('td:nth-child(8)').attr('title'));
+                        $("#anonsDescrByChannels").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
                     }
                     else {
                         $("#anonsToolByChannels").hide(50);

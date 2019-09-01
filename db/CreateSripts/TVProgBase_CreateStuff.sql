@@ -21,5 +21,10 @@ begin
 		   ) pr,
    (select num from (values (0), (1), (2), (3),(4), (5),(6)) as N(num)) N)A
    where datepart(dw, dateMin4weeks) = datepart(dw, '1900-01-01'))
+
+   ALTER DATABASE [TvProgBase] SET RECOVERY SIMPLE
+   
+   DBCC SHRINKFILE (TVProgBase_log, 1); 
+   ALTER DATABASE [TVProgBase] SET RECOVERY FULL
 end
 go

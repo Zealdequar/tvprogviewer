@@ -50,7 +50,7 @@
     <title>@ViewBag.Title</title>
 </head>
 <body>
-    <link rel="SHORTCUT ICON" href="http://www.tvprogviewer.com/favicon.ico"/>
+    <link rel="SHORTCUT ICON" href="http://www.tvprogviewer.com/favicon.ico" />
     <div class="navbar navbar-inverse" role="navigation">
         <a class="navbar-brand" href="#"><img src="~/imgs/i/LCD-TV-Panel128x128.png" title="TVProgViewer" style="position: absolute; top:-33px;left:10px;" /></a>
         <div class="container">
@@ -81,7 +81,12 @@
     <br />
     <footer class="col-xs-12">
         <p>&copy; 2012 — @DateTime.Now.Year TVProgViewer</p>
-        <a href="https://webmaster.yandex.ru/sqi?host=tvprogviewer.ru"><img width="88" height="31" alt="" border="0" src="https://yandex.ru/cycounter?tvprogviewer.ru&theme=light&lang=ru" /></a>
+        <div>
+            <a href="https://webmaster.yandex.ru/sqi?host=tvprogviewer.ru"><img width="88" height="31" alt="" border="0" src="https://yandex.ru/cycounter?tvprogviewer.ru&theme=light&lang=ru" /></a>
+            <script src="https://yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
+            <script src="https://yastatic.net/share2/share.js" async="async"></script>
+            <div class="ya-share2" data-description="TVProgViewer — бесплатное приложение для тонкой настройки и удобного просмотра программы телепередач по всем каналам с анонсами" data-counter="true" style="position:absolute; top:37px; left: 110px" data-services="collections,vkontakte,facebook,odnoklassniki,moimir,twitter,reddit,lj,viber,whatsapp,skype"></div>
+        </div>
     </footer>
     @RenderSection("scripts", required: true)
 </body>
