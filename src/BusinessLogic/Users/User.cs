@@ -1,16 +1,19 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Web.Mvc;
 
+
+
 namespace TVProgViewer.BusinessLogic.Users
 {
     /// <summary>
     /// Пользователь
     /// </summary>
-  
+
     [DataContract]
     public class User 
     {
