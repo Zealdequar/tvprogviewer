@@ -381,7 +381,7 @@ namespace TVProgViewer.UnitTests.TVProgServiceReference {
         private int TVProgProviderIDField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private TVProgViewer.WebUI.MainServiceReferences.EnumsTypeProg TypeEnumField;
+        private TVProgViewer.UnitTests.TVProgServiceReference.EnumsTypeProg TypeEnumField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string TypeNameField;
@@ -452,7 +452,7 @@ namespace TVProgViewer.UnitTests.TVProgServiceReference {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public TVProgViewer.WebUI.MainServiceReferences.EnumsTypeProg TypeEnum {
+        public TVProgViewer.UnitTests.TVProgServiceReference.EnumsTypeProg TypeEnum {
             get {
                 return this.TypeEnumField;
             }
@@ -498,6 +498,17 @@ namespace TVProgViewer.UnitTests.TVProgServiceReference {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
             }
         }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="Enums.TypeProg", Namespace="http://schemas.datacontract.org/2004/07/TVProgViewer.Common")]
+    public enum EnumsTypeProg : int {
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        XMLTV = 0,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        InterTV = 1,
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]

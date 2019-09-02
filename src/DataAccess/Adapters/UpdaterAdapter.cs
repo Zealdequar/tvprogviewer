@@ -12,7 +12,7 @@ namespace TVProgViewer.DataAccess.Adapters
     /// <summary>
     /// Адаптер для робота-обновителя
     /// </summary>
-    internal class UpdaterAdapter : AdapterBase
+    public class UpdaterAdapter : AdapterBase
     {
         /// <summary>
         /// Получение ресурсов программ телепередач

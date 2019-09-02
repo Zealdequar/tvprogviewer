@@ -9,19 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace TVProgViewer.WebUI.MainServiceReferences {
-    using System.Runtime.Serialization;
     
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Enums.TypeProg", Namespace="http://schemas.datacontract.org/2004/07/TVProgViewer.Common")]
-    public enum EnumsTypeProg : int {
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        XMLTV = 0,
-        
-        [System.Runtime.Serialization.EnumMemberAttribute()]
-        InterTV = 1,
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="MainServiceReferences.IMainService")]

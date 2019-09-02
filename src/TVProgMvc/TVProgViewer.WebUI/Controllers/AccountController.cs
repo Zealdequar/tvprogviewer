@@ -32,7 +32,7 @@ namespace TVProgViewer.WebUI.Controllers
         private IUsersRepository _repository;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AccountController()  {}
+        public AccountController() { ViewBag.publicKey = "7897"; }
         
         /// <summary>
         /// Конструктор
