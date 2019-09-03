@@ -31,7 +31,7 @@ namespace TVProgViewer.DataAccess.Adapters
         {
            dataContext  = new TVProgBaseEntities();
            dataContext.Database.CommandTimeout = 180;
-           var config = new MapperConfiguration(cfg => { cfg.AllowNullCollections = true; });
+           var config = new MapperConfiguration(cfg => { cfg.AllowNullCollections = true; cfg.CreateMissingTypeMaps = true; });
            mapper = config.CreateMapper();
         }
 
