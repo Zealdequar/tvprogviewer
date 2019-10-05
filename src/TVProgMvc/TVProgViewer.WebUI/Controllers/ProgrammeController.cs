@@ -22,13 +22,15 @@ namespace TVProgViewer.WebUI.Controllers
         /// <summary>
         /// Репозиторий для телепрограммы
         /// </summary>
-        private IProgrammesRepository repository;
+        private IProgrammesRepository progRepository;
+        private IGenresRepository genresRepository;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private long? UserId { get { return LazyGlobalist.Instance.UserId(System.Web.HttpContext.Current); } }
 
-        public ProgrammeController(IProgrammesRepository programmeRepository)
+        public ProgrammeController(IProgrammesRepository programmeRepository, IGenresRepository genRepository)
         {
-            this.repository = programmeRepository;
+            this.progRepository = programmeRepository;
+            this.genresRepository = genRepository;
         }
 
         public ActionResult List()
@@ -47,11 +49,11 @@ namespace TVProgViewer.WebUI.Controllers
         {           
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await repository.GetUserProgrammesAtNowAsyncList(UserId.Value, progType, DateTimeOffset.Now, (category != "null") ? category : null)
+                return Json(await progRepository.GetUserProgrammesAtNowAsyncList(UserId.Value, progType, DateTimeOffset.Now, (category != "null") ? category : null)
                     , JsonRequestBehavior.AllowGet);
             }
 
-            KeyValuePair<int, SystemProgramme[]> result = await repository.GetSystemProgrammesAtNowAsyncList(progType, DateTimeOffset.Now, (category != "null") ? category : null,
+            KeyValuePair<int, SystemProgramme[]> result = await progRepository.GetSystemProgrammesAtNowAsyncList(progType, DateTimeOffset.Now, (category != "null") ? category : null,
                  sidx, sord, page, rows);
 
             var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
@@ -62,11 +64,11 @@ namespace TVProgViewer.WebUI.Controllers
         {
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await repository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null)
+                return Json(await progRepository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null)
                      , JsonRequestBehavior.AllowGet);
             }
 
-            KeyValuePair<int, SystemProgramme[]> result = await repository.GetSystemProgrammesAtNextAsyncList(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null, sidx, sord, page, rows);
+            KeyValuePair<int, SystemProgramme[]> result = await progRepository.GetSystemProgrammesAtNextAsyncList(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null, sidx, sord, page, rows);
             
             var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
             return Json(jsonData, JsonRequestBehavior.AllowGet);
@@ -74,26 +76,26 @@ namespace TVProgViewer.WebUI.Controllers
 
         public async Task<ActionResult> GetTvProviderList()
         {
-            return Json(await repository.GetProviderTypeAsyncList(), JsonRequestBehavior.AllowGet);
+            return Json(await progRepository.GetProviderTypeAsyncList(), JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> GetCategories()
         {
-            return Json(await repository.GetCategories(), JsonRequestBehavior.AllowGet);
+            return Json(await progRepository.GetCategories(), JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> SearchProgramme(int progType, string findTitle)
         {
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await repository.SearchUserProgramme(UserId.Value, progType, findTitle), JsonRequestBehavior.AllowGet);
+                return Json(await progRepository.SearchUserProgramme(UserId.Value, progType, findTitle), JsonRequestBehavior.AllowGet);
             }
-            return Json(await repository.SearchProgramme(progType, findTitle), JsonRequestBehavior.AllowGet);
+            return Json(await progRepository.SearchProgramme(progType, findTitle), JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> GetSystemProgrammePeriod(int progType)
         {
-            return Json(await repository.GetSystemProgrammePeriodAsync(progType), JsonRequestBehavior.AllowGet);
+            return Json(await progRepository.GetSystemProgrammePeriodAsync(progType), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult TreeView()
@@ -108,9 +110,14 @@ namespace TVProgViewer.WebUI.Controllers
                 return await new Task<JsonResult>(null);
             }
 
-            return Json(await repository.GetUserProgrammesOfDayList(UserId.Value, progTypeID, cid,
+            return Json(await progRepository.GetUserProgrammesOfDayList(UserId.Value, progTypeID, cid,
                                 Convert.ToDateTime(tsDate).AddHours(5).AddMinutes(45),
                                 Convert.ToDateTime(tsDate).AddDays(1).AddHours(5).AddMinutes(45), (category != "null") ? category : null), JsonRequestBehavior.AllowGet);
+        }
+
+        public async Task<JsonResult> GetGenres()
+        {
+            return Json(await genresRepository.GetGenres(null), JsonRequestBehavior.AllowGet);
         }
     }
 }

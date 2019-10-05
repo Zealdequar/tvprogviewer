@@ -202,6 +202,7 @@
     <Content Include="Content\jsTree\themes\default\style.css" />
     <Content Include="Content\jsTree\themes\default\style.min.css" />
     <Content Include="Content\jsTree\themes\default\throbber.gif" />
+    <Content Include="Content\login.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
@@ -321,6 +322,7 @@
     <Content Include="imgs\i\LCD-TV-Panel256x256.png" />
     <Content Include="imgs\i\LCD-TV-Panel50x37.png" />
     <Content Include="imgs\i\LCD-TV-Panel_404.png" />
+    <Content Include="imgs\i\logo_login.png" />
     <Content Include="imgs\i\MessageWindowFone.png" />
     <Content Include="imgs\i\Mon.png" />
     <Content Include="imgs\i\Monitor.png" />
@@ -1350,6 +1352,7 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Programme\About.cshtml" />
     <Content Include="Views\StaticContent\PageNotFound.cshtml" />
+    <Content Include="Views\Shared\_LayoutLogin.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

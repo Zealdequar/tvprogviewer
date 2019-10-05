@@ -160,6 +160,9 @@ function fillSelects() {
 
 // Заполенение подвала
 function fillFooter() {
+    if (!$('#TVProgType option:selected'))
+        return;
+
     $.ajax({
         url: "/Programme/GetSystemProgrammePeriod?progType=" + $('#TVProgType option:selected').val(),
         dataType: 'json',
