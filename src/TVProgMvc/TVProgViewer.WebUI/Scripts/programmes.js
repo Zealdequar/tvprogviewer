@@ -41,6 +41,8 @@ $(function () {
             fillUserByChannels(pairKeys[0], pairKeys[1]);
         }
     });
+    fillGenresTool();
+    $("#tabs").show();
     setGrids();
     $("#anonsTool").click(function () {
         $('#anonsDescr').toggle(100);
@@ -96,7 +98,6 @@ $('#containerByDays').on('select_node.jstree', function (e, data) {
         }
     });
     $("#choicePnl").show();
-    $("#tabs").show();
 });
 
 // Заполнение раскрывающихся списков
@@ -796,4 +797,47 @@ function fillUserByChannels(date, channelId) {
     if (uv == 0) {
         jQuery("#TVProgrammeByChannelsGrid").jqGrid('hideCol', "RatingContent");
     }
+}
+
+function fillGenresTool() {
+    $.ajax({
+        url: "/Programme/GetGenres",
+        dataType: 'json',
+        async: false,
+        type: 'Get',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            $('#genresTool').empty();
+            for (var i = 0; i < response.length; i++) {
+                var b = $('<button id="' + response[i].GenreID + '" class="btn btn-default"  aria-pressed="' + ((response[i].GenreID % 2 === 0) ? "true" : "false") + '">');
+               
+                $('#genresTool').append(
+                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
+               
+               
+            }
+            $('.btn-group-genres').on('click', '.btn', function () {
+             $(this).toggleClass("active");
+        });
+        },
+        error: function (jqXHR, exception) {
+            var msg = '';
+            if (jqXHR.status === 0) {
+                msg = 'Not connect.\n Verify Network.';
+            } else if (jqXHR.status == 404) {
+                msg = 'Requested page not found. [404]';
+            } else if (jqXHR.status == 500) {
+                msg = 'Internal Server Error [500].';
+            } else if (exception === 'parsererror') {
+                msg = 'Requested JSON parse failed.';
+            } else if (exception === 'timeout') {
+                msg = 'Time out error.';
+            } else if (exception === 'abort') {
+                msg = 'Ajax request aborted.';
+            } else {
+                msg = 'Uncaught Error.\n' + jqXHR.responseText;
+            }
+        }
+    });
+
 }

@@ -19,7 +19,7 @@
         <select name="TVProgCategories" id="TVProgCategories" class="input-medium"></select>
     </div>
 </div>
-<div id="tabs">
+<div id="tabs" style="display: none;">
     <ul>
         <li><a href="#tabNow">Сейчас в телеэфире</a></li>
         <li><a href="#tabNext">Затем в телеэфире</a></li>
@@ -31,8 +31,11 @@
         <li><a href="#tabSearch">Поиск по телепрограмме</a></li>
     </ul>
     <div id="tabNow">
-        <div style="height:34px">
+        <div id="mainToolNow" style="height:34px; display:none">
             <button id="anonsTool" style="margin: 3px; display:none;"><img src="~/imgs/i/GreenAnons.png" /></button>
+        </div>
+        <div id="genresTool" class="btn-group btn-group-sm btn-group-genres">
+            
         </div>
         <div class="mainwindow">
             <table id="TVProgrammeNowGrid"></table>
@@ -42,7 +45,7 @@
         <div style="clear:both"></div>
     </div>
     <div id="tabNext">
-        <div style="height:34px">
+        <div id="mainToolNext" style="height:34px; display:none">
             <button id="anonsToolNext" style="margin: 3px; display:none;"><img src="~/imgs/i/GreenAnons.png" /></button>
         </div>
         <div class="mainwindow">
