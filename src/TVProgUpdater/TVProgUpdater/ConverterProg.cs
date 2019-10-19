@@ -341,7 +341,7 @@ namespace TVProgUpdater
             }
             catch (Exception ex)
             {
-                _logger.Error("При парсинге каналов и тв-программы произошло исключение: ErrMessage='{0}',\nStackTrace='{1}'", ex.Message, ex.StackTrace);
+                _logger.Error("При парсинге каналов и тв-программы произошло исключение: №{0}, ErrMessage='{1}',\nStackTrace='{2}'", j, ex.Message, ex.StackTrace);
             }
             return new XDocument();
         }

@@ -223,7 +223,7 @@ function setGrids() {
     // Табличка сейчас в эфире
     $('#TVProgrammeNowGrid').jqGrid(
         {
-            url: "/Programme/GetSystemProgrammeAtNow?progType=" + $('#TVProgType option:selected').val() + "&category=" + $('#TVProgCategories option:selected').val(),
+            url: "/Programme/GetSystemProgrammeAtNow?progType=" + $('#TVProgType option:selected').val() + "&category=" + $('#TVProgCategories option:selected').val() + "&genres=" + GetGenres(),
             datatype: 'json',
             mtype: 'Get',
             success: function () { },
@@ -799,6 +799,14 @@ function fillUserByChannels(date, channelId) {
     }
 }
 
+function GetGenres() {
+    var ids_genres = $(".btn-genre-now.active").map(function () {
+        return this.id;
+    }).get();
+
+    return ids_genres.join(";");
+}
+
 function fillGenresTool() {
     $.ajax({
         url: "/Programme/GetGenres",
@@ -809,15 +817,18 @@ function fillGenresTool() {
         success: function (response) {
             $('#genresTool').empty();
             for (var i = 0; i < response.length; i++) {
-                var b = $('<button id="' + response[i].GenreID + '" class="btn btn-default"  aria-pressed="' + ((response[i].GenreID % 2 === 0) ? "true" : "false") + '">');
+                var b = $('<button id="' + response[i].GenreID + '" class="btn btn-default btn-genre-now">');
                
                 $('#genresTool').append(
                     b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
                
                
             }
-            $('.btn-group-genres').on('click', '.btn', function () {
-             $(this).toggleClass("active");
+            $('.btn-group-genres').on('click', '.btn', function (e) {
+                e.preventDefault();
+                $(this).toggleClass("active");
+                $('#TVProgrammeNowGrid').jqGrid('GridUnload');
+                setGrids();
         });
         },
         error: function (jqXHR, exception) {

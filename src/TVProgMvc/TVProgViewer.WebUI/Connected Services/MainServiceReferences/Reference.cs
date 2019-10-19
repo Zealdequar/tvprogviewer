@@ -59,10 +59,10 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
         System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.SystemChannel[]> GetUserInSystemChannelsAsync(long uid, int progProviderID, int typeProgID);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetSystemProgrammeList", ReplyAction="http://tempuri.org/IMainService/GetSystemProgrammeListResponse")]
-        System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetSystemProgrammeList(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows);
+        System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetSystemProgrammeList(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetSystemProgrammeList", ReplyAction="http://tempuri.org/IMainService/GetSystemProgrammeListResponse")]
-        System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> GetSystemProgrammeListAsync(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows);
+        System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> GetSystemProgrammeListAsync(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetSystemProgrammePeriod", ReplyAction="http://tempuri.org/IMainService/GetSystemProgrammePeriodResponse")]
         TVProgViewer.BusinessLogic.ProgObjs.ProgPeriod GetSystemProgrammePeriod(int typeProgID);
@@ -391,12 +391,12 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
             return base.Channel.GetUserInSystemChannelsAsync(uid, progProviderID, typeProgID);
         }
         
-        public System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetSystemProgrammeList(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows) {
-            return base.Channel.GetSystemProgrammeList(typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows);
+        public System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetSystemProgrammeList(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres) {
+            return base.Channel.GetSystemProgrammeList(typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows, genres);
         }
         
-        public System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> GetSystemProgrammeListAsync(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows) {
-            return base.Channel.GetSystemProgrammeListAsync(typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows);
+        public System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> GetSystemProgrammeListAsync(int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres) {
+            return base.Channel.GetSystemProgrammeListAsync(typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows, genres);
         }
         
         public TVProgViewer.BusinessLogic.ProgObjs.ProgPeriod GetSystemProgrammePeriod(int typeProgID) {

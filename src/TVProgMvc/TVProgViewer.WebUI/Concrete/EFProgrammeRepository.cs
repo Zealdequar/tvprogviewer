@@ -17,9 +17,9 @@ namespace TVProgViewer.WebUI.Concrete
         /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="category">Категория</param>
-        public Task<KeyValuePair<int,SystemProgramme[]>> GetSystemProgrammesAtNowAsyncList(int typeProgID, DateTimeOffset dateTimeOffset, string category, string sidx, string sord, int page, int rows)
+        public Task<KeyValuePair<int,SystemProgramme[]>> GetSystemProgrammesAtNowAsyncList(int typeProgID, DateTimeOffset dateTimeOffset, string category, string sidx, string sord, int page, int rows, string genres)
         {
-            return Task<KeyValuePair<int, SystemProgramme[]>>.Factory.StartNew(() => { return TvProgService.GetSystemProgrammeList(typeProgID, dateTimeOffset, 1, category, sidx, sord, page, rows); });
+            return Task<KeyValuePair<int, SystemProgramme[]>>.Factory.StartNew(() => { return TvProgService.GetSystemProgrammeList(typeProgID, dateTimeOffset, 1, category, sidx, sord, page, rows, genres); });
         }
 
         /// <summary>
@@ -41,9 +41,9 @@ namespace TVProgViewer.WebUI.Concrete
         /// <param name="dateTimeOffset">Текущее время</param>
         /// <param name="category">Категория</param>
         public Task<KeyValuePair<int, SystemProgramme[]>> GetSystemProgrammesAtNextAsyncList(int typeProgID, DateTimeOffset dateTimeOffset, string category,
-            string sidx, string sord, int page, int rows)
+            string sidx, string sord, int page, int rows, string genres)
         {
-            return Task<KeyValuePair<int, SystemProgramme[]>>.Factory.StartNew(() => { return TvProgService.GetSystemProgrammeList(typeProgID, dateTimeOffset, 2, category, sidx, sord, page, rows); });
+            return Task<KeyValuePair<int, SystemProgramme[]>>.Factory.StartNew(() => { return TvProgService.GetSystemProgrammeList(typeProgID, dateTimeOffset, 2, category, sidx, sord, page, rows, genres); });
         }
 
         /// <summary>

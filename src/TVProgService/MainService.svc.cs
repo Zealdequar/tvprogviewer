@@ -79,9 +79,9 @@ namespace TVProgViewer.TVProgService
         /// <param name="mode">Режим: 1 - сейчас, 2 - затем</param>
         /// <param name="category">Категория</param>
         public KeyValuePair<int, List<SystemProgramme>> GetSystemProgrammeList(int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category, 
-            string sidx, string sord, int page, int rows)
+            string sidx, string sord, int page, int rows, string genres)
         {
-            return _tpa.GetSystemProgrammes(typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows);
+            return _tpa.GetSystemProgrammes(typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows, genres);
         }
 
         /// <summary>
