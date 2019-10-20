@@ -206,3 +206,16 @@ div.centerLayer {
             height: 680px
         }
 }
+
+.drag-tool-genre {
+    width: auto;
+    padding-left: 15px;
+    margin-bottom: 9px;
+    z-index: 999;
+    background-image: url('../imgs/i/draggable.png');
+    background-repeat: no-repeat;
+    background-position-y:center;
+    border-radius: 3px 4px;
+    cursor: move;
+}
+

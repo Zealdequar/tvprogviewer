@@ -3,7 +3,7 @@
     window.addEventListener('scroll', Ascroll1, false);
     document.body.addEventListener('scroll', Ascroll1, false);
     function Ascroll1() {
-        if (b == null) {
+        if (b == null && a) {
             var Sa = getComputedStyle(a, ''), s = '';
             for (var i = 0; i < Sa.length; i++) {
                 if (Sa[i].indexOf('overflow') == 0 || Sa[i].indexOf('padding') == 0 || Sa[i].indexOf('border') == 0 || Sa[i].indexOf('outline') == 0 || Sa[i].indexOf('box-shadow') == 0 || Sa[i].indexOf('background') == 0) {

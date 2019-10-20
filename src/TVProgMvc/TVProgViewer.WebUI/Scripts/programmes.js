@@ -5,7 +5,7 @@ $(function () {
     fillSelects();
     $('#tabs').tabs({
         activate: function (event, ui) {
-            idx = ui.newTab.index()
+            idx = ui.newTab.index();
 
             if (idx === 2 || idx === 3) {
                 setTree(idx);
@@ -41,7 +41,8 @@ $(function () {
             fillUserByChannels(pairKeys[0], pairKeys[1]);
         }
     });
-    fillGenresTool();
+    fillGenresToolNow();
+    fillGenresToolNext();
     $("#tabs").show();
     setGrids();
     $("#anonsTool").click(function () {
@@ -98,6 +99,8 @@ $('#containerByDays').on('select_node.jstree', function (e, data) {
         }
     });
     $("#choicePnl").show();
+    $("#dragToolGenreNow").draggable();
+    $("#dragToolGenreNext").draggable();
 });
 
 // Заполнение раскрывающихся списков
@@ -223,7 +226,7 @@ function setGrids() {
     // Табличка сейчас в эфире
     $('#TVProgrammeNowGrid').jqGrid(
         {
-            url: "/Programme/GetSystemProgrammeAtNow?progType=" + $('#TVProgType option:selected').val() + "&category=" + $('#TVProgCategories option:selected').val() + "&genres=" + GetGenres(),
+            url: "/Programme/GetSystemProgrammeAtNow?progType=" + $('#TVProgType option:selected').val() + "&category=" + $('#TVProgCategories option:selected').val() + "&genres=" + GetGenres(".btn-genre-now.active"),
             datatype: 'json',
             mtype: 'Get',
             success: function () { },
@@ -280,11 +283,13 @@ function setGrids() {
                 
                 $("tr.jqgrow td input", "#TVProgrammeNowGrid").click(function () {
                     if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
+                        $("#mainToolNow").show(50); 
                         $("#anonsTool").show(50);
                         $("#anonsDescr").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
                     }
                     else {
                         $("#anonsTool").hide(50);
+                        $("#mainToolNow").hide(50);
                         $("#anonsDescr").hide(150);
                     }
                 });
@@ -321,7 +326,7 @@ function setGrids() {
     // Табличка затем в эфире
     $('#TVProgrammeNextGrid').jqGrid(
         {
-            url: "/Programme/GetSystemProgrammeAtNext?progType=" + $('#TVProgType option:selected').val() + "&category=" + $('#TVProgCategories option:selected').val(),
+            url: "/Programme/GetSystemProgrammeAtNext?progType=" + $('#TVProgType option:selected').val() + "&category=" + $('#TVProgCategories option:selected').val() + "&genres=" + GetGenres(".btn-genre-next.active"),
             datatype: 'json',
             mtype: 'Get',
             colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "Передача", "Начало", "Окончание", "Осталось", ""],
@@ -384,10 +389,12 @@ function setGrids() {
 
                 $("tr.jqgrow td input", "#TVProgrammeNextGrid").click(function () {
                     if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
+                        $("#mainToolNext").show(50);
                         $("#anonsToolNext").show(50);
                         $("#anonsDescrNext").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
                     }
                     else {
+                        $("#mainToolNext").hide(50);
                         $("#anonsToolNext").hide(50);
                         $("#anonsDescrNext").hide(150);
                     }
@@ -799,15 +806,15 @@ function fillUserByChannels(date, channelId) {
     }
 }
 
-function GetGenres() {
-    var ids_genres = $(".btn-genre-now.active").map(function () {
+function GetGenres(btnActive) {
+    var ids_genres = $(btnActive).map(function () {
         return this.id;
     }).get();
 
     return ids_genres.join(";");
 }
 
-function fillGenresTool() {
+function fillGenresToolNow() {
     $.ajax({
         url: "/Programme/GetGenres",
         dataType: 'json',
@@ -815,21 +822,21 @@ function fillGenresTool() {
         type: 'Get',
         contentType: 'application/json; charset=utf-8',
         success: function (response) {
-            $('#genresTool').empty();
+            $('#genresToolNow').empty();
             for (var i = 0; i < response.length; i++) {
                 var b = $('<button id="' + response[i].GenreID + '" class="btn btn-default btn-genre-now">');
-               
-                $('#genresTool').append(
+
+                $('#genresToolNow').append(
                     b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
-               
-               
+
+
             }
-            $('.btn-group-genres').on('click', '.btn', function (e) {
+            $('.btn-group-genres-now').on('click', '.btn', function (e) {
                 e.preventDefault();
                 $(this).toggleClass("active");
                 $('#TVProgrammeNowGrid').jqGrid('GridUnload');
                 setGrids();
-        });
+            });
         },
         error: function (jqXHR, exception) {
             var msg = '';
@@ -850,5 +857,49 @@ function fillGenresTool() {
             }
         }
     });
+}
 
+function fillGenresToolNext() {
+    $.ajax({
+        url: "/Programme/GetGenres",
+        dataType: 'json',
+        async: false,
+        type: 'Get',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            $('#genresToolNext').empty();
+            for (var i = 0; i < response.length; i++) {
+                var b = $('<button id="' + response[i].GenreID + '" class="btn btn-default btn-genre-next">');
+
+                $('#genresToolNext').append(
+                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
+
+
+            }
+            $('.btn-group-genres-next').on('click', '.btn', function (e) {
+                e.preventDefault();
+                $(this).toggleClass("active");
+                $('#TVProgrammeNextGrid').jqGrid('GridUnload');
+                setGrids();
+            });
+        },
+        error: function (jqXHR, exception) {
+            var msg = '';
+            if (jqXHR.status === 0) {
+                msg = 'Not connect.\n Verify Network.';
+            } else if (jqXHR.status == 404) {
+                msg = 'Requested page not found. [404]';
+            } else if (jqXHR.status == 500) {
+                msg = 'Internal Server Error [500].';
+            } else if (exception === 'parsererror') {
+                msg = 'Requested JSON parse failed.';
+            } else if (exception === 'timeout') {
+                msg = 'Time out error.';
+            } else if (exception === 'abort') {
+                msg = 'Ajax request aborted.';
+            } else {
+                msg = 'Uncaught Error.\n' + jqXHR.responseText;
+            }
+        }
+    });
 }

@@ -369,7 +369,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                                             (string.IsNullOrWhiteSpace(gc.NonContainPhrases) ||
                                                             (!string.IsNullOrWhiteSpace(gc.NonContainPhrases) &&
                                                             !sp.TelecastTitle.ContainsAny(gc.NonContainPhrases.Split(';')))))
-                                                .Select(g => g.GenreName).FirstOrDefault() ?? string.Empty;
+                                                .Select(g => g.GenreName).FirstOrDefault() ?? "Без типа";
                 sp.GenreContent = (from gc in dataContext.GenreClassificator.AsNoTracking()
                                    join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
                                    join mp2 in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp2.IconID into gmp2
@@ -404,7 +404,6 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             if (string.IsNullOrWhiteSpace(genres))
                 return systemProgramme;
-
             return systemProgramme.Where(x => genres.Split(';').Any(g => GetNameByIdGenre(g) == x.GenreName)).ToList();
         }
 
@@ -474,17 +473,16 @@ namespace TVProgViewer.DataAccess.Adapters
                                             null),
                                             Category = pr.Category,
                                             Remain = (int)(DbFunctions.DiffSeconds(pr.TsStopMO, dateTime) * 1.0 / (DbFunctions.DiffSeconds(pr.TsStopMO, pr.TsStartMO) * 1.0) * 100.0)
-                                          });
-
+                                          }).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
+                        SetGenres(sp, null);
+                        sp = FilterGenres(sp, genres);
                         count = sp.Count();
 
                         if (!string.IsNullOrWhiteSpace(sidx))
                              systemProgramme = LinqExtensions.OrderBy(sp.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
                         else systemProgramme = sp.Skip((page - 1) * rows).Take(rows).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
 
-                        SetGenres(systemProgramme, null);
-
-                        systemProgramme = FilterGenres(systemProgramme, genres);
+                        
 
                         break;
                     case 2:
@@ -550,12 +548,14 @@ namespace TVProgViewer.DataAccess.Adapters
                                       Category = pr.Category,
                                       Remain = pr.Remain
                                   }).Select(mapper.Map<SystemProgramme>).ToList();
+                            SetGenres(sp3, null);
+                            sp3 = FilterGenres(sp3, genres);
                             count = sp3.Count();
                             if (!string.IsNullOrWhiteSpace(sidx))
                                 systemProgramme = LinqExtensions.OrderBy(sp3.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
                             else systemProgramme = sp3.Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
-                            SetGenres(systemProgramme, null);
-                            systemProgramme = FilterGenres(systemProgramme, genres);
+                            
+                            
                         }
                         else if (dateTime > minDate)
                         {
@@ -587,14 +587,16 @@ namespace TVProgViewer.DataAccess.Adapters
                                            null),
                                            Category = pr.Category,
                                            Remain = (int)DbFunctions.DiffSeconds(DateTime.Now, pr.TsStartMO)
-                                       });
+                                       }).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
+                            SetGenres(sp4, null);
+                            sp4 = FilterGenres(sp4, genres);
                             count = sp4.Count();
                             if (!string.IsNullOrWhiteSpace(sidx))
-                                systemProgramme = LinqExtensions.OrderBy(sp4.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
-                            else systemProgramme = sp4.Skip((page - 1) * rows).Take(rows).Select(mapper.Map<SystemProgramme>).ToList<SystemProgramme>();
+                                systemProgramme = LinqExtensions.OrderBy(sp4.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
+                            else systemProgramme = sp4.Skip((page - 1) * rows).Take(rows).ToList();
 
-                            SetGenres(systemProgramme, null);
-                            systemProgramme = FilterGenres(systemProgramme, genres);
+                            
+                            
                         }
                         break;
                 }
