@@ -49,7 +49,8 @@ namespace TVProgViewer.WebUI.Controllers
         {           
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await progRepository.GetUserProgrammesAtNowAsyncList(UserId.Value, progType, DateTimeOffset.Now, (category != "null") ? category : null)
+                return Json(await progRepository.GetUserProgrammesAtNowAsyncList(UserId.Value, progType, DateTimeOffset.Now, (category != "null") ? category : null
+                    , sidx, sord, page, rows, genres)
                     , JsonRequestBehavior.AllowGet);
             }
 
@@ -64,7 +65,8 @@ namespace TVProgViewer.WebUI.Controllers
         {
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await progRepository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null)
+                return Json(await progRepository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null,
+                    sidx, sord, page, rows, genres)
                      , JsonRequestBehavior.AllowGet);
             }
 
@@ -117,7 +119,9 @@ namespace TVProgViewer.WebUI.Controllers
 
         public async Task<JsonResult> GetGenres()
         {
-            return Json(await genresRepository.GetGenres(null), JsonRequestBehavior.AllowGet);
+            if (UserId == null || !User.Identity.IsAuthenticated)
+               return Json(await genresRepository.GetGenres(null), JsonRequestBehavior.AllowGet);
+            return Json(await genresRepository.GetGenres(UserId.Value), JsonRequestBehavior.AllowGet);
         }
     }
 }

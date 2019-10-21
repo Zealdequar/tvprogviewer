@@ -25,7 +25,7 @@ namespace TVProgViewer.WebUI.Abstract
         /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="category">Категория</param>
-        Task<SystemProgramme[]> GetUserProgrammesAtNowAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category);
+        Task<SystemProgramme[]> GetUserProgrammesAtNowAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category, string sidx, string sord, int page, int rows, string genres);
 
         /// <summary>
         /// Получение системных телепередач следующих после текущих
@@ -43,7 +43,7 @@ namespace TVProgViewer.WebUI.Abstract
         /// <param name="typeProgID">Тип программы телепередач</param>
         /// <param name="dateTimeOffset">Текущее время</param>
         /// <param name="category">Категория</param>
-        Task<SystemProgramme[]> GetUserProgrammesAtNextAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category);
+        Task<SystemProgramme[]> GetUserProgrammesAtNextAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category, string sidx, string sord, int page, int rows, string genres);
 
         /// <summary>
         /// Получение пользовательских телепередач за день

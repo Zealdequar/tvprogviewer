@@ -400,18 +400,18 @@ namespace TVProgViewer.DataAccess.Adapters
         /// </summary>
         /// <param name="systemProgramme">Системная программа</param>
         /// <param name="genres">Идентификаторы жанров через ;</param>
-        private List<SystemProgramme> FilterGenres(List<SystemProgramme> systemProgramme, string genres)
+        private List<SystemProgramme> FilterGenres(List<SystemProgramme> systemProgramme, string genres, long? uid = null)
         {
             if (string.IsNullOrWhiteSpace(genres))
                 return systemProgramme;
-            return systemProgramme.Where(x => genres.Split(';').Any(g => GetNameByIdGenre(g) == x.GenreName)).ToList();
+            return systemProgramme.Where(x => genres.Split(';').Any(g => GetNameByIdGenre(g, uid) == x.GenreName)).ToList();
         }
 
        /// <summary>
        /// Получение названия жанра через идентификатор
        /// </summary>
        /// <param name="idStr">Идентификатор жанра</param>
-        private string GetNameByIdGenre(string idStr)
+        private string GetNameByIdGenre(string idStr, long? uid)
         {  
             long id;
 
@@ -419,7 +419,7 @@ namespace TVProgViewer.DataAccess.Adapters
                 return string.Empty;
 
             return (from g in dataContext.Genres.AsNoTracking()
-                    where g.GenreID == id && g.Visible && g.DeleteDate == null
+                    where g.GenreID == id && g.UID == uid && g.Visible && g.DeleteDate == null
                     select g.GenreName).First(); 
         }
         /// <summary>
@@ -663,11 +663,13 @@ namespace TVProgViewer.DataAccess.Adapters
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="mode">Режим: 1 - сейчас, 2 - затем</param>
         /// <param name="category">Категория телепередач</param>
-        public List<SystemProgramme> GetUserProgrammes(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category)
+        public List<SystemProgramme> GetUserProgrammes(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category,
+                                                         string sidx, string sord, int page, int rows, string genres)
         {
             List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
             DateTime minDate = new DateTime(1800, 1, 1);
             DateTime dateTime = dateTimeOffset.DateTime;
+            int count = 0;
             try
             {
                 switch (mode)
@@ -705,7 +707,12 @@ namespace TVProgViewer.DataAccess.Adapters
                                                Remain = (int)(DbFunctions.DiffSeconds(pr.TsStopMO, dateTime) * 1.0 / (DbFunctions.DiffSeconds(pr.TsStopMO, pr.TsStartMO) * 1.0) * 100.0),
                                            }).ToList().DistinctBy(x => x.ProgrammesID).OrderBy(x => x.OrderCol).Select(mapper.Map<SystemProgramme>).ToList();
                         SetGenres(systemProgramme, uid);
+                        systemProgramme = FilterGenres(systemProgramme, genres, uid);
+                        count = systemProgramme.Count();
                         SetRatings(systemProgramme, uid);
+                        if (!string.IsNullOrWhiteSpace(sidx))
+                            systemProgramme = LinqExtensions.OrderBy(systemProgramme.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList();
+                        else systemProgramme = systemProgramme.Skip((page - 1) * rows).Take(rows).ToList();
                         break;
                     case 2:
                         if (dateTime == minDate)
@@ -774,7 +781,12 @@ namespace TVProgViewer.DataAccess.Adapters
                                                    Remain = pr.Remain
                                                }).ToList().DistinctBy(x => x.ProgrammesID).Select(mapper.Map<SystemProgramme>).ToList(); ;
                             SetGenres(systemProgramme, uid);
+                            systemProgramme = FilterGenres(systemProgramme, genres, uid);
                             SetRatings(systemProgramme, uid);
+                            count = systemProgramme.Count();
+                            if (!string.IsNullOrWhiteSpace(sidx))
+                                systemProgramme = LinqExtensions.OrderBy(systemProgramme.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
+                            else systemProgramme = systemProgramme.Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
                         }
                         else if (dateTime > minDate)
                         {
@@ -811,7 +823,12 @@ namespace TVProgViewer.DataAccess.Adapters
                                                }
                                                ).AsNoTracking().OrderBy(o => o.OrderCol).ToList().Select(mapper.Map<SystemProgramme>).ToList();
                             SetGenres(systemProgramme, uid);
+                            systemProgramme = FilterGenres(systemProgramme, genres, uid);
+                            count = systemProgramme.Count();
                             SetRatings(systemProgramme, uid);
+                            if (!string.IsNullOrWhiteSpace(sidx))
+                                systemProgramme = LinqExtensions.OrderBy(systemProgramme.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
+                            else systemProgramme = systemProgramme.Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
                         }
                         break;
                 }
