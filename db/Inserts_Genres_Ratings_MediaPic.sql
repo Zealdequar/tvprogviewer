@@ -7,7 +7,7 @@ VALUES (2, 'hudFilm.gif', 'image/gif', 'gzip', 676, null, 1, '/imgs/system/genre
 INSERT INTO dbo.MediaPic ([IconID],[FileName],[ContentType],[ContentCoding],[Length],[Length25],[IsSystem],[PathOrig],[Path25])
 VALUES (3, 'teleserial.png', 'image/png', 'gzip', 4298, null, 1, '/imgs/system/genre/', '/imgs/system/genre/')
 INSERT INTO dbo.MediaPic ([IconID],[FileName],[ContentType],[ContentCoding],[Length],[Length25],[IsSystem],[PathOrig],[Path25])
-VALUES (4, 'baloons.gif', 'image/gif', 'gzip', 1081, null, 1, '/imgs/system/genre/', '/imgs/system/genre/')
+VALUES (4, 'balloons.gif', 'image/gif', 'gzip', 1081, null, 1, '/imgs/system/genre/', '/imgs/system/genre/')
 INSERT INTO dbo.MediaPic ([IconID],[FileName],[ContentType],[ContentCoding],[Length],[Length25],[IsSystem],[PathOrig],[Path25])
 VALUES (5, 'sport.png', 'image/png', 'gzip', 1771, null, 1, '/imgs/system/genre/', '/imgs/system/genre/')
 INSERT INTO dbo.MediaPic ([IconID],[FileName],[ContentType],[ContentCoding],[Length],[Length25],[IsSystem],[PathOrig],[Path25])

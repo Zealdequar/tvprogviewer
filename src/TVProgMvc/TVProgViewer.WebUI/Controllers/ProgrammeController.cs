@@ -86,13 +86,14 @@ namespace TVProgViewer.WebUI.Controllers
             return Json(await progRepository.GetCategories(), JsonRequestBehavior.AllowGet);
         }
 
-        public async Task<ActionResult> SearchProgramme(int progType, string findTitle)
+        public async Task<ActionResult> SearchProgramme(int progType, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres)
         {
             if (User.Identity.IsAuthenticated && UserId != null)
             {
                 return Json(await progRepository.SearchUserProgramme(UserId.Value, progType, findTitle), JsonRequestBehavior.AllowGet);
             }
-            return Json(await progRepository.SearchProgramme(progType, findTitle), JsonRequestBehavior.AllowGet);
+            return Json(await progRepository.SearchProgramme(progType, findTitle, (category != "null") ? category : null, sidx, sord, page, rows, genres), JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> GetSystemProgrammePeriod(int progType)

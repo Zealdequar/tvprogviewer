@@ -43,6 +43,7 @@ $(function () {
     });
     fillGenresToolNow();
     fillGenresToolNext();
+    fillGenresToolSearch();
     $("#tabs").show();
     setGrids();
     $("#anonsTool").click(function () {
@@ -50,6 +51,10 @@ $(function () {
     });
     $("#anonsToolNext").click(function () {
         $('#anonsDescrNext').toggle(100);
+    });
+
+    $("#anonsToolSearch").click(function () {
+       $('#anonsDescrSearch').toggle(100)
     });
 
     $("#anonsToolByDays").click(function () {
@@ -101,6 +106,7 @@ $('#containerByDays').on('select_node.jstree', function (e, data) {
     $("#choicePnl").show();
     $("#dragToolGenreNow").draggable();
     $("#dragToolGenreNext").draggable();
+    $("#dragToolGenreSearch").draggable();
 });
 
 // Заполнение раскрывающихся списков
@@ -442,7 +448,7 @@ function searchProgramme(typeProgID, findTitle) {
     $('#SearchedTVProgramme').jqGrid('GridUnload');
     $('#SearchedTVProgramme').jqGrid(
         {
-            url: "/Programme/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle,
+            url: "/Programme/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#TVProgCategories option:selected').val() + "&genres=" + GetGenres(".btn-genre-search.active"),
             datatype: 'json',
             mtype: 'Get',
             colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "День", "От", "До", "Передачи"],
@@ -472,7 +478,7 @@ function searchProgramme(typeProgID, findTitle) {
                     key: false, name: 'ChannelContent', index: 'ChannelContent', sortable: true, align: "center", formatter: imgChannel
                 },
                 { key: false, name: 'ChannelName', index: 'ChannelName', sortable: true },
-                { key: false, name: 'DayMonth', index: 'DayMonth', sortable: true, align: "center", width: 100 } ,
+                { key: false, name: 'DayMonth', index: 'DayMonth', sortable: true, align: "center", width: 100 },
                 {
                     key: false, name: 'Start', index: 'Start', sortable: true, align: "center", width: 55, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
                 },
@@ -482,8 +488,25 @@ function searchProgramme(typeProgID, findTitle) {
                 { key: false, name: 'TelecastTitle', index: 'TelecastTitle', sortable: true, width: 556 },
             ],
             rowNum: 20,
+            beforeSelectRow: function (rowid, e) {
+                $('#SearchedTVProgramme').jqGrid('resetSelection');
+                return (true);
+            },
             loadComplete: function () {
                 $("tr.jqgrow:odd").css("background", "#EFFFEF");
+
+                $("tr.jqgrow td input", "#SearchedTVProgramme").click(function () {
+                    if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
+                        $("#mainToolSearch").show(50);
+                        $("#anonsToolSearch").show(50);
+                        $("#anonsDescrSearch").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
+                    }
+                    else {
+                        $("#anonsToolSearch").hide(50);
+                        $("#mainToolSearch").hide(50);
+                        $("#anonsDescrSearch").hide(150);
+                    }
+                });
             },
             afterInsertRow: function (rowid, rowData, rowelem) {
                 var date = new Date(1970, 0, 1, 3, 0, 0);
@@ -506,16 +529,9 @@ function searchProgramme(typeProgID, findTitle) {
             viewrecords: true,
             caption: 'Программа передач',
             emptyrecords: 'Программа передач не обнаружена',
-            jsonReader:
-            {
-                repeatitems: false,
-                root: function (obj) { return obj; },
-                page: function (obj) { return 1; },
-                total: function (obj) { return obj.rowNum / obj.height; },
-                records: function (obj) { return obj.length; }
-            },
             pager: '#TVProgrammeSearchPager',
             loadonce: true,
+            forceClientSorting: true,
             multiselect: true,
         }).navGrid('#TVProgrammeSearchPager',
         {
@@ -903,3 +919,48 @@ function fillGenresToolNext() {
         }
     });
 }
+
+    function fillGenresToolSearch() {
+        $.ajax({
+            url: "/Programme/GetGenres",
+            dataType: 'json',
+            async: false,
+            type: 'Get',
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                $('#genresToolSearch').empty();
+                for (var i = 0; i < response.length; i++) {
+                    var b = $('<button id="' + response[i].GenreID + '" class="btn btn-default btn-genre-search">');
+
+                    $('#genresToolSearch').append(
+                        b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
+
+
+                }
+                $('.btn-group-genres-search').on('click', '.btn', function (e) {
+                    e.preventDefault();
+                    $(this).toggleClass("active");
+                    $('#SearchedTVProgramme').jqGrid('GridUnload');
+                    setGrids();
+                });
+            },
+            error: function (jqXHR, exception) {
+                var msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Not connect.\n Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                }
+            }
+        });
+    }

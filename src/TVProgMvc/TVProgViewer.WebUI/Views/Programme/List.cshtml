@@ -118,13 +118,24 @@
     }
     <div id="tabSearch">
         <div class="mainwindow">
+            <div id="mainToolSearch" style="height:34px; display:none">
+                <button id="anonsToolSearch" style="margin: 3px; display:none;"><img src="~/imgs/i/GreenAnons.png" /></button>
+            </div>
+            <div id="dragToolGenreSearch" class="drag-tool-genre">
+                <div id="genresToolSearch" class="btn-group btn-group-sm btn-group-genres-search">
+
+                </div>
+            </div>
             <div style="height:39px;">
                 <label for="tbContains">Содержит</label>
                 <input name="tbContains" id="tbContains" class="input-medium" type="text" />
                 <input id="btnSearch" type="button" value="Найти" />
             </div>
+
             <table id="SearchedTVProgramme"></table>
             <table id="TVProgrammeSearchPager"></table>
+            <div id="anonsDescrSearch" class="description"></div>
+            <div style="clear:both"></div>
         </div>
     </div>
 </div>

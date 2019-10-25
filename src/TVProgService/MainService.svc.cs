@@ -148,9 +148,10 @@ namespace TVProgViewer.TVProgService
         /// </summary>
         /// <param name="typeProgID">Идентификатор типа телепрограммы</param>
         /// <param name="findTitle">Поисковая подстрока</param>
-        public List<SystemProgramme> SearchProgramme(int typeProgID, string findTitle)
+        public List<SystemProgramme> SearchProgramme(int typeProgID, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres)
         {
-            return _tpa.SearchProgramme(typeProgID, findTitle);
+            return _tpa.SearchProgramme(typeProgID, findTitle, category, sidx, sord, page, rows, genres);
         }
 
         /// <summary>

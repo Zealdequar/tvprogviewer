@@ -159,7 +159,8 @@ namespace TVProgViewer.TVProgService
         /// <param name="typeProgID">Идентификатор типа телепрограммы</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         [OperationContract]
-        List<SystemProgramme> SearchProgramme(int typeProgID, string findTitle);
+        List<SystemProgramme> SearchProgramme(int typeProgID, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres);
 
         /// <summary>
         /// Поиск по пользовательской программе телепередач
