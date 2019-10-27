@@ -461,3 +461,69 @@ begin
 	end catch
 end;
 go
+
+-- Поиск жанра названия передачи
+CREATE FUNCTION [dbo].[fnGetGenreName](@UID bigint, @Title nvarchar (300))
+RETURNS @returnList Table (GenreName nvarchar(150))
+AS
+BEGIN
+DECLARE @GenreName nvarchar(150)
+
+SELECT @GenreName = (SELECT TOP 1 F.GenreName
+FROM
+(
+SELECT GenreName, ROW_NUMBER() OVER (ORDER BY gc.OrderCol) rn FROM GenreClassificator gc
+JOIN Genres g ON gc.GID = g.GenreID
+CROSS APPLY STRING_SPLIT(ContainPhrases, ';') A
+WHERE COALESCE(gc.UID, 0) = COALESCE(@UID, 0) AND COALESCE(g.UID, 0) = COALESCE(@UID, 0) 
+AND @Title Like '%'+LTRIM(RTRIM(A.Value))+'%' AND LTRIM(RTRIM(A.Value)) not like ''
+AND g.Visible = 1 AND g.DeleteDate IS NULL AND (gc.DeleteAfterDate IS null OR gc.DeleteAfterDate > GetDate())
+AND g.GenreID NOT IN (SELECT GenreID
+FROM GenreClassificator gc2 
+JOIN Genres g2 ON gc2.GID = g2.GenreID 
+CROSS APPLY STRING_SPLIT(NonContainPhrases, ';') B
+WHERE COALESCE(gc2.UID, 0) = COALESCE(@UID, 0) AND COALESCE(g2.UID, 0) = COALESCE(@UID, 0) 
+AND g2.DeleteDate IS NULL AND (gc.DeleteAfterDate IS null OR gc.DeleteAfterDate > GetDate()) 
+AND ( @Title Like '%'+LTRIM(RTRIM(B.Value))+'%' AND LTRIM(RTRIM(B.Value)) not like ''))
+)F
+ORDER BY F.rn)
+
+INSERT INTO @returnList
+SELECT @GenreName
+
+RETURN;
+END
+GO
+
+-- Получение названия файлика жанра по названию телепередачи
+CREATE FUNCTION fnGetGenreContent(@UID bigint, @Title nvarchar (300))
+RETURNS @returnList Table (GenreContent nvarchar(150))
+BEGIN
+DECLARE @GenreContent nvarchar(300);
+
+SELECT TOP 1 @GenreContent = F.GenreContent
+FROM
+(
+SELECT mp.Path25 + mp.FileName GenreContent, ROW_NUMBER() OVER (ORDER BY gc.OrderCol) rn 
+FROM GenreClassificator gc
+JOIN Genres g ON gc.GID = g.GenreID
+LEFT JOIN MediaPic mp ON g.IconID = mp.IconID
+CROSS APPLY STRING_SPLIT(ContainPhrases, ';') A
+WHERE COALESCE(gc.UID, 0) = COALESCE(@UID, 0) AND COALESCE(g.UID, 0) = COALESCE(@UID, 0) 
+AND @Title Like '%'+LTRIM(RTRIM(A.Value))+'%' AND LTRIM(RTRIM(A.Value)) not like ''
+AND g.Visible = 1 AND g.DeleteDate IS NULL AND (gc.DeleteAfterDate IS null OR gc.DeleteAfterDate > GetDate())
+AND g.GenreID NOT IN (SELECT GenreID
+FROM GenreClassificator gc2 
+JOIN Genres g2 ON gc2.GID = g2.GenreID 
+CROSS APPLY STRING_SPLIT(NonContainPhrases, ';') B
+WHERE COALESCE(gc2.UID, 0) = COALESCE(@UID, 0) AND COALESCE(g2.UID, 0) = COALESCE(@UID, 0) 
+AND g2.DeleteDate IS NULL AND (gc.DeleteAfterDate IS null OR gc.DeleteAfterDate > GetDate()) 
+AND ( @Title Like '%'+LTRIM(RTRIM(B.Value))+'%' AND LTRIM(RTRIM(B.Value)) not like ''))
+)F
+ORDER BY F.rn
+
+INSERT INTO @returnList
+SELECT @GenreContent
+RETURN;
+END
+GO

@@ -12,6 +12,8 @@ namespace TVProgViewer.DataAccess
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Entity.Core.Objects;
+    using System.Linq;
     
     public partial class TVProgBaseEntities : DbContext
     {
@@ -42,5 +44,33 @@ namespace TVProgViewer.DataAccess
         public virtual DbSet<UserChannels> UserChannels { get; set; }
         public virtual DbSet<UsersPrograms> UsersPrograms { get; set; }
         public virtual DbSet<WebResources> WebResources { get; set; }
+    
+        [DbFunction("TVProgBaseEntities", "fnGetGenreContent")]
+        public virtual IQueryable<string> fnGetGenreContent(Nullable<long> uID, string title)
+        {
+            var uIDParameter = uID.HasValue ?
+                new ObjectParameter("UID", uID) :
+                new ObjectParameter("UID", typeof(long));
+    
+            var titleParameter = title != null ?
+                new ObjectParameter("Title", title) :
+                new ObjectParameter("Title", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<string>("[TVProgBaseEntities].[fnGetGenreContent](@UID, @Title)", uIDParameter, titleParameter);
+        }
+    
+        [DbFunction("TVProgBaseEntities", "fnGetGenreName")]
+        public virtual IQueryable<string> fnGetGenreName(Nullable<long> uID, string title)
+        {
+            var uIDParameter = uID.HasValue ?
+                new ObjectParameter("UID", uID) :
+                new ObjectParameter("UID", typeof(long));
+    
+            var titleParameter = title != null ?
+                new ObjectParameter("Title", title) :
+                new ObjectParameter("Title", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<string>("[TVProgBaseEntities].[fnGetGenreName](@UID, @Title)", uIDParameter, titleParameter);
+        }
     }
 }

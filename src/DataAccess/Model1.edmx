@@ -542,6 +542,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="fnGetGenreContent" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UID" Type="bigint" Mode="In" />
+          <Parameter Name="Title" Type="nvarchar" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="GenreContent" Type="nvarchar" MaxLength="150" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
+        <Function Name="fnGetGenreName" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UID" Type="bigint" Mode="In" />
+          <Parameter Name="Title" Type="nvarchar" Mode="In" />
+          <ReturnType>
+            <CollectionType>
+              <RowType>
+                <Property Name="GenreName" Type="nvarchar" MaxLength="150" />
+              </RowType>
+            </CollectionType>
+          </ReturnType>
+        </Function>
         <EntityContainer Name="TVProgBaseModelStoreContainer">
           <EntitySet Name="Channels" EntityType="Self.Channels" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExtUserSettings" EntityType="Self.ExtUserSettings" Schema="dbo" store:Type="Tables" />
@@ -1380,6 +1402,14 @@
             <End Role="UserChannels" EntitySet="UserChannels" />
             <End Role="UsersPrograms" EntitySet="UsersPrograms" />
           </AssociationSet>
+          <FunctionImport Name="fnGetGenreContent" IsComposable="true" ReturnType="Collection(String)">
+            <Parameter Name="UID" Mode="In" Type="Int64" />
+            <Parameter Name="Title" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="fnGetGenreName" IsComposable="true" ReturnType="Collection(String)">
+            <Parameter Name="UID" Mode="In" Type="Int64" />
+            <Parameter Name="Title" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
       </Schema>
     </edmx:ConceptualModels>
@@ -1629,6 +1659,8 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="fnGetGenreContent" FunctionName="TVProgBaseModel.Store.fnGetGenreContent" />
+          <FunctionImportMapping FunctionImportName="fnGetGenreName" FunctionName="TVProgBaseModel.Store.fnGetGenreName" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -7,8 +7,7 @@ using TVProgViewer.BusinessLogic.ProgObjs;
 using TVProgViewer.Common;
 using MoreLinq;
 using System.Globalization;
-
-
+using System.Data.Entity.SqlServer;
 
 namespace TVProgViewer.DataAccess.Adapters
 {
@@ -422,6 +421,7 @@ namespace TVProgViewer.DataAccess.Adapters
                     where g.GenreID == id && g.UID == uid && g.Visible && g.DeleteDate == null
                     select g.GenreName).First();
         }
+
         /// <summary>
         /// Выборка телепрограммы
         /// </summary>
@@ -473,7 +473,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                       Category = pr.Category,
                                       Remain = (int)(DbFunctions.DiffSeconds(pr.TsStopMO, dateTime) * 1.0 / (DbFunctions.DiffSeconds(pr.TsStopMO, pr.TsStartMO) * 1.0) * 100.0),
 
-                                  }).Select(pr => new
+                                  }).AsEnumerable().Select(pr => new
                                   {
                                       ProgrammesID = pr.ProgrammesID,
                                       CID = pr.CID,
@@ -495,28 +495,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                                    (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
                                                    orderby gc.OrderCol
                                                    select g.GenreName).FirstOrDefault() ??
-                                                          (from gc in dataContext.GenreClassificator
-                                                           join g in dataContext.Genres on gc.GID equals g.GenreID
-                                                           where g.UID == null && gc.UID == null && g.Visible && g.DeleteDate == null &&
-                                                                 (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
-                                                           orderby gc.OrderCol
-                                                           select new
-                                                           {
-                                                               g.GenreName,
-                                                               gc.ContainPhrases,
-                                                               gc.NonContainPhrases
-                                                           }).ToList()
-                                                             .Where(gc => (gc.ContainPhrases.Split(';').Any(a => pr.TelecastTitle == a)  ||
-                                                                           pr.TelecastTitle.StartsWith(gc.ContainPhrases + ";") ||
-                                                                           pr.TelecastTitle.Contains(";" + gc.ContainPhrases + ";") ||
-                                                                           pr.TelecastTitle.EndsWith(";" + gc.ContainPhrases)) &&
-                                                                           ((gc.NonContainPhrases == null || gc.NonContainPhrases.Trim() == string.Empty) ||
-                                                                            (!(gc.NonContainPhrases == null || gc.NonContainPhrases.Trim() == string.Empty) &&
-                                                                             !(pr.TelecastTitle.StartsWith(gc.NonContainPhrases) || 
-                                                                              pr.TelecastTitle.StartsWith(gc.NonContainPhrases + ";") ||
-                                                                              pr.TelecastTitle.Contains(";" + gc.NonContainPhrases + ";") ||
-                                                                              pr.TelecastTitle.EndsWith(";" + gc.NonContainPhrases)))))
-                                                             .Select(g => g.GenreName).FirstOrDefault() ?? "Без типа",
+                                                         dataContext.fnGetGenreName(null, pr.TelecastTitle).ToArray<string>().FirstOrDefault() ?? "Без типа",
                                       GenreContent = (from gc in dataContext.GenreClassificator
                                                       join g in dataContext.Genres on gc.GID equals g.GenreID
                                                       join mp2 in dataContext.MediaPic on g.IconID equals mp2.IconID into gmp2
@@ -524,34 +503,9 @@ namespace TVProgViewer.DataAccess.Adapters
                                                       where pr.Category == g.GenreName && g.UID == null && gc.UID == null && g.Visible && g.DeleteDate == null &&
                                                        (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
                                                       orderby gc.OrderCol
-                                                      select mp2.Path25 + mp2.FileName).FirstOrDefault() ??
-                                                              (from gc in dataContext.GenreClassificator
-                                                               join g in dataContext.Genres on gc.GID equals g.GenreID
-                                                               join mp2 in dataContext.MediaPic on g.IconID equals mp2.IconID into gmp2
-                                                               from mp2 in gmp2.DefaultIfEmpty()
-                                                               where g.UID == null && gc.UID == null && g.Visible && g.DeleteDate == null &&
-                                                                    (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
-                                                               orderby gc.OrderCol
-                                                               select new
-                                                               {
-                                                                   mp2.Path25,
-                                                                   mp2.FileName,
-                                                                   gc.ContainPhrases,
-                                                                   gc.NonContainPhrases
-                                                               })
-                                                               .ToList()
-                                                               .Where(gc => ((pr.TelecastTitle.StartsWith(gc.ContainPhrases) ||
-                                                                             pr.TelecastTitle.StartsWith(gc.ContainPhrases + ";") ||
-                                                                             pr.TelecastTitle.Contains(";" + gc.ContainPhrases + ";") ||
-                                                                             pr.TelecastTitle.EndsWith(";" + gc.ContainPhrases))
-                                                                                && ((gc.NonContainPhrases == null || gc.NonContainPhrases.Trim() == string.Empty) ||
-                                                                                   (!(gc.NonContainPhrases == null || gc.NonContainPhrases.Trim() == string.Empty) &&
-                                                                                   !(pr.TelecastTitle.StartsWith(gc.NonContainPhrases) ||
-                                                                                   pr.TelecastTitle.StartsWith(gc.NonContainPhrases + ";") ||
-                                                                                   pr.TelecastTitle.Contains(";" + gc.NonContainPhrases + ";") ||
-                                                                                   pr.TelecastTitle.EndsWith(";" + gc.NonContainPhrases))))))
-                                                              .Select(mp2 => mp2.Path25 + mp2.FileName).FirstOrDefault() ?? null
-                                  }).Where(x => splittedGenres.Any(d => (from g in dataContext.Genres
+                                                      select mp2.Path25 + mp2.FileName).FirstOrDefault()
+                                                         ?? dataContext.fnGetGenreContent(null, pr.TelecastTitle).FirstOrDefault()
+                                 }).Where(x => splittedGenres.Any(d => (from g in dataContext.Genres
                                                                          where x.GenreName == g.GenreName && g.UID == null && g.Visible && g.DeleteDate == null
                                                                          select g.GenreID).FirstOrDefault() == d || d == 0));
                         count = sp.Count();
@@ -670,9 +624,6 @@ namespace TVProgViewer.DataAccess.Adapters
                             if (!string.IsNullOrWhiteSpace(sidx))
                                 systemProgramme = LinqExtensions.OrderBy(sp4.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
                             else systemProgramme = sp4.Skip((page - 1) * rows).Take(rows).ToList();
-
-
-
                         }
                         break;
                 }
