@@ -98,6 +98,11 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// </summary>
         [DataMember]
         public string RatingContent { get; set; }
+        
+        /// <summary>
+        /// Идентификатор жанра
+        /// </summary>
+        public long? GenreID { get; set; }
 
         /// <summary>
         /// Название жанра

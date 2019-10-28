@@ -347,50 +347,40 @@ namespace TVProgViewer.DataAccess.Adapters
             }
         }
 
+        /// <summary>
+        /// Установка жанров
+        /// </summary>
+        /// <param name="systemProgramme">Системная телепрограмма</param>
+        /// <param name="uid">Код пользователя</param>
         private void SetGenres(List<SystemProgramme> systemProgramme, long? uid)
         {
             foreach (SystemProgramme sp in systemProgramme)
             {
-                sp.GenreName = (from gc in dataContext.GenreClassificator.AsNoTracking()
-                                join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
-                                where sp.Category == g.GenreName && g.UID == uid && gc.UID == uid && g.Visible && g.DeleteDate == null &&
-                                (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
-                                orderby gc.OrderCol
-                                select g.GenreName).FirstOrDefault() ??
-                                               (from gc in dataContext.GenreClassificator.AsNoTracking()
-                                                join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
-                                                where g.UID == uid && gc.UID == uid && g.Visible && g.DeleteDate == null &&
-                                                (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
-                                                orderby gc.OrderCol
-                                                select new { g.GenreName, gc.ContainPhrases, gc.NonContainPhrases })
-                                                .ToList()
-                                                .Where(gc => sp.TelecastTitle.ContainsAny(gc.ContainPhrases.Split(';')) &&
-                                                            (string.IsNullOrWhiteSpace(gc.NonContainPhrases) ||
-                                                            (!string.IsNullOrWhiteSpace(gc.NonContainPhrases) &&
-                                                            !sp.TelecastTitle.ContainsAny(gc.NonContainPhrases.Split(';')))))
-                                                .Select(g => g.GenreName).FirstOrDefault() ?? "Без типа";
-                sp.GenreContent = (from gc in dataContext.GenreClassificator.AsNoTracking()
-                                   join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
-                                   join mp2 in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp2.IconID into gmp2
-                                   from mp2 in gmp2.DefaultIfEmpty()
-                                   where sp.Category == g.GenreName && g.UID == uid && gc.UID == uid && g.Visible && g.DeleteDate == null &&
-                                    (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
-                                   orderby gc.OrderCol
-                                   select mp2.Path25 + mp2.FileName).FirstOrDefault() ??
-                                               (from gc in dataContext.GenreClassificator.AsNoTracking()
-                                                join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
-                                                join mp2 in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp2.IconID into gmp2
-                                                from mp2 in gmp2.DefaultIfEmpty()
-                                                where g.UID == uid && gc.UID == uid && g.Visible && g.DeleteDate == null &&
-                                                (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
-                                                orderby gc.OrderCol
-                                                select new { mp2.Path25, mp2.FileName, gc.ContainPhrases, gc.NonContainPhrases })
+                var genreCategoryAttrs = (from gc in dataContext.GenreClassificator.AsNoTracking()
+                                          join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
+                                          join mp2 in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp2.IconID into gmp2
+                                          from mp2 in gmp2.DefaultIfEmpty()
+                                          where sp.Category == g.GenreName && g.UID == uid && gc.UID == uid && g.Visible && g.DeleteDate == null &&
+                                           (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
+                                          orderby gc.OrderCol
+                                          select new { GenreID = g.GenreID, GenreName = g.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
+                var genreClassifAttrs = (from gc in dataContext.GenreClassificator.AsNoTracking()
+                                         join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
+                                         join mp2 in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp2.IconID into gmp2
+                                         from mp2 in gmp2.DefaultIfEmpty()
+                                         where g.UID == uid && gc.UID == uid && g.Visible && g.DeleteDate == null &&
+                                         (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
+                                         orderby gc.OrderCol
+                                         select new { g.GenreID, g.GenreName, mp2.Path25, mp2.FileName, gc.ContainPhrases, gc.NonContainPhrases })
                                                 .ToList()
                                                 .Where(gc => sp.TelecastTitle.ContainsAny(gc.ContainPhrases.Split(';'))
                                                        && (string.IsNullOrWhiteSpace(gc.NonContainPhrases) ||
                                                        (!string.IsNullOrWhiteSpace(gc.NonContainPhrases) &&
                                                        !sp.TelecastTitle.ContainsAny(gc.NonContainPhrases.Split(';')))))
-                                                .Select(mp2 => mp2.Path25 + mp2.FileName).FirstOrDefault() ?? null;
+                                                .Select(mp2 => new { GenreID = mp2.GenreID, GenreName = mp2.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
+                sp.GenreID = genreCategoryAttrs?.GenreID ?? genreClassifAttrs?.GenreID ?? null;
+                sp.GenreName = genreCategoryAttrs?.GenreName ?? genreClassifAttrs?.GenreName ?? "Без жанра";
+                sp.GenreContent = genreCategoryAttrs?.GenreContent ?? genreClassifAttrs?.GenreContent;
             }
         }
 
@@ -399,11 +389,12 @@ namespace TVProgViewer.DataAccess.Adapters
         /// </summary>
         /// <param name="systemProgramme">Системная программа</param>
         /// <param name="genres">Идентификаторы жанров через ;</param>
-        private List<SystemProgramme> FilterGenres(List<SystemProgramme> systemProgramme, string genres, long? uid = null)
+        private List<SystemProgramme> FilterGenres(List<SystemProgramme> systemProgramme, string genres)
         {
             if (string.IsNullOrWhiteSpace(genres))
                 return systemProgramme;
-            return systemProgramme.Where(x => genres.Split(';').Any(g => GetNameByIdGenre(g, null) == x.GenreName)).ToList();
+            long gid;
+            return systemProgramme.Where(x => genres.Split(';').Any(g => long.TryParse(g, out gid) && long.Parse(g)  == x.GenreID)).ToList();
         }
 
         /// <summary>
@@ -441,7 +432,7 @@ namespace TVProgViewer.DataAccess.Adapters
                 switch (mode)
                 {
                     case 1:
-                        var sp = (from pr in dataContext.Programmes.AsNoTracking()
+                        /*var sp = (from pr in dataContext.Programmes.AsNoTracking()
                                   join ch in dataContext.Channels.AsNoTracking() on pr.CID equals ch.ChannelID
                                   join mp in dataContext.MediaPic.AsNoTracking() on ch.IconID equals mp.IconID into chmp
                                   from mp in chmp.DefaultIfEmpty()
@@ -507,7 +498,44 @@ namespace TVProgViewer.DataAccess.Adapters
                                                          ?? dataContext.fnGetGenreContent(null, pr.TelecastTitle).FirstOrDefault()
                                  }).Where(x => splittedGenres.Any(d => (from g in dataContext.Genres
                                                                          where x.GenreName == g.GenreName && g.UID == null && g.Visible && g.DeleteDate == null
-                                                                         select g.GenreID).FirstOrDefault() == d || d == 0));
+                                                                         select g.GenreID).FirstOrDefault() == d || d == 0));*/
+                        
+                        var sp = (from pr in dataContext.Programmes.AsNoTracking()
+                         join ch in dataContext.Channels.AsNoTracking() on pr.CID equals ch.ChannelID
+                         join mp in dataContext.MediaPic.AsNoTracking() on ch.IconID equals mp.IconID into chmp
+                         from mp in chmp.DefaultIfEmpty()
+                         where pr.TID == typeProgID && pr.TsStartMO <= dateTime &&
+                               dateTime < pr.TsStopMO && pr.Category != "Для взрослых" &&
+                               !pr.Title.Contains("(18+)") && ch.Deleted == null &&
+                               (category == null || pr.Category == category)
+                         select new
+                         {
+                             ProgrammesID = pr.ProgrammesID,
+                             CID = pr.CID,
+                             ChannelName = ch.TitleChannel,
+                             ChannelContent = (from ch2 in dataContext.Channels
+                                               join mp2 in dataContext.MediaPic on ch2.IconID equals mp2.IconID into chmp2
+                                               from mp2 in chmp.DefaultIfEmpty()
+                                               where ch.ChannelID == ch2.ChannelID
+                                               select mp2.Path25 + mp2.FileName).FirstOrDefault(),
+                             InternalChanID = pr.InternalChanID ?? 0,
+                             Start = pr.TsStart,
+                             Stop = pr.TsStop,
+                             TsStartMO = pr.TsStartMO,
+                             TsStopMO = pr.TsStopMO,
+                             TelecastTitle = pr.Title,
+                             TelecastDescr = pr.Descr,
+                             AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
+                                      dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                      dataContext.MediaPic.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
+                                      null),
+                             Category = pr.Category,
+                             Remain = (int)(DbFunctions.DiffSeconds(pr.TsStopMO, dateTime) * 1.0 / (DbFunctions.DiffSeconds(pr.TsStopMO, pr.TsStartMO) * 1.0) * 100.0),
+
+                         }).Select(mapper.Map<SystemProgramme>).ToList();
+                        
+                        SetGenres(sp, null);
+                        sp = FilterGenres(sp, genres);
                         count = sp.Count();
                         systemProgramme = sp.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanID", sord)
                                             .Skip((page - 1) * rows).Take(rows)
@@ -734,7 +762,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                                Remain = (int)(DbFunctions.DiffSeconds(pr.TsStopMO, dateTime) * 1.0 / (DbFunctions.DiffSeconds(pr.TsStopMO, pr.TsStartMO) * 1.0) * 100.0),
                                            }).ToList().DistinctBy(x => x.ProgrammesID).OrderBy(x => x.OrderCol).Select(mapper.Map<SystemProgramme>).ToList();
                         SetGenres(systemProgramme, uid);
-                        systemProgramme = FilterGenres(systemProgramme, genres, uid);
+                        systemProgramme = FilterGenres(systemProgramme, genres);
                         count = systemProgramme.Count();
                         SetRatings(systemProgramme, uid);
                         if (!string.IsNullOrWhiteSpace(sidx))
@@ -808,7 +836,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                                    Remain = pr.Remain
                                                }).ToList().DistinctBy(x => x.ProgrammesID).Select(mapper.Map<SystemProgramme>).ToList(); ;
                             SetGenres(systemProgramme, uid);
-                            systemProgramme = FilterGenres(systemProgramme, genres, uid);
+                            systemProgramme = FilterGenres(systemProgramme, genres);
                             SetRatings(systemProgramme, uid);
                             count = systemProgramme.Count();
                             if (!string.IsNullOrWhiteSpace(sidx))
@@ -850,7 +878,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                                }
                                                ).AsNoTracking().OrderBy(o => o.OrderCol).ToList().Select(mapper.Map<SystemProgramme>).ToList();
                             SetGenres(systemProgramme, uid);
-                            systemProgramme = FilterGenres(systemProgramme, genres, uid);
+                            systemProgramme = FilterGenres(systemProgramme, genres);
                             count = systemProgramme.Count();
                             SetRatings(systemProgramme, uid);
                             if (!string.IsNullOrWhiteSpace(sidx))

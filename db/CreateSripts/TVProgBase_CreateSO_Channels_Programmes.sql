@@ -19,6 +19,10 @@ if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'd
 drop procedure spUdtUserChannelImageByID;
 if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'spUdtUserChannelImage'))
 drop procedure spUdtUserChannelImage;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'fnGetGenreName'))
+drop procedure spUdtUserChannelImage;
+if (exists(select * from INFORMATION_SCHEMA.ROUTINES where SPECIFIC_SCHEMA = N'dbo' and SPECIFIC_NAME = N'fnGetGenreContent'))
+drop procedure spUdtUserChannelImage;
 go
 
 -- Вставка канала с картинкой
