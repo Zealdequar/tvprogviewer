@@ -490,60 +490,61 @@ begin
 	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Патриарх', '', 276, NULL);
 	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Муфтий', '', 277, NULL);
 	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Час силы духа', '', 278, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Священ', '', 279, NULL);
 	
 	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 28, 'Садоводство', 1);
 	set @GID = SCOPE_IDENTITY(); 
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'сад', 'кольцо' , 279, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Растительная жизнь', '', 280, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'урожай', '', 281, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'даче', 'передаче', 282, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'сад', 'кольцо' , 280, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Растительная жизнь', '', 281, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'урожай', '', 282, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'даче', 'передаче', 283, NULL);
 
 	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 29, 'Реклама', 1);
 	set @GID = SCOPE_IDENTITY(); 
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'магазин', '', 283, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'реклам', '', 284, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'телепокупка', '', 285, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'магазин', '', 284, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'реклам', '', 285, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'телепокупка', '', 286, NULL);
 
 	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 30, 'Женские', 1);
 	set @GID = SCOPE_IDENTITY(); 
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Из жизни женщины', '', 286, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Дамский клуб', '', 287, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Женские истории', '', 288, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Для женщин', '', 289, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'мама;мать', '', 290, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Из жизни женщины', '', 287, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Дамский клуб', '', 288, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Женские истории', '', 289, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Для женщин', '', 290, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'мама;мать', '', 291, NULL);
 	
 	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 31, 'Кулинария', 1);
 	set @GID = SCOPE_IDENTITY(); 
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Кухня', '', 291, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Вкусные истории', '', 292, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Сладкие истории', '', 293, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Вкус', '', 294, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'деликатес', '', 295, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'кулинар', '', 296, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'смак', '', 297, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Лакомый кусочек', '', 298, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'блюд', '', 299, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Кухня', '', 292, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Вкусные истории', '', 293, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Сладкие истории', '', 294, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Вкус', '', 295, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'деликатес', '', 296, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'кулинар', '', 297, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'смак', '', 298, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Лакомый кусочек', '', 299, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'блюд', '', 300, NULL);
 	
 	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 32, 'Экстрим', 1);
 	set @GID = SCOPE_IDENTITY(); 
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'экстр', 'машин', 300, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Служба спасения', '', 301, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Катастрофы недели', '', 302, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Дорожные войны', '', 303, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'каскаде', '', 304, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'экстр', 'машин', 301, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Служба спасения', '', 302, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Катастрофы недели', '', 303, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Дорожные войны', '', 304, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'каскаде', '', 305, NULL);
 
 	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 33, 'Экономика и бизнес', 1);
 	set @GID = SCOPE_IDENTITY(); 
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Деньги', '', 305, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Бизнес', '', 306, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Инвестиции', '', 307, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Финанс', '', 308, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Делов', '', 309, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Деньги', '', 306, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Бизнес', '', 307, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Инвестиции', '', 308, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Финанс', '', 309, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Делов', '', 310, NULL);
 
 	insert dbo.Genres (UID, IconID, GenreName, Visible) values (@UID, 34, 'Эротика', 1);
 	set @GID = SCOPE_IDENTITY(); 
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Секс', '', 310, NULL);
-	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Эрот', '', 311, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Секс', '', 311, NULL);
+	insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, OrderCol, DeleteAfterDate) values (@GID, @UID, 'Эрот', '', 312, NULL);
 	end try
 	begin catch
 		set @ErrCode = 72;
@@ -551,12 +552,12 @@ begin
 	
 	begin try    
 		insert dbo.Ratings (uid, IconID, RatingName, Visible) 
-		values (@UID, 35, 'Без рейтинга', 1),
-		(@UID, 36, 'Можно посмотреть', 1),
-		(@UID, 37, 'Приличные', 1),
-		(@UID, 38, 'Нормальные',1),
-		(@UID, 39, 'Хорошие', 1),
-		(@UID, 40, 'Отличные',1);
+		values (@UID, 37, 'Без рейтинга', 1),
+		(@UID, 38, 'Можно посмотреть', 1),
+		(@UID, 39, 'Приличные', 1),
+		(@UID, 40, 'Нормальные',1),
+		(@UID, 41, 'Хорошие', 1),
+		(@UID, 42, 'Отличные',1);
 	end try
 	begin catch
 		set @ErrCode = 73;

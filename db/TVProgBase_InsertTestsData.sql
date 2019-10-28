@@ -393,6 +393,7 @@ insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, Delet
 insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Патриарх', '', NULL);
 insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Муфтий', '', NULL);
 insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (27, NULL, 'Час силы духа', '', NULL);
+INSERT INTO GenreClassificator (GID, UID, ContainPhrases, NonContainPhrases, OrderCol)  VALUES (27, NULL, 'Cвящен', '', 312)
 
 
 insert dbo.GenreClassificator(gid, uid, ContainPhrases, NonContainPhrases, DeleteAfterDate) values (28, NULL, 'сад', 'кольцо' , NULL);
