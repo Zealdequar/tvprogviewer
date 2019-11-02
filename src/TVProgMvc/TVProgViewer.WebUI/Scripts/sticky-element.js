@@ -1,9 +1,11 @@
 ﻿(function () {
     var a = document.querySelector('#aside1'), b = null, P = 10;  // если ноль заменить на число, то блок будет прилипать до того, как верхний край окна браузера дойдёт до верхнего края элемента. Может быть отрицательным числом
+    if (!a)
+        return;
     window.addEventListener('scroll', Ascroll1, false);
     document.body.addEventListener('scroll', Ascroll1, false);
     function Ascroll1() {
-        if (b == null && a) {
+        if (b == null) {
             var Sa = getComputedStyle(a, ''), s = '';
             for (var i = 0; i < Sa.length; i++) {
                 if (Sa[i].indexOf('overflow') == 0 || Sa[i].indexOf('padding') == 0 || Sa[i].indexOf('border') == 0 || Sa[i].indexOf('outline') == 0 || Sa[i].indexOf('box-shadow') == 0 || Sa[i].indexOf('background') == 0) {
@@ -39,7 +41,9 @@
             a.children[0].style.width = getComputedStyle(a, '').width
         }, false);
     }
-   var a2 = document.querySelector('#aside2'), b2 = null, P2 = 10;  // если ноль заменить на число, то блок будет прилипать до того, как верхний край окна браузера дойдёт до верхнего края элемента. Может быть отрицательным числом
+    var a2 = document.querySelector('#aside2'), b2 = null, P2 = 10;  // если ноль заменить на число, то блок будет прилипать до того, как верхний край окна браузера дойдёт до верхнего края элемента. Может быть отрицательным числом
+    if (!a2)
+        return;
     window.addEventListener('scroll', Ascroll2, false);
     document.body.addEventListener('scroll', Ascroll2, false);
     function Ascroll2() {

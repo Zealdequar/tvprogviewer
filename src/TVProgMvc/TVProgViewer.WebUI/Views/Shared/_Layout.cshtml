@@ -33,20 +33,8 @@
     </script>
 
     <meta charset="utf-8" />
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/themes/base/all.css" rel="stylesheet" />
-    <link href="~/Content/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/Content/jsTree/themes/default/style.css" rel="stylesheet" />
-    <link href="~/Content/ui.jqgrid.min.css" rel="stylesheet" />
-    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
-    <script src="~/Scripts/jquery-1.12.4.min.js"></script>
-    <script src="~/Scripts/modernizr-2.6.2.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
-    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
-    <script src="~/Scripts/jsTree3/jstree.js"></script>
-    <script src="~/Scripts/free-jqGrid/i18n/min/grid.locale-ru.js"></script>
-    <script src="~/Scripts/free-jqGrid/jquery.jqgrid.min.js"></script>
-    <script src="~/Scripts/free-jqGrid/jquery.jqgrid.src.js"></script>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/tvprogviewerscripts")       
     <title>@ViewBag.Title</title>
 </head>
 <body>
