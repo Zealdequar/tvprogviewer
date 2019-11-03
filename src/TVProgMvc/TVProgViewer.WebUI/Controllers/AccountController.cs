@@ -150,7 +150,7 @@ namespace TVProgViewer.WebUI.Controllers
                 {
                     FormsAuthentication.SetAuthCookie(model.Login, true);
 
-                    var authTicket = new FormsAuthenticationTicket(1, userAuth.UserName, DateTime.Now, DateTime.Now.AddDays(7), false, $"User,{secureData.UID}");
+                    var authTicket = new FormsAuthenticationTicket(1, userAuth.UserName, DateTime.Now, DateTime.Now.AddMonths(1), false, $"User,{secureData.UID}");
                     string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
                     var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
                     HttpContext.Response.Cookies.Add(authCookie);

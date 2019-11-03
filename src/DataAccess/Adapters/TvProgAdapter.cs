@@ -316,34 +316,27 @@ namespace TVProgViewer.DataAccess.Adapters
 
             foreach (SystemProgramme sp in systemProgramme)
             {
-                sp.RatingName = (from rc in dataContext.RatingClassificator.AsNoTracking()
-                                 join r in dataContext.Ratings.AsNoTracking() on rc.RID equals r.RatingID
-                                 where r.UID == uid && rc.UID == uid && r.Visible && r.DeleteDate == null &&
-                                 (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.Now)
-                                 orderby rc.OrderCol
-                                 select new { r.RatingName, rc.ContainPhrases, rc.NonContainPhrases })
-                                 .ToList()
-                                 .Where(rc => sp.TelecastTitle.ContainsAny(rc.ContainPhrases.Split(';')) &&
-                                        (string.IsNullOrWhiteSpace(rc.NonContainPhrases) ||
-                                         (!string.IsNullOrWhiteSpace(rc.NonContainPhrases) &&
-                                         !sp.TelecastTitle.ContainsAny(rc.NonContainPhrases.Split(';')))))
-                                  .Select(r => r.RatingName).FirstOrDefault() ?? "Без рейтинга";
-                sp.RatingContent = (from rc in dataContext.RatingClassificator.AsNoTracking()
-                                    join r in dataContext.Ratings.AsNoTracking() on rc.RID equals r.RatingID
-                                    join mp2 in dataContext.MediaPic.AsNoTracking() on r.IconID equals mp2.IconID into rmp2
-                                    from mp2 in rmp2.DefaultIfEmpty()
-                                    where r.UID == uid && rc.UID == uid && r.Visible && r.DeleteDate == null &&
-                                       (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.Now)
-                                    orderby rc.OrderCol
-                                    select new { mp2.Path25, mp2.FileName, rc.ContainPhrases, rc.NonContainPhrases })
+                var ratingAttrs = (from rc in dataContext.RatingClassificator.AsNoTracking()
+                                   join r in dataContext.Ratings.AsNoTracking() on rc.RID equals r.RatingID
+                                   join mp2 in dataContext.MediaPic.AsNoTracking() on r.IconID equals mp2.IconID into rmp2
+                                   from mp2 in rmp2.DefaultIfEmpty()
+                                   where r.UID == uid && rc.UID == uid && r.Visible && r.DeleteDate == null &&
+                                      (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.Now)
+                                   orderby rc.OrderCol
+                                   select new { r.RatingID, r.RatingName, mp2.Path25, mp2.FileName, rc.ContainPhrases, rc.NonContainPhrases })
                                                  .ToList()
-                                                 .Where(rc => sp.TelecastTitle.ContainsAny(rc.ContainPhrases.Split(';'))
+                                                 .Where(rc => sp.TelecastTitle.ToUpper().ContainsAny(rc.ContainPhrases.ToUpper().Split(';'))
                                                         && (string.IsNullOrWhiteSpace(rc.NonContainPhrases) ||
                                                         (!string.IsNullOrWhiteSpace(rc.NonContainPhrases) &&
-                                                        !sp.TelecastTitle.ContainsAny(rc.NonContainPhrases.Split(';')))))
-                                                 .Select(mp2 => mp2.Path25 + mp2.FileName).FirstOrDefault() ?? (from m in dataContext.MediaPic.AsNoTracking()
-                                                                                                                where m.FileName == "favempty.png" && m.IsSystem
-                                                                                                                select m.Path25 + m.FileName).Single();
+                                                        !sp.TelecastTitle.ToUpper().ContainsAny(rc.NonContainPhrases.ToUpper().Split(';')))))
+                                                 .Select(mp2 => new { mp2.RatingID, mp2.RatingName, RatingContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
+                sp.RatingID = ratingAttrs?.RatingID ?? (from r in dataContext.Ratings.AsNoTracking()
+                                                        where r.UID == uid && r.RatingName == "Без рейтинга" && r.Visible && r.DeleteDate == null
+                                                        select r.RatingID).FirstOrDefault();
+                sp.RatingName = ratingAttrs?.RatingName ?? "Без рейтинга";
+                sp.RatingContent = ratingAttrs?.RatingContent?? (from m in dataContext.MediaPic.AsNoTracking()
+                                                                 where m.FileName == "favempty.png" && m.IsSystem
+                                                                 select m.Path25 + m.FileName).FirstOrDefault();
             }
         }
 
@@ -363,7 +356,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                           where sp.Category == g.GenreName && g.UID == uid && gc.UID == uid && g.Visible && g.DeleteDate == null &&
                                            (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
                                           orderby gc.OrderCol
-                                          select new { GenreID = g.GenreID, GenreName = g.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
+                                          select new {g.GenreID, g.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
                 var genreClassifAttrs = (from gc in dataContext.GenreClassificator.AsNoTracking()
                                          join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
                                          join mp2 in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp2.IconID into gmp2
@@ -377,7 +370,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                                        && (string.IsNullOrWhiteSpace(gc.NonContainPhrases) ||
                                                        (!string.IsNullOrWhiteSpace(gc.NonContainPhrases) &&
                                                        !sp.TelecastTitle.ToUpper().ContainsAny(gc.NonContainPhrases.ToUpper().Split(';')))))
-                                                .Select(mp2 => new { GenreID = mp2.GenreID, GenreName = mp2.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
+                                                .Select(mp2 => new { mp2.GenreID, mp2.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
                 sp.GenreID = genreCategoryAttrs?.GenreID ?? genreClassifAttrs?.GenreID ?? 1;
                 sp.GenreName = genreCategoryAttrs?.GenreName ?? genreClassifAttrs?.GenreName ?? "Без типа";
                 sp.GenreContent = genreCategoryAttrs?.GenreContent ?? genreClassifAttrs?.GenreContent;

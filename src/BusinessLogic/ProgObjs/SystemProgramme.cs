@@ -105,6 +105,10 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         public long? GenreID { get; set; }
 
         /// <summary>
+        /// Идентификатор рейтинга
+        /// </summary>
+        public long? RatingID { get; set; }
+        /// <summary>
         /// Название жанра
         /// </summary>
         [DataMember]
