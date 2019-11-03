@@ -334,9 +334,9 @@ namespace TVProgViewer.DataAccess.Adapters
                                                         where r.UID == uid && r.RatingName == "Без рейтинга" && r.Visible && r.DeleteDate == null
                                                         select r.RatingID).FirstOrDefault();
                 sp.RatingName = ratingAttrs?.RatingName ?? "Без рейтинга";
-                sp.RatingContent = ratingAttrs?.RatingContent?? (from m in dataContext.MediaPic.AsNoTracking()
-                                                                 where m.FileName == "favempty.png" && m.IsSystem
-                                                                 select m.Path25 + m.FileName).FirstOrDefault();
+                sp.RatingContent = ratingAttrs?.RatingContent ?? (from m in dataContext.MediaPic.AsNoTracking()
+                                                                  where m.FileName == "favempty.png" && m.IsSystem
+                                                                  select m.Path25 + m.FileName).FirstOrDefault();
             }
         }
 
