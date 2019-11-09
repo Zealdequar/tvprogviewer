@@ -181,7 +181,7 @@ function fillFooter() {
         success: function (response) {
             var startDate = new Date(parseInt(response.dtStart.substr(6)));
             var endDate = new Date(parseInt(response.dtEnd.substr(6)));
-            $("#period").text(formatDateString(startDate) + "—" + formatDateString(endDate));
+            $("#period").text(formatDateString(startDate) + " — " + formatDateString(endDate));
         },
     }); 
 }

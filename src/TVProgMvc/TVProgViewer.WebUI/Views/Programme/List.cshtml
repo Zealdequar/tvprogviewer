@@ -5,7 +5,7 @@
     ViewBag.Title = "TVProgViewer: программа передач по всем каналам сейчас, следом, поиск телепередач";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div id="choicePnl" style="position: relative; display:none">
+<div id="choicePnl" style="position: relative; display:none; margin-top: 8px">
     <div>
         <label for="TVProgProvider">Провайдер ТВ-программы</label>
         <select name="TVProgProvider" id="TVProgProvider" class="input-medium"></select>
@@ -32,7 +32,7 @@
     </ul>
     <div id="tabNow">
         <div id="mainToolNow" style="height:34px; display:none">
-            <button id="anonsTool" style="margin: 3px; display:none;"><img src="~/imgs/i/GreenAnons.png" /></button>
+            <button id="anonsTool" style="display:none;"><img src="~/imgs/i/GreenAnons.png" /></button>
         </div>
         <div id="dragToolGenreNow" class="drag-tool-genre">
             <div id="genresToolNow" class="btn-group btn-group-sm btn-group-genres-now">

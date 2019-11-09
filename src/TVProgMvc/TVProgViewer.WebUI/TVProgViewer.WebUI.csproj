@@ -278,6 +278,9 @@
     <Content Include="Content\themes\base\sortable.css" />
     <Content Include="Content\themes\base\spinner.css" />
     <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\tabs.min.css">
+      <DependentUpon>tabs.css</DependentUpon>
+    </Content>
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
     <Content Include="Content\throbber.gif" />

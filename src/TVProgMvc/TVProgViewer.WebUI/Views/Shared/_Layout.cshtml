@@ -21,7 +21,7 @@
         });
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/54311379" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
+    <!-- Yandex.Metrika counter -->
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-142558739-2"></script>
     <script>
@@ -38,8 +38,8 @@
     <title>@ViewBag.Title</title>
 </head>
 <body>
-    <link rel="SHORTCUT ICON" href="http://www.tvprogviewer.com/favicon.ico" />
-    <div class="navbar navbar-inverse" role="navigation">
+    <link rel="SHORTCUT ICON" href="https://tvprogviewer.ru/favicon.ico" />
+    <div class="navbar navbar-inverse" role="navigation" style="top:0px;">
         <a class="navbar-brand" href="#"><img src="~/imgs/i/LCD-TV-Panel128x128.png" title="TVProgViewer" style="position: absolute; top:-33px;left:10px;" /></a>
         <div class="container">
             <div class="navbar-header">
@@ -61,19 +61,21 @@
             <div class="alert alert-success">@TempData["message"]</div>
         }
     </div>
-    <div class="row panel">
+    <div style="height: 753px">
         <div class="col-xs-12">
             @RenderBody()
         </div>
     </div>
-    <br />
-    <footer class="col-xs-12">
-        <p>&copy; 2012 — @DateTime.Now.Year TVProgViewer</p>
+    <footer class="col-xs-12 page-footer pt-4">
         <div>
             <a href="https://webmaster.yandex.ru/sqi?host=tvprogviewer.ru"><img width="88" height="31" alt="" border="0" src="https://yandex.ru/cycounter?tvprogviewer.ru&theme=light&lang=ru" /></a>
             <script src="https://yastatic.net/es5-shims/0.0.2/es5-shims.min.js"></script>
             <script src="https://yastatic.net/share2/share.js" async="async"></script>
-            <div class="ya-share2" data-description="TVProgViewer — бесплатное приложение для тонкой настройки и удобного просмотра программы телепередач по всем каналам с анонсами" data-counter="true" style="position:absolute; top:37px; left: 110px" data-services="collections,vkontakte,facebook,odnoklassniki,moimir,twitter,reddit,lj,viber,whatsapp,skype"></div>
+            <div class="ya-share2" data-description="TVProgViewer — бесплатное приложение для тонкой настройки и удобного просмотра программы телепередач по всем каналам с анонсами" data-counter="true" style="position:absolute; top:4px; left: 110px" data-services="collections,vkontakte,facebook,odnoklassniki,moimir,twitter,reddit,lj,viber,whatsapp,skype"></div>
+        </div>
+        <div class="footer-copyright text-center footer-font-small py-3">
+            &copy; 2012 — @DateTime.Now.Year Все права защищены:
+            @Html.ActionLink("TVProgViewer.Ru", "List", "Programme", routeValues: null, htmlAttributes: new { id = "mainLink" })
         </div>
     </footer>
     @RenderSection("scripts", required: true)
