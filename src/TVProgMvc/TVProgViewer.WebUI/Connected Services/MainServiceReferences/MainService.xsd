@@ -266,6 +266,7 @@
         <xs:element minOccurs="0" name="page" type="xs:int" />
         <xs:element minOccurs="0" name="rows" type="xs:int" />
         <xs:element minOccurs="0" name="genres" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="dates" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

@@ -160,7 +160,7 @@ namespace TVProgViewer.TVProgService
         /// <param name="findTitle">Поисковая подстрока</param>
         [OperationContract]
         List<SystemProgramme> SearchProgramme(int typeProgID, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres);
+                                                         string sidx, string sord, int page, int rows, string genres, string dates);
 
         /// <summary>
         /// Поиск по пользовательской программе телепередач

@@ -963,4 +963,38 @@ function fillGenresToolNext() {
                 }
             }
         });
+}
+
+function fillDatesToolSearch() {
+    $.ajax({
+        url: "/Programme/GetSystemProgrammePeriod?progType=" + $('#TVProgType option:selected').val(),
+        dataType: 'json',
+        type: 'Get',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            var startDate = new Date(parseInt(response.dtStart.substr(6)));
+            var endDate = new Date(parseInt(response.dtEnd.substr(6)));
+            var arrDates = getDates(startDate, endDate);
+            for (var i = 0; i <= arrDates.length; i++) {
+                $("#datesToolSearch").append("<div>" + formatDateString(arrDates[i]) + "</div>");
+            }
+        }
+    }); 
+ 
+}
+
+Date.prototype.addDays = function (days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+function getDates(startDate, stopDate) {
+    var dateArray = new Array();
+    var currentDate = startDate;
+    while (currentDate <= stopDate) {
+        dateArray.push(new Date(currentDate));
+        currentDate = currentDate.addDays(1);
     }
+    return dateArray;
+}

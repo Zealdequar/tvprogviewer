@@ -72,7 +72,7 @@ namespace TVProgViewer.WebUI.Abstract
         /// <param name="typeProgID">Идентификатор типа телепрограммы</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         Task<SystemProgramme[]> SearchProgramme(int typeProgID, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres);
+                                                         string sidx, string sord, int page, int rows, string genres, string dates);
         
         /// <summary>
         /// Поиск по пользовательской программе телепередач

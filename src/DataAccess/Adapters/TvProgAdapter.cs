@@ -387,9 +387,18 @@ namespace TVProgViewer.DataAccess.Adapters
             if (string.IsNullOrWhiteSpace(genres))
                 return systemProgramme;
             long gid;
-            return systemProgramme.Where(x => genres.Split(';').Any(g => long.TryParse(g, out gid) && long.Parse(g)  == x.GenreID)).ToList();
+            return systemProgramme.Where(x => genres.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Any(g => long.TryParse(g, out gid) && long.Parse(g)  == x.GenreID)).ToList();
         }
 
+        private List<SystemProgramme> FilterDates(List<SystemProgramme> systemProgramme, string dates)
+        {
+            if (string.IsNullOrWhiteSpace(dates))
+                return systemProgramme;
+            DateTime date;
+            CultureInfo ci = new CultureInfo("Ru-ru");
+            List<DateTime> rawDates = dates.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => DateTime.TryParseExact(x, "g", ci, DateTimeStyles.None, out date) ? DateTime.Parse(x, ci) : new DateTime()).ToList();
+            return systemProgramme.Where(x => rawDates.Any(rd => rd <= x.TsStartMO && x.TsStartMO <= rd.AddDays(1))).ToList();
+        }
         /// <summary>
         /// Получение названия жанра через идентификатор
         /// </summary>
@@ -886,7 +895,7 @@ namespace TVProgViewer.DataAccess.Adapters
         /// <param name="typeProgID">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         public List<SystemProgramme> SearchProgramme(int typeProgID, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres)
+                                                         string sidx, string sord, int page, int rows, string genres, string dates)
         {
             List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
             int count = 0;
@@ -929,6 +938,7 @@ namespace TVProgViewer.DataAccess.Adapters
                 });
                 SetGenres(systemProgramme, null);
                 systemProgramme = FilterGenres(systemProgramme, genres);
+                systemProgramme = FilterDates(systemProgramme, dates);
                 count = systemProgramme.Count();
 
                 if (!string.IsNullOrWhiteSpace(sidx))
