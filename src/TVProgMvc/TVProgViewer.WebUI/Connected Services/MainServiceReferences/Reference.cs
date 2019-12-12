@@ -131,10 +131,10 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
         System.Threading.Tasks.Task ChangeChannelImageAsync(long uid, int userChannelId, string filename, string contentType, int length, int length25, string pathOrig, string path25);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetGenres", ReplyAction="http://tempuri.org/IMainService/GetGenresResponse")]
-        TVProgViewer.BusinessLogic.ProgObjs.Genre[] GetGenres(System.Nullable<long> uid);
+        TVProgViewer.BusinessLogic.ProgObjs.Genre[] GetGenres(System.Nullable<long> uid, bool all);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetGenres", ReplyAction="http://tempuri.org/IMainService/GetGenresResponse")]
-        System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.Genre[]> GetGenresAsync(System.Nullable<long> uid);
+        System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.Genre[]> GetGenresAsync(System.Nullable<long> uid, bool all);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/AddGenre", ReplyAction="http://tempuri.org/IMainService/AddGenreResponse")]
         long AddGenre(System.Nullable<long> uid, string name, System.Nullable<int> iconId, bool visible);
@@ -487,12 +487,12 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
             return base.Channel.ChangeChannelImageAsync(uid, userChannelId, filename, contentType, length, length25, pathOrig, path25);
         }
         
-        public TVProgViewer.BusinessLogic.ProgObjs.Genre[] GetGenres(System.Nullable<long> uid) {
-            return base.Channel.GetGenres(uid);
+        public TVProgViewer.BusinessLogic.ProgObjs.Genre[] GetGenres(System.Nullable<long> uid, bool all) {
+            return base.Channel.GetGenres(uid, all);
         }
         
-        public System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.Genre[]> GetGenresAsync(System.Nullable<long> uid) {
-            return base.Channel.GetGenresAsync(uid);
+        public System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.Genre[]> GetGenresAsync(System.Nullable<long> uid, bool all) {
+            return base.Channel.GetGenresAsync(uid, all);
         }
         
         public long AddGenre(System.Nullable<long> uid, string name, System.Nullable<int> iconId, bool visible) {

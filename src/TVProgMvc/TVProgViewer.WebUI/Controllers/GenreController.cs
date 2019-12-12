@@ -57,7 +57,7 @@ namespace TVProgViewer.WebUI.Controllers
             if (UserId == null)
                 return View();
 
-            return Json(await _genresRepository.GetGenres(UserId.Value), JsonRequestBehavior.AllowGet);
+            return Json(await _genresRepository.GetGenres(UserId.Value, true), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

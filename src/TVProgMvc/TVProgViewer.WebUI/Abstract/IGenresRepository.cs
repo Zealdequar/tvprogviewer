@@ -14,7 +14,7 @@ namespace TVProgViewer.WebUI.Abstract
         /// Получение пользовательских жанров
         /// </summary>
         /// <param name="uid">Идентификатор пользователя</param>
-        Task<Genre[]> GetGenres(long? uid);
+        Task<Genre[]> GetGenres(long? uid, bool all);
 
         /// <summary>
         /// Добавление жанра

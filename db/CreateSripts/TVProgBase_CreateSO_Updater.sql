@@ -218,5 +218,5 @@ begin
     @IsSuccess,
     @ErrMessage);
 end    
-  
+ exec dbo.spDelTwoWeekAgo 
 go

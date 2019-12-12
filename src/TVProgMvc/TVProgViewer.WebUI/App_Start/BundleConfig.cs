@@ -29,7 +29,7 @@ namespace TVProgViewer
                     "~/Scripts/free-jqGrid/jquery.jqgrid.js",
                     "~/Scripts/free-jqGrid/jquery.jqgrid.src.js"
                     ));
-            BundleTable.EnableOptimizations = true;
+            
         }
     }
 }

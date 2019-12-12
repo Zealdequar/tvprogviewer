@@ -254,9 +254,9 @@ namespace TVProgViewer.TVProgService
         /// Получение пользовательских жанров
         /// </summary>
         /// <param name="uid">Идентификатор пользователя</param>
-        public List<Genre> GetGenres(long? uid)
+        public List<Genre> GetGenres(long? uid, bool all)
         {
-            return _ga.GetGenres(uid);
+            return _ga.GetGenres(uid, all);
         }
 
         /// <summary>

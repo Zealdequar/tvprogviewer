@@ -14,7 +14,7 @@ namespace TVProgViewer.DataAccess.Adapters
         /// </summary>
         /// <param name="uid">Идентификатор пользователя</param>
         /// <returns>Список жанров</returns>
-        public List<Genre> GetGenres (long? uid)
+        public List<Genre> GetGenres (long? uid, bool all)
         {
             List<Genre> genres = new List<Genre>();
             try
@@ -34,6 +34,8 @@ namespace TVProgViewer.DataAccess.Adapters
                               Visible = g.Visible,
                               DeleteDate = g.DeleteDate
                           }).Select(mapper.Map<Genre>).ToList() ;
+                if (!all)
+                    genres = genres.Where(g => g.Visible).ToList();
 
             }
             catch (Exception ex)
@@ -170,7 +172,7 @@ namespace TVProgViewer.DataAccess.Adapters
                                  join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
                                  join mp in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp.IconID into gmp
                                  from mp in gmp.DefaultIfEmpty()
-                                 where g.UID == uid && gc.UID == uid && g.DeleteDate == null && (gc.DeleteAfterDate == null || gc.DeleteAfterDate >= DateTime.Now)
+                                 where g.UID == uid && g.Visible && gc.UID == uid && g.DeleteDate == null && (gc.DeleteAfterDate == null || gc.DeleteAfterDate >= DateTime.Now)
                                  orderby gc.OrderCol
                                  select new
                                  {

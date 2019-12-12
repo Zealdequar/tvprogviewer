@@ -75,12 +75,13 @@ namespace TVProgViewer.WebUI.Controllers
             var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
-
+        [OutputCache(Duration = 7 * 86400, VaryByParam = "none", Location = System.Web.UI.OutputCacheLocation.Server)]
         public async Task<ActionResult> GetTvProviderList()
         {
             return Json(await progRepository.GetProviderTypeAsyncList(), JsonRequestBehavior.AllowGet);
         }
 
+        [OutputCache(Duration = 7 * 86400, VaryByParam = "none", Location = System.Web.UI.OutputCacheLocation.Server)]
         public async Task<ActionResult> GetCategories()
         {
             return Json(await progRepository.GetCategories(), JsonRequestBehavior.AllowGet);
@@ -96,9 +97,10 @@ namespace TVProgViewer.WebUI.Controllers
             return Json(await progRepository.SearchProgramme(progType, findTitle, (category != "null") ? category : null, sidx, sord, page, rows, genres, dates), JsonRequestBehavior.AllowGet);
         }
 
+        [OutputCache(Duration = 3600, VaryByParam = "none", Location = System.Web.UI.OutputCacheLocation.Server)]
         public async Task<ActionResult> GetSystemProgrammePeriod(int progType)
         {
-            return Json(await progRepository.GetSystemProgrammePeriodAsync(progType), JsonRequestBehavior.AllowGet);
+             return Json(await progRepository.GetSystemProgrammePeriodAsync(progType), JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult TreeView()
@@ -118,11 +120,12 @@ namespace TVProgViewer.WebUI.Controllers
                                 Convert.ToDateTime(tsDate).AddDays(1).AddHours(5).AddMinutes(45), (category != "null") ? category : null), JsonRequestBehavior.AllowGet);
         }
 
+       
         public async Task<JsonResult> GetGenres()
         {
             if (UserId == null || !User.Identity.IsAuthenticated)
-               return Json(await genresRepository.GetGenres(null), JsonRequestBehavior.AllowGet);
-            return Json(await genresRepository.GetGenres(UserId.Value), JsonRequestBehavior.AllowGet);
+               return Json(await genresRepository.GetGenres(null, false), JsonRequestBehavior.AllowGet);
+            return Json(await genresRepository.GetGenres(UserId.Value, false), JsonRequestBehavior.AllowGet);
         }
     }
 }

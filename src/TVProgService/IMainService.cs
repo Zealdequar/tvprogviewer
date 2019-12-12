@@ -197,9 +197,10 @@ namespace TVProgViewer.TVProgService
         /// Получение пользовательских жанров
         /// </summary>
         /// <param name="uid">Идентифкатор пользователя</param>
+        /// <param name="bool">Выводить ли все жанры, даже скрытые</param>
         /// <returns></returns>
         [OperationContract]
-        List<Genre> GetGenres(long? uid);
+        List<Genre> GetGenres(long? uid, bool all);
 
         /// <summary>
         /// Добавление жанра

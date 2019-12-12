@@ -328,6 +328,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" name="uid" nillable="true" type="xs:long" />
+        <xs:element minOccurs="0" name="all" type="xs:boolean" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

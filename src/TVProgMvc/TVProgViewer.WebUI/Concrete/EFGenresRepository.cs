@@ -15,9 +15,10 @@ namespace TVProgViewer.WebUI.Concrete
         /// Получение пользовательских жанров
         /// </summary>
         /// <param name="uid">Идентификатор пользователя</param>
-        public Task<Genre[]> GetGenres(long? uid)
+        /// <param name="all">Выводить все, даже скрытые жанры</param>
+        public Task<Genre[]> GetGenres(long? uid, bool all)
         {
-            return Task<Genre[]>.Factory.StartNew(() => { return TvProgService.GetGenres(uid); });
+            return Task<Genre[]>.Factory.StartNew(() => { return TvProgService.GetGenres(uid, all); });
         }
 
         /// <summary>

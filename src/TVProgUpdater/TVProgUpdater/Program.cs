@@ -42,7 +42,7 @@ namespace TVProgUpdater
             {
                 try
                 {
-                    if (!string.IsNullOrWhiteSpace(wr.Rss))
+                    /*if (!string.IsNullOrWhiteSpace(wr.Rss))
                     {
                         try
                         {
@@ -72,7 +72,7 @@ namespace TVProgUpdater
                         {
                             continue;
                         }
-                    }
+                    }*/
                     _logger.Info("Обновление для ID='{0}'", wr.WebResourceID);
                     Stopwatch swLoc = Stopwatch.StartNew();
                     string fileName = wr.FileName;
