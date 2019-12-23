@@ -44,6 +44,8 @@ $(function () {
     fillGenresToolNow();
     fillGenresToolNext();
     fillGenresToolSearch();
+
+    //fillDatesToolSearch();
     $("#tabs").show();
     setGrids();
     $("#anonsTool").click(function () {
@@ -976,7 +978,7 @@ function fillDatesToolSearch() {
             var endDate = new Date(parseInt(response.dtEnd.substr(6)));
             var arrDates = getDates(startDate, endDate);
             for (var i = 0; i <= arrDates.length; i++) {
-                $("#datesToolSearch").append("<div>" + formatDateString(arrDates[i]) + "</div>");
+                $("#datesToolSearch").append("<div><span><img src='/imgs/i/" + getDayOfWeek(arrDates[i]) + ".png'></img>" + ' ' + formatDateString(arrDates[i]) + "<span></div>");
             }
         }
     }); 
@@ -997,4 +999,10 @@ function getDates(startDate, stopDate) {
         currentDate = currentDate.addDays(1);
     }
     return dateArray;
+}
+
+function getDayOfWeek(dt) {
+    var days = ['Sun', 'Mon', 'Tue', 'Wen', 'Ths', 'Fri', 'Sat'];
+
+    return days[dt.getDay()];
 }
