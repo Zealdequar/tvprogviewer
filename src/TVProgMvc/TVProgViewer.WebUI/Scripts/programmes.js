@@ -45,7 +45,7 @@ $(function () {
     fillGenresToolNext();
     fillGenresToolSearch();
 
-    //fillDatesToolSearch();
+    fillDatesToolSearch();
     $("#tabs").show();
     setGrids();
     $("#anonsTool").click(function () {
@@ -194,6 +194,14 @@ function formatDateString(date) {
     var month = ("0" + (date.getMonth() + 1)).slice(-2);
     var year = date.getFullYear();
     return day + "." + month + "." + year;
+}
+
+// Преобразование к формату даты (202001010)
+function numDateString(date) {
+    var day = ("0" + date.getDate()).slice(-2);
+    var month = ("0" + (date.getMonth() + 1)).slice(-2);
+    var year = date.getFullYear();
+    return year + '' + month + '' + day;
 }
 
 //Получение тега пиктограммы
@@ -977,12 +985,25 @@ function fillDatesToolSearch() {
             var startDate = new Date(parseInt(response.dtStart.substr(6)));
             var endDate = new Date(parseInt(response.dtEnd.substr(6)));
             var arrDates = getDates(startDate, endDate);
-            for (var i = 0; i <= arrDates.length; i++) {
-                $("#datesToolSearch").append("<div><span><img src='/imgs/i/" + getDayOfWeek(arrDates[i]) + ".png'></img>" + ' ' + formatDateString(arrDates[i]) + "<span></div>");
+            for (var i = 1; i <= 7; i++) {
+                $("#datesToolSearch").append('<div class="row">' +
+                    appendDateColumn(arrDates[(i - 1) % 7]) +
+                    appendDateColumn(arrDates[(i - 1) % 7 + 7]) +
+                    appendDateColumn(arrDates[(i - 1) % 7 + 14]) +
+                    appendDateColumn(arrDates[(i - 1) % 7 + 21]) +
+                    appendDateColumn(arrDates[(i - 1) % 7 + 28]) +
+                                              '</div>');
             }
         }
     }); 
  
+}
+
+function appendDateColumn(dt) {
+    return '<div class="col-sm-2">' +
+        ((typeof (dt) !== 'undefined') ? '<input id="Date' + numDateString(dt) + '" type="checkbox"></input>' : '') +
+        ((typeof (dt) !== 'undefined') ? '<img style="float:left" src="/imgs/i/' + getDayOfWeek(dt) + '.png"></img>' : '') +
+        '<div class="mt8">' + ((typeof (dt) !== 'undefined') ? formatDateString(dt) : '') + '</div></div>';
 }
 
 Date.prototype.addDays = function (days) {
