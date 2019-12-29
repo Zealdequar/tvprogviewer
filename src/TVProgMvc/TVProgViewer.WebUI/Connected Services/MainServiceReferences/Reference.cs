@@ -113,10 +113,10 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
         System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> SearchProgrammeAsync(int typeProgID, string findTitle, string category, string sidx, string sord, int page, int rows, string genres, string dates);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/SearchUserProgramme", ReplyAction="http://tempuri.org/IMainService/SearchUserProgrammeResponse")]
-        TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[] SearchUserProgramme(long uid, int typeProgID, string findTitle);
+        System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> SearchUserProgramme(long uid, int typeProgID, string findTitle, string category, string sidx, string sord, int page, int rows, string genres, string dates);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/SearchUserProgramme", ReplyAction="http://tempuri.org/IMainService/SearchUserProgrammeResponse")]
-        System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> SearchUserProgrammeAsync(long uid, int typeProgID, string findTitle);
+        System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> SearchUserProgrammeAsync(long uid, int typeProgID, string findTitle, string category, string sidx, string sord, int page, int rows, string genres, string dates);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/UpdateCatalog", ReplyAction="http://tempuri.org/IMainService/UpdateCatalogResponse")]
         void UpdateCatalog(long uid);
@@ -463,12 +463,12 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
             return base.Channel.SearchProgrammeAsync(typeProgID, findTitle, category, sidx, sord, page, rows, genres, dates);
         }
         
-        public TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[] SearchUserProgramme(long uid, int typeProgID, string findTitle) {
-            return base.Channel.SearchUserProgramme(uid, typeProgID, findTitle);
+        public System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> SearchUserProgramme(long uid, int typeProgID, string findTitle, string category, string sidx, string sord, int page, int rows, string genres, string dates) {
+            return base.Channel.SearchUserProgramme(uid, typeProgID, findTitle, category, sidx, sord, page, rows, genres, dates);
         }
         
-        public System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> SearchUserProgrammeAsync(long uid, int typeProgID, string findTitle) {
-            return base.Channel.SearchUserProgrammeAsync(uid, typeProgID, findTitle);
+        public System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> SearchUserProgrammeAsync(long uid, int typeProgID, string findTitle, string category, string sidx, string sord, int page, int rows, string genres, string dates) {
+            return base.Channel.SearchUserProgrammeAsync(uid, typeProgID, findTitle, category, sidx, sord, page, rows, genres, dates);
         }
         
         public void UpdateCatalog(long uid) {

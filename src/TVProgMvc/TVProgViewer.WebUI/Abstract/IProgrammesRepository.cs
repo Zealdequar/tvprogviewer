@@ -80,7 +80,8 @@ namespace TVProgViewer.WebUI.Abstract
         /// <param name="uid">Идентификатор пользователя</param>
         /// <param name="typeProgID">Идентификатор типа телепрограммы</param>
         /// <param name="findTitle">Посиковая подстрока</param>
-        Task<SystemProgramme[]> SearchUserProgramme(long uid, int typeProgID, string findTitle);
+        Task<KeyValuePair<int, SystemProgramme[]>> SearchUserProgramme(long uid, int typeProgID, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates);
 
         /// <summary>
         /// Получение периода телепрограммы

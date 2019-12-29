@@ -959,9 +959,11 @@ namespace TVProgViewer.DataAccess.Adapters
         /// <param name="uid">Идентификатор пользователя</param>
         /// <param name="typeProgID">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
-        public List<SystemProgramme> SearchUserProgramme(long uid, int typeProgID, string findTitle)
+        public KeyValuePair<int, List<SystemProgramme>> SearchUserProgramme(long uid, int typeProgID, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates)
         {
             List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
+            int count = 0;
             try
             {
                 systemProgramme = (from pr in dataContext.Programmes.AsNoTracking()
@@ -999,13 +1001,22 @@ namespace TVProgViewer.DataAccess.Adapters
                     pr.DayMonth = pr.TsStartMO.ToString("ddd", new CultureInfo("ru-Ru")) +
                     String.Format("({0:D2}.{1:D2})", pr.TsStartMO.Day, pr.TsStartMO.Month);
                 });
+
                 SetGenres(systemProgramme, uid);
                 SetRatings(systemProgramme, uid);
+                systemProgramme = FilterGenres(systemProgramme, genres);
+                systemProgramme = FilterDates(systemProgramme, dates);
+                count = systemProgramme.Count();
+
+                systemProgramme = systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMO", sord)
+                                             .Skip((page - 1) * rows).Take(rows)
+                                             .Select(mapper.Map<SystemProgramme>)
+                                             .ToList<SystemProgramme>();
             }
             catch (Exception ex)
             {
             }
-            return systemProgramme;
+            return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme); 
         }
 
         #endregion

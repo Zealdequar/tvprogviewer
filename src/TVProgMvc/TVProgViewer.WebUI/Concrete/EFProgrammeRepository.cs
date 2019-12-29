@@ -109,9 +109,10 @@ namespace TVProgViewer.WebUI.Concrete
         /// <param name="uid">Идентификатор пользователя</param>
         /// <param name="typeProgID">Идентификатор типа телепрограммы</param>
         /// <param name="findTitle">Посиковая подстрока</param>
-        public Task<SystemProgramme[]> SearchUserProgramme(long uid, int typeProgID, string findTitle)
+        public Task<KeyValuePair<int, SystemProgramme[]>> SearchUserProgramme(long uid, int typeProgID, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates)
         {
-            return Task<SystemProgramme[]>.Factory.StartNew(() => { return TvProgService.SearchUserProgramme(uid, typeProgID, findTitle); });
+            return Task<KeyValuePair<int, SystemProgramme[]>>.Factory.StartNew(() => { return TvProgService.SearchUserProgramme(uid, typeProgID, findTitle, category, sidx, sord, page, rows, genres, dates); });
         }
 
         /// <summary>

@@ -90,12 +90,18 @@ namespace TVProgViewer.WebUI.Controllers
         public async Task<ActionResult> SearchProgramme(int progType, string findTitle, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string dates)
         {
+            object jsonData;
+            KeyValuePair<int, SystemProgramme[]> result;
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await progRepository.SearchUserProgramme(UserId.Value, progType, findTitle), JsonRequestBehavior.AllowGet);
+                result = await progRepository.SearchUserProgramme(UserId.Value, progType, findTitle
+                    , (category != "null") ? category : null, sidx, sord, page, rows, genres, dates);
+
+                jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+                return Json(jsonData, JsonRequestBehavior.AllowGet);
             }
-            KeyValuePair<int, SystemProgramme[]> result = await progRepository.SearchProgramme(progType, findTitle, (category != "null") ? category : null, sidx, sord, page, rows, genres, dates);
-            var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+            result = await progRepository.SearchProgramme(progType, findTitle, (category != "null") ? category : null, sidx, sord, page, rows, genres, dates);
+            jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 

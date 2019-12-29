@@ -985,6 +985,9 @@ function fillGenresToolNext() {
 }
 
 function fillDatesToolSearch() {
+    if (!$('#TVProgType option:selected') || !$('#TVProgType option:selected').val())
+        return;
+
     $.ajax({
         url: "/Programme/GetSystemProgrammePeriod?progType=" + $('#TVProgType option:selected').val(),
         dataType: 'json',

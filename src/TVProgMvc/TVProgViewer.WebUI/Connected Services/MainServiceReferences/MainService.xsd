@@ -283,13 +283,20 @@
         <xs:element minOccurs="0" name="uid" type="xs:long" />
         <xs:element minOccurs="0" name="typeProgID" type="xs:int" />
         <xs:element minOccurs="0" name="findTitle" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="category" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sidx" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="sord" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="page" type="xs:int" />
+        <xs:element minOccurs="0" name="rows" type="xs:int" />
+        <xs:element minOccurs="0" name="genres" nillable="true" type="xs:string" />
+        <xs:element minOccurs="0" name="dates" nillable="true" type="xs:string" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="SearchUserProgrammeResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.ProgObjs" minOccurs="0" name="SearchUserProgrammeResult" nillable="true" type="q16:ArrayOfSystemProgramme" />
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/System.Collections.Generic" minOccurs="0" name="SearchUserProgrammeResult" type="q16:KeyValuePairOfintArrayOfSystemProgrammemnKniqT0" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

@@ -160,9 +160,10 @@ namespace TVProgViewer.TVProgService
         /// <param name="uid">Идентификатор пользователя</param>
         /// <param name="typeProgID">Идентификатор типа телепрограммы</param>
         /// <param name="findTitle">Посиковая подстрока</param>
-        public List<SystemProgramme> SearchUserProgramme(long uid, int typeProgID, string findTitle)
+        public KeyValuePair<int, List<SystemProgramme>> SearchUserProgramme(long uid, int typeProgID, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates)
         {
-            return _tpa.SearchUserProgramme(uid, typeProgID, findTitle);
+            return _tpa.SearchUserProgramme(uid, typeProgID, findTitle, category, sidx, sord, page, rows, genres, dates);
         }
 
         /// <summary>

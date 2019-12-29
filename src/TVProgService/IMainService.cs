@@ -169,7 +169,8 @@ namespace TVProgViewer.TVProgService
         /// <param name="typeProgID">Идентификатор типа телепрограммы</param>
         /// <param name="findTitle">Посиковая подстрока</param>
         [OperationContract]
-        List<SystemProgramme> SearchUserProgramme(long uid, int typeProgID, string findTitle);
+        KeyValuePair<int, List<SystemProgramme>> SearchUserProgramme(long uid, int typeProgID, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates);
 
         /// <summary>
         /// Установка каталога существующим пользователям
