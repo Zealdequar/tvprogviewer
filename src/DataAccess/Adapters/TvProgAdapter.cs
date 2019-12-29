@@ -396,8 +396,8 @@ namespace TVProgViewer.DataAccess.Adapters
                 return systemProgramme;
             DateTime date;
             CultureInfo ci = new CultureInfo("Ru-ru");
-            List<DateTime> rawDates = dates.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => DateTime.TryParseExact(x, "g", ci, DateTimeStyles.None, out date) ? DateTime.Parse(x, ci) : new DateTime()).ToList();
-            return systemProgramme.Where(x => rawDates.Any(rd => rd <= x.TsStartMO && x.TsStartMO <= rd.AddDays(1))).ToList();
+            List<DateTime> rawDates = dates.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => DateTime.TryParseExact(x, "yyyyMMdd", ci, DateTimeStyles.None, out date) ? DateTime.ParseExact(x, "yyyyMMdd", ci) : new DateTime()).ToList();
+            return systemProgramme.Where(x => rawDates.Any(rd => rd <= x.TsStartMO && x.TsStartMO < rd.AddDays(1))).ToList();
         }
         /// <summary>
         /// Получение названия жанра через идентификатор
@@ -894,7 +894,7 @@ namespace TVProgViewer.DataAccess.Adapters
         /// </summary>
         /// <param name="typeProgID">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
-        public List<SystemProgramme> SearchProgramme(int typeProgID, string findTitle, string category,
+        public KeyValuePair<int, List<SystemProgramme>> SearchProgramme(int typeProgID, string findTitle, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string dates)
         {
             List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
@@ -941,15 +941,16 @@ namespace TVProgViewer.DataAccess.Adapters
                 systemProgramme = FilterDates(systemProgramme, dates);
                 count = systemProgramme.Count();
 
-                if (!string.IsNullOrWhiteSpace(sidx))
-                    systemProgramme = LinqExtensions.OrderBy(systemProgramme.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
-                else systemProgramme = systemProgramme.ToList<SystemProgramme>();
+                systemProgramme = systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMO", sord)
+                                             .Skip((page - 1) * rows).Take(rows)
+                                             .Select(mapper.Map<SystemProgramme>)
+                                             .ToList<SystemProgramme>();
 
             }
             catch (Exception ex)
             {
             }
-            return systemProgramme;
+            return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme); 
         }
 
         /// <summary>

@@ -127,15 +127,14 @@
                 </div>
 
             </div>
-            <div id="datesToolSearch" class="container-fluid">
-
-            </div>
-            <div style="height:39px;">
+            <div style="height: 39px">
                 <label for="tbContains">Содержит</label>
                 <input name="tbContains" id="tbContains" class="input-medium" type="text" />
                 <input id="btnSearch" type="button" value="Найти" />
             </div>
+            <div id="datesToolSearch" class="container-fluid" style="margin-top: 10px">
 
+            </div>
             <table id="SearchedTVProgramme"></table>
             <table id="TVProgrammeSearchPager"></table>
             <div id="anonsDescrSearch" class="description" style="display:none"></div>
@@ -160,6 +159,6 @@
         $.jgrid.useJSON = true;
 		var uv = @ViewData["UID"];
     </script>
-    <script src="~/Scripts/programmes.js"></script>
+    <script src="~/Scripts/programmes.min.js"></script>
     <script src="~/Scripts/sticky-element.min.js"></script>
 }

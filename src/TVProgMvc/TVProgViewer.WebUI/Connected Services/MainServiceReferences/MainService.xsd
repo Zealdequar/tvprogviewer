@@ -273,7 +273,7 @@
   <xs:element name="SearchProgrammeResponse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/TVProgViewer.BusinessLogic.ProgObjs" minOccurs="0" name="SearchProgrammeResult" nillable="true" type="q15:ArrayOfSystemProgramme" />
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/System.Collections.Generic" minOccurs="0" name="SearchProgrammeResult" type="q15:KeyValuePairOfintArrayOfSystemProgrammemnKniqT0" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

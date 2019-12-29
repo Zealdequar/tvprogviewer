@@ -94,13 +94,17 @@ namespace TVProgViewer.WebUI.Controllers
             {
                 return Json(await progRepository.SearchUserProgramme(UserId.Value, progType, findTitle), JsonRequestBehavior.AllowGet);
             }
-            return Json(await progRepository.SearchProgramme(progType, findTitle, (category != "null") ? category : null, sidx, sord, page, rows, genres, dates), JsonRequestBehavior.AllowGet);
+            KeyValuePair<int, SystemProgramme[]> result = await progRepository.SearchProgramme(progType, findTitle, (category != "null") ? category : null, sidx, sord, page, rows, genres, dates);
+            var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+            return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
         [OutputCache(Duration = 3600, VaryByParam = "none", Location = System.Web.UI.OutputCacheLocation.Server)]
-        public async Task<ActionResult> GetSystemProgrammePeriod(int progType)
+        public async Task<ActionResult> GetSystemProgrammePeriod(int? progType)
         {
-             return Json(await progRepository.GetSystemProgrammePeriodAsync(progType), JsonRequestBehavior.AllowGet);
+            if (progType.HasValue)
+              return Json(await progRepository.GetSystemProgrammePeriodAsync(progType.Value), JsonRequestBehavior.AllowGet);
+            return View();
         }
 
         public ActionResult TreeView()

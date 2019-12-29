@@ -225,6 +225,12 @@ div.centerLayer {
     font-weight: 300;
 }
 
-.mt8 {
-    margin-top: 8px;
+.pic-of-checkbox {
+    margin-top: -14px;
+    margin-left: 10px;
+}
+
+.label-of-checkbox {
+    margin-top: -3px;
+    font-weight: normal !important;
 }

@@ -56,7 +56,7 @@ $(function () {
     });
 
     $("#anonsToolSearch").click(function () {
-       $('#anonsDescrSearch').toggle(100)
+        $('#anonsDescrSearch').toggle(100);
     });
 
     $("#anonsToolByDays").click(function () {
@@ -172,7 +172,7 @@ function fillSelects() {
 
 // Заполенение подвала
 function fillFooter() {
-    if (!$('#TVProgType option:selected'))
+    if (!$('#TVProgType option:selected') || !$('#TVProgType option:selected').val())
         return;
 
     $.ajax({
@@ -322,13 +322,13 @@ function setGrids() {
             pager: '#TVProgrammePager',
             loadonce: false,
             forceClientSorting: true,
-            multiselect: true,
+            multiselect: true
         }).navGrid('#TVProgrammePager',
         {
             edit: false, add: false, del: false, search: true,
             searchtext: "Поиск передачи", refresh: true
         },
-        {
+         {
             zIndex: 100,
             caption: "Поиск передачи",
             sopt: ['cn']
@@ -458,7 +458,8 @@ function searchProgramme(typeProgID, findTitle) {
     $('#SearchedTVProgramme').jqGrid('GridUnload');
     $('#SearchedTVProgramme').jqGrid(
         {
-            url: "/Programme/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#TVProgCategories option:selected').val() + "&genres=" + GetGenres(".btn-genre-search.active"),
+            url: "/Programme/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#TVProgCategories option:selected').val() +
+                "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked"),
             datatype: 'json',
             mtype: 'Get',
             colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "День", "От", "До", "Передачи"],
@@ -540,9 +541,9 @@ function searchProgramme(typeProgID, findTitle) {
             caption: 'Программа передач',
             emptyrecords: 'Программа передач не обнаружена',
             pager: '#TVProgrammeSearchPager',
-            loadonce: true,
+            loadonce: false,
             forceClientSorting: true,
-            multiselect: true,
+            multiselect: true
         }).navGrid('#TVProgrammeSearchPager',
         {
             edit: false, add: false, del: false, search: true,
@@ -840,6 +841,14 @@ function GetGenres(btnActive) {
     return ids_genres.join(";");
 }
 
+function GetDates(chbChecked) {
+    var ids_dates = $(chbChecked).map(function () {
+        return this.id.replace('Date', '');
+    }).get();
+
+    return ids_dates.join(";");
+}
+
 function fillGenresToolNow() {
     $.ajax({
         url: "/Programme/GetGenres",
@@ -992,6 +1001,7 @@ function fillDatesToolSearch() {
                     appendDateColumn(arrDates[(i - 1) % 7 + 14]) +
                     appendDateColumn(arrDates[(i - 1) % 7 + 21]) +
                     appendDateColumn(arrDates[(i - 1) % 7 + 28]) +
+                    appendDateColumn(arrDates[(i - 1) % 7 + 35]) +
                                               '</div>');
             }
         }
@@ -999,18 +1009,36 @@ function fillDatesToolSearch() {
  
 }
 
-function appendDateColumn(dt) {
-    return '<div class="col-sm-2">' +
-        ((typeof (dt) !== 'undefined') ? '<input id="Date' + numDateString(dt) + '" type="checkbox"></input>' : '') +
-        ((typeof (dt) !== 'undefined') ? '<img style="float:left" src="/imgs/i/' + getDayOfWeek(dt) + '.png"></img>' : '') +
-        '<div class="mt8">' + ((typeof (dt) !== 'undefined') ? formatDateString(dt) : '') + '</div></div>';
-}
+Date.prototype.yyyymmdd = function () {
+    var mm = this.getMonth() + 1; // getMonth() is zero-based
+    var dd = this.getDate();
+
+    return [this.getFullYear(),
+    (mm > 9 ? '' : '0') + mm,
+    (dd > 9 ? '' : '0') + dd
+    ].join('');
+};
 
 Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
+};
+
+
+
+function appendDateColumn(dt) {
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).valueOf();
+    var dtDate = new Date(dt);
+    var chb = dtDate >= today ? 'checked="checked" ' : '';
+    return '<div class="col-sm-2"><div class="form-group form-check">' +
+        (typeof dt !== 'undefined' ? '<input id="Date' + numDateString(dt) + '" type="checkbox" ' + chb + 'class="form-check-input chkDates">' : '') +
+           (typeof dt !== 'undefined' ? '<label class="form-check-label label-of-checkbox" for="Date' +
+              numDateString(dt) + '"><img class="pic-of-checkbox" src="/imgs/i/' + getDayOfWeek(dt) + '.png"></img>' : '') +
+                (typeof dt !== 'undefined' ? formatDateString(dt) : '') + '</label></div></div>';
 }
+
 
 function getDates(startDate, stopDate) {
     var dateArray = new Array();
