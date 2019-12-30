@@ -654,7 +654,7 @@ namespace TVProgViewer.DataAccess.Adapters
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="mode">Режим: 1 - сейчас, 2 - затем</param>
         /// <param name="category">Категория телепередач</param>
-        public List<SystemProgramme> GetUserProgrammes(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category,
+        public KeyValuePair<int, List<SystemProgramme>> GetUserProgrammes(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category,
                                                          string sidx, string sord, int page, int rows, string genres)
         {
             List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
@@ -701,9 +701,10 @@ namespace TVProgViewer.DataAccess.Adapters
                         systemProgramme = FilterGenres(systemProgramme, genres);
                         count = systemProgramme.Count();
                         SetRatings(systemProgramme, uid);
-                        if (!string.IsNullOrWhiteSpace(sidx))
-                            systemProgramme = LinqExtensions.OrderBy(systemProgramme.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList();
-                        else systemProgramme = systemProgramme.Skip((page - 1) * rows).Take(rows).ToList();
+                        systemProgramme = systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanID", sord)
+                                            .Skip((page - 1) * rows).Take(rows)
+                                            .Select(mapper.Map<SystemProgramme>)
+                                            .ToList<SystemProgramme>();
                         break;
                     case 2:
                         if (dateTime == minDate)
@@ -775,9 +776,10 @@ namespace TVProgViewer.DataAccess.Adapters
                             systemProgramme = FilterGenres(systemProgramme, genres);
                             SetRatings(systemProgramme, uid);
                             count = systemProgramme.Count();
-                            if (!string.IsNullOrWhiteSpace(sidx))
-                                systemProgramme = LinqExtensions.OrderBy(systemProgramme.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
-                            else systemProgramme = systemProgramme.Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
+                            systemProgramme = systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanID", sord)
+                                            .Skip((page - 1) * rows).Take(rows)
+                                            .Select(mapper.Map<SystemProgramme>)
+                                            .ToList<SystemProgramme>();
                         }
                         else if (dateTime > minDate)
                         {
@@ -817,9 +819,10 @@ namespace TVProgViewer.DataAccess.Adapters
                             systemProgramme = FilterGenres(systemProgramme, genres);
                             count = systemProgramme.Count();
                             SetRatings(systemProgramme, uid);
-                            if (!string.IsNullOrWhiteSpace(sidx))
-                                systemProgramme = LinqExtensions.OrderBy(systemProgramme.AsQueryable(), sidx, sord).Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
-                            else systemProgramme = systemProgramme.Skip((page - 1) * rows).Take(rows).ToList<SystemProgramme>();
+                            systemProgramme = systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanID", sord)
+                                            .Skip((page - 1) * rows).Take(rows)
+                                            .Select(mapper.Map<SystemProgramme>)
+                                            .ToList<SystemProgramme>();
                         }
                         break;
                 }
@@ -828,7 +831,7 @@ namespace TVProgViewer.DataAccess.Adapters
             {
                 Logger.Error(ex, ex.Message);
             }
-            return systemProgramme;
+            return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme);
         }
         
         /// <summary>

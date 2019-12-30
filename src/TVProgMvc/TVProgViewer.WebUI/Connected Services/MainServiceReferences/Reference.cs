@@ -89,10 +89,10 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
         System.Threading.Tasks.Task DeleteUserChannelAsync(long uid, int cid);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetUserProgrammeList", ReplyAction="http://tempuri.org/IMainService/GetUserProgrammeListResponse")]
-        TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[] GetUserProgrammeList(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
+        System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetUserProgrammeList(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetUserProgrammeList", ReplyAction="http://tempuri.org/IMainService/GetUserProgrammeListResponse")]
-        System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetUserProgrammeListAsync(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
+        System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> GetUserProgrammeListAsync(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMainService/GetUserProgrammeDayList", ReplyAction="http://tempuri.org/IMainService/GetUserProgrammeDayListResponse")]
         TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[] GetUserProgrammeDayList(long uid, int typeProgID, int cid, System.DateTime tsStart, System.DateTime tsStop, string category);
@@ -431,11 +431,11 @@ namespace TVProgViewer.WebUI.MainServiceReferences {
             return base.Channel.DeleteUserChannelAsync(uid, cid);
         }
         
-        public TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[] GetUserProgrammeList(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres) {
+        public System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetUserProgrammeList(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres) {
             return base.Channel.GetUserProgrammeList(uid, typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows, genres);
         }
         
-        public System.Threading.Tasks.Task<TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]> GetUserProgrammeListAsync(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres) {
+        public System.Threading.Tasks.Task<System.Collections.Generic.KeyValuePair<int, TVProgViewer.BusinessLogic.ProgObjs.SystemProgramme[]>> GetUserProgrammeListAsync(long uid, int typeProgID, System.DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres) {
             return base.Channel.GetUserProgrammeListAsync(uid, typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows, genres);
         }
         

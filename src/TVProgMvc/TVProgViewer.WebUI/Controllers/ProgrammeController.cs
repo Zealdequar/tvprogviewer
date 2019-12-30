@@ -46,35 +46,41 @@ namespace TVProgViewer.WebUI.Controllers
 
         [AllowAnonymous]
         public async Task<ActionResult> GetSystemProgrammeAtNow(int progType, string category, string sidx, string sord, int page, int rows, string genres)
-        {           
+        {
+            object jsonData;
+            KeyValuePair<int, SystemProgramme[]> result;
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await progRepository.GetUserProgrammesAtNowAsyncList(UserId.Value, progType, DateTimeOffset.Now, (category != "null") ? category : null
-                    , sidx, sord, page, rows, genres)
-                    , JsonRequestBehavior.AllowGet);
+                result = await progRepository.GetUserProgrammesAtNowAsyncList(UserId.Value, progType, DateTimeOffset.Now, (category != "null") ? category : null
+                    , sidx, sord, page, rows, genres);
+                jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+                return Json(jsonData, JsonRequestBehavior.AllowGet);
             }
 
-            KeyValuePair<int, SystemProgramme[]> result = await progRepository.GetSystemProgrammesAtNowAsyncList(progType, DateTimeOffset.Now, (category != "null") ? category : null,
+             result = await progRepository.GetSystemProgrammesAtNowAsyncList(progType, DateTimeOffset.Now, (category != "null") ? category : null,
                  sidx, sord, page, rows, genres);
 
-            var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+            jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
 
         public async Task<ActionResult> GetSystemProgrammeAtNext(int progType, string category, string sidx, string sord, int page, int rows, string genres)
         {
+            KeyValuePair<int, SystemProgramme[]> result;
+            object jsonData;
             if (User.Identity.IsAuthenticated && UserId != null)
             {
-                return Json(await progRepository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null,
-                    sidx, sord, page, rows, genres)
-                     , JsonRequestBehavior.AllowGet);
+                result = await progRepository.GetUserProgrammesAtNextAsyncList(UserId.Value, progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null,
+                    sidx, sord, page, rows, genres);
+                jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+                return Json(jsonData, JsonRequestBehavior.AllowGet);
             }
 
-            KeyValuePair<int, SystemProgramme[]> result = await progRepository.GetSystemProgrammesAtNextAsyncList(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null, sidx, sord, page, rows, genres);
-            
-            var jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+            result = await progRepository.GetSystemProgrammesAtNextAsyncList(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), (category != "null") ? category : null, sidx, sord, page, rows, genres);
+            jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
             return Json(jsonData, JsonRequestBehavior.AllowGet);
         }
+
         [OutputCache(Duration = 7 * 86400, VaryByParam = "none", Location = System.Web.UI.OutputCacheLocation.Server)]
         public async Task<ActionResult> GetTvProviderList()
         {

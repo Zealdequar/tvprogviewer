@@ -115,7 +115,7 @@ namespace TVProgViewer.TVProgService
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="mode">Режми: 1 - сейчас, 2 - затем</param>
         /// <param name="category">Категория</param>
-        public List<SystemProgramme> GetUserProgrammeList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category,
+        public KeyValuePair<int, List<SystemProgramme>> GetUserProgrammeList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category,
                                                string sidx, string sord, int page, int rows, string genres)
         {
             return _tpa.GetUserProgrammes(uid, typeProgID, dateTimeOffset, mode, category, sidx, sord, page, rows, genres);

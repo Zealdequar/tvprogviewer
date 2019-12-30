@@ -29,10 +29,10 @@ namespace TVProgViewer.WebUI.Concrete
         /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="category">Категория</param>
-        public Task<SystemProgramme[]> GetUserProgrammesAtNowAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category,
+        public Task<KeyValuePair<int, SystemProgramme[]>> GetUserProgrammesAtNowAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category,
                                          string sidx, string sord, int page, int rows, string genres)
         {
-            return Task<SystemProgramme[]>.Factory.StartNew(() => { return TvProgService.GetUserProgrammeList(uid, typeProgID, dateTimeOffset, 1, category, sidx, sord, page, rows, genres); });
+            return Task<KeyValuePair<int, SystemProgramme[]>>.Factory.StartNew(() => { return TvProgService.GetUserProgrammeList(uid, typeProgID, dateTimeOffset, 1, category, sidx, sord, page, rows, genres); });
         }
 
         /// <summary>
@@ -54,10 +54,10 @@ namespace TVProgViewer.WebUI.Concrete
         /// <param name="typeProgID">Тип программы телепередач</param>
         /// <param name="dateTimeOffset">Текущее время</param>
         /// <param name="category">Категория</param>
-        public Task<SystemProgramme[]> GetUserProgrammesAtNextAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category,
+        public Task<KeyValuePair<int, SystemProgramme[]>> GetUserProgrammesAtNextAsyncList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, string category,
                                  string sidx, string sord, int page, int rows, string genres)
         {
-            return Task<SystemProgramme[]>.Factory.StartNew(() => { return TvProgService.GetUserProgrammeList(uid, typeProgID, dateTimeOffset, 2, category, sidx, sord, page, rows, genres); });
+            return Task<KeyValuePair<int, SystemProgramme[]>>.Factory.StartNew(() => { return TvProgService.GetUserProgrammeList(uid, typeProgID, dateTimeOffset, 2, category, sidx, sord, page, rows, genres); });
         }
 
         /// <summary>

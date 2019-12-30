@@ -133,7 +133,7 @@ namespace TVProgViewer.TVProgService
         /// <param name="mode">Режми: 1 - сейчас, 2 - затем</param>
         /// <param name="category">Категория</param>
         [OperationContract]
-        List<SystemProgramme> GetUserProgrammeList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
+        KeyValuePair<int, List<SystemProgramme>> GetUserProgrammeList(long uid, int typeProgID, DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres);
 
         /// <summary>
         /// Получение пользовательской программы телепередач за день
