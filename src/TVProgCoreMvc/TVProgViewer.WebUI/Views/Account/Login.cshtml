@@ -1,0 +1,103 @@
+﻿@using TVProgViewer.BusinessLogic.Users
+@using reCaptcha
+@model LoginViewModel
+@{
+    ViewBag.Title = "Вход";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+
+}
+    <div class="login-page" id="main" style="display: block;">
+        <div class="login-container container-fluid">
+            <div class="row">
+                <div class="col-xs-4 col-sm-offset-4">
+                    <div class="login center-block">
+                        <div class="header">
+                            <div class="login-logo"></div>
+                            <div class="login_corp">TVProgViewer</div>
+                        </div>
+                        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { id = "login_form", role = "form" }))
+                        {
+                            @Html.AntiForgeryToken()
+                    <div>
+                        <div class="control-group">
+                            <div class="controls">
+                                @Html.TextBoxFor(m => m.Login, new { @class = "form-control", id = "username", type = "text", placeholder = "Логин", name = "login", autocomplete = "on", tabindex = "10", autofocus = "true", required = "required" })
+                                @Html.ValidationMessageFor(m => m.Login, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", id = "password", type = "password", placeholder = "Пароль", name = "password", autocomplete = "on", tabindex = "20", required = "required" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="control-group">
+                            @ReCaptcha.GetHtml(@ViewBag.publicKey)
+
+                            @if (ViewBag.RecaptchaLastErrors != null)
+                            {
+                                <div class="text-danger"> Ошибка! Неверная ReCaptcha </div>
+                            }
+                            @Html.ValidationMessage("ReCaptcha")
+                        </div>
+                        <div class="checkbox first">
+                            @Html.CheckBoxFor(m => m.RememberMe, new { type = "checkbox", name = "remember", id = "remember", tabindex = "30" })
+                            @Html.LabelFor(m => m.RememberMe)
+                        </div>
+                        <br>
+                        <div id="recover_password" style="display: none;">
+                            <input id="new_password" type="password" placeholder="Новый пароль" name="new_password">
+                            <br>
+                            <input id="new_password_repeat" type="password" placeholder="Подтверждение пароля" name="new_password_repeat"> <span id="repeat_error"></span>
+                        </div>
+                        <button type="submit" class="login-button" id="login_button" tabindex="40">
+                            Войти
+                        </button>
+l                        <button type="button" class="login-button" id="login-register"> 
+                        @Html.ActionLink("Зарегистрироваться", "Register", null, new { style="color: white; text-decoration: none;" })
+                        </button>
+                        <div class="links" id="register-links" style="display: none">
+                            <span><a href="../recover/recover">Забыли пароль?</a></span>
+                        </div>
+                    </div>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div id="error" class="error" role="alert" style="display: none">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        @* Enable this once you have account confirmation enabled for password reset functionality
+        <p>
+            @Html.ActionLink("Forgot your password?", "ForgotPassword")
+        </p>*@
+
+    </div>  
+
+
+@section scripts {
+    <style type="text/css">
+        .validation-summary-errors {
+            color: #f00;
+            font-weight: bold;
+        }
+
+        .field-validation-error {
+            color: #f00;
+        }
+
+        .validation-summary-errors {
+            color: #f00;
+            font-weight: bold;
+        }
+
+        .input-validation-error {
+            border: 2px solid #f00;
+            background-color: #fee;
+        }
+    </style>
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+
+}
+

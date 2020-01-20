@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "О проекте TVProgViewer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+    <div>
+        <div class="col-xs-10">
+            <h2>Введение в TVProgViewer</h2>
+            <p>Благодарим вас за посещение и использование TVProgViewer. С помощью данного портала вы всегда сможете быть в курсе телевизионного вещания.</p>
+                       
+            <p><strong>TVProgViewer</strong> — это бесплатное приложение для тонкой настройки и удобного просмотра программы телепередач с анонсами. В TVProgViewer реализована функциональность создания классификации по жанрам и рейтингам.</p>
+            <p>Регистрация бесплатная. После регистрации и входа под своими логином и паролем, станут доступными настройки телеканалов под ваши вкусы, включая, выбранные вами эмблемы и названия, редактирование жанров и рейтингов, а также их классификаций для телепередач.</p>
+            <img src="~/imgs/i/TVProgUser.png" alt="TVProgViewer" title="TVProgViewer"/>
+            <div>
+                <p>Хроника разработки приложения TVProgViewer: </p>
+                23.06.2019: публикация портала в Web <br />
+                06.01.2019: публикация исходников проекта на GitHub <br />
+                06.04.2012: выпуск TVProgViewer 1.2 <br />
+            </div>
+            <ul>
+                <li> выпуск 64x-разрядной версии;</li>
+                <li> оптимизировано очищение неактуальной тв-программы;</li>
+                <li> оптимизировано очищение лишних каналов;</li>
+                <li> доработан вывод сообщений.</li>
+            </ul>
+            <div>
+                20.03.2012: выпуск TVProgViewer 1.1 Beta
+                <ul>
+                    <li> реализован процесс слияния телепрограммы в один контейнер без дубликатов;</li>
+                    <li> переделан метод загрузки;</li>
+                    <li> реализована дополнительная кнопка «Открыть» для ручной загрузки тв-программы;</li>
+                    <li> автоматическое сохранение ширины, порядка и видимости колонок.</li>
+                </ul>
+                18.02.2012: выпуск стартовой версии TVProgViewer 1.0 Beta
+            </div>
+        </div>
+    </div>
+
+@section scripts {
+
+    <link href="~/Content/themes/base/all.css" rel="stylesheet" />
+    <style type="text/css">
+        td {
+            border-top-color: transparent !important;
+            border-bottom-color: transparent !important
+        }
+    </style>
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script type="text/javascript">
+        $.jgrid.no_legacy_api = true;
+        $.jgrid.useJSON = true;
+		var uv = @ViewData["UID"];
+    </script>
+    <script src="~/Scripts/programmes.js"></script>
+    <script src="~/Scripts/sticky-element.js"></script>
+}

@@ -1,0 +1,151 @@
+﻿@using reCaptcha
+@model TVProgViewer.BusinessLogic.Users.User
+@{
+    ViewBag.Title = "Регистрация нового пользователя";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Информация о пользователе</h2>
+@Html.ValidationSummary(true)
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="panel-body">
+        <div class="col-md-5">
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.UserName)</label>
+                @Html.TextBoxFor(model => model.UserName, null, new { @class = "form-control" })
+                <p>@Html.ValidationMessageFor(m => m.UserName)</p>
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.Pass)</label>
+                @Html.PasswordFor(model => model.Pass, new { @class = "form-control" })
+                <p>@Html.ValidationMessageFor(m => m.Pass)</p>
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.PassRepeate)</label>
+                @Html.PasswordFor(model => model.PassRepeate, new { @class = "form-control" })
+                <p>@Html.ValidationMessageFor(m => m.PassRepeate)</p>
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.LastName)</label>
+                @Html.TextBoxFor(model => model.LastName, null, new { @class = "form-control" })
+                <p>@Html.ValidationMessageFor(m => m.LastName)</p>
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.FirstName)</label>
+                @Html.TextBoxFor(model => model.FirstName, null, new { @class = "form-control" })
+                <p>@Html.ValidationMessageFor(m => m.FirstName)</p>
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.MiddleName)</label>
+                @Html.TextBoxFor(model => model.MiddleName, null, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.BirthDate)</label>
+                @Html.TextBoxFor(model => model.BirthDate, null, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.Gender)</label>
+                @Html.DropDownListFor(model => model.Gender, Model.AvailableGenders, null, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.Email)</label>
+                @Html.TextBoxFor(model => model.Email, null, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.MobilePhone)</label>
+                @Html.TextBoxFor(model => model.MobilePhone, null, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.OtherPhone1)</label>
+                @Html.TextBoxFor(model => model.OtherPhone1, null, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>@Html.DisplayNameFor(model => model.Address)</label>
+                @Html.TextAreaFor(model => model.Address, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-10">
+            <div class="form-group">
+                <div class="checkbox" style="margin-left:20px">
+                    @Html.CheckBoxFor(model => model.Aggree, new { @class = "checkbox" })
+                    @Html.LabelFor(m => m.Aggree)
+                    <p>@Html.ValidationMessageFor(m => m.Aggree)</p>
+                </div>
+            </div>
+            <div class="form-group">
+                @ReCaptcha.GetHtml(@ViewBag.publicKey)
+
+                @if (ViewBag.RecaptchaLastErrors != null)
+                {
+                    <div class="text-danger"> Ошибка! Неверная ReCaptcha </div>
+                }
+                @Html.ValidationMessage("ReCaptcha")
+            </div>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <input type="submit" value="Сохранить" class="btn btn-primary" />
+        @Html.ActionLink("Отмена", "List", "Programme", null, null, null, null, new { @class = "btn btn-default" })
+    </div>
+
+}
+@section scripts {
+    <style type="text/css">
+        .validation-summary-errors {
+            color: #f00;
+            font-weight: bold;
+        }
+
+        .field-validation-error {
+            color: #f00;
+        }
+
+        .validation-summary-errors {
+            color: #f00;
+            font-weight: bold;
+        }
+
+        .input-validation-error {
+            border: 2px solid #f00;
+            background-color: #fee;
+        }
+
+        input[type="checkbox"].input-validation-error {
+            outline: 2px solid #f00;
+        }
+    </style>
+    <link href="~/Content/themes/base/all.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/datepicker-ru.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script type="text/javascript">
+        $.validator.unobtrusive.adapters.addBool("mustbetrue", "required");
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            $.datepicker.setDefaults($.datepicker.regional['ru']);
+            $('#BirthDate').datepicker().datepicker("setDate", new Date(new Date().setFullYear(new Date().getFullYear() - 18)));
+            $('#BirthDate').datepicker().datepicker({
+                dateFormat: "dd.mm.yy",
+            });
+            $.validator.addMethod('date',
+                function (value, element) {
+                    var ok = true;
+                    try {
+                        $.datepicker.parseDate('dd.mm.yy', value);
+                    }
+                    catch (err) {
+                        ok = false;
+                    }
+                    return ok;
+                });
+        });
+    </script>
+}
+
