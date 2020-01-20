@@ -16,6 +16,7 @@ namespace TVProgViewer.WebUI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -27,6 +28,19 @@ namespace TVProgViewer.WebUI
             }
 
             app.UseRouting();
+
+            app.UseMvc(routes => {
+                routes.MapRoute(
+                    name: "Default",
+                    template: "{controller}/{action}/{id?}",
+                    defaults: new { controller = "Programme", action = "List"}
+                  );
+
+                routes.MapRoute(
+                   name: "404-PageNotFound",
+                   template: "*{url}",
+                   defaults: new { controller = "StaticContent", action = "PageNotFound" });
+            });
 
             app.UseEndpoints(endpoints =>
             {
