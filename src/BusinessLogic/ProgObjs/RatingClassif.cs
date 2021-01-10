@@ -14,19 +14,19 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Идентификатор элемента классификатора рейтингов
         /// </summary>
         [DataMember]
-        public long RatingClassificatorID { get; set; }
+        public long RatingClassificatorId { get; set; }
 
         /// <summary>
         /// Идентификатор рейтинга
         /// </summary>
         [DataMember]
-        public long RID { get; set; }
+        public long Rid { get; set; }
 
         /// <summary>
         /// Идентификатор пользователя
         /// </summary>
         [DataMember]
-        public long UID { get; set; }
+        public long Uid { get; set; }
 
         /// <summary>
         /// Содержит

@@ -1,0 +1,335 @@
+﻿using System;
+using System.Collections.Generic;
+using TVProgViewer.Core;
+using TVProgViewer.Core.Domain.Catalog;
+using TVProgViewer.Core.Domain.Orders;
+
+namespace TVProgViewer.Services.Orders
+{
+    /// <summary>
+    /// Order service interface
+    /// </summary>
+    public partial interface IOrderService
+    {
+        #region Orders
+
+        /// <summary>
+        /// Gets an order
+        /// </summary>
+        /// <param name="orderId">The order identifier</param>
+        /// <returns>Order</returns>
+        Order GetOrderById(long orderId);
+
+        /// <summary>
+        /// Gets an order
+        /// </summary>
+        /// <param name="customOrderNumber">The custom order number</param>
+        /// <returns>Order</returns>
+        Order GetOrderByCustomOrderNumber(string customOrderNumber);
+
+        /// <summary>
+        /// Gets an order by order item identifier
+        /// </summary>
+        /// <param name="orderItemId">The order item identifier</param>
+        /// <returns>Order</returns>
+        Order GetOrderByOrderItem(long orderItemId);
+
+        /// <summary>
+        /// Get orders by identifiers
+        /// </summary>
+        /// <param name="orderIds">Order identifiers</param>
+        /// <returns>Order</returns>
+        IList<Order> GetOrdersByIds(long[] orderIds);
+
+        /// <summary>
+        /// Gets an order
+        /// </summary>
+        /// <param name="orderGuid">The order identifier</param>
+        /// <returns>Order</returns>
+        Order GetOrderByGuid(Guid orderGuid);
+
+        /// <summary>
+        /// Deletes an order
+        /// </summary>
+        /// <param name="order">The order</param>
+        void DeleteOrder(Order order);
+
+        /// <summary>
+        /// Search orders
+        /// </summary>
+        /// <param name="storeId">Store identifier; null to load all orders</param>
+        /// <param name="vendorId">Vendor identifier; null to load all orders</param>
+        /// <param name="UserId">User identifier; null to load all orders</param>
+        /// <param name="productId">Product identifier which was purchased in an order; 0 to load all orders</param>
+        /// <param name="affiliateId">Affiliate identifier; 0 to load all orders</param>
+        /// <param name="billingCountryId">Billing country identifier; 0 to load all orders</param>
+        /// <param name="warehouseId">Warehouse identifier, only orders with products from a specified warehouse will be loaded; 0 to load all orders</param>
+        /// <param name="paymentMethodSystemName">Payment method system name; null to load all records</param>
+        /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
+        /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
+        /// <param name="osIds">Order status identifiers; null to load all orders</param>
+        /// <param name="psIds">Payment status identifiers; null to load all orders</param>
+        /// <param name="ssIds">Shipping status identifiers; null to load all orders</param>
+        /// <param name="billingPhone">Billing phone. Leave empty to load all records.</param>
+        /// <param name="billingEmail">Billing email. Leave empty to load all records.</param>
+        /// <param name="billingLastName">Billing last name. Leave empty to load all records.</param>
+        /// <param name="orderNotes">Search in order notes. Leave empty to load all records.</param>
+        /// <param name="pageIndex">Page index</param>
+        /// <param name="pageSize">Page size</param>
+        /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
+        /// <returns>Orders</returns>
+        IPagedList<Order> SearchOrders(long storeId = 0,
+            long vendorId = 0, long userId = 0,
+            long productId = 0, long affiliateId = 0, long warehouseId = 0,
+            long billingCountryId = 0, string paymentMethodSystemName = null,
+            DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
+            List<long> osIds = null, List<long> psIds = null, List<long> ssIds = null,
+            string billingPhone = null, string billingEmail = null, string billingLastName = "",
+            string orderNotes = null, int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
+
+        /// <summary>
+        /// Inserts an order
+        /// </summary>
+        /// <param name="order">Order</param>
+        void InsertOrder(Order order);
+
+        /// <summary>
+        /// Updates the order
+        /// </summary>
+        /// <param name="order">The order</param>
+        void UpdateOrder(Order order);
+
+        /// <summary>
+        /// Get an order by authorization transaction ID and payment method system name
+        /// </summary>
+        /// <param name="authorizationTransactionId">Authorization transaction ID</param>
+        /// <param name="paymentMethodSystemName">Payment method system name</param>
+        /// <returns>Order</returns>
+        Order GetOrderByAuthorizationTransactionIdAndPaymentMethod(string authorizationTransactionId, string paymentMethodSystemName);
+
+        /// <summary>
+        /// Parse tax rates
+        /// </summary>
+        /// <param name="order">Order</param>
+        /// <param name="taxRatesStr"></param>
+        /// <returns>Rates</returns>
+        SortedDictionary<decimal, decimal> ParseTaxRates(Order order, string taxRatesStr);
+
+        /// <summary>
+        /// Gets a value indicating whether an order has items to be added to a shipment
+        /// </summary>
+        /// <param name="order">Order</param>
+        /// <returns>A value indicating whether an order has items to be added to a shipment</returns>
+        bool HasItemsToAddToShipment(Order order);
+
+        /// <summary>
+        /// Gets a value indicating whether an order has items to ship
+        /// </summary>
+        /// <param name="order">Order</param>
+        /// <returns>A value indicating whether an order has items to ship</returns>
+        bool HasItemsToShip(Order order);
+
+        /// <summary>
+        /// Gets a value indicating whether an order has items to deliver
+        /// </summary>
+        /// <param name="order">Order</param>
+        /// <returns>A value indicating whether an order has items to deliver</returns>
+        bool HasItemsToDeliver(Order order);
+
+        #endregion
+
+        #region Orders items
+
+        /// <summary>
+        /// Gets an order item
+        /// </summary>
+        /// <param name="orderItemId">Order item identifier</param>
+        /// <returns>Order item</returns>
+        OrderItem GetOrderItemById(long orderItemId);
+
+        /// <summary>
+        /// Gets a product of specify order item
+        /// </summary>
+        /// <param name="orderItemId">Order item identifier</param>
+        /// <returns>Product</returns>
+        Product GetProductByOrderItemId(long orderItemId);
+
+        /// <summary>
+        /// Gets a list items of order
+        /// </summary>
+        /// <param name="orderId">Order identifier</param>
+        /// <param name="isNotReturnable">Value indicating whether this product is returnable; pass null to ignore</param>
+        /// <param name="isShipEnabled">Value indicating whether the entity is ship enabled; pass null to ignore</param>
+        /// <param name="vendorId">Vendor identifier; pass 0 to ignore</param>
+        /// <returns>Result</returns>
+        IList<OrderItem> GetOrderItems(long orderId, bool? isNotReturnable = null, bool? isShipEnabled = null, long vendorId = 0);
+
+        /// <summary>
+        /// Gets an order item
+        /// </summary>
+        /// <param name="orderItemGuid">Order item identifier</param>
+        /// <returns>Order item</returns>
+        OrderItem GetOrderItemByGuid(Guid orderItemGuid);
+
+        /// <summary>
+        /// Gets all downloadable order items
+        /// </summary>
+        /// <param name="UserId">User identifier; null to load all records</param>
+        /// <returns>Order items</returns>
+        IList<OrderItem> GetDownloadableOrderItems(long UserId);
+
+        /// <summary>
+        /// Delete an order item
+        /// </summary>
+        /// <param name="orderItem">The order item</param>
+        void DeleteOrderItem(OrderItem orderItem);
+
+        /// <summary>
+        /// Gets a total number of items in all shipments
+        /// </summary>
+        /// <param name="orderItem">Order item</param>
+        /// <returns>Total number of items in all shipments</returns>
+        int GetTotalNumberOfItemsInAllShipment(OrderItem orderItem);
+
+        /// <summary>
+        /// Gets a total number of already items which can be added to new shipments
+        /// </summary>
+        /// <param name="orderItem">Order item</param>
+        /// <returns>Total number of already delivered items which can be added to new shipments</returns>
+        int GetTotalNumberOfItemsCanBeAddedToShipment(OrderItem orderItem);
+
+        /// <summary>
+        /// Gets a total number of not yet shipped items (but added to shipments)
+        /// </summary>
+        /// <param name="orderItem">Order item</param>
+        /// <returns>Total number of not yet shipped items (but added to shipments)</returns>
+        int GetTotalNumberOfNotYetShippedItems(OrderItem orderItem);
+
+        /// <summary>
+        /// Gets a total number of already shipped items
+        /// </summary>
+        /// <param name="orderItem">Order item</param>
+        /// <returns>Total number of already shipped items</returns>
+        int GetTotalNumberOfShippedItems(OrderItem orderItem);
+
+        /// <summary>
+        /// Gets a total number of already delivered items
+        /// </summary>
+        /// <param name="orderItem">Order  item</param>
+        /// <returns>Total number of already delivered items</returns>
+        int GetTotalNumberOfDeliveredItems(OrderItem orderItem);
+
+        /// <summary>
+        /// Inserts a order item
+        /// </summary>
+        /// <param name="orderItem">Order item</param>
+        void InsertOrderItem(OrderItem orderItem);
+
+        /// <summary>
+        /// Updates a order item
+        /// </summary>
+        /// <param name="orderItem">Order item</param>
+        void UpdateOrderItem(OrderItem orderItem);
+
+        #endregion
+
+        #region Order notes
+
+        /// <summary>
+        /// Gets an order note
+        /// </summary>
+        /// <param name="orderNoteId">The order note identifier</param>
+        /// <returns>Order note</returns>
+        OrderNote GetOrderNoteById(long orderNoteId);
+
+        /// <summary>
+        /// Gets a list notes of order
+        /// </summary>
+        /// <param name="orderId">Order identifier</param>
+        /// <param name="displayToUser">Value indicating whether a User can see a note; pass null to ignore</param>
+        /// <returns>Result</returns>
+        IList<OrderNote> GetOrderNotesByOrderId(long orderId, bool? displayToUser = null);
+
+        /// <summary>
+        /// Deletes an order note
+        /// </summary>
+        /// <param name="orderNote">The order note</param>
+        void DeleteOrderNote(OrderNote orderNote);
+
+        /// <summary>
+        /// Formats the order note text
+        /// </summary>
+        /// <param name="orderNote">Order note</param>
+        /// <returns>Formatted text</returns>
+        string FormatOrderNoteText(OrderNote orderNote);
+
+        /// <summary>
+        /// Inserts an order note
+        /// </summary>
+        /// <param name="orderNote">The order note</param>
+        void InsertOrderNote(OrderNote orderNote);
+
+        #endregion
+
+        #region Recurring payments
+
+        /// <summary>
+        /// Deletes a recurring payment
+        /// </summary>
+        /// <param name="recurringPayment">Recurring payment</param>
+        void DeleteRecurringPayment(RecurringPayment recurringPayment);
+
+        /// <summary>
+        /// Gets a recurring payment
+        /// </summary>
+        /// <param name="recurringPaymentId">The recurring payment identifier</param>
+        /// <returns>Recurring payment</returns>
+        RecurringPayment GetRecurringPaymentById(long recurringPaymentId);
+
+        /// <summary>
+        /// Inserts a recurring payment
+        /// </summary>
+        /// <param name="recurringPayment">Recurring payment</param>
+        void InsertRecurringPayment(RecurringPayment recurringPayment);
+
+        /// <summary>
+        /// Updates the recurring payment
+        /// </summary>
+        /// <param name="recurringPayment">Recurring payment</param>
+        void UpdateRecurringPayment(RecurringPayment recurringPayment);
+
+        /// <summary>
+        /// Search recurring payments
+        /// </summary>
+        /// <param name="storeId">The store identifier; 0 to load all records</param>
+        /// <param name="UserId">The User identifier; 0 to load all records</param>
+        /// <param name="initialOrderId">The initial order identifier; 0 to load all records</param>
+        /// <param name="initialOrderStatus">Initial order status identifier; null to load all records</param>
+        /// <param name="pageIndex">Page index</param>
+        /// <param name="pageSize">Page size</param>
+        /// <param name="showHidden">A value indicating whether to show hidden records</param>
+        /// <returns>Recurring payments</returns>
+        IPagedList<RecurringPayment> SearchRecurringPayments(long storeId = 0,
+            long UserId = 0, long initialOrderId = 0, OrderStatus? initialOrderStatus = null,
+            int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false);
+
+        #endregion
+
+        #region Recurring payment history
+
+        /// <summary>
+        /// Inserts a recurring payment history entry
+        /// </summary>
+        /// <param name="recurringPaymentHistory">Recurring payment history entry</param>
+        void InsertRecurringPaymentHistory(RecurringPaymentHistory recurringPaymentHistory);
+
+        /// <summary>
+        /// Gets a recurring payment history
+        /// </summary>
+        /// <param name="recurringPayment">The recurring payment</param>
+        /// <returns>Result</returns>
+        IList<RecurringPaymentHistory> GetRecurringPaymentHistory(RecurringPayment recurringPayment);
+
+        #endregion
+    }
+}

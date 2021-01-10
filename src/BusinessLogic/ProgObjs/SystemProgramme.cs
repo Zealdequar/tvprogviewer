@@ -14,13 +14,13 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Идентификатор
         /// </summary>
         [DataMember]
-        public long ProgrammesID { get; set; }
+        public long ProgrammesId { get; set; }
 
         /// <summary>
         /// Системный идентификатор телеканала
         /// </summary>
         [DataMember]
-        public int CID { get; set; }
+        public int Cid { get; set; }
 
         /// <summary>
         /// Название файла пиктограмы телеканала
@@ -32,7 +32,7 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Внутренний (миграционный) идентификатор телеканала
         /// </summary>
         [DataMember]
-        public int? InternalChanID { get; set; }
+        public int? InternalChanId { get; set; }
 
         /// <summary>
         /// Время начала телепередачи
@@ -79,13 +79,13 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Начало телепередачи (время мск)
         /// </summary>
         [DataMember]
-        public DateTime TsStartMO { get; set; }
+        public DateTime TsStartMo { get; set; }
 
         /// <summary>
         /// Завершение телепередачи (время мск)
         /// </summary>
         [DataMember]
-        public DateTime TsStopMO { get; set; }
+        public DateTime TsStopMo { get; set; }
 
         /// <summary>
         /// Название рейтинга
@@ -102,12 +102,12 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// <summary>
         /// Идентификатор жанра
         /// </summary>
-        public long? GenreID { get; set; }
+        public long? GenreId { get; set; }
 
         /// <summary>
         /// Идентификатор рейтинга
         /// </summary>
-        public long? RatingID { get; set; }
+        public long? RatingId { get; set; }
         /// <summary>
         /// Название жанра
         /// </summary>
@@ -138,7 +138,7 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Идентификатор телепрограммы
         /// </summary>
         [DataMember]
-        public long ProgrammeID { get; set; }
+        public long ProgrammeId { get; set; }
 
         /// <summary>
         /// Номер канала

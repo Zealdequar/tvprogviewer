@@ -1,0 +1,27 @@
+﻿using LinqToDB.Mapping;
+using TVProgViewer.Core.Domain.Catalog;
+
+namespace TVProgViewer.Data.Mapping.Catalog
+{
+    /// <summary>
+    /// Represents a product attribute mapping configuration
+    /// </summary>
+    public partial class ProductAttributeMap : TvProgEntityTypeConfiguration<ProductAttribute>
+    {
+        #region Methods
+
+        /// <summary>
+        /// Configures the entity
+        /// </summary>
+        /// <param name="builder">The builder to be used to configure the entity</param>
+        public override void Configure(EntityMappingBuilder<ProductAttribute> builder)
+        {
+            builder.HasTableName(nameof(ProductAttribute));
+
+            builder.Property(attribute => attribute.Name).IsNullable(false);
+            builder.Property(productattribute => productattribute.Description);
+        }
+
+        #endregion
+    }
+}

@@ -1,0 +1,11 @@
+﻿{
+  "Group": "Discount requirements",
+  "FriendlyName": "Must be assigned to user role",
+  "SystemName": "DiscountRequirement.MustBeAssignedToUserRole",
+  "Version": "1.32",
+  "SupportedVersions": [ "4.30" ],
+  "Author": "nopCommerce team",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.DiscountRules.UserRoles.dll",
+  "Description": "This plugin allows you to configure discounts for certain user groups (roles)"
+}

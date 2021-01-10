@@ -1,0 +1,22 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using TVProgViewer.WebUI.Factories;
+using TVProgViewer.Web.Framework.Components;
+
+namespace TVProgViewer.WebUI.Components
+{
+    public class ForumBreadcrumbViewComponent : TvProgViewComponent
+    {
+        private readonly IForumModelFactory _forumModelFactory;
+
+        public ForumBreadcrumbViewComponent(IForumModelFactory forumModelFactory)
+        {
+            _forumModelFactory = forumModelFactory;
+        }
+
+        public IViewComponentResult Invoke(int? forumGroupId, int? forumId, int? forumTopicId)
+        {
+            var model = _forumModelFactory.PrepareForumBreadcrumbModel(forumGroupId, forumId, forumTopicId);
+            return View(model);
+        }
+    }
+}

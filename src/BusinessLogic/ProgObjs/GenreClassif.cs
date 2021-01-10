@@ -14,19 +14,19 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Идентификатор элемента классификатора жанров
         /// </summary>
         [DataMember]
-        public long GenreClassificatorID { get; set; }
+        public long GenreClassificatorId { get; set; }
 
         /// <summary>
         /// Идентификатор жанра
         /// </summary>
         [DataMember]
-        public long GID { get; set; }
+        public long Gid{ get; set; }
 
         /// <summary>
         /// Идентификатор пользователя
         /// </summary>
         [DataMember]
-        public long? UID { get; set; }
+        public long? Uid { get; set; }
 
         /// <summary>
         /// Содержит

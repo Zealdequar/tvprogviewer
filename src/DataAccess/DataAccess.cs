@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Data.Common;
+using System.Configuration;
 
 namespace TVProgViewer.DataAccess
 {
@@ -24,7 +25,7 @@ namespace TVProgViewer.DataAccess
             {
                 cmd.CommandText = cmdName;
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.CommandTimeout = 300;
+                cmd.CommandTimeout = 99000;
                 if (pars != null)
                     cmd.Parameters.AddRange((from p in pars where p != null select p).ToArray<DbParameter>());
                 try
@@ -68,7 +69,7 @@ namespace TVProgViewer.DataAccess
             List<T> listResult = new List<T>();
             using (DbCommand cmd = conn.CreateCommand())
             {
-                cmd.CommandTimeout = 300;
+                cmd.CommandTimeout = 99000;
                 cmd.CommandText = cmdName;
                 cmd.CommandType = CommandType.StoredProcedure;
                 if (pars != null)
@@ -174,6 +175,38 @@ namespace TVProgViewer.DataAccess
                 }
             }
             return scalarResult;
+        }
+        
+        /// <summary>
+        /// Получить главное соединение
+        /// </summary>
+        /// <returns>Подключение</returns>
+        public static DbConnection GetTvProgMainConnection()
+        {
+           return GetConnection("tvProgBase.Main"); 
+        }
+
+        /// <summary>
+        /// Получить безопасное соединение
+        /// </summary>
+        /// <returns>Подключение</returns>
+        public static DbConnection GetTvProgSecureConnection()
+        {
+           return GetConnection("tvProgBase.Secure");
+        }
+
+        /// <summary>
+        /// Получение соединения
+        /// </summary>
+        /// <param name="name">Название подключения в файле конфигурации</param>
+        /// <returns>Подключение</returns>
+        private static DbConnection GetConnection(string name)
+        {
+            ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings[name];
+            DbProviderFactory factory = DbProviderFactories.GetFactory(settings.ProviderName);
+            DbConnection conn = factory.CreateConnection();
+            conn.ConnectionString = settings.ConnectionString;
+            return conn;
         }
     }
 }

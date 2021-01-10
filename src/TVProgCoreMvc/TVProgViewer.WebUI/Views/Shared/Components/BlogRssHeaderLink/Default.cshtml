@@ -1,0 +1,10 @@
+﻿@using TVProgViewer.Core
+@inject TVProgViewer.Services.Localization.ILocalizationService localizationService 
+@inject IStoreContext storeContext
+@inject IWebHelper webHelper
+@inject IWorkContext workContext
+@{
+    var link = Url.RouteUrl("BlogRSS", new { languageId = workContext.WorkingLanguage.Id }, webHelper.GetCurrentRequestProtocol());
+    var storeName = localizationService.GetLocalized(storeContext.CurrentStore, x => x.Name);
+}
+<link href="@link" rel="alternate" type="application/rss+xml" title="@storeName: Blog" />

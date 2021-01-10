@@ -13,12 +13,12 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Время окончания телепередачи
         /// </summary>
         [DataMember]
-        public DateTime TsStopMOAfter { get; set; }
+        public DateTime TsStopMoAfter { get; set; }
         
         /// <summary>
         /// Идентификатор телеканала
         /// </summary>
         [DataMember]
-        public int CID { get; set; }
+        public int Cid { get; set; }
     }
 }

@@ -13,31 +13,31 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Пользовательский идентификатор телеканала
         /// </summary>
         [DataMember]
-        public int UserChannelID { get; set; }
+        public int UserChannelId { get; set; }
 
         /// <summary>
         /// Системный идентификатор канала
         /// </summary>
         [DataMember]
-        public int ChannelID { get; set; }
+        public int ChannelId { get; set; }
 
         /// <summary>
         /// Идентификатор провайдера телепрограммы
         /// </summary>
         [DataMember]
-        public int TVProgViewerID { get; set; }
+        public int TVProgViewerId { get; set; }
 
         /// <summary>
         /// Внутренний идентификатор канала
         /// </summary>
         [DataMember]
-        public int? InternalID { get; set; }
+        public int? InternalId { get; set; }
         
         /// <summary>
         /// Идентификатор пиктограммы
         /// </summary>
         [DataMember]
-        public long? IconID { get; set; }
+        public long? IconId { get; set; }
 
         /// <summary>
         /// Название файла крупной пиктограммы

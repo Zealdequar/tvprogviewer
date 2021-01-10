@@ -1,0 +1,137 @@
+﻿@model UserReportsSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Reports.Users.BestBy.BestByOrderTotal").Text;
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("Users by order total");
+}
+
+@{
+    const string hideSearchBlockAttributeName = "UsersBestByOrderTotalPage.HideSearchBlock";
+    var hideSearchBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideSearchBlockAttributeName);
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        @T("Admin.Reports.Users.BestBy.BestByOrderTotal")
+    </h1>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default panel-search">
+                <div class="panel-body">
+                    <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+                        <div class="search-text">@T("Admin.Common.Search")</div>
+                        <div class="icon-search"><i class="fa fa-search" aria-hidden="true"></i></div>
+                        <div class="icon-collapse"><i class="fa fa-angle-down" aria-hidden="true"></i></div>
+                    </div>
+
+                    <div class="search-body @(hideSearchBlock ? "closed" : "")">
+
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="BestUsersByOrderTotal.StartDate" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-editor asp-for="BestUsersByOrderTotal.StartDate" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="BestUsersByOrderTotal.EndDate" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-editor asp-for="BestUsersByOrderTotal.EndDate" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="BestUsersByOrderTotal.OrderStatusId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-select asp-for="BestUsersByOrderTotal.OrderStatusId" asp-items="Model.BestUsersByOrderTotal.AvailableOrderStatuses" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="BestUsersByOrderTotal.PaymentStatusId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-select asp-for="BestUsersByOrderTotal.PaymentStatusId" asp-items="Model.BestUsersByOrderTotal.AvailablePaymentStatuses" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="BestUsersByOrderTotal.ShippingStatusId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-select asp-for="BestUsersByOrderTotal.ShippingStatusId" asp-items="Model.BestUsersByOrderTotal.AvailableShippingStatuses" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7 col-md-offset-5">
+                                <button type="button" id="search-best-users-ordertotal" class="btn btn-primary btn-search">
+                                    <i class="fa fa-line-chart"></i>
+                                    @T("Admin.Reports.Users.RunReport")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "users-ordertotal-grid",
+                        UrlRead = new DataUrl("ReportBestUsersByOrderTotalList", "Report", null),
+                        SearchButtonId = "search-best-users-ordertotal",
+                        Length = Model.BestUsersByOrderTotal.PageSize,
+                        LengthMenu = Model.BestUsersByOrderTotal.AvailablePageSizes,
+                        Filters = new List<FilterParameter>
+                        {
+                            new FilterParameter(nameof(Model.BestUsersByOrderTotal.OrderBy), 1),
+                            new FilterParameter(nameof(Model.BestUsersByOrderTotal.StartDate), nameof(UserReportsSearchModel.BestUsersByOrderTotal)),
+                            new FilterParameter(nameof(Model.BestUsersByOrderTotal.EndDate), nameof(UserReportsSearchModel.BestUsersByOrderTotal)),
+                            new FilterParameter(nameof(Model.BestUsersByOrderTotal.OrderStatusId), nameof(UserReportsSearchModel.BestUsersByOrderTotal)),
+                            new FilterParameter(nameof(Model.BestUsersByOrderTotal.PaymentStatusId), nameof(UserReportsSearchModel.BestUsersByOrderTotal)),
+                            new FilterParameter(nameof(Model.BestUsersByOrderTotal.ShippingStatusId), nameof(UserReportsSearchModel.BestUsersByOrderTotal))
+                        },
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(BestUsersReportModel.UserName))
+                            {
+                                Title = T("Admin.Reports.Users.BestBy.Fields.User").Text
+                            },
+                            new ColumnProperty(nameof(BestUsersReportModel.OrderTotal))
+                            {
+                                Title = T("Admin.Reports.Users.BestBy.Fields.OrderTotal").Text
+                            },
+                            new ColumnProperty(nameof(BestUsersReportModel.OrderCount))
+                            {
+                                Title = T("Admin.Reports.Users.BestBy.Fields.OrderCount").Text
+                            },
+                            new ColumnProperty(nameof(BestUsersReportModel.UserId))
+                            {
+                                Title = T("Admin.Common.View").Text,
+                                Width = "100",
+                                ClassName =  TvProgColumnClassDefaults.Button,
+                                Render = new RenderButtonView(new DataUrl("~/Admin/User/Edit/"))
+                            }
+                        }
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

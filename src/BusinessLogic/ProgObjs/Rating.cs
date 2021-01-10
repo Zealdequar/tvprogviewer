@@ -17,19 +17,19 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Идентификатор рейтинга
         /// </summary>
         [DataMember]
-        public int RatingID { get; set; }
+        public int RatingId { get; set; }
 
         /// <summary>
         /// Идентификатор пользователя
         /// </summary>
         [DataMember]
-        public long UID { get; set; }
+        public long Uid { get; set; }
 
         /// <summary>
         /// Идентификатор пиктограммы
         /// </summary>
         [DataMember]
-        public int IconID { get; set; }
+        public int IconId { get; set; }
 
         /// <summary>
         /// Путь к пиктограмме рейтинга

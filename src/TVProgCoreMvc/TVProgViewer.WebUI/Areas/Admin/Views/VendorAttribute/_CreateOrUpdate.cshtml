@@ -1,0 +1,23 @@
+﻿@model VendorAttributeModel
+
+@{
+    const string hideInfoBlockAttributeName = "VendorAttributePage.HideInfoBlock";
+    var hideInfoBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideInfoBlockAttributeName);
+
+    const string hideValuesBlockAttributeName = "VendorAttributePage.HideValuesBlock";
+    var hideValuesBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideValuesBlockAttributeName, defaultValue: true);
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<div class="content">
+    <div class="form-horizontal">
+        <tvprog-panels id="vendorattribute-panels">
+            <tvprog-panel asp-name="vendorattribute-info" asp-icon="fa fa-info" asp-title="@T("Admin.Vendors.VendorAttributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-panel>
+            <tvprog-panel asp-name="vendorattribute-values" asp-icon="fa fa-check-square-o" asp-title="@T("Admin.Vendors.VendorAttributes.Values")" asp-hide-block-attribute-name="@hideValuesBlockAttributeName" asp-hide="@hideValuesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Values", Model)</tvprog-panel>
+            
+            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.AdminVendorAttributeDetailsBlock, additionalData = Model })
+        </tvprog-panels>
+    </div>
+</div>

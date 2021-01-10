@@ -1,0 +1,176 @@
+﻿@model UserModel
+@using TVProgViewer.Core.Domain.Users
+@using TVProgViewer.Services
+@using TVProgViewer.Services.Stores
+@inject IStoreService storeService
+<div class="panel-body">
+    <div class="sub-panel">
+        @await Html.PartialAsync("Table", new DataTablesModel
+        {
+            Name = "user-rewardpoints-grid",
+            UrlRead = new DataUrl("RewardPointsHistorySelect", "User", new RouteValueDictionary { [nameof(Model.UserRewardPointsSearchModel.UserId)] = Model.UserRewardPointsSearchModel.UserId }),
+            Length = Model.UserRewardPointsSearchModel.PageSize,
+            LengthMenu = Model.UserRewardPointsSearchModel.AvailablePageSizes,
+            ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(UserRewardPointsModel.StoreName))
+                {
+                    Title = T("Admin.Users.Users.RewardPoints.Fields.Store").Text,
+                    Visible = storeService.GetAllStores().Count > 1
+                },
+                new ColumnProperty(nameof(UserRewardPointsModel.Points))
+                {
+                    Title = T("Admin.Users.Users.RewardPoints.Fields.Points").Text
+                },
+                new ColumnProperty(nameof(UserRewardPointsModel.PointsBalance))
+                {
+                    Title = T("Admin.Users.Users.RewardPoints.Fields.PointsBalance").Text
+                },
+                new ColumnProperty(nameof(UserRewardPointsModel.Message))
+                {
+                    Title = T("Admin.Users.Users.RewardPoints.Fields.Message").Text
+                },
+                new ColumnProperty(nameof(UserRewardPointsModel.CreatedOn))
+                {
+                    Title = T("Admin.Users.Users.RewardPoints.Fields.CreatedDate").Text,
+                    Render = new RenderDate()
+                },
+                new ColumnProperty(nameof(UserRewardPointsModel.EndDate))
+                {
+                    Title = T("Admin.Users.Users.RewardPoints.Fields.EndDate").Text,
+                    Render = new RenderDate()
+                }
+            }
+        })
+    </div>
+    <div class="panel panel-default no-margin">
+        <div class="panel-heading">
+            @T("Admin.Users.Users.RewardPoints.AddTitle")
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddRewardPoints.Points" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddRewardPoints.Points" />
+                    <span asp-validation-for="@Model.AddRewardPoints.Points"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddRewardPoints.PointsValidity" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddRewardPoints.PointsValidity" asp-postfix="@T("Admin.Users.Users.RewardPoints.Fields.PointsValidity.Postfix")" />
+                    <span asp-validation-for="@Model.AddRewardPoints.PointsValidity"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddRewardPoints.Message" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddRewardPoints.Message" placeholder="@T("Admin.Users.Users.SomeComment")"/>
+                    <span asp-validation-for="@Model.AddRewardPoints.Message"></span>
+                </div>
+            </div>
+            <div class="form-group" @(Model.AddRewardPoints.AvailableStores.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddRewardPoints.StoreId" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-select asp-for="@Model.AddRewardPoints.StoreId" asp-items="@Model.AddRewardPoints.AvailableStores" />
+                    <span asp-validation-for="@Model.AddRewardPoints.StoreId"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddRewardPoints.ActivatePointsImmediately" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddRewardPoints.ActivatePointsImmediately" />
+                    <span asp-validation-for="@Model.AddRewardPoints.ActivatePointsImmediately"></span>
+                </div>
+            </div>
+            <div class="form-group" id="pnl-activating-delay">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddRewardPoints.ActivationDelay" />
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <tvprog-editor asp-for="@Model.AddRewardPoints.ActivationDelay" />
+                            <span asp-validation-for="@Model.AddRewardPoints.ActivationDelay"></span>
+                        </div>
+                        <div class="col-md-3">
+                            <tvprog-select asp-for="@Model.AddRewardPoints.ActivationDelayPeriodId" asp-items="@(((RewardPointsActivatingDelayPeriod) Model.AddRewardPoints.ActivationDelayPeriodId).ToSelectList())" style="max-width: 200px;" />
+                            <span asp-validation-for="@Model.AddRewardPoints.ActivationDelayPeriodId"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-9 col-md-offset-3">
+                    <button type="button" id="addRewardPoints" class="btn btn-primary">@T("Admin.Users.Users.RewardPoints.AddButton")</button>
+                </div>
+            </div>
+        </div>
+        <script>
+        $(document).ready(function () {
+            $("#@Html.IdFor(model => Model.AddRewardPoints.ActivatePointsImmediately)").click(activatePointsImmediately);
+            activatePointsImmediately();
+            $('#addRewardPoints').click(function () {
+                $('#addRewardPoints').attr('disabled', true);
+                var postData = {
+                    Points: $("#@Html.IdFor(model => model.AddRewardPoints.Points)").val(),
+                    Message: $("#@Html.IdFor(model => model.AddRewardPoints.Message)").val(),
+                    StoreId: $("#@Html.IdFor(model => model.AddRewardPoints.StoreId)").val(),
+                    ActivatePointsImmediately: $("#@Html.IdFor(model => model.AddRewardPoints.ActivatePointsImmediately)").is(':checked'),
+                    ActivationDelayPeriodId: $("#@Html.IdFor(model => model.AddRewardPoints.ActivationDelayPeriodId)").val(),
+                    ActivationDelay: $("#@Html.IdFor(model => model.AddRewardPoints.ActivationDelay)").val(),
+                    PointsValidity: $("#@Html.IdFor(model => model.AddRewardPoints.PointsValidity)").val(),
+                    UserId: '@(Model.Id)'
+                };
+                addAntiForgeryToken(postData);
+
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "@(Url.Action("RewardPointsHistoryAdd", "User"))",
+                    data: postData,
+                    success: function (data, textStatus, jqXHR) {
+                        if (data.Result) {
+                            //reload grid
+                            updateTable('#user-rewardpoints-grid');
+
+                            $("#@Html.IdFor(model => model.AddRewardPoints.Points)").val(0);
+                            $("#@Html.IdFor(model => model.AddRewardPoints.Message)").val('@JavaScriptEncoder.Default.Encode(Model.AddRewardPoints.Message)');
+                            $("#@Html.IdFor(model => model.AddRewardPoints.StoreId)").val(@Model.AddRewardPoints.StoreId);
+                            $("#@Html.IdFor(model => model.AddRewardPoints.ActivationDelayPeriodId)").val(@Model.AddRewardPoints.ActivationDelayPeriodId);
+                            $("#@Html.IdFor(model => model.AddRewardPoints.ActivationDelay)").val(@Model.AddRewardPoints.ActivationDelay);
+                            $("#@Html.IdFor(model => model.AddRewardPoints.PointsValidity)").val('');
+                            $("#@Html.IdFor(model => model.AddRewardPoints.ActivatePointsImmediately)").prop('checked', @(Model.AddRewardPoints.ActivatePointsImmediately.ToString().ToLower()));
+
+                            activatePointsImmediately();
+                        } else {
+                            //display errors if returned
+                            display_nop_error(data);
+                        }
+                    },
+                    complete: function (jqXHR, textStatus) {
+                        $('#addRewardPoints').attr('disabled', false);
+                    }
+                });
+            });
+        });
+
+        function activatePointsImmediately() {
+            if ($('#@Html.IdFor(model => Model.AddRewardPoints.ActivatePointsImmediately)').is(':checked'))
+                $('#pnl-activating-delay').hide();
+            else
+                $('#pnl-activating-delay').show();
+        }
+        </script>
+    </div>
+</div>

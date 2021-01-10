@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TVProgViewer.BusinessLogic.ProgObjs;
+using Microsoft.EntityFrameworkCore;
+using TVProgViewer.Data.TvProgMain.ProgObjs;
+using TVProgViewer.DataAccess.Models;
 
 namespace TVProgViewer.DataAccess.Adapters
 {
@@ -20,14 +22,14 @@ namespace TVProgViewer.DataAccess.Adapters
             try
             {
                 ratings = (from r in dataContext.Ratings.AsNoTracking()
-                           join mp in dataContext.MediaPic.AsNoTracking() on r.IconID equals mp.IconID into gmp
+                           join mp in dataContext.MediaPic.AsNoTracking() on r.IconId equals mp.IconId into gmp
                            from mp in gmp.DefaultIfEmpty()
-                           where r.UID == uid && r.DeleteDate == null
+                           where r.Uid == uid && r.DeleteDate == null
                            select new
                            {
-                               RatingID = r.RatingID,
-                               UID = r.UID,
-                               IconID = r.IconID,
+                               RatingID = r.RatingId,
+                               UID = r.Uid,
+                               IconID = r.IconId,
                                RatingPath = mp.Path25 + mp.FileName,
                                CreateDate = r.CreateDate,
                                RatingName = r.RatingName,
@@ -57,14 +59,14 @@ namespace TVProgViewer.DataAccess.Adapters
                 Ratings rating = new Ratings
                 {
                     CreateDate = DateTimeOffset.Now,
-                    UID = uid,
-                    IconID = iconId,
+                    Uid = uid,
+                    IconId = iconId,
                     RatingName = name,
                     Visible = visible
                 };
-                rating = dataContext.Ratings.Add(rating);
+                dataContext.Ratings.Add(rating);
                 dataContext.SaveChanges();
-                ratingId = rating.RatingID;
+                ratingId = rating.RatingId;
             }
             catch(Exception ex)
             {
@@ -80,11 +82,11 @@ namespace TVProgViewer.DataAccess.Adapters
         /// <param name="name">Название</param>
         /// <param name="visible">Видимость</param>
         /// <param name="deleteDate">Удалить после</param>
-        public void UpdateRating(long ratingId, string name, bool visible, DateTimeOffset? deleteDate = null)
+       /* public void UpdateRating(long ratingId, string name, bool visible, DateTimeOffset? deleteDate = null)
         {
             try
             {
-                Ratings rating = dataContext.Ratings.Where(r => r.RatingID == ratingId && r.DeleteDate == null).Single();
+                Ratings rating = dataContext.Ratings.Where(r => r.RatingId == ratingId && r.DeleteDate == null).Single();
                 rating.RatingName = name;
                 rating.Visible = visible;
                 rating.DeleteDate = deleteDate;
@@ -103,11 +105,11 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                Ratings rating = dataContext.Ratings.Where(r => r.RatingID == ratingId && r.DeleteDate == null).Single();
+                Ratings rating = dataContext.Ratings.Where(r => r.RatingId == ratingId && r.DeleteDate == null).Single();
                 rating.DeleteDate = DateTimeOffset.Now;
                 foreach(var rc in rating.RatingClassificator.ToList())
                 {
-                    DeleteRatingClassificator(rc.RatingClassificatorID);
+                    DeleteRatingClassificator(rc.RatingClassificatorId);
                 }
                 dataContext.SaveChanges();
             }
@@ -132,7 +134,7 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                MediaPic mp = dataContext.MediaPic.Add(new MediaPic()
+                MediaPic mp = new MediaPic()
                 {
                     FileName = filename,
                     ContentType = contentType,
@@ -141,12 +143,13 @@ namespace TVProgViewer.DataAccess.Adapters
                     IsSystem = false,
                     PathOrig = pathOrig,
                     Path25 = path25
-                });
+                };
+                dataContext.MediaPic.Add(mp);
 
                 dataContext.SaveChanges();
 
-                Ratings rating = dataContext.Ratings.Single(x => x.RatingID == ratingId && x.DeleteDate == null);
-                rating.IconID = mp.IconID;
+                Ratings rating = dataContext.Ratings.Single(x => x.RatingId == ratingId && x.DeleteDate == null);
+                rating.IconId = mp.IconId;
                 dataContext.SaveChanges();
             }
             catch (Exception ex)
@@ -164,16 +167,16 @@ namespace TVProgViewer.DataAccess.Adapters
             try
             {
                 ratingClassifs = (from rc in dataContext.RatingClassificator.AsNoTracking()
-                                  join r in dataContext.Ratings.AsNoTracking() on rc.RID equals r.RatingID
-                                  join mp in dataContext.MediaPic.AsNoTracking() on r.IconID equals mp.IconID into gmp
+                                  join r in dataContext.Ratings.AsNoTracking() on rc.Rid equals r.RatingId
+                                  join mp in dataContext.MediaPic.AsNoTracking() on r.IconId equals mp.IconId into gmp
                                   from mp in gmp.DefaultIfEmpty()
-                                  where r.UID == uid && rc.UID == uid && r.DeleteDate == null && (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.Now)
+                                  where r.Uid == uid && rc.Uid == uid && r.DeleteDate == null && (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.Now)
                                   orderby rc.OrderCol
                                   select new
                                   {
-                                      RatingClassificatorID = rc.RatingClassificatorID,
-                                      RID = rc.RID,
-                                      UID = rc.UID,
+                                      RatingClassificatorID = rc.RatingClassificatorId,
+                                      RID = rc.Rid,
+                                      UID = rc.Uid,
                                       ContainPhrases = rc.ContainPhrases,
                                       NonContainPhrases = rc.NonContainPhrases,
                                       RatingPath = mp.Path25 + mp.FileName,
@@ -203,19 +206,19 @@ namespace TVProgViewer.DataAccess.Adapters
             long ratingClassificatorId = 0;
             try
             {
-                int? maxOrderCol = dataContext.RatingClassificator.AsNoTracking().Where(rc => rc.UID == uid).Max(rc => rc.OrderCol);
+                int? maxOrderCol = dataContext.RatingClassificator.AsNoTracking().Where(rc => rc.Uid == uid).Max(rc => rc.OrderCol);
                 RatingClassificator ratingClassif = new RatingClassificator()
                 {
-                    RID = rid,
-                    UID = uid,
+                    Rid = rid,
+                    Uid = uid,
                     ContainPhrases = containPhrases,
                     NonContainPhrases = nonContainPhrases,
                     OrderCol = (maxOrderCol ?? 0) + 1,
                     DeleteAfterDate = deleteAfterDate
                 };
-                ratingClassif = dataContext.RatingClassificator.Add(ratingClassif);
+                dataContext.RatingClassificator.Add(ratingClassif);
                 dataContext.SaveChanges();
-                ratingClassificatorId = ratingClassif.RatingClassificatorID;
+                ratingClassificatorId = ratingClassif.RatingClassificatorId;
             }
             catch(Exception ex)
             {
@@ -237,9 +240,9 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                RatingClassificator ratingClassificator = dataContext.RatingClassificator.Single(rc => rc.RatingClassificatorID == ratingClassificatorId &&
+                RatingClassificator ratingClassificator = dataContext.RatingClassificator.Single(rc => rc.RatingClassificatorId == ratingClassificatorId &&
                                                                   (deleteAfterDate == null || deleteAfterDate >= DateTime.Now));
-                ratingClassificator.RID = rid;
+                ratingClassificator.Rid = rid;
                 ratingClassificator.ContainPhrases = containPhrases;
                 ratingClassificator.NonContainPhrases = nonContainPrhases;
                 ratingClassificator.DeleteAfterDate = deleteAfterDate;
@@ -261,9 +264,9 @@ namespace TVProgViewer.DataAccess.Adapters
             try
             {
                 RatingClassificator ratingClassificator = dataContext.RatingClassificator
-                    .Single(rc => rc.RatingClassificatorID == ratingClassificatorId);
+                    .Single(rc => rc.RatingClassificatorId == ratingClassificatorId);
                 IEnumerable<RatingClassificator> afterRcs = dataContext.RatingClassificator
-                    .Where(rc => rc.UID == ratingClassificator.UID && rc.OrderCol > ratingClassificator.OrderCol)
+                    .Where(rc => rc.Uid == ratingClassificator.Uid && rc.OrderCol > ratingClassificator.OrderCol)
                     .OrderBy(o => o.OrderCol);
                 foreach (RatingClassificator rc in afterRcs)
                 {
@@ -286,10 +289,10 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                RatingClassificator ratingClassificator = dataContext.RatingClassificator.Single(rc => rc.RatingClassificatorID == ratingClassificatorId);
+                RatingClassificator ratingClassificator = dataContext.RatingClassificator.Single(rc => rc.RatingClassificatorId == ratingClassificatorId);
                 if (ratingClassificator.OrderCol > 1)
                 {
-                    RatingClassificator rcAbove = dataContext.RatingClassificator.Single(rc => rc.UID == ratingClassificator.UID &&
+                    RatingClassificator rcAbove = dataContext.RatingClassificator.Single(rc => rc.Uid == ratingClassificator.Uid &&
                                                                                                  rc.OrderCol == ratingClassificator.OrderCol - 1);
                     int? temp = ratingClassificator.OrderCol;
                     ratingClassificator.OrderCol = rcAbove.OrderCol;
@@ -310,11 +313,11 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                RatingClassificator ratingClassificator = dataContext.RatingClassificator.Single(rc => rc.RatingClassificatorID == ratingClassificatorId);
+                RatingClassificator ratingClassificator = dataContext.RatingClassificator.Single(rc => rc.RatingClassificatorId == ratingClassificatorId);
                 if (ratingClassificator.OrderCol < dataContext.RatingClassificator.AsNoTracking()
-                                                    .Where(rc => rc.UID == ratingClassificator.UID).Max(rc => rc.OrderCol))
+                                                    .Where(rc => rc.Uid == ratingClassificator.Uid).Max(rc => rc.OrderCol))
                 {
-                    RatingClassificator rcUnder = dataContext.RatingClassificator.Single(rc => rc.UID == ratingClassificator.UID &&
+                    RatingClassificator rcUnder = dataContext.RatingClassificator.Single(rc => rc.Uid == ratingClassificator.Uid &&
                                                                                            rc.OrderCol == ratingClassificator.OrderCol + 1);
                     int? temp = ratingClassificator.OrderCol;
                     ratingClassificator.OrderCol = rcUnder.OrderCol;
@@ -326,6 +329,6 @@ namespace TVProgViewer.DataAccess.Adapters
             {
 
             }
-        }
+        }*/
     }
 }

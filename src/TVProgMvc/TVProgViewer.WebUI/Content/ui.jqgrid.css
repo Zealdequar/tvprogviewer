@@ -5,16 +5,18 @@
 
 /* Grid */
 .ui-jqgrid {
-	position: relative;
-	-moz-box-sizing: content-box;
-	-webkit-box-sizing: content-box;
-	box-sizing: content-box;
-	-ms-touch-action: none;
-	touch-action: manipulation;
+    position: relative;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    box-sizing: content-box;
+    -ms-touch-action: none;
+    touch-action: manipulation;
 }
+
 .ui-jqgrid div {
-	line-height: normal;
+    line-height: normal;
 }
+
 .ui-jqgrid table {
 	border-collapse: separate;
 	border-spacing: 0;

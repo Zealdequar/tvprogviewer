@@ -14,7 +14,7 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Идентификатор провайдера
         /// </summary>
         [DataMember]
-        public int TVProgProviderID { get; set; }
+        public int TVProgProviderId { get; set; }
 
         /// <summary>
         /// Название провайдера
@@ -48,7 +48,7 @@ namespace TVProgViewer.BusinessLogic.ProgObjs
         /// Идентификатор типа телепрограммы
         /// </summary>
         [DataMember]
-        public int TypeProgID { get; set; }
+        public int TypeProgId { get; set; }
 
         /// <summary>
         /// Формат телепрограммы

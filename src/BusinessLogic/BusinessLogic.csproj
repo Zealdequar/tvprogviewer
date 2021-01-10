@@ -178,19 +178,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProgObjs\Channel.cs" />
     <Compile Include="Updater\WebResource.cs" />
-    <Compile Include="Users\AccountViewModels.cs" />
-    <Compile Include="Users\SecureData.cs" />
-    <Compile Include="Users\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{d29070e9-6088-4eb4-aac5-319fd85e42cd}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
+    <Folder Include="Users\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

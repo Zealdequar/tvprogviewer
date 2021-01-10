@@ -1,0 +1,108 @@
+@model ForumSettingsModel
+
+<div class="panel-body">
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowGuestsToCreatePosts_OverrideForStore" asp-input="AllowGuestsToCreatePosts" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowGuestsToCreatePosts" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowGuestsToCreatePosts" />
+            <span asp-validation-for="AllowGuestsToCreatePosts"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowGuestsToCreateTopics_OverrideForStore" asp-input="AllowGuestsToCreateTopics" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowGuestsToCreateTopics" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowGuestsToCreateTopics" />
+            <span asp-validation-for="AllowGuestsToCreateTopics"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowUsersToEditPosts_OverrideForStore" asp-input="AllowUsersToEditPosts" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowUsersToEditPosts" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowUsersToEditPosts" />
+            <span asp-validation-for="AllowUsersToEditPosts"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowUsersToDeletePosts_OverrideForStore" asp-input="AllowUsersToDeletePosts" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowUsersToDeletePosts" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowUsersToDeletePosts" />
+            <span asp-validation-for="AllowUsersToDeletePosts"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowUsersToManageSubscriptions_OverrideForStore" asp-input="AllowUsersToManageSubscriptions" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowUsersToManageSubscriptions" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowUsersToManageSubscriptions" />
+            <span asp-validation-for="AllowUsersToManageSubscriptions"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowPostVoting_OverrideForStore" asp-input="AllowPostVoting" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowPostVoting" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowPostVoting" />
+            <span asp-validation-for="AllowPostVoting"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="AllowPostVoting">
+        <div class="form-group advanced-setting" id="pnlMaxVotes">
+            <div class="col-md-3">
+                <tvprog-override-store-checkbox asp-for="MaxVotesPerDay_OverrideForStore" asp-input="MaxVotesPerDay" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="MaxVotesPerDay" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="MaxVotesPerDay" />
+                <span asp-validation-for="MaxVotesPerDay"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowPrivateMessages_OverrideForStore" asp-input="AllowPrivateMessages" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowPrivateMessages" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowPrivateMessages" />
+            <span asp-validation-for="AllowPrivateMessages"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="AllowPrivateMessages">
+        <div class="form-group advanced-setting" id="pnlShowAlertForPM">
+            <div class="col-md-3">
+                <tvprog-override-store-checkbox asp-for="ShowAlertForPM_OverrideForStore" asp-input="ShowAlertForPM" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="ShowAlertForPM" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="ShowAlertForPM" />
+                <span asp-validation-for="ShowAlertForPM"></span>
+            </div>
+        </div>
+        <div class="form-group advanced-setting" id="pnlNotifyAboutPrivateMessages">
+            <div class="col-md-3">
+                <tvprog-override-store-checkbox asp-for="NotifyAboutPrivateMessages_OverrideForStore" asp-input="NotifyAboutPrivateMessages" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="NotifyAboutPrivateMessages" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="NotifyAboutPrivateMessages" />
+                <span asp-validation-for="NotifyAboutPrivateMessages"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+</div>

@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TVProgViewer.BusinessLogic.ProgObjs;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
+using TVProgViewer.Data.TvProgMain.ProgObjs;
+using TVProgViewer.DataAccess.Models;
 
 namespace TVProgViewer.DataAccess.Adapters
 {
@@ -20,14 +23,14 @@ namespace TVProgViewer.DataAccess.Adapters
             try
             {
                 genres = (from g in dataContext.Genres.AsNoTracking()
-                          join mp in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp.IconID into gmp
+                          join mp in dataContext.MediaPic.AsNoTracking() on g.IconId equals mp.IconId into gmp
                           from mp in gmp.DefaultIfEmpty()
-                          where g.UID == uid && g.DeleteDate == null
+                          where g.Uid == uid && g.DeleteDate == null
                           select new
                           {
-                              GenreID = g.GenreID,
-                              UID = g.UID,
-                              IconID = g.IconID,
+                              GenreID = g.GenreId,
+                              UID = g.Uid,
+                              IconID = g.IconId,
                               GenrePath = mp.Path25 + mp.FileName,
                               CreateDate = g.CreateDate,
                               GenreName = g.GenreName,
@@ -60,15 +63,15 @@ namespace TVProgViewer.DataAccess.Adapters
                 Genres genre = new Genres
                 {
                     CreateDate = DateTimeOffset.Now,
-                    UID = uid,
-                    IconID = iconId,
+                    Uid = uid,
+                    IconId = iconId,
                     GenreName = name,
                     Visible = visible
                 };
 
-                genre = dataContext.Genres.Add(genre);
+                dataContext.Add(genre);
                 dataContext.SaveChanges();
-                genreId = genre.GenreID;
+                genreId = genre.GenreId;
             }
             catch (Exception ex)
             {
@@ -84,11 +87,11 @@ namespace TVProgViewer.DataAccess.Adapters
         /// <param name="name">Название</param>
         /// <param name="visible">Видимость</param>
         /// <param name="deleteDate">Удалить после</param>
-        public void UpdateGenre(long genreId, string name, bool visible, DateTimeOffset? deleteDate = null)
+        /*public void UpdateGenre(long genreId, string name, bool visible, DateTimeOffset? deleteDate = null)
         {
             try
             {
-                Genres genre = dataContext.Genres.Where(g => g.GenreID == genreId && g.DeleteDate == null).Single();
+                Genres genre = dataContext.Genres.Where(g => g.GenreId == genreId && g.DeleteDate == null).Single();
                 genre.GenreName = name;
                 genre.Visible = visible;
                 genre.DeleteDate = deleteDate;
@@ -108,10 +111,10 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                Genres genre = dataContext.Genres.Where(g => g.GenreID == genreId && g.DeleteDate == null).Single();
+                Genres genre = dataContext.Genres.Where(g => g.GenreId == genreId && g.DeleteDate == null).Single();
                 genre.DeleteDate = DateTimeOffset.Now;
                 foreach (var gc in genre.GenreClassificator.ToList())
-                       DeleteGenreClassificator(gc.GenreClassificatorID);
+                       DeleteGenreClassificator(gc.GenreClassificatorId);
                 dataContext.SaveChanges();
             }
             catch (Exception ex)
@@ -135,7 +138,7 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                MediaPic mp = dataContext.MediaPic.Add(new MediaPic()
+                var mp = new MediaPic()
                 {
                     FileName = filename,
                     ContentType = contentType,
@@ -144,12 +147,13 @@ namespace TVProgViewer.DataAccess.Adapters
                     IsSystem = false,
                     PathOrig = pathOrig,
                     Path25 = path25
-                });
+                };
+                dataContext.MediaPic.Add(mp);
 
                 dataContext.SaveChanges();
 
-                Genres genre = dataContext.Genres.Single(x => x.GenreID == genreId && x.DeleteDate == null);
-                genre.IconID = mp.IconID;
+                Genres genre = dataContext.Genres.Single(x => x.GenreId == genreId && x.DeleteDate == null);
+                genre.IconId = mp.IconId;
                 dataContext.SaveChanges();
 
             }
@@ -169,16 +173,16 @@ namespace TVProgViewer.DataAccess.Adapters
             try
             {
                 genreClassifs = (from gc in dataContext.GenreClassificator.AsNoTracking()
-                                 join g in dataContext.Genres.AsNoTracking() on gc.GID equals g.GenreID
-                                 join mp in dataContext.MediaPic.AsNoTracking() on g.IconID equals mp.IconID into gmp
+                                 join g in dataContext.Genres.AsNoTracking() on gc.Gid equals g.GenreId
+                                 join mp in dataContext.MediaPic.AsNoTracking() on g.IconId equals mp.IconId into gmp
                                  from mp in gmp.DefaultIfEmpty()
-                                 where g.UID == uid && g.Visible && gc.UID == uid && g.DeleteDate == null && (gc.DeleteAfterDate == null || gc.DeleteAfterDate >= DateTime.Now)
+                                 where g.Uid == uid && g.Visible && gc.Uid == uid && g.DeleteDate == null && (gc.DeleteAfterDate == null || gc.DeleteAfterDate >= DateTime.Now)
                                  orderby gc.OrderCol
                                  select new
                                  {
-                                     GenreClassificatorID = gc.GenreClassificatorID,
-                                     GID = gc.GID,
-                                     UID = gc.UID,
+                                     GenreClassificatorID = gc.GenreClassificatorId,
+                                     GID = gc.Gid,
+                                     UID = gc.Uid,
                                      ContainPhrases = gc.ContainPhrases,
                                      NonContainPhrases = gc.NonContainPhrases,
                                      GenrePath = mp.Path25 + mp.FileName,
@@ -210,19 +214,19 @@ namespace TVProgViewer.DataAccess.Adapters
             long genreClassificatorId = 0;
             try
             {
-                int? maxOrderCol = dataContext.GenreClassificator.AsNoTracking().Where(gc => gc.UID == uid).Max(gc => gc.OrderCol);
+                int? maxOrderCol = dataContext.GenreClassificator.AsNoTracking().Where(gc => gc.Uid == uid).Max(gc => gc.OrderCol);
                 GenreClassificator genreClassif = new GenreClassificator()
                 {
-                    GID = gid,
-                    UID = uid,
+                    Gid = gid,
+                    Uid = uid,
                     ContainPhrases = containPhrases,
                     NonContainPhrases = nonContainPhrases,
                     OrderCol = (maxOrderCol ?? 0) + 1,
                     DeleteAfterDate = deleteAfterDate
                 };
-                genreClassif = dataContext.GenreClassificator.Add(genreClassif);
+                dataContext.GenreClassificator.Add(genreClassif);
                 dataContext.SaveChanges();
-                genreClassificatorId = genreClassif.GenreClassificatorID;
+                genreClassificatorId = genreClassif.GenreClassificatorId;
             }
             catch(Exception ex)
             {
@@ -244,9 +248,9 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                GenreClassificator genreClassificator = dataContext.GenreClassificator.Single(gc => gc.GenreClassificatorID == genreClassificatorId &&
+                GenreClassificator genreClassificator = dataContext.GenreClassificator.Single(gc => gc.GenreClassificatorId == genreClassificatorId &&
                                                            (deleteAfterDate == null || deleteAfterDate >= DateTime.Now));
-                genreClassificator.GID = gid;
+                genreClassificator.Gid = gid;
                 genreClassificator.ContainPhrases = containPhrases;
                 genreClassificator.NonContainPhrases = nonContainPhrases;
                 genreClassificator.DeleteAfterDate = deleteAfterDate;
@@ -268,9 +272,9 @@ namespace TVProgViewer.DataAccess.Adapters
             try
             {
                 GenreClassificator genreClassificator = dataContext.GenreClassificator
-                               .Single(gc => gc.GenreClassificatorID == genreClassificatorId);
+                               .Single(gc => gc.GenreClassificatorId == genreClassificatorId);
                 IEnumerable<GenreClassificator> afterGcs = dataContext.GenreClassificator
-                               .Where(gc => gc.UID == genreClassificator.UID && gc.OrderCol > genreClassificator.OrderCol)
+                               .Where(gc => gc.Uid == genreClassificator.Uid && gc.OrderCol > genreClassificator.OrderCol)
                                .OrderBy(o => o.OrderCol);
                 foreach(GenreClassificator gc in afterGcs)
                 {
@@ -293,10 +297,10 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                GenreClassificator genreClassificator = dataContext.GenreClassificator.Single(gc => gc.GenreClassificatorID == genreClassificatorId);
+                GenreClassificator genreClassificator = dataContext.GenreClassificator.Single(gc => gc.GenreClassificatorId == genreClassificatorId);
                 if (genreClassificator.OrderCol > 1)
                 {
-                    GenreClassificator gcAbove = dataContext.GenreClassificator.Single(gc => gc.UID == genreClassificator.UID && 
+                    GenreClassificator gcAbove = dataContext.GenreClassificator.Single(gc => gc.Uid == genreClassificator.Uid && 
                                                                                               gc.OrderCol == genreClassificator.OrderCol - 1);
                     int? temp = genreClassificator.OrderCol;
                     genreClassificator.OrderCol = gcAbove.OrderCol;
@@ -317,11 +321,11 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                GenreClassificator genreClassificator = dataContext.GenreClassificator.Single(gc => gc.GenreClassificatorID == genreClassificatorId);
+                GenreClassificator genreClassificator = dataContext.GenreClassificator.Single(gc => gc.GenreClassificatorId == genreClassificatorId);
                 if (genreClassificator.OrderCol < dataContext.GenreClassificator.AsNoTracking()
-                                                  .Where(gc => gc.UID == genreClassificator.UID).Max(gc => gc.OrderCol))
+                                                  .Where(gc => gc.Uid == genreClassificator.Uid).Max(gc => gc.OrderCol))
                 {
-                    GenreClassificator gcUnder = dataContext.GenreClassificator.Single(gc => gc.UID == genreClassificator.UID &&
+                    GenreClassificator gcUnder = dataContext.GenreClassificator.Single(gc => gc.Uid == genreClassificator.Uid &&
                                                                                               gc.OrderCol == genreClassificator.OrderCol + 1);
                     int? temp = genreClassificator.OrderCol;
                     genreClassificator.OrderCol = gcUnder.OrderCol;
@@ -332,6 +336,6 @@ namespace TVProgViewer.DataAccess.Adapters
             catch (Exception ex)
             {
             }
-        }
+        }*/
     }
 }

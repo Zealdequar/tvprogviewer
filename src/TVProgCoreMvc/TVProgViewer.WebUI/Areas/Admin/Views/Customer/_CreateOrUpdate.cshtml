@@ -1,0 +1,54 @@
+﻿@model UserModel
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+@{
+    const string hideInfoBlockAttributeName = "UserPage.HideInfoBlock";
+    var hideInfoBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideInfoBlockAttributeName);
+
+    const string hideOrdersBlockAttributeName = "UserPage.HideOrdersBlock";
+    var hideOrdersBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideOrdersBlockAttributeName, defaultValue: true);
+
+    const string hideAddressesBlockAttributeName = "UserPage.HideAddressesBlock";
+    var hideAddressesBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideAddressesBlockAttributeName, defaultValue: true);
+
+    const string hideShoppingCartAndWishlistBlockAttributeName = "UserPage.HideShoppingCartAndWishlistBlock";
+    var hideShoppingCartAndWishlistBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideShoppingCartAndWishlistBlockAttributeName, defaultValue: true);
+
+    const string hideActivityLogBlockAttributeName = "UserPage.HideActivityLogBlock";
+    var hideActivityLogBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideActivityLogBlockAttributeName, defaultValue: true);
+
+    const string hidePlaceOrderBlockAttributeName = "UserPage.HidePlaceOrderBlock";
+    var hidePlaceOrderBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hidePlaceOrderBlockAttributeName, defaultValue: true);
+
+    const string hideBackInStockSubscriptionsBlockAttributeName = "UserPage.HideBackInStockSubscriptionsBlock";
+    var hideBackInStockSubscriptionsBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideBackInStockSubscriptionsBlockAttributeName, defaultValue: true);
+
+    const string hideRewardPointsBlockAttributeName = "UserPage.HideRewardPointsBlock";
+    var hideRewardPointsBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideRewardPointsBlockAttributeName, defaultValue: true);
+}
+
+<div class="content">
+    <div class="form-horizontal">
+        <tvprog-panels id="user-panels">
+            <tvprog-panel asp-name="user-info" asp-icon="fa fa-info" asp-title="@T("Admin.Users.Users.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-panel>
+            @if (Model.Id > 0)
+            {
+                <tvprog-panel asp-name="user-orders" asp-icon="fa fa-cart-plus" asp-title="@T("Admin.Users.Users.Orders")" asp-hide-block-attribute-name="@hideOrdersBlockAttributeName" asp-hide="@hideOrdersBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Orders", Model)</tvprog-panel>
+                <tvprog-panel asp-name="user-address" asp-icon="fa fa-address-book-o" asp-title="@T("Admin.Users.Users.Addresses")" asp-hide-block-attribute-name="@hideAddressesBlockAttributeName" asp-hide="@hideAddressesBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Addresses", Model)</tvprog-panel>
+                <tvprog-panel asp-name="user-cart" asp-icon="fa fa-shopping-cart" asp-title="@T("Admin.Users.Users.ShoppingCartAndWishlist")" asp-hide-block-attribute-name="@hideShoppingCartAndWishlistBlockAttributeName" asp-hide="@hideShoppingCartAndWishlistBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.CurrentShoppingCart", Model)</tvprog-panel>
+                <tvprog-panel asp-name="user-activitylog" asp-icon="fa fa-list-alt" asp-title="@T("Admin.Users.Users.ActivityLog")" asp-hide-block-attribute-name="@hideActivityLogBlockAttributeName" asp-hide="@hideActivityLogBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.ActivityLog", Model)</tvprog-panel>
+                <tvprog-panel asp-name="user-impersonate" asp-icon="fa fa-shopping-basket" asp-title="@T("Admin.Users.Users.Impersonate")" asp-hide-block-attribute-name="@hidePlaceOrderBlockAttributeName" asp-hide="@hidePlaceOrderBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Impersonate", Model)</tvprog-panel>
+                <tvprog-panel asp-name="user-backinstock" asp-icon="fa fa-plus-square" asp-title="@T("Admin.Users.Users.BackInStockSubscriptions")" asp-hide-block-attribute-name="@hideBackInStockSubscriptionsBlockAttributeName" asp-hide="@hideBackInStockSubscriptionsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.BackInStockSubscriptions", Model)</tvprog-panel>
+            }
+
+            @if (Model.DisplayRewardPointsHistory)
+            {
+                <tvprog-panel asp-name="user-notes" asp-icon="fa fa-sticky-note-o" asp-title="@T("Admin.Users.Users.RewardPoints")" asp-hide-block-attribute-name="@hideRewardPointsBlockAttributeName" asp-hide="@hideRewardPointsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.RewardPoints", Model)</tvprog-panel>
+            }
+            
+            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.UserDetailsBlock, additionalData = Model })
+        </tvprog-panels>
+    </div>
+</div>

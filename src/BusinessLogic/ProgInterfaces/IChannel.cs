@@ -15,7 +15,7 @@ namespace TVProgViewer.BusinessLogic.ProgInterfaces
         /// <summary>
         /// Идентификатор канала
         /// </summary>
-        int ChannelID { get;  } 
+        int ChannelId { get;  } 
 
         /// <summary>
         /// Нужно ли отображать?
@@ -30,7 +30,7 @@ namespace TVProgViewer.BusinessLogic.ProgInterfaces
         /// <summary>
         /// Миграционный идентификатор
         /// </summary>
-        int? InternalID { get; }
+        int? InternalId { get; }
 
         /// <summary>
         /// Порядковый номер

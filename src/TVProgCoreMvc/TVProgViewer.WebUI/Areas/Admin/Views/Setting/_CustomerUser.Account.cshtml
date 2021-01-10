@@ -1,0 +1,149 @@
+﻿@using TVProgViewer.Core.Domain.Users
+@using TVProgViewer.Services
+@model UserUserSettingsModel
+
+<div class="panel-body">
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.UsernamesEnabled" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.UsernamesEnabled" />
+            <span asp-validation-for="UserSettings.UsernamesEnabled"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="UserSettings.UsernamesEnabled">
+        <div class="form-group advanced-setting" id="pnlAllowUsersToChangeUsernames">
+            <div class="col-md-3">
+                <tvprog-label asp-for="UserSettings.AllowUsersToChangeUsernames" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="UserSettings.AllowUsersToChangeUsernames" />
+                <span asp-validation-for="UserSettings.AllowUsersToChangeUsernames"></span>
+            </div>
+        </div>
+        <div class="form-group advanced-setting" id="pnlCheckUsernameAvailability">
+            <div class="col-md-3">
+                <tvprog-label asp-for="UserSettings.CheckUsernameAvailabilityEnabled" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="UserSettings.CheckUsernameAvailabilityEnabled" />
+                <span asp-validation-for="UserSettings.CheckUsernameAvailabilityEnabled"></span>
+            </div>
+        </div>
+        <div id="pnlUsernameValidationEnabled">
+            <div class="form-group advanced-setting">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="UserSettings.UsernameValidationEnabled" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="UserSettings.UsernameValidationEnabled" />
+                    <span asp-validation-for="UserSettings.UsernameValidationEnabled"></span>
+                </div>
+            </div>
+            <tvprog-nested-setting asp-for="UserSettings.UsernameValidationEnabled">
+                <div class="form-group advanced-setting" id="pnlUsernameValidationRule">
+                    <div class="col-md-3">
+                        <tvprog-label asp-for="UserSettings.UsernameValidationRule" />
+                    </div>
+                    <div class="col-md-9">
+                        <tvprog-editor asp-for="UserSettings.UsernameValidationRule" />
+                        <span asp-validation-for="UserSettings.UsernameValidationRule"></span>
+                    </div>
+                </div>
+                <div class="form-group advanced-setting" id="pnlUsernameValidationUseRegex">
+                    <div class="col-md-3">
+                        <tvprog-label asp-for="UserSettings.UsernameValidationUseRegex" />
+                    </div>
+                    <div class="col-md-9">
+                        <tvprog-editor asp-for="UserSettings.UsernameValidationUseRegex" />
+                        <span asp-validation-for="UserSettings.UsernameValidationUseRegex"></span>
+                    </div>
+                </div>
+            </tvprog-nested-setting>
+        </div>
+    </tvprog-nested-setting>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.UserNameFormat" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="UserSettings.UserNameFormat" asp-items="@(((UserNameFormat)Model.UserSettings.UserNameFormat).ToSelectList())" />
+            <span asp-validation-for="UserSettings.UserNameFormat"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.AllowUsersToUploadAvatars" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.AllowUsersToUploadAvatars" />
+            <span asp-validation-for="UserSettings.AllowUsersToUploadAvatars"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="UserSettings.AllowUsersToUploadAvatars">
+        <div class="form-group" id="pnlDefaultAvatarEnabled">
+            <div class="col-md-3">
+                <tvprog-label asp-for="UserSettings.DefaultAvatarEnabled" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="UserSettings.DefaultAvatarEnabled" />
+                <span asp-validation-for="UserSettings.DefaultAvatarEnabled"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.HideDownloadableProductsTab" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.HideDownloadableProductsTab" />
+            <span asp-validation-for="UserSettings.HideDownloadableProductsTab"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.HideBackInStockSubscriptionsTab" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.HideBackInStockSubscriptionsTab" />
+            <span asp-validation-for="UserSettings.HideBackInStockSubscriptionsTab"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.HideNewsletterBlock" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.HideNewsletterBlock" />
+            <span asp-validation-for="UserSettings.HideNewsletterBlock"></span>
+        </div>
+    </div>
+    <div class="form-group" id="pnlNewsletterBlockAllowToUnsubscribe">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.NewsletterBlockAllowToUnsubscribe" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.NewsletterBlockAllowToUnsubscribe" />
+            <span asp-validation-for="UserSettings.NewsletterBlockAllowToUnsubscribe"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.StoreLastVisitedPage" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.StoreLastVisitedPage" />
+            <span asp-validation-for="UserSettings.StoreLastVisitedPage"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.StoreIpAddresses" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.StoreIpAddresses" />
+            <span asp-validation-for="UserSettings.StoreIpAddresses"></span>
+        </div>
+    </div>
+</div>

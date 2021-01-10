@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using TVProgViewer.BusinessLogic.Users;
+using TVProgViewer.Core.Domain.Users;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data.Common;
+using TVProgViewer.DataAccess.Models;
 
 namespace TVProgViewer.DataAccess.Adapters
 {
@@ -79,23 +81,23 @@ namespace TVProgViewer.DataAccess.Adapters
             SqlParameter outRes = new SqlParameter("@ErrCode", SqlDbType.Int) { Direction = ParameterDirection.Output };
             pars.Add(outRes);
             Logger.Debug("Старт заведения пользователя");
-            da.ExecCommand(GetTvProgSecureConnection(), "spUserStart", pars.Cast<DbParameter>().ToList<DbParameter>());
+          //  da.ExecCommand(GetTvProgSecureConnection(), "spUserStart", pars.Cast<DbParameter>().ToList<DbParameter>());
             result = (outRes.Value != DBNull.Value) ? int.Parse(outRes.Value.ToString()) : -1;
             Logger.Debug("result = " + result);
             return result;
         }
-
+        
         /// <summary>
         /// Получение хеша
         /// </summary>
         /// <param name="username">Имя пользователя</param>
-        public SecureData GetHashes(string username)
+        public SecureData GetHashesByUserName(string username)
         {
 
             SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserName == username);
             if (su != null)
             {
-                SecureData sd = new SecureData(su.UserID, su.PassHash, su.PassExtend);
+                SecureData sd = new SecureData(su.UserId, su.PassHash, su.PassExtend);
                 return sd;
             }
             return null;
@@ -197,15 +199,15 @@ namespace TVProgViewer.DataAccess.Adapters
             string gmtZone)
         {
             int result = 0;
-            if (dataContext.SystemUsers.SingleOrDefault(x => x.UserID != uid && x.Email.ToUpper() == email.ToUpper()) != null)
+            if (dataContext.SystemUsers.SingleOrDefault(x => x.UserId != uid && x.Email.ToUpper() == email.ToUpper()) != null)
                 return 3;
 
-            if (dataContext.SystemUsers.SingleOrDefault(x => x.UserID == uid && (x.Status == 6 || !(x.DateBegin < DateTime.Now && DateTime.Now < x.DateEnd))) != null)
+            if (dataContext.SystemUsers.SingleOrDefault(x => x.UserId == uid && (x.Status == 6 || !(x.DateBegin < DateTime.Now && DateTime.Now < x.DateEnd))) != null)
                 return 5;
 
             try
             {
-                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserID == uid);
+                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserId == uid);
                 if (su != null)
                 {
                     su.LastName = lastName;
@@ -236,7 +238,7 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserID == uid);
+                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserId == uid);
                 if (su != null)
                 {
                     su.Status = 6;
@@ -256,7 +258,7 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserID == uid);
+                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserId == uid);
                 if (su != null)
                 {
                     su.DateBegin = new DateTime(2900, 1, 1);
@@ -278,7 +280,7 @@ namespace TVProgViewer.DataAccess.Adapters
         {
             try
             {
-                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserID == uid);
+                SystemUsers su = dataContext.SystemUsers.SingleOrDefault(x => x.UserId == uid);
                 if (su != null)
                 {
                     su.DateEnd = endBlockDate;
@@ -296,20 +298,17 @@ namespace TVProgViewer.DataAccess.Adapters
         /// </summary>
         /// <param name="uid">Идентификатор пользователя</param>
         /// <param name="errCode">Код ошибки</param>
-        public User GetUser(long uid, out int errCode)
+        public User GetUserByUserName(string userName)
         {
-            errCode = 0;
+            
             try
             {
-                if (dataContext.SystemUsers.SingleOrDefault(x => x.UserID == uid && (x.Status == 6 || !(x.DateBegin < DateTime.Now && DateTime.Now < x.DateEnd))) != null)
-                    errCode = 5;
-
-                SystemUsers su = dataContext.SystemUsers.AsNoTracking().SingleOrDefault(x => x.UserID == uid);
+                SystemUsers su = dataContext.SystemUsers.AsNoTracking().SingleOrDefault(x => x.UserName == userName);
                 if (su != null)
                 {
                     User user = new User()
                     {
-                        UserID = su.UserID,
+                        Id = su.UserId,
                         UserName = su.UserName,
                         LastName = su.LastName,
                         FirstName = su.FirstName,
@@ -318,8 +317,6 @@ namespace TVProgViewer.DataAccess.Adapters
                         Gender = su.Gender,
                         Email = su.Email,
                         MobilePhone = su.MobPhoneNumber,
-                        OtherPhone1 = su.OtherPhoneNumber1,
-                        OtherPhone2 = su.OtherPhoneNumber2,
                         Address = su.Address,
                         GmtZone = su.GmtZone,
                         Status = su.Status,

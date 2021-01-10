@@ -14,7 +14,7 @@ namespace TVProgViewer.BusinessLogic.Updater
         /// Идентификатор
         /// </summary>
         [DataMember]
-        public int WebResourceID { get; set; }
+        public int WebResourceId { get; set; }
 
         /// <summary>
         /// Формат телепрограммы

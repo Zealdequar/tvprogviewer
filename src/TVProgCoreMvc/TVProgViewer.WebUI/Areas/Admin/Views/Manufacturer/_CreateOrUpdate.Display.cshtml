@@ -1,0 +1,74 @@
+﻿@model ManufacturerModel
+
+<div class="panel-body">
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="Published" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="Published" />
+            <span asp-validation-for="Published"></span>
+        </div>
+    </div>
+
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="AllowUsersToSelectPageSize" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowUsersToSelectPageSize" />
+            <span asp-validation-for="AllowUsersToSelectPageSize"></span>
+        </div>
+    </div>
+
+    <tvprog-nested-setting asp-for="AllowUsersToSelectPageSize">
+        <div id="pnlPageSize" class="form-group advanced-setting">
+            <div class="col-md-3">
+                <tvprog-label asp-for="PageSize" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="PageSize" />
+                <span asp-validation-for="PageSize"></span>
+            </div>
+        </div>
+        <div id="pnlPageSizeOptions" class="form-group advanced-setting">
+            <div class="col-md-3">
+                <tvprog-label asp-for="PageSizeOptions" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="PageSizeOptions" />
+                <span asp-validation-for="PageSizeOptions"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="PriceRanges" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="PriceRanges" />
+            <span asp-validation-for="PriceRanges"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="DisplayOrder" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="DisplayOrder" />
+            <span asp-validation-for="DisplayOrder"></span>
+        </div>
+    </div>
+
+    <div class="form-group" @(Model.AvailableManufacturerTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+        <div class="col-md-3">
+            <tvprog-label asp-for="ManufacturerTemplateId" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="ManufacturerTemplateId" asp-items="Model.AvailableManufacturerTemplates" />
+            <span asp-validation-for="ManufacturerTemplateId"></span>
+        </div>
+    </div>
+</div>

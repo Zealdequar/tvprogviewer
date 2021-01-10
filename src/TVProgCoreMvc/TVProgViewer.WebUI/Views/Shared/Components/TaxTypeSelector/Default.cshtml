@@ -1,0 +1,24 @@
+﻿@model TaxTypeSelectorModel
+@using TVProgViewer.Core.Domain.Tax
+@inject TVProgViewer.Core.IWebHelper webHelper
+
+@{
+    var returnUrl = webHelper.GetRawUrl(Context.Request);
+
+    var taxTypes = new List<SelectListItem>();
+    taxTypes.Add(new SelectListItem
+    {
+        Text = T("Tax.Inclusive").Text,
+        Value = Url.RouteUrl("ChangeTaxType", new { usertaxtype = ((int)TaxDisplayType.IncludingTax), returnUrl }, webHelper.GetCurrentRequestProtocol()),
+        Selected = Model.CurrentTaxType == TaxDisplayType.IncludingTax
+    });
+    taxTypes.Add(new SelectListItem
+    {
+        Text = T("Tax.Exclusive").Text,
+        Value = Url.RouteUrl("ChangeTaxType", new { usertaxtype = ((int)TaxDisplayType.ExcludingTax), returnUrl }, webHelper.GetCurrentRequestProtocol()),
+        Selected = Model.CurrentTaxType == TaxDisplayType.ExcludingTax
+    });
+}
+<div class="tax-display-type-selector">
+    <select id="userTaxType" name="userTaxType" asp-items="@taxTypes" onchange="setLocation(this.value);" aria-label="@T("Tax.Selector.Label")"></select>
+</div>

@@ -1,54 +1,61 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using TVProgViewer.Core.Configuration;
+using TVProgViewer.Core.Infrastructure;
+using TVProgViewer.Web.Framework.Infrastructure.Extensions;
 
 namespace TVProgViewer.WebUI
 {
+    /// <summary>
+    /// Представляет запускной класс приложения
+    /// </summary>
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        #region Поля
+
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private IEngine _engine;
+        private TvProgConfig _tvProgConfig;
+
+        #endregion
+
+        #region Конструктор
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
-            services.AddMvc();
+            _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        #endregion
+
+        /// <summary>
+        /// Добавление сервисов к приложению и конфигурирование провайдера сервисов
+        /// </summary>
+        /// <param name="services">Коллекция указателей на сервисы</param>
+        public void ConfigureServices(IServiceCollection services)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            (_engine, _tvProgConfig) = services.ConfigureApplicationServices(_configuration, _webHostEnvironment);
+        }
 
-            app.UseRouting();
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            _engine.RegisterDependencies(builder, _tvProgConfig);
+        }
 
-            app.UseMvc(routes => {
-                routes.MapRoute(
-                    name: "Default",
-                    template: "{controller}/{action}/{id?}",
-                    defaults: new { controller = "Programme", action = "List"}
-                  );
+        /// <summary>
+        /// Конфигурирование приложения конвейера HTTP-запросов
+        /// </summary>
+        /// <param name="applicaton">Строитель для конфигурирования приложения конвейера запросов</param>
+        public void Configure(IApplicationBuilder application)
+        {
+            application.ConfigureRequestPipeline();
 
-                routes.MapRoute(
-                   name: "404-PageNotFound",
-                   template: "*{url}",
-                   defaults: new { controller = "StaticContent", action = "PageNotFound" });
-            });
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", async context =>
-                {
-                    await context.Response.WriteAsync("Hello World!");
-                });
-            });
+            application.StartEngine();
         }
     }
 }

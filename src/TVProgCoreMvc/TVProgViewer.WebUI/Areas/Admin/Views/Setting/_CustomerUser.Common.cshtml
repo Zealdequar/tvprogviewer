@@ -1,0 +1,69 @@
+﻿@using TVProgViewer.Core.Domain.Users
+@using TVProgViewer.Services
+@model UserUserSettingsModel
+
+<div class="panel-body">
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.UserRegistrationType" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="UserSettings.UserRegistrationType" asp-items="@(((UserRegistrationType)Model.UserSettings.UserRegistrationType).ToSelectList())" />
+            <span asp-validation-for="UserSettings.UserRegistrationType"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.NotifyNewUserRegistration" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.NotifyNewUserRegistration" />
+            <span asp-validation-for="UserSettings.NotifyNewUserRegistration"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.RequireRegistrationForDownloadableProducts" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.RequireRegistrationForDownloadableProducts" />
+            <span asp-validation-for="UserSettings.RequireRegistrationForDownloadableProducts"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.AllowUsersToCheckGiftCardBalance" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.AllowUsersToCheckGiftCardBalance" />
+            <span asp-validation-for="UserSettings.AllowUsersToCheckGiftCardBalance"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="DateTimeSettings.AllowUsersToSetTimeZone" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="DateTimeSettings.AllowUsersToSetTimeZone" />
+            <span asp-validation-for="DateTimeSettings.AllowUsersToSetTimeZone"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="DateTimeSettings.DefaultStoreTimeZoneId" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="DateTimeSettings.DefaultStoreTimeZoneId" asp-items="Model.DateTimeSettings.AvailableTimeZones" />
+            <span asp-validation-for="DateTimeSettings.DefaultStoreTimeZoneId"></span>
+        </div>
+    </div>
+    <div class="form-group advanced-setting">
+        <div class="col-md-3">
+            <tvprog-label asp-for="ExternalAuthenticationSettings.AllowUsersToRemoveAssociations" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="ExternalAuthenticationSettings.AllowUsersToRemoveAssociations" />
+            <span asp-validation-for="ExternalAuthenticationSettings.AllowUsersToRemoveAssociations"></span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Copyright>Copyright © TVProgViewer Solutions, Ltd</Copyright>
+    <Company>TVProgViewer Solutions, Ltd</Company>
+    <Authors>TVProgViewer Solutions, Ltd</Authors>
+    <Version>4.2.0.0</Version>
+    <Description>TVProgViewer.Web.Framework is a class library project containing some common presentation things for TVProgViewer.Web project</Description>
+    <PackageLicenseUrl>http://www.TVProgViewercommerce.com/licensev3.aspx</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.TVProgViewercommerce.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TVProgViewerSolutions/TvProg</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BundlerMinifier.Core" Version="3.2.449" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="3.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureKeyVault" Version="3.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.AzureStorage" Version="3.1.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.5" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.5.0" />
+    <PackageReference Include="WebMarkupMin.AspNetCore3" Version="2.8.4" />
+    <PackageReference Include="WebMarkupMin.NUglify" Version="2.8.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TVProgViewer.Core\TVProgViewer.Core.csproj" />
+    <ProjectReference Include="..\TVProgViewer.Data\TVProgViewer.Data.csproj" />
+    <ProjectReference Include="..\TVProgViewer.Services\TVProgViewer.Services.csproj" />
+  </ItemGroup>
+
+</Project>

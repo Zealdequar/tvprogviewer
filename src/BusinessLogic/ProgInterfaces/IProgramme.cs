@@ -10,7 +10,7 @@ namespace TVProgViewer.BusinessLogic.ProgInterfaces
         /// <summary>
         /// Идентификатор
         /// </summary>
-        long ProgrammeID { get;  }
+        long ProgrammeId { get;  }
         
         /// <summary>
         /// Номер канала
