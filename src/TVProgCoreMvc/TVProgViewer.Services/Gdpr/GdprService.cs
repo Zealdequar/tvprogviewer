@@ -7,16 +7,16 @@ using TVProgViewer.Core.Domain.Gdpr;
 using TVProgViewer.Data;
 using TVProgViewer.Services.Authentication.External;
 using TVProgViewer.Services.Blogs;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Catalog;
 using TVProgViewer.Services.Common;
 using TVProgViewer.Services.Users;
-using TVProgViewer.Services.Events;
 using TVProgViewer.Services.Forums;
 using TVProgViewer.Services.Messages;
 using TVProgViewer.Services.News;
 using TVProgViewer.Services.Orders;
 using TVProgViewer.Services.Stores;
+using TVProgViewer.Core.Events;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Gdpr
 {
@@ -50,7 +50,7 @@ namespace TVProgViewer.Services.Gdpr
         public GdprService(IAddressService addressService,
             IBackInStockSubscriptionService backInStockSubscriptionService,
             IBlogService blogService,
-            IUserService UserService,
+            IUserService userService,
             IExternalAuthenticationService externalAuthenticationService,
             IEventPublisher eventPublisher,
             IForumService forumService,
@@ -66,7 +66,7 @@ namespace TVProgViewer.Services.Gdpr
             _addressService = addressService;
             _backInStockSubscriptionService = backInStockSubscriptionService;
             _blogService = blogService;
-            _userService = UserService;
+            _userService = userService;
             _externalAuthenticationService = externalAuthenticationService;
             _eventPublisher = eventPublisher;
             _forumService = forumService;
@@ -82,6 +82,19 @@ namespace TVProgViewer.Services.Gdpr
 
         #endregion
 
+        #region Utilities
+
+        /// <summary>
+        /// Insert a GDPR log
+        /// </summary>
+        /// <param name="gdprLog">GDPR log</param>
+        protected virtual async Task InsertLogAsync(GdprLog gdprLog)
+        {
+            await _gdprLogRepository.InsertAsync(gdprLog);
+        }
+
+        #endregion
+
         #region Methods
 
         #region GDPR consent
@@ -91,24 +104,24 @@ namespace TVProgViewer.Services.Gdpr
         /// </summary>
         /// <param name="gdprConsentId">The GDPR consent identifier</param>
         /// <returns>GDPR consent</returns>
-        public virtual GdprConsent GetConsentById(int gdprConsentId)
+        public virtual async Task<GdprConsent> GetConsentByIdAsync(int gdprConsentId)
         {
-            if (gdprConsentId == 0)
-                return null;
-
-            return _gdprConsentRepository.ToCachedGetById(gdprConsentId);
+            return await _gdprConsentRepository.GetByIdAsync(gdprConsentId, cache => default);
         }
 
         /// <summary>
         /// Get all GDPR consents
         /// </summary>
         /// <returns>GDPR consent</returns>
-        public virtual IList<GdprConsent> GetAllConsents()
+        public virtual async Task<IList<GdprConsent>> GetAllConsentsAsync()
         {
-            var query = from c in _gdprConsentRepository.Table
-                        orderby c.DisplayOrder, c.Id
-                        select c;
-            var gdprConsents = query.ToList();
+            var gdprConsents = await _gdprConsentRepository.GetAllAsync(query =>
+            {
+                return from c in query
+                       orderby c.DisplayOrder, c.Id
+                       select c;
+            }, cache => default);
+
             return gdprConsents;
         }
 
@@ -116,194 +129,114 @@ namespace TVProgViewer.Services.Gdpr
         /// Insert a GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        public virtual void InsertConsent(GdprConsent gdprConsent)
+        public virtual async Task InsertConsentAsync(GdprConsent gdprConsent)
         {
-            if (gdprConsent == null)
-                throw new ArgumentNullException(nameof(gdprConsent));
-
-            _gdprConsentRepository.Insert(gdprConsent);
-
-            //event notification
-            _eventPublisher.EntityInserted(gdprConsent);
+            await _gdprConsentRepository.InsertAsync(gdprConsent);
         }
 
         /// <summary>
         /// Update the GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        public virtual void UpdateConsent(GdprConsent gdprConsent)
+        public virtual async Task UpdateConsentAsync(GdprConsent gdprConsent)
         {
-            if (gdprConsent == null)
-                throw new ArgumentNullException(nameof(gdprConsent));
-
-            _gdprConsentRepository.Update(gdprConsent);
-
-            //event notification
-            _eventPublisher.EntityUpdated(gdprConsent);
+            await _gdprConsentRepository.UpdateAsync(gdprConsent);
         }
 
         /// <summary>
         /// Delete a GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        public virtual void DeleteConsent(GdprConsent gdprConsent)
+        public virtual async Task DeleteConsentAsync(GdprConsent gdprConsent)
         {
-            if (gdprConsent == null)
-                throw new ArgumentNullException(nameof(gdprConsent));
-
-            _gdprConsentRepository.Delete(gdprConsent);
-
-            //event notification
-            _eventPublisher.EntityDeleted(gdprConsent);
+            await _gdprConsentRepository.DeleteAsync(gdprConsent);
         }
 
         /// <summary>
-        /// Gets the latest selected value (a consent is accepted or not by a User)
+        /// Gets the latest selected value (a consent is accepted or not by a user)
         /// </summary>
         /// <param name="consentId">Consent identifier</param>
-        /// <param name="UserId">User identifier</param>
-        /// <returns>Result; null if previous a User hasn't been asked</returns>
-        public virtual bool? IsConsentAccepted(int consentId, int UserId)
+        /// <param name="userId">User identifier</param>
+        /// <returns>Result; null if previous a user hasn't been asked</returns>
+        public virtual async Task<bool?> IsConsentAcceptedAsync(int consentId, int userId)
         {
             //get latest record
-            var log = GetAllLog(UserId: UserId, consentId: consentId, pageIndex: 0, pageSize: 1).FirstOrDefault();
+            var log = (await GetAllLogAsync(userId: userId, consentId: consentId, pageIndex: 0, pageSize: 1)).FirstOrDefault();
             if (log == null)
                 return null;
 
-            switch (log.RequestType)
+            return log.RequestType switch
             {
-                case GdprRequestType.ConsentAgree:
-                    return true;
-                case GdprRequestType.ConsentDisagree:
-                    return false;
-                default:
-                    return null;
-            }
+                GdprRequestType.ConsentAgree => true,
+                GdprRequestType.ConsentDisagree => false,
+                _ => null,
+            };
         }
+
         #endregion
 
         #region GDPR log
 
         /// <summary>
-        /// Get a GDPR log
-        /// </summary>
-        /// <param name="gdprLogId">The GDPR log identifier</param>
-        /// <returns>GDPR log</returns>
-        public virtual GdprLog GetLogById(int gdprLogId)
-        {
-            if (gdprLogId == 0)
-                return null;
-
-            return _gdprLogRepository.ToCachedGetById(gdprLogId);
-        }
-
-        /// <summary>
         /// Get all GDPR log records
         /// </summary>
-        /// <param name="UserId">User identifier</param>
+        /// <param name="userId">User identifier</param>
         /// <param name="consentId">Consent identifier</param>
-        /// <param name="UserInfo">User info (Exact match)</param>
+        /// <param name="userInfo">User info (Exact match)</param>
         /// <param name="requestType">GDPR request type</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>GDPR log records</returns>
-        public virtual IPagedList<GdprLog> GetAllLog(int UserId = 0, int consentId = 0,
-            string UserInfo = "", GdprRequestType? requestType = null,
+        public virtual async Task<IPagedList<GdprLog>> GetAllLogAsync(int userId = 0, int consentId = 0,
+            string userInfo = "", GdprRequestType? requestType = null,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var query = _gdprLogRepository.Table;
-            if (UserId > 0)
+            return await _gdprLogRepository.GetAllPagedAsync(query =>
             {
-                query = query.Where(log => log.UserId == UserId);
-            }
+                if (userId > 0)
+                    query = query.Where(log => log.UserId == userId);
 
-            if (consentId > 0)
-            {
-                query = query.Where(log => log.ConsentId == consentId);
-            }
+                if (consentId > 0)
+                    query = query.Where(log => log.ConsentId == consentId);
 
-            if (!string.IsNullOrEmpty(UserInfo))
-            {
-                query = query.Where(log => log.UserInfo == UserInfo);
-            }
+                if (!string.IsNullOrEmpty(userInfo))
+                    query = query.Where(log => log.UserInfo == userInfo);
 
-            if (requestType != null)
-            {
-                var requestTypeId = (int)requestType;
-                query = query.Where(log => log.RequestTypeId == requestTypeId);
-            }
+                if (requestType != null)
+                {
+                    var requestTypeId = (int)requestType;
+                    query = query.Where(log => log.RequestTypeId == requestTypeId);
+                }
 
-            query = query.OrderByDescending(log => log.CreatedOnUtc).ThenByDescending(log => log.Id);
-            return new PagedList<GdprLog>(query, pageIndex, pageSize);
+                query = query.OrderByDescending(log => log.CreatedOnUtc).ThenByDescending(log => log.Id);
+
+                return query;
+            }, pageIndex, pageSize);
         }
 
         /// <summary>
         /// Insert a GDPR log
         /// </summary>
-        /// <param name="gdprLog">GDPR log</param>
-        public virtual void InsertLog(GdprLog gdprLog)
-        {
-            if (gdprLog == null)
-                throw new ArgumentNullException(nameof(gdprLog));
-
-            _gdprLogRepository.Insert(gdprLog);
-
-            //event notification
-            _eventPublisher.EntityInserted(gdprLog);
-        }
-
-        /// <summary>
-        /// Insert a GDPR log
-        /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="consentId">Consent identifier</param>
         /// <param name="requestType">Request type</param>
         /// <param name="requestDetails">Request details</param>
-        public virtual void InsertLog(User User, int consentId, GdprRequestType requestType, string requestDetails)
+        public virtual async Task InsertLogAsync(User user, int consentId, GdprRequestType requestType, string requestDetails)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             var gdprLog = new GdprLog
             {
-                UserId = User.Id,
+                UserId = user.Id,
                 ConsentId = consentId,
-                UserInfo = User.Email,
+                UserInfo = user.Email,
                 RequestType = requestType,
                 RequestDetails = requestDetails,
                 CreatedOnUtc = DateTime.UtcNow
             };
-            InsertLog(gdprLog);
-        }
 
-        /// <summary>
-        /// Update the GDPR log
-        /// </summary>
-        /// <param name="gdprLog">GDPR log</param>
-        public virtual void UpdateLog(GdprLog gdprLog)
-        {
-            if (gdprLog == null)
-                throw new ArgumentNullException(nameof(gdprLog));
-
-            _gdprLogRepository.Update(gdprLog);
-
-            //event notification
-            _eventPublisher.EntityUpdated(gdprLog);
-        }
-
-        /// <summary>
-        /// Delete a GDPR log
-        /// </summary>
-        /// <param name="gdprLog">GDPR log</param>
-        public virtual void DeleteLog(GdprLog gdprLog)
-        {
-            if (gdprLog == null)
-                throw new ArgumentNullException(nameof(gdprLog));
-
-            _gdprLogRepository.Delete(gdprLog);
-
-            //event notification
-            _eventPublisher.EntityDeleted(gdprLog);
+            await InsertLogAsync(gdprLog);
         }
 
         #endregion
@@ -311,71 +244,78 @@ namespace TVProgViewer.Services.Gdpr
         #region User
 
         /// <summary>
-        /// Перманентное удаление пользователя
+        /// Permanent delete of user
         /// </summary>
-        /// <param name="user">Пользователь</param>
-        public virtual void PermanentDeleteUser(User user)
+        /// <param name="user">User</param>
+        public virtual async Task PermanentDeleteUserAsync(User user)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            // Комменты блога
-            var blogComments = _blogService.GetAllComments(UserId: user.Id);
-            _blogService.DeleteBlogComments(blogComments);
+            //blog comments
+            var blogComments = await _blogService.GetAllCommentsAsync(userId: user.Id);
+            await _blogService.DeleteBlogCommentsAsync(blogComments);
 
-            // Новостные комменты
-            var newsComments = _newsService.GetAllComments(UserId: user.Id);
-            _newsService.DeleteNewsComments(newsComments);
+            //news comments
+            var newsComments = await _newsService.GetAllCommentsAsync(userId: user.Id);
+            await _newsService.DeleteNewsCommentsAsync(newsComments);
 
             //back in stock subscriptions
-            var backInStockSubscriptions = _backInStockSubscriptionService.GetAllSubscriptionsByUserId(user.Id);
+            var backInStockSubscriptions = await _backInStockSubscriptionService.GetAllSubscriptionsByUserIdAsync(user.Id);
             foreach (var backInStockSubscription in backInStockSubscriptions)
-                _backInStockSubscriptionService.DeleteSubscription(backInStockSubscription);
+                await _backInStockSubscriptionService.DeleteSubscriptionAsync(backInStockSubscription);
 
             //product review
-            var productReviews = _productService.GetAllProductReviews(user.Id);
-            var reviewedProducts = _productService.GetProductsByIds(productReviews.Select(p => p.ProductId).Distinct().ToArray());
-            _productService.DeleteProductReviews(productReviews);
+            var productReviews = await _productService.GetAllProductReviewsAsync(user.Id);
+            var reviewedProducts = await _productService.GetProductsByIdsAsync(productReviews.Select(p => p.ProductId).Distinct().ToArray());
+            await _productService.DeleteProductReviewsAsync(productReviews);
             //update product totals
             foreach (var product in reviewedProducts)
-            {
-                _productService.UpdateProductReviewTotals(product);
-            }
-            
+                await _productService.UpdateProductReviewTotalsAsync(product);
+
             //external authentication record
-            foreach (var ear in _externalAuthenticationService.GetUserExternalAuthenticationRecords(user))
-                _externalAuthenticationService.DeleteExternalAuthenticationRecord(ear);
+            foreach (var ear in await _externalAuthenticationService.GetUserExternalAuthenticationRecordsAsync(user))
+                await _externalAuthenticationService.DeleteExternalAuthenticationRecordAsync(ear);
 
             //forum subscriptions
-            var forumSubscriptions = _forumService.GetAllSubscriptions(user.Id);
+            var forumSubscriptions = await _forumService.GetAllSubscriptionsAsync(user.Id);
             foreach (var forumSubscription in forumSubscriptions)
-                _forumService.DeleteSubscription(forumSubscription);
+                await _forumService.DeleteSubscriptionAsync(forumSubscription);
 
             //shopping cart items
-            foreach (var sci in _shoppingCartService.GetShoppingCart(user))
-                _shoppingCartService.DeleteShoppingCartItem(sci);
+            foreach (var sci in await _shoppingCartService.GetShoppingCartAsync(user))
+                await _shoppingCartService.DeleteShoppingCartItemAsync(sci);
 
             //private messages (sent)
-            foreach (var pm in _forumService.GetAllPrivateMessages(0, user.Id, 0, null, null, null, null))
-                _forumService.DeletePrivateMessage(pm);
+            foreach (var pm in await _forumService.GetAllPrivateMessagesAsync(0, user.Id, 0, null, null, null, null))
+                await _forumService.DeletePrivateMessageAsync(pm);
 
             //private messages (received)
-            foreach (var pm in _forumService.GetAllPrivateMessages(0, 0, user.Id, null, null, null, null))
-                _forumService.DeletePrivateMessage(pm);
+            foreach (var pm in await _forumService.GetAllPrivateMessagesAsync(0, 0, user.Id, null, null, null, null))
+                await _forumService.DeletePrivateMessageAsync(pm);
 
             //newsletter
-            var allStores = _storeService.GetAllStores();
+            var allStores = await _storeService.GetAllStoresAsync();
             foreach (var store in allStores)
             {
-                var newsletter = _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreId(user.Email, store.Id);
+                var newsletter = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(user.Email, store.Id);
                 if (newsletter != null)
-                    _newsLetterSubscriptionService.DeleteNewsLetterSubscription(newsletter);
+                    await _newsLetterSubscriptionService.DeleteNewsLetterSubscriptionAsync(newsletter);
+            }
+
+            //addresses
+            foreach (var address in await _userService.GetAddressesByUserIdAsync(user.Id))
+            {
+                await _userService.RemoveUserAddressAsync(user, address);
+                await _userService.UpdateUserAsync(user);
+                //now delete the address record
+                await _addressService.DeleteAddressAsync(address);
             }
 
             //generic attributes
             var keyGroup = user.GetType().Name;
-            var genericAttributes = _genericAttributeService.GetAttributesForEntity(user.Id, keyGroup);
-            _genericAttributeService.DeleteAttributes(genericAttributes);
+            var genericAttributes = await _genericAttributeService.GetAttributesForEntityAsync(user.Id, keyGroup);
+            await _genericAttributeService.DeleteAttributesAsync(genericAttributes);
 
             //ignore ActivityLog
             //ignore ForumPost, ForumTopic, ignore ForumPostVote
@@ -388,30 +328,31 @@ namespace TVProgViewer.Services.Gdpr
             //and we do not delete orders
 
             //remove from Registered role, add to Guest one
-            if (_userService.IsRegistered(user))
+            if (await _userService.IsRegisteredAsync(user))
             {
-                var registeredRole = _userService.GetUserRoleBySystemName(TvProgUserDefaults.RegisteredRoleName);
-                _userService.RemoveUserRoleMapping(user, registeredRole);
+                var registeredRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.RegisteredRoleName);
+                await _userService.RemoveUserRoleMappingAsync(user, registeredRole);
             }
 
-            if (!_userService.IsGuest(user))
+            if (!await _userService.IsGuestAsync(user))
             {
-                var guestRole = _userService.GetUserRoleBySystemName(TvProgUserDefaults.GuestsRoleName);
-                _userService.AddUserRoleMapping(new UserUserRoleMapping { UserId = user.Id, UserRoleId = guestRole.Id });
+                var guestRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.GuestsRoleName);
+                await _userService.AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = user.Id, UserRoleId = guestRole.Id });
             }
 
             var email = user.Email;
 
-            // Очистка другой информации:
+            //clear other information
             user.Email = string.Empty;
             user.EmailToRevalidate = string.Empty;
-            user.UserName = string.Empty;
+            user.Username = string.Empty;
             user.Active = false;
-            user.Deleted = DateTime.Now;
-            _userService.UpdateUser(user);
+            user.Deleted = true;
+
+            await _userService.UpdateUserAsync(user);
 
             //raise event
-            _eventPublisher.Publish(new UserPermanentlyDeleted(user.Id, email));
+            await _eventPublisher.PublishAsync(new UserPermanentlyDeleted(user.Id, email));
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TVProgViewer.Core;
@@ -28,41 +29,42 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         #region Nested filter
 
         /// <summary>
-        /// Represents a filter that saves last IP address of User
+        /// Represents a filter that saves last IP address of user
         /// </summary>
-        private class SaveIpAddressFilter : IActionFilter
+        private class SaveIpAddressFilter : IAsyncActionFilter
         {
             #region Fields
 
-            private readonly IUserService _UserService;
+            private readonly UserSettings _userSettings;
+            private readonly IRepository<User> _userRepository;
             private readonly IWebHelper _webHelper;
             private readonly IWorkContext _workContext;
-            private readonly UserSettings _UserSettings;
 
             #endregion
 
             #region Ctor
 
-            public SaveIpAddressFilter(IUserService UserService,
+            public SaveIpAddressFilter(UserSettings userSettings,
+                IRepository<User> userRepository,
                 IWebHelper webHelper,
-                IWorkContext workContext,
-                UserSettings UserSettings)
+                IWorkContext workContext)
             {
-                _UserService = UserService;
+                _userSettings = userSettings;
+                _userRepository = userRepository;
                 _webHelper = webHelper;
                 _workContext = workContext;
-                _UserSettings = UserSettings;
             }
 
             #endregion
 
-            #region Methods
+            #region Utilities
 
             /// <summary>
-            /// Called before the action executes, after model binding is complete
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuting(ActionExecutingContext context)
+            /// <returns>A task that on completion indicates the necessary filter actions have been executed</returns>
+            private async Task SaveIpAddressAsync(ActionExecutingContext context)
             {
                 if (context == null)
                     throw new ArgumentNullException(nameof(context));
@@ -74,34 +76,46 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
                 if (!context.HttpContext.Request.Method.Equals(WebRequestMethods.Http.Get, StringComparison.InvariantCultureIgnoreCase))
                     return;
 
-                if (!DataSettingsManager.IsDatabaseInstalled())
+                if (!await DataSettingsManager.IsDatabaseInstalledAsync())
                     return;
 
                 //check whether we store IP addresses
-                if (!_UserSettings.StoreIpAddresses)
+                if (!_userSettings.StoreIpAddresses)
                     return;
 
                 //get current IP address
                 var currentIpAddress = _webHelper.GetCurrentIpAddress();
+
                 if (string.IsNullOrEmpty(currentIpAddress))
                     return;
 
-                //update User's IP address
+                //update user's IP address
+                var user = await _workContext.GetCurrentUserAsync();
                 if (_workContext.OriginalUserIfImpersonated == null &&
-                     !currentIpAddress.Equals(_workContext.CurrentUser.LastIpAddress, StringComparison.InvariantCultureIgnoreCase))
+                     !currentIpAddress.Equals(user.LastIpAddress, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    _workContext.CurrentUser.LastIpAddress = currentIpAddress;
-                    _UserService.UpdateUser(_workContext.CurrentUser);
+                    user.LastIpAddress = currentIpAddress;
+
+                    //update user without event notification
+                    await _userRepository.UpdateAsync(user, false);
                 }
             }
 
+            #endregion
+
+            #region Methods
+
             /// <summary>
-            /// Called after the action executes, before the action result
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuted(ActionExecutedContext context)
+            /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
+            /// <returns>A task that on completion indicates the filter has executed</returns>
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
-                //do nothing
+                await SaveIpAddressAsync(context);
+                if (context.Result == null)
+                    await next();
             }
 
             #endregion

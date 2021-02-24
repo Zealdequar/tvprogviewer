@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain;
@@ -27,17 +28,17 @@ namespace TVProgViewer.WebUI.Components
             _storeInformationSettings = storeInformationSettings;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             if (!_storeInformationSettings.DisplayEuCookieLawWarning)
                 //disabled
                 return Content("");
 
             //ignore search engines because some pages could be indexed with the EU cookie as description
-            if (_workContext.CurrentUser.IsSearchEngineAccount())
+            if ((await _workContext.GetCurrentUserAsync()).IsSearchEngineAccount())
                 return Content("");
 
-            if (_genericAttributeService.GetAttribute<bool>(_workContext.CurrentUser, TvProgUserDefaults.EuCookieLawAcceptedAttribute, _storeContext.CurrentStore.Id))
+            if (await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), TvProgUserDefaults.EuCookieLawAcceptedAttribute, (await _storeContext.GetCurrentStoreAsync()).Id))
                 //already accepted
                 return Content("");
 

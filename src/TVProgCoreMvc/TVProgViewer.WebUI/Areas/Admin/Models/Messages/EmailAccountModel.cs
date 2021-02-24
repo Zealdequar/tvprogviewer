@@ -29,7 +29,6 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Messages
 
         [TvProgResourceDisplayName("Admin.Configuration.EmailAccounts.Fields.Password")]
         [DataType(DataType.Password)]
-        [NoTrim]
         public string Password { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.EmailAccounts.Fields.EnableSsl")]

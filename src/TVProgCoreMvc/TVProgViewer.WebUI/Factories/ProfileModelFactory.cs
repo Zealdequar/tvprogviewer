@@ -14,6 +14,7 @@ using TVProgViewer.Services.Media;
 using TVProgViewer.Web.Framework.Extensions;
 using TVProgViewer.WebUI.Models.Common;
 using TVProgViewer.WebUI.Models.Profile;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Factories
 {
@@ -75,7 +76,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="user">User</param>
         /// <param name="page">Number of posts page; pass null to disable paging</param>
         /// <returns>Profile index model</returns>
-        public virtual ProfileIndexModel PrepareProfileIndexModel(User user, int? page)
+        public virtual async Task<ProfileIndexModel> PrepareProfileIndexModelAsync(User user, int? page)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -89,8 +90,8 @@ namespace TVProgViewer.WebUI.Factories
                 pagingPosts = true;
             }
 
-            var name = _userService.FormatUsername(user);
-            var title = string.Format(_localizationService.GetResource("Profile.ProfileOf"), name);
+            var name = await _userService.FormatUsernameAsync(user);
+            var title = string.Format(await _localizationService.GetResourceAsync("Profile.ProfileOf"), name);
 
             var model = new ProfileIndexModel
             {
@@ -108,7 +109,7 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>Profile info model</returns>
-        public virtual ProfileInfoModel PrepareProfileInfoModel(User user)
+        public virtual async Task<ProfileInfoModel> PrepareProfileInfoModelAsync(User user)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -117,8 +118,8 @@ namespace TVProgViewer.WebUI.Factories
             var avatarUrl = "";
             if (_userSettings.AllowUsersToUploadAvatars)
             {
-                avatarUrl = _pictureService.GetPictureUrl(
-                 _genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute),
+                avatarUrl = await _pictureService.GetPictureUrlAsync(
+                 await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute),
                  _mediaSettings.AvatarPictureSize,
                  _userSettings.DefaultAvatarEnabled,
                  defaultPictureType: PictureType.Avatar);
@@ -131,11 +132,11 @@ namespace TVProgViewer.WebUI.Factories
             {
                 locationEnabled = true;
 
-                var countryId = _genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.CountryIdAttribute);
-                var country = _countryService.GetCountryById(countryId);
+                var countryId = await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.CountryIdAttribute);
+                var country = await _countryService.GetCountryByIdAsync(countryId);
                 if (country != null)
                 {
-                    location = _localizationService.GetLocalized(country, x => x.Name);
+                    location = await _localizationService.GetLocalizedAsync(country, x => x.Name);
                 }
                 else
                 {
@@ -144,7 +145,7 @@ namespace TVProgViewer.WebUI.Factories
             }
 
             //private message
-            var pmEnabled = _forumSettings.AllowPrivateMessages && !_userService.IsGuest(user);
+            var pmEnabled = _forumSettings.AllowPrivateMessages && !await _userService.IsGuestAsync(user);
 
             //total forum posts
             var totalPostsEnabled = false;
@@ -152,7 +153,7 @@ namespace TVProgViewer.WebUI.Factories
             if (_forumSettings.ForumsEnabled && _forumSettings.ShowUsersPostCount)
             {
                 totalPostsEnabled = true;
-                totalPosts = _genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.ForumPostCountAttribute);
+                totalPosts = await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.ForumPostCountAttribute);
             }
 
             //registration date
@@ -162,7 +163,7 @@ namespace TVProgViewer.WebUI.Factories
             if (_userSettings.ShowUsersJoinDate)
             {
                 joinDateEnabled = true;
-                joinDate = _dateTimeHelper.ConvertToUserTime(user.CreatedOnUtc, DateTimeKind.Utc).ToString("f");
+                joinDate = (await _dateTimeHelper.ConvertToUserTimeAsync(user.CreatedOnUtc, DateTimeKind.Utc)).ToString("f");
             }
 
             //birth date
@@ -170,7 +171,7 @@ namespace TVProgViewer.WebUI.Factories
             var dateOfBirth = string.Empty;
             if (_userSettings.DateOfBirthEnabled)
             {
-                var dob = _genericAttributeService.GetAttribute<DateTime?>(user, TvProgUserDefaults.DateOfBirthAttribute);
+                var dob = await _genericAttributeService.GetAttributeAsync<DateTime?>(user, TvProgUserDefaults.DateOfBirthAttribute);
                 if (dob.HasValue)
                 {
                     dateOfBirthEnabled = true;
@@ -202,7 +203,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="user">User</param>
         /// <param name="page">Number of posts page</param>
         /// <returns>Profile posts model</returns>
-        public virtual ProfilePostsModel PrepareProfilePostsModel(User user, int page)
+        public virtual async Task<ProfilePostsModel> PrepareProfilePostsModelAsync(User user, int page)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -214,7 +215,7 @@ namespace TVProgViewer.WebUI.Factories
 
             var pageSize = _forumSettings.LatestUserPostsPageSize;
 
-            var list = _forumService.GetAllPosts(0, user.Id, string.Empty, false, page, pageSize);
+            var list = await _forumService.GetAllPostsAsync(0, user.Id, string.Empty, false, page, pageSize);
 
             var latestPosts = new List<PostsModel>();
 
@@ -223,22 +224,22 @@ namespace TVProgViewer.WebUI.Factories
                 var posted = string.Empty;
                 if (_forumSettings.RelativeDateTimeFormattingEnabled)
                 {
-                    var languageCode = _workContext.WorkingLanguage.LanguageCulture;
+                    var languageCode = (await _workContext.GetWorkingLanguageAsync()).LanguageCulture;
                     var postedAgo = forumPost.CreatedOnUtc.RelativeFormat(languageCode);
-                    posted = string.Format(_localizationService.GetResource("Common.RelativeDateTime.Past"), postedAgo);
+                    posted = string.Format(await _localizationService.GetResourceAsync("Common.RelativeDateTime.Past"), postedAgo);
                 }
                 else
                 {
-                    posted = _dateTimeHelper.ConvertToUserTime(forumPost.CreatedOnUtc, DateTimeKind.Utc).ToString("f");
+                    posted = (await _dateTimeHelper.ConvertToUserTimeAsync(forumPost.CreatedOnUtc, DateTimeKind.Utc)).ToString("f");
                 }
 
-                var topic = _forumService.GetTopicById(forumPost.TopicId);
+                var topic = await _forumService.GetTopicByIdAsync(forumPost.TopicId);
 
                 latestPosts.Add(new PostsModel
                 {
                     ForumTopicId = topic.Id,
                     ForumTopicTitle = topic.Subject,
-                    ForumTopicSlug = _forumService.GetTopicSeName(topic),
+                    ForumTopicSlug = await _forumService.GetTopicSeNameAsync(topic),
                     ForumPostText = _forumService.FormatPostText(forumPost),
                     Posted = posted
                 });

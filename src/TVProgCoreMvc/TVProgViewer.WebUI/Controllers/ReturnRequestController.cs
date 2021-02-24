@@ -16,6 +16,7 @@ using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
 using TVProgViewer.WebUI.Models.Order;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -78,39 +79,37 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Methods
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult UserReturnRequests()
+        public virtual async Task<IActionResult> UserReturnRequests()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var model = _returnRequestModelFactory.PrepareUserReturnRequestsModel();
+            var model = await _returnRequestModelFactory.PrepareUserReturnRequestsModelAsync();
             return View(model);
         }
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult ReturnRequest(int orderId)
+        public virtual async Task<IActionResult> ReturnRequest(int orderId)
         {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
-            if (!_orderProcessingService.IsReturnRequestAllowed(order))
+            if (!await _orderProcessingService.IsReturnRequestAllowedAsync(order))
                 return RedirectToRoute("Homepage");
 
             var model = new SubmitReturnRequestModel();
-            model = _returnRequestModelFactory.PrepareSubmitReturnRequestModel(model, order);
+            model = await _returnRequestModelFactory.PrepareSubmitReturnRequestModelAsync(model, order);
             return View(model);
         }
 
         [HttpPost, ActionName("ReturnRequest")]
-        public virtual IActionResult ReturnRequestSubmit(int orderId, SubmitReturnRequestModel model, IFormCollection form)
+        public virtual async Task<IActionResult> ReturnRequestSubmit(int orderId, SubmitReturnRequestModel model, IFormCollection form)
         {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
-            if (!_orderProcessingService.IsReturnRequestAllowed(order))
+            if (!await _orderProcessingService.IsReturnRequestAllowedAsync(order))
                 return RedirectToRoute("Homepage");
 
             var count = 0;
@@ -118,13 +117,13 @@ namespace TVProgViewer.WebUI.Controllers
             var downloadId = 0;
             if (_orderSettings.ReturnRequestsAllowFiles)
             {
-                var download = _downloadService.GetDownloadByGuid(model.UploadedFileGuid);
+                var download = await _downloadService.GetDownloadByGuidAsync(model.UploadedFileGuid);
                 if (download != null)
                     downloadId = download.Id;
             }
 
             //returnable products
-            var orderItems = _orderService.GetOrderItems(order.Id, isNotReturnable: false);
+            var orderItems = await _orderService.GetOrderItemsAsync(order.Id, isNotReturnable: false);
             foreach (var orderItem in orderItems)
             {
                 var quantity = 0; //parse quantity
@@ -136,18 +135,18 @@ namespace TVProgViewer.WebUI.Controllers
                     }
                 if (quantity > 0)
                 {
-                    var rrr = _returnRequestService.GetReturnRequestReasonById(model.ReturnRequestReasonId);
-                    var rra = _returnRequestService.GetReturnRequestActionById(model.ReturnRequestActionId);
+                    var rrr = await _returnRequestService.GetReturnRequestReasonByIdAsync(model.ReturnRequestReasonId);
+                    var rra = await _returnRequestService.GetReturnRequestActionByIdAsync(model.ReturnRequestActionId);
 
                     var rr = new ReturnRequest
                     {
                         CustomNumber = "",
-                        StoreId = _storeContext.CurrentStore.Id,
+                        StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
                         OrderItemId = orderItem.Id,
                         Quantity = quantity,
-                        UserId = _workContext.CurrentUser.Id,
-                        ReasonForReturn = rrr != null ? _localizationService.GetLocalized(rrr, x => x.Name) : "not available",
-                        RequestedAction = rra != null ? _localizationService.GetLocalized(rra, x => x.Name) : "not available",
+                        UserId = (await _workContext.GetCurrentUserAsync()).Id,
+                        ReasonForReturn = rrr != null ? await _localizationService.GetLocalizedAsync(rrr, x => x.Name) : "not available",
+                        RequestedAction = rra != null ? await _localizationService.GetLocalizedAsync(rra, x => x.Name) : "not available",
                         UserComments = model.Comments,
                         UploadedFileId = downloadId,
                         StaffNotes = string.Empty,
@@ -156,32 +155,34 @@ namespace TVProgViewer.WebUI.Controllers
                         UpdatedOnUtc = DateTime.UtcNow
                     };
 
-                    _returnRequestService.InsertReturnRequest(rr);
+                    await _returnRequestService.InsertReturnRequestAsync(rr);
 
                     //set return request custom number
                     rr.CustomNumber = _customNumberFormatter.GenerateReturnRequestCustomNumber(rr);
-                    _userService.UpdateUser(_workContext.CurrentUser);
+                    await _userService.UpdateUserAsync(await _workContext.GetCurrentUserAsync());
+                    await _returnRequestService.UpdateReturnRequestAsync(rr);
+
                     //notify store owner
-                    _workflowMessageService.SendNewReturnRequestStoreOwnerNotification(rr, orderItem, order, _localizationSettings.DefaultAdminLanguageId);
+                    await _workflowMessageService.SendNewReturnRequestStoreOwnerNotificationAsync(rr, orderItem, order, _localizationSettings.DefaultAdminLanguageId);
                     //notify user
-                    _workflowMessageService.SendNewReturnRequestUserNotification(rr, orderItem, order);
+                    await _workflowMessageService.SendNewReturnRequestUserNotificationAsync(rr, orderItem, order);
 
                     count++;
                 }
             }
 
-            model = _returnRequestModelFactory.PrepareSubmitReturnRequestModel(model, order);
+            model = await _returnRequestModelFactory.PrepareSubmitReturnRequestModelAsync(model, order);
             if (count > 0)
-                model.Result = _localizationService.GetResource("ReturnRequests.Submitted");
+                model.Result = await _localizationService.GetResourceAsync("ReturnRequests.Submitted");
             else
-                model.Result = _localizationService.GetResource("ReturnRequests.NoItemsSubmitted");
+                model.Result = await _localizationService.GetResourceAsync("ReturnRequests.NoItemsSubmitted");
 
             return View(model);
         }
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult UploadFileReturnRequest()
+        public virtual async Task<IActionResult> UploadFileReturnRequest()
         {
             if (!_orderSettings.ReturnRequestsEnabled || !_orderSettings.ReturnRequestsAllowFiles)
             {
@@ -203,7 +204,7 @@ namespace TVProgViewer.WebUI.Controllers
                 });
             }
 
-            var fileBinary = _downloadService.GetDownloadBits(httpPostedFile);
+            var fileBinary = await _downloadService.GetDownloadBitsAsync(httpPostedFile);
 
             var qqFileNameParameter = "qqfilename";
             var fileName = httpPostedFile.FileName;
@@ -228,7 +229,7 @@ namespace TVProgViewer.WebUI.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = string.Format(_localizationService.GetResource("ShoppingCart.MaximumUploadedFileSize"), validationFileMaximumSize),
+                        message = string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MaximumUploadedFileSize"), validationFileMaximumSize),
                         downloadGuid = Guid.Empty,
                     });
                 }
@@ -246,14 +247,14 @@ namespace TVProgViewer.WebUI.Controllers
                 Extension = fileExtension,
                 IsNew = true
             };
-            _downloadService.InsertDownload(download);
+            await _downloadService.InsertDownloadAsync(download);
 
             //when returning JSON the mime-type must be set to text/plain
             //otherwise some browsers will pop-up a "Save As" dialog.
             return Json(new
             {
                 success = true,
-                message = _localizationService.GetResource("ShoppingCart.FileUploaded"),
+                message = await _localizationService.GetResourceAsync("ShoppingCart.FileUploaded"),
                 downloadUrl = Url.Action("GetFileUpload", "Download", new { downloadId = download.DownloadGuid }),
                 downloadGuid = download.DownloadGuid,
             });

@@ -1,1 +1,6 @@
-﻿
+﻿{
+  "DataConnectionString": "Data Source=(local);Initial Catalog=TVProgCoreDb;Integrated Security=False;Persist Security Info=False;User ID=sa;Password=sqlAspiration",
+  "DataProvider": "sqlserver",
+  "SQLCommandTimeout": 200000000,
+  "RawDataSettings": {}
+}

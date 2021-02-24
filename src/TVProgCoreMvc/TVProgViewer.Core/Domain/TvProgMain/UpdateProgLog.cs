@@ -15,12 +15,12 @@ namespace TVProgViewer.Core.Domain.TvProgMain
         /// <summary>
         /// Дата и время начала обновления
         /// </summary>
-        public DateTimeOffset TsUpdateStart { get; set; }
+        public DateTime TsUpdateStart { get; set; }
 
         /// <summary>
         /// Дата и время окончания обновления
         /// </summary>
-        public DateTimeOffset TsUpdateEnd { get; set; }
+        public DateTime TsUpdateEnd { get; set; }
 
         /// <summary>
         /// Сколько секунд заняло обновление
@@ -30,12 +30,12 @@ namespace TVProgViewer.Core.Domain.TvProgMain
         /// <summary>
         /// Минимальная дата и время эфира
         /// </summary>
-        public DateTimeOffset MinProgDate { get; set; }
+        public DateTime MinProgDate { get; set; }
 
         /// <summary>
         /// Максимальная дата и время эфира
         /// </summary>
-        public DateTimeOffset MaxProgDate { get; set; }
+        public DateTime MaxProgDate { get; set; }
 
         /// <summary>
         /// Количество телеканалов

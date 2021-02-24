@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Data.TvProgMain.ProgObjs;
 
 namespace TVProgViewer.Services.TvProgMain
@@ -13,6 +14,6 @@ namespace TVProgViewer.Services.TvProgMain
         /// </summary>
         /// <param name="uid">Идентификатор пользователя; null — для всех пользователей</param>
         /// <param name="all">Все жанры</param>
-        public List<Genre> GetGenres(int? uid, bool all);
+        public Task<List<Genre>> GetGenresAsync(int? uid, bool all);
     }
 }

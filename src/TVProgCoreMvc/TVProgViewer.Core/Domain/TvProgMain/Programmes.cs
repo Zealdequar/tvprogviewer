@@ -25,12 +25,12 @@ namespace TVProgViewer.Core.Domain.TvProgMain
         /// <summary>
         /// Начало телепередачи
         /// </summary>
-        public DateTimeOffset TsStart { get; set; }
+        public DateTime TsStart { get; set; }
 
         /// <summary>
         ///  Завершение телепередачи
         /// </summary>
-        public DateTimeOffset TsStop { get; set; }
+        public DateTime TsStop { get; set; }
 
         /// <summary>
         /// Начало телепередачи по Москве

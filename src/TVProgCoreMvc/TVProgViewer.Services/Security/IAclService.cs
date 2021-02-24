@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Security;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using System;
 
 namespace TVProgViewer.Services.Security
 {
@@ -11,69 +14,66 @@ namespace TVProgViewer.Services.Security
     public partial interface IAclService
     {
         /// <summary>
+        /// Get an expression predicate to apply the ACL
+        /// </summary>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
+        /// <param name="userRoleIds">Identifiers of user's roles</param>
+        /// <returns>Lambda expression</returns>
+        Expression<Func<TEntity, bool>> ApplyAcl<TEntity>(int[] userRoleIds) where TEntity : BaseEntity, IAclSupported;
+
+        /// <summary>
         /// Deletes an ACL record
         /// </summary>
         /// <param name="aclRecord">ACL record</param>
-        void DeleteAclRecord(AclRecord aclRecord);
+        Task DeleteAclRecordAsync(AclRecord aclRecord);
 
-        /// <summary>
-        /// Gets an ACL record
-        /// </summary>
-        /// <param name="aclRecordId">ACL record identifier</param>
-        /// <returns>ACL record</returns>
-        AclRecord GetAclRecordById(int aclRecordId);
-        
         /// <summary>
         /// Gets ACL records
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>ACL records</returns>
-        IList<AclRecord> GetAclRecords<T>(T entity) where T : BaseEntity, IAclSupported;
+        Task<IList<AclRecord>> GetAclRecordsAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported;
 
         /// <summary>
         /// Inserts an ACL record
         /// </summary>
-        /// <param name="aclRecord">ACL record</param>
-        void InsertAclRecord(AclRecord aclRecord);
-        
-        /// <summary>
-        /// Inserts an ACL record
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="UserRoleId">User role id</param>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
-        void InsertAclRecord<T>(T entity, int UserRoleId) where T : BaseEntity, IAclSupported;
+        /// <param name="userRoleId">User role id</param>
+        Task InsertAclRecordAsync<TEntity>(TEntity entity, int userRoleId) where TEntity : BaseEntity, IAclSupported;
 
         /// <summary>
-        /// Updates the ACL record
+        /// Get a value indicating whether any ACL records exist for entity type are related to user roles
         /// </summary>
-        /// <param name="aclRecord">ACL record</param>
-        void UpdateAclRecord(AclRecord aclRecord);
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
+        /// <param name="userRoleIds">User's role identifiers</param>
+        /// <returns>True if exist; otherwise false</returns>
+        Task<bool> IsEntityAclMappingExistAsync<TEntity>(int[] userRoleIds) where TEntity : BaseEntity, IAclSupported;
 
         /// <summary>
-        /// Find User role identifiers with granted access
+        /// Find user role identifiers with granted access
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>User role identifiers</returns>
-        int[] GetUserRoleIdsWithAccess<T>(T entity) where T : BaseEntity, IAclSupported;
+        Task<int[]> GetUserRoleIdsWithAccessAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported;
 
         /// <summary>
         /// Authorize ACL permission
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        bool Authorize<T>(T entity) where T : BaseEntity, IAclSupported;
+        Task<bool> AuthorizeAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported;
 
         /// <summary>
         /// Authorize ACL permission
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        bool Authorize<T>(T entity, User User) where T : BaseEntity, IAclSupported;
+        Task<bool> AuthorizeAsync<TEntity>(TEntity entity, User user) where TEntity : BaseEntity, IAclSupported;
     }
 }

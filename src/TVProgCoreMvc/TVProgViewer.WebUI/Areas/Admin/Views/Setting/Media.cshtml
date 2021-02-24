@@ -9,13 +9,13 @@
 
 @{
     const string hideCommonBlockAttributeName = "MediaSettingsPage.HideCommonBlock";
-    var hideCommonBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideCommonBlockAttributeName);
+    var hideCommonBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideCommonBlockAttributeName);
 
     const string hideProductBlockAttributeName = "MediaSettingsPage.HideProductBlock";
-    var hideProductBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideProductBlockAttributeName);
+    var hideProductBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideProductBlockAttributeName);
 
     const string hideOtherPagesBlockAttributeName = "MediaSettingsPage.HideOtherPagesBlock";
-    var hideOtherPagesBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideOtherPagesBlockAttributeName);
+    var hideOtherPagesBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideOtherPagesBlockAttributeName);
 }
 
 <form asp-controller="Setting" asp-action="Media" method="post">
@@ -24,7 +24,7 @@
             @T("Admin.Configuration.Settings.Media")
         </h1>
         <div class="pull-right">
-            <button type="submit" name="save" class="btn bg-blue">
+            <button type="submit" name="save" class="btn btn-primary">
                 <i class="fa fa-floppy-o"></i>
                 @T("Admin.Common.Save")
             </button>
@@ -32,19 +32,21 @@
         </div>
     </div>
 
-    <div class="content">
-        <div class="form-horizontal">
-            @await Component.InvokeAsync("StoreScopeConfiguration")
-            @await Component.InvokeAsync("SettingMode")
-            <div asp-validation-summary="All"></div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                @await Component.InvokeAsync("StoreScopeConfiguration")
+                @await Component.InvokeAsync("SettingMode")
+                <div asp-validation-summary="All"></div>
 
-            <tvprog-panels id="mediasettings-panels">
-                <tvprog-panel asp-name="mediasettings-common" asp-icon="fa fa-info" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.Common")" asp-hide-block-attribute-name="@hideCommonBlockAttributeName" asp-hide="@hideCommonBlock" asp-advanced="false">@await Html.PartialAsync("_Media.Common", Model)</tvprog-panel>
-                <tvprog-panel asp-name="mediasettings-product" asp-icon="fa fa-cube" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.Product")" asp-hide-block-attribute-name="@hideProductBlockAttributeName" asp-hide="@hideProductBlock" asp-advanced="true">@await Html.PartialAsync("_Media.Product", Model)</tvprog-panel>
-                <tvprog-panel asp-name="mediasettings-other-pages" asp-icon="fa fa-file-o" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.OtherPages")" asp-hide-block-attribute-name="@hideOtherPagesBlockAttributeName" asp-hide="@hideOtherPagesBlock" asp-advanced="true">@await Html.PartialAsync("_Media.OtherPages", Model)</tvprog-panel>
+                <tvprog-cards id="mediasettings-cards">
+                    <tvprog-card asp-name="mediasettings-common" asp-icon="fa fa-info" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.Common")" asp-hide-block-attribute-name="@hideCommonBlockAttributeName" asp-hide="@hideCommonBlock" asp-advanced="false">@await Html.PartialAsync("_Media.Common", Model)</tvprog-card>
+                    <tvprog-card asp-name="mediasettings-product" asp-icon="fa fa-cube" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.Product")" asp-hide-block-attribute-name="@hideProductBlockAttributeName" asp-hide="@hideProductBlock" asp-advanced="true">@await Html.PartialAsync("_Media.Product", Model)</tvprog-card>
+                    <tvprog-card asp-name="mediasettings-other-pages" asp-icon="fa fa-file-o" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.OtherPages")" asp-hide-block-attribute-name="@hideOtherPagesBlockAttributeName" asp-hide="@hideOtherPagesBlock" asp-advanced="true">@await Html.PartialAsync("_Media.OtherPages", Model)</tvprog-card>
 
-                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.MediaSettingsDetailsBlock, additionalData = Model })
-            </tvprog-panels>
+                    @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.MediaSettingsDetailsBlock, additionalData = Model })
+                </tvprog-cards>
+            </div>
         </div>
-    </div>
+    </section>
 </form>

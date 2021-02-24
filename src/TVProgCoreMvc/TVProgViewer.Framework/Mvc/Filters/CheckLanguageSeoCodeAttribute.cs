@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TVProgViewer.Core;
@@ -24,7 +25,7 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         public CheckLanguageSeoCodeAttribute() : base(typeof(CheckLanguageSeoCodeFilter))
         {
         }
-        
+
         #endregion
 
         #region Nested filter
@@ -32,11 +33,10 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         /// <summary>
         /// Represents a filter that checks SEO friendly URLs for multiple languages and properly redirect if necessary
         /// </summary>
-        private class CheckLanguageSeoCodeFilter : IActionFilter
+        private class CheckLanguageSeoCodeFilter : IAsyncActionFilter
         {
             #region Fields
 
-            private readonly ILanguageService _languageService;
             private readonly IWebHelper _webHelper;
             private readonly IWorkContext _workContext;
             private readonly LocalizationSettings _localizationSettings;
@@ -45,12 +45,10 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
 
             #region Ctor
 
-            public CheckLanguageSeoCodeFilter(ILanguageService languageService,
-                IWebHelper webHelper,
+            public CheckLanguageSeoCodeFilter(IWebHelper webHelper,
                 IWorkContext workContext,
                 LocalizationSettings localizationSettings)
             {
-                _languageService = languageService;
                 _webHelper = webHelper;
                 _workContext = workContext;
                 _localizationSettings = localizationSettings;
@@ -58,13 +56,14 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
 
             #endregion
 
-            #region Methods
+            #region Utilities
 
             /// <summary>
-            /// Called before the action executes, after model binding is complete
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuting(ActionExecutingContext context)
+            /// <returns>A task that on completion indicates the necessary filter actions have been executed</returns>
+            private async Task CheckLanguageSeoCodeAsync(ActionExecutingContext context)
             {
                 if (context == null)
                     throw new ArgumentNullException(nameof(context));
@@ -76,34 +75,41 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
                 if (!context.HttpContext.Request.Method.Equals(WebRequestMethods.Http.Get, StringComparison.InvariantCultureIgnoreCase))
                     return;
 
-                if (!DataSettingsManager.IsDatabaseInstalled())
+                if (!await DataSettingsManager.IsDatabaseInstalledAsync())
                     return;
 
                 //whether SEO friendly URLs are enabled
                 if (!_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
                     return;
-                                
-                //ensure that this route is registered and localizable (LocalizedRoute in RouteProvider)
-                if (context.RouteData?.Routers == null || !context.RouteData.Routers.ToList().Any(r => r is LocalizedRoute))
-                    return;
 
                 //check whether current page URL is already localized URL
                 var pageUrl = _webHelper.GetRawUrl(context.HttpContext.Request);
-                if (pageUrl.IsLocalizedUrl(context.HttpContext.Request.PathBase, true, out Language _))
+                var result = await pageUrl.IsLocalizedUrlAsync(context.HttpContext.Request.PathBase, true);
+                if (result.IsLocalized)
                     return;
 
                 //not localized yet, so redirect to the page with working language SEO code
-                pageUrl = pageUrl.AddLanguageSeoCodeToUrl(context.HttpContext.Request.PathBase, true, _workContext.WorkingLanguage);
-                context.Result = new RedirectResult(pageUrl, false);
+                var language = await _workContext.GetWorkingLanguageAsync();
+                pageUrl = pageUrl.AddLanguageSeoCodeToUrl(context.HttpContext.Request.PathBase, true, language);
+
+                context.Result = new LocalRedirectResult(pageUrl, false);
             }
 
+            #endregion
+
+            #region Methods
+
             /// <summary>
-            /// Called after the action executes, before the action result
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuted(ActionExecutedContext context)
+            /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
+            /// <returns>A task that on completion indicates the filter has executed</returns>
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
-                //do nothing
+                await CheckLanguageSeoCodeAsync(context);
+                if (context.Result == null)
+                    await next();
             }
 
             #endregion

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
+using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
-using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Catalog
 {
@@ -17,32 +16,117 @@ namespace TVProgViewer.Services.Catalog
     {
         #region Fields
 
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<Product> _productRepository;
         private readonly IRepository<ProductSpecificationAttribute> _productSpecificationAttributeRepository;
         private readonly IRepository<SpecificationAttribute> _specificationAttributeRepository;
         private readonly IRepository<SpecificationAttributeOption> _specificationAttributeOptionRepository;
+        private readonly IRepository<SpecificationAttributeGroup> _specificationAttributeGroupRepository;
+        private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
 
         #region Ctor
 
-        public SpecificationAttributeService(IEventPublisher eventPublisher,
-            IRepository<Product> productRepository,
+        public SpecificationAttributeService(IRepository<Product> productRepository,
             IRepository<ProductSpecificationAttribute> productSpecificationAttributeRepository,
             IRepository<SpecificationAttribute> specificationAttributeRepository,
-            IRepository<SpecificationAttributeOption> specificationAttributeOptionRepository)
+            IRepository<SpecificationAttributeOption> specificationAttributeOptionRepository,
+            IRepository<SpecificationAttributeGroup> specificationAttributeGroupRepository,
+            IStaticCacheManager staticCacheManager)
         {
-            _eventPublisher = eventPublisher;
             _productRepository = productRepository;
             _productSpecificationAttributeRepository = productSpecificationAttributeRepository;
             _specificationAttributeRepository = specificationAttributeRepository;
             _specificationAttributeOptionRepository = specificationAttributeOptionRepository;
+            _specificationAttributeGroupRepository = specificationAttributeGroupRepository;
+            _staticCacheManager = staticCacheManager;
         }
 
         #endregion
 
         #region Methods
+
+        #region Specification attribute group
+
+        /// <summary>
+        /// Gets a specification attribute group
+        /// </summary>
+        /// <param name="specificationAttributeGroupId">The specification attribute group identifier</param>
+        /// <returns>Specification attribute group</returns>
+        public virtual async Task<SpecificationAttributeGroup> GetSpecificationAttributeGroupByIdAsync(int specificationAttributeGroupId)
+        {
+            return await _specificationAttributeGroupRepository.GetByIdAsync(specificationAttributeGroupId, cache => default);
+        }
+
+        /// <summary>
+        /// Gets specification attribute groups
+        /// </summary>
+        /// <param name="pageIndex">Page index</param>
+        /// <param name="pageSize">Page size</param>
+        /// <returns>Specification attribute groups</returns>
+        public virtual async Task<IPagedList<SpecificationAttributeGroup>> GetSpecificationAttributeGroupsAsync(int pageIndex = 0, int pageSize = int.MaxValue)
+        {
+            var query = from sag in _specificationAttributeGroupRepository.Table
+                        orderby sag.DisplayOrder, sag.Id
+                        select sag;
+
+            return await query.ToPagedListAsync(pageIndex, pageSize);
+        }
+
+        /// <summary>
+        /// Gets product specification attribute groups
+        /// </summary>
+        /// <param name="productId">Product identifier</param>
+        /// <returns>Specification attribute groups</returns>
+        public virtual async Task<IList<SpecificationAttributeGroup>> GetProductSpecificationAttributeGroupsAsync(int productId)
+        {
+            var productAttributesForGroupQuery =
+                from sa in _specificationAttributeRepository.Table
+                join sao in _specificationAttributeOptionRepository.Table
+                    on sa.Id equals sao.SpecificationAttributeId
+                join psa in _productSpecificationAttributeRepository.Table
+                    on sao.Id equals psa.SpecificationAttributeOptionId
+                where psa.ProductId == productId && psa.ShowOnProductPage
+                select sa.SpecificationAttributeGroupId;
+
+            var availableGroupsQuery =
+                from sag in _specificationAttributeGroupRepository.Table
+                where productAttributesForGroupQuery.Any(groupId => groupId == sag.Id)
+                select sag;
+
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.SpecificationAttributeGroupByProductCacheKey, productId);
+
+            return await _staticCacheManager.GetAsync(key, async () => await availableGroupsQuery.ToListAsync());
+        }
+
+        /// <summary>
+        /// Deletes a specification attribute group
+        /// </summary>
+        /// <param name="specificationAttributeGroup">The specification attribute group</param>
+        public virtual async Task DeleteSpecificationAttributeGroupAsync(SpecificationAttributeGroup specificationAttributeGroup)
+        {
+            await _specificationAttributeGroupRepository.DeleteAsync(specificationAttributeGroup);
+        }
+
+        /// <summary>
+        /// Inserts a specification attribute group
+        /// </summary>
+        /// <param name="specificationAttributeGroup">The specification attribute group</param>
+        public virtual async Task InsertSpecificationAttributeGroupAsync(SpecificationAttributeGroup specificationAttributeGroup)
+        {
+            await _specificationAttributeGroupRepository.InsertAsync(specificationAttributeGroup);
+        }
+
+        /// <summary>
+        /// Updates the specification attribute group
+        /// </summary>
+        /// <param name="specificationAttributeGroup">The specification attribute group</param>
+        public virtual async Task UpdateSpecificationAttributeGroupAsync(SpecificationAttributeGroup specificationAttributeGroup)
+        {
+            await _specificationAttributeGroupRepository.UpdateAsync(specificationAttributeGroup);
+        }
+
+        #endregion
 
         #region Specification attribute
 
@@ -51,12 +135,9 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeId">The specification attribute identifier</param>
         /// <returns>Specification attribute</returns>
-        public virtual SpecificationAttribute GetSpecificationAttributeById(int specificationAttributeId)
+        public virtual async Task<SpecificationAttribute> GetSpecificationAttributeByIdAsync(int specificationAttributeId)
         {
-            if (specificationAttributeId == 0)
-                return null;
-
-            return _specificationAttributeRepository.ToCachedGetById(specificationAttributeId);
+            return await _specificationAttributeRepository.GetByIdAsync(specificationAttributeId, cache => default);
         }
 
         /// <summary>
@@ -64,16 +145,9 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeIds">The specification attribute identifiers</param>
         /// <returns>Specification attributes</returns>
-        public virtual IList<SpecificationAttribute> GetSpecificationAttributeByIds(int[] specificationAttributeIds)
+        public virtual async Task<IList<SpecificationAttribute>> GetSpecificationAttributeByIdsAsync(int[] specificationAttributeIds)
         {
-            if (specificationAttributeIds == null || specificationAttributeIds.Length == 0)
-                return new List<SpecificationAttribute>();
-
-            var query = from p in _specificationAttributeRepository.Table
-                        where specificationAttributeIds.Contains(p.Id)
-                        select p;
-
-            return query.ToList();
+            return await _specificationAttributeRepository.GetByIdsAsync(specificationAttributeIds);
         }
 
         /// <summary>
@@ -82,89 +156,83 @@ namespace TVProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Specification attributes</returns>
-        public virtual IPagedList<SpecificationAttribute> GetSpecificationAttributes(int pageIndex = 0, int pageSize = int.MaxValue)
+        public virtual async Task<IPagedList<SpecificationAttribute>> GetSpecificationAttributesAsync(int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var query = from sa in _specificationAttributeRepository.Table
                         orderby sa.DisplayOrder, sa.Id
                         select sa;
 
-            //TODO: issue 239, check caching. If so, then remove pageIndex and pageSize from others cache keys
-            var specificationAttributes = query.ToCachedPagedList(TvProgCatalogCachingDefaults.SpecAttributesAllCacheKey, pageIndex, pageSize);
-
-            return specificationAttributes;
+            return await query.ToPagedListAsync(pageIndex, pageSize);
         }
 
         /// <summary>
         /// Gets specification attributes that have options
         /// </summary>
         /// <returns>Specification attributes that have available options</returns>
-        public virtual IList<SpecificationAttribute> GetSpecificationAttributesWithOptions()
+        public virtual async Task<IList<SpecificationAttribute>> GetSpecificationAttributesWithOptionsAsync()
         {
             var query = from sa in _specificationAttributeRepository.Table
-                join sao in _specificationAttributeOptionRepository.Table on sa.Id equals sao.SpecificationAttributeId
-                select sa;
+                        where _specificationAttributeOptionRepository.Table.Any(o => o.SpecificationAttributeId == sa.Id)
+                        orderby sa.DisplayOrder, sa.Id
+                        select sa;
 
-            return query.ToCachedList(TvProgCatalogCachingDefaults.SpecAttributesWithOptionsCacheKey);
+            return await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.SpecificationAttributesWithOptionsCacheKey), async () => await query.ToListAsync());
+        }
+
+        /// <summary>
+        /// Gets specification attributes by group identifier
+        /// </summary>
+        /// <param name="specificationAttributeGroupId">The specification attribute group identifier</param>
+        /// <returns>Specification attributes</returns>
+        public virtual async Task<IList<SpecificationAttribute>> GetSpecificationAttributesByGroupIdAsync(int? specificationAttributeGroupId = null)
+        {
+            var query = _specificationAttributeRepository.Table;
+            if (!specificationAttributeGroupId.HasValue || specificationAttributeGroupId > 0)
+                query = query.Where(sa => sa.SpecificationAttributeGroupId == specificationAttributeGroupId);
+
+            query = query.OrderBy(sa => sa.DisplayOrder).ThenBy(sa => sa.Id);
+
+            return await query.ToListAsync();
         }
 
         /// <summary>
         /// Deletes a specification attribute
         /// </summary>
         /// <param name="specificationAttribute">The specification attribute</param>
-        public virtual void DeleteSpecificationAttribute(SpecificationAttribute specificationAttribute)
+        public virtual async Task DeleteSpecificationAttributeAsync(SpecificationAttribute specificationAttribute)
         {
-            if (specificationAttribute == null)
-                throw new ArgumentNullException(nameof(specificationAttribute));
-
-            _specificationAttributeRepository.Delete(specificationAttribute);
-            
-            //event notification
-            _eventPublisher.EntityDeleted(specificationAttribute);
+            await _specificationAttributeRepository.DeleteAsync(specificationAttribute);
         }
 
         /// <summary>
         /// Deletes specifications attributes
         /// </summary>
         /// <param name="specificationAttributes">Specification attributes</param>
-        public virtual void DeleteSpecificationAttributes(IList<SpecificationAttribute> specificationAttributes)
+        public virtual async Task DeleteSpecificationAttributesAsync(IList<SpecificationAttribute> specificationAttributes)
         {
             if (specificationAttributes == null)
                 throw new ArgumentNullException(nameof(specificationAttributes));
 
             foreach (var specificationAttribute in specificationAttributes)
-            {
-                DeleteSpecificationAttribute(specificationAttribute);
-            }
+                await DeleteSpecificationAttributeAsync(specificationAttribute);
         }
 
         /// <summary>
         /// Inserts a specification attribute
         /// </summary>
         /// <param name="specificationAttribute">The specification attribute</param>
-        public virtual void InsertSpecificationAttribute(SpecificationAttribute specificationAttribute)
+        public virtual async Task InsertSpecificationAttributeAsync(SpecificationAttribute specificationAttribute)
         {
-            if (specificationAttribute == null)
-                throw new ArgumentNullException(nameof(specificationAttribute));
-
-            _specificationAttributeRepository.Insert(specificationAttribute);
-            
-            //event notification
-            _eventPublisher.EntityInserted(specificationAttribute);
+            await _specificationAttributeRepository.InsertAsync(specificationAttribute);
         }
 
         /// <summary>
         /// Updates the specification attribute
         /// </summary>
         /// <param name="specificationAttribute">The specification attribute</param>
-        public virtual void UpdateSpecificationAttribute(SpecificationAttribute specificationAttribute)
+        public virtual async Task UpdateSpecificationAttributeAsync(SpecificationAttribute specificationAttribute)
         {
-            if (specificationAttribute == null)
-                throw new ArgumentNullException(nameof(specificationAttribute));
-
-            _specificationAttributeRepository.Update(specificationAttribute);
-            
-            //event notification
-            _eventPublisher.EntityUpdated(specificationAttribute);
+            await _specificationAttributeRepository.UpdateAsync(specificationAttribute);
         }
 
         #endregion
@@ -176,12 +244,9 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeOptionId">The specification attribute option identifier</param>
         /// <returns>Specification attribute option</returns>
-        public virtual SpecificationAttributeOption GetSpecificationAttributeOptionById(int specificationAttributeOptionId)
+        public virtual async Task<SpecificationAttributeOption> GetSpecificationAttributeOptionByIdAsync(int specificationAttributeOptionId)
         {
-            if (specificationAttributeOptionId == 0)
-                return null;
-
-            return _specificationAttributeOptionRepository.ToCachedGetById(specificationAttributeOptionId);
+            return await _specificationAttributeOptionRepository.GetByIdAsync(specificationAttributeOptionId, cache => default);
         }
 
         /// <summary>
@@ -189,25 +254,9 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeOptionIds">Identifiers</param>
         /// <returns>Specification attribute options</returns>
-        public virtual IList<SpecificationAttributeOption> GetSpecificationAttributeOptionsByIds(int[] specificationAttributeOptionIds)
+        public virtual async Task<IList<SpecificationAttributeOption>> GetSpecificationAttributeOptionsByIdsAsync(int[] specificationAttributeOptionIds)
         {
-            if (specificationAttributeOptionIds == null || specificationAttributeOptionIds.Length == 0)
-                return new List<SpecificationAttributeOption>();
-
-            var query = from sao in _specificationAttributeOptionRepository.Table
-                        where specificationAttributeOptionIds.Contains(sao.Id)
-                        select sao;
-            var specificationAttributeOptions = query.ToList();
-            //sort by passed identifiers
-            var sortedSpecificationAttributeOptions = new List<SpecificationAttributeOption>();
-            foreach (var id in specificationAttributeOptionIds)
-            {
-                var sao = specificationAttributeOptions.Find(x => x.Id == id);
-                if (sao != null)
-                    sortedSpecificationAttributeOptions.Add(sao);
-            }
-
-            return sortedSpecificationAttributeOptions;
+            return await _specificationAttributeOptionRepository.GetByIdsAsync(specificationAttributeOptionIds);
         }
 
         /// <summary>
@@ -215,14 +264,14 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeId">The specification attribute identifier</param>
         /// <returns>Specification attribute option</returns>
-        public virtual IList<SpecificationAttributeOption> GetSpecificationAttributeOptionsBySpecificationAttribute(int specificationAttributeId)
+        public virtual async Task<IList<SpecificationAttributeOption>> GetSpecificationAttributeOptionsBySpecificationAttributeAsync(int specificationAttributeId)
         {
             var query = from sao in _specificationAttributeOptionRepository.Table
                         orderby sao.DisplayOrder, sao.Id
                         where sao.SpecificationAttributeId == specificationAttributeId
                         select sao;
 
-            var specificationAttributeOptions = query.ToCachedList(TvProgCatalogCachingDefaults.SpecAttributesOptionsCacheKey.FillCacheKey(specificationAttributeId));
+            var specificationAttributeOptions = await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.SpecificationAttributeOptionsCacheKey, specificationAttributeId), async () => await query.ToListAsync());
 
             return specificationAttributeOptions;
         }
@@ -231,45 +280,27 @@ namespace TVProgViewer.Services.Catalog
         /// Deletes a specification attribute option
         /// </summary>
         /// <param name="specificationAttributeOption">The specification attribute option</param>
-        public virtual void DeleteSpecificationAttributeOption(SpecificationAttributeOption specificationAttributeOption)
+        public virtual async Task DeleteSpecificationAttributeOptionAsync(SpecificationAttributeOption specificationAttributeOption)
         {
-            if (specificationAttributeOption == null)
-                throw new ArgumentNullException(nameof(specificationAttributeOption));
-
-            _specificationAttributeOptionRepository.Delete(specificationAttributeOption);
-
-            //event notification
-            _eventPublisher.EntityDeleted(specificationAttributeOption);
+            await _specificationAttributeOptionRepository.DeleteAsync(specificationAttributeOption);
         }
 
         /// <summary>
         /// Inserts a specification attribute option
         /// </summary>
         /// <param name="specificationAttributeOption">The specification attribute option</param>
-        public virtual void InsertSpecificationAttributeOption(SpecificationAttributeOption specificationAttributeOption)
+        public virtual async Task InsertSpecificationAttributeOptionAsync(SpecificationAttributeOption specificationAttributeOption)
         {
-            if (specificationAttributeOption == null)
-                throw new ArgumentNullException(nameof(specificationAttributeOption));
-
-            _specificationAttributeOptionRepository.Insert(specificationAttributeOption);
-            
-            //event notification
-            _eventPublisher.EntityInserted(specificationAttributeOption);
+            await _specificationAttributeOptionRepository.InsertAsync(specificationAttributeOption);
         }
 
         /// <summary>
         /// Updates the specification attribute
         /// </summary>
         /// <param name="specificationAttributeOption">The specification attribute option</param>
-        public virtual void UpdateSpecificationAttributeOption(SpecificationAttributeOption specificationAttributeOption)
+        public virtual async Task UpdateSpecificationAttributeOptionAsync(SpecificationAttributeOption specificationAttributeOption)
         {
-            if (specificationAttributeOption == null)
-                throw new ArgumentNullException(nameof(specificationAttributeOption));
-
-            _specificationAttributeOptionRepository.Update(specificationAttributeOption);
-            
-            //event notification
-            _eventPublisher.EntityUpdated(specificationAttributeOption);
+            await _specificationAttributeOptionRepository.UpdateAsync(specificationAttributeOption);
         }
 
         /// <summary>
@@ -277,14 +308,16 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="attributeOptionIds">The IDs of the attribute options to check</param>
         /// <returns>List of IDs not existing specification attribute options</returns>
-        public virtual int[] GetNotExistingSpecificationAttributeOptions(int[] attributeOptionIds)
+        public virtual async Task<int[]> GetNotExistingSpecificationAttributeOptionsAsync(int[] attributeOptionIds)
         {
             if (attributeOptionIds == null)
                 throw new ArgumentNullException(nameof(attributeOptionIds));
 
             var query = _specificationAttributeOptionRepository.Table;
             var queryFilter = attributeOptionIds.Distinct().ToArray();
-            var filter = query.Select(a => a.Id).Where(m => queryFilter.Contains(m)).ToList();
+            var filter = await query.Select(a => a.Id)
+                .Where(m => queryFilter.Contains(m))
+                .ToListAsync();
             return queryFilter.Except(filter).ToArray();
         }
 
@@ -296,15 +329,9 @@ namespace TVProgViewer.Services.Catalog
         /// Deletes a product specification attribute mapping
         /// </summary>
         /// <param name="productSpecificationAttribute">Product specification attribute</param>
-        public virtual void DeleteProductSpecificationAttribute(ProductSpecificationAttribute productSpecificationAttribute)
+        public virtual async Task DeleteProductSpecificationAttributeAsync(ProductSpecificationAttribute productSpecificationAttribute)
         {
-            if (productSpecificationAttribute == null)
-                throw new ArgumentNullException(nameof(productSpecificationAttribute));
-
-            _productSpecificationAttributeRepository.Delete(productSpecificationAttribute);
-            
-            //event notification
-            _eventPublisher.EntityDeleted(productSpecificationAttribute);
+            await _productSpecificationAttributeRepository.DeleteAsync(productSpecificationAttribute);
         }
 
         /// <summary>
@@ -314,14 +341,17 @@ namespace TVProgViewer.Services.Catalog
         /// <param name="specificationAttributeOptionId">Specification attribute option identifier; 0 to load all records</param>
         /// <param name="allowFiltering">0 to load attributes with AllowFiltering set to false, 1 to load attributes with AllowFiltering set to true, null to load all attributes</param>
         /// <param name="showOnProductPage">0 to load attributes with ShowOnProductPage set to false, 1 to load attributes with ShowOnProductPage set to true, null to load all attributes</param>
+        /// <param name="specificationAttributeGroupId">Specification attribute group identifier; 0 to load all records; null to load attributes without group</param>
         /// <returns>Product specification attribute mapping collection</returns>
-        public virtual IList<ProductSpecificationAttribute> GetProductSpecificationAttributes(int productId = 0,
-            int specificationAttributeOptionId = 0, bool? allowFiltering = null, bool? showOnProductPage = null)
+        public virtual async Task<IList<ProductSpecificationAttribute>> GetProductSpecificationAttributesAsync(int productId = 0,
+            int specificationAttributeOptionId = 0, bool? allowFiltering = null, bool? showOnProductPage = null, int? specificationAttributeGroupId = 0)
         {
             var allowFilteringCacheStr = allowFiltering.HasValue ? allowFiltering.ToString() : "null";
             var showOnProductPageCacheStr = showOnProductPage.HasValue ? showOnProductPage.ToString() : "null";
-            var key = TvProgCatalogCachingDefaults.ProductSpecificationAttributeAllByProductIdCacheKey.FillCacheKey(
-                productId, specificationAttributeOptionId, allowFilteringCacheStr, showOnProductPageCacheStr);
+            var specificationAttributeGroupIdCacheStr = specificationAttributeGroupId.HasValue ? specificationAttributeGroupId.ToString() : "null";
+
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.ProductSpecificationAttributeByProductCacheKey,
+                productId, specificationAttributeOptionId, allowFilteringCacheStr, showOnProductPageCacheStr, specificationAttributeGroupIdCacheStr);
 
             var query = _productSpecificationAttributeRepository.Table;
             if (productId > 0)
@@ -330,11 +360,21 @@ namespace TVProgViewer.Services.Catalog
                 query = query.Where(psa => psa.SpecificationAttributeOptionId == specificationAttributeOptionId);
             if (allowFiltering.HasValue)
                 query = query.Where(psa => psa.AllowFiltering == allowFiltering.Value);
+            if (!specificationAttributeGroupId.HasValue || specificationAttributeGroupId > 0)
+            {
+                query = from psa in query
+                        join sao in _specificationAttributeOptionRepository.Table
+                            on psa.SpecificationAttributeOptionId equals sao.Id
+                        join sa in _specificationAttributeRepository.Table
+                            on sao.SpecificationAttributeId equals sa.Id
+                        where sa.SpecificationAttributeGroupId == specificationAttributeGroupId
+                        select psa;
+            }
             if (showOnProductPage.HasValue)
                 query = query.Where(psa => psa.ShowOnProductPage == showOnProductPage.Value);
             query = query.OrderBy(psa => psa.DisplayOrder).ThenBy(psa => psa.Id);
 
-            var productSpecificationAttributes = query.ToCachedList(key);
+            var productSpecificationAttributes = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
 
             return productSpecificationAttributes;
         }
@@ -344,42 +384,27 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="productSpecificationAttributeId">Product specification attribute mapping identifier</param>
         /// <returns>Product specification attribute mapping</returns>
-        public virtual ProductSpecificationAttribute GetProductSpecificationAttributeById(int productSpecificationAttributeId)
+        public virtual async Task<ProductSpecificationAttribute> GetProductSpecificationAttributeByIdAsync(int productSpecificationAttributeId)
         {
-            if (productSpecificationAttributeId == 0)
-                return null;
-
-            return _productSpecificationAttributeRepository.ToCachedGetById(productSpecificationAttributeId);
+            return await _productSpecificationAttributeRepository.GetByIdAsync(productSpecificationAttributeId);
         }
 
         /// <summary>
         /// Inserts a product specification attribute mapping
         /// </summary>
         /// <param name="productSpecificationAttribute">Product specification attribute mapping</param>
-        public virtual void InsertProductSpecificationAttribute(ProductSpecificationAttribute productSpecificationAttribute)
+        public virtual async Task InsertProductSpecificationAttributeAsync(ProductSpecificationAttribute productSpecificationAttribute)
         {
-            if (productSpecificationAttribute == null)
-                throw new ArgumentNullException(nameof(productSpecificationAttribute));
-
-            _productSpecificationAttributeRepository.Insert(productSpecificationAttribute);
-            
-            //event notification
-            _eventPublisher.EntityInserted(productSpecificationAttribute);
+            await _productSpecificationAttributeRepository.InsertAsync(productSpecificationAttribute);
         }
 
         /// <summary>
         /// Updates the product specification attribute mapping
         /// </summary>
         /// <param name="productSpecificationAttribute">Product specification attribute mapping</param>
-        public virtual void UpdateProductSpecificationAttribute(ProductSpecificationAttribute productSpecificationAttribute)
+        public virtual async Task UpdateProductSpecificationAttributeAsync(ProductSpecificationAttribute productSpecificationAttribute)
         {
-            if (productSpecificationAttribute == null)
-                throw new ArgumentNullException(nameof(productSpecificationAttribute));
-
-            _productSpecificationAttributeRepository.Update(productSpecificationAttribute);
-            
-            //event notification
-            _eventPublisher.EntityUpdated(productSpecificationAttribute);
+            await _productSpecificationAttributeRepository.UpdateAsync(productSpecificationAttribute);
         }
 
         /// <summary>
@@ -388,7 +413,7 @@ namespace TVProgViewer.Services.Catalog
         /// <param name="productId">Product identifier; 0 to load all records</param>
         /// <param name="specificationAttributeOptionId">The specification attribute option identifier; 0 to load all records</param>
         /// <returns>Count</returns>
-        public virtual int GetProductSpecificationAttributeCount(int productId = 0, int specificationAttributeOptionId = 0)
+        public virtual async Task<int> GetProductSpecificationAttributeCountAsync(int productId = 0, int specificationAttributeOptionId = 0)
         {
             var query = _productSpecificationAttributeRepository.Table;
             if (productId > 0)
@@ -396,7 +421,7 @@ namespace TVProgViewer.Services.Catalog
             if (specificationAttributeOptionId > 0)
                 query = query.Where(psa => psa.SpecificationAttributeOptionId == specificationAttributeOptionId);
 
-            return query.Count();
+            return await query.CountAsync();
         }
 
         /// <summary>
@@ -406,15 +431,16 @@ namespace TVProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Products</returns>
-        public virtual IPagedList<Product> GetProductsBySpecificationAttributeId(int specificationAttributeId, int pageIndex, int pageSize)
+        public virtual async Task<IPagedList<Product>> GetProductsBySpecificationAttributeIdAsync(int specificationAttributeId, int pageIndex, int pageSize)
         {
             var query = from product in _productRepository.Table
-                join psa in _productSpecificationAttributeRepository.Table on product.Id equals psa.ProductId
-                where psa.Id == specificationAttributeId
-                orderby product.Name
-                select product;
+                        join psa in _productSpecificationAttributeRepository.Table on product.Id equals psa.ProductId
+                        join spao in _specificationAttributeOptionRepository.Table on psa.SpecificationAttributeOptionId equals spao.Id
+                        where spao.SpecificationAttributeId == specificationAttributeId
+                        orderby product.Name
+                        select product;
 
-            return new PagedList<Product>(query, pageIndex, pageSize);
+            return await query.ToPagedListAsync(pageIndex, pageSize);
         }
 
         #endregion

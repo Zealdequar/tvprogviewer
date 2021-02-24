@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Services.Authentication.External;
 using TVProgViewer.WebUI.Models.User;
@@ -38,10 +39,10 @@ namespace TVProgViewer.WebUI.Factories
         /// Prepare the external authentication method model
         /// </summary>
         /// <returns>List of the external authentication method model</returns>
-        public virtual List<ExternalAuthenticationMethodModel> PrepareExternalMethodsModel()
+        public virtual async Task<List<ExternalAuthenticationMethodModel>> PrepareExternalMethodsModelAsync()
         {
-            return _authenticationPluginManager
-                .LoadActivePlugins(_workContext.CurrentUser, _storeContext.CurrentStore.Id)
+            return (await _authenticationPluginManager
+                .LoadActivePluginsAsync(await _workContext.GetCurrentUserAsync(), (await _storeContext.GetCurrentStoreAsync()).Id))
                 .Select(authenticationMethod => new ExternalAuthenticationMethodModel
                 {
                     ViewComponentName = authenticationMethod.GetPublicViewComponentName()

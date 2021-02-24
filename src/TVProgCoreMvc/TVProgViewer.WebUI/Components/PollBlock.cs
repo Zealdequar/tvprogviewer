@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -13,13 +14,13 @@ namespace TVProgViewer.WebUI.Components
             _pollModelFactory = pollModelFactory;
         }
 
-        public IViewComponentResult Invoke(string systemKeyword)
+        public async Task<IViewComponentResult> InvokeAsync(string systemKeyword)
         {
 
             if (string.IsNullOrWhiteSpace(systemKeyword))
                 return Content("");
 
-            var model = _pollModelFactory.PreparePollModelBySystemName(systemKeyword);
+            var model = await _pollModelFactory.PreparePollModelBySystemNameAsync(systemKeyword);
             if (model == null)
                 return Content("");
 

@@ -1,4 +1,4 @@
-﻿@inherits TVProgViewer.Web.Framework.Mvc.Razor.TVProgViewerRazorPage<TModel>
+﻿@inherits TVProgViewer.Web.Framework.Mvc.Razor.TvProgRazorPage<TModel>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @*we remove the default InputTagHelper to prevent the checkbox duplicating: https://stackoverflow.com/questions/42544961/asp-net-core-custom-input-tag-helper-rendering-duplicate-checkboxes*@
 @removeTagHelper Microsoft.AspNetCore.Mvc.TagHelpers.InputTagHelper, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -7,6 +7,7 @@
 
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using Microsoft.Extensions.Primitives
 @using TVProgViewer.WebUI.Extensions
 @using TVProgViewer.Web.Framework
 @using TVProgViewer.Web.Framework.Extensions

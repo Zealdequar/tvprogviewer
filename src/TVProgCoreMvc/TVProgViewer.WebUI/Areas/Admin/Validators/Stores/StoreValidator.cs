@@ -9,10 +9,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Stores
 {
     public partial class StoreValidator : BaseTvProgValidator<StoreModel>
     {
-        public StoreValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public StoreValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Stores.Fields.Name.Required"));
-            RuleFor(x => x.Url).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Stores.Fields.Url.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Stores.Fields.Name.Required"));
+            RuleFor(x => x.Url).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Stores.Fields.Url.Required"));
 
             SetDatabaseValidationRules<Store>(dataProvider);
         }

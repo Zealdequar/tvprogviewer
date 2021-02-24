@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Common;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Services.Plugins;
 using TVProgViewer.Services.Shipping.Tracking;
 
@@ -25,8 +26,8 @@ namespace TVProgViewer.Services.Shipping.Pickup
         /// </summary>
         /// <param name="address">Address</param>
         /// <returns>Represents a response of getting pickup points</returns>
-        GetPickupPointsResponse GetPickupPoints(Address address);
-        
+        Task<GetPickupPointsResponse> GetPickupPointsAsync(Address address);
+
         #endregion
     }
 }

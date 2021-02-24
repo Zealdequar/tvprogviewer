@@ -38,6 +38,11 @@ namespace TVProgViewer.Core.Domain.Users
         /// <summary>
         /// Locked out
         /// </summary>
-        LockedOut = 7
+        LockedOut = 7,
+
+        /// <summary>
+        /// Requires multi-factor authentication
+        /// </summary>
+        MultiFactorAuthenticationRequired = 8
     }
 }

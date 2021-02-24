@@ -13,6 +13,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Vendors
         [TvProgResourceDisplayName("Admin.Vendors.List.SearchName")]
         public string SearchName { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Vendors.List.SearchEmail")]
+        public string SearchEmail { get; set; }
+
         #endregion
     }
 }

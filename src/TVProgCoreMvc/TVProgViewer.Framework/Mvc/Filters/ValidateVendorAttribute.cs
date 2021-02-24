@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TVProgViewer.Core;
@@ -13,12 +14,6 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
     /// </summary>
     public sealed class ValidateVendorAttribute : TypeFilterAttribute
     {
-        #region Fields
-
-        private readonly bool _ignoreFilter;
-
-        #endregion
-
         #region Ctor
 
         /// <summary>
@@ -27,7 +22,7 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         /// <param name="ignore">Whether to ignore the execution of filter actions</param>
         public ValidateVendorAttribute(bool ignore = false) : base(typeof(ValidateVendorFilter))
         {
-            _ignoreFilter = ignore;
+            IgnoreFilter = ignore;
             Arguments = new object[] { ignore };
         }
 
@@ -38,32 +33,71 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         /// <summary>
         /// Gets a value indicating whether to ignore the execution of filter actions
         /// </summary>
-        public bool IgnoreFilter => _ignoreFilter;
+        public bool IgnoreFilter { get; }
 
         #endregion
 
         #region Nested filter
 
         /// <summary>
-        /// Represents a filter confirming that user with "Vendor" User role has appropriate vendor account associated (and active)
+        /// Represents a filter confirming that user with "Vendor" user role has appropriate vendor account associated (and active)
         /// </summary>
-        private class ValidateVendorFilter : IAuthorizationFilter
+        private class ValidateVendorFilter : IAsyncAuthorizationFilter
         {
             #region Fields
 
             private readonly bool _ignoreFilter;
-            private readonly IUserService _UserService;
+            private readonly IUserService _userService;
             private readonly IWorkContext _workContext;
 
             #endregion
 
             #region Ctor
 
-            public ValidateVendorFilter(bool ignoreFilter, IWorkContext workContext, IUserService UserService)
+            public ValidateVendorFilter(bool ignoreFilter, IWorkContext workContext, IUserService userService)
             {
                 _ignoreFilter = ignoreFilter;
-                _UserService = UserService;
+                _userService = userService;
                 _workContext = workContext;
+            }
+
+            #endregion
+
+            #region Utilities
+
+            /// <summary>
+            /// Called early in the filter pipeline to confirm request is authorized
+            /// </summary>
+            /// <param name="context">Authorization filter context</param>
+            /// <returns>A task that on completion indicates the filter has executed</returns>
+            private async Task ValidateVendorAsync(AuthorizationFilterContext context)
+            {
+                if (context == null)
+                    throw new ArgumentNullException(nameof(context));
+
+                //check whether this filter has been overridden for the Action
+                var actionFilter = context.ActionDescriptor.FilterDescriptors
+                    .Where(filterDescriptor => filterDescriptor.Scope == FilterScope.Action)
+                    .Select(filterDescriptor => filterDescriptor.Filter)
+                    .OfType<ValidateVendorAttribute>()
+                    .FirstOrDefault();
+
+                //ignore filter (the action is available even if the current user isn't a vendor)
+                if (actionFilter?.IgnoreFilter ?? _ignoreFilter)
+                    return;
+
+                if (!await DataSettingsManager.IsDatabaseInstalledAsync())
+                    return;
+
+                //whether current user is vendor
+                var user = await _workContext.GetCurrentUserAsync();
+                if (!await _userService.IsVendorAsync(user))
+                    return;
+
+                //ensure that this user has active vendor record associated
+                var vendor = await _workContext.GetCurrentVendorAsync();
+                if (vendor == null)
+                    context.Result = new ChallengeResult();
             }
 
             #endregion
@@ -73,31 +107,10 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
             /// <summary>
             /// Called early in the filter pipeline to confirm request is authorized
             /// </summary>
-            /// <param name="filterContext">Authorization filter context</param>
-            public void OnAuthorization(AuthorizationFilterContext filterContext)
+            /// <param name="context">Authorization filter context</param>
+            public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
             {
-                if (filterContext == null)
-                    throw new ArgumentNullException(nameof(filterContext));
-
-                //check whether this filter has been overridden for the Action
-                var actionFilter = filterContext.ActionDescriptor.FilterDescriptors
-                    .Where(filterDescriptor => filterDescriptor.Scope == FilterScope.Action)
-                    .Select(filterDescriptor => filterDescriptor.Filter).OfType<ValidateVendorAttribute>().FirstOrDefault();
-
-                //ignore filter (the action is available even if the current User isn't a vendor)
-                if (actionFilter?.IgnoreFilter ?? _ignoreFilter)
-                    return;
-
-                if (!DataSettingsManager.IsDatabaseInstalled())
-                    return;
-
-                //whether current User is vendor
-                if (!_UserService.IsVendor(_workContext.CurrentUser))
-                    return;
-
-                //ensure that this user has active vendor record associated
-                if (_workContext.CurrentVendor == null)
-                    filterContext.Result = new ChallengeResult();
+                await ValidateVendorAsync(context);
             }
 
             #endregion

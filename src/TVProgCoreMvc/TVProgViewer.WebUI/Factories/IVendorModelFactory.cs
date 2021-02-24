@@ -1,4 +1,5 @@
-﻿using TVProgViewer.WebUI.Models.Vendors;
+﻿using System.Threading.Tasks;
+using TVProgViewer.WebUI.Models.Vendors;
 
 namespace TVProgViewer.WebUI.Factories
 {
@@ -15,7 +16,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <param name="vendorAttributesXml">Vendor attributes in XML format</param>
         /// <returns>The apply vendor model</returns>
-        ApplyVendorModel PrepareApplyVendorModel(ApplyVendorModel model, bool validateVendor, bool excludeProperties, string vendorAttributesXml);
+        Task<ApplyVendorModel> PrepareApplyVendorModelAsync(ApplyVendorModel model, bool validateVendor, bool excludeProperties, string vendorAttributesXml);
 
         /// <summary>
         /// Prepare the vendor info model
@@ -24,6 +25,6 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <param name="overriddenVendorAttributesXml">Overridden vendor attributes in XML format; pass null to use VendorAttributes of vendor</param>
         /// <returns>Vendor info model</returns>
-        VendorInfoModel PrepareVendorInfoModel(VendorInfoModel model, bool excludeProperties, string overriddenVendorAttributesXml = "");
+        Task<VendorInfoModel> PrepareVendorInfoModelAsync(VendorInfoModel model, bool excludeProperties, string overriddenVendorAttributesXml = "");
     }
 }

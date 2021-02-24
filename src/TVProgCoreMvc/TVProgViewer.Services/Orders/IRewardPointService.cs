@@ -2,6 +2,7 @@ using System;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Orders;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Orders
 {
@@ -13,14 +14,15 @@ namespace TVProgViewer.Services.Orders
         /// <summary>
         /// Load reward point history records
         /// </summary>
-        /// <param name="UserId">User identifier; 0 to load all records</param>
+        /// <param name="userId">User identifier; 0 to load all records</param>
         /// <param name="storeId">Store identifier; pass null to load all records</param>
         /// <param name="showNotActivated">A value indicating whether to show reward points that did not yet activated</param>
+        /// <param name="orderGuid">Order Guid; pass null to load all record</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Reward point history records</returns>
-        IPagedList<RewardPointsHistory> GetRewardPointsHistory(int UserId = 0, int? storeId = null,
-            bool showNotActivated = false, int pageIndex = 0, int pageSize = int.MaxValue);
+        Task<IPagedList<RewardPointsHistory>> GetRewardPointsHistoryAsync(int userId = 0, int? storeId = null,
+            bool showNotActivated = false, Guid? orderGuid = null, int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
         /// Gets reduced reward points balance per order
@@ -32,15 +34,15 @@ namespace TVProgViewer.Services.Orders
         /// <summary>
         /// Gets reward points balance
         /// </summary>
-        /// <param name="UserId">User identifier</param>
+        /// <param name="userId">User identifier</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>Balance</returns>
-        int GetRewardPointsBalance(int UserId, int storeId);
+        Task<int> GetRewardPointsBalanceAsync(int userId, int storeId);
 
         /// <summary>
         /// Add reward points history record
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="points">Number of points to add</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="message">Message</param>
@@ -49,7 +51,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="activatingDate">Date and time of activating reward points; pass null to immediately activating</param>
         /// <param name="endDate">Date and time when the reward points will no longer be valid; pass null to add date termless points</param>
         /// <returns>Reward points history entry identifier</returns>
-        int AddRewardPointsHistoryEntry(User User, int points, int storeId, string message = "",
+        Task<int> AddRewardPointsHistoryEntryAsync(User user, int points, int storeId, string message = "",
             Order usedWithOrder = null, decimal usedAmount = 0M, DateTime? activatingDate = null, DateTime? endDate = null);
 
         /// <summary>
@@ -57,24 +59,18 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="rewardPointsHistoryId">Reward point history entry identifier</param>
         /// <returns>Reward point history entry</returns>
-        RewardPointsHistory GetRewardPointsHistoryEntryById(int rewardPointsHistoryId);
+        Task<RewardPointsHistory> GetRewardPointsHistoryEntryByIdAsync(int rewardPointsHistoryId);
 
-        /// <summary>
-        /// Insert the reward point history entry
-        /// </summary>
-        /// <param name="rewardPointsHistory">Reward point history entry</param>
-        void InsertRewardPointsHistoryEntry(RewardPointsHistory rewardPointsHistory);
-        
         /// <summary>
         /// Updates the reward point history entry
         /// </summary>
         /// <param name="rewardPointsHistory">Reward point history entry</param>
-        void UpdateRewardPointsHistoryEntry(RewardPointsHistory rewardPointsHistory);
+        Task UpdateRewardPointsHistoryEntryAsync(RewardPointsHistory rewardPointsHistory);
 
         /// <summary>
         /// Delete the reward point history entry
         /// </summary>
         /// <param name="rewardPointsHistory">Reward point history entry</param>
-        void DeleteRewardPointsHistoryEntry(RewardPointsHistory rewardPointsHistory);
+        Task DeleteRewardPointsHistoryEntryAsync(RewardPointsHistory rewardPointsHistory);
     }
 }

@@ -17,6 +17,7 @@ using TVProgViewer.Web.Framework;
 using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
 using TVProgViewer.WebUI.Models.Catalog;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -51,20 +52,20 @@ namespace TVProgViewer.WebUI.Controllers
         public CatalogController(CatalogSettings catalogSettings,
             IAclService aclService,
             ICatalogModelFactory catalogModelFactory,
-            ICategoryService categoryService, 
+            ICategoryService categoryService,
             IUserActivityService userActivityService,
             IGenericAttributeService genericAttributeService,
             ILocalizationService localizationService,
             IManufacturerService manufacturerService,
-            IPermissionService permissionService, 
+            IPermissionService permissionService,
             IProductModelFactory productModelFactory,
-            IProductService productService, 
+            IProductService productService,
             IProductTagService productTagService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IVendorService vendorService,
             IWebHelper webHelper,
-            IWorkContext workContext, 
+            IWorkContext workContext,
             MediaSettings mediaSettings,
             VendorSettings vendorSettings)
         {
@@ -90,13 +91,12 @@ namespace TVProgViewer.WebUI.Controllers
         }
 
         #endregion
-        
+
         #region Categories
-        
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult Category(int categoryId, CatalogPagingFilteringModel command)
+
+        public virtual async Task<IActionResult> Category(int categoryId, CatalogPagingFilteringModel command)
         {
-            var category = _categoryService.GetCategoryById(categoryId);
+            var category = await _categoryService.GetCategoryByIdAsync(categoryId);
             if (category == null || category.Deleted)
                 return InvokeHttp404();
 
@@ -104,51 +104,51 @@ namespace TVProgViewer.WebUI.Controllers
                 //published?
                 !category.Published ||
                 //ACL (access control list) 
-                !_aclService.Authorize(category) ||
+                !await _aclService.AuthorizeAsync(category) ||
                 //Store mapping
-                !_storeMappingService.Authorize(category);
+                !await _storeMappingService.AuthorizeAsync(category);
             //Check whether the current user has a "Manage categories" permission (usually a store owner)
             //We should allows him (her) to use "Preview" functionality
-            var hasAdminAccess = _permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageCategories);
+            var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories);
             if (notAvailable && !hasAdminAccess)
                 return InvokeHttp404();
 
             //'Continue shopping' URL
-            _genericAttributeService.SaveAttribute(_workContext.CurrentUser, 
-                TvProgUserDefaults.LastContinueShoppingPageAttribute, 
+            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(),
+                TvProgUserDefaults.LastContinueShoppingPageAttribute,
                 _webHelper.GetThisPageUrl(false),
-                _storeContext.CurrentStore.Id);
+                (await _storeContext.GetCurrentStoreAsync()).Id);
 
             //display "edit" (manage) link
-            if (_permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageCategories))
+            if (await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 DisplayEditLink(Url.Action("Edit", "Category", new { id = category.Id, area = AreaNames.Admin }));
 
             //activity log
-            _userActivityService.InsertActivity("PublicStore.ViewCategory",
-                string.Format(_localizationService.GetResource("ActivityLog.PublicStore.ViewCategory"), category.Name), category);
+            await _userActivityService.InsertActivityAsync("PublicStore.ViewCategory",
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.ViewCategory"), category.Name), category);
 
             //model
-            var model = _catalogModelFactory.PrepareCategoryModel(category, command);
+            var model = await _catalogModelFactory.PrepareCategoryModelAsync(category, command);
 
             //template
-            var templateViewPath = _catalogModelFactory.PrepareCategoryTemplateViewPath(category.CategoryTemplateId);
+            var templateViewPath = await _catalogModelFactory.PrepareCategoryTemplateViewPathAsync(category.CategoryTemplateId);
             return View(templateViewPath, model);
         }
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult GetCatalogRoot()
+        public virtual async Task<IActionResult> GetCatalogRoot()
         {
-            var model = _catalogModelFactory.PrepareRootCategories();
+            var model = await _catalogModelFactory.PrepareRootCategoriesAsync();
 
             return Json(model);
         }
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult GetCatalogSubCategories(int id)
+        public virtual async Task<IActionResult> GetCatalogSubCategories(int id)
         {
-            var model = _catalogModelFactory.PrepareSubCategories(id);
+            var model = await _catalogModelFactory.PrepareSubCategoriesAsync(id);
 
             return Json(model);
         }
@@ -157,10 +157,9 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Manufacturers
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult Manufacturer(int manufacturerId, CatalogPagingFilteringModel command)
+        public virtual async Task<IActionResult> Manufacturer(int manufacturerId, CatalogPagingFilteringModel command)
         {
-            var manufacturer = _manufacturerService.GetManufacturerById(manufacturerId);
+            var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(manufacturerId);
             if (manufacturer == null || manufacturer.Deleted)
                 return InvokeHttp404();
 
@@ -168,101 +167,100 @@ namespace TVProgViewer.WebUI.Controllers
                 //published?
                 !manufacturer.Published ||
                 //ACL (access control list) 
-                !_aclService.Authorize(manufacturer) ||
+                !await _aclService.AuthorizeAsync(manufacturer) ||
                 //Store mapping
-                !_storeMappingService.Authorize(manufacturer);
+                !await _storeMappingService.AuthorizeAsync(manufacturer);
             //Check whether the current user has a "Manage categories" permission (usually a store owner)
             //We should allows him (her) to use "Preview" functionality
-            var hasAdminAccess = _permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageManufacturers);
+            var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers);
             if (notAvailable && !hasAdminAccess)
                 return InvokeHttp404();
 
             //'Continue shopping' URL
-            _genericAttributeService.SaveAttribute(_workContext.CurrentUser, 
-                TvProgUserDefaults.LastContinueShoppingPageAttribute, 
+            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(),
+                TvProgUserDefaults.LastContinueShoppingPageAttribute,
                 _webHelper.GetThisPageUrl(false),
-                _storeContext.CurrentStore.Id);
-            
+                (await _storeContext.GetCurrentStoreAsync()).Id);
+
             //display "edit" (manage) link
-            if (_permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageManufacturers))
+            if (await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 DisplayEditLink(Url.Action("Edit", "Manufacturer", new { id = manufacturer.Id, area = AreaNames.Admin }));
 
             //activity log
-            _userActivityService.InsertActivity("PublicStore.ViewManufacturer",
-                string.Format(_localizationService.GetResource("ActivityLog.PublicStore.ViewManufacturer"), manufacturer.Name), manufacturer);
+            await _userActivityService.InsertActivityAsync("PublicStore.ViewManufacturer",
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.ViewManufacturer"), manufacturer.Name), manufacturer);
 
             //model
-            var model = _catalogModelFactory.PrepareManufacturerModel(manufacturer, command);
-            
+            var model = await _catalogModelFactory.PrepareManufacturerModelAsync(manufacturer, command);
+
             //template
-            var templateViewPath = _catalogModelFactory.PrepareManufacturerTemplateViewPath(manufacturer.ManufacturerTemplateId);
+            var templateViewPath = await _catalogModelFactory.PrepareManufacturerTemplateViewPathAsync(manufacturer.ManufacturerTemplateId);
+
             return View(templateViewPath, model);
         }
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult ManufacturerAll()
+        public virtual async Task<IActionResult> ManufacturerAll()
         {
-            var model = _catalogModelFactory.PrepareManufacturerAllModels();
+            var model = await _catalogModelFactory.PrepareManufacturerAllModelsAsync();
+
             return View(model);
         }
-        
+
         #endregion
 
         #region Vendors
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult Vendor(int vendorId, CatalogPagingFilteringModel command)
+        public virtual async Task<IActionResult> Vendor(int vendorId, CatalogPagingFilteringModel command)
         {
-            var vendor = _vendorService.GetVendorById(vendorId);
+            var vendor = await _vendorService.GetVendorByIdAsync(vendorId);
             if (vendor == null || vendor.Deleted || !vendor.Active)
                 return InvokeHttp404();
 
             //'Continue shopping' URL
-            _genericAttributeService.SaveAttribute(_workContext.CurrentUser,
+            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(),
                 TvProgUserDefaults.LastContinueShoppingPageAttribute,
                 _webHelper.GetThisPageUrl(false),
-                _storeContext.CurrentStore.Id);
-            
+                (await _storeContext.GetCurrentStoreAsync()).Id);
+
             //display "edit" (manage) link
-            if (_permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageVendors))
+            if (await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageVendors))
                 DisplayEditLink(Url.Action("Edit", "Vendor", new { id = vendor.Id, area = AreaNames.Admin }));
 
             //model
-            var model = _catalogModelFactory.PrepareVendorModel(vendor, command);
+            var model = await _catalogModelFactory.PrepareVendorModelAsync(vendor, command);
 
             return View(model);
         }
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult VendorAll()
+        public virtual async Task<IActionResult> VendorAll()
         {
             //we don't allow viewing of vendors if "vendors" block is hidden
             if (_vendorSettings.VendorsBlockItemsToDisplay == 0)
                 return RedirectToRoute("Homepage");
 
-            var model = _catalogModelFactory.PrepareVendorAllModels();
+            var model = await _catalogModelFactory.PrepareVendorAllModelsAsync();
             return View(model);
         }
 
         #endregion
 
         #region Product tags
-        
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult ProductsByTag(int productTagId, CatalogPagingFilteringModel command)
+
+        public virtual async Task<IActionResult> ProductsByTag(int productTagId, CatalogPagingFilteringModel command)
         {
-            var productTag = _productTagService.GetProductTagById(productTagId);
+            var productTag = await _productTagService.GetProductTagByIdAsync(productTagId);
             if (productTag == null)
                 return InvokeHttp404();
 
-            var model = _catalogModelFactory.PrepareProductsByTagModel(productTag, command);
+            var model = await _catalogModelFactory.PrepareProductsByTagModelAsync(productTag, command);
+
             return View(model);
         }
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult ProductTagsAll()
+        public virtual async Task<IActionResult> ProductTagsAll()
         {
-            var model = _catalogModelFactory.PrepareProductTagsAllModel();
+            var model = await _catalogModelFactory.PrepareProductTagsAllModelAsync();
+
             return View(model);
         }
 
@@ -270,53 +268,53 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Searching
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult Search(SearchModel model, CatalogPagingFilteringModel command)
+        public virtual async Task<IActionResult> Search(SearchModel model, CatalogPagingFilteringModel command)
         {
             //'Continue shopping' URL
-            _genericAttributeService.SaveAttribute(_workContext.CurrentUser,
+            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(),
                 TvProgUserDefaults.LastContinueShoppingPageAttribute,
                 _webHelper.GetThisPageUrl(true),
-                _storeContext.CurrentStore.Id);
+                (await _storeContext.GetCurrentStoreAsync()).Id);
 
             if (model == null)
                 model = new SearchModel();
 
-            model = _catalogModelFactory.PrepareSearchModel(model, command);
+            model = await _catalogModelFactory.PrepareSearchModelAsync(model, command);
+
             return View(model);
         }
 
-        public virtual IActionResult SearchTermAutoComplete(string term)
+        public virtual async Task<IActionResult> SearchTermAutoComplete(string term)
         {
             if (string.IsNullOrWhiteSpace(term) || term.Length < _catalogSettings.ProductSearchTermMinimumLength)
                 return Content("");
 
             //products
             var productNumber = _catalogSettings.ProductSearchAutoCompleteNumberOfProducts > 0 ?
-                _catalogSettings.ProductSearchAutoCompleteNumberOfProducts : 10;            
+                _catalogSettings.ProductSearchAutoCompleteNumberOfProducts : 10;
 
-            var products = _productService.SearchProducts(
-                storeId: _storeContext.CurrentStore.Id,
+            var products = await _productService.SearchProductsAsync(0,
+                storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
                 keywords: term,
-                languageId: _workContext.WorkingLanguage.Id,
+                languageId: (await _workContext.GetWorkingLanguageAsync()).Id,
                 visibleIndividuallyOnly: true,
                 pageSize: productNumber);
 
             var showLinkToResultSearch = _catalogSettings.ShowLinkToAllResultInSearchAutoComplete && (products.TotalCount > productNumber);
 
-            var models =  _productModelFactory.PrepareProductOverviewModels(products, false, _catalogSettings.ShowProductImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize).ToList();
+            var models = (await _productModelFactory.PrepareProductOverviewModelsAsync(products, false, _catalogSettings.ShowProductImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize)).ToList();
             var result = (from p in models
-                    select new
-                    {
-                        label = p.Name,
-                        producturl = Url.RouteUrl("Product", new {SeName = p.SeName}),
-                        productpictureurl = p.DefaultPictureModel.ImageUrl,
-                        showlinktoresultsearch = showLinkToResultSearch
-                    })
+                          select new
+                          {
+                              label = p.Name,
+                              producturl = Url.RouteUrl("Product", new { SeName = p.SeName }),
+                              productpictureurl = p.DefaultPictureModel.ImageUrl,
+                              showlinktoresultsearch = showLinkToResultSearch
+                          })
                 .ToList();
             return Json(result);
         }
-        
+
         #endregion
     }
 }

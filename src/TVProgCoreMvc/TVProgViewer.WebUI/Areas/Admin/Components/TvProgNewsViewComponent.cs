@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Areas.Admin.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Components
 {
@@ -30,12 +31,12 @@ namespace TVProgViewer.WebUI.Areas.Admin.Components
         /// Invoke view component
         /// </summary>
         /// <returns>View component result</returns>
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             try
             {
                 //prepare model
-                var model = _homeModelFactory.PrepareTvProgNewsModel();
+                var model = await _homeModelFactory.PrepareTvProgNewsModelAsync();
 
                 return View(model);
             }

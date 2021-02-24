@@ -21,7 +21,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         #region Properties
 
         public int ActiveStoreScopeConfiguration { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.ShipToSameAddress")]
         public bool ShipToSameAddress { get; set; }
         public bool ShipToSameAddress_OverrideForStore { get; set; }
@@ -49,7 +49,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.NotifyUserAboutShippingFromMultipleLocations")]
         public bool NotifyUserAboutShippingFromMultipleLocations { get; set; }
         public bool NotifyUserAboutShippingFromMultipleLocations_OverrideForStore { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.FreeShippingOverXEnabled")]
         public bool FreeShippingOverXEnabled { get; set; }
         public bool FreeShippingOverXEnabled_OverrideForStore { get; set; }
@@ -62,9 +62,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool FreeShippingOverXIncludingTax { get; set; }
         public bool FreeShippingOverXIncludingTax_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.EstimateShippingEnabled")]
-        public bool EstimateShippingEnabled { get; set; }
-        public bool EstimateShippingEnabled_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.EstimateShippingCartPageEnabled")]
+        public bool EstimateShippingCartPageEnabled { get; set; }
+        public bool EstimateShippingCartPageEnabled_OverrideForStore { get; set; }
+
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.EstimateShippingProductPageEnabled")]
+        public bool EstimateShippingProductPageEnabled { get; set; }
+        public bool EstimateShippingProductPageEnabled_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.DisplayShipmentEventsToUsers")]
         public bool DisplayShipmentEventsToUsers { get; set; }

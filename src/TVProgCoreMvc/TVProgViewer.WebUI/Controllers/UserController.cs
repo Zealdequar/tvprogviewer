@@ -1,13 +1,14 @@
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Common;
-using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Forums;
 using TVProgViewer.Core.Domain.Gdpr;
 using TVProgViewer.Core.Domain.Localization;
@@ -15,14 +16,16 @@ using TVProgViewer.Core.Domain.Media;
 using TVProgViewer.Core.Domain.Messages;
 using TVProgViewer.Core.Domain.Security;
 using TVProgViewer.Core.Domain.Tax;
+using TVProgViewer.Core.Domain.Users;
+using TVProgViewer.Core.Events;
 using TVProgViewer.Core.Http;
+using TVProgViewer.Core.Http.Extensions;
 using TVProgViewer.Services.Authentication;
 using TVProgViewer.Services.Authentication.External;
+using TVProgViewer.Services.Authentication.MultiFactor;
 using TVProgViewer.Services.Catalog;
 using TVProgViewer.Services.Common;
-using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Directory;
-using TVProgViewer.Services.Events;
 using TVProgViewer.Services.ExportImport;
 using TVProgViewer.Services.Gdpr;
 using TVProgViewer.Services.Helpers;
@@ -32,13 +35,13 @@ using TVProgViewer.Services.Media;
 using TVProgViewer.Services.Messages;
 using TVProgViewer.Services.Orders;
 using TVProgViewer.Services.Tax;
-using TVProgViewer.WebUI.Extensions;
-using TVProgViewer.WebUI.Factories;
+using TVProgViewer.Services.Users;
 using TVProgViewer.Web.Framework;
 using TVProgViewer.Web.Framework.Controllers;
 using TVProgViewer.Web.Framework.Mvc.Filters;
-using TVProgViewer.Web.Framework.Security;
 using TVProgViewer.Web.Framework.Validators;
+using TVProgViewer.WebUI.Extensions;
+using TVProgViewer.WebUI.Factories;
 using TVProgViewer.WebUI.Models.User;
 
 namespace TVProgViewer.WebUI.Controllers
@@ -75,20 +78,20 @@ namespace TVProgViewer.WebUI.Controllers
         private readonly IGiftCardService _giftCardService;
         private readonly ILocalizationService _localizationService;
         private readonly ILogger _logger;
+        private readonly IMultiFactorAuthenticationPluginManager _multiFactorAuthenticationPluginManager;
         private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
         private readonly IOrderService _orderService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
         private readonly IProductService _productService;
-        private readonly IShoppingCartService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
         private readonly ITaxService _taxService;
-        private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
         private readonly IWorkflowMessageService _workflowMessageService;
         private readonly LocalizationSettings _localizationSettings;
         private readonly MediaSettings _mediaSettings;
+        private readonly MultiFactorAuthenticationSettings _multiFactorAuthenticationSettings;
         private readonly StoreInformationSettings _storeInformationSettings;
         private readonly TaxSettings _taxSettings;
 
@@ -123,20 +126,20 @@ namespace TVProgViewer.WebUI.Controllers
             IGiftCardService giftCardService,
             ILocalizationService localizationService,
             ILogger logger,
+            IMultiFactorAuthenticationPluginManager multiFactorAuthenticationPluginManager,
             INewsLetterSubscriptionService newsLetterSubscriptionService,
             IOrderService orderService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
             IProductService productService,
-            IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
             ITaxService taxService,
-            IWebHelper webHelper,
             IWorkContext workContext,
             IWorkflowMessageService workflowMessageService,
             LocalizationSettings localizationSettings,
             MediaSettings mediaSettings,
+            MultiFactorAuthenticationSettings multiFactorAuthenticationSettings,
             StoreInformationSettings storeInformationSettings,
             TaxSettings taxSettings)
         {
@@ -167,20 +170,20 @@ namespace TVProgViewer.WebUI.Controllers
             _giftCardService = giftCardService;
             _localizationService = localizationService;
             _logger = logger;
+            _multiFactorAuthenticationPluginManager = multiFactorAuthenticationPluginManager;
             _newsLetterSubscriptionService = newsLetterSubscriptionService;
             _orderService = orderService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
             _productService = productService;
-            _shoppingCartService = shoppingCartService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
             _taxService = taxService;
-            _webHelper = webHelper;
             _workContext = workContext;
             _workflowMessageService = workflowMessageService;
             _localizationSettings = localizationSettings;
             _mediaSettings = mediaSettings;
+            _multiFactorAuthenticationSettings = multiFactorAuthenticationSettings;
             _storeInformationSettings = storeInformationSettings;
             _taxSettings = taxSettings;
         }
@@ -189,16 +192,52 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Utilities
 
-        protected virtual string ParseCustomUserAttributes(IFormCollection form)
+        protected virtual void ValidateRequiredConsents(List<GdprConsent> consents, IFormCollection form)
+        {
+            foreach (var consent in consents)
+            {
+                var controlId = $"consent{consent.Id}";
+                var cbConsent = form[controlId];
+                if (StringValues.IsNullOrEmpty(cbConsent) || !cbConsent.ToString().Equals("on"))
+                {
+                    ModelState.AddModelError("", consent.RequiredMessage);
+                }
+            }
+        }
+
+        protected virtual async Task<string> ParseSelectedProviderAsync(IFormCollection form)
+        {
+            if (form == null)
+                throw new ArgumentNullException(nameof(form));
+
+            var multiFactorAuthenticationProviders = await _multiFactorAuthenticationPluginManager.LoadActivePluginsAsync(await _workContext.GetCurrentUserAsync(), (await _storeContext.GetCurrentStoreAsync()).Id);
+            foreach (var provider in multiFactorAuthenticationProviders)
+            {
+                var controlId = $"provider_{provider.PluginDescriptor.SystemName}";
+
+                var curProvider = form[controlId];
+                if (!StringValues.IsNullOrEmpty(curProvider))
+                {
+                    var selectedProvider = curProvider.ToString();
+                    if (!string.IsNullOrEmpty(selectedProvider))
+                    {
+                        return selectedProvider;
+                    }
+                }
+            }
+            return string.Empty;
+        }
+
+        protected virtual async Task<string> ParseCustomUserAttributesAsync(IFormCollection form)
         {
             if (form == null)
                 throw new ArgumentNullException(nameof(form));
 
             var attributesXml = "";
-            var attributes = _userAttributeService.GetAllUserAttributes();
+            var attributes = await _userAttributeService.GetAllUserAttributesAsync();
             foreach (var attribute in attributes)
             {
-                var controlId = $"{TvProgAttributePrefixDefaults.User}{attribute.Id}";
+                var controlId = $"{TvProgUserServicesDefaults.UserAttributePrefix}{attribute.Id}";
                 switch (attribute.AttributeControlType)
                 {
                     case AttributeControlType.DropdownList:
@@ -232,7 +271,7 @@ namespace TVProgViewer.WebUI.Controllers
                     case AttributeControlType.ReadonlyCheckboxes:
                         {
                             //load read-only (already server-side selected) values
-                            var attributeValues = _userAttributeService.GetUserAttributeValues(attribute.Id);
+                            var attributeValues = await _userAttributeService.GetUserAttributeValuesAsync(attribute.Id);
                             foreach (var selectedAttributeId in attributeValues
                                 .Where(v => v.IsPreSelected)
                                 .Select(v => v.Id)
@@ -268,16 +307,16 @@ namespace TVProgViewer.WebUI.Controllers
             return attributesXml;
         }
 
-        protected virtual void LogGdpr(User user, UserInfoModel oldUserInfoModel,
+        protected virtual async Task LogGdprAsync(User user, UserInfoModel oldUserInfoModel,
             UserInfoModel newUserInfoModel, IFormCollection form)
         {
             try
             {
                 //consents
-                var consents = _gdprService.GetAllConsents().Where(consent => consent.DisplayOnUserInfoPage).ToList();
+                var consents = (await _gdprService.GetAllConsentsAsync()).Where(consent => consent.DisplayOnUserInfoPage).ToList();
                 foreach (var consent in consents)
                 {
-                    var previousConsentValue = _gdprService.IsConsentAccepted(consent.Id, _workContext.CurrentUser.Id);
+                    var previousConsentValue = await _gdprService.IsConsentAcceptedAsync(consent.Id, (await _workContext.GetCurrentUserAsync()).Id);
                     var controlId = $"consent{consent.Id}";
                     var cbConsent = form[controlId];
                     if (!StringValues.IsNullOrEmpty(cbConsent) && cbConsent.ToString().Equals("on"))
@@ -285,7 +324,7 @@ namespace TVProgViewer.WebUI.Controllers
                         //agree
                         if (!previousConsentValue.HasValue || !previousConsentValue.Value)
                         {
-                            _gdprService.InsertLog(user, consent.Id, GdprRequestType.ConsentAgree, consent.Message);
+                            await _gdprService.InsertLogAsync(user, consent.Id, GdprRequestType.ConsentAgree, consent.Message);
                         }
                     }
                     else
@@ -293,7 +332,7 @@ namespace TVProgViewer.WebUI.Controllers
                         //disagree
                         if (!previousConsentValue.HasValue || previousConsentValue.Value)
                         {
-                            _gdprService.InsertLog(user, consent.Id, GdprRequestType.ConsentDisagree, consent.Message);
+                            await _gdprService.InsertLogAsync(user, consent.Id, GdprRequestType.ConsentDisagree, consent.Message);
                         }
                     }
                 }
@@ -302,9 +341,9 @@ namespace TVProgViewer.WebUI.Controllers
                 if (_gdprSettings.LogNewsletterConsent)
                 {
                     if (oldUserInfoModel.Newsletter && !newUserInfoModel.Newsletter)
-                        _gdprService.InsertLog(user, 0, GdprRequestType.ConsentDisagree, _localizationService.GetResource("Gdpr.Consent.Newsletter"));
+                        await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ConsentDisagree, await _localizationService.GetResourceAsync("Gdpr.Consent.Newsletter"));
                     if (!oldUserInfoModel.Newsletter && newUserInfoModel.Newsletter)
-                        _gdprService.InsertLog(user, 0, GdprRequestType.ConsentAgree, _localizationService.GetResource("Gdpr.Consent.Newsletter"));
+                        await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ConsentAgree, await _localizationService.GetResourceAsync("Gdpr.Consent.Newsletter"));
                 }
 
                 //user profile changes
@@ -312,53 +351,53 @@ namespace TVProgViewer.WebUI.Controllers
                     return;
 
                 if (oldUserInfoModel.Gender != newUserInfoModel.Gender)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.Gender")} = {newUserInfoModel.Gender}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.Gender")} = {newUserInfoModel.Gender}");
 
                 if (oldUserInfoModel.FirstName != newUserInfoModel.FirstName)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.FirstName")} = {newUserInfoModel.FirstName}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.FirstName")} = {newUserInfoModel.FirstName}");
 
                 if (oldUserInfoModel.LastName != newUserInfoModel.LastName)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.LastName")} = {newUserInfoModel.LastName}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.LastName")} = {newUserInfoModel.LastName}");
 
                 if (oldUserInfoModel.ParseDateOfBirth() != newUserInfoModel.ParseDateOfBirth())
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.DateOfBirth")} = {newUserInfoModel.ParseDateOfBirth().ToString()}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.DateOfBirth")} = {newUserInfoModel.ParseDateOfBirth()}");
 
                 if (oldUserInfoModel.Email != newUserInfoModel.Email)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.Email")} = {newUserInfoModel.Email}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.Email")} = {newUserInfoModel.Email}");
 
                 if (oldUserInfoModel.Company != newUserInfoModel.Company)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.Company")} = {newUserInfoModel.Company}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.Company")} = {newUserInfoModel.Company}");
 
                 if (oldUserInfoModel.StreetAddress != newUserInfoModel.StreetAddress)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.StreetAddress")} = {newUserInfoModel.StreetAddress}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.StreetAddress")} = {newUserInfoModel.StreetAddress}");
 
                 if (oldUserInfoModel.StreetAddress2 != newUserInfoModel.StreetAddress2)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.StreetAddress2")} = {newUserInfoModel.StreetAddress2}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.StreetAddress2")} = {newUserInfoModel.StreetAddress2}");
 
                 if (oldUserInfoModel.ZipPostalCode != newUserInfoModel.ZipPostalCode)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.ZipPostalCode")} = {newUserInfoModel.ZipPostalCode}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.ZipPostalCode")} = {newUserInfoModel.ZipPostalCode}");
 
                 if (oldUserInfoModel.City != newUserInfoModel.City)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.City")} = {newUserInfoModel.City}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.City")} = {newUserInfoModel.City}");
 
                 if (oldUserInfoModel.County != newUserInfoModel.County)
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.County")} = {newUserInfoModel.County}");
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.County")} = {newUserInfoModel.County}");
 
                 if (oldUserInfoModel.CountryId != newUserInfoModel.CountryId)
                 {
-                    var countryName = _countryService.GetCountryById(newUserInfoModel.CountryId)?.Name;
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.Country")} = {countryName}");
+                    var countryName = (await _countryService.GetCountryByIdAsync(newUserInfoModel.CountryId))?.Name;
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.Country")} = {countryName}");
                 }
 
                 if (oldUserInfoModel.StateProvinceId != newUserInfoModel.StateProvinceId)
                 {
-                    var stateProvinceName = _stateProvinceService.GetStateProvinceById(newUserInfoModel.StateProvinceId)?.Name;
-                    _gdprService.InsertLog(user, 0, GdprRequestType.ProfileChanged, $"{_localizationService.GetResource("Account.Fields.StateProvince")} = {stateProvinceName}");
+                    var stateProvinceName = (await _stateProvinceService.GetStateProvinceByIdAsync(newUserInfoModel.StateProvinceId))?.Name;
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.StateProvince")} = {stateProvinceName}");
                 }
             }
             catch (Exception exception)
             {
-                _logger.Error(exception.Message, exception, user);
+                await _logger.ErrorAsync(exception.Message, exception, user);
             }
         }
 
@@ -368,14 +407,14 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Login / logout
 
-        [HttpsRequirement(SslRequirement.Yes)]
         //available even when a store is closed
         [CheckAccessClosedStore(true)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult Login(bool? checkoutAsGuest)
+        public virtual async Task<IActionResult> Login(bool? checkoutAsGuest)
         {
-            var model = _userModelFactory.PrepareLoginModel(checkoutAsGuest);
+            var model = await _userModelFactory.PrepareLoginModelAsync(checkoutAsGuest);
+
             return View(model);
         }
 
@@ -385,12 +424,12 @@ namespace TVProgViewer.WebUI.Controllers
         [CheckAccessClosedStore(true)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult Login(LoginModel model, string returnUrl, bool captchaValid)
+        public virtual async Task<IActionResult> Login(LoginModel model, string returnUrl, bool captchaValid)
         {
             //validate CAPTCHA
             if (_captchaSettings.Enabled && _captchaSettings.ShowOnLoginPage && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
             if (ModelState.IsValid)
@@ -399,57 +438,81 @@ namespace TVProgViewer.WebUI.Controllers
                 {
                     model.Username = model.Username.Trim();
                 }
-                var loginResult = _userRegistrationService.ValidateUser(_userSettings.UsernamesEnabled ? model.Username : model.Email, model.Password);
+                var loginResult = await _userRegistrationService.ValidateUserAsync(_userSettings.UsernamesEnabled ? model.Username : model.Email, model.Password);
                 switch (loginResult)
                 {
                     case UserLoginResults.Successful:
                         {
                             var user = _userSettings.UsernamesEnabled
-                                ? _userService.GetUserByUsername(model.Username)
-                                : _userService.GetUserByEmail(model.Email);
+                                ? await _userService.GetUserByUsernameAsync(model.Username)
+                                : await _userService.GetUserByEmailAsync(model.Email);
 
-                            //migrate shopping cart
-                            _shoppingCartService.MigrateShoppingCart(_workContext.CurrentUser, user, true);
-
-                            //sign in new user
-                            _authenticationService.SignIn(user, model.RememberMe);
-
-                            //raise event       
-                            _eventPublisher.Publish(new UserLoggedinEvent(user));
-
-                            //activity log
-                            _userActivityService.InsertActivity(user, "PublicStore.Login",
-                                _localizationService.GetResource("ActivityLog.PublicStore.Login"), user);
-
-                            if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
-                                return RedirectToRoute("Homepage");
-
-                            return Redirect(returnUrl);
+                            return await _userRegistrationService.SignInUserAsync(user, returnUrl, model.RememberMe);
+                        }
+                    case UserLoginResults.MultiFactorAuthenticationRequired:
+                        {
+                            var userName = _userSettings.UsernamesEnabled ? model.Username : model.Email;
+                            var userMultiFactorAuthenticationInfo = new UserMultiFactorAuthenticationInfo
+                            {
+                                UserName = userName,
+                                RememberMe = model.RememberMe,
+                                ReturnUrl = returnUrl
+                            };
+                            HttpContext.Session.Set(TvProgUserDefaults.UserMultiFactorAuthenticationInfo, userMultiFactorAuthenticationInfo);
+                            return RedirectToRoute("MultiFactorVerification");
                         }
                     case UserLoginResults.UserNotExist:
-                        ModelState.AddModelError("", _localizationService.GetResource("Account.Login.WrongCredentials.UserNotExist"));
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.Login.WrongCredentials.UserNotExist"));
                         break;
                     case UserLoginResults.Deleted:
-                        ModelState.AddModelError("", _localizationService.GetResource("Account.Login.WrongCredentials.Deleted"));
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.Login.WrongCredentials.Deleted"));
                         break;
                     case UserLoginResults.NotActive:
-                        ModelState.AddModelError("", _localizationService.GetResource("Account.Login.WrongCredentials.NotActive"));
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.Login.WrongCredentials.NotActive"));
                         break;
                     case UserLoginResults.NotRegistered:
-                        ModelState.AddModelError("", _localizationService.GetResource("Account.Login.WrongCredentials.NotRegistered"));
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.Login.WrongCredentials.NotRegistered"));
                         break;
                     case UserLoginResults.LockedOut:
-                        ModelState.AddModelError("", _localizationService.GetResource("Account.Login.WrongCredentials.LockedOut"));
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.Login.WrongCredentials.LockedOut"));
                         break;
                     case UserLoginResults.WrongPassword:
                     default:
-                        ModelState.AddModelError("", _localizationService.GetResource("Account.Login.WrongCredentials"));
+                        ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.Login.WrongCredentials"));
                         break;
                 }
             }
 
             //If we got this far, something failed, redisplay form
-            model = _userModelFactory.PrepareLoginModel(model.CheckoutAsGuest);
+            model = await _userModelFactory.PrepareLoginModelAsync(model.CheckoutAsGuest);
+            return View(model);
+        }
+
+        /// <summary>
+        /// The entry point for injecting a plugin component of type "MultiFactorAuth"
+        /// </summary>
+        /// <returns>User verification page for Multi-factor authentication. Served by an authentication provider.</returns>
+        public virtual async Task<IActionResult> MultiFactorVerification()
+        {
+            if (!await _multiFactorAuthenticationPluginManager.HasActivePluginsAsync())
+                return RedirectToRoute("Login");
+
+            var userMultiFactorAuthenticationInfo = HttpContext.Session.Get<UserMultiFactorAuthenticationInfo>(TvProgUserDefaults.UserMultiFactorAuthenticationInfo);
+            var userName = userMultiFactorAuthenticationInfo.UserName;
+            if (string.IsNullOrEmpty(userName))
+                return RedirectToRoute("HomePage");
+
+            var user = _userSettings.UsernamesEnabled ? await _userService.GetUserByUsernameAsync(userName) : await _userService.GetUserByEmailAsync(userName);
+            if (user == null)
+                return RedirectToRoute("HomePage");
+
+            var selectedProvider = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.SelectedMultiFactorAuthenticationProviderAttribute);
+            if (string.IsNullOrEmpty(selectedProvider))
+                return RedirectToRoute("HomePage");
+
+            var model = new MultiFactorAuthenticationProviderModel();
+            model = await _userModelFactory.PrepareMultiFactorAuthenticationProviderModelAsync(model, selectedProvider, true);
+
             return View(model);
         }
 
@@ -457,38 +520,38 @@ namespace TVProgViewer.WebUI.Controllers
         [CheckAccessClosedStore(true)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult Logout()
+        public virtual async Task<IActionResult> Logout()
         {
             if (_workContext.OriginalUserIfImpersonated != null)
             {
                 //activity log
-                _userActivityService.InsertActivity(_workContext.OriginalUserIfImpersonated, "Impersonation.Finished",
-                    string.Format(_localizationService.GetResource("ActivityLog.Impersonation.Finished.StoreOwner"),
-                        _workContext.CurrentUser.Email, _workContext.CurrentUser.Id),
-                    _workContext.CurrentUser);
+                await _userActivityService.InsertActivityAsync(_workContext.OriginalUserIfImpersonated, "Impersonation.Finished",
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.Impersonation.Finished.StoreOwner"),
+                        (await _workContext.GetCurrentUserAsync()).Email, (await _workContext.GetCurrentUserAsync()).Id),
+                    await _workContext.GetCurrentUserAsync());
 
-                _userActivityService.InsertActivity("Impersonation.Finished",
-                    string.Format(_localizationService.GetResource("ActivityLog.Impersonation.Finished.User"),
+                await _userActivityService.InsertActivityAsync("Impersonation.Finished",
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.Impersonation.Finished.User"),
                         _workContext.OriginalUserIfImpersonated.Email, _workContext.OriginalUserIfImpersonated.Id),
                     _workContext.OriginalUserIfImpersonated);
 
                 //logout impersonated user
-                _genericAttributeService
-                    .SaveAttribute<int?>(_workContext.OriginalUserIfImpersonated, TvProgUserDefaults.ImpersonatedUserIdAttribute, null);
+                await _genericAttributeService
+                    .SaveAttributeAsync<int?>(_workContext.OriginalUserIfImpersonated, TvProgUserDefaults.ImpersonatedUserIdAttribute, null);
 
                 //redirect back to user details page (admin area)
-                return RedirectToAction("Edit", "User", new { id = _workContext.CurrentUser.Id, area = AreaNames.Admin });
+                return RedirectToAction("Edit", "User", new { id = (await _workContext.GetCurrentUserAsync()).Id, area = AreaNames.Admin });
             }
 
             //activity log
-            _userActivityService.InsertActivity(_workContext.CurrentUser, "PublicStore.Logout",
-                _localizationService.GetResource("ActivityLog.PublicStore.Logout"), _workContext.CurrentUser);
+            await _userActivityService.InsertActivityAsync(await _workContext.GetCurrentUserAsync(), "PublicStore.Logout",
+                await _localizationService.GetResourceAsync("ActivityLog.PublicStore.Logout"), await _workContext.GetCurrentUserAsync());
 
             //standard logout 
-            _authenticationService.SignOut();
+            await _authenticationService.SignOutAsync();
 
             //raise logged out event       
-            _eventPublisher.Publish(new UserLoggedOutEvent(_workContext.CurrentUser));
+            await _eventPublisher.PublishAsync(new UserLoggedOutEvent(await _workContext.GetCurrentUserAsync()));
 
             //EU Cookie
             if (_storeInformationSettings.DisplayEuCookieLawWarning)
@@ -509,13 +572,14 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Password recovery
 
-        [HttpsRequirement(SslRequirement.Yes)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult PasswordRecovery()
+        //available even when a store is closed
+        [CheckAccessClosedStore(true)]
+        public virtual async Task<IActionResult> PasswordRecovery()
         {
             var model = new PasswordRecoveryModel();
-            model = _userModelFactory.PreparePasswordRecoveryModel(model);
+            model = await _userModelFactory.PreparePasswordRecoveryModelAsync(model);
 
             return View(model);
         }
@@ -525,79 +589,81 @@ namespace TVProgViewer.WebUI.Controllers
         [FormValueRequired("send-email")]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult PasswordRecoverySend(PasswordRecoveryModel model, bool captchaValid)
+        //available even when a store is closed
+        [CheckAccessClosedStore(true)]
+        public virtual async Task<IActionResult> PasswordRecoverySend(PasswordRecoveryModel model, bool captchaValid)
         {
             // validate CAPTCHA
             if (_captchaSettings.Enabled && _captchaSettings.ShowOnForgotPasswordPage && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
             if (ModelState.IsValid)
             {
-                var user = _userService.GetUserByEmail(model.Email);
-                if (user != null && user.Active && user.Deleted == null)
+                var user = await _userService.GetUserByEmailAsync(model.Email);
+                if (user != null && user.Active && !user.Deleted)
                 {
                     //save token and current date
                     var passwordRecoveryToken = Guid.NewGuid();
-                    _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute,
+                    await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute,
                         passwordRecoveryToken.ToString());
                     DateTime? generatedDateTime = DateTime.UtcNow;
-                    _genericAttributeService.SaveAttribute(user,
+                    await _genericAttributeService.SaveAttributeAsync(user,
                         TvProgUserDefaults.PasswordRecoveryTokenDateGeneratedAttribute, generatedDateTime);
 
                     //send email
-                    _workflowMessageService.SendUserPasswordRecoveryMessage(user,
-                        _workContext.WorkingLanguage.Id);
+                    await _workflowMessageService.SendUserPasswordRecoveryMessageAsync(user,
+                        (await _workContext.GetWorkingLanguageAsync()).Id);
 
-                    model.Result = _localizationService.GetResource("Account.PasswordRecovery.EmailHasBeenSent");
+                    model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.EmailHasBeenSent");
                 }
                 else
                 {
-                    model.Result = _localizationService.GetResource("Account.PasswordRecovery.EmailNotFound");
+                    model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.EmailNotFound");
                 }
             }
 
-            model = _userModelFactory.PreparePasswordRecoveryModel(model);
+            model = await _userModelFactory.PreparePasswordRecoveryModelAsync(model);
+
             return View(model);
         }
 
-        [HttpsRequirement(SslRequirement.Yes)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult PasswordRecoveryConfirm(string token, string email, Guid guid)
+        //available even when a store is closed
+        [CheckAccessClosedStore(true)]
+        public virtual async Task<IActionResult> PasswordRecoveryConfirm(string token, string email, Guid guid)
         {
             //For backward compatibility with previous versions where email was used as a parameter in the URL
-            var user = _userService.GetUserByEmail(email);
-            if (user == null)
-                user = _userService.GetUserByGuid(guid);
+            var user = await _userService.GetUserByEmailAsync(email)
+                ?? await _userService.GetUserByGuidAsync(guid);
 
             if (user == null)
                 return RedirectToRoute("Homepage");
 
-            if (string.IsNullOrEmpty(_genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute)))
-            {
-                return View(new PasswordRecoveryConfirmModel
-                {
-                    DisablePasswordChanging = true,
-                    Result = _localizationService.GetResource("Account.PasswordRecovery.PasswordAlreadyHasBeenChanged")
-                });
-            }
-
-            var model = _userModelFactory.PreparePasswordRecoveryConfirmModel();
-
-            //validate token
-            if (!_userService.IsPasswordRecoveryTokenValid(user, token))
+            var model = new PasswordRecoveryConfirmModel { ReturnUrl = Url.RouteUrl("Homepage") };
+            if (string.IsNullOrEmpty(await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute)))
             {
                 model.DisablePasswordChanging = true;
-                model.Result = _localizationService.GetResource("Account.PasswordRecovery.WrongToken");
+                model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.PasswordAlreadyHasBeenChanged");
+                return View(model);
+            }
+
+            //validate token
+            if (!await _userService.IsPasswordRecoveryTokenValidAsync(user, token))
+            {
+                model.DisablePasswordChanging = true;
+                model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.WrongToken");
+                return View(model);
             }
 
             //validate token expiration date
-            if (_userService.IsPasswordRecoveryLinkExpired(user))
+            if (await _userService.IsPasswordRecoveryLinkExpiredAsync(user))
             {
                 model.DisablePasswordChanging = true;
-                model.Result = _localizationService.GetResource("Account.PasswordRecovery.LinkExpired");
+                model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.LinkExpired");
+                return View(model);
             }
 
             return View(model);
@@ -607,52 +673,53 @@ namespace TVProgViewer.WebUI.Controllers
         [FormValueRequired("set-password")]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult PasswordRecoveryConfirmPOST(string token, string email, Guid guid, PasswordRecoveryConfirmModel model)
+        //available even when a store is closed
+        [CheckAccessClosedStore(true)]
+        public virtual async Task<IActionResult> PasswordRecoveryConfirmPOST(string token, string email, Guid guid, PasswordRecoveryConfirmModel model)
         {
             //For backward compatibility with previous versions where email was used as a parameter in the URL
-            var user = _userService.GetUserByEmail(email);
-            if (user == null)
-                user = _userService.GetUserByGuid(guid);
+            var user = await _userService.GetUserByEmailAsync(email)
+                ?? await _userService.GetUserByGuidAsync(guid);
 
             if (user == null)
                 return RedirectToRoute("Homepage");
 
+            model.ReturnUrl = Url.RouteUrl("Homepage");
+
             //validate token
-            if (!_userService.IsPasswordRecoveryTokenValid(user, token))
+            if (!await _userService.IsPasswordRecoveryTokenValidAsync(user, token))
             {
                 model.DisablePasswordChanging = true;
-                model.Result = _localizationService.GetResource("Account.PasswordRecovery.WrongToken");
+                model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.WrongToken");
                 return View(model);
             }
 
             //validate token expiration date
-            if (_userService.IsPasswordRecoveryLinkExpired(user))
+            if (await _userService.IsPasswordRecoveryLinkExpiredAsync(user))
             {
                 model.DisablePasswordChanging = true;
-                model.Result = _localizationService.GetResource("Account.PasswordRecovery.LinkExpired");
+                model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.LinkExpired");
                 return View(model);
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var response = await _userRegistrationService
+                .ChangePasswordAsync(new ChangePasswordRequest(user.Email, false, _userSettings.DefaultPasswordFormat, model.NewPassword));
+            if (!response.Success)
             {
-                var response = _userRegistrationService.ChangePassword(new ChangePasswordRequest(user.Email,
-                    false, _userSettings.DefaultPasswordFormat, model.NewPassword));
-                if (response.Success)
-                {
-                    _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute, "");
-
-                    model.DisablePasswordChanging = true;
-                    model.Result = _localizationService.GetResource("Account.PasswordRecovery.PasswordHasBeenChanged");
-                }
-                else
-                {
-                    model.Result = response.Errors.FirstOrDefault();
-                }
-
+                model.Result = string.Join(';', response.Errors);
                 return View(model);
             }
 
-            //If we got this far, something failed, redisplay form
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute, "");
+
+            //authenticate user after changing password
+            await _userRegistrationService.SignInUserAsync(user, null, true);
+
+            model.DisablePasswordChanging = true;
+            model.Result = await _localizationService.GetResourceAsync("Account.PasswordRecovery.PasswordHasBeenChanged");
             return View(model);
         }
 
@@ -660,17 +727,16 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Register
 
-        [HttpsRequirement(SslRequirement.Yes)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult Register()
+        public virtual async Task<IActionResult> Register(string returnUrl)
         {
             //check whether registration is allowed
             if (_userSettings.UserRegistrationType == UserRegistrationType.Disabled)
-                return RedirectToRoute("RegisterResult", new { resultId = (int)UserRegistrationType.Disabled });
+                return RedirectToRoute("RegisterResult", new { resultId = (int)UserRegistrationType.Disabled, returnUrl });
 
             var model = new RegisterModel();
-            model = _userModelFactory.PrepareRegisterModel(model, false, setDefaultValues: true);
+            model = await _userModelFactory.PrepareRegisterModelAsync(model, false, setDefaultValues: true);
 
             return View(model);
         }
@@ -680,29 +746,29 @@ namespace TVProgViewer.WebUI.Controllers
         [ValidateHoneypot]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult Register(RegisterModel model, string returnUrl, bool captchaValid, IFormCollection form)
+        public virtual async Task<IActionResult> Register(RegisterModel model, string returnUrl, bool captchaValid, IFormCollection form)
         {
             //check whether registration is allowed
             if (_userSettings.UserRegistrationType == UserRegistrationType.Disabled)
-                return RedirectToRoute("RegisterResult", new { resultId = (int)UserRegistrationType.Disabled });
+                return RedirectToRoute("RegisterResult", new { resultId = (int)UserRegistrationType.Disabled, returnUrl });
 
-            if (_userService.IsRegistered(_workContext.CurrentUser))
+            if (await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
             {
                 //Already registered user. 
-                _authenticationService.SignOut();
+                await _authenticationService.SignOutAsync();
 
                 //raise logged out event       
-                _eventPublisher.Publish(new UserLoggedOutEvent(_workContext.CurrentUser));
+                await _eventPublisher.PublishAsync(new UserLoggedOutEvent(await _workContext.GetCurrentUserAsync()));
 
                 //Save a new record
-                _workContext.CurrentUser = _userService.InsertGuestUser();
+                await _workContext.SetCurrentUserAsync(await _userService.InsertGuestUserAsync());
             }
-            var user = _workContext.CurrentUser;
-            user.RegisteredInStoreId = _storeContext.CurrentStore.Id;
+            var user = await _workContext.GetCurrentUserAsync();
+            user.RegisteredInStoreId = (await _storeContext.GetCurrentStoreAsync()).Id;
 
             //custom user attributes
-            var userAttributesXml = ParseCustomUserAttributes(form);
-            var userAttributeWarnings = _userAttributeParser.GetAttributeWarnings(userAttributesXml);
+            var userAttributesXml = await ParseCustomUserAttributesAsync(form);
+            var userAttributeWarnings = await _userAttributeParser.GetAttributeWarningsAsync(userAttributesXml);
             foreach (var error in userAttributeWarnings)
             {
                 ModelState.AddModelError("", error);
@@ -711,7 +777,16 @@ namespace TVProgViewer.WebUI.Controllers
             //validate CAPTCHA
             if (_captchaSettings.Enabled && _captchaSettings.ShowOnRegistrationPage && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
+            }
+
+            //GDPR
+            if (_gdprSettings.GdprEnabled)
+            {
+                var consents = (await _gdprService
+                    .GetAllConsentsAsync()).Where(consent => consent.DisplayDuringRegistration && consent.IsRequired).ToList();
+
+                ValidateRequiredConsents(consents, form);
             }
 
             if (ModelState.IsValid)
@@ -727,78 +802,78 @@ namespace TVProgViewer.WebUI.Controllers
                     _userSettings.UsernamesEnabled ? model.Username : model.Email,
                     model.Password,
                     _userSettings.DefaultPasswordFormat,
-                    _storeContext.CurrentStore.Id,
+                    (await _storeContext.GetCurrentStoreAsync()).Id,
                     isApproved);
-                var registrationResult = _userRegistrationService.RegisterUser(registrationRequest);
+                var registrationResult = await _userRegistrationService.RegisterUserAsync(registrationRequest);
                 if (registrationResult.Success)
                 {
                     //properties
                     if (_dateTimeSettings.AllowUsersToSetTimeZone)
                     {
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.TimeZoneIdAttribute, model.TimeZoneId);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.TimeZoneIdAttribute, model.TimeZoneId);
                     }
                     //VAT number
                     if (_taxSettings.EuVatEnabled)
                     {
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.VatNumberAttribute, model.VatNumber);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.VatNumberAttribute, model.VatNumber);
 
-                        var vatNumberStatus = _taxService.GetVatNumberStatus(model.VatNumber, out _, out var vatAddress);
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.VatNumberStatusIdAttribute, (int)vatNumberStatus);
+                        var (vatNumberStatus, _, vatAddress) = await _taxService.GetVatNumberStatusAsync(model.VatNumber);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.VatNumberStatusIdAttribute, (int)vatNumberStatus);
                         //send VAT number admin notification
                         if (!string.IsNullOrEmpty(model.VatNumber) && _taxSettings.EuVatEmailAdminWhenNewVatSubmitted)
-                            _workflowMessageService.SendNewVatSubmittedStoreOwnerNotification(user, model.VatNumber, vatAddress, _localizationSettings.DefaultAdminLanguageId);
+                            await _workflowMessageService.SendNewVatSubmittedStoreOwnerNotificationAsync(user, model.VatNumber, vatAddress, _localizationSettings.DefaultAdminLanguageId);
                     }
 
                     //form fields
                     if (_userSettings.GenderEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.GenderAttribute, model.Gender);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.GenderAttribute, model.Gender);
                     if (_userSettings.FirstNameEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.FirstNameAttribute, model.FirstName);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.FirstNameAttribute, model.FirstName);
                     if (_userSettings.LastNameEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.LastNameAttribute, model.LastName);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.LastNameAttribute, model.LastName);
                     if (_userSettings.DateOfBirthEnabled)
                     {
                         var dateOfBirth = model.ParseDateOfBirth();
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.DateOfBirthAttribute, dateOfBirth);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.DateOfBirthAttribute, dateOfBirth);
                     }
                     if (_userSettings.CompanyEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CompanyAttribute, model.Company);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CompanyAttribute, model.Company);
                     if (_userSettings.StreetAddressEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.StreetAddressAttribute, model.StreetAddress);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.StreetAddressAttribute, model.StreetAddress);
                     if (_userSettings.StreetAddress2Enabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.StreetAddress2Attribute, model.StreetAddress2);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.StreetAddress2Attribute, model.StreetAddress2);
                     if (_userSettings.ZipPostalCodeEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.ZipPostalCodeAttribute, model.ZipPostalCode);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.ZipPostalCodeAttribute, model.ZipPostalCode);
                     if (_userSettings.CityEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CityAttribute, model.City);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CityAttribute, model.City);
                     if (_userSettings.CountyEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CountyAttribute, model.County);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CountyAttribute, model.County);
                     if (_userSettings.CountryEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CountryIdAttribute, model.CountryId);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CountryIdAttribute, model.CountryId);
                     if (_userSettings.CountryEnabled && _userSettings.StateProvinceEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.StateProvinceIdAttribute,
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.StateProvinceIdAttribute,
                             model.StateProvinceId);
                     if (_userSettings.PhoneEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.PhoneAttribute, model.Phone);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.PhoneAttribute, model.Phone);
                     if (_userSettings.FaxEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.FaxAttribute, model.Fax);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.FaxAttribute, model.Fax);
 
                     //newsletter
                     if (_userSettings.NewsletterEnabled)
                     {
                         //save newsletter value
-                        var newsletter = _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreId(model.Email, _storeContext.CurrentStore.Id);
+                        var newsletter = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(model.Email, (await _storeContext.GetCurrentStoreAsync()).Id);
                         if (newsletter != null)
                         {
                             if (model.Newsletter)
                             {
                                 newsletter.Active = true;
-                                _newsLetterSubscriptionService.UpdateNewsLetterSubscription(newsletter);
+                                await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(newsletter);
 
                                 //GDPR
                                 if (_gdprSettings.GdprEnabled && _gdprSettings.LogNewsletterConsent)
                                 {
-                                    _gdprService.InsertLog(user, 0, GdprRequestType.ConsentAgree, _localizationService.GetResource("Gdpr.Consent.Newsletter"));
+                                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ConsentAgree, await _localizationService.GetResourceAsync("Gdpr.Consent.Newsletter"));
                                 }
                             }
                             //else
@@ -811,19 +886,19 @@ namespace TVProgViewer.WebUI.Controllers
                         {
                             if (model.Newsletter)
                             {
-                                _newsLetterSubscriptionService.InsertNewsLetterSubscription(new NewsLetterSubscription
+                                await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new NewsLetterSubscription
                                 {
                                     NewsLetterSubscriptionGuid = Guid.NewGuid(),
                                     Email = model.Email,
                                     Active = true,
-                                    StoreId = _storeContext.CurrentStore.Id,
+                                    StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
                                     CreatedOnUtc = DateTime.UtcNow
                                 });
 
                                 //GDPR
                                 if (_gdprSettings.GdprEnabled && _gdprSettings.LogNewsletterConsent)
                                 {
-                                    _gdprService.InsertLog(user, 0, GdprRequestType.ConsentAgree, _localizationService.GetResource("Gdpr.Consent.Newsletter"));
+                                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ConsentAgree, await _localizationService.GetResourceAsync("Gdpr.Consent.Newsletter"));
                                 }
                             }
                         }
@@ -835,14 +910,14 @@ namespace TVProgViewer.WebUI.Controllers
                         //GDPR
                         if (_gdprSettings.GdprEnabled && _gdprSettings.LogPrivacyPolicyConsent)
                         {
-                            _gdprService.InsertLog(user, 0, GdprRequestType.ConsentAgree, _localizationService.GetResource("Gdpr.Consent.PrivacyPolicy"));
+                            await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ConsentAgree, await _localizationService.GetResourceAsync("Gdpr.Consent.PrivacyPolicy"));
                         }
                     }
 
                     //GDPR
                     if (_gdprSettings.GdprEnabled)
                     {
-                        var consents = _gdprService.GetAllConsents().Where(consent => consent.DisplayDuringRegistration).ToList();
+                        var consents = (await _gdprService.GetAllConsentsAsync()).Where(consent => consent.DisplayDuringRegistration).ToList();
                         foreach (var consent in consents)
                         {
                             var controlId = $"consent{consent.Id}";
@@ -850,46 +925,42 @@ namespace TVProgViewer.WebUI.Controllers
                             if (!StringValues.IsNullOrEmpty(cbConsent) && cbConsent.ToString().Equals("on"))
                             {
                                 //agree
-                                _gdprService.InsertLog(user, consent.Id, GdprRequestType.ConsentAgree, consent.Message);
+                                await _gdprService.InsertLogAsync(user, consent.Id, GdprRequestType.ConsentAgree, consent.Message);
                             }
                             else
                             {
                                 //disagree
-                                _gdprService.InsertLog(user, consent.Id, GdprRequestType.ConsentDisagree, consent.Message);
+                                await _gdprService.InsertLogAsync(user, consent.Id, GdprRequestType.ConsentDisagree, consent.Message);
                             }
                         }
                     }
 
                     //save user attributes
-                    _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CustomUserAttributes, userAttributesXml);
-
-                    //login user now
-                    if (isApproved)
-                        _authenticationService.SignIn(user, true);
+                    await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CustomUserAttributes, userAttributesXml);
 
                     //insert default address (if possible)
                     var defaultAddress = new Address
                     {
-                        FirstName = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.FirstNameAttribute),
-                        LastName = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.LastNameAttribute),
+                        FirstName = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.FirstNameAttribute),
+                        LastName = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.LastNameAttribute),
                         Email = user.Email,
-                        Company = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.CompanyAttribute),
-                        CountryId = _genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.CountryIdAttribute) > 0
-                            ? (int?)_genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.CountryIdAttribute)
+                        Company = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.CompanyAttribute),
+                        CountryId = await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.CountryIdAttribute) > 0
+                            ? (int?)await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.CountryIdAttribute)
                             : null,
-                        StateProvinceId = _genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.StateProvinceIdAttribute) > 0
-                            ? (int?)_genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.StateProvinceIdAttribute)
+                        StateProvinceId = await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.StateProvinceIdAttribute) > 0
+                            ? (int?)await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.StateProvinceIdAttribute)
                             : null,
-                        County = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.CountyAttribute),
-                        City = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.CityAttribute),
-                        Address1 = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.StreetAddressAttribute),
-                        Address2 = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.StreetAddress2Attribute),
-                        ZipPostalCode = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.ZipPostalCodeAttribute),
-                        PhoneNumber = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.PhoneAttribute),
-                        FaxNumber = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.FaxAttribute),
+                        County = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.CountyAttribute),
+                        City = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.CityAttribute),
+                        Address1 = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.StreetAddressAttribute),
+                        Address2 = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.StreetAddress2Attribute),
+                        ZipPostalCode = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.ZipPostalCodeAttribute),
+                        PhoneNumber = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.PhoneAttribute),
+                        FaxNumber = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.FaxAttribute),
                         CreatedOnUtc = user.CreatedOnUtc
                     };
-                    if (_addressService.IsAddressValid(defaultAddress))
+                    if (await _addressService.IsAddressValidAsync(defaultAddress))
                     {
                         //some validation
                         if (defaultAddress.CountryId == 0)
@@ -899,57 +970,49 @@ namespace TVProgViewer.WebUI.Controllers
                         //set default address
                         //user.Addresses.Add(defaultAddress);
 
-                        _addressService.InsertAddress(defaultAddress);
+                        await _addressService.InsertAddressAsync(defaultAddress);
 
-                        _userService.InsertUserAddress(user, defaultAddress);
+                        await _userService.InsertUserAddressAsync(user, defaultAddress);
 
                         user.BillingAddressId = defaultAddress.Id;
                         user.ShippingAddressId = defaultAddress.Id;
 
-                        _userService.UpdateUser(user);
+                        await _userService.UpdateUserAsync(user);
                     }
 
                     //notifications
                     if (_userSettings.NotifyNewUserRegistration)
-                        _workflowMessageService.SendUserRegisteredNotificationMessage(user,
+                        await _workflowMessageService.SendUserRegisteredNotificationMessageAsync(user,
                             _localizationSettings.DefaultAdminLanguageId);
 
                     //raise event       
-                    _eventPublisher.Publish(new UserRegisteredEvent(user));
+                    await _eventPublisher.PublishAsync(new UserRegisteredEvent(user));
 
                     switch (_userSettings.UserRegistrationType)
                     {
                         case UserRegistrationType.EmailValidation:
-                            {
-                                //email validation message
-                                _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.AccountActivationTokenAttribute, Guid.NewGuid().ToString());
-                                _workflowMessageService.SendUserEmailValidationMessage(user, _workContext.WorkingLanguage.Id);
+                            //email validation message
+                            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.AccountActivationTokenAttribute, Guid.NewGuid().ToString());
+                            await _workflowMessageService.SendUserEmailValidationMessageAsync(user, (await _workContext.GetWorkingLanguageAsync()).Id);
 
-                                //result
-                                return RedirectToRoute("RegisterResult",
-                                    new { resultId = (int)UserRegistrationType.EmailValidation });
-                            }
+                            //result
+                            return RedirectToRoute("RegisterResult", new { resultId = (int)UserRegistrationType.EmailValidation, returnUrl });
+
                         case UserRegistrationType.AdminApproval:
-                            {
-                                return RedirectToRoute("RegisterResult",
-                                    new { resultId = (int)UserRegistrationType.AdminApproval });
-                            }
+                            return RedirectToRoute("RegisterResult", new { resultId = (int)UserRegistrationType.AdminApproval, returnUrl });
+
                         case UserRegistrationType.Standard:
-                            {
-                                //send user welcome message
-                                _workflowMessageService.SendUserWelcomeMessage(user, _workContext.WorkingLanguage.Id);
+                            //send user welcome message
+                            await _workflowMessageService.SendUserWelcomeMessageAsync(user, (await _workContext.GetWorkingLanguageAsync()).Id);
 
-                                //raise event       
-                                _eventPublisher.Publish(new UserActivatedEvent(user));
+                            //raise event       
+                            await _eventPublisher.PublishAsync(new UserActivatedEvent(user));
 
-                                var redirectUrl = Url.RouteUrl("RegisterResult",
-                                    new { resultId = (int)UserRegistrationType.Standard, returnUrl }, _webHelper.GetCurrentRequestProtocol());
-                                return Redirect(redirectUrl);
-                            }
+                            returnUrl = Url.RouteUrl("RegisterResult", new { resultId = (int)UserRegistrationType.Standard, returnUrl });
+                            return await _userRegistrationService.SignInUserAsync(user, returnUrl, true);
+
                         default:
-                            {
-                                return RedirectToRoute("Homepage");
-                            }
+                            return RedirectToRoute("Homepage");
                     }
                 }
 
@@ -959,56 +1022,48 @@ namespace TVProgViewer.WebUI.Controllers
             }
 
             //If we got this far, something failed, redisplay form
-            model = _userModelFactory.PrepareRegisterModel(model, true, userAttributesXml);
+            model = await _userModelFactory.PrepareRegisterModelAsync(model, true, userAttributesXml);
+
             return View(model);
         }
 
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult RegisterResult(int resultId)
-        {
-            var model = _userModelFactory.PrepareRegisterResultModel(resultId);
-            return View(model);
-        }
-
-        //available even when navigation is not allowed
-        [CheckAccessPublicStore(true)]
-        [HttpPost]
-        [IgnoreAntiforgeryToken]
-        public virtual IActionResult RegisterResult(string returnUrl)
+        public virtual async Task<IActionResult> RegisterResult(int resultId, string returnUrl)
         {
             if (string.IsNullOrEmpty(returnUrl) || !Url.IsLocalUrl(returnUrl))
-                return RedirectToRoute("Homepage");
+                returnUrl = Url.RouteUrl("Homepage");
 
-            return Redirect(returnUrl);
+            var model = await _userModelFactory.PrepareRegisterResultModelAsync(resultId, returnUrl);
+            return View(model);
         }
 
         [HttpPost]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult CheckUsernameAvailability(string username)
+        public virtual async Task<IActionResult> CheckUsernameAvailability(string username)
         {
             var usernameAvailable = false;
-            var statusText = _localizationService.GetResource("Account.CheckUsernameAvailability.NotAvailable");
+            var statusText = await _localizationService.GetResourceAsync("Account.CheckUsernameAvailability.NotAvailable");
 
             if (!UsernamePropertyValidator.IsValid(username, _userSettings))
             {
-                statusText = _localizationService.GetResource("Account.Fields.Username.NotValid");
+                statusText = await _localizationService.GetResourceAsync("Account.Fields.Username.NotValid");
             }
             else if (_userSettings.UsernamesEnabled && !string.IsNullOrWhiteSpace(username))
             {
-                if (_workContext.CurrentUser != null &&
-                    _workContext.CurrentUser.UserName != null &&
-                    _workContext.CurrentUser.UserName.Equals(username, StringComparison.InvariantCultureIgnoreCase))
+                if (await _workContext.GetCurrentUserAsync() != null &&
+                    (await _workContext.GetCurrentUserAsync()).Username != null &&
+                    (await _workContext.GetCurrentUserAsync()).Username.Equals(username, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    statusText = _localizationService.GetResource("Account.CheckUsernameAvailability.CurrentUsername");
+                    statusText = await _localizationService.GetResourceAsync("Account.CheckUsernameAvailability.CurrentUsername");
                 }
                 else
                 {
-                    var user = _userService.GetUserByUsername(username);
+                    var user = await _userService.GetUserByUsernameAsync(username);
                     if (user == null)
                     {
-                        statusText = _localizationService.GetResource("Account.CheckUsernameAvailability.Available");
+                        statusText = await _localizationService.GetResourceAsync("Account.CheckUsernameAvailability.Available");
                         usernameAvailable = true;
                     }
                 }
@@ -1017,44 +1072,43 @@ namespace TVProgViewer.WebUI.Controllers
             return Json(new { Available = usernameAvailable, Text = statusText });
         }
 
-        [HttpsRequirement(SslRequirement.Yes)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult AccountActivation(string token, string email, Guid guid)
+        public virtual async Task<IActionResult> AccountActivation(string token, string email, Guid guid)
         {
             //For backward compatibility with previous versions where email was used as a parameter in the URL
-            var user = _userService.GetUserByEmail(email);
-            if (user == null)
-                user = _userService.GetUserByGuid(guid);
+            var user = await _userService.GetUserByEmailAsync(email)
+                ?? await _userService.GetUserByGuidAsync(guid);
 
             if (user == null)
                 return RedirectToRoute("Homepage");
 
-            var cToken = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.AccountActivationTokenAttribute);
+            var model = new AccountActivationModel { ReturnUrl = Url.RouteUrl("Homepage") };
+            var cToken = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.AccountActivationTokenAttribute);
             if (string.IsNullOrEmpty(cToken))
-                return
-                    View(new AccountActivationModel
-                    {
-                        Result = _localizationService.GetResource("Account.AccountActivation.AlreadyActivated")
-                    });
+            {
+                model.Result = await _localizationService.GetResourceAsync("Account.AccountActivation.AlreadyActivated");
+                return View(model);
+            }
 
             if (!cToken.Equals(token, StringComparison.InvariantCultureIgnoreCase))
                 return RedirectToRoute("Homepage");
 
             //activate user account
             user.Active = true;
-            _userService.UpdateUser(user);
-            _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.AccountActivationTokenAttribute, "");
+            await _userService.UpdateUserAsync(user);
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.AccountActivationTokenAttribute, "");
+
             //send welcome message
-            _workflowMessageService.SendUserWelcomeMessage(user, _workContext.WorkingLanguage.Id);
+            await _workflowMessageService.SendUserWelcomeMessageAsync(user, (await _workContext.GetWorkingLanguageAsync()).Id);
 
             //raise event       
-            _eventPublisher.Publish(new UserActivatedEvent(user));
+            await _eventPublisher.PublishAsync(new UserActivatedEvent(user));
 
-            var model = new AccountActivationModel
-            {
-                Result = _localizationService.GetResource("Account.AccountActivation.Activated")
-            };
+            //authenticate user after activation
+            await _userRegistrationService.SignInUserAsync(user, null, true);
+
+            model.Result = await _localizationService.GetResourceAsync("Account.AccountActivation.Activated");
             return View(model);
         }
 
@@ -1062,38 +1116,46 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region My account / Info
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult Info()
+        public virtual async Task<IActionResult> Info()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             var model = new UserInfoModel();
-            model = _userModelFactory.PrepareUserInfoModel(model, _workContext.CurrentUser, false);
+            model = await _userModelFactory.PrepareUserInfoModelAsync(model, await _workContext.GetCurrentUserAsync(), false);
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual IActionResult Info(UserInfoModel model, IFormCollection form)
+        public virtual async Task<IActionResult> Info(UserInfoModel model, IFormCollection form)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             var oldUserModel = new UserInfoModel();
 
-            var user = _workContext.CurrentUser;
+            var user = await _workContext.GetCurrentUserAsync();
 
             //get user info model before changes for gdpr log
             if (_gdprSettings.GdprEnabled & _gdprSettings.LogUserProfileChanges)
-                oldUserModel = _userModelFactory.PrepareUserInfoModel(oldUserModel, user, false);
+                oldUserModel = await _userModelFactory.PrepareUserInfoModelAsync(oldUserModel, user, false);
 
             //custom user attributes
-            var userAttributesXml = ParseCustomUserAttributes(form);
-            var userAttributeWarnings = _userAttributeParser.GetAttributeWarnings(userAttributesXml);
+            var userAttributesXml = await ParseCustomUserAttributesAsync(form);
+            var userAttributeWarnings = await _userAttributeParser.GetAttributeWarningsAsync(userAttributesXml);
             foreach (var error in userAttributeWarnings)
             {
                 ModelState.AddModelError("", error);
+            }
+
+            //GDPR
+            if (_gdprSettings.GdprEnabled)
+            {
+                var consents = (await _gdprService
+                    .GetAllConsentsAsync()).Where(consent => consent.DisplayOnUserInfoPage && consent.IsRequired).ToList();
+
+                ValidateRequiredConsents(consents, form);
             }
 
             try
@@ -1103,16 +1165,15 @@ namespace TVProgViewer.WebUI.Controllers
                     //username 
                     if (_userSettings.UsernamesEnabled && _userSettings.AllowUsersToChangeUsernames)
                     {
-                        if (
-                            !user.UserName.Equals(model.Username.Trim(), StringComparison.InvariantCultureIgnoreCase))
+                        if (!user.Username.Equals(model.Username.Trim(), StringComparison.InvariantCultureIgnoreCase))
                         {
                             //change username
-                            _userRegistrationService.SetUsername(user, model.Username.Trim());
+                            await _userRegistrationService.SetUsernameAsync(user, model.Username.Trim());
 
                             //re-authenticate
                             //do not authenticate users in impersonation mode
                             if (_workContext.OriginalUserIfImpersonated == null)
-                                _authenticationService.SignIn(user, true);
+                                await _authenticationService.SignInAsync(user, true);
                         }
                     }
                     //email
@@ -1120,102 +1181,101 @@ namespace TVProgViewer.WebUI.Controllers
                     {
                         //change email
                         var requireValidation = _userSettings.UserRegistrationType == UserRegistrationType.EmailValidation;
-                        _userRegistrationService.SetEmail(user, model.Email.Trim(), requireValidation);
+                        await _userRegistrationService.SetEmailAsync(user, model.Email.Trim(), requireValidation);
 
                         //do not authenticate users in impersonation mode
                         if (_workContext.OriginalUserIfImpersonated == null)
                         {
                             //re-authenticate (if usernames are disabled)
                             if (!_userSettings.UsernamesEnabled && !requireValidation)
-                                _authenticationService.SignIn(user, true);
+                                await _authenticationService.SignInAsync(user, true);
                         }
                     }
 
                     //properties
                     if (_dateTimeSettings.AllowUsersToSetTimeZone)
                     {
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.TimeZoneIdAttribute,
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.TimeZoneIdAttribute,
                             model.TimeZoneId);
                     }
                     //VAT number
                     if (_taxSettings.EuVatEnabled)
                     {
-                        var prevVatNumber = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.VatNumberAttribute);
+                        var prevVatNumber = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.VatNumberAttribute);
 
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.VatNumberAttribute,
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.VatNumberAttribute,
                             model.VatNumber);
                         if (prevVatNumber != model.VatNumber)
                         {
-                            var vatNumberStatus = _taxService.GetVatNumberStatus(model.VatNumber, out _, out var vatAddress);
-                            _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.VatNumberStatusIdAttribute, (int)vatNumberStatus);
+                            var (vatNumberStatus, _, vatAddress) = await _taxService.GetVatNumberStatusAsync(model.VatNumber);
+                            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.VatNumberStatusIdAttribute, (int)vatNumberStatus);
                             //send VAT number admin notification
                             if (!string.IsNullOrEmpty(model.VatNumber) && _taxSettings.EuVatEmailAdminWhenNewVatSubmitted)
-                                _workflowMessageService.SendNewVatSubmittedStoreOwnerNotification(user,
+                                await _workflowMessageService.SendNewVatSubmittedStoreOwnerNotificationAsync(user,
                                     model.VatNumber, vatAddress, _localizationSettings.DefaultAdminLanguageId);
                         }
                     }
 
                     //form fields
                     if (_userSettings.GenderEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.GenderAttribute, model.Gender);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.GenderAttribute, model.Gender);
                     if (_userSettings.FirstNameEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.FirstNameAttribute, model.FirstName);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.FirstNameAttribute, model.FirstName);
                     if (_userSettings.LastNameEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.LastNameAttribute, model.LastName);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.LastNameAttribute, model.LastName);
                     if (_userSettings.DateOfBirthEnabled)
                     {
                         var dateOfBirth = model.ParseDateOfBirth();
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.DateOfBirthAttribute, dateOfBirth);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.DateOfBirthAttribute, dateOfBirth);
                     }
                     if (_userSettings.CompanyEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CompanyAttribute, model.Company);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CompanyAttribute, model.Company);
                     if (_userSettings.StreetAddressEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.StreetAddressAttribute, model.StreetAddress);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.StreetAddressAttribute, model.StreetAddress);
                     if (_userSettings.StreetAddress2Enabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.StreetAddress2Attribute, model.StreetAddress2);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.StreetAddress2Attribute, model.StreetAddress2);
                     if (_userSettings.ZipPostalCodeEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.ZipPostalCodeAttribute, model.ZipPostalCode);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.ZipPostalCodeAttribute, model.ZipPostalCode);
                     if (_userSettings.CityEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CityAttribute, model.City);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CityAttribute, model.City);
                     if (_userSettings.CountyEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CountyAttribute, model.County);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CountyAttribute, model.County);
                     if (_userSettings.CountryEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CountryIdAttribute, model.CountryId);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CountryIdAttribute, model.CountryId);
                     if (_userSettings.CountryEnabled && _userSettings.StateProvinceEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.StateProvinceIdAttribute, model.StateProvinceId);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.StateProvinceIdAttribute, model.StateProvinceId);
                     if (_userSettings.PhoneEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.PhoneAttribute, model.Phone);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.PhoneAttribute, model.Phone);
                     if (_userSettings.FaxEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.FaxAttribute, model.Fax);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.FaxAttribute, model.Fax);
 
                     //newsletter
                     if (_userSettings.NewsletterEnabled)
                     {
                         //save newsletter value
-                        var newsletter = _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreId(user.Email, _storeContext.CurrentStore.Id);
+                        var newsletter = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(user.Email, (await _storeContext.GetCurrentStoreAsync()).Id);
                         if (newsletter != null)
                         {
                             if (model.Newsletter)
                             {
-                                var wasActive = newsletter.Active;
                                 newsletter.Active = true;
-                                _newsLetterSubscriptionService.UpdateNewsLetterSubscription(newsletter);
+                                await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(newsletter);
                             }
                             else
                             {
-                                _newsLetterSubscriptionService.DeleteNewsLetterSubscription(newsletter);
+                                await _newsLetterSubscriptionService.DeleteNewsLetterSubscriptionAsync(newsletter);
                             }
                         }
                         else
                         {
                             if (model.Newsletter)
                             {
-                                _newsLetterSubscriptionService.InsertNewsLetterSubscription(new NewsLetterSubscription
+                                await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(new NewsLetterSubscription
                                 {
                                     NewsLetterSubscriptionGuid = Guid.NewGuid(),
                                     Email = user.Email,
                                     Active = true,
-                                    StoreId = _storeContext.CurrentStore.Id,
+                                    StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
                                     CreatedOnUtc = DateTime.UtcNow
                                 });
                             }
@@ -1223,15 +1283,15 @@ namespace TVProgViewer.WebUI.Controllers
                     }
 
                     if (_forumSettings.ForumsEnabled && _forumSettings.SignaturesEnabled)
-                        _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.SignatureAttribute, model.Signature);
+                        await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.SignatureAttribute, model.Signature);
 
                     //save user attributes
-                    _genericAttributeService.SaveAttribute(_workContext.CurrentUser,
+                    await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(),
                         TvProgUserDefaults.CustomUserAttributes, userAttributesXml);
 
                     //GDPR
                     if (_gdprSettings.GdprEnabled)
-                        LogGdpr(user, oldUserModel, model, form);
+                        await LogGdprAsync(user, oldUserModel, model, form);
 
                     return RedirectToRoute("UserInfo");
                 }
@@ -1242,18 +1302,19 @@ namespace TVProgViewer.WebUI.Controllers
             }
 
             //If we got this far, something failed, redisplay form
-            model = _userModelFactory.PrepareUserInfoModel(model, user, true, userAttributesXml);
+            model = await _userModelFactory.PrepareUserInfoModelAsync(model, user, true, userAttributesXml);
+
             return View(model);
         }
 
         [HttpPost]
-        public virtual IActionResult RemoveExternalAssociation(int id)
+        public virtual async Task<IActionResult> RemoveExternalAssociation(int id)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             //ensure it's our record
-            var ear = _externalAuthenticationService.GetExternalAuthenticationRecordById(id);
+            var ear = await _externalAuthenticationService.GetExternalAuthenticationRecordByIdAsync(id);
 
             if (ear == null)
             {
@@ -1263,7 +1324,7 @@ namespace TVProgViewer.WebUI.Controllers
                 });
             }
 
-            _externalAuthenticationService.DeleteExternalAuthenticationRecord(ear);
+            await _externalAuthenticationService.DeleteExternalAuthenticationRecordAsync(ear);
 
             return Json(new
             {
@@ -1271,25 +1332,24 @@ namespace TVProgViewer.WebUI.Controllers
             });
         }
 
-        [HttpsRequirement(SslRequirement.Yes)]
         //available even when navigation is not allowed
         [CheckAccessPublicStore(true)]
-        public virtual IActionResult EmailRevalidation(string token, string email, Guid guid)
+        public virtual async Task<IActionResult> EmailRevalidation(string token, string email, Guid guid)
         {
             //For backward compatibility with previous versions where email was used as a parameter in the URL
-            var user = _userService.GetUserByEmail(email);
-            if (user == null)
-                user = _userService.GetUserByGuid(guid);
+            var user = await _userService.GetUserByEmailAsync(email)
+                ?? await _userService.GetUserByGuidAsync(guid);
 
             if (user == null)
                 return RedirectToRoute("Homepage");
 
-            var cToken = _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.EmailRevalidationTokenAttribute);
+            var model = new EmailRevalidationModel { ReturnUrl = Url.RouteUrl("Homepage") };
+            var cToken = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.EmailRevalidationTokenAttribute);
             if (string.IsNullOrEmpty(cToken))
-                return View(new EmailRevalidationModel
-                {
-                    Result = _localizationService.GetResource("Account.EmailRevalidation.AlreadyChanged")
-                });
+            {
+                model.Result = await _localizationService.GetResourceAsync("Account.EmailRevalidation.AlreadyChanged");
+                return View(model);
+            }
 
             if (!cToken.Equals(token, StringComparison.InvariantCultureIgnoreCase))
                 return RedirectToRoute("Homepage");
@@ -1303,29 +1363,22 @@ namespace TVProgViewer.WebUI.Controllers
             //change email
             try
             {
-                _userRegistrationService.SetEmail(user, user.EmailToRevalidate, false);
+                await _userRegistrationService.SetEmailAsync(user, user.EmailToRevalidate, false);
             }
             catch (Exception exc)
             {
-                return View(new EmailRevalidationModel
-                {
-                    Result = _localizationService.GetResource(exc.Message)
-                });
+                model.Result = await _localizationService.GetResourceAsync(exc.Message);
+                return View(model);
             }
+
             user.EmailToRevalidate = null;
-            _userService.UpdateUser(user);
-            _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.EmailRevalidationTokenAttribute, "");
+            await _userService.UpdateUserAsync(user);
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.EmailRevalidationTokenAttribute, "");
 
-            //re-authenticate (if usernames are disabled)
-            if (!_userSettings.UsernamesEnabled)
-            {
-                _authenticationService.SignIn(user, true);
-            }
+            //authenticate user after changing email
+            await _userRegistrationService.SignInUserAsync(user, null, true);
 
-            var model = new EmailRevalidationModel()
-            {
-                Result = _localizationService.GetResource("Account.EmailRevalidation.Changed")
-            };
+            model.Result = await _localizationService.GetResourceAsync("Account.EmailRevalidation.Changed");
             return View(model);
         }
 
@@ -1333,33 +1386,32 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region My account / Addresses
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult Addresses()
+        public virtual async Task<IActionResult> Addresses()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var model = _userModelFactory.PrepareUserAddressListModel();
+            var model = await _userModelFactory.PrepareUserAddressListModelAsync();
+
             return View(model);
         }
 
         [HttpPost]
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult AddressDelete(int addressId)
+        public virtual async Task<IActionResult> AddressDelete(int addressId)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var user = _workContext.CurrentUser;
+            var user = await _workContext.GetCurrentUserAsync();
 
             //find address (ensure that it belongs to the current user)
-            var address = _userService.GetUserAddress(user.Id, addressId);
+            var address = await _userService.GetUserAddressAsync(user.Id, addressId);
             if (address != null)
             {
-                _userService.RemoveUserAddress(user, address);
-                _userService.UpdateUser(user);
+                await _userService.RemoveUserAddressAsync(user, address);
+                await _userService.UpdateUserAsync(user);
                 //now delete the address record
-                _addressService.DeleteAddress(address);
+                await _addressService.DeleteAddressAsync(address);
             }
 
             //redirect to the address list page
@@ -1369,31 +1421,30 @@ namespace TVProgViewer.WebUI.Controllers
             });
         }
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult AddressAdd()
+        public virtual async Task<IActionResult> AddressAdd()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             var model = new UserAddressEditModel();
-            _addressModelFactory.PrepareAddressModel(model.Address,
+            await _addressModelFactory.PrepareAddressModelAsync(model.Address,
                 address: null,
                 excludeProperties: false,
                 addressSettings: _addressSettings,
-                loadCountries: () => _countryService.GetAllCountries(_workContext.WorkingLanguage.Id));
+                loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id));
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual IActionResult AddressAdd(UserAddressEditModel model, IFormCollection form)
+        public virtual async Task<IActionResult> AddressAdd(UserAddressEditModel model, IFormCollection form)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             //custom address attributes
-            var customAttributes = _addressAttributeParser.ParseCustomAddressAttributes(form);
-            var customAttributeWarnings = _addressAttributeParser.GetAttributeWarnings(customAttributes);
+            var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);
+            var customAttributeWarnings = await _addressAttributeParser.GetAttributeWarningsAsync(customAttributes);
             foreach (var error in customAttributeWarnings)
             {
                 ModelState.AddModelError("", error);
@@ -1411,63 +1462,62 @@ namespace TVProgViewer.WebUI.Controllers
                     address.StateProvinceId = null;
 
 
-                _addressService.InsertAddress(address);
+                await _addressService.InsertAddressAsync(address);
 
-                _userService.InsertUserAddress(_workContext.CurrentUser, address);
+                await _userService.InsertUserAddressAsync(await _workContext.GetCurrentUserAsync(), address);
 
                 return RedirectToRoute("UserAddresses");
             }
 
             //If we got this far, something failed, redisplay form
-            _addressModelFactory.PrepareAddressModel(model.Address,
+            await _addressModelFactory.PrepareAddressModelAsync(model.Address,
                 address: null,
                 excludeProperties: true,
                 addressSettings: _addressSettings,
-                loadCountries: () => _countryService.GetAllCountries(_workContext.WorkingLanguage.Id),
+                loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id),
                 overrideAttributesXml: customAttributes);
 
             return View(model);
         }
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult AddressEdit(int addressId)
+        public virtual async Task<IActionResult> AddressEdit(int addressId)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var user = _workContext.CurrentUser;
+            var user = await _workContext.GetCurrentUserAsync();
             //find address (ensure that it belongs to the current user)
-            var address = _userService.GetUserAddress(user.Id, addressId);
+            var address = await _userService.GetUserAddressAsync(user.Id, addressId);
             if (address == null)
                 //address is not found
                 return RedirectToRoute("UserAddresses");
 
             var model = new UserAddressEditModel();
-            _addressModelFactory.PrepareAddressModel(model.Address,
+            await _addressModelFactory.PrepareAddressModelAsync(model.Address,
                 address: address,
                 excludeProperties: false,
                 addressSettings: _addressSettings,
-                loadCountries: () => _countryService.GetAllCountries(_workContext.WorkingLanguage.Id));
+                loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id));
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual IActionResult AddressEdit(UserAddressEditModel model, int addressId, IFormCollection form)
+        public virtual async Task<IActionResult> AddressEdit(UserAddressEditModel model, int addressId, IFormCollection form)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var user = _workContext.CurrentUser;
+            var user = await _workContext.GetCurrentUserAsync();
             //find address (ensure that it belongs to the current user)
-            var address = _userService.GetUserAddress(user.Id, addressId);
+            var address = await _userService.GetUserAddressAsync(user.Id, addressId);
             if (address == null)
                 //address is not found
                 return RedirectToRoute("UserAddresses");
 
             //custom address attributes
-            var customAttributes = _addressAttributeParser.ParseCustomAddressAttributes(form);
-            var customAttributeWarnings = _addressAttributeParser.GetAttributeWarnings(customAttributes);
+            var customAttributes = await _addressAttributeParser.ParseCustomAddressAttributesAsync(form);
+            var customAttributeWarnings = await _addressAttributeParser.GetAttributeWarningsAsync(customAttributes);
             foreach (var error in customAttributeWarnings)
             {
                 ModelState.AddModelError("", error);
@@ -1477,18 +1527,19 @@ namespace TVProgViewer.WebUI.Controllers
             {
                 address = model.Address.ToEntity(address);
                 address.CustomAttributes = customAttributes;
-                _addressService.UpdateAddress(address);
+                await _addressService.UpdateAddressAsync(address);
 
                 return RedirectToRoute("UserAddresses");
             }
 
             //If we got this far, something failed, redisplay form
-            _addressModelFactory.PrepareAddressModel(model.Address,
+            await _addressModelFactory.PrepareAddressModelAsync(model.Address,
                 address: address,
                 excludeProperties: true,
                 addressSettings: _addressSettings,
-                loadCountries: () => _countryService.GetAllCountries(_workContext.WorkingLanguage.Id),
+                loadCountries: async () => await _countryService.GetAllCountriesAsync((await _workContext.GetWorkingLanguageAsync()).Id),
                 overrideAttributesXml: customAttributes);
+
             return View(model);
         }
 
@@ -1496,31 +1547,32 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region My account / Downloadable products
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult DownloadableProducts()
+        public virtual async Task<IActionResult> DownloadableProducts()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (_userSettings.HideDownloadableProductsTab)
                 return RedirectToRoute("UserInfo");
 
-            var model = _userModelFactory.PrepareUserDownloadableProductsModel();
+            var model = await _userModelFactory.PrepareUserDownloadableProductsModelAsync();
+
             return View(model);
         }
 
-        public virtual IActionResult UserAgreement(Guid orderItemId)
+        public virtual async Task<IActionResult> UserAgreement(Guid orderItemId)
         {
-            var orderItem = _orderService.GetOrderItemByGuid(orderItemId);
+            var orderItem = await _orderService.GetOrderItemByGuidAsync(orderItemId);
             if (orderItem == null)
                 return RedirectToRoute("Homepage");
 
-            var product = _productService.GetProductById(orderItem.ProductId);
+            var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
             if (product == null || !product.HasUserAgreement)
                 return RedirectToRoute("Homepage");
 
-            var model = _userModelFactory.PrepareUserAgreementModel(orderItem, product);
+            var model = await _userModelFactory.PrepareUserAgreementModelAsync(orderItem, product);
+
             return View(model);
         }
 
@@ -1528,37 +1580,36 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region My account / Change password
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult ChangePassword()
+        public virtual async Task<IActionResult> ChangePassword()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var model = _userModelFactory.PrepareChangePasswordModel();
+            var model = await _userModelFactory.PrepareChangePasswordModelAsync();
 
             //display the cause of the change password 
-            if (_userService.PasswordIsExpired(_workContext.CurrentUser))
-                ModelState.AddModelError(string.Empty, _localizationService.GetResource("Account.ChangePassword.PasswordIsExpired"));
+            if (await _userService.PasswordIsExpiredAsync(await _workContext.GetCurrentUserAsync()))
+                ModelState.AddModelError(string.Empty, await _localizationService.GetResourceAsync("Account.ChangePassword.PasswordIsExpired"));
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual IActionResult ChangePassword(ChangePasswordModel model)
+        public virtual async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var user = _workContext.CurrentUser;
+            var user = await _workContext.GetCurrentUserAsync();
 
             if (ModelState.IsValid)
             {
                 var changePasswordRequest = new ChangePasswordRequest(user.Email,
                     true, _userSettings.DefaultPasswordFormat, model.NewPassword, model.OldPassword);
-                var changePasswordResult = _userRegistrationService.ChangePassword(changePasswordRequest);
+                var changePasswordResult = await _userRegistrationService.ChangePasswordAsync(changePasswordRequest);
                 if (changePasswordResult.Success)
                 {
-                    model.Result = _localizationService.GetResource("Account.ChangePassword.Success");
+                    model.Result = await _localizationService.GetResourceAsync("Account.ChangePassword.Success");
                     return View(model);
                 }
 
@@ -1575,60 +1626,61 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region My account / Avatar
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult Avatar()
+        public virtual async Task<IActionResult> Avatar()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_userSettings.AllowUsersToUploadAvatars)
                 return RedirectToRoute("UserInfo");
 
             var model = new UserAvatarModel();
-            model = _userModelFactory.PrepareUserAvatarModel(model);
+            model = await _userModelFactory.PrepareUserAvatarModelAsync(model);
+
             return View(model);
         }
 
         [HttpPost, ActionName("Avatar")]
         [FormValueRequired("upload-avatar")]
-        public virtual IActionResult UploadAvatar(UserAvatarModel model, IFormFile uploadedFile)
+        public virtual async Task<IActionResult> UploadAvatar(UserAvatarModel model, IFormFile uploadedFile)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_userSettings.AllowUsersToUploadAvatars)
                 return RedirectToRoute("UserInfo");
 
-            var user = _workContext.CurrentUser;
+            var user = await _workContext.GetCurrentUserAsync();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var userAvatar = _pictureService.GetPictureById(_genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute));
+                    var userAvatar = await _pictureService.GetPictureByIdAsync(await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute));
                     if (uploadedFile != null && !string.IsNullOrEmpty(uploadedFile.FileName))
                     {
                         var avatarMaxSize = _userSettings.AvatarMaximumSizeBytes;
                         if (uploadedFile.Length > avatarMaxSize)
-                            throw new TvProgException(string.Format(_localizationService.GetResource("Account.Avatar.MaximumUploadedFileSize"), avatarMaxSize));
+                            throw new TvProgException(string.Format(await _localizationService.GetResourceAsync("Account.Avatar.MaximumUploadedFileSize"), avatarMaxSize));
 
-                        var userPictureBinary = _downloadService.GetDownloadBits(uploadedFile);
+                        var userPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
                         if (userAvatar != null)
-                            userAvatar = _pictureService.UpdatePicture(userAvatar.Id, userPictureBinary, uploadedFile.ContentType, null);
+                            userAvatar = await _pictureService.UpdatePictureAsync(userAvatar.Id, userPictureBinary, uploadedFile.ContentType, null);
                         else
-                            userAvatar = _pictureService.InsertPicture(userPictureBinary, uploadedFile.ContentType, null);
+                            userAvatar = await _pictureService.InsertPictureAsync(userPictureBinary, uploadedFile.ContentType, null);
                     }
 
                     var userAvatarId = 0;
                     if (userAvatar != null)
                         userAvatarId = userAvatar.Id;
 
-                    _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.AvatarPictureIdAttribute, userAvatarId);
+                    await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.AvatarPictureIdAttribute, userAvatarId);
 
-                    model.AvatarUrl = _pictureService.GetPictureUrl(
-                        _genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute),
+                    model.AvatarUrl = await _pictureService.GetPictureUrlAsync(
+                        await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute),
                         _mediaSettings.AvatarPictureSize,
                         false);
+
                     return View(model);
                 }
                 catch (Exception exc)
@@ -1638,26 +1690,26 @@ namespace TVProgViewer.WebUI.Controllers
             }
 
             //If we got this far, something failed, redisplay form
-            model = _userModelFactory.PrepareUserAvatarModel(model);
+            model = await _userModelFactory.PrepareUserAvatarModelAsync(model);
             return View(model);
         }
 
         [HttpPost, ActionName("Avatar")]
         [FormValueRequired("remove-avatar")]
-        public virtual IActionResult RemoveAvatar(UserAvatarModel model)
+        public virtual async Task<IActionResult> RemoveAvatar(UserAvatarModel model)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_userSettings.AllowUsersToUploadAvatars)
                 return RedirectToRoute("UserInfo");
 
-            var user = _workContext.CurrentUser;
+            var user = await _workContext.GetCurrentUserAsync();
 
-            var userAvatar = _pictureService.GetPictureById(_genericAttributeService.GetAttribute<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute));
+            var userAvatar = await _pictureService.GetPictureByIdAsync(await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.AvatarPictureIdAttribute));
             if (userAvatar != null)
-                _pictureService.DeletePicture(userAvatar);
-            _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.AvatarPictureIdAttribute, 0);
+                await _pictureService.DeletePictureAsync(userAvatar);
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.AvatarPictureIdAttribute, 0);
 
             return RedirectToRoute("UserAvatar");
         }
@@ -1666,53 +1718,54 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region GDPR tools
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult GdprTools()
+        public virtual async Task<IActionResult> GdprTools()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_gdprSettings.GdprEnabled)
                 return RedirectToRoute("UserInfo");
 
-            var model = _userModelFactory.PrepareGdprToolsModel();
+            var model = await _userModelFactory.PrepareGdprToolsModelAsync();
+
             return View(model);
         }
 
         [HttpPost, ActionName("GdprTools")]
         [FormValueRequired("export-data")]
-        public virtual IActionResult GdprToolsExport()
+        public virtual async Task<IActionResult> GdprToolsExport()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_gdprSettings.GdprEnabled)
                 return RedirectToRoute("UserInfo");
 
             //log
-            _gdprService.InsertLog(_workContext.CurrentUser, 0, GdprRequestType.ExportData, _localizationService.GetResource("Gdpr.Exported"));
+            await _gdprService.InsertLogAsync(await _workContext.GetCurrentUserAsync(), 0, GdprRequestType.ExportData, await _localizationService.GetResourceAsync("Gdpr.Exported"));
 
             //export
-            var bytes = _exportManager.ExportUserGdprInfoToXlsx(_workContext.CurrentUser, _storeContext.CurrentStore.Id);
+            var bytes = await _exportManager.ExportUserGdprInfoToXlsxAsync(await _workContext.GetCurrentUserAsync(), (await _storeContext.GetCurrentStoreAsync()).Id);
 
             return File(bytes, MimeTypes.TextXlsx, "userdata.xlsx");
         }
 
         [HttpPost, ActionName("GdprTools")]
         [FormValueRequired("delete-account")]
-        public virtual IActionResult GdprToolsDelete()
+        public virtual async Task<IActionResult> GdprToolsDelete()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_gdprSettings.GdprEnabled)
                 return RedirectToRoute("UserInfo");
 
             //log
-            _gdprService.InsertLog(_workContext.CurrentUser, 0, GdprRequestType.DeleteUser, _localizationService.GetResource("Gdpr.DeleteRequested"));
+            await _gdprService.InsertLogAsync(await _workContext.GetCurrentUserAsync(), 0, GdprRequestType.DeleteUser, await _localizationService.GetResourceAsync("Gdpr.DeleteRequested"));
 
-            var model = _userModelFactory.PrepareGdprToolsModel();
-            model.Result = _localizationService.GetResource("Gdpr.DeleteRequested.Success");
+            var model = await _userModelFactory.PrepareGdprToolsModelAsync();
+            model.Result = await _localizationService.GetResourceAsync("Gdpr.DeleteRequested.Success");
+
             return View(model);
         }
 
@@ -1721,44 +1774,135 @@ namespace TVProgViewer.WebUI.Controllers
         #region Check gift card balance
 
         //check gift card balance page
-        [HttpsRequirement(SslRequirement.Yes)]
         //available even when a store is closed
         [CheckAccessClosedStore(true)]
-        public virtual IActionResult CheckGiftCardBalance()
+        public virtual async Task<IActionResult> CheckGiftCardBalance()
         {
             if (!(_captchaSettings.Enabled && _userSettings.AllowUsersToCheckGiftCardBalance))
             {
                 return RedirectToRoute("UserInfo");
             }
 
-            var model = _userModelFactory.PrepareCheckGiftCardBalanceModel();
+            var model = await _userModelFactory.PrepareCheckGiftCardBalanceModelAsync();
+
             return View(model);
         }
 
         [HttpPost, ActionName("CheckGiftCardBalance")]
         [FormValueRequired("checkbalancegiftcard")]
         [ValidateCaptcha]
-        public virtual IActionResult CheckBalance(CheckGiftCardBalanceModel model, bool captchaValid)
+        public virtual async Task<IActionResult> CheckBalance(CheckGiftCardBalanceModel model, bool captchaValid)
         {
             //validate CAPTCHA
             if (_captchaSettings.Enabled && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
             if (ModelState.IsValid)
             {
-                var giftCard = _giftCardService.GetAllGiftCards(giftCardCouponCode: model.GiftCardCode).FirstOrDefault();
-                if (giftCard != null && _giftCardService.IsGiftCardValid(giftCard))
+                var giftCard = (await _giftCardService.GetAllGiftCardsAsync(giftCardCouponCode: model.GiftCardCode)).FirstOrDefault();
+                if (giftCard != null && await _giftCardService.IsGiftCardValidAsync(giftCard))
                 {
-                    var remainingAmount = _currencyService.ConvertFromPrimaryStoreCurrency(_giftCardService.GetGiftCardRemainingAmount(giftCard), _workContext.WorkingCurrency);
-                    model.Result = _priceFormatter.FormatPrice(remainingAmount, true, false);
+                    var remainingAmount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(await _giftCardService.GetGiftCardRemainingAmountAsync(giftCard), await _workContext.GetWorkingCurrencyAsync());
+                    model.Result = await _priceFormatter.FormatPriceAsync(remainingAmount, true, false);
                 }
                 else
                 {
-                    model.Message = _localizationService.GetResource("CheckGiftCardBalance.GiftCardCouponCode.Invalid");
+                    model.Message = await _localizationService.GetResourceAsync("CheckGiftCardBalance.GiftCardCouponCode.Invalid");
                 }
             }
+
+            return View(model);
+        }
+
+        #endregion
+
+        #region Multi-factor Authentication
+
+        //available even when a store is closed
+        [CheckAccessClosedStore(true)]
+        public virtual async Task<IActionResult> MultiFactorAuthentication()
+        {
+            if (!await _multiFactorAuthenticationPluginManager.HasActivePluginsAsync())
+            {
+                return RedirectToRoute("UserInfo");
+            }
+
+            var model = new MultiFactorAuthenticationModel();
+            model = await _userModelFactory.PrepareMultiFactorAuthenticationModelAsync(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        public virtual async Task<IActionResult> MultiFactorAuthentication(MultiFactorAuthenticationModel model, IFormCollection form)
+        {
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
+                return Challenge();
+
+            var user = await _workContext.GetCurrentUserAsync();
+
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    //save MultiFactorIsEnabledAttribute
+                    if (!model.IsEnabled)
+                    {
+                        if (!_multiFactorAuthenticationSettings.ForceMultifactorAuthentication)
+                        {
+                            await _genericAttributeService
+                                .SaveAttributeAsync(user, TvProgUserDefaults.SelectedMultiFactorAuthenticationProviderAttribute, string.Empty);
+
+                            //raise change multi-factor authentication provider event       
+                            await _eventPublisher.PublishAsync(new UserChangeMultiFactorAuthenticationProviderEvent(user));
+                        }
+                        else
+                        {
+                            model = await _userModelFactory.PrepareMultiFactorAuthenticationModelAsync(model);
+                            model.Message = await _localizationService.GetResourceAsync("Account.MultiFactorAuthentication.Warning.ForceActivation");
+                            return View(model);
+                        }
+                    }
+                    else
+                    {
+                        //save selected multi-factor authentication provider
+                        var selectedProvider = await ParseSelectedProviderAsync(form);
+                        var lastSavedProvider = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.SelectedMultiFactorAuthenticationProviderAttribute);
+                        if (string.IsNullOrEmpty(selectedProvider) && !string.IsNullOrEmpty(lastSavedProvider))
+                        {
+                            selectedProvider = lastSavedProvider;
+                        }
+
+                        if (selectedProvider != lastSavedProvider)
+                        {
+                            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.SelectedMultiFactorAuthenticationProviderAttribute, selectedProvider);
+
+                            //raise change multi-factor authentication provider event       
+                            await _eventPublisher.PublishAsync(new UserChangeMultiFactorAuthenticationProviderEvent(user));
+                        }
+                    }
+
+                    return RedirectToRoute("MultiFactorAuthenticationSettings");
+                }
+            }
+            catch (Exception exc)
+            {
+                ModelState.AddModelError("", exc.Message);
+            }
+
+            //If we got this far, something failed, redisplay form
+            model = await _userModelFactory.PrepareMultiFactorAuthenticationModelAsync(model);
+            return View(model);
+        }
+
+        public virtual async Task<IActionResult> ConfigureMultiFactorAuthenticationProvider(string providerSysName)
+        {
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
+                return Challenge();
+
+            var model = new MultiFactorAuthenticationProviderModel();
+            model = await _userModelFactory.PrepareMultiFactorAuthenticationProviderModelAsync(model, providerSysName);
 
             return View(model);
         }

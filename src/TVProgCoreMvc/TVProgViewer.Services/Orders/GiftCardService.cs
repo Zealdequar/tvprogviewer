@@ -5,9 +5,9 @@ using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Users;
-using TVProgViewer.Services.Events;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Events;
 
 namespace TVProgViewer.Services.Orders
 {
@@ -27,13 +27,13 @@ namespace TVProgViewer.Services.Orders
 
         #region Ctor
 
-        public GiftCardService(IUserService UserService,
+        public GiftCardService(IUserService userService,
             IEventPublisher eventPublisher,
             IRepository<GiftCard> giftCardRepository,
             IRepository<GiftCardUsageHistory> giftCardUsageHistoryRepository,
             IRepository<OrderItem> orderItemRepository)
         {
-            _userService = UserService;
+            _userService = userService;
             _eventPublisher = eventPublisher;
             _giftCardRepository = giftCardRepository;
             _giftCardUsageHistoryRepository = giftCardUsageHistoryRepository;
@@ -48,15 +48,9 @@ namespace TVProgViewer.Services.Orders
         /// Deletes a gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        public virtual void DeleteGiftCard(GiftCard giftCard)
+        public virtual async Task DeleteGiftCardAsync(GiftCard giftCard)
         {
-            if (giftCard == null)
-                throw new ArgumentNullException(nameof(giftCard));
-
-            _giftCardRepository.Delete(giftCard);
-
-            //event notification
-            _eventPublisher.EntityDeleted(giftCard);
+            await _giftCardRepository.DeleteAsync(giftCard);
         }
 
         /// <summary>
@@ -64,12 +58,9 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="giftCardId">Gift card identifier</param>
         /// <returns>Gift card entry</returns>
-        public virtual GiftCard GetGiftCardById(int giftCardId)
+        public virtual async Task<GiftCard> GetGiftCardByIdAsync(int giftCardId)
         {
-            if (giftCardId == 0)
-                return null;
-
-            return _giftCardRepository.ToCachedGetById(giftCardId);
+            return await _giftCardRepository.GetByIdAsync(giftCardId, cache => default);
         }
 
         /// <summary>
@@ -85,41 +76,42 @@ namespace TVProgViewer.Services.Orders
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Gift cards</returns>
-        public virtual IPagedList<GiftCard> GetAllGiftCards(int? purchasedWithOrderId = null, int? usedWithOrderId = null,
+        public virtual async Task<IPagedList<GiftCard>> GetAllGiftCardsAsync(int? purchasedWithOrderId = null, int? usedWithOrderId = null,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             bool? isGiftCardActivated = null, string giftCardCouponCode = null,
             string recipientName = null,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var query = _giftCardRepository.Table;
-
-            if (purchasedWithOrderId.HasValue)
+            var giftCards = await _giftCardRepository.GetAllPagedAsync(query =>
             {
-                query = from gc in query
-                    join oi in _orderItemRepository.Table on gc.PurchasedWithOrderItemId equals oi.Id
-                    where oi.OrderId == purchasedWithOrderId.Value
-                    select gc;
-            }
+                if (purchasedWithOrderId.HasValue)
+                {
+                    query = from gc in query
+                            join oi in _orderItemRepository.Table on gc.PurchasedWithOrderItemId equals oi.Id
+                            where oi.OrderId == purchasedWithOrderId.Value
+                            select gc;
+                }
 
-            if (usedWithOrderId.HasValue)
-                query = from gc in query
-                    join gcuh in _giftCardUsageHistoryRepository.Table on gc.Id equals gcuh.GiftCardId
-                    where gcuh.UsedWithOrderId == usedWithOrderId
-                    select gc;
+                if (usedWithOrderId.HasValue)
+                    query = from gc in query
+                            join gcuh in _giftCardUsageHistoryRepository.Table on gc.Id equals gcuh.GiftCardId
+                            where gcuh.UsedWithOrderId == usedWithOrderId
+                            select gc;
 
-            if (createdFromUtc.HasValue)
-                query = query.Where(gc => createdFromUtc.Value <= gc.CreatedOnUtc);
-            if (createdToUtc.HasValue)
-                query = query.Where(gc => createdToUtc.Value >= gc.CreatedOnUtc);
-            if (isGiftCardActivated.HasValue)
-                query = query.Where(gc => gc.IsGiftCardActivated == isGiftCardActivated.Value);
-            if (!string.IsNullOrEmpty(giftCardCouponCode))
-                query = query.Where(gc => gc.GiftCardCouponCode == giftCardCouponCode);
-            if (!string.IsNullOrWhiteSpace(recipientName))
-                query = query.Where(c => c.RecipientName.Contains(recipientName));
-            query = query.OrderByDescending(gc => gc.CreatedOnUtc);
+                if (createdFromUtc.HasValue)
+                    query = query.Where(gc => createdFromUtc.Value <= gc.CreatedOnUtc);
+                if (createdToUtc.HasValue)
+                    query = query.Where(gc => createdToUtc.Value >= gc.CreatedOnUtc);
+                if (isGiftCardActivated.HasValue)
+                    query = query.Where(gc => gc.IsGiftCardActivated == isGiftCardActivated.Value);
+                if (!string.IsNullOrEmpty(giftCardCouponCode))
+                    query = query.Where(gc => gc.GiftCardCouponCode == giftCardCouponCode);
+                if (!string.IsNullOrWhiteSpace(recipientName))
+                    query = query.Where(c => c.RecipientName.Contains(recipientName));
+                query = query.OrderByDescending(gc => gc.CreatedOnUtc);
 
-            var giftCards = new PagedList<GiftCard>(query, pageIndex, pageSize);
+                return query;
+            }, pageIndex, pageSize);
 
             return giftCards;
         }
@@ -128,30 +120,18 @@ namespace TVProgViewer.Services.Orders
         /// Inserts a gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        public virtual void InsertGiftCard(GiftCard giftCard)
+        public virtual async Task InsertGiftCardAsync(GiftCard giftCard)
         {
-            if (giftCard == null)
-                throw new ArgumentNullException(nameof(giftCard));
-
-            _giftCardRepository.Insert(giftCard);
-
-            //event notification
-            _eventPublisher.EntityInserted(giftCard);
+            await _giftCardRepository.InsertAsync(giftCard);
         }
 
         /// <summary>
         /// Updates the gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        public virtual void UpdateGiftCard(GiftCard giftCard)
+        public virtual async Task UpdateGiftCardAsync(GiftCard giftCard)
         {
-            if (giftCard == null)
-                throw new ArgumentNullException(nameof(giftCard));
-
-            _giftCardRepository.Update(giftCard);
-
-            //event notification
-            _eventPublisher.EntityUpdated(giftCard);
+            await _giftCardRepository.UpdateAsync(giftCard);
         }
 
         /// <summary>
@@ -159,7 +139,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="purchasedWithOrderItemId">Purchased with order item identifier</param>
         /// <returns>Gift card entries</returns>
-        public virtual IList<GiftCard> GetGiftCardsByPurchasedWithOrderItemId(int purchasedWithOrderItemId)
+        public virtual async Task<IList<GiftCard>> GetGiftCardsByPurchasedWithOrderItemIdAsync(int purchasedWithOrderItemId)
         {
             if (purchasedWithOrderItemId == 0)
                 return new List<GiftCard>();
@@ -168,30 +148,29 @@ namespace TVProgViewer.Services.Orders
             query = query.Where(gc => gc.PurchasedWithOrderItemId.HasValue && gc.PurchasedWithOrderItemId.Value == purchasedWithOrderItemId);
             query = query.OrderBy(gc => gc.Id);
 
-            var giftCards = query.ToList();
+            var giftCards = await query.ToListAsync();
+
             return giftCards;
         }
 
         /// <summary>
-        /// Get active gift cards that are applied by a User
+        /// Get active gift cards that are applied by a user
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Active gift cards</returns>
-        public virtual IList<GiftCard> GetActiveGiftCardsAppliedByUser(User User)
+        public virtual async Task<IList<GiftCard>> GetActiveGiftCardsAppliedByUserAsync(User user)
         {
             var result = new List<GiftCard>();
-            if (User == null)
+            if (user == null)
                 return result;
 
-            var couponCodes = _userService.ParseAppliedGiftCardCouponCodes(User);
+            var couponCodes = await _userService.ParseAppliedGiftCardCouponCodesAsync(user);
             foreach (var couponCode in couponCodes)
             {
-                var giftCards = GetAllGiftCards(isGiftCardActivated: true, giftCardCouponCode: couponCode);
+                var giftCards = await GetAllGiftCardsAsync(isGiftCardActivated: true, giftCardCouponCode: couponCode);
                 foreach (var gc in giftCards)
-                {
-                    if (IsGiftCardValid(gc))
+                    if (await IsGiftCardValidAsync(gc))
                         result.Add(gc);
-                }
             }
 
             return result;
@@ -206,7 +185,7 @@ namespace TVProgViewer.Services.Orders
             var length = 13;
             var result = Guid.NewGuid().ToString();
             if (result.Length > length)
-                result = result.Substring(0, length);
+                result = result[0..length];
             return result;
         }
 
@@ -214,36 +193,34 @@ namespace TVProgViewer.Services.Orders
         /// Delete gift card usage history
         /// </summary>
         /// <param name="order">Order</param>
-        public virtual void DeleteGiftCardUsageHistory(Order order)
+        public virtual async Task DeleteGiftCardUsageHistoryAsync(Order order)
         {
-            var giftCardUsageHistory = GetGiftCardUsageHistory(order);
+            var giftCardUsageHistory = await GetGiftCardUsageHistoryAsync(order);
 
-            _giftCardUsageHistoryRepository.Delete(giftCardUsageHistory);
+            await _giftCardUsageHistoryRepository.DeleteAsync(giftCardUsageHistory);
 
             var query = _giftCardRepository.Table;
 
             var giftCardIds = giftCardUsageHistory.Select(gcuh => gcuh.GiftCardId).ToArray();
-            var giftCards = query.Where(bp => giftCardIds.Contains(bp.Id)).ToList();
+            var giftCards = await query.Where(bp => giftCardIds.Contains(bp.Id)).ToListAsync();
 
             //event notification
             foreach (var giftCard in giftCards)
-            {
-                _eventPublisher.EntityUpdated(giftCard);
-            }
+                await _eventPublisher.EntityUpdatedAsync(giftCard);
         }
 
         /// <summary>
         /// Gets a gift card remaining amount
         /// </summary>
         /// <returns>Gift card remaining amount</returns>
-        public virtual decimal GetGiftCardRemainingAmount(GiftCard giftCard)
+        public virtual async Task<decimal> GetGiftCardRemainingAmountAsync(GiftCard giftCard)
         {
             if (giftCard == null)
                 throw new ArgumentNullException(nameof(giftCard));
 
             var result = giftCard.Amount;
 
-            foreach (var gcuh in GetGiftCardUsageHistory(giftCard))
+            foreach (var gcuh in await GetGiftCardUsageHistoryAsync(giftCard))
                 result -= gcuh.UsedValue;
 
             if (result < decimal.Zero)
@@ -257,12 +234,14 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="giftCard">Gift card</param>
         /// <returns>Result</returns>
-        public virtual IList<GiftCardUsageHistory> GetGiftCardUsageHistory(GiftCard giftCard)
+        public virtual async Task<IList<GiftCardUsageHistory>> GetGiftCardUsageHistoryAsync(GiftCard giftCard)
         {
             if (giftCard is null)
                 throw new ArgumentNullException(nameof(giftCard));
 
-            return _giftCardUsageHistoryRepository.Table.Where(gcuh => gcuh.GiftCardId == giftCard.Id).ToList();
+            return await _giftCardUsageHistoryRepository.Table
+                .Where(gcuh => gcuh.GiftCardId == giftCard.Id)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -270,26 +249,23 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>Result</returns>
-        public virtual IList<GiftCardUsageHistory> GetGiftCardUsageHistory(Order order)
+        public virtual async Task<IList<GiftCardUsageHistory>> GetGiftCardUsageHistoryAsync(Order order)
         {
             if (order is null)
                 throw new ArgumentNullException(nameof(order));
 
-            return _giftCardUsageHistoryRepository.Table.Where(gcuh => gcuh.UsedWithOrderId == order.Id).ToList();
+            return await _giftCardUsageHistoryRepository.Table
+                .Where(gcuh => gcuh.UsedWithOrderId == order.Id)
+                .ToListAsync();
         }
 
         /// <summary>
         /// Inserts a gift card usage history entry
         /// </summary>
         /// <param name="giftCardUsageHistory">Gift card usage history entry</param>
-        public virtual void InsertGiftCardUsageHistory(GiftCardUsageHistory giftCardUsageHistory)
+        public virtual async Task InsertGiftCardUsageHistoryAsync(GiftCardUsageHistory giftCardUsageHistory)
         {
-            if (giftCardUsageHistory is null)
-                throw new ArgumentNullException(nameof(giftCardUsageHistory));
-
-            _giftCardUsageHistoryRepository.Insert(giftCardUsageHistory);
-
-            _eventPublisher.EntityInserted(giftCardUsageHistory);
+            await _giftCardUsageHistoryRepository.InsertAsync(giftCardUsageHistory);
         }
 
         /// <summary>
@@ -297,7 +273,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="giftCard">Gift card</param>
         /// <returns>Result</returns>
-        public virtual bool IsGiftCardValid(GiftCard giftCard)
+        public virtual async Task<bool> IsGiftCardValidAsync(GiftCard giftCard)
         {
             if (giftCard == null)
                 throw new ArgumentNullException(nameof(giftCard));
@@ -305,7 +281,7 @@ namespace TVProgViewer.Services.Orders
             if (!giftCard.IsGiftCardActivated)
                 return false;
 
-            var remainingAmount = GetGiftCardRemainingAmount(giftCard);
+            var remainingAmount = await GetGiftCardRemainingAmountAsync(giftCard);
             if (remainingAmount > decimal.Zero)
                 return true;
 

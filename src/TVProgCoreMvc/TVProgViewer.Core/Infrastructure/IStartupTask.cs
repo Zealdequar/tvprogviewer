@@ -1,4 +1,6 @@
-﻿namespace TVProgViewer.Core.Infrastructure
+﻿using System.Threading.Tasks;
+
+namespace TVProgViewer.Core.Infrastructure
 {
     /// <summary>
     /// Интерфейс, который должен реализовывать задания, запускаемые вначале
@@ -8,7 +10,7 @@
         /// <summary>
         /// Реализует задания
         /// </summary>
-        void Execute();
+        Task ExecuteAsync();
 
         /// <summary>
         /// Получает порядок запуска заданий

@@ -4,6 +4,8 @@ using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Core.Domain.Payments;
 using TVProgViewer.Core.Domain.Shipping;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Orders;
 
 namespace TVProgViewer.Services.Users
 {
@@ -13,7 +15,7 @@ namespace TVProgViewer.Services.Users
     public partial interface IUserReportService
     {
         /// <summary>
-        /// Get best Users
+        /// Get best users
         /// </summary>
         /// <param name="createdFromUtc">Order created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Order created date to (UTC); null to load all records</param>
@@ -24,15 +26,15 @@ namespace TVProgViewer.Services.Users
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Report</returns>
-        IPagedList<BestUserReportLine> GetBestUsersReport(DateTime? createdFromUtc,
-            DateTime? createdToUtc, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int orderBy,
+        Task<IPagedList<BestUserReportLine>> GetBestUsersReportAsync(DateTime? createdFromUtc,
+            DateTime? createdToUtc, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, OrderByEnum orderBy,
             int pageIndex = 0, int pageSize = 214748364);
-        
+
         /// <summary>
-        /// Gets a report of Users registered in the last days
+        /// Gets a report of users registered in the last days
         /// </summary>
         /// <param name="days">Users registered in the last days</param>
-        /// <returns>Number of registered Users</returns>
-        int GetRegisteredUsersReport(int days);
+        /// <returns>Number of registered users</returns>
+        Task<int> GetRegisteredUsersReportAsync(int days);
     }
 }

@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Shipping
 {
     public partial class WarehouseValidator : BaseTvProgValidator<WarehouseModel>
     {
-        public WarehouseValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public WarehouseValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Shipping.Warehouses.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Shipping.Warehouses.Fields.Name.Required"));
 
             SetDatabaseValidationRules<Warehouse>(dataProvider);
         }

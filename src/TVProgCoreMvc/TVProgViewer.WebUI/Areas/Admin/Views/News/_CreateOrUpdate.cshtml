@@ -2,22 +2,24 @@
 
 @{
     const string hideInfoBlockAttributeName = "NewsItemPage.HideInfoBlock";
-    var hideInfoBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideInfoBlockAttributeName);
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideInfoBlockAttributeName);
 
     const string hideSeoBlockAttributeName = "NewsItemPage.HideSeoBlock";
-    var hideSeoBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideSeoBlockAttributeName, defaultValue: true);
+    var hideSeoBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideSeoBlockAttributeName, defaultValue: true);
 }
 
 <div asp-validation-summary="All"></div>
 <input asp-for="Id" type="hidden" />
 
-<div class="content">
-    <div class="form-horizontal">
-        <tvprog-panels id="news-item-panels">
-            <tvprog-panel asp-name="news-item-info" asp-icon="fa fa-info" asp-title="@T("Admin.ContentManagement.News.NewsItems.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-panel>
-            <tvprog-panel asp-name="news-item-seo" asp-icon="fa fa-search-plus" asp-title="@T("Admin.Common.SEO")" asp-hide-block-attribute-name="@hideSeoBlockAttributeName" asp-hide="@hideSeoBlock">@await Html.PartialAsync("_CreateOrUpdate.Seo", Model)</tvprog-panel>
-                    
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.NewsItemsDetailsBlock, additionalData = Model })
-        </tvprog-panels>
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <tvprog-cards id="news-item-cards">
+                <tvprog-card asp-name="news-item-info" asp-icon="fa fa-info" asp-title="@T("Admin.ContentManagement.News.NewsItems.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>
+                <tvprog-card asp-name="news-item-seo" asp-icon="fa fa-search-plus" asp-title="@T("Admin.Common.SEO")" asp-hide-block-attribute-name="@hideSeoBlockAttributeName" asp-hide="@hideSeoBlock">@await Html.PartialAsync("_CreateOrUpdate.Seo", Model)</tvprog-card>
+
+                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.NewsItemsDetailsBlock, additionalData = Model })
+            </tvprog-cards>
+        </div>
     </div>
-</div>
+</section>

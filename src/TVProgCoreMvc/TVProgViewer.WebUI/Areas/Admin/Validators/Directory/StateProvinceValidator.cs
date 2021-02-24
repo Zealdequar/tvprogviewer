@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Directory
 {
     public partial class StateProvinceValidator : BaseTvProgValidator<StateProvinceModel>
     {
-        public StateProvinceValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public StateProvinceValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Countries.States.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Countries.States.Fields.Name.Required"));
 
             SetDatabaseValidationRules<StateProvince>(dataProvider);
         }

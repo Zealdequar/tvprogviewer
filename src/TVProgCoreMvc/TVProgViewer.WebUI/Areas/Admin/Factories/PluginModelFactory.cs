@@ -18,6 +18,8 @@ using TVProgViewer.WebUI.Areas.Admin.Models.Plugins;
 using TVProgViewer.WebUI.Areas.Admin.Models.Plugins.Marketplace;
 using TVProgViewer.Web.Framework.Factories;
 using TVProgViewer.Web.Framework.Models.Extensions;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Authentication.MultiFactor;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -33,11 +35,12 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         private readonly IBaseAdminModelFactory _baseAdminModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedModelFactory _localizedModelFactory;
+        private readonly IMultiFactorAuthenticationPluginManager _multiFactorAuthenticationPluginManager;
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly IPickupPluginManager _pickupPluginManager;
         private readonly IPluginService _pluginService;
         private readonly IShippingPluginManager _shippingPluginManager;
-        private readonly IStaticCacheManager _cacheManager;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreMappingSupportedModelFactory _storeMappingSupportedModelFactory;
         private readonly ITaxPluginManager _taxPluginManager;
         private readonly IWidgetPluginManager _widgetPluginManager;
@@ -52,12 +55,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             IAuthenticationPluginManager authenticationPluginManager,
             IBaseAdminModelFactory baseAdminModelFactory,
             ILocalizationService localizationService,
+            IMultiFactorAuthenticationPluginManager multiFactorAuthenticationPluginManager,
             ILocalizedModelFactory localizedModelFactory,
             IPaymentPluginManager paymentPluginManager,
             IPickupPluginManager pickupPluginManager,
             IPluginService pluginService,
             IShippingPluginManager shippingPluginManager,
-            IStaticCacheManager cacheManager,
+            IStaticCacheManager staticCacheManager,
             IStoreMappingSupportedModelFactory storeMappingSupportedModelFactory,
             ITaxPluginManager taxPluginManager,
             IWidgetPluginManager widgetPluginManager,
@@ -69,11 +73,12 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             _baseAdminModelFactory = baseAdminModelFactory;
             _localizationService = localizationService;
             _localizedModelFactory = localizedModelFactory;
+            _multiFactorAuthenticationPluginManager = multiFactorAuthenticationPluginManager;
             _paymentPluginManager = paymentPluginManager;
             _pickupPluginManager = pickupPluginManager;
             _pluginService = pluginService;
             _shippingPluginManager = shippingPluginManager;
-            _cacheManager = cacheManager;
+            _staticCacheManager = staticCacheManager;
             _storeMappingSupportedModelFactory = storeMappingSupportedModelFactory;
             _taxPluginManager = taxPluginManager;
             _widgetPluginManager = widgetPluginManager;
@@ -125,6 +130,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     model.IsEnabled = _authenticationPluginManager.IsPluginActive(externalAuthenticationMethod);
                     break;
 
+                case IMultiFactorAuthenticationMethod multiFactorAuthenticationMethod:
+                    model.IsEnabled = _multiFactorAuthenticationPluginManager.IsPluginActive(multiFactorAuthenticationMethod);
+                    break;
+
                 case IWidgetPlugin widgetPlugin:
                     model.IsEnabled = _widgetPluginManager.IsPluginActive(widgetPlugin);
                     break;
@@ -144,16 +153,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Plugin search model</param>
         /// <returns>Plugin search model</returns>
-        public virtual PluginSearchModel PreparePluginSearchModel(PluginSearchModel searchModel)
+        public virtual async Task<PluginSearchModel> PreparePluginSearchModelAsync(PluginSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare available load plugin modes
-            _baseAdminModelFactory.PrepareLoadPluginModes(searchModel.AvailableLoadModes, false);
+            await _baseAdminModelFactory.PrepareLoadPluginModesAsync(searchModel.AvailableLoadModes, false);
 
             //prepare available groups
-            _baseAdminModelFactory.PreparePluginGroups(searchModel.AvailableGroups);
+            await _baseAdminModelFactory.PreparePluginGroupsAsync(searchModel.AvailableGroups);
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -168,7 +177,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Plugin search model</param>
         /// <returns>Plugin list model</returns>
-        public virtual PluginListModel PreparePluginListModel(PluginSearchModel searchModel)
+        public virtual async Task<PluginListModel> PreparePluginListModelAsync(PluginSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -176,23 +185,26 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             //get parameters to filter plugins
             var group = string.IsNullOrEmpty(searchModel.SearchGroup) || searchModel.SearchGroup.Equals("0") ? null : searchModel.SearchGroup;
             var loadMode = (LoadPluginsMode)searchModel.SearchLoadModeId;
+            var friendlyName = string.IsNullOrEmpty(searchModel.SearchFriendlyName) ? null : searchModel.SearchFriendlyName;
+            var author = string.IsNullOrEmpty(searchModel.SearchAuthor) ? null : searchModel.SearchAuthor;
 
             //filter visible plugins
-            var plugins = _pluginService.GetPluginDescriptors<IPlugin>(group: group, loadMode: loadMode)
+            var plugins = (await _pluginService.GetPluginDescriptorsAsync<IPlugin>(group: group, loadMode: loadMode, friendlyName: friendlyName, author: author))
                 .Where(p => p.ShowInPluginsList)
                 .OrderBy(plugin => plugin.Group).ToList()
                 .ToPagedList(searchModel);
 
             //prepare list model
-            var model = new PluginListModel().PrepareToGrid(searchModel, plugins, () =>
+            var model = await new PluginListModel().PrepareToGridAsync(searchModel, plugins, () =>
             {
-                return plugins.Select(pluginDescriptor =>
+                return plugins.SelectAwait(async pluginDescriptor =>
                 {
                     //fill in model values from the entity
                     var pluginModel = pluginDescriptor.ToPluginModel<PluginModel>();
 
                     //fill in additional values (not existing in the entity)
-                    pluginModel.LogoUrl = _pluginService.GetPluginLogoUrl(pluginDescriptor);
+                    pluginModel.LogoUrl = await _pluginService.GetPluginLogoUrlAsync(pluginDescriptor);
+
                     if (pluginDescriptor.Installed)
                         PrepareInstalledPluginModel(pluginModel, pluginDescriptor.Instance<IPlugin>());
 
@@ -210,7 +222,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="pluginDescriptor">Plugin descriptor</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>Plugin model</returns>
-        public virtual PluginModel PreparePluginModel(PluginModel model, PluginDescriptor pluginDescriptor, bool excludeProperties = false)
+        public virtual async Task<PluginModel> PreparePluginModelAsync(PluginModel model, PluginDescriptor pluginDescriptor, bool excludeProperties = false)
         {
             Action<PluginLocalizedModel, int> localizedModelConfiguration = null;
 
@@ -219,29 +231,29 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 //fill in model values from the entity
                 model ??= pluginDescriptor.ToPluginModel(model);
 
-                model.LogoUrl = _pluginService.GetPluginLogoUrl(pluginDescriptor);
+                model.LogoUrl = await _pluginService.GetPluginLogoUrlAsync(pluginDescriptor);
                 model.SelectedStoreIds = pluginDescriptor.LimitedToStores;
-                model.SelecteduserRoleIds = pluginDescriptor.LimitedToUserRoles;
+                model.SelectedUserRoleIds = pluginDescriptor.LimitedToUserRoles;
                 var plugin = pluginDescriptor.Instance<IPlugin>();
                 if (pluginDescriptor.Installed)
                     PrepareInstalledPluginModel(model, plugin);
 
                 //define localized model configuration action
-                localizedModelConfiguration = (locale, languageId) =>
+                localizedModelConfiguration = async (locale, languageId) =>
                 {
-                    locale.FriendlyName = _localizationService.GetLocalizedFriendlyName(plugin, languageId, false);
+                    locale.FriendlyName = await _localizationService.GetLocalizedFriendlyNameAsync(plugin, languageId, false);
                 };
             }
 
             //prepare localized models
             if (!excludeProperties)
-                model.Locales = _localizedModelFactory.PrepareLocalizedModels(localizedModelConfiguration);
+                model.Locales = await _localizedModelFactory.PrepareLocalizedModelsAsync(localizedModelConfiguration);
 
             //prepare model user roles
-            _aclSupportedModelFactory.PrepareModelUserRoles(model);
+            await _aclSupportedModelFactory.PrepareModelUserRolesAsync(model);
 
             //prepare available stores
-            _storeMappingSupportedModelFactory.PrepareModelStores(model);
+            await _storeMappingSupportedModelFactory.PrepareModelStoresAsync(model);
 
             return model;
         }
@@ -251,20 +263,20 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Search model of plugins of the official feed</param>
         /// <returns>Search model of plugins of the official feed</returns>
-        public virtual OfficialFeedPluginSearchModel PrepareOfficialFeedPluginSearchModel(OfficialFeedPluginSearchModel searchModel)
+        public virtual async Task<OfficialFeedPluginSearchModel> PrepareOfficialFeedPluginSearchModelAsync(OfficialFeedPluginSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare available versions
-            var pluginVersions = _officialFeedManager.GetVersions();
-            searchModel.AvailableVersions.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            var pluginVersions = await _officialFeedManager.GetVersionsAsync();
+            searchModel.AvailableVersions.Add(new SelectListItem { Text = await _localizationService.GetResourceAsync("Admin.Common.All"), Value = "0" });
             foreach (var version in pluginVersions)
                 searchModel.AvailableVersions.Add(new SelectListItem { Text = version.Name, Value = version.Id.ToString() });
 
             //pre-select current version
             //current version name and named on official site do not match. that's why we use "Contains"
-            var currentVersionItem = searchModel.AvailableVersions.FirstOrDefault(x => x.Text.Contains(TvProgVersion.CurrentVersion));
+            var currentVersionItem = searchModel.AvailableVersions.FirstOrDefault(x => x.Text.Contains(TvProgVersion.CURRENT_VERSION));
             if (currentVersionItem != null)
             {
                 searchModel.SearchVersionId = int.Parse(currentVersionItem.Value);
@@ -272,8 +284,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             }
 
             //prepare available plugin categories
-            var pluginCategories = _officialFeedManager.GetCategories();
-            searchModel.AvailableCategories.Add(new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            var pluginCategories = await _officialFeedManager.GetCategoriesAsync();
+            searchModel.AvailableCategories.Add(new SelectListItem { Text = await _localizationService.GetResourceAsync("Admin.Common.All"), Value = "0" });
             foreach (var pluginCategory in pluginCategories)
             {
                 var pluginCategoryNames = new List<string>();
@@ -297,17 +309,17 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             searchModel.AvailablePrices.Add(new SelectListItem
             {
                 Value = "0",
-                Text = _localizationService.GetResource("Admin.Common.All")
+                Text = await _localizationService.GetResourceAsync("Admin.Common.All")
             });
             searchModel.AvailablePrices.Add(new SelectListItem
             {
                 Value = "10",
-                Text = _localizationService.GetResource("Admin.Configuration.Plugins.OfficialFeed.Price.Free")
+                Text = await _localizationService.GetResourceAsync("Admin.Configuration.Plugins.OfficialFeed.Price.Free")
             });
             searchModel.AvailablePrices.Add(new SelectListItem
             {
                 Value = "20",
-                Text = _localizationService.GetResource("Admin.Configuration.Plugins.OfficialFeed.Price.Commercial")
+                Text = await _localizationService.GetResourceAsync("Admin.Configuration.Plugins.OfficialFeed.Price.Commercial")
             });
 
             //prepare page parameters
@@ -321,13 +333,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Search model of plugins of the official feed</param>
         /// <returns>List model of plugins of the official feed</returns>
-        public virtual OfficialFeedPluginListModel PrepareOfficialFeedPluginListModel(OfficialFeedPluginSearchModel searchModel)
+        public virtual async Task<OfficialFeedPluginListModel> PrepareOfficialFeedPluginListModelAsync(OfficialFeedPluginSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get plugins
-            var plugins = _officialFeedManager.GetAllPlugins(categoryId: searchModel.SearchCategoryId,
+            var plugins = await _officialFeedManager.GetAllPluginsAsync(categoryId: searchModel.SearchCategoryId,
                 versionId: searchModel.SearchVersionId,
                 price: searchModel.SearchPriceId,
                 searchTerm: searchModel.SearchName,
@@ -352,33 +364,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare plugins configuration model
-        /// </summary>
-        /// <param name="pluginsConfigurationModel">Plugins configuration model</param>
-        /// <returns>Plugins configuration model</returns>
-        public virtual PluginsConfigurationModel PreparePluginsConfigurationModel(PluginsConfigurationModel pluginsConfigurationModel)
-        {
-            if (pluginsConfigurationModel == null)
-                throw new ArgumentNullException(nameof(pluginsConfigurationModel));
-
-            //prepare nested search models
-            PreparePluginSearchModel(pluginsConfigurationModel.PluginsLocal);
-            PrepareOfficialFeedPluginSearchModel(pluginsConfigurationModel.AllPluginsAndThemes);
-
-            return pluginsConfigurationModel;
-        }
-
-        /// <summary>
         /// Prepare plugin models for admin navigation
         /// </summary>
         /// <returns>List of models</returns>
-        public virtual IList<AdminNavigationPluginModel> PrepareAdminNavigationPluginModels()
+        public virtual async Task<IList<AdminNavigationPluginModel>> PrepareAdminNavigationPluginModelsAsync()
         {
-            var cacheKey = TvProgPluginDefaults.AdminNavigationPluginsCacheKey.FillCacheKey(_workContext.CurrentUser.Id);
-            return _cacheManager.Get(cacheKey, () =>
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgPluginDefaults.AdminNavigationPluginsCacheKey, await _workContext.GetCurrentUserAsync());
+            return await _staticCacheManager.GetAsync(cacheKey, async () =>
             {
                 //get installed plugins
-                return _pluginService.GetPluginDescriptors<IPlugin>(LoadPluginsMode.InstalledOnly, _workContext.CurrentUser)
+                return (await _pluginService.GetPluginDescriptorsAsync<IPlugin>(LoadPluginsMode.InstalledOnly, await _workContext.GetCurrentUserAsync()))
                     .Where(plugin => plugin.ShowInPluginsList)
                     .Select(plugin => new AdminNavigationPluginModel
                     {

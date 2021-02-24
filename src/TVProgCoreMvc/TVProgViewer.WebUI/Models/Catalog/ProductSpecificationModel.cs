@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Web.Framework.Models;
+﻿using System.Collections.Generic;
+using TVProgViewer.Web.Framework.Models;
 
 namespace TVProgViewer.WebUI.Models.Catalog
 {
@@ -7,30 +8,22 @@ namespace TVProgViewer.WebUI.Models.Catalog
     /// </summary>
     public partial record ProductSpecificationModel : BaseTvProgModel
     {
-        /// <summary>
-        /// Specificartion attribute ID
-        /// </summary>
-        public int SpecificationAttributeId { get; set; }
+        #region Properties
 
         /// <summary>
-        /// Specificartion attribute name
+        /// Gets or sets the grouped specification attribute models
         /// </summary>
-        public string SpecificationAttributeName { get; set; }
+        public IList<ProductSpecificationAttributeGroupModel> Groups { get; set; }
 
-        /// <summary>
-        /// Option value
-        /// this value is already HTML encoded
-        /// </summary>
-        public string ValueRaw { get; set; }
+        #endregion
 
-        /// <summary>
-        /// Option color (if specified). Used to display color squares
-        /// </summary>
-        public string ColorSquaresRgb { get; set; }
+        #region Ctor
 
-        /// <summary>
-        /// Attribyte type ID
-        /// </summary>
-        public int AttributeTypeId { get; set; }
+        public ProductSpecificationModel()
+        {
+            Groups = new List<ProductSpecificationAttributeGroupModel>();
+        }
+
+        #endregion
     }
 }

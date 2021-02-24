@@ -1,4 +1,6 @@
 ﻿
+using System.Threading.Tasks;
+
 namespace TVProgViewer.Web.Framework.Themes
 {
     /// <summary>
@@ -7,8 +9,13 @@ namespace TVProgViewer.Web.Framework.Themes
     public interface IThemeContext
     {
         /// <summary>
-        /// Get or set current theme system name
+        /// Get current theme system name
         /// </summary>
-        string WorkingThemeName { get; set; }
+        Task<string> GetWorkingThemeNameAsync();
+
+        /// <summary>
+        /// Set current theme system name
+        /// </summary>
+        Task SetWorkingThemeNameAsync(string workingThemeName);
     }
 }

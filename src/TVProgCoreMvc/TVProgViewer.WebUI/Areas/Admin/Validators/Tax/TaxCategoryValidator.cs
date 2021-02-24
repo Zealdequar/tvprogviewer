@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Tax
 {
     public partial class TaxCategoryValidator : BaseTvProgValidator<TaxCategoryModel>
     {
-        public TaxCategoryValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public TaxCategoryValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Tax.Categories.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Tax.Categories.Fields.Name.Required"));
 
             SetDatabaseValidationRules<TaxCategory>(dataProvider);
         }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using TVProgViewer.Core;
-using TVProgViewer.Core.Caching;
-using TVProgViewer.Core.Defaults;
 using TVProgViewer.Core.Infrastructure;
 
 namespace TVProgViewer.Services.Common
@@ -14,7 +12,7 @@ namespace TVProgViewer.Services.Common
     public partial class MaintenanceService : IMaintenanceService
     {
         #region Fields
-       
+
         private readonly ITvProgFileProvider _fileProvider;
 
         #endregion
@@ -56,14 +54,12 @@ namespace TVProgViewer.Services.Common
             var path = GetBackupDirectoryPath();
 
             if (!_fileProvider.DirectoryExists(path))
-            {
                 throw new TvProgException("Backup directory not exists");
-            }
 
             return _fileProvider.GetFiles(path, $"*.{TvProgCommonDefaults.DbBackupFileExtension}")
                 .OrderByDescending(p => _fileProvider.GetLastWriteTime(p)).ToList();
         }
-        
+
         /// <summary>
         /// Returns the path to the backup file
         /// </summary>
@@ -73,8 +69,12 @@ namespace TVProgViewer.Services.Common
         {
             return _fileProvider.Combine(GetBackupDirectoryPath(), backupFileName);
         }
-        
-        public virtual string GetNewBackupFilePath()
+
+        /// <summary>
+        /// Creates a path to a new database backup file
+        /// </summary>
+        /// <returns>Path to a new database backup file</returns>
+        public virtual string CreateNewBackupFilePath()
         {
             return _fileProvider.Combine(GetBackupDirectoryPath(), $"database_{DateTime.Now:yyyy-MM-dd-HH-mm-ss}_{CommonHelper.GenerateRandomDigitCode(10)}.{TvProgCommonDefaults.DbBackupFileExtension}");
         }

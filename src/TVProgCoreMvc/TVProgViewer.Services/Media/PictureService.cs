@@ -9,8 +9,6 @@ using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Media;
 using TVProgViewer.Core.Infrastructure;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Catalog;
 using TVProgViewer.Services.Configuration;
 using TVProgViewer.Services.Events;
@@ -23,9 +21,9 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 using static SixLabors.ImageSharp.Configuration;
-using TVProgViewerMediaDefaults = TVProgViewer.Services.Defaults.TVProgViewerMediaDefaults;
+using System.Threading.Tasks;
+using LinqToDB;
 
 namespace TVProgViewer.Services.Media
 {
@@ -36,9 +34,8 @@ namespace TVProgViewer.Services.Media
     {
         #region Fields
 
-        private readonly IDataProvider _dataProvider;
+        private readonly ITvProgDataProvider _dataProvider;
         private readonly IDownloadService _downloadService;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITvProgFileProvider _fileProvider;
         private readonly IProductAttributeParser _productAttributeParser;
@@ -54,9 +51,8 @@ namespace TVProgViewer.Services.Media
 
         #region Ctor
 
-        public PictureService(IDataProvider dataProvider,
+        public PictureService(ITvProgDataProvider dataProvider,
             IDownloadService downloadService,
-            IEventPublisher eventPublisher,
             IHttpContextAccessor httpContextAccessor,
             ITvProgFileProvider fileProvider,
             IProductAttributeParser productAttributeParser,
@@ -70,7 +66,6 @@ namespace TVProgViewer.Services.Media
         {
             _dataProvider = dataProvider;
             _downloadService = downloadService;
-            _eventPublisher = eventPublisher;
             _httpContextAccessor = httpContextAccessor;
             _fileProvider = fileProvider;
             _productAttributeParser = productAttributeParser;
@@ -86,6 +81,22 @@ namespace TVProgViewer.Services.Media
         #endregion
 
         #region Utilities
+
+        /// <summary>
+        /// Gets a data hash from database side
+        /// </summary>
+        /// <param name="binaryData">Array for a hashing function</param>
+        /// <param name="limit">Allowed limit input value</param>
+        /// <returns>Data hash</returns>
+        /// <remarks>
+        /// For SQL Server 2014 (12.x) and earlier, allowed input values are limited to 8000 bytes. 
+        /// https://docs.microsoft.com/en-us/sql/t-sql/functions/hashbytes-transact-sql
+        /// </remarks>
+        [Sql.Expression("CONVERT(VARCHAR(128), HASHBYTES('SHA2_512', SUBSTRING({0}, 0, {1})), 2)", ServerSideOnly = true, Configuration = ProviderName.SqlServer)]
+        [Sql.Expression("SHA2({0}, 512)", ServerSideOnly = true, Configuration = ProviderName.MySql)]
+        [Sql.Expression("encode(digest({0}, 'sha512'), 'hex')", ServerSideOnly = true, Configuration = ProviderName.PostgreSQL95)]
+        public static string Hash(byte[] binaryData, int limit)
+            => throw new InvalidOperationException("This function should be used only in database code");
 
         /// <summary>
         /// Calculates picture dimensions whilst maintaining aspect
@@ -137,7 +148,7 @@ namespace TVProgViewer.Services.Media
             if (height < 1)
                 height = 1;
 
-            //we invoke Math.Round to ensure that no white background is rendered - https://www.TVProgViewercommerce.com/boards/topic/40616/image-resizing-bug
+            //we invoke Math.Round to ensure that no white background is rendered - https://www.nopcommerce.com/boards/topic/40616/image-resizing-bug
             return new Size((int)Math.Round(width), (int)Math.Round(height));
         }
 
@@ -147,13 +158,13 @@ namespace TVProgViewer.Services.Media
         /// <param name="pictureId">Picture identifier</param>
         /// <param name="mimeType">MIME type</param>
         /// <returns>Picture binary</returns>
-        protected virtual byte[] LoadPictureFromFile(int pictureId, string mimeType)
+        protected virtual async Task<byte[]> LoadPictureFromFileAsync(int pictureId, string mimeType)
         {
-            var lastPart = GetFileExtensionFromMimeType(mimeType);
+            var lastPart = await GetFileExtensionFromMimeTypeAsync(mimeType);
             var fileName = $"{pictureId:0000000}_0.{lastPart}";
-            var filePath = GetPictureLocalPath(fileName);
+            var filePath = await GetPictureLocalPathAsync(fileName);
 
-            return _fileProvider.ReadAllBytes(filePath);
+            return await _fileProvider.ReadAllBytesAsync(filePath);
         }
 
         /// <summary>
@@ -162,25 +173,25 @@ namespace TVProgViewer.Services.Media
         /// <param name="pictureId">Picture identifier</param>
         /// <param name="pictureBinary">Picture binary</param>
         /// <param name="mimeType">MIME type</param>
-        protected virtual void SavePictureInFile(int pictureId, byte[] pictureBinary, string mimeType)
+        protected virtual async Task SavePictureInFileAsync(int pictureId, byte[] pictureBinary, string mimeType)
         {
-            var lastPart = GetFileExtensionFromMimeType(mimeType);
+            var lastPart = await GetFileExtensionFromMimeTypeAsync(mimeType);
             var fileName = $"{pictureId:0000000}_0.{lastPart}";
-            _fileProvider.WriteAllBytes(GetPictureLocalPath(fileName), pictureBinary);
+            await _fileProvider.WriteAllBytesAsync(await GetPictureLocalPathAsync(fileName), pictureBinary);
         }
 
         /// <summary>
         /// Delete a picture on file system
         /// </summary>
         /// <param name="picture">Picture</param>
-        protected virtual void DeletePictureOnFileSystem(Picture picture)
+        protected virtual async Task DeletePictureOnFileSystemAsync(Picture picture)
         {
             if (picture == null)
                 throw new ArgumentNullException(nameof(picture));
 
-            var lastPart = GetFileExtensionFromMimeType(picture.MimeType);
+            var lastPart = await GetFileExtensionFromMimeTypeAsync(picture.MimeType);
             var fileName = $"{picture.Id:0000000}_0.{lastPart}";
-            var filePath = GetPictureLocalPath(fileName);
+            var filePath = await GetPictureLocalPathAsync(fileName);
             _fileProvider.DeleteFile(filePath);
         }
 
@@ -188,13 +199,13 @@ namespace TVProgViewer.Services.Media
         /// Delete picture thumbs
         /// </summary>
         /// <param name="picture">Picture</param>
-        protected virtual void DeletePictureThumbs(Picture picture)
+        protected virtual async Task DeletePictureThumbsAsync(Picture picture)
         {
             var filter = $"{picture.Id:0000000}*.*";
-            var currentFiles = _fileProvider.GetFiles(_fileProvider.GetAbsolutePath(TVProgViewerMediaDefaults.ImageThumbsPath), filter, false);
+            var currentFiles = _fileProvider.GetFiles(_fileProvider.GetAbsolutePath(TvProgMediaDefaults.ImageThumbsPath), filter, false);
             foreach (var currentFileName in currentFiles)
             {
-                var thumbFilePath = GetThumbLocalPath(currentFileName);
+                var thumbFilePath = await GetThumbLocalPathAsync(currentFileName);
                 _fileProvider.DeleteFile(thumbFilePath);
             }
         }
@@ -204,24 +215,24 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="thumbFileName">Filename</param>
         /// <returns>Local picture thumb path</returns>
-        protected virtual string GetThumbLocalPath(string thumbFileName)
+        protected virtual Task<string> GetThumbLocalPathAsync(string thumbFileName)
         {
-            var thumbsDirectoryPath = _fileProvider.GetAbsolutePath(TVProgViewerMediaDefaults.ImageThumbsPath);
+            var thumbsDirectoryPath = _fileProvider.GetAbsolutePath(TvProgMediaDefaults.ImageThumbsPath);
 
             if (_mediaSettings.MultipleThumbDirectories)
             {
                 //get the first two letters of the file name
                 var fileNameWithoutExtension = _fileProvider.GetFileNameWithoutExtension(thumbFileName);
-                if (fileNameWithoutExtension != null && fileNameWithoutExtension.Length > TVProgViewerMediaDefaults.MultipleThumbDirectoriesLength)
+                if (fileNameWithoutExtension != null && fileNameWithoutExtension.Length > TvProgMediaDefaults.MultipleThumbDirectoriesLength)
                 {
-                    var subDirectoryName = fileNameWithoutExtension.Substring(0, TVProgViewerMediaDefaults.MultipleThumbDirectoriesLength);
-                    thumbsDirectoryPath = _fileProvider.GetAbsolutePath(TVProgViewerMediaDefaults.ImageThumbsPath, subDirectoryName);
+                    var subDirectoryName = fileNameWithoutExtension[0..TvProgMediaDefaults.MultipleThumbDirectoriesLength];
+                    thumbsDirectoryPath = _fileProvider.GetAbsolutePath(TvProgMediaDefaults.ImageThumbsPath, subDirectoryName);
                     _fileProvider.CreateDirectory(thumbsDirectoryPath);
                 }
             }
 
             var thumbFilePath = _fileProvider.Combine(thumbsDirectoryPath, thumbFileName);
-            return thumbFilePath;
+            return Task.FromResult(thumbFilePath);
         }
 
         /// <summary>
@@ -229,19 +240,14 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <returns></returns>
-        protected virtual string GetImagesPathUrl(string storeLocation = null)
+        protected virtual Task<string> GetImagesPathUrlAsync(string storeLocation = null)
         {
             var pathBase = _httpContextAccessor.HttpContext.Request.PathBase.Value ?? string.Empty;
-
             var imagesPathUrl = _mediaSettings.UseAbsoluteImagePath ? storeLocation : $"{pathBase}/";
-
-            imagesPathUrl = string.IsNullOrEmpty(imagesPathUrl)
-                ? _webHelper.GetStoreLocation()
-                : imagesPathUrl;
-
+            imagesPathUrl = string.IsNullOrEmpty(imagesPathUrl) ? _webHelper.GetStoreLocation() : imagesPathUrl;
             imagesPathUrl += "images/";
 
-            return imagesPathUrl;
+            return Task.FromResult(imagesPathUrl);
         }
 
         /// <summary>
@@ -250,22 +256,22 @@ namespace TVProgViewer.Services.Media
         /// <param name="thumbFileName">Filename</param>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <returns>Local picture thumb path</returns>
-        protected virtual string GetThumbUrl(string thumbFileName, string storeLocation = null)
+        protected virtual async Task<string> GetThumbUrlAsync(string thumbFileName, string storeLocation = null)
         {
-            var url = GetImagesPathUrl(storeLocation) + "thumbs/";
+            var url = await GetImagesPathUrlAsync(storeLocation) + "thumbs/";
 
             if (_mediaSettings.MultipleThumbDirectories)
             {
                 //get the first two letters of the file name
                 var fileNameWithoutExtension = _fileProvider.GetFileNameWithoutExtension(thumbFileName);
-                if (fileNameWithoutExtension != null && fileNameWithoutExtension.Length > TVProgViewerMediaDefaults.MultipleThumbDirectoriesLength)
+                if (fileNameWithoutExtension != null && fileNameWithoutExtension.Length > TvProgMediaDefaults.MultipleThumbDirectoriesLength)
                 {
-                    var subDirectoryName = fileNameWithoutExtension.Substring(0, TVProgViewerMediaDefaults.MultipleThumbDirectoriesLength);
+                    var subDirectoryName = fileNameWithoutExtension[0..TvProgMediaDefaults.MultipleThumbDirectoriesLength];
                     url = url + subDirectoryName + "/";
                 }
             }
 
-            url = url + thumbFileName;
+            url += thumbFileName;
             return url;
         }
 
@@ -274,9 +280,9 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="fileName">Filename</param>
         /// <returns>Local picture path</returns>
-        protected virtual string GetPictureLocalPath(string fileName)
+        protected virtual Task<string> GetPictureLocalPathAsync(string fileName)
         {
-            return _fileProvider.GetAbsolutePath("images", fileName);
+            return Task.FromResult(_fileProvider.GetAbsolutePath("images", fileName));
         }
 
         /// <summary>
@@ -285,14 +291,14 @@ namespace TVProgViewer.Services.Media
         /// <param name="picture">Picture</param>
         /// <param name="fromDb">Load from database; otherwise, from file system</param>
         /// <returns>Picture binary</returns>
-        protected virtual byte[] LoadPictureBinary(Picture picture, bool fromDb)
+        protected virtual async Task<byte[]> LoadPictureBinaryAsync(Picture picture, bool fromDb)
         {
             if (picture == null)
                 throw new ArgumentNullException(nameof(picture));
 
             var result = fromDb
-                ? GetPictureBinaryByPictureId(picture.Id)?.BinaryData ?? Array.Empty<byte>()
-                : LoadPictureFromFile(picture.Id, picture.MimeType);
+                ? (await GetPictureBinaryByPictureIdAsync(picture.Id))?.BinaryData ?? Array.Empty<byte>()
+                : await LoadPictureFromFileAsync(picture.Id, picture.MimeType);
 
             return result;
         }
@@ -303,9 +309,9 @@ namespace TVProgViewer.Services.Media
         /// <param name="thumbFilePath">Thumb file path</param>
         /// <param name="thumbFileName">Thumb file name</param>
         /// <returns>Result</returns>
-        protected virtual bool GeneratedThumbExists(string thumbFilePath, string thumbFileName)
+        protected virtual Task<bool> GeneratedThumbExistsAsync(string thumbFilePath, string thumbFileName)
         {
-            return _fileProvider.FileExists(thumbFilePath);
+            return Task.FromResult(_fileProvider.FileExists(thumbFilePath));
         }
 
         /// <summary>
@@ -315,14 +321,14 @@ namespace TVProgViewer.Services.Media
         /// <param name="thumbFileName">Thumb file name</param>
         /// <param name="mimeType">MIME type</param>
         /// <param name="binary">Picture binary</param>
-        protected virtual void SaveThumb(string thumbFilePath, string thumbFileName, string mimeType, byte[] binary)
+        protected virtual async Task SaveThumbAsync(string thumbFilePath, string thumbFileName, string mimeType, byte[] binary)
         {
             //ensure \thumb directory exists
-            var thumbsDirectoryPath = _fileProvider.GetAbsolutePath(TVProgViewerMediaDefaults.ImageThumbsPath);
+            var thumbsDirectoryPath = _fileProvider.GetAbsolutePath(TvProgMediaDefaults.ImageThumbsPath);
             _fileProvider.CreateDirectory(thumbsDirectoryPath);
 
             //save
-            _fileProvider.WriteAllBytes(thumbFilePath, binary);
+            await _fileProvider.WriteAllBytesAsync(thumbFilePath, binary);
         }
 
         /// <summary>
@@ -331,12 +337,12 @@ namespace TVProgViewer.Services.Media
         /// <param name="picture">The picture object</param>
         /// <param name="binaryData">The picture binary data</param>
         /// <returns>Picture binary</returns>
-        protected virtual PictureBinary UpdatePictureBinary(Picture picture, byte[] binaryData)
+        protected virtual async Task<PictureBinary> UpdatePictureBinaryAsync(Picture picture, byte[] binaryData)
         {
             if (picture == null)
                 throw new ArgumentNullException(nameof(picture));
 
-            var pictureBinary = GetPictureBinaryByPictureId(picture.Id);
+            var pictureBinary = await GetPictureBinaryByPictureIdAsync(picture.Id);
 
             var isNew = pictureBinary == null;
 
@@ -349,9 +355,9 @@ namespace TVProgViewer.Services.Media
             pictureBinary.BinaryData = binaryData;
 
             if (isNew)
-                _pictureBinaryRepository.Insert(pictureBinary);
+                await _pictureBinaryRepository.InsertAsync(pictureBinary);
             else
-                _pictureBinaryRepository.Update(pictureBinary);
+                await _pictureBinaryRepository.UpdateAsync(pictureBinary);
 
             return pictureBinary;
         }
@@ -359,40 +365,40 @@ namespace TVProgViewer.Services.Media
         /// <summary>
         /// Encode the image into a byte array in accordance with the specified image format
         /// </summary>
-        /// <typeparam name="T">Pixel data type</typeparam>
+        /// <typeparam name="TPixel">Pixel data type</typeparam>
         /// <param name="image">Image data</param>
         /// <param name="imageFormat">Image format</param>
         /// <param name="quality">Quality index that will be used to encode the image</param>
         /// <returns>Image binary data</returns>
-        protected virtual byte[] EncodeImage<T>(Image<T> image, IImageFormat imageFormat, int? quality = null) where T : struct, IPixel<T>
+        protected virtual async Task<byte[]> EncodeImageAsync<TPixel>(Image<TPixel> image, IImageFormat imageFormat, int? quality = null)
+            where TPixel : unmanaged, IPixel<TPixel>
         {
-            using var stream = new MemoryStream();
-
+            await using var stream = new MemoryStream();
             var imageEncoder = Default.ImageFormatsManager.FindEncoder(imageFormat);
             switch (imageEncoder)
             {
                 case JpegEncoder jpegEncoder:
                     jpegEncoder.Subsample = JpegSubsample.Ratio444;
                     jpegEncoder.Quality = quality ?? _mediaSettings.DefaultImageQuality;
-                    jpegEncoder.Encode(image, stream);
+                    await jpegEncoder.EncodeAsync(image, stream, default);
                     break;
 
                 case PngEncoder pngEncoder:
                     pngEncoder.ColorType = PngColorType.RgbWithAlpha;
-                    pngEncoder.Encode(image, stream);
+                    await pngEncoder.EncodeAsync(image, stream, default);
                     break;
 
                 case BmpEncoder bmpEncoder:
                     bmpEncoder.BitsPerPixel = BmpBitsPerPixel.Pixel32;
-                    bmpEncoder.Encode(image, stream);
+                    await bmpEncoder.EncodeAsync(image, stream, default);
                     break;
 
                 case GifEncoder gifEncoder:
-                    gifEncoder.Encode(image, stream);
+                    await gifEncoder.EncodeAsync(image, stream, default);
                     break;
 
                 default:
-                    imageEncoder.Encode(image, stream);
+                    await imageEncoder.EncodeAsync(image, stream, default);
                     break;
             }
 
@@ -408,15 +414,13 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="mimeType">Mime type</param>
         /// <returns>File extension</returns>
-        public virtual string GetFileExtensionFromMimeType(string mimeType)
+        public virtual Task<string> GetFileExtensionFromMimeTypeAsync(string mimeType)
         {
             if (mimeType == null)
-                return null;
-
-            //TODO use FileExtensionContentTypeProvider to get file extension
+                return Task.FromResult<string>(null);
 
             var parts = mimeType.Split('/');
-            var lastPart = parts[parts.Length - 1];
+            var lastPart = parts[^1];
             switch (lastPart)
             {
                 case "pjpeg":
@@ -430,7 +434,7 @@ namespace TVProgViewer.Services.Media
                     break;
             }
 
-            return lastPart;
+            return Task.FromResult(lastPart);
         }
 
         /// <summary>
@@ -438,9 +442,9 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="picture">Picture</param>
         /// <returns>Picture binary</returns>
-        public virtual byte[] LoadPictureBinary(Picture picture)
+        public virtual async Task<byte[]> LoadPictureBinaryAsync(Picture picture)
         {
-            return LoadPictureBinary(picture, StoreInDb);
+            return await LoadPictureBinaryAsync(picture, await IsStoreInDbAsync());
         }
 
         /// <summary>
@@ -448,9 +452,9 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="name">Name</param>
         /// <returns>Result</returns>
-        public virtual string GetPictureSeName(string name)
+        public virtual async Task<string> GetPictureSeNameAsync(string name)
         {
-            return _urlRecordService.GetSeName(name, true, false);
+            return await _urlRecordService.GetSeNameAsync(name, true, false);
         }
 
         /// <summary>
@@ -460,49 +464,40 @@ namespace TVProgViewer.Services.Media
         /// <param name="defaultPictureType">Default picture type</param>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <returns>Picture URL</returns>
-        public virtual string GetDefaultPictureUrl(int targetSize = 0,
+        public virtual async Task<string> GetDefaultPictureUrlAsync(int targetSize = 0,
             PictureType defaultPictureType = PictureType.Entity,
             string storeLocation = null)
         {
             var defaultImageFileName = defaultPictureType switch
             {
-                PictureType.Avatar => _settingService.GetSettingByKey("Media.User.DefaultAvatarImageName", TVProgViewerMediaDefaults.DefaultAvatarFileName),
-                _ => _settingService.GetSettingByKey("Media.DefaultImageName", TVProgViewerMediaDefaults.DefaultImageFileName)
+                PictureType.Avatar => await _settingService.GetSettingByKeyAsync("Media.User.DefaultAvatarImageName", TvProgMediaDefaults.DefaultAvatarFileName),
+                _ => await _settingService.GetSettingByKeyAsync("Media.DefaultImageName", TvProgMediaDefaults.DefaultImageFileName),
             };
-
-            var filePath = GetPictureLocalPath(defaultImageFileName);
+            var filePath = await GetPictureLocalPathAsync(defaultImageFileName);
             if (!_fileProvider.FileExists(filePath))
             {
                 return string.Empty;
             }
 
             if (targetSize == 0)
-            {
-                var url = GetImagesPathUrl(storeLocation) + defaultImageFileName;
+                return await GetImagesPathUrlAsync(storeLocation) + defaultImageFileName;
 
-                return url;
-            }
-            else
+            var fileExtension = _fileProvider.GetFileExtension(filePath);
+            var thumbFileName = $"{_fileProvider.GetFileNameWithoutExtension(filePath)}_{targetSize}{fileExtension}";
+            var thumbFilePath = await GetThumbLocalPathAsync(thumbFileName);
+            if (!await GeneratedThumbExistsAsync(thumbFilePath, thumbFileName))
             {
-                var fileExtension = _fileProvider.GetFileExtension(filePath);
-                var thumbFileName = $"{_fileProvider.GetFileNameWithoutExtension(filePath)}_{targetSize}{fileExtension}";
-                var thumbFilePath = GetThumbLocalPath(thumbFileName);
-                if (!GeneratedThumbExists(thumbFilePath, thumbFileName))
+                using var image = Image.Load<Rgba32>(filePath, out var imageFormat);
+                image.Mutate(imageProcess => imageProcess.Resize(new ResizeOptions
                 {
-                    using var image = Image.Load(filePath, out var imageFormat);
-
-                    image.Mutate(imageProcess => imageProcess.Resize(new ResizeOptions
-                    {
-                        Mode = ResizeMode.Max,
-                        Size = CalculateDimensions(image.Size(), targetSize)
-                    }));
-                    var pictureBinary = EncodeImage(image, imageFormat);
-                    SaveThumb(thumbFilePath, thumbFileName, imageFormat.DefaultMimeType, pictureBinary);
-                }
-
-                var url = GetThumbUrl(thumbFileName, storeLocation);
-                return url;
+                    Mode = ResizeMode.Max,
+                    Size = CalculateDimensions(image.Size(), targetSize)
+                }));
+                var pictureBinary = await EncodeImageAsync(image, imageFormat);
+                await SaveThumbAsync(thumbFilePath, thumbFileName, imageFormat.DefaultMimeType, pictureBinary);
             }
+
+            return await GetThumbUrlAsync(thumbFileName, storeLocation);
         }
 
         /// <summary>
@@ -514,45 +509,45 @@ namespace TVProgViewer.Services.Media
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <param name="defaultPictureType">Default picture type</param>
         /// <returns>Picture URL</returns>
-        public virtual string GetPictureUrl(int pictureId,
+        public virtual async Task<string> GetPictureUrlAsync(int pictureId,
             int targetSize = 0,
             bool showDefaultPicture = true,
             string storeLocation = null,
             PictureType defaultPictureType = PictureType.Entity)
         {
-            var picture = GetPictureById(pictureId);
-            return GetPictureUrl(picture, targetSize, showDefaultPicture, storeLocation, defaultPictureType);
+            var picture = await GetPictureByIdAsync(pictureId);
+            return (await GetPictureUrlAsync(picture, targetSize, showDefaultPicture, storeLocation, defaultPictureType)).Url;
         }
 
         /// <summary>
         /// Get a picture URL
         /// </summary>
-        /// <param name="picture">Picture instance</param>
+        /// <param name="picture">Reference instance of Picture</param>
         /// <param name="targetSize">The target picture size (longest side)</param>
         /// <param name="showDefaultPicture">A value indicating whether the default picture is shown</param>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <param name="defaultPictureType">Default picture type</param>
         /// <returns>Picture URL</returns>
-        public virtual string GetPictureUrl(Picture picture,
+        public virtual async Task<(string Url, Picture Picture)> GetPictureUrlAsync(Picture picture,
             int targetSize = 0,
             bool showDefaultPicture = true,
             string storeLocation = null,
             PictureType defaultPictureType = PictureType.Entity)
         {
             if (picture == null)
-                return showDefaultPicture ? GetDefaultPictureUrl(targetSize, defaultPictureType, storeLocation) : string.Empty;
+                return showDefaultPicture ? (await GetDefaultPictureUrlAsync(targetSize, defaultPictureType, storeLocation), null) : (string.Empty, (Picture)null);
 
             byte[] pictureBinary = null;
             if (picture.IsNew)
             {
-                DeletePictureThumbs(picture);
-                pictureBinary = LoadPictureBinary(picture);
+                await DeletePictureThumbsAsync(picture);
+                pictureBinary = await LoadPictureBinaryAsync(picture);
 
                 if ((pictureBinary?.Length ?? 0) == 0)
-                    return showDefaultPicture ? GetDefaultPictureUrl(targetSize, defaultPictureType, storeLocation) : string.Empty;
+                    return showDefaultPicture ? (await GetDefaultPictureUrlAsync(targetSize, defaultPictureType, storeLocation), picture) : (string.Empty, picture);
 
                 //we do not validate picture binary here to ensure that no exception ("Parameter is not valid") will be thrown
-                picture = UpdatePicture(picture.Id,
+                picture = await UpdatePictureAsync(picture.Id,
                     pictureBinary,
                     picture.MimeType,
                     picture.SeoFilename,
@@ -564,7 +559,7 @@ namespace TVProgViewer.Services.Media
 
             var seoFileName = picture.SeoFilename; // = GetPictureSeName(picture.SeoFilename); //just for sure
 
-            var lastPart = GetFileExtensionFromMimeType(picture.MimeType);
+            var lastPart = await GetFileExtensionFromMimeTypeAsync(picture.MimeType);
             string thumbFileName;
             if (targetSize == 0)
             {
@@ -579,52 +574,54 @@ namespace TVProgViewer.Services.Media
                     : $"{picture.Id:0000000}_{targetSize}.{lastPart}";
             }
 
-            var thumbFilePath = GetThumbLocalPath(thumbFileName);
+            var thumbFilePath = await GetThumbLocalPathAsync(thumbFileName);
 
-            //the named mutex helps to avoid creating the same files in different threads,
+            if (await GeneratedThumbExistsAsync(thumbFilePath, thumbFileName))
+                return (await GetThumbUrlAsync(thumbFileName, storeLocation), picture);
+
+            //the named semaphore helps to avoid creating the same files in different threads,
             //and does not decrease performance significantly, because the code is blocked only for the specific file.
-            using (var mutex = new Mutex(false, thumbFileName))
+            using (var semaphore = new Semaphore(1, 1, thumbFileName))
             {
-                if (GeneratedThumbExists(thumbFilePath, thumbFileName))
-                    return GetThumbUrl(thumbFileName, storeLocation);
+                semaphore.WaitOne();
 
-                mutex.WaitOne();
-
-                //check, if the file was created, while we were waiting for the release of the mutex.
-                if (!GeneratedThumbExists(thumbFilePath, thumbFileName))
+                try
                 {
-                    pictureBinary ??= LoadPictureBinary(picture);
-
-                    if ((pictureBinary?.Length ?? 0) == 0)
-                        return showDefaultPicture ? GetDefaultPictureUrl(targetSize, defaultPictureType, storeLocation) : string.Empty;
-
-                    byte[] pictureBinaryResized;
-                    if (targetSize != 0)
+                    //check, if the file was created, while we were waiting for the release of the mutex.
+                    if (!await GeneratedThumbExistsAsync(thumbFilePath, thumbFileName))
                     {
-                        //resizing required
-                        using var image = Image.Load(pictureBinary, out var imageFormat);
+                        pictureBinary ??= await LoadPictureBinaryAsync(picture);
 
-                        image.Mutate(imageProcess => imageProcess.Resize(new ResizeOptions
+                        if ((pictureBinary?.Length ?? 0) == 0)
+                            return showDefaultPicture ? (await GetDefaultPictureUrlAsync(targetSize, defaultPictureType, storeLocation), picture) : (string.Empty, picture);
+
+                        byte[] pictureBinaryResized;
+                        if (targetSize != 0)
                         {
-                            Mode = ResizeMode.Max,
-                            Size = CalculateDimensions(image.Size(), targetSize)
-                        }));
+                            //resizing required
+                            using var image = Image.Load<Rgba32>(pictureBinary, out var imageFormat);
+                            image.Mutate(imageProcess => imageProcess.Resize(new ResizeOptions
+                            {
+                                Mode = ResizeMode.Max,
+                                Size = CalculateDimensions(image.Size(), targetSize)
+                            }));
 
-                        pictureBinaryResized = EncodeImage(image, imageFormat);
-                    }
-                    else
-                    {
-                        //create a copy of pictureBinary
-                        pictureBinaryResized = pictureBinary.ToArray();
-                    }
+                            pictureBinaryResized = await EncodeImageAsync(image, imageFormat);
+                        }
+                        else
+                            //create a copy of pictureBinary
+                            pictureBinaryResized = pictureBinary.ToArray();
 
-                    SaveThumb(thumbFilePath, thumbFileName, picture.MimeType, pictureBinaryResized);
+                        await SaveThumbAsync(thumbFilePath, thumbFileName, picture.MimeType, pictureBinaryResized);
+                    }
                 }
-
-                mutex.ReleaseMutex();
+                finally
+                {
+                    semaphore.Release();
+                }
             }
 
-            return GetThumbUrl(thumbFileName, storeLocation);
+            return (await GetThumbUrlAsync(thumbFileName, storeLocation), picture);
         }
 
         /// <summary>
@@ -634,13 +631,13 @@ namespace TVProgViewer.Services.Media
         /// <param name="targetSize">The target picture size (longest side)</param>
         /// <param name="showDefaultPicture">A value indicating whether the default picture is shown</param>
         /// <returns></returns>
-        public virtual string GetThumbLocalPath(Picture picture, int targetSize = 0, bool showDefaultPicture = true)
+        public virtual async Task<string> GetThumbLocalPathAsync(Picture picture, int targetSize = 0, bool showDefaultPicture = true)
         {
-            var url = GetPictureUrl(picture, targetSize, showDefaultPicture);
+            var (url, _) = await GetPictureUrlAsync(picture, targetSize, showDefaultPicture);
             if (string.IsNullOrEmpty(url))
                 return string.Empty;
 
-            return GetThumbLocalPath(_fileProvider.GetFileName(url));
+            return await GetThumbLocalPathAsync(_fileProvider.GetFileName(url));
         }
 
         #endregion
@@ -652,35 +649,29 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="pictureId">Picture identifier</param>
         /// <returns>Picture</returns>
-        public virtual Picture GetPictureById(int pictureId)
+        public virtual async Task<Picture> GetPictureByIdAsync(int pictureId)
         {
-            if (pictureId == 0)
-                return null;
-
-            return _pictureRepository.ToCachedGetById(pictureId);
+            return await _pictureRepository.GetByIdAsync(pictureId, cache => default);
         }
 
         /// <summary>
         /// Deletes a picture
         /// </summary>
         /// <param name="picture">Picture</param>
-        public virtual void DeletePicture(Picture picture)
+        public virtual async Task DeletePictureAsync(Picture picture)
         {
             if (picture == null)
                 throw new ArgumentNullException(nameof(picture));
 
             //delete thumbs
-            DeletePictureThumbs(picture);
+            await DeletePictureThumbsAsync(picture);
 
             //delete from file system
-            if (!StoreInDb)
-                DeletePictureOnFileSystem(picture);
+            if (!await IsStoreInDbAsync())
+                await DeletePictureOnFileSystemAsync(picture);
 
             //delete from database
-            _pictureRepository.Delete(picture);
-
-            //event notification
-            _eventPublisher.EntityDeleted(picture);
+            await _pictureRepository.DeleteAsync(picture);
         }
 
         /// <summary>
@@ -690,7 +681,7 @@ namespace TVProgViewer.Services.Media
         /// <param name="pageIndex">Current page</param>
         /// <param name="pageSize">Items on each page</param>
         /// <returns>Paged list of pictures</returns>
-        public virtual IPagedList<Picture> GetPictures(string virtualPath = "", int pageIndex = 0, int pageSize = int.MaxValue)
+        public virtual async Task<IPagedList<Picture>> GetPicturesAsync(string virtualPath = "", int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var query = _pictureRepository.Table;
 
@@ -699,11 +690,7 @@ namespace TVProgViewer.Services.Media
 
             query = query.OrderByDescending(p => p.Id);
 
-            var key = TvProgMediaCachingDefaults.PicturesByVirtualPathCacheKey.FillCacheKey(virtualPath);
-
-            var pics = query.ToCachedPagedList(key, pageIndex, pageSize);
-
-            return pics;
+            return await query.ToPagedListAsync(pageIndex, pageSize);
         }
 
         /// <summary>
@@ -712,7 +699,7 @@ namespace TVProgViewer.Services.Media
         /// <param name="productId">Product identifier</param>
         /// <param name="recordsToReturn">Number of records to return. 0 if you want to get all items</param>
         /// <returns>Pictures</returns>
-        public virtual IList<Picture> GetPicturesByProductId(int productId, int recordsToReturn = 0)
+        public virtual async Task<IList<Picture>> GetPicturesByProductIdAsync(int productId, int recordsToReturn = 0)
         {
             if (productId == 0)
                 return new List<Picture>();
@@ -726,7 +713,8 @@ namespace TVProgViewer.Services.Media
             if (recordsToReturn > 0)
                 query = query.Take(recordsToReturn);
 
-            var pics = query.ToList();
+            var pics = await query.ToListAsync();
+
             return pics;
         }
 
@@ -741,7 +729,7 @@ namespace TVProgViewer.Services.Media
         /// <param name="isNew">A value indicating whether the picture is new</param>
         /// <param name="validateBinary">A value indicating whether to validated provided picture binary</param>
         /// <returns>Picture</returns>
-        public virtual Picture InsertPicture(byte[] pictureBinary, string mimeType, string seoFilename,
+        public virtual async Task<Picture> InsertPictureAsync(byte[] pictureBinary, string mimeType, string seoFilename,
             string altAttribute = null, string titleAttribute = null,
             bool isNew = true, bool validateBinary = true)
         {
@@ -751,7 +739,7 @@ namespace TVProgViewer.Services.Media
             seoFilename = CommonHelper.EnsureMaximumLength(seoFilename, 100);
 
             if (validateBinary)
-                pictureBinary = ValidatePicture(pictureBinary, mimeType);
+                pictureBinary = await ValidatePictureAsync(pictureBinary, mimeType);
 
             var picture = new Picture
             {
@@ -761,14 +749,11 @@ namespace TVProgViewer.Services.Media
                 TitleAttribute = titleAttribute,
                 IsNew = isNew
             };
-            _pictureRepository.Insert(picture);
-            UpdatePictureBinary(picture, StoreInDb ? pictureBinary : Array.Empty<byte>());
+            await _pictureRepository.InsertAsync(picture);
+            await UpdatePictureBinaryAsync(picture, await IsStoreInDbAsync() ? pictureBinary : Array.Empty<byte>());
 
-            if (!StoreInDb)
-                SavePictureInFile(picture.Id, pictureBinary, mimeType);
-
-            //event notification
-            _eventPublisher.EntityInserted(picture);
+            if (!await IsStoreInDbAsync())
+                await SavePictureInFileAsync(picture.Id, pictureBinary, mimeType);
 
             return picture;
         }
@@ -780,7 +765,7 @@ namespace TVProgViewer.Services.Media
         /// <param name="defaultFileName">File name which will be use if IFormFile.FileName not present</param>
         /// <param name="virtualPath">Virtual path</param>
         /// <returns>Picture</returns>
-        public virtual Picture InsertPicture(IFormFile formFile, string defaultFileName = "", string virtualPath = "")
+        public virtual async Task<Picture> InsertPictureAsync(IFormFile formFile, string defaultFileName = "", string virtualPath = "")
         {
             var imgExt = new List<string>
             {
@@ -846,13 +831,13 @@ namespace TVProgViewer.Services.Media
                 }
             }
 
-            var picture = InsertPicture(_downloadService.GetDownloadBits(formFile), contentType, _fileProvider.GetFileNameWithoutExtension(fileName));
+            var picture = await InsertPictureAsync(await _downloadService.GetDownloadBitsAsync(formFile), contentType, _fileProvider.GetFileNameWithoutExtension(fileName));
 
             if (string.IsNullOrEmpty(virtualPath))
                 return picture;
 
             picture.VirtualPath = _fileProvider.GetVirtualPath(virtualPath);
-            _pictureRepository.Update(picture);
+            await UpdatePictureAsync(picture);
 
             return picture;
         }
@@ -869,7 +854,7 @@ namespace TVProgViewer.Services.Media
         /// <param name="isNew">A value indicating whether the picture is new</param>
         /// <param name="validateBinary">A value indicating whether to validated provided picture binary</param>
         /// <returns>Picture</returns>
-        public virtual Picture UpdatePicture(int pictureId, byte[] pictureBinary, string mimeType,
+        public virtual async Task<Picture> UpdatePictureAsync(int pictureId, byte[] pictureBinary, string mimeType,
             string seoFilename, string altAttribute = null, string titleAttribute = null,
             bool isNew = true, bool validateBinary = true)
         {
@@ -879,15 +864,15 @@ namespace TVProgViewer.Services.Media
             seoFilename = CommonHelper.EnsureMaximumLength(seoFilename, 100);
 
             if (validateBinary)
-                pictureBinary = ValidatePicture(pictureBinary, mimeType);
+                pictureBinary = await ValidatePictureAsync(pictureBinary, mimeType);
 
-            var picture = GetPictureById(pictureId);
+            var picture = await GetPictureByIdAsync(pictureId);
             if (picture == null)
                 return null;
 
             //delete old thumbs if a picture has been changed
             if (seoFilename != picture.SeoFilename)
-                DeletePictureThumbs(picture);
+                await DeletePictureThumbsAsync(picture);
 
             picture.MimeType = mimeType;
             picture.SeoFilename = seoFilename;
@@ -895,14 +880,11 @@ namespace TVProgViewer.Services.Media
             picture.TitleAttribute = titleAttribute;
             picture.IsNew = isNew;
 
-            _pictureRepository.Update(picture);
-            UpdatePictureBinary(picture, StoreInDb ? pictureBinary : Array.Empty<byte>());
+            await _pictureRepository.UpdateAsync(picture);
+            await UpdatePictureBinaryAsync(picture, await IsStoreInDbAsync() ? pictureBinary : Array.Empty<byte>());
 
-            if (!StoreInDb)
-                SavePictureInFile(picture.Id, pictureBinary, mimeType);
-
-            //event notification
-            _eventPublisher.EntityUpdated(picture);
+            if (!await IsStoreInDbAsync())
+                await SavePictureInFileAsync(picture.Id, pictureBinary, mimeType);
 
             return picture;
         }
@@ -912,7 +894,7 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="picture">The picture to update</param>
         /// <returns>Picture</returns>
-        public virtual Picture UpdatePicture(Picture picture)
+        public virtual async Task<Picture> UpdatePictureAsync(Picture picture)
         {
             if (picture == null)
                 return null;
@@ -921,18 +903,15 @@ namespace TVProgViewer.Services.Media
 
             //delete old thumbs if a picture has been changed
             if (seoFilename != picture.SeoFilename)
-                DeletePictureThumbs(picture);
+                await DeletePictureThumbsAsync(picture);
 
             picture.SeoFilename = seoFilename;
 
-            _pictureRepository.Update(picture);
-            UpdatePictureBinary(picture, StoreInDb ? GetPictureBinaryByPictureId(picture.Id).BinaryData : Array.Empty<byte>());
+            await _pictureRepository.UpdateAsync(picture);
+            await UpdatePictureBinaryAsync(picture, await IsStoreInDbAsync() ? (await GetPictureBinaryByPictureIdAsync(picture.Id)).BinaryData : Array.Empty<byte>());
 
-            if (!StoreInDb)
-                SavePictureInFile(picture.Id, GetPictureBinaryByPictureId(picture.Id).BinaryData, picture.MimeType);
-
-            //event notification
-            _eventPublisher.EntityUpdated(picture);
+            if (!await IsStoreInDbAsync())
+                await SavePictureInFileAsync(picture.Id, (await GetPictureBinaryByPictureIdAsync(picture.Id)).BinaryData, picture.MimeType);
 
             return picture;
         }
@@ -942,9 +921,10 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="pictureId">The picture identifier</param>
         /// <returns>Picture binary</returns>
-        public virtual PictureBinary GetPictureBinaryByPictureId(int pictureId)
+        public virtual async Task<PictureBinary> GetPictureBinaryByPictureIdAsync(int pictureId)
         {
-            return _pictureBinaryRepository.Table.FirstOrDefault(pb => pb.PictureId == pictureId);
+            return await _pictureBinaryRepository.Table
+                .FirstOrDefaultAsync(pb => pb.PictureId == pictureId);
         }
 
         /// <summary>
@@ -953,9 +933,9 @@ namespace TVProgViewer.Services.Media
         /// <param name="pictureId">The picture identifier</param>
         /// <param name="seoFilename">The SEO filename</param>
         /// <returns>Picture</returns>
-        public virtual Picture SetSeoFilename(int pictureId, string seoFilename)
+        public virtual async Task<Picture> SetSeoFilenameAsync(int pictureId, string seoFilename)
         {
-            var picture = GetPictureById(pictureId);
+            var picture = await GetPictureByIdAsync(pictureId);
             if (picture == null)
                 throw new ArgumentException("No picture found with the specified id");
 
@@ -963,8 +943,8 @@ namespace TVProgViewer.Services.Media
             if (seoFilename != picture.SeoFilename)
             {
                 //update picture
-                picture = UpdatePicture(picture.Id,
-                    LoadPictureBinary(picture),
+                picture = await UpdatePictureAsync(picture.Id,
+                    await LoadPictureBinaryAsync(picture),
                     picture.MimeType,
                     seoFilename,
                     picture.AltAttribute,
@@ -982,10 +962,9 @@ namespace TVProgViewer.Services.Media
         /// <param name="pictureBinary">Picture binary</param>
         /// <param name="mimeType">MIME type</param>
         /// <returns>Picture binary or throws an exception</returns>
-        public virtual byte[] ValidatePicture(byte[] pictureBinary, string mimeType)
+        public virtual async Task<byte[]> ValidatePictureAsync(byte[] pictureBinary, string mimeType)
         {
-            using var image = Image.Load(pictureBinary, out var imageFormat);
-
+            using var image = Image.Load<Rgba32>(pictureBinary, out var imageFormat);
             //resize the image in accordance with the maximum size
             if (Math.Max(image.Height, image.Width) > _mediaSettings.MaximumImageSize)
             {
@@ -996,7 +975,7 @@ namespace TVProgViewer.Services.Media
                 }));
             }
 
-            return EncodeImage(image, imageFormat);
+            return await EncodeImageAsync(image, imageFormat);
         }
 
         /// <summary>
@@ -1004,17 +983,20 @@ namespace TVProgViewer.Services.Media
         /// </summary>
         /// <param name="picturesIds">Pictures Ids</param>
         /// <returns></returns>
-        public IDictionary<int, string> GetPicturesHash(int[] picturesIds)
+        public async Task<IDictionary<int, string>> GetPicturesHashAsync(int[] picturesIds)
         {
-            var supportedLengthOfBinaryHash = _dataProvider.SupportedLengthOfBinaryHash;
-
-            if (supportedLengthOfBinaryHash == 0 || !picturesIds.Any())
+            if (!picturesIds.Any())
                 return new Dictionary<int, string>();
 
-            const string strCommand = "SELECT [PictureId], HASHBYTES('sha1', substring([BinaryData], 0, {0})) as [Hash] FROM [PictureBinary] where [PictureId] in ({1})";
-            
-            return _dataProvider.Query<PictureHashItem>(string.Format(strCommand, supportedLengthOfBinaryHash, picturesIds.Select(p => p.ToString()).Aggregate((all, current) => all + ", " + current))).Distinct()
-                .ToDictionary(p => p.PictureId, p => BitConverter.ToString(p.Hash).Replace("-", string.Empty));
+            var hashes = (await _dataProvider.GetTableAsync<PictureBinary>())
+                    .Where(p => picturesIds.Contains(p.PictureId))
+                    .Select(x => new
+                    {
+                        x.PictureId,
+                        Hash = Hash(x.BinaryData, _dataProvider.SupportedLengthOfBinaryHash)
+                    });
+
+            return await AsyncIQueryableExtensions.ToDictionaryAsync(hashes, p => p.PictureId, p => p.Hash);
         }
 
         /// <summary>
@@ -1023,26 +1005,26 @@ namespace TVProgViewer.Services.Media
         /// <param name="product">Product</param>
         /// <param name="attributesXml">Attributes (in XML format)</param>
         /// <returns>Picture</returns>
-        public virtual Picture GetProductPicture(Product product, string attributesXml)
+        public virtual async Task<Picture> GetProductPictureAsync(Product product, string attributesXml)
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
             //first, try to get product attribute combination picture
-            var combination = _productAttributeParser.FindProductAttributeCombination(product, attributesXml);
-            var combinationPicture = GetPictureById(combination?.PictureId ?? 0);
+            var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
+            var combinationPicture = await GetPictureByIdAsync(combination?.PictureId ?? 0);
             if (combinationPicture != null)
                 return combinationPicture;
 
             //then, let's see whether we have attribute values with pictures
-            var attributePicture = _productAttributeParser.ParseProductAttributeValues(attributesXml)
-                .Select(attributeValue => GetPictureById(attributeValue?.PictureId ?? 0))
-                .FirstOrDefault(picture => picture != null);
+            var attributePicture = await (await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml))
+                .SelectAwait(async attributeValue => await GetPictureByIdAsync(attributeValue?.PictureId ?? 0))
+                .FirstOrDefaultAsync(picture => picture != null);
             if (attributePicture != null)
                 return attributePicture;
 
             //now let's load the default product picture
-            var productPicture = GetPicturesByProductId(product.Id, 1).FirstOrDefault();
+            var productPicture = (await GetPicturesByProductIdAsync(product.Id, 1)).FirstOrDefault();
             if (productPicture != null)
                 return productPicture;
 
@@ -1050,80 +1032,79 @@ namespace TVProgViewer.Services.Media
             if (product.VisibleIndividually || product.ParentGroupedProductId <= 0)
                 return null;
 
-            var parentGroupedProductPicture = GetPicturesByProductId(product.ParentGroupedProductId, 1).FirstOrDefault();
+            var parentGroupedProductPicture = (await GetPicturesByProductIdAsync(product.ParentGroupedProductId, 1)).FirstOrDefault();
             return parentGroupedProductPicture;
         }
 
-        #endregion
-
-        #region Properties
+        /// <summary>
+        /// Gets a value indicating whether the images should be stored in data base.
+        /// </summary>
+        public virtual async Task<bool> IsStoreInDbAsync()
+        {
+            return await _settingService.GetSettingByKeyAsync("Media.Images.StoreInDB", true);
+        }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the images should be stored in data base.
+        /// Sets a value indicating whether the images should be stored in data base
         /// </summary>
-        public virtual bool StoreInDb
+        /// <param name="isStoreInDb">A value indicating whether the images should be stored in data base</param>
+        public virtual async Task SetIsStoreInDbAsync(bool isStoreInDb)
         {
-            get => _settingService.GetSettingByKey("Media.Images.StoreInDB", true);
-            set
+            //check whether it's a new value
+            if (await IsStoreInDbAsync() == isStoreInDb)
+                return;
+
+            //save the new setting value
+            await _settingService.SetSettingAsync("Media.Images.StoreInDB", isStoreInDb);
+
+            var pageIndex = 0;
+            const int pageSize = 400;
+            try
             {
-                //check whether it's a new value
-                if (StoreInDb == value)
-                    return;
-
-                //save the new setting value
-                _settingService.SetSetting("Media.Images.StoreInDB", value);
-
-                var pageIndex = 0;
-                const int pageSize = 400;
-                try
+                while (true)
                 {
-                    while (true)
+                    var pictures = await GetPicturesAsync(pageIndex: pageIndex, pageSize: pageSize);
+                    pageIndex++;
+
+                    //all pictures converted?
+                    if (!pictures.Any())
+                        break;
+
+                    foreach (var picture in pictures)
                     {
-                        var pictures = GetPictures(pageIndex: pageIndex, pageSize: pageSize);
-                        pageIndex++;
+                        if (!string.IsNullOrEmpty(picture.VirtualPath))
+                            continue;
 
-                        //all pictures converted?
-                        if (!pictures.Any())
-                            break;
+                        var pictureBinary = await LoadPictureBinaryAsync(picture, !isStoreInDb);
 
-                        foreach (var picture in pictures)
-                        {
-                            if (!string.IsNullOrEmpty(picture.VirtualPath))
-                                continue;
-
-                            var pictureBinary = LoadPictureBinary(picture, !value);
-
-                            //we used the code below before. but it's too slow
-                            //let's do it manually (uncommented code) - copy some logic from "UpdatePicture" method
-                            /*just update a picture (all required logic is in "UpdatePicture" method)
-                            we do not validate picture binary here to ensure that no exception ("Parameter is not valid") will be thrown when "moving" pictures
-                            UpdatePicture(picture.Id,
-                                          pictureBinary,
-                                          picture.MimeType,
-                                          picture.SeoFilename,
-                                          true,
-                                          false);*/
-                            if (value)
-                                //delete from file system. now it's in the database
-                                DeletePictureOnFileSystem(picture);
-                            else
-                                //now on file system
-                                SavePictureInFile(picture.Id, pictureBinary, picture.MimeType);
-                            //update appropriate properties
-                            UpdatePictureBinary(picture, value ? pictureBinary : Array.Empty<byte>());
-                            picture.IsNew = true;
-                            //raise event?
-                            //_eventPublisher.EntityUpdated(picture);
-                        }
-
-                        //save all at once
-                        _pictureRepository.Update(pictures);
+                        //we used the code below before. but it's too slow
+                        //let's do it manually (uncommented code) - copy some logic from "UpdatePicture" method
+                        /*just update a picture (all required logic is in "UpdatePicture" method)
+                        we do not validate picture binary here to ensure that no exception ("Parameter is not valid") will be thrown when "moving" pictures
+                        UpdatePicture(picture.Id,
+                                      pictureBinary,
+                                      picture.MimeType,
+                                      picture.SeoFilename,
+                                      true,
+                                      false);*/
+                        if (isStoreInDb)
+                            //delete from file system. now it's in the database
+                            await DeletePictureOnFileSystemAsync(picture);
+                        else
+                            //now on file system
+                            await SavePictureInFileAsync(picture.Id, pictureBinary, picture.MimeType);
+                        //update appropriate properties
+                        await UpdatePictureBinaryAsync(picture, isStoreInDb ? pictureBinary : Array.Empty<byte>());
+                        picture.IsNew = true;
                     }
+
+                    //save all at once
+                    await _pictureRepository.UpdateAsync(pictures, false);
                 }
-                catch
-                {
-                    // ignored
-                }
+            }
+            catch
+            {
+                // ignored
             }
         }
 

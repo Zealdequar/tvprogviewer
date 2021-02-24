@@ -1,16 +1,22 @@
 ﻿using System;
+using TVProgViewer.Core.Domain.Common;
 
 namespace TVProgViewer.Core.Domain.Users
 {
     /// <summary>
     /// Пользователь
     /// </summary>
-    public partial class User: BaseEntity
+    public partial class User: BaseEntity, ISoftDeletedEntity
     {
+
+        public User()
+        {
+            UserGuid = Guid.NewGuid();
+        }
         /// <summary>
         /// Имя пользователя (логин)
         /// </summary>
-        public string UserName { get; set; }
+        public string Username { get; set; }
 
         /// <summary>
         /// Согласие на обработку персональных данных
@@ -96,7 +102,7 @@ namespace TVProgViewer.Core.Domain.Users
         public string AdminComment { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the customer is tax exempt
+        /// Gets or sets a value indicating whether the user is tax exempt
         /// </summary>
         public bool IsTaxExempt { get; set; }
 
@@ -106,12 +112,12 @@ namespace TVProgViewer.Core.Domain.Users
         public int AffiliateId { get; set; }
 
         /// <summary>
-        /// Gets or sets the vendor identifier with which this customer is associated (maganer)
+        /// Gets or sets the vendor identifier with which this user is associated (maganer)
         /// </summary>
         public int VendorId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this customer has some products in the shopping cart
+        /// Gets or sets a value indicating whether this user has some products in the shopping cart
         /// <remarks>The same as if we run ShoppingCartItems.Count > 0
         /// We use this property for performance optimization:
         /// if this property is set to false, then we do not need to load "ShoppingCartItems" navigation property for each page load
@@ -143,7 +149,7 @@ namespace TVProgViewer.Core.Domain.Users
         /// <summary>
         /// Дата и время удаления пользователя
         /// </summary>
-        public DateTime? Deleted { get; set; }
+        public bool Deleted { get; set; }
 
         /// <summary>
         /// Индицирует, системный ли аккаунт у пользователя

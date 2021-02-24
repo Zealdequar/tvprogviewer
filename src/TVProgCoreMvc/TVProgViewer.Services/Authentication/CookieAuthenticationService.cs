@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using TVProgViewer.Services.Users;
 using TVProgViewer.Core.Domain.Users;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Authentication
 {
@@ -25,12 +26,12 @@ namespace TVProgViewer.Services.Authentication
 
         #region Ctor
 
-        public CookieAuthenticationService(UserSettings UserSettings,
-            IUserService UserService,
+        public CookieAuthenticationService(UserSettings userSettings,
+            IUserService userService,
             IHttpContextAccessor httpContextAccessor)
         {
-            _userSettings = UserSettings;
-            _userService = UserService;
+            _userSettings = userSettings;
+            _userService = userService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -39,48 +40,48 @@ namespace TVProgViewer.Services.Authentication
         #region Methods
 
         /// <summary>
-        /// Вход в Систему
+        /// Sign in
         /// </summary>
-        /// <param name="User">Пользователь</param>
-        /// <param name="isPersistent">Сохранять ли сеанс аутентификации в нескольких запросах</param>
-        public virtual async void SignIn(User User, bool isPersistent)
+        /// <param name="user">User</param>
+        /// <param name="isPersistent">Whether the authentication session is persisted across multiple requests</param>
+        public virtual async Task SignInAsync(User user, bool isPersistent)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
-            // Создание заявки на имя пользователя и адрес электронной почты:
+            //create claims for user's username and email
             var claims = new List<Claim>();
 
-            if (!string.IsNullOrEmpty(User.UserName))
-                claims.Add(new Claim(ClaimTypes.Name, User.UserName, ClaimValueTypes.String, TvProgAuthenticationDefaults.ClaimsIssuer));
+            if (!string.IsNullOrEmpty(user.Username))
+                claims.Add(new Claim(ClaimTypes.Name, user.Username, ClaimValueTypes.String, TvProgAuthenticationDefaults.ClaimsIssuer));
 
-            if (!string.IsNullOrEmpty(User.Email))
-                claims.Add(new Claim(ClaimTypes.Email, User.Email, ClaimValueTypes.Email, TvProgAuthenticationDefaults.ClaimsIssuer));
+            if (!string.IsNullOrEmpty(user.Email))
+                claims.Add(new Claim(ClaimTypes.Email, user.Email, ClaimValueTypes.Email, TvProgAuthenticationDefaults.ClaimsIssuer));
 
-            // Создание принципала для текущей аутентфикационной схемы:
+            //create principal for the current authentication scheme
             var userIdentity = new ClaimsIdentity(claims, TvProgAuthenticationDefaults.AuthenticationScheme);
             var userPrincipal = new ClaimsPrincipal(userIdentity);
 
-            // Установка значения, показывающая должна ли сессися сохраняться во время, которое было вызован аутентификацией
+            //set value indicating whether session is persisted and the time at which the authentication was issued
             var authenticationProperties = new AuthenticationProperties
             {
                 IsPersistent = isPersistent,
                 IssuedUtc = DateTime.UtcNow
             };
 
-            // Вход
+            //sign in
             await _httpContextAccessor.HttpContext.SignInAsync(TvProgAuthenticationDefaults.AuthenticationScheme, userPrincipal, authenticationProperties);
 
-            // Кэширование аутентифицирванного пользователя
-            _cachedUser = User;
+            //cache authenticated user
+            _cachedUser = user;
         }
 
         /// <summary>
         /// Sign out
         /// </summary>
-        public virtual async void SignOut()
+        public virtual async Task SignOutAsync()
         {
-            //reset cached User
+            //reset cached user
             _cachedUser = null;
 
             //and sign out from the current authentication scheme
@@ -88,44 +89,44 @@ namespace TVProgViewer.Services.Authentication
         }
 
         /// <summary>
-        /// Get authenticated User
+        /// Get authenticated user
         /// </summary>
         /// <returns>User</returns>
-        public virtual User GetAuthenticatedUser()
+        public virtual async Task<User> GetAuthenticatedUserAsync()
         {
-            //whether there is a cached User
+            //whether there is a cached user
             if (_cachedUser != null)
                 return _cachedUser;
 
             //try to get authenticated user identity
-            var authenticateResult = _httpContextAccessor.HttpContext.AuthenticateAsync(TvProgAuthenticationDefaults.AuthenticationScheme).Result;
+            var authenticateResult = await _httpContextAccessor.HttpContext.AuthenticateAsync(TvProgAuthenticationDefaults.AuthenticationScheme);
             if (!authenticateResult.Succeeded)
                 return null;
 
-            User User = null;
+            User user = null;
             if (_userSettings.UsernamesEnabled)
             {
-                //try to get User by username
+                //try to get user by username
                 var usernameClaim = authenticateResult.Principal.FindFirst(claim => claim.Type == ClaimTypes.Name
                     && claim.Issuer.Equals(TvProgAuthenticationDefaults.ClaimsIssuer, StringComparison.InvariantCultureIgnoreCase));
                 if (usernameClaim != null)
-                    User = _userService.GetUserByUsername(usernameClaim.Value);
+                    user = await _userService.GetUserByUsernameAsync(usernameClaim.Value);
             }
             else
             {
-                //try to get User by email
+                //try to get user by email
                 var emailClaim = authenticateResult.Principal.FindFirst(claim => claim.Type == ClaimTypes.Email
                     && claim.Issuer.Equals(TvProgAuthenticationDefaults.ClaimsIssuer, StringComparison.InvariantCultureIgnoreCase));
                 if (emailClaim != null)
-                    User = _userService.GetUserByEmail(emailClaim.Value);
+                    user = await _userService.GetUserByEmailAsync(emailClaim.Value);
             }
 
-            // Доступен ли найденный пользователь
-            if (User == null || !User.Active || User.RequireReLogin || User.Deleted != null || !_userService.IsRegistered(User))
+            //whether the found user is available
+            if (user == null || !user.Active || user.RequireReLogin || user.Deleted || !await _userService.IsRegisteredAsync(user))
                 return null;
 
-            //cache authenticated User
-            _cachedUser = User;
+            //cache authenticated user
+            _cachedUser = user;
 
             return _cachedUser;
         }

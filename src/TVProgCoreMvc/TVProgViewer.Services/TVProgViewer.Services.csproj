@@ -14,15 +14,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.3.107.24" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
     <PackageReference Include="EPPlus" Version="5.2.0" />
-    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="1.6.7" />
-	<PackageReference Include="MailKit" Version="2.8.0" />
-    <PackageReference Include="MaxMind.GeoIP2" Version="3.2.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.1.7" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
-    <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="1.7.1" />
+	<PackageReference Include="MailKit" Version="2.10.1" />
+    <PackageReference Include="MaxMind.GeoIP2" Version="4.0.1" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.2" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.7" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.8.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,10 +38,6 @@
       <ExcludeFromSourceAnalysis>False</ExcludeFromSourceAnalysis>
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Blogs\" />
   </ItemGroup>
 
 </Project>

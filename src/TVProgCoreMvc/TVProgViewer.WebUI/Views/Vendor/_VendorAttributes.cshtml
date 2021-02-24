@@ -1,11 +1,11 @@
 ﻿@model IList<VendorAttributeModel>
-@using TVProgViewer.Web.Framework.Controllers
 
-@using TVProgViewer.Core.Domain.Catalog
+@using TVProgViewer.Core.Domain.Catalog;
+@using TVProgViewer.Core.Domain.Vendors
 
 @foreach (var attribute in Model)
 {
-    var controlId = $"{TvProgAttributePrefixDefaults.Vendor}{attribute.Id}";
+    var controlId = $"{TvProgVendorDefaults.VendorAttributePrefix}{attribute.Id}";
     var textPrompt = attribute.Name;
 
     <div class="inputs vendor-attributes">

@@ -2,6 +2,8 @@
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Directory;
 using TVProgViewer.Services.Plugins;
+using TVProgViewer.Services.Users;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Directory
 {
@@ -19,7 +21,8 @@ namespace TVProgViewer.Services.Directory
         #region Ctor
 
         public ExchangeRatePluginManager(CurrencySettings currencySettings,
-            IPluginService pluginService) : base(pluginService)
+            IUserService userService,
+            IPluginService pluginService) : base(userService, pluginService)
         {
             _currencySettings = currencySettings;
         }
@@ -31,12 +34,12 @@ namespace TVProgViewer.Services.Directory
         /// <summary>
         /// Load primary active exchange rate provider
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Exchange rate provider</returns>
-        public virtual IExchangeRateProvider LoadPrimaryPlugin(User User = null, int storeId = 0)
+        public virtual async Task<IExchangeRateProvider> LoadPrimaryPluginAsync(User user = null, int storeId = 0)
         {
-            return LoadPrimaryPlugin(_currencySettings.ActiveExchangeRateProviderSystemName, User, storeId);
+            return await LoadPrimaryPluginAsync(_currencySettings.ActiveExchangeRateProviderSystemName, user, storeId);
         }
 
         /// <summary>

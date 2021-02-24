@@ -50,7 +50,7 @@ namespace TVProgViewer.Core.Infrastructure
         /// <returns>Result</returns>
         public override IList<Assembly> GetAssemblies()
         {
-            if (!EnsureBinFolderAssembliesLoaded || _binFolderAssembliesLoaded)
+            if (!EnsureBinFolderAssembliesLoaded || _binFolderAssembliesLoaded) 
                 return base.GetAssemblies();
 
             _binFolderAssembliesLoaded = true;

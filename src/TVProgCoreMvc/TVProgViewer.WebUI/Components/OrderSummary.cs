@@ -6,6 +6,7 @@ using TVProgViewer.Services.Orders;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
 using TVProgViewer.WebUI.Models.ShoppingCart;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -27,17 +28,17 @@ namespace TVProgViewer.WebUI.Components
             _workContext = workContext;
         }
 
-        public IViewComponentResult Invoke(bool? prepareAndDisplayOrderReviewData, ShoppingCartModel overriddenModel)
+        public async Task<IViewComponentResult> InvokeAsync(bool? prepareAndDisplayOrderReviewData, ShoppingCartModel overriddenModel)
         {
             //use already prepared (shared) model
             if (overriddenModel != null)
                 return View(overriddenModel);
 
             //if not passed, then create a new model
-            var cart = _shoppingCartService.GetShoppingCart(_workContext.CurrentUser, ShoppingCartType.ShoppingCart, _storeContext.CurrentStore.Id);
+            var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentUserAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
 
             var model = new ShoppingCartModel();
-            model = _shoppingCartModelFactory.PrepareShoppingCartModel(model, cart,
+            model = await _shoppingCartModelFactory.PrepareShoppingCartModelAsync(model, cart,
                 isEditable: false,
                 prepareAndDisplayOrderReviewData: prepareAndDisplayOrderReviewData.GetValueOrDefault());
             return View(model);

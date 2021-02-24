@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Directory;
-using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Common
 {
@@ -21,7 +20,6 @@ namespace TVProgViewer.Services.Common
         private readonly IAddressAttributeParser _addressAttributeParser;
         private readonly IAddressAttributeService _addressAttributeService;
         private readonly ICountryService _countryService;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<Address> _addressRepository;
         private readonly IStateProvinceService _stateProvinceService;
 
@@ -33,7 +31,6 @@ namespace TVProgViewer.Services.Common
             IAddressAttributeParser addressAttributeParser,
             IAddressAttributeService addressAttributeService,
             ICountryService countryService,
-            IEventPublisher eventPublisher,
             IRepository<Address> addressRepository,
             IStateProvinceService stateProvinceService)
         {
@@ -41,7 +38,6 @@ namespace TVProgViewer.Services.Common
             _addressAttributeParser = addressAttributeParser;
             _addressAttributeService = addressAttributeService;
             _countryService = countryService;
-            _eventPublisher = eventPublisher;
             _addressRepository = addressRepository;
             _stateProvinceService = stateProvinceService;
         }
@@ -54,15 +50,9 @@ namespace TVProgViewer.Services.Common
         /// Deletes an address
         /// </summary>
         /// <param name="address">Address</param>
-        public virtual void DeleteAddress(Address address)
+        public virtual async Task DeleteAddressAsync(Address address)
         {
-            if (address == null)
-                throw new ArgumentNullException(nameof(address));
-
-            _addressRepository.Delete(address);
-            
-            //event notification
-            _eventPublisher.EntityDeleted(address);
+            await _addressRepository.DeleteAsync(address);
         }
 
         /// <summary>
@@ -70,7 +60,7 @@ namespace TVProgViewer.Services.Common
         /// </summary>
         /// <param name="countryId">Country identifier</param>
         /// <returns>Number of addresses</returns>
-        public virtual int GetAddressTotalByCountryId(int countryId)
+        public virtual async Task<int> GetAddressTotalByCountryIdAsync(int countryId)
         {
             if (countryId == 0)
                 return 0;
@@ -79,7 +69,7 @@ namespace TVProgViewer.Services.Common
                         where a.CountryId == countryId
                         select a;
 
-            return query.Count();
+            return await query.CountAsync();
         }
 
         /// <summary>
@@ -87,7 +77,7 @@ namespace TVProgViewer.Services.Common
         /// </summary>
         /// <param name="stateProvinceId">State/province identifier</param>
         /// <returns>Number of addresses</returns>
-        public virtual int GetAddressTotalByStateProvinceId(int stateProvinceId)
+        public virtual async Task<int> GetAddressTotalByStateProvinceIdAsync(int stateProvinceId)
         {
             if (stateProvinceId == 0)
                 return 0;
@@ -95,7 +85,8 @@ namespace TVProgViewer.Services.Common
             var query = from a in _addressRepository.Table
                         where a.StateProvinceId == stateProvinceId
                         select a;
-            return query.Count();
+
+            return await query.CountAsync();
         }
 
         /// <summary>
@@ -103,19 +94,17 @@ namespace TVProgViewer.Services.Common
         /// </summary>
         /// <param name="addressId">Address identifier</param>
         /// <returns>Address</returns>
-        public virtual Address GetAddressById(int addressId)
+        public virtual async Task<Address> GetAddressByIdAsync(int addressId)
         {
-            if (addressId == 0)
-                return null;
-
-            return _addressRepository.ToCachedGetById(addressId);
+            return await _addressRepository.GetByIdAsync(addressId,
+                cache => cache.PrepareKeyForShortTermCache(TvProgEntityCacheDefaults<Address>.ByIdCacheKey, addressId));
         }
 
         /// <summary>
         /// Inserts an address
         /// </summary>
         /// <param name="address">Address</param>
-        public virtual void InsertAddress(Address address)
+        public virtual async Task InsertAddressAsync(Address address)
         {
             if (address == null)
                 throw new ArgumentNullException(nameof(address));
@@ -128,17 +117,14 @@ namespace TVProgViewer.Services.Common
             if (address.StateProvinceId == 0)
                 address.StateProvinceId = null;
 
-            _addressRepository.Insert(address);
-            
-            //event notification
-            _eventPublisher.EntityInserted(address);
+            await _addressRepository.InsertAsync(address);
         }
 
         /// <summary>
         /// Updates the address
         /// </summary>
         /// <param name="address">Address</param>
-        public virtual void UpdateAddress(Address address)
+        public virtual async Task UpdateAddressAsync(Address address)
         {
             if (address == null)
                 throw new ArgumentNullException(nameof(address));
@@ -149,10 +135,7 @@ namespace TVProgViewer.Services.Common
             if (address.StateProvinceId == 0)
                 address.StateProvinceId = null;
 
-            _addressRepository.Update(address);
-            
-            //event notification
-            _eventPublisher.EntityUpdated(address);
+            await _addressRepository.UpdateAsync(address);
         }
 
         /// <summary>
@@ -160,7 +143,7 @@ namespace TVProgViewer.Services.Common
         /// </summary>
         /// <param name="address">Address to validate</param>
         /// <returns>Result</returns>
-        public virtual bool IsAddressValid(Address address)
+        public virtual async Task<bool> IsAddressValidAsync(Address address)
         {
             if (address == null)
                 throw new ArgumentNullException(nameof(address));
@@ -196,13 +179,13 @@ namespace TVProgViewer.Services.Common
 
             if (_addressSettings.CountryEnabled)
             {
-                var country = _countryService.GetCountryByAddress(address);
+                var country = await _countryService.GetCountryByAddressAsync(address);
                 if (country == null)
                     return false;
 
                 if (_addressSettings.StateProvinceEnabled)
                 {
-                    var states = _stateProvinceService.GetStateProvincesByCountryId(country.Id);
+                    var states = await _stateProvinceService.GetStateProvincesByCountryIdAsync(country.Id);
                     if (states.Any())
                     {
                         if (address.StateProvinceId == null || address.StateProvinceId.Value == 0)
@@ -235,7 +218,7 @@ namespace TVProgViewer.Services.Common
                 string.IsNullOrWhiteSpace(address.FaxNumber))
                 return false;
 
-            var requiredAttributes = _addressAttributeService.GetAllAddressAttributes().Where(x => x.IsRequired);
+            var requiredAttributes = (await _addressAttributeService.GetAllAddressAttributesAsync()).Where(x => x.IsRequired);
 
             foreach (var requiredAttribute in requiredAttributes)
             {

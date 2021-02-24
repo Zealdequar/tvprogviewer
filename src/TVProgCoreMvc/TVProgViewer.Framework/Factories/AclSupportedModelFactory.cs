@@ -6,6 +6,7 @@ using TVProgViewer.Core.Domain.Security;
 using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Security;
 using TVProgViewer.Web.Framework.Models;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Web.Framework.Factories
 {
@@ -17,17 +18,17 @@ namespace TVProgViewer.Web.Framework.Factories
         #region Fields
 
         private readonly IAclService _aclService;
-        private readonly IUserService _UserService;
+        private readonly IUserService _userService;
 
         #endregion
 
         #region Ctor
 
         public AclSupportedModelFactory(IAclService aclService,
-            IUserService UserService)
+            IUserService userService)
         {
             _aclService = aclService;
-            _UserService = UserService;
+            _userService = userService;
         }
 
         #endregion
@@ -35,17 +36,17 @@ namespace TVProgViewer.Web.Framework.Factories
         #region Methods
 
         /// <summary>
-        /// Prepare selected and all available User roles for the passed model
+        /// Prepare selected and all available user roles for the passed model
         /// </summary>
         /// <typeparam name="TModel">ACL supported model type</typeparam>
         /// <param name="model">Model</param>
-        public virtual void PrepareModelUserRoles<TModel>(TModel model) where TModel : IAclSupportedModel
+        public virtual async Task PrepareModelUserRolesAsync<TModel>(TModel model) where TModel : IAclSupportedModel
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            //prepare available User roles
-            var availableRoles = _UserService.GetAllUserRoles(showHidden: true);
+            //prepare available user roles
+            var availableRoles = await _userService.GetAllUserRolesAsync(showHidden: true);
             model.AvailableUserRoles = availableRoles.Select(role => new SelectListItem
             {
                 Text = role.Name,
@@ -55,24 +56,24 @@ namespace TVProgViewer.Web.Framework.Factories
         }
 
         /// <summary>
-        /// Prepare selected and all available User roles for the passed model by ACL mappings
+        /// Prepare selected and all available user roles for the passed model by ACL mappings
         /// </summary>
         /// <typeparam name="TModel">ACL supported model type</typeparam>
         /// <typeparam name="TEntity">ACL supported entity type</typeparam>
         /// <param name="model">Model</param>
         /// <param name="entity">Entity</param>
         /// <param name="ignoreAclMappings">Whether to ignore existing ACL mappings</param>
-        public virtual void PrepareModelUserRoles<TModel, TEntity>(TModel model, TEntity entity, bool ignoreAclMappings)
+        public virtual async Task PrepareModelUserRolesAsync<TModel, TEntity>(TModel model, TEntity entity, bool ignoreAclMappings)
             where TModel : IAclSupportedModel where TEntity : BaseEntity, IAclSupported
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            //prepare User roles with granted access
+            //prepare user roles with granted access
             if (!ignoreAclMappings && entity != null)
-                model.SelectedUserRoleIds = _aclService.GetUserRoleIdsWithAccess(entity).ToList();
+                model.SelectedUserRoleIds = (await _aclService.GetUserRoleIdsWithAccessAsync(entity)).ToList();
 
-            PrepareModelUserRoles(model);
+            await PrepareModelUserRolesAsync(model);
         }
 
         #endregion

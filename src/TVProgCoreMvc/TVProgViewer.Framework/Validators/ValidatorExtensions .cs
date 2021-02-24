@@ -12,10 +12,10 @@ namespace TVProgViewer.Web.Framework.Validators
         /// <summary>
         /// Set credit card validator
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="ruleBuilder">RuleBuilder</param>
+        /// <typeparam name="TModel">Type of model being validated</typeparam>
+        /// <param name="ruleBuilder">Rule builder</param>
         /// <returns>Result</returns>
-        public static IRuleBuilderOptions<T, string> IsCreditCard<T>(this IRuleBuilder<T, string> ruleBuilder)
+        public static IRuleBuilderOptions<TModel, string> IsCreditCard<TModel>(this IRuleBuilder<TModel, string> ruleBuilder)
         {
             return ruleBuilder.SetValidator(new CreditCardPropertyValidator());
         }
@@ -23,11 +23,11 @@ namespace TVProgViewer.Web.Framework.Validators
         /// <summary>
         /// Set decimal validator
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="ruleBuilder">RuleBuilder</param>
+        /// <typeparam name="TModel">Type of model being validated</typeparam>
+        /// <param name="ruleBuilder">Rule builder</param>
         /// <param name="maxValue">Maximum value</param>
         /// <returns>Result</returns>
-        public static IRuleBuilderOptions<T, decimal> IsDecimal<T>(this IRuleBuilder<T, decimal> ruleBuilder, decimal maxValue)
+        public static IRuleBuilderOptions<TModel, decimal> IsDecimal<TModel>(this IRuleBuilder<TModel, decimal> ruleBuilder, decimal maxValue)
         {
             return ruleBuilder.SetValidator(new DecimalPropertyValidator(maxValue));
         }
@@ -35,45 +35,60 @@ namespace TVProgViewer.Web.Framework.Validators
         /// <summary>
         /// Set username validator
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="ruleBuilder">RuleBuilder</param>
-        /// <param name="UserSettings">User settings</param>
+        /// <typeparam name="TModel">Type of model being validated</typeparam>
+        /// <param name="ruleBuilder">Rule builder</param>
+        /// <param name="userSettings">User settings</param>
         /// <returns>Result</returns>
-        public static IRuleBuilderOptions<T, string> IsUsername<T>(this IRuleBuilder<T, string> ruleBuilder, UserSettings UserSettings)
+        public static IRuleBuilderOptions<TModel, string> IsUsername<TModel>(this IRuleBuilder<TModel, string> ruleBuilder,
+            UserSettings userSettings)
         {
-            return ruleBuilder.SetValidator(new UsernamePropertyValidator(UserSettings));
+            return ruleBuilder.SetValidator(new UsernamePropertyValidator(userSettings));
+        }
+
+        /// <summary>
+        /// Set phone number validator
+        /// </summary>
+        /// <typeparam name="TModel">Type of model being validated</typeparam>
+        /// <param name="ruleBuilder">Rule builder</param>
+        /// <param name="userSettings">User settings</param>
+        /// <returns>Result</returns>
+        public static IRuleBuilderOptions<TModel, string> IsPhoneNumber<TModel>(this IRuleBuilder<TModel, string> ruleBuilder,
+            UserSettings userSettings)
+        {
+            return ruleBuilder.SetValidator(new PhoneNumberPropertyValidator(userSettings));
         }
 
         /// <summary>
         /// Implement password validator
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="ruleBuilder">RuleBuilder</param>
+        /// <typeparam name="TModel">Type of model being validated</typeparam>
+        /// <param name="ruleBuilder">Rule builder</param>
         /// <param name="localizationService">Localization service</param>
-        /// <param name="UserSettings">User settings</param>
+        /// <param name="userSettings">User settings</param>
         /// <returns>Result</returns>
-        public static IRuleBuilder<T, string> IsPassword<T>(this IRuleBuilder<T, string> ruleBuilder, ILocalizationService localizationService, UserSettings UserSettings)
+        public static IRuleBuilder<TModel, string> IsPassword<TModel>(this IRuleBuilder<TModel, string> ruleBuilder,
+            ILocalizationService localizationService, UserSettings userSettings)
         {
             var regExp = "^";
             //Passwords must be at least X characters and contain the following: upper case (A-Z), lower case (a-z), number (0-9) and special character (e.g. !@#$%^&*-)
-            regExp += UserSettings.PasswordRequireUppercase ? "(?=.*?[A-Z])" : "";
-            regExp += UserSettings.PasswordRequireLowercase ? "(?=.*?[a-z])" : "";
-            regExp += UserSettings.PasswordRequireDigit ? "(?=.*?[0-9])" : "";
-            regExp += UserSettings.PasswordRequireNonAlphanumeric ? "(?=.*?[#?!@$%^&*-])" : "";
-            regExp += $".{{{UserSettings.PasswordMinLength},}}$";
+            regExp += userSettings.PasswordRequireUppercase ? "(?=.*?[A-Z])" : "";
+            regExp += userSettings.PasswordRequireLowercase ? "(?=.*?[a-z])" : "";
+            regExp += userSettings.PasswordRequireDigit ? "(?=.*?[0-9])" : "";
+            regExp += userSettings.PasswordRequireNonAlphanumeric ? "(?=.*?[#?!@$%^&*-])" : "";
+            regExp += $".{{{userSettings.PasswordMinLength},}}$";
 
-            var message = string.Format(localizationService.GetResource("Validation.Password.Rule"),
-                string.Format(localizationService.GetResource("Validation.Password.LengthValidation"), UserSettings.PasswordMinLength),
-                UserSettings.PasswordRequireUppercase ? localizationService.GetResource("Validation.Password.RequireUppercase") :"",
-                UserSettings.PasswordRequireLowercase ? localizationService.GetResource("Validation.Password.RequireLowercase") : "",
-                UserSettings.PasswordRequireDigit ? localizationService.GetResource("Validation.Password.RequireDigit") : "",
-                UserSettings.PasswordRequireNonAlphanumeric ? localizationService.GetResource("Validation.Password.RequireNonAlphanumeric") : "");
+            ;
 
             var options = ruleBuilder
-                .NotEmpty().WithMessage(localizationService.GetResource("Validation.Password.IsNotEmpty"))
-                .Matches(regExp).WithMessage(message);
+                .NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Validation.Password.IsNotEmpty"))
+                .Matches(regExp).WithMessageAwait(async () => string.Format(await localizationService.GetResourceAsync("Validation.Password.Rule"),
+                string.Format(await localizationService.GetResourceAsync("Validation.Password.LengthValidation"), userSettings.PasswordMinLength),
+                userSettings.PasswordRequireUppercase ? await localizationService.GetResourceAsync("Validation.Password.RequireUppercase") : "",
+                userSettings.PasswordRequireLowercase ? await localizationService.GetResourceAsync("Validation.Password.RequireLowercase") : "",
+                userSettings.PasswordRequireDigit ? await localizationService.GetResourceAsync("Validation.Password.RequireDigit") : "",
+                userSettings.PasswordRequireNonAlphanumeric ? await localizationService.GetResourceAsync("Validation.Password.RequireNonAlphanumeric") : ""));
 
             return options;
-        }        
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Users;
+using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Plugins;
 
 namespace TVProgViewer.Services.Authentication.External
@@ -18,7 +20,8 @@ namespace TVProgViewer.Services.Authentication.External
         #region Ctor
 
         public AuthenticationPluginManager(ExternalAuthenticationSettings externalAuthenticationSettings,
-            IPluginService pluginService) : base(pluginService)
+            IUserService userService,
+            IPluginService pluginService) : base(userService, pluginService)
         {
             _externalAuthenticationSettings = externalAuthenticationSettings;
         }
@@ -30,12 +33,12 @@ namespace TVProgViewer.Services.Authentication.External
         /// <summary>
         /// Load active authentication methods
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>List of active authentication methods</returns>
-        public virtual IList<IExternalAuthenticationMethod> LoadActivePlugins(User User = null, int storeId = 0)
+        public virtual async Task<IList<IExternalAuthenticationMethod>> LoadActivePluginsAsync(User user = null, int storeId = 0)
         {
-            return LoadActivePlugins(_externalAuthenticationSettings.ActiveAuthenticationMethodSystemNames, User, storeId);
+            return await LoadActivePluginsAsync(_externalAuthenticationSettings.ActiveAuthenticationMethodSystemNames, user, storeId);
         }
 
         /// <summary>
@@ -52,12 +55,12 @@ namespace TVProgViewer.Services.Authentication.External
         /// Check whether the authentication method with the passed system name is active
         /// </summary>
         /// <param name="systemName">System name of authentication method to check</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Result</returns>
-        public virtual bool IsPluginActive(string systemName, User User = null, int storeId = 0)
+        public virtual async Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0)
         {
-            var authenticationMethod = LoadPluginBySystemName(systemName, User, storeId);
+            var authenticationMethod = await LoadPluginBySystemNameAsync(systemName, user, storeId);
             return IsPluginActive(authenticationMethod);
         }
 

@@ -18,7 +18,10 @@ namespace TVProgViewer.WebUI.Models.Checkout
 
         public IList<string> Warnings { get; set; }
 
-        #region Nested recordes
+        public bool DisplayPickupInStore { get; set; }
+        public CheckoutPickupPointsModel PickupPointsModel { get; set; }
+
+        #region Nested classes
 
         public partial record ShippingMethodModel : BaseTvProgModel
         {
@@ -28,7 +31,7 @@ namespace TVProgViewer.WebUI.Models.Checkout
             public string Fee { get; set; }
             public bool Selected { get; set; }
 
-            public ShippingOption ShippingOption { get; set; } 
+            public ShippingOption ShippingOption { get; set; }
         }
 
         #endregion

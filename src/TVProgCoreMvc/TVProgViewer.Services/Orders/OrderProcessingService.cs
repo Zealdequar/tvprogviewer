@@ -30,6 +30,8 @@ using TVProgViewer.Services.Security;
 using TVProgViewer.Services.Shipping;
 using TVProgViewer.Services.Tax;
 using TVProgViewer.Services.Vendors;
+using TVProgViewer.Core.Events;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Orders
 {
@@ -46,7 +48,7 @@ namespace TVProgViewer.Services.Orders
         private readonly ICheckoutAttributeFormatter _checkoutAttributeFormatter;
         private readonly ICountryService _countryService;
         private readonly ICurrencyService _currencyService;
-        private readonly IUserActivityService _UserActivityService;
+        private readonly IUserActivityService _userActivityService;
         private readonly IUserService _userService;
         private readonly ICustomNumberFormatter _customNumberFormatter;
         private readonly IDiscountService _discountService;
@@ -69,11 +71,9 @@ namespace TVProgViewer.Services.Orders
         private readonly IProductService _productService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShipmentService _shipmentService;
-        private readonly IShippingPluginManager _shippingPluginManager;
         private readonly IShippingService _shippingService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
-        private readonly IStoreContext _storeContext;
         private readonly ITaxService _taxService;
         private readonly IVendorService _vendorService;
         private readonly IWebHelper _webHelper;
@@ -96,8 +96,8 @@ namespace TVProgViewer.Services.Orders
             ICheckoutAttributeFormatter checkoutAttributeFormatter,
             ICountryService countryService,
             ICurrencyService currencyService,
-            IUserActivityService UserActivityService,
-            IUserService UserService,
+            IUserActivityService userActivityService,
+            IUserService userService,
             ICustomNumberFormatter customNumberFormatter,
             IDiscountService discountService,
             IEncryptionService encryptionService,
@@ -119,11 +119,9 @@ namespace TVProgViewer.Services.Orders
             IProductService productService,
             IRewardPointService rewardPointService,
             IShipmentService shipmentService,
-            IShippingPluginManager shippingPluginManager,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
-            IStoreContext storeContext,
             ITaxService taxService,
             IVendorService vendorService,
             IWebHelper webHelper,
@@ -142,8 +140,8 @@ namespace TVProgViewer.Services.Orders
             _checkoutAttributeFormatter = checkoutAttributeFormatter;
             _countryService = countryService;
             _currencyService = currencyService;
-            _UserActivityService = UserActivityService;
-            _userService = UserService;
+            _userActivityService = userActivityService;
+            _userService = userService;
             _customNumberFormatter = customNumberFormatter;
             _discountService = discountService;
             _encryptionService = encryptionService;
@@ -165,11 +163,9 @@ namespace TVProgViewer.Services.Orders
             _productService = productService;
             _rewardPointService = rewardPointService;
             _shipmentService = shipmentService;
-            _shippingPluginManager = shippingPluginManager;
             _shippingService = shippingService;
             _shoppingCartService = shoppingCartService;
             _stateProvinceService = stateProvinceService;
-            _storeContext = storeContext;
             _taxService = taxService;
             _vendorService = vendorService;
             _webHelper = webHelper;
@@ -384,9 +380,9 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="note">Note text</param>
-        protected virtual void AddOrderNote(Order order, string note)
+        protected virtual async Task AddOrderNoteAsync(Order order, string note)
         {
-            _orderService.InsertOrderNote(new OrderNote
+            await _orderService.InsertOrderNoteAsync(new OrderNote
             {
                 OrderId = order.Id,
                 Note = note,
@@ -395,13 +391,245 @@ namespace TVProgViewer.Services.Orders
             });
         }
 
-        
+        /// <summary>
+        /// Prepare details to place an order. It also sets some properties to "processPaymentRequest"
+        /// </summary>
+        /// <param name="processPaymentRequest">Process payment request</param>
+        /// <returns>Details</returns>
+        protected virtual async Task<PlaceOrderContainer> PreparePlaceOrderDetailsAsync(ProcessPaymentRequest processPaymentRequest)
+        {
+            var details = new PlaceOrderContainer
+            {
+                //user
+                User = await _userService.GetUserByIdAsync(processPaymentRequest.UserId)
+            };
+            if (details.User == null)
+                throw new ArgumentException("User is not set");
+
+            //affiliate
+            var affiliate = await _affiliateService.GetAffiliateByIdAsync(details.User.AffiliateId);
+            if (affiliate != null && affiliate.Active && !affiliate.Deleted)
+                details.AffiliateId = affiliate.Id;
+
+            //check whether user is guest
+            if (await _userService.IsGuestAsync(details.User) && !_orderSettings.AnonymousCheckoutAllowed)
+                throw new TvProgException("Anonymous checkout is not allowed");
+
+            //user currency
+            var currencyTmp = await _currencyService.GetCurrencyByIdAsync(
+                await _genericAttributeService.GetAttributeAsync<int>(details.User, TvProgUserDefaults.CurrencyIdAttribute, processPaymentRequest.StoreId));
+            var userCurrency = currencyTmp != null && currencyTmp.Published ? currencyTmp : await _workContext.GetWorkingCurrencyAsync();
+            var primaryStoreCurrency = await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId);
+            details.UserCurrencyCode = userCurrency.CurrencyCode;
+            details.UserCurrencyRate = userCurrency.Rate / primaryStoreCurrency.Rate;
+
+            //user language
+            details.UserLanguage = await _languageService.GetLanguageByIdAsync(
+                await _genericAttributeService.GetAttributeAsync<int>(details.User, TvProgUserDefaults.LanguageIdAttribute, processPaymentRequest.StoreId));
+            if (details.UserLanguage == null || !details.UserLanguage.Published)
+                details.UserLanguage = await _workContext.GetWorkingLanguageAsync();
+
+            //billing address
+            if (details.User.BillingAddressId is null)
+                throw new TvProgException("Billing address is not provided");
+
+            var billingAddress = await _userService.GetUserBillingAddressAsync(details.User);
+
+            if (!CommonHelper.IsValidEmail(billingAddress?.Email))
+                throw new TvProgException("Email is not valid");
+
+            details.BillingAddress = _addressService.CloneAddress(billingAddress);
+
+            if (await _countryService.GetCountryByAddressAsync(details.BillingAddress) is Country billingCountry && !billingCountry.AllowsBilling)
+                throw new TvProgException($"Country '{billingCountry.Name}' is not allowed for billing");
+
+            //checkout attributes
+            details.CheckoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(details.User, TvProgUserDefaults.CheckoutAttributes, processPaymentRequest.StoreId);
+            details.CheckoutAttributeDescription = await _checkoutAttributeFormatter.FormatAttributesAsync(details.CheckoutAttributesXml, details.User);
+
+            //load shopping cart
+            details.Cart = await _shoppingCartService.GetShoppingCartAsync(details.User, ShoppingCartType.ShoppingCart, processPaymentRequest.StoreId);
+
+            if (!details.Cart.Any())
+                throw new TvProgException("Cart is empty");
+
+            //validate the entire shopping cart
+            var warnings = await _shoppingCartService.GetShoppingCartWarningsAsync(details.Cart, details.CheckoutAttributesXml, true);
+            if (warnings.Any())
+                throw new TvProgException(warnings.Aggregate(string.Empty, (current, next) => $"{current}{next};"));
+
+            //validate individual cart items
+            foreach (var sci in details.Cart)
+            {
+                var product = await _productService.GetProductByIdAsync(sci.ProductId);
+
+                var sciWarnings = await _shoppingCartService.GetShoppingCartItemWarningsAsync(details.User,
+                    sci.ShoppingCartType, product, processPaymentRequest.StoreId, sci.AttributesXml,
+                    sci.UserEnteredPrice, sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, false, sci.Id);
+                if (sciWarnings.Any())
+                    throw new TvProgException(sciWarnings.Aggregate(string.Empty, (current, next) => $"{current}{next};"));
+            }
+
+            //min totals validation
+            if (!await ValidateMinOrderSubtotalAmountAsync(details.Cart))
+            {
+                var minOrderSubtotalAmount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_orderSettings.MinOrderSubtotalAmount, await _workContext.GetWorkingCurrencyAsync());
+                throw new TvProgException(string.Format(await _localizationService.GetResourceAsync("Checkout.MinOrderSubtotalAmount"),
+                    await _priceFormatter.FormatPriceAsync(minOrderSubtotalAmount, true, false)));
+            }
+
+            if (!await ValidateMinOrderTotalAmountAsync(details.Cart))
+            {
+                var minOrderTotalAmount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(_orderSettings.MinOrderTotalAmount, await _workContext.GetWorkingCurrencyAsync());
+                throw new TvProgException(string.Format(await _localizationService.GetResourceAsync("Checkout.MinOrderTotalAmount"),
+                    await _priceFormatter.FormatPriceAsync(minOrderTotalAmount, true, false)));
+            }
+
+            //tax display type
+            if (_taxSettings.AllowUsersToSelectTaxDisplayType)
+                details.UserTaxDisplayType = (TaxDisplayType)await _genericAttributeService.GetAttributeAsync<int>(details.User, TvProgUserDefaults.TaxDisplayTypeIdAttribute, processPaymentRequest.StoreId);
+            else
+                details.UserTaxDisplayType = _taxSettings.TaxDisplayType;
+
+            //sub total (incl tax)
+            var (orderSubTotalDiscountAmount, orderSubTotalAppliedDiscounts, subTotalWithoutDiscountBase, _, _) = await _orderTotalCalculationService.GetShoppingCartSubTotalAsync(details.Cart, true);
+            details.OrderSubTotalInclTax = subTotalWithoutDiscountBase;
+            details.OrderSubTotalDiscountInclTax = orderSubTotalDiscountAmount;
+
+            //discount history
+            foreach (var disc in orderSubTotalAppliedDiscounts)
+                if (!_discountService.ContainsDiscount(details.AppliedDiscounts, disc))
+                    details.AppliedDiscounts.Add(disc);
+
+            //sub total (excl tax)
+            (orderSubTotalDiscountAmount, _, subTotalWithoutDiscountBase, _, _) = await _orderTotalCalculationService.GetShoppingCartSubTotalAsync(details.Cart, false);
+            details.OrderSubTotalExclTax = subTotalWithoutDiscountBase;
+            details.OrderSubTotalDiscountExclTax = orderSubTotalDiscountAmount;
+
+            //shipping info
+            if (await _shoppingCartService.ShoppingCartRequiresShippingAsync(details.Cart))
+            {
+                var pickupPoint = await _genericAttributeService.GetAttributeAsync<PickupPoint>(details.User,
+                    TvProgUserDefaults.SelectedPickupPointAttribute, processPaymentRequest.StoreId);
+                if (_shippingSettings.AllowPickupInStore && pickupPoint != null)
+                {
+                    var country = await _countryService.GetCountryByTwoLetterIsoCodeAsync(pickupPoint.CountryCode);
+                    var state = await _stateProvinceService.GetStateProvinceByAbbreviationAsync(pickupPoint.StateAbbreviation, country?.Id);
+
+                    details.PickupInStore = true;
+                    details.PickupAddress = new Address
+                    {
+                        Address1 = pickupPoint.Address,
+                        City = pickupPoint.City,
+                        County = pickupPoint.County,
+                        CountryId = country?.Id,
+                        StateProvinceId = state?.Id,
+                        ZipPostalCode = pickupPoint.ZipPostalCode,
+                        CreatedOnUtc = DateTime.UtcNow
+                    };
+                }
+                else
+                {
+                    if (details.User.ShippingAddressId == null)
+                        throw new TvProgException("Shipping address is not provided");
+
+                    var shippingAddress = await _userService.GetUserShippingAddressAsync(details.User);
+
+                    if (!CommonHelper.IsValidEmail(shippingAddress?.Email))
+                        throw new TvProgException("Email is not valid");
+
+                    //clone shipping address
+                    details.ShippingAddress = _addressService.CloneAddress(shippingAddress);
+
+                    if (await _countryService.GetCountryByAddressAsync(details.ShippingAddress) is Country shippingCountry && !shippingCountry.AllowsShipping)
+                        throw new TvProgException($"Country '{shippingCountry.Name}' is not allowed for shipping");
+                }
+
+                var shippingOption = await _genericAttributeService.GetAttributeAsync<ShippingOption>(details.User,
+                    TvProgUserDefaults.SelectedShippingOptionAttribute, processPaymentRequest.StoreId);
+                if (shippingOption != null)
+                {
+                    details.ShippingMethodName = shippingOption.Name;
+                    details.ShippingRateComputationMethodSystemName = shippingOption.ShippingRateComputationMethodSystemName;
+                }
+
+                details.ShippingStatus = ShippingStatus.NotYetShipped;
+            }
+            else
+                details.ShippingStatus = ShippingStatus.ShippingNotRequired;
+
+            //shipping total
+            var (orderShippingTotalInclTax, _, shippingTotalDiscounts) = await _orderTotalCalculationService.GetShoppingCartShippingTotalAsync(details.Cart, true);
+            var (orderShippingTotalExclTax, _, _) = await _orderTotalCalculationService.GetShoppingCartShippingTotalAsync(details.Cart, false);
+            if (!orderShippingTotalInclTax.HasValue || !orderShippingTotalExclTax.HasValue)
+                throw new TvProgException("Shipping total couldn't be calculated");
+
+            details.OrderShippingTotalInclTax = orderShippingTotalInclTax.Value;
+            details.OrderShippingTotalExclTax = orderShippingTotalExclTax.Value;
+
+            foreach (var disc in shippingTotalDiscounts)
+                if (!_discountService.ContainsDiscount(details.AppliedDiscounts, disc))
+                    details.AppliedDiscounts.Add(disc);
+
+            //payment total
+            var paymentAdditionalFee = await _paymentService.GetAdditionalHandlingFeeAsync(details.Cart, processPaymentRequest.PaymentMethodSystemName);
+            details.PaymentAdditionalFeeInclTax = (await _taxService.GetPaymentMethodAdditionalFeeAsync(paymentAdditionalFee, true, details.User)).price;
+            details.PaymentAdditionalFeeExclTax = (await _taxService.GetPaymentMethodAdditionalFeeAsync(paymentAdditionalFee, false, details.User)).price;
+
+            //tax amount
+            SortedDictionary<decimal, decimal> taxRatesDictionary;
+            (details.OrderTaxTotal, taxRatesDictionary) = await _orderTotalCalculationService.GetTaxTotalAsync(details.Cart);
+
+            //VAT number
+            var userVatStatus = (VatNumberStatus)await _genericAttributeService.GetAttributeAsync<int>(details.User, TvProgUserDefaults.VatNumberStatusIdAttribute);
+            if (_taxSettings.EuVatEnabled && userVatStatus == VatNumberStatus.Valid)
+                details.VatNumber = await _genericAttributeService.GetAttributeAsync<string>(details.User, TvProgUserDefaults.VatNumberAttribute);
+
+            //tax rates
+            details.TaxRates = taxRatesDictionary.Aggregate(string.Empty, (current, next) =>
+                $"{current}{next.Key.ToString(CultureInfo.InvariantCulture)}:{next.Value.ToString(CultureInfo.InvariantCulture)};   ");
+
+            //order total (and applied discounts, gift cards, reward points)
+            var (orderTotal, orderDiscountAmount, orderAppliedDiscounts, appliedGiftCards, redeemedRewardPoints, redeemedRewardPointsAmount) = await _orderTotalCalculationService.GetShoppingCartTotalAsync(details.Cart);
+            if (!orderTotal.HasValue)
+                throw new TvProgException("Order total couldn't be calculated");
+
+            details.OrderDiscountAmount = orderDiscountAmount;
+            details.RedeemedRewardPoints = redeemedRewardPoints;
+            details.RedeemedRewardPointsAmount = redeemedRewardPointsAmount;
+            details.AppliedGiftCards = appliedGiftCards;
+            details.OrderTotal = orderTotal.Value;
+
+            //discount history
+            foreach (var disc in orderAppliedDiscounts)
+                if (!_discountService.ContainsDiscount(details.AppliedDiscounts, disc))
+                    details.AppliedDiscounts.Add(disc);
+
+            processPaymentRequest.OrderTotal = details.OrderTotal;
+
+            //recurring or standard shopping cart?
+            details.IsRecurringShoppingCart = await _shoppingCartService.ShoppingCartIsRecurringAsync(details.Cart);
+            if (!details.IsRecurringShoppingCart)
+                return details;
+
+            var (recurringCyclesError, recurringCycleLength, recurringCyclePeriod, recurringTotalCycles) = await _shoppingCartService.GetRecurringCycleInfoAsync(details.Cart);
+
+            if (!string.IsNullOrEmpty(recurringCyclesError))
+                throw new TvProgException(recurringCyclesError);
+
+            processPaymentRequest.RecurringCycleLength = recurringCycleLength;
+            processPaymentRequest.RecurringCyclePeriod = recurringCyclePeriod;
+            processPaymentRequest.RecurringTotalCycles = recurringTotalCycles;
+
+            return details;
+        }
+
         /// <summary>
         /// Prepare details to place order based on the recurring payment.
         /// </summary>
         /// <param name="processPaymentRequest">Process payment request</param>
         /// <returns>Details</returns>
-        protected virtual PlaceOrderContainer PrepareRecurringOrderDetails(ProcessPaymentRequest processPaymentRequest)
+        protected virtual async Task<PlaceOrderContainer> PrepareRecurringOrderDetailsAsync(ProcessPaymentRequest processPaymentRequest)
         {
             var details = new PlaceOrderContainer
             {
@@ -415,33 +643,37 @@ namespace TVProgViewer.Services.Orders
 
             processPaymentRequest.PaymentMethodSystemName = details.InitialOrder.PaymentMethodSystemName;
 
-            //User
-            details.User = _userService.GetUserById(processPaymentRequest.UserId);
+            //user
+            details.User = await _userService.GetUserByIdAsync(processPaymentRequest.UserId);
             if (details.User == null)
                 throw new ArgumentException("User is not set");
 
-            
-            //check whether User is guest
-            if (_userService.IsGuest(details.User) && !_orderSettings.AnonymousCheckoutAllowed)
+            //affiliate
+            var affiliate = await _affiliateService.GetAffiliateByIdAsync(details.User.AffiliateId);
+            if (affiliate != null && affiliate.Active && !affiliate.Deleted)
+                details.AffiliateId = affiliate.Id;
+
+            //check whether user is guest
+            if (await _userService.IsGuestAsync(details.User) && !_orderSettings.AnonymousCheckoutAllowed)
                 throw new TvProgException("Anonymous checkout is not allowed");
 
-            //User currency
+            //user currency
             details.UserCurrencyCode = details.InitialOrder.UserCurrencyCode;
             details.UserCurrencyRate = details.InitialOrder.CurrencyRate;
 
-            //User language
-            details.UserLanguage = _languageService.GetLanguageById(details.InitialOrder.UserLanguageId);
+            //user language
+            details.UserLanguage = await _languageService.GetLanguageByIdAsync(details.InitialOrder.UserLanguageId);
             if (details.UserLanguage == null || !details.UserLanguage.Published)
-                details.UserLanguage = _workContext.WorkingLanguage;
+                details.UserLanguage = await _workContext.GetWorkingLanguageAsync();
 
             //billing address
             if (details.InitialOrder.BillingAddressId == 0)
                 throw new TvProgException("Billing address is not available");
 
-            var billingAddress = _addressService.GetAddressById(details.InitialOrder.BillingAddressId);
+            var billingAddress = await _addressService.GetAddressByIdAsync(details.InitialOrder.BillingAddressId);
 
             details.BillingAddress = _addressService.CloneAddress(billingAddress);
-            if (_countryService.GetCountryByAddress(billingAddress) is Country billingCountry && !billingCountry.AllowsBilling)
+            if (await _countryService.GetCountryByAddressAsync(billingAddress) is Country billingCountry && !billingCountry.AllowsBilling)
                 throw new TvProgException($"Country '{billingCountry.Name}' is not allowed for billing");
 
             //checkout attributes
@@ -463,18 +695,16 @@ namespace TVProgViewer.Services.Orders
                 details.PickupInStore = details.InitialOrder.PickupInStore;
                 if (!details.PickupInStore)
                 {
-                    if (!details.InitialOrder.ShippingAddressId.HasValue || !(_addressService.GetAddressById(details.InitialOrder.ShippingAddressId.Value) is Address shippingAddress))
+                    if (!details.InitialOrder.ShippingAddressId.HasValue || await _addressService.GetAddressByIdAsync(details.InitialOrder.ShippingAddressId.Value) is not Address shippingAddress)
                         throw new TvProgException("Shipping address is not available");
 
                     //clone shipping address
                     details.ShippingAddress = _addressService.CloneAddress(shippingAddress);
-                    if (_countryService.GetCountryByAddress(details.ShippingAddress) is Country shippingCountry && !shippingCountry.AllowsShipping)
+                    if (await _countryService.GetCountryByAddressAsync(details.ShippingAddress) is Country shippingCountry && !shippingCountry.AllowsShipping)
                         throw new TvProgException($"Country '{shippingCountry.Name}' is not allowed for shipping");
                 }
-                else if (details.InitialOrder.PickupAddressId.HasValue && _addressService.GetAddressById(details.InitialOrder.PickupAddressId.Value) is Address pickupAddress)
-                {
+                else if (details.InitialOrder.PickupAddressId.HasValue && await _addressService.GetAddressByIdAsync(details.InitialOrder.PickupAddressId.Value) is Address pickupAddress)
                     details.PickupAddress = _addressService.CloneAddress(pickupAddress);
-                }
 
                 details.ShippingMethodName = details.InitialOrder.ShippingMethod;
                 details.ShippingRateComputationMethodSystemName = details.InitialOrder.ShippingRateComputationMethodSystemName;
@@ -501,9 +731,9 @@ namespace TVProgViewer.Services.Orders
             details.VatNumber = details.InitialOrder.VatNumber;
 
             //discount history (the same)
-            foreach (var duh in _discountService.GetAllDiscountUsageHistory(orderId: details.InitialOrder.Id))
+            foreach (var duh in await _discountService.GetAllDiscountUsageHistoryAsync(orderId: details.InitialOrder.Id))
             {
-                var d = _discountService.GetDiscountById(duh.DiscountId);
+                var d = await _discountService.GetDiscountByIdAsync(duh.DiscountId);
                 if (d != null)
                     details.AppliedDiscounts.Add(d);
             }
@@ -523,7 +753,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="processPaymentResult">Process payment result</param>
         /// <param name="details">Details</param>
         /// <returns>Order</returns>
-        protected virtual Order SaveOrderDetails(ProcessPaymentRequest processPaymentRequest,
+        protected virtual async Task<Order> SaveOrderDetailsAsync(ProcessPaymentRequest processPaymentRequest,
             ProcessPaymentResult processPaymentResult, PlaceOrderContainer details)
         {
             var order = new Order
@@ -583,35 +813,36 @@ namespace TVProgViewer.Services.Orders
             if (details.BillingAddress is null)
                 throw new TvProgException("Billing address is not provided");
 
-            _addressService.InsertAddress(details.BillingAddress);
+            await _addressService.InsertAddressAsync(details.BillingAddress);
             order.BillingAddressId = details.BillingAddress.Id;
 
             if (details.PickupAddress != null)
             {
-                _addressService.InsertAddress(details.PickupAddress);
+                await _addressService.InsertAddressAsync(details.PickupAddress);
                 order.PickupAddressId = details.PickupAddress.Id;
             }
 
             if (details.ShippingAddress != null)
             {
-                _addressService.InsertAddress(details.ShippingAddress);
+                await _addressService.InsertAddressAsync(details.ShippingAddress);
                 order.ShippingAddressId = details.ShippingAddress.Id;
             }
 
-            _orderService.InsertOrder(order);
+            await _orderService.InsertOrderAsync(order);
 
             //generate and set custom order number
             order.CustomOrderNumber = _customNumberFormatter.GenerateOrderCustomNumber(order);
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //reward points history
             if (details.RedeemedRewardPointsAmount <= decimal.Zero)
                 return order;
 
-            _rewardPointService.AddRewardPointsHistoryEntry(details.User, -details.RedeemedRewardPoints, order.StoreId,
-                string.Format(_localizationService.GetResource("RewardPoints.Message.RedeemedForOrder", order.UserLanguageId), order.CustomOrderNumber),
+            order.RedeemedRewardPointsEntryId = await _rewardPointService.AddRewardPointsHistoryEntryAsync(details.User, -details.RedeemedRewardPoints, order.StoreId,
+                string.Format(await _localizationService.GetResourceAsync("RewardPoints.Message.RedeemedForOrder", order.UserLanguageId), order.CustomOrderNumber),
                 order, details.RedeemedRewardPointsAmount);
-            _userService.UpdateUser(details.User);
+            await _userService.UpdateUserAsync(details.User);
+            await _orderService.UpdateOrderAsync(order);
 
             return order;
         }
@@ -620,58 +851,58 @@ namespace TVProgViewer.Services.Orders
         /// Send "order placed" notifications and save order notes
         /// </summary>
         /// <param name="order">Order</param>
-        protected virtual void SendNotificationsAndSaveNotes(Order order)
+        protected virtual async Task SendNotificationsAndSaveNotesAsync(Order order)
         {
             //notes, messages
-            AddOrderNote(order, _workContext.OriginalUserIfImpersonated != null
-                ? $"Order placed by a store owner ('{_workContext.OriginalUserIfImpersonated.Email}'. ID = {_workContext.OriginalUserIfImpersonated.Id}) impersonating the User."
+            await AddOrderNoteAsync(order, _workContext.OriginalUserIfImpersonated != null
+                ? $"Order placed by a store owner ('{_workContext.OriginalUserIfImpersonated.Email}'. ID = {_workContext.OriginalUserIfImpersonated.Id}) impersonating the user."
                 : "Order placed");
 
             //send email notifications
-            var orderPlacedStoreOwnerNotificationQueuedEmailIds = _workflowMessageService.SendOrderPlacedStoreOwnerNotification(order, _localizationSettings.DefaultAdminLanguageId);
+            var orderPlacedStoreOwnerNotificationQueuedEmailIds = await _workflowMessageService.SendOrderPlacedStoreOwnerNotificationAsync(order, _localizationSettings.DefaultAdminLanguageId);
             if (orderPlacedStoreOwnerNotificationQueuedEmailIds.Any())
-                AddOrderNote(order, $"\"Order placed\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedStoreOwnerNotificationQueuedEmailIds)}.");
+                await AddOrderNoteAsync(order, $"\"Order placed\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedStoreOwnerNotificationQueuedEmailIds)}.");
 
             var orderPlacedAttachmentFilePath = _orderSettings.AttachPdfInvoiceToOrderPlacedEmail ?
-                _pdfService.PrintOrderToPdf(order) : null;
+                (await _pdfService.PrintOrderToPdfAsync(order)) : null;
             var orderPlacedAttachmentFileName = _orderSettings.AttachPdfInvoiceToOrderPlacedEmail ?
                 "order.pdf" : null;
-            var orderPlacedUserNotificationQueuedEmailIds = _workflowMessageService
-                .SendOrderPlacedUserNotification(order, order.UserLanguageId, orderPlacedAttachmentFilePath, orderPlacedAttachmentFileName);
+            var orderPlacedUserNotificationQueuedEmailIds = await _workflowMessageService
+                .SendOrderPlacedUserNotificationAsync(order, order.UserLanguageId, orderPlacedAttachmentFilePath, orderPlacedAttachmentFileName);
             if (orderPlacedUserNotificationQueuedEmailIds.Any())
-                AddOrderNote(order, $"\"Order placed\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedUserNotificationQueuedEmailIds)}.");
+                await AddOrderNoteAsync(order, $"\"Order placed\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedUserNotificationQueuedEmailIds)}.");
 
-            var vendors = GetVendorsInOrder(order);
+            var vendors = await GetVendorsInOrderAsync(order);
             foreach (var vendor in vendors)
             {
-                var orderPlacedVendorNotificationQueuedEmailIds = _workflowMessageService.SendOrderPlacedVendorNotification(order, vendor, _localizationSettings.DefaultAdminLanguageId);
+                var orderPlacedVendorNotificationQueuedEmailIds = await _workflowMessageService.SendOrderPlacedVendorNotificationAsync(order, vendor, _localizationSettings.DefaultAdminLanguageId);
                 if (orderPlacedVendorNotificationQueuedEmailIds.Any())
-                    AddOrderNote(order, $"\"Order placed\" email (to vendor) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedVendorNotificationQueuedEmailIds)}.");
+                    await AddOrderNoteAsync(order, $"\"Order placed\" email (to vendor) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedVendorNotificationQueuedEmailIds)}.");
             }
 
             if (order.AffiliateId == 0)
                 return;
 
-            var orderPlacedAffiliateNotificationQueuedEmailIds = _workflowMessageService.SendOrderPlacedAffiliateNotification(order, _localizationSettings.DefaultAdminLanguageId);
+            var orderPlacedAffiliateNotificationQueuedEmailIds = await _workflowMessageService.SendOrderPlacedAffiliateNotificationAsync(order, _localizationSettings.DefaultAdminLanguageId);
             if (orderPlacedAffiliateNotificationQueuedEmailIds.Any())
-                AddOrderNote(order, $"\"Order placed\" email (to affiliate) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedAffiliateNotificationQueuedEmailIds)}.");
+                await AddOrderNoteAsync(order, $"\"Order placed\" email (to affiliate) has been queued. Queued email identifiers: {string.Join(", ", orderPlacedAffiliateNotificationQueuedEmailIds)}.");
         }
 
         /// <summary>
         /// Award (earn) reward points (for placing a new order)
         /// </summary>
         /// <param name="order">Order</param>
-        protected virtual void AwardRewardPoints(Order order)
+        protected virtual async Task AwardRewardPointsAsync(Order order)
         {
             if (order is null)
                 throw new ArgumentNullException(nameof(order));
 
-            var User = _userService.GetUserById(order.UserId);
+            var user = await _userService.GetUserByIdAsync(order.UserId);
 
             var totalForRewardPoints = _orderTotalCalculationService
                 .CalculateApplicableOrderTotalForRewardPoints(order.OrderShippingInclTax, order.OrderTotal);
             var points = totalForRewardPoints > decimal.Zero ?
-                _orderTotalCalculationService.CalculateRewardPoints(User, totalForRewardPoints) : 0;
+                await _orderTotalCalculationService.CalculateRewardPointsAsync(user, totalForRewardPoints) : 0;
             if (points == 0)
                 return;
 
@@ -694,28 +925,28 @@ namespace TVProgViewer.Services.Orders
                 endDate = (activatingDate ?? DateTime.UtcNow).AddDays(_rewardPointsSettings.PurchasesPointsValidity.Value);
 
             //add reward points
-            order.RewardPointsHistoryEntryId = _rewardPointService.AddRewardPointsHistoryEntry(User, points, order.StoreId,
-                string.Format(_localizationService.GetResource("RewardPoints.Message.EarnedForOrder"), order.CustomOrderNumber),
+            order.RewardPointsHistoryEntryId = await _rewardPointService.AddRewardPointsHistoryEntryAsync(user, points, order.StoreId,
+                string.Format(await _localizationService.GetResourceAsync("RewardPoints.Message.EarnedForOrder"), order.CustomOrderNumber),
                 activatingDate: activatingDate, endDate: endDate);
 
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
         }
 
         /// <summary>
         /// Reduce (cancel) reward points (previously awarded for placing an order)
         /// </summary>
         /// <param name="order">Order</param>
-        protected virtual void ReduceRewardPoints(Order order)
+        protected virtual async Task ReduceRewardPointsAsync(Order order)
         {
             if (order is null)
                 throw new ArgumentNullException(nameof(order));
 
-            var User = _userService.GetUserById(order.UserId);
+            var user = await _userService.GetUserByIdAsync(order.UserId);
 
             var totalForRewardPoints = _orderTotalCalculationService
                 .CalculateApplicableOrderTotalForRewardPoints(order.OrderShippingInclTax, order.OrderTotal);
             var points = totalForRewardPoints > decimal.Zero ?
-                _orderTotalCalculationService.CalculateRewardPoints(User, totalForRewardPoints) : 0;
+                await _orderTotalCalculationService.CalculateRewardPointsAsync(user, totalForRewardPoints) : 0;
             if (points == 0)
                 return;
 
@@ -724,40 +955,36 @@ namespace TVProgViewer.Services.Orders
                 return;
 
             //get appropriate history entry
-            var rewardPointsHistoryEntry = _rewardPointService.GetRewardPointsHistoryEntryById(order.RewardPointsHistoryEntryId.Value);
+            var rewardPointsHistoryEntry = await _rewardPointService.GetRewardPointsHistoryEntryByIdAsync(order.RewardPointsHistoryEntryId.Value);
             if (rewardPointsHistoryEntry != null && rewardPointsHistoryEntry.CreatedOnUtc > DateTime.UtcNow)
             {
                 //just delete the upcoming entry (points were not granted yet)
-                _rewardPointService.DeleteRewardPointsHistoryEntry(rewardPointsHistoryEntry);
+                await _rewardPointService.DeleteRewardPointsHistoryEntryAsync(rewardPointsHistoryEntry);
             }
             else
             {
                 //or reduce reward points if the entry already exists
-                _rewardPointService.AddRewardPointsHistoryEntry(User, -points, order.StoreId,
-                    string.Format(_localizationService.GetResource("RewardPoints.Message.ReducedForOrder"), order.CustomOrderNumber));
+                await _rewardPointService.AddRewardPointsHistoryEntryAsync(user, -points, order.StoreId,
+                    string.Format(await _localizationService.GetResourceAsync("RewardPoints.Message.ReducedForOrder"), order.CustomOrderNumber));
             }
         }
 
         /// <summary>
-        /// Return back redeemed reward points to a User (spent when placing an order)
+        /// Return back redeemed reward points to a user (spent when placing an order)
         /// </summary>
         /// <param name="order">Order</param>
-        protected virtual void ReturnBackRedeemedRewardPoints(Order order)
+        protected virtual async Task ReturnBackRedeemedRewardPointsAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            //were some points redeemed when placing an order?
-            if (order.RedeemedRewardPointsEntryId is null)
-                return;
+            var user = await _userService.GetUserByIdAsync(order.UserId);
 
-            var User = _userService.GetUserById(order.UserId);
-
-            var redeemedRewardPointsEntry = _rewardPointService.GetRewardPointsHistoryEntryById(order.RedeemedRewardPointsEntryId.Value);
-
-            //return back
-            _rewardPointService.AddRewardPointsHistoryEntry(User, -redeemedRewardPointsEntry.Points, order.StoreId,
-                string.Format(_localizationService.GetResource("RewardPoints.Message.ReturnedForOrder"), order.CustomOrderNumber));
+            //were some reward points spend on the order
+            foreach (var rewardPoints in await _rewardPointService.GetRewardPointsHistoryAsync(order.UserId, order.StoreId, orderGuid: order.OrderGuid))
+                //return back
+                await _rewardPointService.AddRewardPointsHistoryEntryAsync(user, -rewardPoints.Points, order.StoreId,
+                    string.Format(await _localizationService.GetResourceAsync("RewardPoints.Message.ReturnedForOrder"), order.CustomOrderNumber));
         }
 
         /// <summary>
@@ -765,9 +992,9 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="activate">A value indicating whether to activate gift cards; true - activate, false - deactivate</param>
-        protected virtual void SetActivatedValueForPurchasedGiftCards(Order order, bool activate)
+        protected virtual async Task SetActivatedValueForPurchasedGiftCardsAsync(Order order, bool activate)
         {
-            var giftCards = _giftCardService.GetAllGiftCards(order.Id, isGiftCardActivated: !activate);
+            var giftCards = await _giftCardService.GetAllGiftCardsAsync(order.Id, isGiftCardActivated: !activate);
             foreach (var gc in giftCards)
             {
                 if (activate)
@@ -780,11 +1007,11 @@ namespace TVProgViewer.Services.Orders
                         if (!string.IsNullOrEmpty(gc.RecipientEmail) &&
                             !string.IsNullOrEmpty(gc.SenderEmail))
                         {
-                            var UserLang = _languageService.GetLanguageById(order.UserLanguageId) ??
-                                               _languageService.GetAllLanguages().FirstOrDefault();
-                            if (UserLang == null)
+                            var userLang = await _languageService.GetLanguageByIdAsync(order.UserLanguageId) ??
+                                               (await _languageService.GetAllLanguagesAsync()).FirstOrDefault();
+                            if (userLang == null)
                                 throw new Exception("No languages could be loaded");
-                            var queuedEmailIds = _workflowMessageService.SendGiftCardNotification(gc, UserLang.Id);
+                            var queuedEmailIds = await _workflowMessageService.SendGiftCardNotificationAsync(gc, userLang.Id);
                             if (queuedEmailIds.Any())
                                 isRecipientNotified = true;
                         }
@@ -792,13 +1019,13 @@ namespace TVProgViewer.Services.Orders
 
                     gc.IsGiftCardActivated = true;
                     gc.IsRecipientNotified = isRecipientNotified;
-                    _giftCardService.UpdateGiftCard(gc);
+                    await _giftCardService.UpdateGiftCardAsync(gc);
                 }
                 else
                 {
                     //deactivate
                     gc.IsGiftCardActivated = false;
-                    _giftCardService.UpdateGiftCard(gc);
+                    await _giftCardService.UpdateGiftCardAsync(gc);
                 }
             }
         }
@@ -808,8 +1035,8 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="os">New order status</param>
-        /// <param name="notifyUser">True to notify User</param>
-        protected virtual void SetOrderStatus(Order order, OrderStatus os, bool notifyUser)
+        /// <param name="notifyUser">True to notify user</param>
+        protected virtual async Task SetOrderStatusAsync(Order order, OrderStatus os, bool notifyUser)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -820,10 +1047,10 @@ namespace TVProgViewer.Services.Orders
 
             //set and save new order status
             order.OrderStatusId = (int)os;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //order notes, notifications
-            AddOrderNote(order, $"Order status has been changed to {os.ToString()}");
+            await AddOrderNoteAsync(order, $"Order status has been changed to {await _localizationService.GetLocalizedEnumAsync(os)}");
 
             if (prevOrderStatus != OrderStatus.Complete &&
                 os == OrderStatus.Complete
@@ -831,14 +1058,14 @@ namespace TVProgViewer.Services.Orders
             {
                 //notification
                 var orderCompletedAttachmentFilePath = _orderSettings.AttachPdfInvoiceToOrderCompletedEmail ?
-                    _pdfService.PrintOrderToPdf(order) : null;
+                    await _pdfService.PrintOrderToPdfAsync(order) : null;
                 var orderCompletedAttachmentFileName = _orderSettings.AttachPdfInvoiceToOrderCompletedEmail ?
                     "order.pdf" : null;
-                var orderCompletedUserNotificationQueuedEmailIds = _workflowMessageService
-                    .SendOrderCompletedUserNotification(order, order.UserLanguageId, orderCompletedAttachmentFilePath,
+                var orderCompletedUserNotificationQueuedEmailIds = await _workflowMessageService
+                    .SendOrderCompletedUserNotificationAsync(order, order.UserLanguageId, orderCompletedAttachmentFilePath,
                     orderCompletedAttachmentFileName);
                 if (orderCompletedUserNotificationQueuedEmailIds.Any())
-                    AddOrderNote(order, $"\"Order completed\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", orderCompletedUserNotificationQueuedEmailIds)}.");
+                    await AddOrderNoteAsync(order, $"\"Order completed\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderCompletedUserNotificationQueuedEmailIds)}.");
             }
 
             if (prevOrderStatus != OrderStatus.Cancelled &&
@@ -846,46 +1073,38 @@ namespace TVProgViewer.Services.Orders
                 && notifyUser)
             {
                 //notification
-                var orderCancelledUserNotificationQueuedEmailIds = _workflowMessageService.SendOrderCancelledUserNotification(order, order.UserLanguageId);
+                var orderCancelledUserNotificationQueuedEmailIds = await _workflowMessageService.SendOrderCancelledUserNotificationAsync(order, order.UserLanguageId);
                 if (orderCancelledUserNotificationQueuedEmailIds.Any())
-                    AddOrderNote(order, $"\"Order cancelled\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", orderCancelledUserNotificationQueuedEmailIds)}.");
+                    await AddOrderNoteAsync(order, $"\"Order cancelled\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderCancelledUserNotificationQueuedEmailIds)}.");
             }
 
             //reward points
             if (order.OrderStatus == OrderStatus.Complete)
-            {
-                AwardRewardPoints(order);
-            }
+                await AwardRewardPointsAsync(order);
 
             if (order.OrderStatus == OrderStatus.Cancelled)
-            {
-                ReduceRewardPoints(order);
-            }
+                await ReduceRewardPointsAsync(order);
 
             //gift cards activation
             if (_orderSettings.ActivateGiftCardsAfterCompletingOrder && order.OrderStatus == OrderStatus.Complete)
-            {
-                SetActivatedValueForPurchasedGiftCards(order, true);
-            }
+                await SetActivatedValueForPurchasedGiftCardsAsync(order, true);
 
             //gift cards deactivation
             if (_orderSettings.DeactivateGiftCardsAfterCancellingOrder && order.OrderStatus == OrderStatus.Cancelled)
-            {
-                SetActivatedValueForPurchasedGiftCards(order, false);
-            }
+                await SetActivatedValueForPurchasedGiftCardsAsync(order, false);
         }
 
         /// <summary>
         /// Process order paid status
         /// </summary>
         /// <param name="order">Order</param>
-        protected virtual void ProcessOrderPaid(Order order)
+        protected virtual async Task ProcessOrderPaidAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
             //raise event
-            _eventPublisher.Publish(new OrderPaidEvent(order));
+            await _eventPublisher.PublishAsync(new OrderPaidEvent(order));
 
             //order paid email notification
             if (order.OrderTotal != decimal.Zero)
@@ -894,48 +1113,60 @@ namespace TVProgViewer.Services.Orders
                 //remove this "if" statement if you want to send it in this case
 
                 var orderPaidAttachmentFilePath = _orderSettings.AttachPdfInvoiceToOrderPaidEmail ?
-                    _pdfService.PrintOrderToPdf(order) : null;
+                    await _pdfService.PrintOrderToPdfAsync(order) : null;
                 var orderPaidAttachmentFileName = _orderSettings.AttachPdfInvoiceToOrderPaidEmail ?
                     "order.pdf" : null;
-                _workflowMessageService.SendOrderPaidUserNotification(order, order.UserLanguageId,
+                var orderPaidUserNotificationQueuedEmailIds = await _workflowMessageService.SendOrderPaidUserNotificationAsync(order, order.UserLanguageId,
                     orderPaidAttachmentFilePath, orderPaidAttachmentFileName);
 
-                _workflowMessageService.SendOrderPaidStoreOwnerNotification(order, _localizationSettings.DefaultAdminLanguageId);
-                var vendors = GetVendorsInOrder(order);
+                if (orderPaidUserNotificationQueuedEmailIds.Any())
+                    await AddOrderNoteAsync(order, $"\"Order paid\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderPaidUserNotificationQueuedEmailIds)}.");
+
+                var orderPaidStoreOwnerNotificationQueuedEmailIds = await _workflowMessageService.SendOrderPaidStoreOwnerNotificationAsync(order, _localizationSettings.DefaultAdminLanguageId);
+                if (orderPaidStoreOwnerNotificationQueuedEmailIds.Any())
+                    await AddOrderNoteAsync(order, $"\"Order paid\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderPaidStoreOwnerNotificationQueuedEmailIds)}.");
+
+                var vendors = await GetVendorsInOrderAsync(order);
                 foreach (var vendor in vendors)
                 {
-                    _workflowMessageService.SendOrderPaidVendorNotification(order, vendor, _localizationSettings.DefaultAdminLanguageId);
+                    var orderPaidVendorNotificationQueuedEmailIds = await _workflowMessageService.SendOrderPaidVendorNotificationAsync(order, vendor, _localizationSettings.DefaultAdminLanguageId);
+
+                    if (orderPaidVendorNotificationQueuedEmailIds.Any())
+                        await AddOrderNoteAsync(order, $"\"Order paid\" email (to vendor) has been queued. Queued email identifiers: {string.Join(", ", orderPaidVendorNotificationQueuedEmailIds)}.");
                 }
 
                 if (order.AffiliateId != 0)
-                    _workflowMessageService.SendOrderPaidAffiliateNotification(order, _localizationSettings.DefaultAdminLanguageId);
-
-                //TODO add "order paid email sent" order note
+                {
+                    var orderPaidAffiliateNotificationQueuedEmailIds = await _workflowMessageService.SendOrderPaidAffiliateNotificationAsync(order,
+                        _localizationSettings.DefaultAdminLanguageId);
+                    if (orderPaidAffiliateNotificationQueuedEmailIds.Any())
+                        await AddOrderNoteAsync(order, $"\"Order paid\" email (to affiliate) has been queued. Queued email identifiers: {string.Join(", ", orderPaidAffiliateNotificationQueuedEmailIds)}.");
+                }
             }
 
-            //User roles with "purchased with product" specified
-            ProcessUserRolesWithPurchasedProductSpecified(order, true);
+            //user roles with "purchased with product" specified
+            await ProcessUserRolesWithPurchasedProductSpecifiedAsync(order, true);
         }
 
         /// <summary>
-        /// Process User roles with "Purchased with Product" property configured
+        /// Process user roles with "Purchased with Product" property configured
         /// </summary>
         /// <param name="order">Order</param>
-        /// <param name="add">A value indicating whether to add configured User role; true - add, false - remove</param>
-        protected virtual void ProcessUserRolesWithPurchasedProductSpecified(Order order, bool add)
+        /// <param name="add">A value indicating whether to add configured user role; true - add, false - remove</param>
+        protected virtual async Task ProcessUserRolesWithPurchasedProductSpecifiedAsync(Order order, bool add)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
             //purchased product identifiers
             var purchasedProductIds = new List<int>();
-            foreach (var orderItem in _orderService.GetOrderItems(order.Id))
+            foreach (var orderItem in await _orderService.GetOrderItemsAsync(order.Id))
             {
                 //standard items
                 purchasedProductIds.Add(orderItem.ProductId);
 
                 //bundled (associated) products
-                var attributeValues = _productAttributeParser.ParseProductAttributeValues(orderItem.AttributesXml);
+                var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(orderItem.AttributesXml);
                 foreach (var attributeValue in attributeValues)
                 {
                     if (attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct)
@@ -945,26 +1176,26 @@ namespace TVProgViewer.Services.Orders
                 }
             }
 
-            //list of User roles
-            var UserRoles = _userService
-                .GetAllUserRoles(true)
+            //list of user roles
+            var userRoles = (await _userService
+                .GetAllUserRolesAsync(true))
                 .Where(cr => purchasedProductIds.Contains(cr.PurchasedWithProductId))
                 .ToList();
 
-            if (!UserRoles.Any())
+            if (!userRoles.Any())
                 return;
 
-            var User = _userService.GetUserById(order.UserId);
-            
-            foreach (var UserRole in UserRoles)
+            var user = await _userService.GetUserByIdAsync(order.UserId);
+
+            foreach (var userRole in userRoles)
             {
-                if (!_userService.IsInUserRole(User, UserRole.SystemName))
+                if (!await _userService.IsInUserRoleAsync(user, userRole.SystemName))
                 {
                     //not in the list yet
                     if (add)
                     {
                         //add
-                        _userService.AddUserRoleMapping(new UserUserRoleMapping { UserId = User.Id, UserRoleId = UserRole.Id });
+                        await _userService.AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = user.Id, UserRoleId = userRole.Id });
                     }
                 }
                 else
@@ -973,12 +1204,12 @@ namespace TVProgViewer.Services.Orders
                     if (!add)
                     {
                         //remove
-                        _userService.RemoveUserRoleMapping(User, UserRole);
+                        await _userService.RemoveUserRoleMappingAsync(user, userRole);
                     }
                 }
             }
 
-            _userService.UpdateUser(User);
+            await _userService.UpdateUserAsync(user);
         }
 
         /// <summary>
@@ -986,11 +1217,11 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>Vendors</returns>
-        protected virtual IList<Vendor> GetVendorsInOrder(Order order)
+        protected virtual async Task<IList<Vendor>> GetVendorsInOrderAsync(Order order)
         {
-            var pIds = _orderService.GetOrderItems(order.Id).Select(x => x.ProductId).ToArray();
+            var pIds = (await _orderService.GetOrderItemsAsync(order.Id)).Select(x => x.ProductId).ToArray();
 
-            return _vendorService.GetVendorsByProductIds(pIds);
+            return await _vendorService.GetVendorsByProductIdsAsync(pIds);
         }
 
         /// <summary>
@@ -998,7 +1229,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="processPaymentRequest">Process payment request</param>
         /// <param name="order">Order</param>
-        protected virtual void CreateFirstRecurringPayment(ProcessPaymentRequest processPaymentRequest, Order order)
+        protected virtual async Task CreateFirstRecurringPaymentAsync(ProcessPaymentRequest processPaymentRequest, Order order)
         {
             var rp = new RecurringPayment
             {
@@ -1010,15 +1241,15 @@ namespace TVProgViewer.Services.Orders
                 CreatedOnUtc = DateTime.UtcNow,
                 InitialOrderId = order.Id
             };
-            _orderService.InsertRecurringPayment(rp);
+            await _orderService.InsertRecurringPaymentAsync(rp);
 
-            switch (_paymentService.GetRecurringPaymentType(processPaymentRequest.PaymentMethodSystemName))
+            switch (await _paymentService.GetRecurringPaymentTypeAsync(processPaymentRequest.PaymentMethodSystemName))
             {
                 case RecurringPaymentType.NotSupported:
                     //not supported
                     break;
                 case RecurringPaymentType.Manual:
-                    _orderService.InsertRecurringPaymentHistory(new RecurringPaymentHistory
+                    await _orderService.InsertRecurringPaymentHistoryAsync(new RecurringPaymentHistory
                     {
                         RecurringPaymentId = rp.Id,
                         CreatedOnUtc = DateTime.UtcNow,
@@ -1038,37 +1269,36 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="details">Place order container</param>
         /// <param name="order">Order</param>
-        protected virtual void MoveShoppingCartItemsToOrderItems(PlaceOrderContainer details, Order order)
+        protected virtual async Task MoveShoppingCartItemsToOrderItemsAsync(PlaceOrderContainer details, Order order)
         {
             foreach (var sc in details.Cart)
             {
-                var product = _productService.GetProductById(sc.ProductId);
+                var product = await _productService.GetProductByIdAsync(sc.ProductId);
 
                 //prices
-                var scUnitPrice = _shoppingCartService.GetUnitPrice(sc);
-                var scSubTotal = _shoppingCartService.GetSubTotal(sc, true, out var discountAmount,
-                    out var scDiscounts, out _);
+                var scUnitPrice = (await _shoppingCartService.GetUnitPriceAsync(sc, true)).unitPrice;
+                var (scSubTotal, discountAmount, scDiscounts, _) = await _shoppingCartService.GetSubTotalAsync(sc, true);
                 var scUnitPriceInclTax =
-                    _taxService.GetProductPrice(product, scUnitPrice, true, details.User, out var _);
+                    await _taxService.GetProductPriceAsync(product, scUnitPrice, true, details.User);
                 var scUnitPriceExclTax =
-                    _taxService.GetProductPrice(product, scUnitPrice, false, details.User, out _);
+                    await _taxService.GetProductPriceAsync(product, scUnitPrice, false, details.User);
                 var scSubTotalInclTax =
-                    _taxService.GetProductPrice(product, scSubTotal, true, details.User, out _);
+                    await _taxService.GetProductPriceAsync(product, scSubTotal, true, details.User);
                 var scSubTotalExclTax =
-                    _taxService.GetProductPrice(product, scSubTotal, false, details.User, out _);
+                    await _taxService.GetProductPriceAsync(product, scSubTotal, false, details.User);
                 var discountAmountInclTax =
-                    _taxService.GetProductPrice(product, discountAmount, true, details.User, out _);
+                    await _taxService.GetProductPriceAsync(product, discountAmount, true, details.User);
                 var discountAmountExclTax =
-                    _taxService.GetProductPrice(product, discountAmount, false, details.User, out _);
+                    await _taxService.GetProductPriceAsync(product, discountAmount, false, details.User);
                 foreach (var disc in scDiscounts)
                     if (!_discountService.ContainsDiscount(details.AppliedDiscounts, disc))
                         details.AppliedDiscounts.Add(disc);
 
                 //attributes
                 var attributeDescription =
-                    _productAttributeFormatter.FormatAttributes(product, sc.AttributesXml, details.User);
+                    await _productAttributeFormatter.FormatAttributesAsync(product, sc.AttributesXml, details.User);
 
-                var itemWeight = _shippingService.GetShoppingCartItemWeight(sc);
+                var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(sc);
 
                 //save order item
                 var orderItem = new OrderItem
@@ -1076,16 +1306,16 @@ namespace TVProgViewer.Services.Orders
                     OrderItemGuid = Guid.NewGuid(),
                     OrderId = order.Id,
                     ProductId = product.Id,
-                    UnitPriceInclTax = scUnitPriceInclTax,
-                    UnitPriceExclTax = scUnitPriceExclTax,
-                    PriceInclTax = scSubTotalInclTax,
-                    PriceExclTax = scSubTotalExclTax,
-                    OriginalProductCost = _priceCalculationService.GetProductCost(product, sc.AttributesXml),
+                    UnitPriceInclTax = scUnitPriceInclTax.price,
+                    UnitPriceExclTax = scUnitPriceExclTax.price,
+                    PriceInclTax = scSubTotalInclTax.price,
+                    PriceExclTax = scSubTotalExclTax.price,
+                    OriginalProductCost = await _priceCalculationService.GetProductCostAsync(product, sc.AttributesXml),
                     AttributeDescription = attributeDescription,
                     AttributesXml = sc.AttributesXml,
                     Quantity = sc.Quantity,
-                    DiscountAmountInclTax = discountAmountInclTax,
-                    DiscountAmountExclTax = discountAmountExclTax,
+                    DiscountAmountInclTax = discountAmountInclTax.price,
+                    DiscountAmountExclTax = discountAmountExclTax.price,
                     DownloadCount = 0,
                     IsDownloadActivated = false,
                     LicenseDownloadId = 0,
@@ -1094,18 +1324,18 @@ namespace TVProgViewer.Services.Orders
                     RentalEndDateUtc = sc.RentalEndDateUtc
                 };
 
-                _orderService.InsertOrderItem(orderItem);
+                await _orderService.InsertOrderItemAsync(orderItem);
 
                 //gift cards
-                AddGiftCards(product, sc.AttributesXml, sc.Quantity, orderItem, scUnitPriceExclTax);
+                await AddGiftCardsAsync(product, sc.AttributesXml, sc.Quantity, orderItem, scUnitPriceExclTax.price);
 
                 //inventory
-                _productService.AdjustInventory(product, -sc.Quantity, sc.AttributesXml,
-                    string.Format(_localizationService.GetResource("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
+                await _productService.AdjustInventoryAsync(product, -sc.Quantity, sc.AttributesXml,
+                    string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
             }
 
             //clear shopping cart
-            details.Cart.ToList().ForEach(sci => _shoppingCartService.DeleteShoppingCartItem(sci, false));
+            details.Cart.ToList().ForEach(async sci => await _shoppingCartService.DeleteShoppingCartItemAsync(sci, false));
         }
 
         /// <summary>
@@ -1117,7 +1347,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="orderItem">Order item</param>
         /// <param name="unitPriceExclTax">Unit price exclude tax, it set as amount if not set specific amount and product.OverriddenGiftCardAmount isn't set to</param>
         /// <param name="amount">Amount</param>
-        protected virtual void AddGiftCards(Product product, string attributesXml, int quantity, OrderItem orderItem, decimal? unitPriceExclTax = null, decimal? amount = null)
+        protected virtual async Task AddGiftCardsAsync(Product product, string attributesXml, int quantity, OrderItem orderItem, decimal? unitPriceExclTax = null, decimal? amount = null)
         {
             if (!product.IsGiftCard)
                 return;
@@ -1126,7 +1356,7 @@ namespace TVProgViewer.Services.Orders
 
             for (var i = 0; i < quantity; i++)
             {
-                _giftCardService.InsertGiftCard(new GiftCard
+                await _giftCardService.InsertGiftCardAsync(new GiftCard
                 {
                     GiftCardType = product.GiftCardType,
                     PurchasedWithOrderItemId = orderItem.Id,
@@ -1150,15 +1380,16 @@ namespace TVProgViewer.Services.Orders
         /// <param name="processPaymentRequest">Process payment request</param>
         /// <param name="details">Place order container</param>
         /// <returns></returns>
-        protected virtual ProcessPaymentResult GetProcessPaymentResult(ProcessPaymentRequest processPaymentRequest, PlaceOrderContainer details)
+        protected virtual async Task<ProcessPaymentResult> GetProcessPaymentResultAsync(ProcessPaymentRequest processPaymentRequest, PlaceOrderContainer details)
         {
             //process payment
             ProcessPaymentResult processPaymentResult;
-            //skip payment workflow if order total equals zero
-            var skipPaymentWorkflow = details.OrderTotal == decimal.Zero;
-            if (!skipPaymentWorkflow)
+            //check if is payment workflow required
+            if (await IsPaymentWorkflowRequiredAsync(details.Cart))
             {
-                var paymentMethod = _paymentPluginManager.LoadPluginBySystemName(processPaymentRequest.PaymentMethodSystemName)
+                var user = await _userService.GetUserByIdAsync(processPaymentRequest.UserId);
+                var paymentMethod = await _paymentPluginManager
+                    .LoadPluginBySystemNameAsync(processPaymentRequest.PaymentMethodSystemName, user, processPaymentRequest.StoreId)
                     ?? throw new TvProgException("Payment method couldn't be loaded");
 
                 //ensure that payment method is active
@@ -1168,21 +1399,17 @@ namespace TVProgViewer.Services.Orders
                 if (details.IsRecurringShoppingCart)
                 {
                     //recurring cart
-                    switch (_paymentService.GetRecurringPaymentType(processPaymentRequest.PaymentMethodSystemName))
+                    processPaymentResult = (await _paymentService.GetRecurringPaymentTypeAsync(processPaymentRequest.PaymentMethodSystemName)) switch
                     {
-                        case RecurringPaymentType.NotSupported:
-                            throw new TvProgException("Recurring payments are not supported by selected payment method");
-                        case RecurringPaymentType.Manual:
-                        case RecurringPaymentType.Automatic:
-                            processPaymentResult = _paymentService.ProcessRecurringPayment(processPaymentRequest);
-                            break;
-                        default:
-                            throw new TvProgException("Not supported recurring payment type");
-                    }
+                        RecurringPaymentType.NotSupported => throw new TvProgException("Recurring payments are not supported by selected payment method"),
+                        RecurringPaymentType.Manual or
+                        RecurringPaymentType.Automatic => await _paymentService.ProcessRecurringPaymentAsync(processPaymentRequest),
+                        _ => throw new TvProgException("Not supported recurring payment type"),
+                    };
                 }
                 else
                     //standard cart
-                    processPaymentResult = _paymentService.ProcessPayment(processPaymentRequest);
+                    processPaymentResult = await _paymentService.ProcessPaymentAsync(processPaymentRequest);
             }
             else
                 //payment is not required
@@ -1195,21 +1422,19 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="details">Place order container</param>
         /// <param name="order">Order</param>
-        protected virtual void SaveGiftCardUsageHistory(PlaceOrderContainer details, Order order)
+        protected virtual async Task SaveGiftCardUsageHistoryAsync(PlaceOrderContainer details, Order order)
         {
             if (details.AppliedGiftCards == null || !details.AppliedGiftCards.Any())
                 return;
 
             foreach (var agc in details.AppliedGiftCards)
-            {
-                _giftCardService.InsertGiftCardUsageHistory(new GiftCardUsageHistory
+                await _giftCardService.InsertGiftCardUsageHistoryAsync(new GiftCardUsageHistory
                 {
                     GiftCardId = agc.GiftCard.Id,
                     UsedWithOrderId = order.Id,
                     UsedValue = agc.AmountCanBeUsed,
                     CreatedOnUtc = DateTime.UtcNow
                 });
-            }
         }
 
         /// <summary>
@@ -1217,23 +1442,23 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="details">PlaceOrderContainer</param>
         /// <param name="order">Order</param>
-        protected virtual void SaveDiscountUsageHistory(PlaceOrderContainer details, Order order)
+        protected virtual async Task SaveDiscountUsageHistoryAsync(PlaceOrderContainer details, Order order)
         {
             if (details.AppliedDiscounts == null || !details.AppliedDiscounts.Any())
                 return;
 
             foreach (var discount in details.AppliedDiscounts)
             {
-                var d = _discountService.GetDiscountById(discount.Id);
-                if (d != null)
+                var d = await _discountService.GetDiscountByIdAsync(discount.Id);
+                if (d == null)
+                    continue;
+
+                await _discountService.InsertDiscountUsageHistoryAsync(new DiscountUsageHistory
                 {
-                    _discountService.InsertDiscountUsageHistory(new DiscountUsageHistory
-                    {
-                        DiscountId = d.Id,
-                        OrderId = order.Id,
-                        CreatedOnUtc = DateTime.UtcNow
-                    });
-                }
+                    DiscountId = d.Id,
+                    OrderId = order.Id,
+                    CreatedOnUtc = DateTime.UtcNow
+                });
             }
         }
 
@@ -1245,7 +1470,7 @@ namespace TVProgViewer.Services.Orders
         /// Checks order status
         /// </summary>
         /// <param name="order">Order</param>
-        public virtual void CheckOrderStatus(Order order)
+        public virtual async Task CheckOrderStatusAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -1254,7 +1479,7 @@ namespace TVProgViewer.Services.Orders
             {
                 //ensure that paid date is set
                 order.PaidDateUtc = DateTime.UtcNow;
-                _orderService.UpdateOrder(order);
+                await _orderService.UpdateOrderAsync(order);
             }
 
             switch (order.OrderStatus)
@@ -1262,16 +1487,12 @@ namespace TVProgViewer.Services.Orders
                 case OrderStatus.Pending:
                     if (order.PaymentStatus == PaymentStatus.Authorized ||
                         order.PaymentStatus == PaymentStatus.Paid)
-                    {
-                        SetOrderStatus(order, OrderStatus.Processing, false);
-                    }
+                        await SetOrderStatusAsync(order, OrderStatus.Processing, false);
 
                     if (order.ShippingStatus == ShippingStatus.PartiallyShipped ||
                         order.ShippingStatus == ShippingStatus.Shipped ||
                         order.ShippingStatus == ShippingStatus.Delivered)
-                    {
-                        SetOrderStatus(order, OrderStatus.Processing, false);
-                    }
+                        await SetOrderStatusAsync(order, OrderStatus.Processing, false);
 
                     break;
                 //is order complete?
@@ -1294,20 +1515,14 @@ namespace TVProgViewer.Services.Orders
             {
                 //shipping is required
                 if (_orderSettings.CompleteOrderWhenDelivered)
-                {
                     completed = order.ShippingStatus == ShippingStatus.Delivered;
-                }
                 else
-                {
                     completed = order.ShippingStatus == ShippingStatus.Shipped ||
                                 order.ShippingStatus == ShippingStatus.Delivered;
-                }
             }
 
             if (completed)
-            {
-                SetOrderStatus(order, OrderStatus.Complete, true);
-            }
+                await SetOrderStatusAsync(order, OrderStatus.Complete, true);
         }
 
         /// <summary>
@@ -1315,19 +1530,87 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="processPaymentRequest">Process payment request</param>
         /// <returns>Place order result</returns>
-        public virtual PlaceOrderResult PlaceOrder(ProcessPaymentRequest processPaymentRequest)
+        public virtual async Task<PlaceOrderResult> PlaceOrderAsync(ProcessPaymentRequest processPaymentRequest)
         {
             if (processPaymentRequest == null)
                 throw new ArgumentNullException(nameof(processPaymentRequest));
-                        
-            return null;
+
+            var result = new PlaceOrderResult();
+            try
+            {
+                if (processPaymentRequest.OrderGuid == Guid.Empty)
+                    throw new Exception("Order GUID is not generated");
+
+                //prepare order details
+                var details = await PreparePlaceOrderDetailsAsync(processPaymentRequest);
+
+                var processPaymentResult = await GetProcessPaymentResultAsync(processPaymentRequest, details);
+
+                if (processPaymentResult == null)
+                    throw new TvProgException("processPaymentResult is not available");
+
+                if (processPaymentResult.Success)
+                {
+                    var order = await SaveOrderDetailsAsync(processPaymentRequest, processPaymentResult, details);
+                    result.PlacedOrder = order;
+
+                    //move shopping cart items to order items
+                    await MoveShoppingCartItemsToOrderItemsAsync(details, order);
+
+                    //discount usage history
+                    await SaveDiscountUsageHistoryAsync(details, order);
+
+                    //gift card usage history
+                    await SaveGiftCardUsageHistoryAsync(details, order);
+
+                    //recurring orders
+                    if (details.IsRecurringShoppingCart)
+                        await CreateFirstRecurringPaymentAsync(processPaymentRequest, order);
+
+                    //notifications
+                    await SendNotificationsAndSaveNotesAsync(order);
+
+                    //reset checkout data
+                    await _userService.ResetCheckoutDataAsync(details.User, processPaymentRequest.StoreId, clearCouponCodes: true, clearCheckoutAttributes: true);
+                    await _userActivityService.InsertActivityAsync("PublicStore.PlaceOrder",
+                        string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.PlaceOrder"), order.Id), order);
+
+                    //check order status
+                    await CheckOrderStatusAsync(order);
+
+                    //raise event       
+                    await _eventPublisher.PublishAsync(new OrderPlacedEvent(order));
+
+                    if (order.PaymentStatus == PaymentStatus.Paid)
+                        await ProcessOrderPaidAsync(order);
+                }
+                else
+                    foreach (var paymentError in processPaymentResult.Errors)
+                        result.AddError(string.Format(await _localizationService.GetResourceAsync("Checkout.PaymentError"), paymentError));
+            }
+            catch (Exception exc)
+            {
+                await _logger.ErrorAsync(exc.Message, exc);
+                result.AddError(exc.Message);
+            }
+
+            if (result.Success)
+                return result;
+
+            //log errors
+            var logError = result.Errors.Aggregate("Error while placing order. ",
+                (current, next) => $"{current}Error {result.Errors.IndexOf(next) + 1}: {next}. ");
+            var user = await _userService.GetUserByIdAsync(processPaymentRequest.UserId);
+            await _logger.ErrorAsync(logError, user: user);
+
+            return result;
         }
 
         /// <summary>
         /// Update order totals
         /// </summary>
         /// <param name="updateOrderParameters">Parameters for the updating order</param>
-        public virtual void UpdateOrderTotals(UpdateOrderParameters updateOrderParameters)
+        public virtual async Task UpdateOrderTotalsAsync(UpdateOrderParameters updateOrderParameters)
         {
             if (!_orderSettings.AutoUpdateOrderTotalsOnEditingOrder)
                 return;
@@ -1336,33 +1619,33 @@ namespace TVProgViewer.Services.Orders
             var updatedOrderItem = updateOrderParameters.UpdatedOrderItem;
 
             //restore shopping cart from order items
-            var (restoredCart, updatedShoppingCartItem) = restoreShoppingCart(updatedOrder, updatedOrderItem.Id);
+            var (restoredCart, updatedShoppingCartItem) = await restoreShoppingCartAsync(updatedOrder, updatedOrderItem.Id);
 
             var itemDeleted = updatedShoppingCartItem is null;
 
             //validate shopping cart for warnings
-            updateOrderParameters.Warnings.AddRange(_shoppingCartService.GetShoppingCartWarnings(restoredCart, string.Empty, false));
+            updateOrderParameters.Warnings.AddRange(await _shoppingCartService.GetShoppingCartWarningsAsync(restoredCart, string.Empty, false));
 
-            var User = _userService.GetUserById(updatedOrder.UserId);
+            var user = await _userService.GetUserByIdAsync(updatedOrder.UserId);
 
             if (!itemDeleted)
             {
-                var product = _productService.GetProductById(updatedShoppingCartItem.ProductId);
+                var product = await _productService.GetProductByIdAsync(updatedShoppingCartItem.ProductId);
 
-                updateOrderParameters.Warnings.AddRange(_shoppingCartService.GetShoppingCartItemWarnings(User, updatedShoppingCartItem.ShoppingCartType,
+                updateOrderParameters.Warnings.AddRange(await _shoppingCartService.GetShoppingCartItemWarningsAsync(user, updatedShoppingCartItem.ShoppingCartType,
                     product, updatedOrder.StoreId, updatedShoppingCartItem.AttributesXml, updatedShoppingCartItem.UserEnteredPrice,
                     updatedShoppingCartItem.RentalStartDateUtc, updatedShoppingCartItem.RentalEndDateUtc, updatedShoppingCartItem.Quantity, false, updatedShoppingCartItem.Id));
 
-                updatedOrderItem.ItemWeight = _shippingService.GetShoppingCartItemWeight(updatedShoppingCartItem);
-                updatedOrderItem.OriginalProductCost = _priceCalculationService.GetProductCost(product, updatedShoppingCartItem.AttributesXml);
-                updatedOrderItem.AttributeDescription = _productAttributeFormatter.FormatAttributes(product,
-                    updatedShoppingCartItem.AttributesXml, User);
+                updatedOrderItem.ItemWeight = await _shippingService.GetShoppingCartItemWeightAsync(updatedShoppingCartItem);
+                updatedOrderItem.OriginalProductCost = await _priceCalculationService.GetProductCostAsync(product, updatedShoppingCartItem.AttributesXml);
+                updatedOrderItem.AttributeDescription = await _productAttributeFormatter.FormatAttributesAsync(product,
+                    updatedShoppingCartItem.AttributesXml, user);
 
                 //gift cards
-                AddGiftCards(product, updatedShoppingCartItem.AttributesXml, updatedShoppingCartItem.Quantity, updatedOrderItem, updatedOrderItem.UnitPriceExclTax);
+                await AddGiftCardsAsync(product, updatedShoppingCartItem.AttributesXml, updatedShoppingCartItem.Quantity, updatedOrderItem, updatedOrderItem.UnitPriceExclTax);
             }
 
-            _orderTotalCalculationService.UpdateOrderTotals(updateOrderParameters, restoredCart);
+            await _orderTotalCalculationService.UpdateOrderTotalsAsync(updateOrderParameters, restoredCart);
 
             if (updateOrderParameters.PickupPoint != null)
             {
@@ -1373,31 +1656,31 @@ namespace TVProgViewer.Services.Orders
                     Address1 = updateOrderParameters.PickupPoint.Address,
                     City = updateOrderParameters.PickupPoint.City,
                     County = updateOrderParameters.PickupPoint.County,
-                    CountryId = _countryService.GetCountryByTwoLetterIsoCode(updateOrderParameters.PickupPoint.CountryCode)?.Id,
+                    CountryId = (await _countryService.GetCountryByTwoLetterIsoCodeAsync(updateOrderParameters.PickupPoint.CountryCode))?.Id,
                     ZipPostalCode = updateOrderParameters.PickupPoint.ZipPostalCode,
                     CreatedOnUtc = DateTime.UtcNow
                 };
 
-                _addressService.InsertAddress(pickupAddress);
+                await _addressService.InsertAddressAsync(pickupAddress);
 
                 updatedOrder.PickupAddressId = pickupAddress.Id;
-                updatedOrder.ShippingMethod = string.Format(_localizationService.GetResource("Checkout.PickupPoints.Name"), updateOrderParameters.PickupPoint.Name);
+                updatedOrder.ShippingMethod = string.Format(await _localizationService.GetResourceAsync("Checkout.PickupPoints.Name"), updateOrderParameters.PickupPoint.Name);
                 updatedOrder.ShippingRateComputationMethodSystemName = updateOrderParameters.PickupPoint.ProviderSystemName;
             }
 
-            _orderService.UpdateOrder(updatedOrder);
+            await _orderService.UpdateOrderAsync(updatedOrder);
 
             //discount usage history
-            var discountUsageHistoryForOrder = _discountService.GetAllDiscountUsageHistory(null, User.Id, updatedOrder.Id);
+            var discountUsageHistoryForOrder = await _discountService.GetAllDiscountUsageHistoryAsync(null, user.Id, updatedOrder.Id);
             foreach (var discount in updateOrderParameters.AppliedDiscounts)
             {
                 if (discountUsageHistoryForOrder.Any(history => history.DiscountId == discount.Id))
                     continue;
 
-                var d = _discountService.GetDiscountById(discount.Id);
+                var d = await _discountService.GetDiscountByIdAsync(discount.Id);
                 if (d != null)
                 {
-                    _discountService.InsertDiscountUsageHistory(new DiscountUsageHistory
+                    await _discountService.InsertDiscountUsageHistoryAsync(new DiscountUsageHistory
                     {
                         DiscountId = d.Id,
                         OrderId = updatedOrder.Id,
@@ -1406,14 +1689,14 @@ namespace TVProgViewer.Services.Orders
                 }
             }
 
-            CheckOrderStatus(updatedOrder);
+            await CheckOrderStatusAsync(updatedOrder);
 
-            (List<ShoppingCartItem> restoredCart, ShoppingCartItem updatedShoppingCartItem) restoreShoppingCart(Order order, int updatedOrderItemId)
+            async Task<(List<ShoppingCartItem> restoredCart, ShoppingCartItem updatedShoppingCartItem)> restoreShoppingCartAsync(Order order, int updatedOrderItemId)
             {
                 if (order is null)
                     throw new ArgumentNullException(nameof(order));
 
-                var cart = _orderService.GetOrderItems(order.Id).Select(item => new ShoppingCartItem
+                var cart = (await _orderService.GetOrderItemsAsync(order.Id)).Select(item => new ShoppingCartItem
                 {
                     Id = item.Id,
                     AttributesXml = item.AttributesXml,
@@ -1437,7 +1720,7 @@ namespace TVProgViewer.Services.Orders
         /// Deletes an order
         /// </summary>
         /// <param name="order">The order</param>
-        public virtual void DeleteOrder(Order order)
+        public virtual async Task DeleteOrderAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -1449,51 +1732,49 @@ namespace TVProgViewer.Services.Orders
             if (order.OrderStatus != OrderStatus.Cancelled)
             {
                 //return (add) back redeemded reward points
-                ReturnBackRedeemedRewardPoints(order);
+                await ReturnBackRedeemedRewardPointsAsync(order);
                 //reduce (cancel) back reward points (previously awarded for this order)
-                ReduceRewardPoints(order);
+                await ReduceRewardPointsAsync(order);
 
                 //cancel recurring payments
-                var recurringPayments = _orderService.SearchRecurringPayments(initialOrderId: order.Id);
+                var recurringPayments = await _orderService.SearchRecurringPaymentsAsync(initialOrderId: order.Id);
                 foreach (var rp in recurringPayments)
-                {
-                    CancelRecurringPayment(rp);
-                }
+                    await CancelRecurringPaymentAsync(rp);
 
                 //Adjust inventory for already shipped shipments
                 //only products with "use multiple warehouses"
-                foreach (var shipment in _shipmentService.GetShipmentsByOrderId(order.Id))
+                foreach (var shipment in await _shipmentService.GetShipmentsByOrderIdAsync(order.Id))
                 {
-                    foreach (var shipmentItem in _shipmentService.GetShipmentItemsByShipmentId(shipment.Id))
+                    foreach (var shipmentItem in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
                     {
-                        var product = _orderService.GetProductByOrderItemId(shipmentItem.OrderItemId);
+                        var product = await _orderService.GetProductByOrderItemIdAsync(shipmentItem.OrderItemId);
                         if (product == null)
                             continue;
 
-                        _productService.ReverseBookedInventory(product, shipmentItem,
-                            string.Format(_localizationService.GetResource("Admin.StockQuantityHistory.Messages.DeleteOrder"), order.Id));
+                        await _productService.ReverseBookedInventoryAsync(product, shipmentItem,
+                            string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.DeleteOrder"), order.Id));
                     }
                 }
 
                 //Adjust inventory
-                foreach (var orderItem in _orderService.GetOrderItems(order.Id))
+                foreach (var orderItem in await _orderService.GetOrderItemsAsync(order.Id))
                 {
-                    var product = _productService.GetProductById(orderItem.ProductId);
+                    var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
-                    _productService.AdjustInventory(product, orderItem.Quantity, orderItem.AttributesXml,
-                        string.Format(_localizationService.GetResource("Admin.StockQuantityHistory.Messages.DeleteOrder"), order.Id));
+                    await _productService.AdjustInventoryAsync(product, orderItem.Quantity, orderItem.AttributesXml,
+                        string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.DeleteOrder"), order.Id));
                 }
             }
 
             //deactivate gift cards
             if (_orderSettings.DeactivateGiftCardsAfterDeletingOrder)
-                SetActivatedValueForPurchasedGiftCards(order, false);
+                await SetActivatedValueForPurchasedGiftCardsAsync(order, false);
 
             //add a note
-            AddOrderNote(order, "Order has been deleted");
+            await AddOrderNoteAsync(order, "Order has been deleted");
 
             //now delete an order
-            _orderService.DeleteOrder(order);
+            await _orderService.DeleteOrderAsync(order);
         }
 
         /// <summary>
@@ -1502,7 +1783,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="recurringPayment">Recurring payment</param>
         /// <param name="paymentResult">Process payment result (info about last payment for automatic recurring payments)</param>
         /// <returns>Collection of errors</returns>
-        public virtual IEnumerable<string> ProcessNextRecurringPayment(RecurringPayment recurringPayment, ProcessPaymentResult paymentResult = null)
+        public virtual async Task<IEnumerable<string>> ProcessNextRecurringPaymentAsync(RecurringPayment recurringPayment, ProcessPaymentResult paymentResult = null)
         {
             if (recurringPayment == null)
                 throw new ArgumentNullException(nameof(recurringPayment));
@@ -1512,22 +1793,22 @@ namespace TVProgViewer.Services.Orders
                 if (!recurringPayment.IsActive)
                     throw new TvProgException("Recurring payment is not active");
 
-                var initialOrder = _orderService.GetOrderById(recurringPayment.InitialOrderId);
+                var initialOrder = await _orderService.GetOrderByIdAsync(recurringPayment.InitialOrderId);
                 if (initialOrder == null)
                     throw new TvProgException("Initial order could not be loaded");
 
-                var User = _userService.GetUserById(initialOrder.UserId);
-                if (User == null)
+                var user = await _userService.GetUserByIdAsync(initialOrder.UserId);
+                if (user == null)
                     throw new TvProgException("User could not be loaded");
 
-                if (GetNextPaymentDate(recurringPayment) is null)
+                if (await GetNextPaymentDateAsync(recurringPayment) is null)
                     throw new TvProgException("Next payment date could not be calculated");
 
                 //payment info
                 var processPaymentRequest = new ProcessPaymentRequest
                 {
                     StoreId = initialOrder.StoreId,
-                    UserId = User.Id,
+                    UserId = user.Id,
                     OrderGuid = Guid.NewGuid(),
                     InitialOrder = initialOrder,
                     RecurringCycleLength = recurringPayment.CycleLength,
@@ -1537,14 +1818,15 @@ namespace TVProgViewer.Services.Orders
                 };
 
                 //prepare order details
-                var details = PrepareRecurringOrderDetails(processPaymentRequest);
+                var details = await PrepareRecurringOrderDetailsAsync(processPaymentRequest);
 
                 ProcessPaymentResult processPaymentResult;
                 //skip payment workflow if order total equals zero
                 var skipPaymentWorkflow = details.OrderTotal == decimal.Zero;
                 if (!skipPaymentWorkflow)
                 {
-                    var paymentMethod = _paymentPluginManager.LoadPluginBySystemName(processPaymentRequest.PaymentMethodSystemName)
+                    var paymentMethod = await _paymentPluginManager
+                        .LoadPluginBySystemNameAsync(processPaymentRequest.PaymentMethodSystemName, user, initialOrder.StoreId)
                         ?? throw new TvProgException("Payment method couldn't be loaded");
 
                     if (!_paymentPluginManager.IsPluginActive(paymentMethod))
@@ -1569,15 +1851,14 @@ namespace TVProgViewer.Services.Orders
                     }
 
                     //payment type
-                    processPaymentResult = (_paymentService.GetRecurringPaymentType(processPaymentRequest.PaymentMethodSystemName)) switch
+                    processPaymentResult = (await _paymentService.GetRecurringPaymentTypeAsync(processPaymentRequest.PaymentMethodSystemName)) switch
                     {
                         RecurringPaymentType.NotSupported => throw new TvProgException("Recurring payments are not supported by selected payment method"),
-                        RecurringPaymentType.Manual => _paymentService.ProcessRecurringPayment(processPaymentRequest),
+                        RecurringPaymentType.Manual => await _paymentService.ProcessRecurringPaymentAsync(processPaymentRequest),
                         //payment is processed on payment gateway site, info about last transaction in paymentResult parameter
                         RecurringPaymentType.Automatic => paymentResult ?? new ProcessPaymentResult(),
                         _ => throw new TvProgException("Not supported recurring payment type"),
                     };
-
                 }
                 else
                     processPaymentResult = paymentResult ?? new ProcessPaymentResult { NewPaymentStatus = PaymentStatus.Paid };
@@ -1588,9 +1869,9 @@ namespace TVProgViewer.Services.Orders
                 if (processPaymentResult.Success)
                 {
                     //save order details
-                    var order = SaveOrderDetails(processPaymentRequest, processPaymentResult, details);
+                    var order = await SaveOrderDetailsAsync(processPaymentRequest, processPaymentResult, details);
 
-                    foreach (var orderItem in _orderService.GetOrderItems(details.InitialOrder.Id))
+                    foreach (var orderItem in await _orderService.GetOrderItemsAsync(details.InitialOrder.Id))
                     {
                         //save item
                         var newOrderItem = new OrderItem
@@ -1616,45 +1897,45 @@ namespace TVProgViewer.Services.Orders
                             RentalEndDateUtc = orderItem.RentalEndDateUtc
                         };
 
-                        _orderService.InsertOrderItem(newOrderItem);
+                        await _orderService.InsertOrderItemAsync(newOrderItem);
 
-                        var product = _productService.GetProductById(orderItem.ProductId);
+                        var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
                         //gift cards
-                        AddGiftCards(product, orderItem.AttributesXml, orderItem.Quantity, newOrderItem, amount: orderItem.UnitPriceExclTax);
+                        await AddGiftCardsAsync(product, orderItem.AttributesXml, orderItem.Quantity, newOrderItem, amount: orderItem.UnitPriceExclTax);
 
                         //inventory
-                        _productService.AdjustInventory(product, -orderItem.Quantity, orderItem.AttributesXml,
-                            string.Format(_localizationService.GetResource("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
+                        await _productService.AdjustInventoryAsync(product, -orderItem.Quantity, orderItem.AttributesXml,
+                            string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
                     }
 
                     //discount usage history
-                    SaveDiscountUsageHistory(details, order);
+                    await SaveDiscountUsageHistoryAsync(details, order);
 
                     //notifications
-                    SendNotificationsAndSaveNotes(order);
+                    await SendNotificationsAndSaveNotesAsync(order);
 
                     //check order status
-                    CheckOrderStatus(order);
+                    await CheckOrderStatusAsync(order);
 
                     //raise event       
-                    _eventPublisher.Publish(new OrderPlacedEvent(order));
+                    await _eventPublisher.PublishAsync(new OrderPlacedEvent(order));
 
                     if (order.PaymentStatus == PaymentStatus.Paid)
-                        ProcessOrderPaid(order);
+                        await ProcessOrderPaidAsync(order);
 
                     //last payment succeeded
                     recurringPayment.LastPaymentFailed = false;
 
                     //next recurring payment
-                    _orderService.InsertRecurringPaymentHistory(new RecurringPaymentHistory
+                    await _orderService.InsertRecurringPaymentHistoryAsync(new RecurringPaymentHistory
                     {
                         RecurringPaymentId = recurringPayment.Id,
                         CreatedOnUtc = DateTime.UtcNow,
                         OrderId = order.Id
                     });
 
-                    _orderService.UpdateRecurringPayment(recurringPayment);
+                    await _orderService.UpdateRecurringPaymentAsync(recurringPayment);
 
                     return new List<string>();
                 }
@@ -1662,32 +1943,32 @@ namespace TVProgViewer.Services.Orders
                 //log errors
                 var logError = processPaymentResult.Errors.Aggregate("Error while processing recurring order. ",
                     (current, next) => $"{current}Error {processPaymentResult.Errors.IndexOf(next) + 1}: {next}. ");
-                _logger.Error(logError, User: User);
+                await _logger.ErrorAsync(logError, user: user);
 
                 if (!processPaymentResult.RecurringPaymentFailed)
                     return processPaymentResult.Errors;
 
                 //set flag that last payment failed
                 recurringPayment.LastPaymentFailed = true;
-                _orderService.UpdateRecurringPayment(recurringPayment);
+                await _orderService.UpdateRecurringPaymentAsync(recurringPayment);
 
                 if (_paymentSettings.CancelRecurringPaymentsAfterFailedPayment)
                 {
                     //cancel recurring payment
-                    CancelRecurringPayment(recurringPayment).ToList().ForEach(error => _logger.Error(error));
+                    (await CancelRecurringPaymentAsync(recurringPayment)).ToList().ForEach(error => _logger.ErrorAsync(error));
 
-                    //notify a User about cancelled payment
-                    _workflowMessageService.SendRecurringPaymentCancelledUserNotification(recurringPayment, initialOrder.UserLanguageId);
+                    //notify a user about cancelled payment
+                    await _workflowMessageService.SendRecurringPaymentCancelledUserNotificationAsync(recurringPayment, initialOrder.UserLanguageId);
                 }
                 else
-                    //notify a User about failed payment
-                    _workflowMessageService.SendRecurringPaymentFailedUserNotification(recurringPayment, initialOrder.UserLanguageId);
+                    //notify a user about failed payment
+                    await _workflowMessageService.SendRecurringPaymentFailedUserNotificationAsync(recurringPayment, initialOrder.UserLanguageId);
 
                 return processPaymentResult.Errors;
             }
             catch (Exception exc)
             {
-                _logger.Error($"Error while processing recurring order. {exc.Message}", exc);
+                await _logger.ErrorAsync($"Error while processing recurring order. {exc.Message}", exc);
                 throw;
             }
         }
@@ -1696,12 +1977,12 @@ namespace TVProgViewer.Services.Orders
         /// Cancels a recurring payment
         /// </summary>
         /// <param name="recurringPayment">Recurring payment</param>
-        public virtual IList<string> CancelRecurringPayment(RecurringPayment recurringPayment)
+        public virtual async Task<IList<string>> CancelRecurringPaymentAsync(RecurringPayment recurringPayment)
         {
             if (recurringPayment == null)
                 throw new ArgumentNullException(nameof(recurringPayment));
 
-            var initialOrder = _orderService.GetOrderById(recurringPayment.InitialOrderId);
+            var initialOrder = await _orderService.GetOrderByIdAsync(recurringPayment.InitialOrderId);
             if (initialOrder == null)
                 return new List<string> { "Initial order could not be loaded" };
 
@@ -1710,15 +1991,15 @@ namespace TVProgViewer.Services.Orders
             try
             {
                 request.Order = initialOrder;
-                result = _paymentService.CancelRecurringPayment(request);
+                result = await _paymentService.CancelRecurringPaymentAsync(request);
                 if (result.Success)
                 {
                     //update recurring payment
                     recurringPayment.IsActive = false;
-                    _orderService.UpdateRecurringPayment(recurringPayment);
+                    await _orderService.UpdateRecurringPaymentAsync(recurringPayment);
 
                     //add a note
-                    _orderService.InsertOrderNote(new OrderNote
+                    await _orderService.InsertOrderNoteAsync(new OrderNote
                     {
                         OrderId = initialOrder.Id,
                         Note = "Recurring payment has been cancelled",
@@ -1727,8 +2008,8 @@ namespace TVProgViewer.Services.Orders
                     });
 
                     //notify a store owner
-                    _workflowMessageService
-                        .SendRecurringPaymentCancelledStoreOwnerNotification(recurringPayment,
+                    await _workflowMessageService
+                        .SendRecurringPaymentCancelledStoreOwnerNotificationAsync(recurringPayment,
                         _localizationSettings.DefaultAdminLanguageId);
                 }
             }
@@ -1752,7 +2033,7 @@ namespace TVProgViewer.Services.Orders
                 return result.Errors;
 
             //add a note
-            _orderService.InsertOrderNote(new OrderNote
+            await _orderService.InsertOrderNoteAsync(new OrderNote
             {
                 OrderId = initialOrder.Id,
                 Note = $"Unable to cancel recurring payment. {error}",
@@ -1762,72 +2043,70 @@ namespace TVProgViewer.Services.Orders
 
             //log it
             var logError = $"Error cancelling recurring payment. Order #{initialOrder.Id}. Error: {error}";
-            _logger.InsertLog(LogLevel.Error, logError, logError);
+            await _logger.InsertLogAsync(LogLevel.Error, logError, logError);
             return result.Errors;
         }
 
         /// <summary>
-        /// Gets a value indicating whether a User can cancel recurring payment
+        /// Gets a value indicating whether a user can cancel recurring payment
         /// </summary>
-        /// <param name="UserToValidate">User</param>
+        /// <param name="userToValidate">User</param>
         /// <param name="recurringPayment">Recurring Payment</param>
-        /// <returns>value indicating whether a User can cancel recurring payment</returns>
-        public virtual bool CanCancelRecurringPayment(User UserToValidate, RecurringPayment recurringPayment)
+        /// <returns>value indicating whether a user can cancel recurring payment</returns>
+        public virtual async Task<bool> CanCancelRecurringPaymentAsync(User userToValidate, RecurringPayment recurringPayment)
         {
             if (recurringPayment is null)
                 return false;
 
-            if (UserToValidate is null)
+            if (userToValidate is null)
                 return false;
 
-            var initialOrder = _orderService.GetOrderById(recurringPayment.InitialOrderId);
+            var initialOrder = await _orderService.GetOrderByIdAsync(recurringPayment.InitialOrderId);
             if (initialOrder is null)
                 return false;
 
-            var User = _userService.GetUserById(initialOrder.UserId);
-            if (User is null)
+            var user = await _userService.GetUserByIdAsync(initialOrder.UserId);
+            if (user is null)
                 return false;
 
             if (initialOrder.OrderStatus == OrderStatus.Cancelled)
                 return false;
 
-            if (!_userService.IsAdmin(UserToValidate))
-            {
-                if (User.Id != UserToValidate.Id)
+            if (!await _userService.IsAdminAsync(userToValidate))
+                if (user.Id != userToValidate.Id)
                     return false;
-            }
 
-            if (GetNextPaymentDate(recurringPayment) is null)
+            if (await GetNextPaymentDateAsync(recurringPayment) is null)
                 return false;
 
             return true;
         }
 
         /// <summary>
-        /// Gets a value indicating whether a User can retry last failed recurring payment
+        /// Gets a value indicating whether a user can retry last failed recurring payment
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="recurringPayment">Recurring Payment</param>
-        /// <returns>True if a User can retry payment; otherwise false</returns>
-        public virtual bool CanRetryLastRecurringPayment(User User, RecurringPayment recurringPayment)
+        /// <returns>True if a user can retry payment; otherwise false</returns>
+        public virtual async Task<bool> CanRetryLastRecurringPaymentAsync(User user, RecurringPayment recurringPayment)
         {
-            if (recurringPayment == null || User == null)
+            if (recurringPayment == null || user == null)
                 return false;
 
-            var order = _orderService.GetOrderById(recurringPayment.InitialOrderId);
+            var order = await _orderService.GetOrderByIdAsync(recurringPayment.InitialOrderId);
 
             if (order is null)
                 return false;
 
-            var orderUser = _userService.GetUserById(order.UserId);
-            
+            var orderUser = await _userService.GetUserByIdAsync(order.UserId);
+
             if (order.OrderStatus == OrderStatus.Cancelled)
                 return false;
 
-            if (!recurringPayment.LastPaymentFailed || _paymentService.GetRecurringPaymentType(order.PaymentMethodSystemName) != RecurringPaymentType.Manual)
+            if (!recurringPayment.LastPaymentFailed || await _paymentService.GetRecurringPaymentTypeAsync(order.PaymentMethodSystemName) != RecurringPaymentType.Manual)
                 return false;
 
-            if (orderUser == null || (!_userService.IsAdmin(User) && orderUser.Id != User.Id))
+            if (orderUser == null || (!await _userService.IsAdminAsync(user) && orderUser.Id != user.Id))
                 return false;
 
             return true;
@@ -1837,13 +2116,13 @@ namespace TVProgViewer.Services.Orders
         /// Send a shipment
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <param name="notifyUser">True to notify User</param>
-        public virtual void Ship(Shipment shipment, bool notifyUser)
+        /// <param name="notifyUser">True to notify user</param>
+        public virtual async Task ShipAsync(Shipment shipment, bool notifyUser)
         {
             if (shipment == null)
                 throw new ArgumentNullException(nameof(shipment));
 
-            var order = _orderService.GetOrderById(shipment.OrderId);
+            var order = await _orderService.GetOrderByIdAsync(shipment.OrderId);
             if (order == null)
                 throw new Exception("Order cannot be loaded");
 
@@ -1851,56 +2130,56 @@ namespace TVProgViewer.Services.Orders
                 throw new Exception("This shipment is already shipped");
 
             shipment.ShippedDateUtc = DateTime.UtcNow;
-            _shipmentService.UpdateShipment(shipment);
+            await _shipmentService.UpdateShipmentAsync(shipment);
 
             //process products with "Multiple warehouse" support enabled
-            foreach (var item in _shipmentService.GetShipmentItemsByShipmentId(shipment.Id))
+            foreach (var item in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
             {
-                var product = _orderService.GetProductByOrderItemId(item.OrderItemId);
+                var product = await _orderService.GetProductByOrderItemIdAsync(item.OrderItemId);
 
                 if (product is null)
                     continue;
 
-                _productService.BookReservedInventory(product, item.WarehouseId, -item.Quantity,
-                    string.Format(_localizationService.GetResource("Admin.StockQuantityHistory.Messages.Ship"), shipment.OrderId));
+                await _productService.BookReservedInventoryAsync(product, item.WarehouseId, -item.Quantity,
+                    string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Ship"), shipment.OrderId));
             }
 
             //check whether we have more items to ship
-            if (_orderService.HasItemsToAddToShipment(order) || _orderService.HasItemsToShip(order))
+            if (await _orderService.HasItemsToAddToShipmentAsync(order) || await _orderService.HasItemsToShipAsync(order))
                 order.ShippingStatusId = (int)ShippingStatus.PartiallyShipped;
             else
                 order.ShippingStatusId = (int)ShippingStatus.Shipped;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //add a note
-            AddOrderNote(order, $"Shipment# {shipment.Id} has been sent");
+            await AddOrderNoteAsync(order, $"Shipment# {shipment.Id} has been sent");
 
             if (notifyUser)
             {
-                //notify User
-                var queuedEmailIds = _workflowMessageService.SendShipmentSentUserNotification(shipment, order.UserLanguageId);
+                //notify user
+                var queuedEmailIds = await _workflowMessageService.SendShipmentSentUserNotificationAsync(shipment, order.UserLanguageId);
                 if (queuedEmailIds.Any())
-                    AddOrderNote(order, $"\"Shipped\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", queuedEmailIds)}.");
+                    await AddOrderNoteAsync(order, $"\"Shipped\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", queuedEmailIds)}.");
             }
 
             //event
-            _eventPublisher.PublishShipmentSent(shipment);
+            await _eventPublisher.PublishShipmentSentAsync(shipment);
 
             //check order status
-            CheckOrderStatus(order);
+            await CheckOrderStatusAsync(order);
         }
 
         /// <summary>
         /// Marks a shipment as delivered
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <param name="notifyUser">True to notify User</param>
-        public virtual void Deliver(Shipment shipment, bool notifyUser)
+        /// <param name="notifyUser">True to notify user</param>
+        public virtual async Task DeliverAsync(Shipment shipment, bool notifyUser)
         {
             if (shipment == null)
                 throw new ArgumentNullException(nameof(shipment));
 
-            var order = _orderService.GetOrderById(shipment.OrderId);
+            var order = await _orderService.GetOrderByIdAsync(shipment.OrderId);
             if (order == null)
                 throw new Exception("Order cannot be loaded");
 
@@ -1911,28 +2190,28 @@ namespace TVProgViewer.Services.Orders
                 throw new Exception("This shipment is already delivered");
 
             shipment.DeliveryDateUtc = DateTime.UtcNow;
-            _shipmentService.UpdateShipment(shipment);
+            await _shipmentService.UpdateShipmentAsync(shipment);
 
-            if (!_orderService.HasItemsToAddToShipment(order) && !_orderService.HasItemsToShip(order) && !_orderService.HasItemsToDeliver(order))
+            if (!await _orderService.HasItemsToAddToShipmentAsync(order) && !await _orderService.HasItemsToShipAsync(order) && !await _orderService.HasItemsToDeliverAsync(order))
                 order.ShippingStatusId = (int)ShippingStatus.Delivered;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //add a note
-            AddOrderNote(order, $"Shipment# {shipment.Id} has been delivered");
+            await AddOrderNoteAsync(order, $"Shipment# {shipment.Id} has been delivered");
 
             if (notifyUser)
             {
                 //send email notification
-                var queuedEmailIds = _workflowMessageService.SendShipmentDeliveredUserNotification(shipment, order.UserLanguageId);
+                var queuedEmailIds = await _workflowMessageService.SendShipmentDeliveredUserNotificationAsync(shipment, order.UserLanguageId);
                 if (queuedEmailIds.Any())
-                    AddOrderNote(order, $"\"Delivered\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", queuedEmailIds)}.");
+                    await AddOrderNoteAsync(order, $"\"Delivered\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", queuedEmailIds)}.");
             }
 
             //event
-            _eventPublisher.PublishShipmentDelivered(shipment);
+            await _eventPublisher.PublishShipmentDeliveredAsync(shipment);
 
             //check order status
-            CheckOrderStatus(order);
+            await CheckOrderStatusAsync(order);
         }
 
         /// <summary>
@@ -1955,8 +2234,8 @@ namespace TVProgViewer.Services.Orders
         /// Cancels order
         /// </summary>
         /// <param name="order">Order</param>
-        /// <param name="notifyUser">True to notify User</param>
-        public virtual void CancelOrder(Order order, bool notifyUser)
+        /// <param name="notifyUser">True to notify user</param>
+        public virtual async Task CancelOrderAsync(Order order, bool notifyUser)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -1965,52 +2244,48 @@ namespace TVProgViewer.Services.Orders
                 throw new TvProgException("Cannot do cancel for order.");
 
             //cancel order
-            SetOrderStatus(order, OrderStatus.Cancelled, notifyUser);
+            await SetOrderStatusAsync(order, OrderStatus.Cancelled, notifyUser);
 
             //add a note
-            AddOrderNote(order, "Order has been cancelled");
+            await AddOrderNoteAsync(order, "Order has been cancelled");
 
             //return (add) back redeemded reward points
-            ReturnBackRedeemedRewardPoints(order);
+            await ReturnBackRedeemedRewardPointsAsync(order);
 
             //delete gift card usage history
             if (_orderSettings.DeleteGiftCardUsageHistory)
-            {
-                _giftCardService.DeleteGiftCardUsageHistory(order);
-            }
+                await _giftCardService.DeleteGiftCardUsageHistoryAsync(order);
 
             //cancel recurring payments
-            var recurringPayments = _orderService.SearchRecurringPayments(initialOrderId: order.Id);
+            var recurringPayments = await _orderService.SearchRecurringPaymentsAsync(initialOrderId: order.Id);
             foreach (var rp in recurringPayments)
-            {
-                CancelRecurringPayment(rp);
-            }
+                await CancelRecurringPaymentAsync(rp);
 
             //Adjust inventory for already shipped shipments
             //only products with "use multiple warehouses"
-            foreach (var shipment in _shipmentService.GetShipmentsByOrderId(order.Id))
+            foreach (var shipment in await _shipmentService.GetShipmentsByOrderIdAsync(order.Id))
             {
-                foreach (var shipmentItem in _shipmentService.GetShipmentItemsByShipmentId(shipment.Id))
+                foreach (var shipmentItem in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
                 {
-                    var product = _orderService.GetProductByOrderItemId(shipmentItem.OrderItemId);
+                    var product = await _orderService.GetProductByOrderItemIdAsync(shipmentItem.OrderItemId);
 
                     if (product is null)
                         continue;
 
-                    _productService.ReverseBookedInventory(product, shipmentItem,
-                        string.Format(_localizationService.GetResource("Admin.StockQuantityHistory.Messages.CancelOrder"), order.Id));
+                    await _productService.ReverseBookedInventoryAsync(product, shipmentItem,
+                        string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CancelOrder"), order.Id));
                 }
             }
             //Adjust inventory
-            foreach (var orderItem in _orderService.GetOrderItems(order.Id))
+            foreach (var orderItem in await _orderService.GetOrderItemsAsync(order.Id))
             {
-                var product = _productService.GetProductById(orderItem.ProductId);
+                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
-                _productService.AdjustInventory(product, orderItem.Quantity, orderItem.AttributesXml,
-                    string.Format(_localizationService.GetResource("Admin.StockQuantityHistory.Messages.CancelOrder"), order.Id));
+                await _productService.AdjustInventoryAsync(product, orderItem.Quantity, orderItem.AttributesXml,
+                    string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CancelOrder"), order.Id));
             }
 
-            _eventPublisher.Publish(new OrderCancelledEvent(order));
+            await _eventPublisher.PublishAsync(new OrderCancelledEvent(order));
         }
 
         /// <summary>
@@ -2036,21 +2311,21 @@ namespace TVProgViewer.Services.Orders
         /// Marks order as authorized
         /// </summary>
         /// <param name="order">Order</param>
-        public virtual void MarkAsAuthorized(Order order)
+        public virtual async Task MarkAsAuthorizedAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
             order.PaymentStatusId = (int)PaymentStatus.Authorized;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //add a note
-            AddOrderNote(order, "Order has been marked as authorized");
+            await AddOrderNoteAsync(order, "Order has been marked as authorized");
 
             //check order status
-            CheckOrderStatus(order);
-        
-            _eventPublisher.Publish(new OrderAuthorizedEvent(order)); 
+            await CheckOrderStatusAsync(order);
+
+            await _eventPublisher.PublishAsync(new OrderAuthorizedEvent(order));
         }
 
         /// <summary>
@@ -2058,7 +2333,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>A value indicating whether capture from admin panel is allowed</returns>
-        public virtual bool CanCapture(Order order)
+        public virtual async Task<bool> CanCaptureAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -2068,7 +2343,7 @@ namespace TVProgViewer.Services.Orders
                 return false;
 
             if (order.PaymentStatus == PaymentStatus.Authorized &&
-                _paymentService.SupportCapture(order.PaymentMethodSystemName))
+                await _paymentService.SupportCaptureAsync(order.PaymentMethodSystemName))
                 return true;
 
             return false;
@@ -2079,12 +2354,12 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>A list of errors; empty list if no errors</returns>
-        public virtual IList<string> Capture(Order order)
+        public virtual async Task<IList<string>> CaptureAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            if (!CanCapture(order))
+            if (!await CanCaptureAsync(order))
                 throw new TvProgException("Cannot do capture for order.");
 
             var request = new CapturePaymentRequest();
@@ -2093,7 +2368,7 @@ namespace TVProgViewer.Services.Orders
             {
                 //old info from placing order
                 request.Order = order;
-                result = _paymentService.Capture(request);
+                result = await _paymentService.CaptureAsync(request);
 
                 if (result.Success)
                 {
@@ -2105,17 +2380,15 @@ namespace TVProgViewer.Services.Orders
                     order.CaptureTransactionResult = result.CaptureTransactionResult;
                     order.PaymentStatus = result.NewPaymentStatus;
                     order.PaidDateUtc = paidDate;
-                    _orderService.UpdateOrder(order);
+                    await _orderService.UpdateOrderAsync(order);
 
                     //add a note
-                    AddOrderNote(order, "Order has been captured");
+                    await AddOrderNoteAsync(order, "Order has been captured");
 
-                    CheckOrderStatus(order);
+                    await CheckOrderStatusAsync(order);
 
                     if (order.PaymentStatus == PaymentStatus.Paid)
-                    {
-                        ProcessOrderPaid(order);
-                    }
+                        await ProcessOrderPaidAsync(order);
                 }
             }
             catch (Exception exc)
@@ -2138,11 +2411,11 @@ namespace TVProgViewer.Services.Orders
                 return result.Errors;
 
             //add a note
-            AddOrderNote(order, $"Unable to capture order. {error}");
+            await AddOrderNoteAsync(order, $"Unable to capture order. {error}");
 
             //log it
             var logError = $"Error capturing order #{order.Id}. Error: {error}";
-            _logger.InsertLog(LogLevel.Error, logError, logError);
+            await _logger.InsertLogAsync(LogLevel.Error, logError, logError);
             return result.Errors;
         }
 
@@ -2171,7 +2444,7 @@ namespace TVProgViewer.Services.Orders
         /// Marks order as paid
         /// </summary>
         /// <param name="order">Order</param>
-        public virtual void MarkOrderAsPaid(Order order)
+        public virtual async Task MarkOrderAsPaidAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -2181,17 +2454,15 @@ namespace TVProgViewer.Services.Orders
 
             order.PaymentStatusId = (int)PaymentStatus.Paid;
             order.PaidDateUtc = DateTime.UtcNow;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //add a note
-            AddOrderNote(order, "Order has been marked as paid");
+            await AddOrderNoteAsync(order, "Order has been marked as paid");
 
-            CheckOrderStatus(order);
+            await CheckOrderStatusAsync(order);
 
             if (order.PaymentStatus == PaymentStatus.Paid)
-            {
-                ProcessOrderPaid(order);
-            }
+                await ProcessOrderPaidAsync(order);
         }
 
         /// <summary>
@@ -2199,7 +2470,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>A value indicating whether refund from admin panel is allowed</returns>
-        public virtual bool CanRefund(Order order)
+        public virtual async Task<bool> CanRefundAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -2216,7 +2487,7 @@ namespace TVProgViewer.Services.Orders
             //    return false;
 
             if (order.PaymentStatus == PaymentStatus.Paid &&
-                _paymentService.SupportRefund(order.PaymentMethodSystemName))
+                await _paymentService.SupportRefundAsync(order.PaymentMethodSystemName))
                 return true;
 
             return false;
@@ -2227,12 +2498,12 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>A list of errors; empty list if no errors</returns>
-        public virtual IList<string> Refund(Order order)
+        public virtual async Task<IList<string>> RefundAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            if (!CanRefund(order))
+            if (!await CanRefundAsync(order))
                 throw new TvProgException("Cannot do refund for order.");
 
             var request = new RefundPaymentRequest();
@@ -2242,7 +2513,7 @@ namespace TVProgViewer.Services.Orders
                 request.Order = order;
                 request.AmountToRefund = order.OrderTotal;
                 request.IsPartialRefund = false;
-                result = _paymentService.Refund(request);
+                result = await _paymentService.RefundAsync(request);
                 if (result.Success)
                 {
                     //total amount refunded
@@ -2251,25 +2522,25 @@ namespace TVProgViewer.Services.Orders
                     //update order info
                     order.RefundedAmount = totalAmountRefunded;
                     order.PaymentStatus = result.NewPaymentStatus;
-                    _orderService.UpdateOrder(order);
+                    await _orderService.UpdateOrderAsync(order);
 
                     //add a note
-                    AddOrderNote(order, $"Order has been refunded. Amount = {request.AmountToRefund}");
+                    await AddOrderNoteAsync(order, $"Order has been refunded. Amount = {request.AmountToRefund}");
 
                     //check order status
-                    CheckOrderStatus(order);
+                    await CheckOrderStatusAsync(order);
 
                     //notifications
-                    var orderRefundedStoreOwnerNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedStoreOwnerNotification(order, request.AmountToRefund, _localizationSettings.DefaultAdminLanguageId);
+                    var orderRefundedStoreOwnerNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedStoreOwnerNotificationAsync(order, request.AmountToRefund, _localizationSettings.DefaultAdminLanguageId);
                     if (orderRefundedStoreOwnerNotificationQueuedEmailIds.Any())
-                        AddOrderNote(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
+                        await AddOrderNoteAsync(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
 
-                    var orderRefundedUserNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedUserNotification(order, request.AmountToRefund, order.UserLanguageId);
+                    var orderRefundedUserNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedUserNotificationAsync(order, request.AmountToRefund, order.UserLanguageId);
                     if (orderRefundedUserNotificationQueuedEmailIds.Any())
-                        AddOrderNote(order, $"\"Order refunded\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
+                        await AddOrderNoteAsync(order, $"\"Order refunded\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
 
                     //raise event       
-                    _eventPublisher.Publish(new OrderRefundedEvent(order, request.AmountToRefund));
+                    await _eventPublisher.PublishAsync(new OrderRefundedEvent(order, request.AmountToRefund));
                 }
             }
             catch (Exception exc)
@@ -2292,11 +2563,12 @@ namespace TVProgViewer.Services.Orders
                 return result.Errors;
 
             //add a note
-            AddOrderNote(order, $"Unable to refund order. {error}");
+            await AddOrderNoteAsync(order, $"Unable to refund order. {error}");
 
             //log it
             var logError = $"Error refunding order #{order.Id}. Error: {error}";
-            _logger.InsertLog(LogLevel.Error, logError, logError);
+            await _logger.InsertLogAsync(LogLevel.Error, logError, logError);
+
             return result.Errors;
         }
 
@@ -2331,7 +2603,7 @@ namespace TVProgViewer.Services.Orders
         /// Refunds an order (offline)
         /// </summary>
         /// <param name="order">Order</param>
-        public virtual void RefundOffline(Order order)
+        public virtual async Task RefundOfflineAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -2348,25 +2620,25 @@ namespace TVProgViewer.Services.Orders
             //update order info
             order.RefundedAmount = totalAmountRefunded;
             order.PaymentStatus = PaymentStatus.Refunded;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //add a note
-            AddOrderNote(order, $"Order has been marked as refunded. Amount = {amountToRefund}");
+            await AddOrderNoteAsync(order, $"Order has been marked as refunded. Amount = {amountToRefund}");
 
             //check order status
-            CheckOrderStatus(order);
+            await CheckOrderStatusAsync(order);
 
             //notifications
-            var orderRefundedStoreOwnerNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedStoreOwnerNotification(order, amountToRefund, _localizationSettings.DefaultAdminLanguageId);
+            var orderRefundedStoreOwnerNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedStoreOwnerNotificationAsync(order, amountToRefund, _localizationSettings.DefaultAdminLanguageId);
             if (orderRefundedStoreOwnerNotificationQueuedEmailIds.Any())
-                AddOrderNote(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
+                await AddOrderNoteAsync(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
 
-            var orderRefundedUserNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedUserNotification(order, amountToRefund, order.UserLanguageId);
+            var orderRefundedUserNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedUserNotificationAsync(order, amountToRefund, order.UserLanguageId);
             if (orderRefundedUserNotificationQueuedEmailIds.Any())
-                AddOrderNote(order, $"\"Order refunded\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
+                await AddOrderNoteAsync(order, $"\"Order refunded\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
 
             //raise event       
-            _eventPublisher.Publish(new OrderRefundedEvent(order, amountToRefund));
+            await _eventPublisher.PublishAsync(new OrderRefundedEvent(order, amountToRefund));
         }
 
         /// <summary>
@@ -2375,7 +2647,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="order">Order</param>
         /// <param name="amountToRefund">Amount to refund</param>
         /// <returns>A value indicating whether refund from admin panel is allowed</returns>
-        public virtual bool CanPartiallyRefund(Order order, decimal amountToRefund)
+        public virtual async Task<bool> CanPartiallyRefundAsync(Order order, decimal amountToRefund)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -2396,7 +2668,7 @@ namespace TVProgViewer.Services.Orders
 
             if ((order.PaymentStatus == PaymentStatus.Paid ||
                 order.PaymentStatus == PaymentStatus.PartiallyRefunded) &&
-                _paymentService.SupportPartiallyRefund(order.PaymentMethodSystemName))
+                await _paymentService.SupportPartiallyRefundAsync(order.PaymentMethodSystemName))
                 return true;
 
             return false;
@@ -2408,12 +2680,12 @@ namespace TVProgViewer.Services.Orders
         /// <param name="order">Order</param>
         /// <param name="amountToRefund">Amount to refund</param>
         /// <returns>A list of errors; empty list if no errors</returns>
-        public virtual IList<string> PartiallyRefund(Order order, decimal amountToRefund)
+        public virtual async Task<IList<string>> PartiallyRefundAsync(Order order, decimal amountToRefund)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            if (!CanPartiallyRefund(order, amountToRefund))
+            if (!await CanPartiallyRefundAsync(order, amountToRefund))
                 throw new TvProgException("Cannot do partial refund for order.");
 
             var request = new RefundPaymentRequest();
@@ -2424,7 +2696,7 @@ namespace TVProgViewer.Services.Orders
                 request.AmountToRefund = amountToRefund;
                 request.IsPartialRefund = true;
 
-                result = _paymentService.Refund(request);
+                result = await _paymentService.RefundAsync(request);
 
                 if (result.Success)
                 {
@@ -2435,25 +2707,25 @@ namespace TVProgViewer.Services.Orders
                     order.RefundedAmount = totalAmountRefunded;
                     //mark payment status as 'Refunded' if the order total amount is fully refunded
                     order.PaymentStatus = order.OrderTotal == totalAmountRefunded && result.NewPaymentStatus == PaymentStatus.PartiallyRefunded ? PaymentStatus.Refunded : result.NewPaymentStatus;
-                    _orderService.UpdateOrder(order);
+                    await _orderService.UpdateOrderAsync(order);
 
                     //add a note
-                    AddOrderNote(order, $"Order has been partially refunded. Amount = {amountToRefund}");
+                    await AddOrderNoteAsync(order, $"Order has been partially refunded. Amount = {amountToRefund}");
 
                     //check order status
-                    CheckOrderStatus(order);
+                    await CheckOrderStatusAsync(order);
 
                     //notifications
-                    var orderRefundedStoreOwnerNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedStoreOwnerNotification(order, amountToRefund, _localizationSettings.DefaultAdminLanguageId);
+                    var orderRefundedStoreOwnerNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedStoreOwnerNotificationAsync(order, amountToRefund, _localizationSettings.DefaultAdminLanguageId);
                     if (orderRefundedStoreOwnerNotificationQueuedEmailIds.Any())
-                        AddOrderNote(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
+                        await AddOrderNoteAsync(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
 
-                    var orderRefundedUserNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedUserNotification(order, amountToRefund, order.UserLanguageId);
+                    var orderRefundedUserNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedUserNotificationAsync(order, amountToRefund, order.UserLanguageId);
                     if (orderRefundedUserNotificationQueuedEmailIds.Any())
-                        AddOrderNote(order, $"\"Order refunded\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
+                        await AddOrderNoteAsync(order, $"\"Order refunded\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
 
                     //raise event       
-                    _eventPublisher.Publish(new OrderRefundedEvent(order, amountToRefund));
+                    await _eventPublisher.PublishAsync(new OrderRefundedEvent(order, amountToRefund));
                 }
             }
             catch (Exception exc)
@@ -2476,11 +2748,11 @@ namespace TVProgViewer.Services.Orders
                 return result.Errors;
 
             //add a note
-            AddOrderNote(order, $"Unable to partially refund order. {error}");
+            await AddOrderNoteAsync(order, $"Unable to partially refund order. {error}");
 
             //log it
             var logError = $"Error refunding order #{order.Id}. Error: {error}";
-            _logger.InsertLog(LogLevel.Error, logError, logError);
+            await _logger.InsertLogAsync(LogLevel.Error, logError, logError);
             return result.Errors;
         }
 
@@ -2521,7 +2793,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="amountToRefund">Amount to refund</param>
-        public virtual void PartiallyRefundOffline(Order order, decimal amountToRefund)
+        public virtual async Task PartiallyRefundOfflineAsync(Order order, decimal amountToRefund)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -2536,33 +2808,33 @@ namespace TVProgViewer.Services.Orders
             order.RefundedAmount = totalAmountRefunded;
             //mark payment status as 'Refunded' if the order total amount is fully refunded
             order.PaymentStatus = order.OrderTotal == totalAmountRefunded ? PaymentStatus.Refunded : PaymentStatus.PartiallyRefunded;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //add a note
-            AddOrderNote(order, $"Order has been marked as partially refunded. Amount = {amountToRefund}");
+            await AddOrderNoteAsync(order, $"Order has been marked as partially refunded. Amount = {amountToRefund}");
 
             //check order status
-            CheckOrderStatus(order);
+            await CheckOrderStatusAsync(order);
 
             //notifications
-            var orderRefundedStoreOwnerNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedStoreOwnerNotification(order, amountToRefund, _localizationSettings.DefaultAdminLanguageId);
+            var orderRefundedStoreOwnerNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedStoreOwnerNotificationAsync(order, amountToRefund, _localizationSettings.DefaultAdminLanguageId);
             if (orderRefundedStoreOwnerNotificationQueuedEmailIds.Any())
-                AddOrderNote(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
+                await AddOrderNoteAsync(order, $"\"Order refunded\" email (to store owner) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedStoreOwnerNotificationQueuedEmailIds)}.");
 
-            var orderRefundedUserNotificationQueuedEmailIds = _workflowMessageService.SendOrderRefundedUserNotification(order, amountToRefund, order.UserLanguageId);
+            var orderRefundedUserNotificationQueuedEmailIds = await _workflowMessageService.SendOrderRefundedUserNotificationAsync(order, amountToRefund, order.UserLanguageId);
             if (orderRefundedUserNotificationQueuedEmailIds.Any())
-                AddOrderNote(order, $"\"Order refunded\" email (to User) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
+                await AddOrderNoteAsync(order, $"\"Order refunded\" email (to user) has been queued. Queued email identifiers: {string.Join(", ", orderRefundedUserNotificationQueuedEmailIds)}.");
 
             //raise event       
-            _eventPublisher.Publish(new OrderRefundedEvent(order, amountToRefund));
+            await _eventPublisher.PublishAsync(new OrderRefundedEvent(order, amountToRefund));
         }
 
         /// <summary>
-        /// Gets a value indicating whether void from admin panel is allowed
+        /// Gets a value indicating whether async Task from admin panel is allowed
         /// </summary>
         /// <param name="order">Order</param>
-        /// <returns>A value indicating whether void from admin panel is allowed</returns>
-        public virtual bool CanVoid(Order order)
+        /// <returns>A value indicating whether async Task from admin panel is allowed</returns>
+        public virtual async Task<bool> CanVoidAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
@@ -2575,46 +2847,46 @@ namespace TVProgViewer.Services.Orders
             //    return false;
 
             if (order.PaymentStatus == PaymentStatus.Authorized &&
-                _paymentService.SupportVoid(order.PaymentMethodSystemName))
+                await _paymentService.SupportVoidAsync(order.PaymentMethodSystemName))
                 return true;
 
             return false;
         }
 
         /// <summary>
-        /// Voids order (from admin panel)
+        /// async Tasks order (from admin panel)
         /// </summary>
         /// <param name="order">Order</param>
-        /// <returns>Voided order</returns>
-        public virtual IList<string> Void(Order order)
+        /// <returns>async Tasked order</returns>
+        public virtual async Task<IList<string>> VoidAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            if (!CanVoid(order))
-                throw new TvProgException("Cannot do void for order.");
+            if (!await CanVoidAsync(order))
+                throw new TvProgException("Cannot do async Task for order.");
 
             var request = new VoidPaymentRequest();
             VoidPaymentResult result = null;
             try
             {
                 request.Order = order;
-                result = _paymentService.Void(request);
+                result = await _paymentService.VoidAsync(request);
 
                 if (result.Success)
                 {
                     //update order info
                     order.PaymentStatus = result.NewPaymentStatus;
-                    _orderService.UpdateOrder(order);
+                    await _orderService.UpdateOrderAsync(order);
 
                     //add a note
-                    AddOrderNote(order, "Order has been voided");
+                    await AddOrderNoteAsync(order, "Order has been async Tasked");
 
                     //check order status
-                    CheckOrderStatus(order);
+                    await CheckOrderStatusAsync(order);
 
                     //raise event       
-                    _eventPublisher.Publish(new OrderVoidedEvent(order));
+                    await _eventPublisher.PublishAsync(new OrderVoidedEvent(order));
                 }
             }
             catch (Exception exc)
@@ -2637,19 +2909,19 @@ namespace TVProgViewer.Services.Orders
                 return result.Errors;
 
             //add a note
-            AddOrderNote(order, $"Unable to voiding order. {error}");
+            await AddOrderNoteAsync(order, $"Unable to async Tasking order. {error}");
 
             //log it
-            var logError = $"Error voiding order #{order.Id}. Error: {error}";
-            _logger.InsertLog(LogLevel.Error, logError, logError);
+            var logError = $"Error async Tasking order #{order.Id}. Error: {error}";
+            await _logger.InsertLogAsync(LogLevel.Error, logError, logError);
             return result.Errors;
         }
 
         /// <summary>
-        /// Gets a value indicating whether order can be marked as voided
+        /// Gets a value indicating whether order can be marked as async Tasked
         /// </summary>
         /// <param name="order">Order</param>
-        /// <returns>A value indicating whether order can be marked as voided</returns>
+        /// <returns>A value indicating whether order can be marked as async Tasked</returns>
         public virtual bool CanVoidOffline(Order order)
         {
             if (order == null)
@@ -2669,47 +2941,47 @@ namespace TVProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Voids order (offline)
+        /// async Tasks order (offline)
         /// </summary>
         /// <param name="order">Order</param>
-        public virtual void VoidOffline(Order order)
+        public virtual async Task VoidOfflineAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
             if (!CanVoidOffline(order))
-                throw new TvProgException("You can't void this order");
+                throw new TvProgException("You can't async Task this order");
 
             order.PaymentStatusId = (int)PaymentStatus.Voided;
-            _orderService.UpdateOrder(order);
+            await _orderService.UpdateOrderAsync(order);
 
             //add a note
-            AddOrderNote(order, "Order has been marked as voided");
+            await AddOrderNoteAsync(order, "Order has been marked as async Tasked");
 
             //check order status
-            CheckOrderStatus(order);
+            await CheckOrderStatusAsync(order);
 
             //raise event       
-            _eventPublisher.Publish(new OrderVoidedEvent(order));
+            await _eventPublisher.PublishAsync(new OrderVoidedEvent(order));
         }
 
         /// <summary>
         /// Place order items in current user shopping cart.
         /// </summary>
         /// <param name="order">The order</param>
-        public virtual void ReOrder(Order order)
+        public virtual async Task ReOrderAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            var user = _userService.GetUserById(order.UserId);
+            var user = await _userService.GetUserByIdAsync(order.UserId);
 
             //move shopping cart items (if possible)
-            foreach (var orderItem in _orderService.GetOrderItems(order.Id))
+            foreach (var orderItem in await _orderService.GetOrderItemsAsync(order.Id))
             {
-                var product = _productService.GetProductById(orderItem.ProductId);
+                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
-                _shoppingCartService.AddToCart(user, product,
+                await _shoppingCartService.AddToCartAsync(user, product,
                     ShoppingCartType.ShoppingCart, order.StoreId,
                     orderItem.AttributesXml, orderItem.UnitPriceExclTax,
                     orderItem.RentalStartDateUtc, orderItem.RentalEndDateUtc,
@@ -2718,7 +2990,7 @@ namespace TVProgViewer.Services.Orders
 
             //set checkout attributes
             //comment the code below if you want to disable this functionality
-            _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CheckoutAttributes, order.CheckoutAttributesXml, order.StoreId);
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CheckoutAttributes, order.CheckoutAttributesXml, order.StoreId);
         }
 
         /// <summary>
@@ -2726,7 +2998,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>Result</returns>
-        public virtual bool IsReturnRequestAllowed(Order order)
+        public virtual async Task<bool> IsReturnRequestAllowedAsync(Order order)
         {
             if (!_orderSettings.ReturnRequestsEnabled)
                 return false;
@@ -2740,7 +3012,7 @@ namespace TVProgViewer.Services.Orders
 
             //validate allowed number of days
             if (_orderSettings.NumberOfDaysReturnRequestAvailable <= 0)
-                return _orderService.GetOrderItems(order.Id, isNotReturnable: false).Any();
+                return (await _orderService.GetOrderItemsAsync(order.Id, false)).Any();
 
             var daysPassed = (DateTime.UtcNow - order.CreatedOnUtc).TotalDays;
 
@@ -2748,7 +3020,7 @@ namespace TVProgViewer.Services.Orders
                 return false;
 
             //ensure that we have at least one returnable product
-            return _orderService.GetOrderItems(order.Id, isNotReturnable: false).Any();
+            return (await _orderService.GetOrderItemsAsync(order.Id, false)).Any();
         }
 
         /// <summary>
@@ -2756,7 +3028,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Shopping cart</param>
         /// <returns>true - OK; false - minimum order sub-total amount is not reached</returns>
-        public virtual bool ValidateMinOrderSubtotalAmount(IList<ShoppingCartItem> cart)
+        public virtual async Task<bool> ValidateMinOrderSubtotalAmountAsync(IList<ShoppingCartItem> cart)
         {
             if (cart == null)
                 throw new ArgumentNullException(nameof(cart));
@@ -2766,7 +3038,7 @@ namespace TVProgViewer.Services.Orders
                 return true;
 
             //subtotal
-            _orderTotalCalculationService.GetShoppingCartSubTotal(cart, _orderSettings.MinOrderSubtotalAmountIncludingTax, out var _, out var _, out var subTotalWithoutDiscountBase, out var _);
+            var (_, _, subTotalWithoutDiscountBase, _, _) = await _orderTotalCalculationService.GetShoppingCartSubTotalAsync(cart, _orderSettings.MinOrderSubtotalAmountIncludingTax);
 
             if (subTotalWithoutDiscountBase < _orderSettings.MinOrderSubtotalAmount)
                 return false;
@@ -2779,7 +3051,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Shopping cart</param>
         /// <returns>true - OK; false - minimum order total amount is not reached</returns>
-        public virtual bool ValidateMinOrderTotalAmount(IList<ShoppingCartItem> cart)
+        public virtual async Task<bool> ValidateMinOrderTotalAmountAsync(IList<ShoppingCartItem> cart)
         {
             if (cart == null)
                 throw new ArgumentNullException(nameof(cart));
@@ -2787,7 +3059,7 @@ namespace TVProgViewer.Services.Orders
             if (!cart.Any() || _orderSettings.MinOrderTotalAmount <= decimal.Zero)
                 return true;
 
-            var shoppingCartTotalBase = _orderTotalCalculationService.GetShoppingCartTotal(cart);
+            var shoppingCartTotalBase = (await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart)).shoppingCartTotal;
 
             if (shoppingCartTotalBase.HasValue && shoppingCartTotalBase.Value < _orderSettings.MinOrderTotalAmount)
                 return false;
@@ -2799,9 +3071,9 @@ namespace TVProgViewer.Services.Orders
         /// Gets a value indicating whether payment workflow is required
         /// </summary>
         /// <param name="cart">Shopping cart</param>
-        /// <param name="useRewardPoints">A value indicating reward points should be used; null to detect current choice of the User</param>
+        /// <param name="useRewardPoints">A value indicating reward points should be used; null to detect current choice of the user</param>
         /// <returns>true - OK; false - minimum order total amount is not reached</returns>
-        public virtual bool IsPaymentWorkflowRequired(IList<ShoppingCartItem> cart, bool? useRewardPoints = null)
+        public virtual async Task<bool> IsPaymentWorkflowRequiredAsync(IList<ShoppingCartItem> cart, bool? useRewardPoints = null)
         {
             if (cart == null)
                 throw new ArgumentNullException(nameof(cart));
@@ -2809,7 +3081,7 @@ namespace TVProgViewer.Services.Orders
             var result = true;
 
             //check whether order total equals zero
-            var shoppingCartTotalBase = _orderTotalCalculationService.GetShoppingCartTotal(cart, useRewardPoints: useRewardPoints);
+            var shoppingCartTotalBase = (await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart, useRewardPoints: useRewardPoints)).shoppingCartTotal;
             if (shoppingCartTotalBase.HasValue && shoppingCartTotalBase.Value == decimal.Zero)
                 result = false;
             return result;
@@ -2819,7 +3091,7 @@ namespace TVProgViewer.Services.Orders
         /// Gets the next payment date
         /// </summary>
         /// <param name="recurringPayment">Recurring payment</param>
-        public virtual DateTime? GetNextPaymentDate(RecurringPayment recurringPayment)
+        public virtual async Task<DateTime?> GetNextPaymentDateAsync(RecurringPayment recurringPayment)
         {
             if (recurringPayment is null)
                 throw new ArgumentNullException(nameof(recurringPayment));
@@ -2827,11 +3099,9 @@ namespace TVProgViewer.Services.Orders
             if (!recurringPayment.IsActive)
                 return null;
 
-            var historyCollection = _orderService.GetRecurringPaymentHistory(recurringPayment);
+            var historyCollection = await _orderService.GetRecurringPaymentHistoryAsync(recurringPayment);
             if (historyCollection.Count >= recurringPayment.TotalCycles)
-            {
                 return null;
-            }
 
             //result
             DateTime? result = null;
@@ -2847,7 +3117,6 @@ namespace TVProgViewer.Services.Orders
                     RecurringProductCyclePeriod.Years => recurringPayment.StartDateUtc.AddYears(recurringPayment.CycleLength * historyCollection.Count),
                     _ => throw new TvProgException("Not supported cycle period"),
                 };
-
             }
             else
             {
@@ -2862,12 +3131,12 @@ namespace TVProgViewer.Services.Orders
         /// Gets the cycles remaining
         /// </summary>
         /// <param name="recurringPayment">Recurring payment</param>
-        public virtual int GetCyclesRemaining(RecurringPayment recurringPayment)
+        public virtual async Task<int> GetCyclesRemainingAsync(RecurringPayment recurringPayment)
         {
             if (recurringPayment is null)
                 throw new ArgumentNullException(nameof(recurringPayment));
 
-            var historyCollection = _orderService.GetRecurringPaymentHistory(recurringPayment);
+            var historyCollection = await _orderService.GetRecurringPaymentHistoryAsync(recurringPayment);
 
             var result = recurringPayment.TotalCycles - historyCollection.Count;
             if (result < 0)

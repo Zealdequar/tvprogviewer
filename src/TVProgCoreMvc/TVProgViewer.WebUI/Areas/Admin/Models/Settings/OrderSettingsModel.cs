@@ -75,6 +75,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool DisableOrderCompletedPage { get; set; }
         public bool DisableOrderCompletedPage_OverrideForStore { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.DisplayPickupInStoreOnShippingMethodPage")]
+        public bool DisplayPickupInStoreOnShippingMethodPage { get; set; }
+        public bool DisplayPickupInStoreOnShippingMethodPage_OverrideForStore { get; set; }
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.AttachPdfInvoiceToOrderPlacedEmail")]
         public bool AttachPdfInvoiceToOrderPlacedEmail { get; set; }
         public bool AttachPdfInvoiceToOrderPlacedEmail_OverrideForStore { get; set; }
@@ -119,7 +123,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.OrderIdent")]
         public int? OrderIdent { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.CustomOrderNumberMask")]
         public string CustomOrderNumberMask { get; set; }
         public bool CustomOrderNumberMask_OverrideForStore { get; set; }

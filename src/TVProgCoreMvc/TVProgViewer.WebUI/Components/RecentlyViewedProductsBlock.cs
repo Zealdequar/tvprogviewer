@@ -8,6 +8,7 @@ using TVProgViewer.Services.Stores;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
 using TVProgViewer.WebUI.Models.Catalog;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -35,25 +36,24 @@ namespace TVProgViewer.WebUI.Components
             _storeMappingService = storeMappingService;
         }
 
-        public IViewComponentResult Invoke(int? productThumbPictureSize, bool? preparePriceModel)
+        public async Task<IViewComponentResult> InvokeAsync(int? productThumbPictureSize, bool? preparePriceModel)
         {
             if (!_catalogSettings.RecentlyViewedProductsEnabled)
                 return Content("");
 
             var preparePictureModel = productThumbPictureSize.HasValue;
-            var products = _recentlyViewedProductsService.GetRecentlyViewedProducts(_catalogSettings.RecentlyViewedProductsNumber);
-
+            var products = await (await _recentlyViewedProductsService.GetRecentlyViewedProductsAsync(_catalogSettings.RecentlyViewedProductsNumber))
             //ACL and store mapping
-            products = products.Where(p => _aclService.Authorize(p) && _storeMappingService.Authorize(p)).ToList();
+            .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            products = products.Where(p => _productService.ProductIsAvailable(p)).ToList();
+            .Where(p => _productService.ProductIsAvailable(p)).ToListAsync();
 
             if (!products.Any())
                 return Content("");
 
             //prepare model
             var model = new List<ProductOverviewModel>();
-            model.AddRange(_productModelFactory.PrepareProductOverviewModels(products,
+            model.AddRange(await _productModelFactory.PrepareProductOverviewModelsAsync(products,
                 preparePriceModel.GetValueOrDefault(),
                 preparePictureModel,
                 productThumbPictureSize));

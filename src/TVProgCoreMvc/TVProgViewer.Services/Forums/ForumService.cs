@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
+using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Forums;
 using TVProgViewer.Core.Domain.Seo;
 using TVProgViewer.Core.Html;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
+using TVProgViewer.Data.Extensions;
 using TVProgViewer.Services.Common;
 using TVProgViewer.Services.Users;
-using TVProgViewer.Services.Events;
 using TVProgViewer.Services.Messages;
 using TVProgViewer.Services.Seo;
-using TVProgViewer.Services.Defaults;
 
 namespace TVProgViewer.Services.Forums
 {
@@ -27,7 +26,6 @@ namespace TVProgViewer.Services.Forums
 
         private readonly ForumSettings _forumSettings;
         private readonly IUserService _userService;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Forum> _forumRepository;
@@ -37,6 +35,7 @@ namespace TVProgViewer.Services.Forums
         private readonly IRepository<ForumSubscription> _forumSubscriptionRepository;
         private readonly IRepository<ForumTopic> _forumTopicRepository;
         private readonly IRepository<PrivateMessage> _forumPrivateMessageRepository;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IWorkContext _workContext;
         private readonly IWorkflowMessageService _workflowMessageService;
@@ -47,10 +46,9 @@ namespace TVProgViewer.Services.Forums
         #region Ctor
 
         public ForumService(ForumSettings forumSettings,
-            IUserService UserService,
-            IEventPublisher eventPublisher,
+            IUserService userService,
             IGenericAttributeService genericAttributeService,
-            IRepository<User> UserRepository,
+            IRepository<User> userRepository,
             IRepository<Forum> forumRepository,
             IRepository<ForumGroup> forumGroupRepository,
             IRepository<ForumPost> forumPostRepository,
@@ -58,16 +56,16 @@ namespace TVProgViewer.Services.Forums
             IRepository<ForumSubscription> forumSubscriptionRepository,
             IRepository<ForumTopic> forumTopicRepository,
             IRepository<PrivateMessage> forumPrivateMessageRepository,
+            IStaticCacheManager staticCacheManager,
             IUrlRecordService urlRecordService,
             IWorkContext workContext,
             IWorkflowMessageService workflowMessageService,
             SeoSettings seoSettings)
         {
             _forumSettings = forumSettings;
-            _userService = UserService;
-            _eventPublisher = eventPublisher;
+            _userService = userService;
             _genericAttributeService = genericAttributeService;
-            _userRepository = UserRepository;
+            _userRepository = userRepository;
             _forumRepository = forumRepository;
             _forumGroupRepository = forumGroupRepository;
             _forumPostRepository = forumPostRepository;
@@ -75,6 +73,7 @@ namespace TVProgViewer.Services.Forums
             _forumSubscriptionRepository = forumSubscriptionRepository;
             _forumTopicRepository = forumTopicRepository;
             _forumPrivateMessageRepository = forumPrivateMessageRepository;
+            _staticCacheManager = staticCacheManager;
             _urlRecordService = urlRecordService;
             _workContext = workContext;
             _workflowMessageService = workflowMessageService;
@@ -89,31 +88,27 @@ namespace TVProgViewer.Services.Forums
         /// Update forum stats
         /// </summary>
         /// <param name="forumId">The forum identifier</param>
-        private void UpdateForumStats(int forumId)
+        private async Task UpdateForumStatsAsync(int forumId)
         {
             if (forumId == 0)
-            {
                 return;
-            }
 
-            var forum = GetForumById(forumId);
+            var forum = await GetForumByIdAsync(forumId);
             if (forum == null)
-            {
                 return;
-            }
 
             //number of topics
             var queryNumTopics = from ft in _forumTopicRepository.Table
                                  where ft.ForumId == forumId
                                  select ft.Id;
-            var numTopics = queryNumTopics.Count();
+            var numTopics = await queryNumTopics.CountAsync();
 
             //number of posts
             var queryNumPosts = from ft in _forumTopicRepository.Table
                                 join fp in _forumPostRepository.Table on ft.Id equals fp.TopicId
                                 where ft.ForumId == forumId
                                 select fp.Id;
-            var numPosts = queryNumPosts.Count();
+            var numPosts = await queryNumPosts.CountAsync();
 
             //last values
             var lastTopicId = 0;
@@ -131,7 +126,7 @@ namespace TVProgViewer.Services.Forums
                                       LastPostUserId = fp.UserId,
                                       LastPostTime = fp.CreatedOnUtc
                                   };
-            var lastValues = queryLastValues.FirstOrDefault();
+            var lastValues = await queryLastValues.FirstOrDefaultAsync();
             if (lastValues != null)
             {
                 lastTopicId = lastValues.LastTopicId;
@@ -147,31 +142,27 @@ namespace TVProgViewer.Services.Forums
             forum.LastPostId = lastPostId;
             forum.LastPostUserId = lastPostUserId;
             forum.LastPostTime = lastPostTime;
-            UpdateForum(forum);
+            await UpdateForumAsync(forum);
         }
 
         /// <summary>
         /// Update forum topic stats
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
-        private void UpdateForumTopicStats(int forumTopicId)
+        private async Task UpdateForumTopicStatsAsync(int forumTopicId)
         {
             if (forumTopicId == 0)
-            {
                 return;
-            }
 
-            var forumTopic = GetTopicById(forumTopicId);
+            var forumTopic = await GetTopicByIdAsync(forumTopicId);
             if (forumTopic == null)
-            {
                 return;
-            }
 
             //number of posts
             var queryNumPosts = from fp in _forumPostRepository.Table
                                 where fp.TopicId == forumTopicId
                                 select fp.Id;
-            var numPosts = queryNumPosts.Count();
+            var numPosts = await queryNumPosts.CountAsync();
 
             //last values
             var lastPostId = 0;
@@ -186,7 +177,7 @@ namespace TVProgViewer.Services.Forums
                                       LastPostUserId = fp.UserId,
                                       LastPostTime = fp.CreatedOnUtc
                                   };
-            var lastValues = queryLastValues.FirstOrDefault();
+            var lastValues = await queryLastValues.FirstOrDefaultAsync();
             if (lastValues != null)
             {
                 lastPostId = lastValues.LastPostId;
@@ -199,33 +190,52 @@ namespace TVProgViewer.Services.Forums
             forumTopic.LastPostId = lastPostId;
             forumTopic.LastPostUserId = lastPostUserId;
             forumTopic.LastPostTime = lastPostTime;
-            UpdateTopic(forumTopic);
+
+            await UpdateTopicAsync(forumTopic);
         }
 
         /// <summary>
-        /// Update User stats
+        /// Update user stats
         /// </summary>
-        /// <param name="UserId">The User identifier</param>
-        private void UpdateUserStats(int UserId)
+        /// <param name="userId">The user identifier</param>
+        private async Task UpdateUserStatsAsync(int userId)
         {
-            if (UserId == 0)
-            {
+            if (userId == 0)
                 return;
-            }
 
-            var User = _userService.GetUserById(UserId);
+            var user = await _userService.GetUserByIdAsync(userId);
 
-            if (User == null)
-            {
+            if (user == null)
                 return;
-            }
 
             var query = from fp in _forumPostRepository.Table
-                        where fp.UserId == UserId
+                        where fp.UserId == userId
                         select fp.Id;
-            var numPosts = query.Count();
+            var numPosts = await query.CountAsync();
 
-            _genericAttributeService.SaveAttribute(User, TvProgUserDefaults.ForumPostCountAttribute, numPosts);
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.ForumPostCountAttribute, numPosts);
+        }
+
+        /// <summary>
+        /// Gets a forum topic
+        /// </summary>
+        /// <param name="forumTopicId">The forum topic identifier</param>
+        /// <param name="increaseViews">The value indicating whether to increase forum topic views</param>
+        /// <returns>Forum Topic</returns>
+        protected virtual async Task<ForumTopic> GetTopicByIdAsync(int forumTopicId, bool increaseViews)
+        {
+            var forumTopic = await _forumTopicRepository.GetByIdAsync(forumTopicId, cache => default);
+
+            if (forumTopic == null)
+                return null;
+
+            if (!increaseViews)
+                return forumTopic;
+
+            forumTopic.Views = ++forumTopic.Views;
+            await UpdateTopicAsync(forumTopic);
+
+            return forumTopic;
         }
 
         #endregion
@@ -236,17 +246,9 @@ namespace TVProgViewer.Services.Forums
         /// Deletes a forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        public virtual void DeleteForumGroup(ForumGroup forumGroup)
+        public virtual async Task DeleteForumGroupAsync(ForumGroup forumGroup)
         {
-            if (forumGroup == null)
-            {
-                throw new ArgumentNullException(nameof(forumGroup));
-            }
-
-            _forumGroupRepository.Delete(forumGroup);
-
-            //event notification
-            _eventPublisher.EntityDeleted(forumGroup);
+            await _forumGroupRepository.DeleteAsync(forumGroup);
         }
 
         /// <summary>
@@ -254,73 +256,51 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumGroupId">The forum group identifier</param>
         /// <returns>Forum group</returns>
-        public virtual ForumGroup GetForumGroupById(int forumGroupId)
+        public virtual async Task<ForumGroup> GetForumGroupByIdAsync(int forumGroupId)
         {
-            if (forumGroupId == 0)
-            {
-                return null;
-            }
-
-            return _forumGroupRepository.ToCachedGetById(forumGroupId);
+            return await _forumGroupRepository.GetByIdAsync(forumGroupId, cache => default);
         }
 
         /// <summary>
         /// Gets all forum groups
         /// </summary>
         /// <returns>Forum groups</returns>
-        public virtual IList<ForumGroup> GetAllForumGroups()
+        public virtual async Task<IList<ForumGroup>> GetAllForumGroupsAsync()
         {
-            var query = from fg in _forumGroupRepository.Table
-                orderby fg.DisplayOrder, fg.Id
-                select fg;
-
-            return query.ToCachedList(TvProgForumCachingDefaults.ForumGroupAllCacheKey);
+            return await _forumGroupRepository.GetAllAsync(query =>
+            {
+                return from fg in query
+                       orderby fg.DisplayOrder, fg.Id
+                       select fg;
+            }, cache => default);
         }
 
         /// <summary>
         /// Inserts a forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        public virtual void InsertForumGroup(ForumGroup forumGroup)
+        public virtual async Task InsertForumGroupAsync(ForumGroup forumGroup)
         {
-            if (forumGroup == null)
-            {
-                throw new ArgumentNullException(nameof(forumGroup));
-            }
-
-            _forumGroupRepository.Insert(forumGroup);
-            
-            //event notification
-            _eventPublisher.EntityInserted(forumGroup);
+            await _forumGroupRepository.InsertAsync(forumGroup);
         }
 
         /// <summary>
         /// Updates the forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        public virtual void UpdateForumGroup(ForumGroup forumGroup)
+        public virtual async Task UpdateForumGroupAsync(ForumGroup forumGroup)
         {
-            if (forumGroup == null)
-            {
-                throw new ArgumentNullException(nameof(forumGroup));
-            }
-
-            _forumGroupRepository.Update(forumGroup);
-
-            //event notification
-            _eventPublisher.EntityUpdated(forumGroup);
+            await _forumGroupRepository.UpdateAsync(forumGroup);
         }
 
         /// <summary>
         /// Deletes a forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        public virtual void DeleteForum(Forum forum)
+        public virtual async Task DeleteForumAsync(Forum forum)
         {
             if (forum == null)
-            {
                 throw new ArgumentNullException(nameof(forum));
-            }
 
             //delete forum subscriptions (topics)
             var queryTopicIds = from ft in _forumTopicRepository.Table
@@ -329,29 +309,18 @@ namespace TVProgViewer.Services.Forums
             var queryFs1 = from fs in _forumSubscriptionRepository.Table
                            where queryTopicIds.Contains(fs.TopicId)
                            select fs;
-            foreach (var fs in queryFs1.ToList())
-            {
-                _forumSubscriptionRepository.Delete(fs);
-                //event notification
-                _eventPublisher.EntityDeleted(fs);
-            }
+
+            await _forumSubscriptionRepository.DeleteAsync(queryFs1.ToList());
 
             //delete forum subscriptions (forum)
             var queryFs2 = from fs in _forumSubscriptionRepository.Table
                            where fs.ForumId == forum.Id
                            select fs;
-            foreach (var fs2 in queryFs2.ToList())
-            {
-                _forumSubscriptionRepository.Delete(fs2);
-                //event notification
-                _eventPublisher.EntityDeleted(fs2);
-            }
+
+            await _forumSubscriptionRepository.DeleteAsync(queryFs2.ToList());
 
             //delete forum
-            _forumRepository.Delete(forum);
-            
-            //event notification
-            _eventPublisher.EntityDeleted(forum);
+            await _forumRepository.DeleteAsync(forum);
         }
 
         /// <summary>
@@ -359,12 +328,9 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumId">The forum identifier</param>
         /// <returns>Forum</returns>
-        public virtual Forum GetForumById(int forumId)
+        public virtual async Task<Forum> GetForumByIdAsync(int forumId)
         {
-            if (forumId == 0)
-                return null;
-
-            return _forumRepository.ToCachedGetById(forumId);
+            return await _forumRepository.GetByIdAsync(forumId, cache => default);
         }
 
         /// <summary>
@@ -372,16 +338,15 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumGroupId">The forum group identifier</param>
         /// <returns>Forums</returns>
-        public virtual IList<Forum> GetAllForumsByGroupId(int forumGroupId)
+        public virtual async Task<IList<Forum>> GetAllForumsByGroupIdAsync(int forumGroupId)
         {
-            var key = TvProgForumCachingDefaults.ForumAllByForumGroupIdCacheKey.FillCacheKey(forumGroupId);
-
-            var query = from f in _forumRepository.Table
-                orderby f.DisplayOrder, f.Id
-                where f.ForumGroupId == forumGroupId
-                select f;
-
-            var forums = query.ToCachedList(key);
+            var forums = await _forumRepository.GetAllAsync(query =>
+            {
+                return from f in query
+                       orderby f.DisplayOrder, f.Id
+                       where f.ForumGroupId == forumGroupId
+                       select f;
+            }, cache => cache.PrepareKeyForDefaultCache(TvProgForumDefaults.ForumByForumGroupCacheKey, forumGroupId));
 
             return forums;
         }
@@ -390,71 +355,51 @@ namespace TVProgViewer.Services.Forums
         /// Inserts a forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        public virtual void InsertForum(Forum forum)
+        public virtual async Task InsertForumAsync(Forum forum)
         {
-            if (forum == null)
-            {
-                throw new ArgumentNullException(nameof(forum));
-            }
-
-            _forumRepository.Insert(forum);
-
-            //event notification
-            _eventPublisher.EntityInserted(forum);
+            await _forumRepository.InsertAsync(forum);
         }
 
         /// <summary>
         /// Updates the forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        public virtual void UpdateForum(Forum forum)
+        public virtual async Task UpdateForumAsync(Forum forum)
         {
-            if (forum == null)
-            {
-                throw new ArgumentNullException(nameof(forum));
-            }
+            // if the forum group is changed then clear cache for the previous group 
+            // (we can't use the event consumer because it will work after saving the changes in DB)
+            var forumToUpdate = await _forumRepository.LoadOriginalCopyAsync(forum);
+            if (forumToUpdate.ForumGroupId != forum.ForumGroupId)
+                await _staticCacheManager.RemoveAsync(TvProgForumDefaults.ForumByForumGroupCacheKey, forumToUpdate.ForumGroupId);
 
-            _forumRepository.Update(forum);
-
-            //event notification
-            _eventPublisher.EntityUpdated(forum);
+            await _forumRepository.UpdateAsync(forum);
         }
 
         /// <summary>
         /// Deletes a forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        public virtual void DeleteTopic(ForumTopic forumTopic)
+        public virtual async Task DeleteTopicAsync(ForumTopic forumTopic)
         {
-            if (forumTopic == null)
-            {
-                throw new ArgumentNullException(nameof(forumTopic));
-            }
+            if (forumTopic == null) throw new ArgumentNullException(nameof(forumTopic));
 
-            var UserId = forumTopic.UserId;
+            var userId = forumTopic.UserId;
             var forumId = forumTopic.ForumId;
 
             //delete topic
-            _forumTopicRepository.Delete(forumTopic);
+            await _forumTopicRepository.DeleteAsync(forumTopic);
 
             //delete forum subscriptions
             var queryFs = from ft in _forumSubscriptionRepository.Table
                           where ft.TopicId == forumTopic.Id
                           select ft;
             var forumSubscriptions = queryFs.ToList();
-            foreach (var fs in forumSubscriptions)
-            {
-                _forumSubscriptionRepository.Delete(fs);
-                //event notification
-                _eventPublisher.EntityDeleted(fs);
-            }
+
+            await _forumSubscriptionRepository.DeleteAsync(forumSubscriptions);
 
             //update stats
-            UpdateForumStats(forumId);
-            UpdateUserStats(UserId);
-
-            //event notification
-            _eventPublisher.EntityDeleted(forumTopic);
+            await UpdateForumStatsAsync(forumId);
+            await UpdateUserStatsAsync(userId);
         }
 
         /// <summary>
@@ -462,76 +407,54 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
         /// <returns>Forum Topic</returns>
-        public virtual ForumTopic GetTopicById(int forumTopicId)
+        public virtual async Task<ForumTopic> GetTopicByIdAsync(int forumTopicId)
         {
-            return GetTopicById(forumTopicId, false);
-        }
-
-        /// <summary>
-        /// Gets a forum topic
-        /// </summary>
-        /// <param name="forumTopicId">The forum topic identifier</param>
-        /// <param name="increaseViews">The value indicating whether to increase forum topic views</param>
-        /// <returns>Forum Topic</returns>
-        public virtual ForumTopic GetTopicById(int forumTopicId, bool increaseViews)
-        {
-            if (forumTopicId == 0)
-                return null;
-
-            var forumTopic = _forumTopicRepository.ToCachedGetById(forumTopicId);
-            if (forumTopic == null)
-                return null;
-
-            if (!increaseViews) 
-                return forumTopic;
-
-            forumTopic.Views = ++forumTopic.Views;
-            UpdateTopic(forumTopic);
-
-            return forumTopic;
+            return await GetTopicByIdAsync(forumTopicId, false);
         }
 
         /// <summary>
         /// Gets all forum topics
         /// </summary>
         /// <param name="forumId">The forum identifier</param>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="keywords">Keywords</param>
         /// <param name="searchType">Search type</param>
         /// <param name="limitDays">Limit by the last number days; 0 to load all topics</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum Topics</returns>
-        public virtual IPagedList<ForumTopic> GetAllTopics(int forumId = 0,
-            int UserId = 0, string keywords = "", ForumSearchType searchType = ForumSearchType.All,
+        public virtual async Task<IPagedList<ForumTopic>> GetAllTopicsAsync(int forumId = 0,
+            int userId = 0, string keywords = "", ForumSearchType searchType = ForumSearchType.All,
             int limitDays = 0, int pageIndex = 0, int pageSize = int.MaxValue)
         {
             DateTime? limitDate = null;
-            if (limitDays > 0)
-            {
-                limitDate = DateTime.UtcNow.AddDays(-limitDays);
-            }
+            if (limitDays > 0) limitDate = DateTime.UtcNow.AddDays(-limitDays);
 
             var searchKeywords = !string.IsNullOrEmpty(keywords);
             var searchTopicTitles = searchType == ForumSearchType.All || searchType == ForumSearchType.TopicTitlesOnly;
             var searchPostText = searchType == ForumSearchType.All || searchType == ForumSearchType.PostTextOnly;
-            var query1 = from ft in _forumTopicRepository.Table
-                         join fp in _forumPostRepository.Table on ft.Id equals fp.TopicId
-                         where
-                         (forumId == 0 || ft.ForumId == forumId) &&
-                         (UserId == 0 || ft.UserId == UserId) &&
-                         (!searchKeywords ||
-                            (searchTopicTitles && ft.Subject.Contains(keywords)) ||
-                            (searchPostText && fp.Text.Contains(keywords))) &&
-                         (!limitDate.HasValue || limitDate.Value <= ft.LastPostTime)
-                         select ft.Id;
 
-            var query2 = from ft in _forumTopicRepository.Table
-                         where query1.Contains(ft.Id)
-                         orderby ft.TopicTypeId descending, ft.LastPostTime descending, ft.Id descending
-                         select ft;
+            var topics = await _forumTopicRepository.GetAllPagedAsync(query =>
+            {
+                var query1 = from ft in query
+                             join fp in _forumPostRepository.Table on ft.Id equals fp.TopicId
+                             where
+                                 (forumId == 0 || ft.ForumId == forumId) &&
+                                 (userId == 0 || ft.UserId == userId) &&
+                                 (!searchKeywords ||
+                                  (searchTopicTitles && ft.Subject.Contains(keywords)) ||
+                                  (searchPostText && fp.Text.Contains(keywords))) &&
+                                 (!limitDate.HasValue || limitDate.Value <= ft.LastPostTime)
+                             select ft.Id;
 
-            var topics = new PagedList<ForumTopic>(query2, pageIndex, pageSize);
+                var query2 = from ft in query
+                             where query1.Contains(ft.Id)
+                             orderby ft.TopicTypeId descending, ft.LastPostTime descending, ft.Id descending
+                             select ft;
+
+                return query2;
+            }, pageIndex, pageSize);
+
             return topics;
         }
 
@@ -542,7 +465,7 @@ namespace TVProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum Topics</returns>
-        public virtual IPagedList<ForumTopic> GetActiveTopics(int forumId = 0,
+        public virtual async Task<IPagedList<ForumTopic>> GetActiveTopicsAsync(int forumId = 0,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var query1 = from ft in _forumTopicRepository.Table
@@ -556,7 +479,8 @@ namespace TVProgViewer.Services.Forums
                          orderby ft.LastPostTime descending
                          select ft;
 
-            var topics = new PagedList<ForumTopic>(query2, pageIndex, pageSize);
+            var topics = await query2.ToPagedListAsync(pageIndex, pageSize);
+
             return topics;
         }
 
@@ -564,43 +488,30 @@ namespace TVProgViewer.Services.Forums
         /// Inserts a forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed Users</param>
-        public virtual void InsertTopic(ForumTopic forumTopic, bool sendNotifications)
+        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed users</param>
+        public virtual async Task InsertTopicAsync(ForumTopic forumTopic, bool sendNotifications)
         {
-            if (forumTopic == null)
-            {
-                throw new ArgumentNullException(nameof(forumTopic));
-            }
-
-            _forumTopicRepository.Insert(forumTopic);
+            await _forumTopicRepository.InsertAsync(forumTopic);
 
             //update stats
-            UpdateForumStats(forumTopic.ForumId);
+            await UpdateForumStatsAsync(forumTopic.ForumId);
 
-            //event notification
-            _eventPublisher.EntityInserted(forumTopic);
-            
-            if (!sendNotifications) 
+            if (!sendNotifications)
                 return;
 
             //send notifications
-            var forum = GetForumById(forumTopic.ForumId);
-            var subscriptions = GetAllSubscriptions(forumId: forum.Id);
-            var languageId = _workContext.WorkingLanguage.Id;
+            var forum = await GetForumByIdAsync(forumTopic.ForumId);
+            var subscriptions = await GetAllSubscriptionsAsync(forumId: forum.Id);
+            var languageId = (await _workContext.GetWorkingLanguageAsync()).Id;
 
             foreach (var subscription in subscriptions)
             {
-                if (subscription.UserId == forumTopic.UserId)
-                {
-                    continue;
-                }
+                if (subscription.UserId == forumTopic.UserId) continue;
 
-                var User = _userService.GetUserById(subscription.UserId);
+                var user = await _userService.GetUserByIdAsync(subscription.UserId);
 
-                if (!string.IsNullOrEmpty(User?.Email))
-                {
-                    _workflowMessageService.SendNewForumTopicMessage(User, forumTopic, forum, languageId);
-                }
+                if (!string.IsNullOrEmpty(user?.Email))
+                    await _workflowMessageService.SendNewForumTopicMessageAsync(user, forumTopic, forum, languageId);
             }
         }
 
@@ -608,17 +519,9 @@ namespace TVProgViewer.Services.Forums
         /// Updates the forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        public virtual void UpdateTopic(ForumTopic forumTopic)
+        public virtual async Task UpdateTopicAsync(ForumTopic forumTopic)
         {
-            if (forumTopic == null)
-            {
-                throw new ArgumentNullException(nameof(forumTopic));
-            }
-
-            _forumTopicRepository.Update(forumTopic);
-
-            //event notification
-            _eventPublisher.EntityUpdated(forumTopic);
+            await _forumTopicRepository.UpdateAsync(forumTopic);
         }
 
         /// <summary>
@@ -627,17 +530,17 @@ namespace TVProgViewer.Services.Forums
         /// <param name="forumTopicId">The forum topic identifier</param>
         /// <param name="newForumId">New forum identifier</param>
         /// <returns>Moved forum topic</returns>
-        public virtual ForumTopic MoveTopic(int forumTopicId, int newForumId)
+        public virtual async Task<ForumTopic> MoveTopicAsync(int forumTopicId, int newForumId)
         {
-            var forumTopic = GetTopicById(forumTopicId);
+            var forumTopic = await GetTopicByIdAsync(forumTopicId);
             if (forumTopic == null)
                 return null;
 
-            if (!IsUserAllowedToMoveTopic(_workContext.CurrentUser, forumTopic))
+            if (!await IsUserAllowedToMoveTopicAsync(await _workContext.GetCurrentUserAsync(), forumTopic))
                 return forumTopic;
 
             var previousForumId = forumTopic.ForumId;
-            var newForum = GetForumById(newForumId);
+            var newForum = await GetForumByIdAsync(newForumId);
 
             if (newForum == null)
                 return forumTopic;
@@ -647,11 +550,11 @@ namespace TVProgViewer.Services.Forums
 
             forumTopic.ForumId = newForum.Id;
             forumTopic.UpdatedOnUtc = DateTime.UtcNow;
-            UpdateTopic(forumTopic);
+            await UpdateTopicAsync(forumTopic);
 
             //update forum stats
-            UpdateForumStats(previousForumId);
-            UpdateForumStats(newForumId);
+            await UpdateForumStatsAsync(previousForumId);
+            await UpdateForumStatsAsync(newForumId);
             return forumTopic;
         }
 
@@ -659,46 +562,35 @@ namespace TVProgViewer.Services.Forums
         /// Deletes a forum post
         /// </summary>
         /// <param name="forumPost">Forum post</param>
-        public virtual void DeletePost(ForumPost forumPost)
+        public virtual async Task DeletePostAsync(ForumPost forumPost)
         {
             if (forumPost == null)
-            {
                 throw new ArgumentNullException(nameof(forumPost));
-            }
 
             var forumTopicId = forumPost.TopicId;
-            var UserId = forumPost.UserId;
-            var forumTopic = GetTopicById(forumTopicId);
+            var userId = forumPost.UserId;
+            var forumTopic = await GetTopicByIdAsync(forumTopicId);
             var forumId = forumTopic.ForumId;
 
             //delete topic if it was the first post
             var deleteTopic = false;
-            var firstPost = GetFirstPost(forumTopic);
+            var firstPost = await GetFirstPostAsync(forumTopic);
             if (firstPost != null && firstPost.Id == forumPost.Id)
-            {
                 deleteTopic = true;
-            }
 
             //delete forum post
-            _forumPostRepository.Delete(forumPost);
+            await _forumPostRepository.DeleteAsync(forumPost);
 
             //delete topic
             if (deleteTopic)
-            {
-                DeleteTopic(forumTopic);
-            }
+                await DeleteTopicAsync(forumTopic);
 
             //update stats
             if (!deleteTopic)
-            {
-                UpdateForumTopicStats(forumTopicId);
-            }
+                await UpdateForumTopicStatsAsync(forumTopicId);
 
-            UpdateForumStats(forumId);
-            UpdateUserStats(UserId);
-
-            //event notification
-            _eventPublisher.EntityDeleted(forumPost);
+            await UpdateForumStatsAsync(forumId);
+            await UpdateUserStatsAsync(userId);
         }
 
         /// <summary>
@@ -706,28 +598,25 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumPostId">The forum post identifier</param>
         /// <returns>Forum Post</returns>
-        public virtual ForumPost GetPostById(int forumPostId)
+        public virtual async Task<ForumPost> GetPostByIdAsync(int forumPostId)
         {
-            if (forumPostId == 0)
-                return null;
-
-            return _forumPostRepository.ToCachedGetById(forumPostId);
+            return await _forumPostRepository.GetByIdAsync(forumPostId, cache => default);
         }
 
         /// <summary>
         /// Gets all forum posts
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="keywords">Keywords</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Posts</returns>
-        public virtual IPagedList<ForumPost> GetAllPosts(int forumTopicId = 0,
-            int UserId = 0, string keywords = "",
+        public virtual async Task<IPagedList<ForumPost>> GetAllPostsAsync(int forumTopicId = 0,
+            int userId = 0, string keywords = "",
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            return GetAllPosts(forumTopicId, UserId, keywords, true,
+            return await GetAllPostsAsync(forumTopicId, userId, keywords, true,
                 pageIndex, pageSize);
         }
 
@@ -735,37 +624,34 @@ namespace TVProgViewer.Services.Forums
         /// Gets all forum posts
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="keywords">Keywords</param>
         /// <param name="ascSort">Sort order</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum Posts</returns>
-        public virtual IPagedList<ForumPost> GetAllPosts(int forumTopicId = 0, int UserId = 0,
+        public virtual async Task<IPagedList<ForumPost>> GetAllPostsAsync(int forumTopicId = 0, int userId = 0,
             string keywords = "", bool ascSort = false,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var query = _forumPostRepository.Table;
-            if (forumTopicId > 0)
+            var forumPosts = await _forumPostRepository.GetAllPagedAsync(query =>
             {
-                query = query.Where(fp => forumTopicId == fp.TopicId);
-            }
+                if (forumTopicId > 0)
+                    query = query.Where(fp => forumTopicId == fp.TopicId);
 
-            if (UserId > 0)
-            {
-                query = query.Where(fp => UserId == fp.UserId);
-            }
+                if (userId > 0)
+                    query = query.Where(fp => userId == fp.UserId);
 
-            if (!string.IsNullOrEmpty(keywords))
-            {
-                query = query.Where(fp => fp.Text.Contains(keywords));
-            }
+                if (!string.IsNullOrEmpty(keywords))
+                    query = query.Where(fp => fp.Text.Contains(keywords));
 
-            query = ascSort ?
-                query.OrderBy(fp => fp.CreatedOnUtc).ThenBy(fp => fp.Id) :
-                query.OrderByDescending(fp => fp.CreatedOnUtc).ThenBy(fp => fp.Id);
+                query = ascSort
+                    ? query.OrderBy(fp => fp.CreatedOnUtc).ThenBy(fp => fp.Id)
+                    : query.OrderByDescending(fp => fp.CreatedOnUtc).ThenBy(fp => fp.Id);
 
-            var forumPosts = new PagedList<ForumPost>(query, pageIndex, pageSize);
+                return query;
+            }, pageIndex, pageSize);
+
             return forumPosts;
         }
 
@@ -773,53 +659,42 @@ namespace TVProgViewer.Services.Forums
         /// Inserts a forum post
         /// </summary>
         /// <param name="forumPost">The forum post</param>
-        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed Users</param>
-        public virtual void InsertPost(ForumPost forumPost, bool sendNotifications)
+        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed users</param>
+        public virtual async Task InsertPostAsync(ForumPost forumPost, bool sendNotifications)
         {
-            if (forumPost == null)
-            {
-                throw new ArgumentNullException(nameof(forumPost));
-            }
-
-            _forumPostRepository.Insert(forumPost);
+            await _forumPostRepository.InsertAsync(forumPost);
 
             //update stats
-            var UserId = forumPost.UserId;
-            var forumTopic = GetTopicById(forumPost.TopicId);
+            var userId = forumPost.UserId;
+            var forumTopic = await GetTopicByIdAsync(forumPost.TopicId);
             var forumId = forumTopic.ForumId;
-            UpdateForumTopicStats(forumPost.TopicId);
-            UpdateForumStats(forumId);
-            UpdateUserStats(UserId);
 
-            //event notification
-            _eventPublisher.EntityInserted(forumPost);
+            await UpdateForumTopicStatsAsync(forumPost.TopicId);
+            await UpdateForumStatsAsync(forumId);
+            await UpdateUserStatsAsync(userId);
 
             //notifications
-            if (!sendNotifications) 
+            if (!sendNotifications)
                 return;
 
-            var forum = GetForumById(forumTopic.ForumId);
-            var subscriptions = GetAllSubscriptions(topicId: forumTopic.Id);
+            var forum = await GetForumByIdAsync(forumTopic.ForumId);
+            var subscriptions = await GetAllSubscriptionsAsync(topicId: forumTopic.Id);
 
-            var languageId = _workContext.WorkingLanguage.Id;
+            var languageId = (await _workContext.GetWorkingLanguageAsync()).Id;
 
-            var friendlyTopicPageIndex = CalculateTopicPageIndex(forumPost.TopicId,
+            var friendlyTopicPageIndex = await CalculateTopicPageIndexAsync(forumPost.TopicId,
                                              _forumSettings.PostsPageSize > 0 ? _forumSettings.PostsPageSize : 10,
                                              forumPost.Id) + 1;
 
             foreach (var subscription in subscriptions)
             {
                 if (subscription.UserId == forumPost.UserId)
-                {
                     continue;
-                }
 
-                var User = _userService.GetUserById(subscription.UserId);
+                var user = await _userService.GetUserByIdAsync(subscription.UserId);
 
-                if (!string.IsNullOrEmpty(User?.Email))
-                {
-                    _workflowMessageService.SendNewForumPostMessage(User, forumPost, forumTopic, forum, friendlyTopicPageIndex, languageId);
-                }
+                if (!string.IsNullOrEmpty(user?.Email))
+                    await _workflowMessageService.SendNewForumPostMessageAsync(user, forumPost, forumTopic, forum, friendlyTopicPageIndex, languageId);
             }
         }
 
@@ -827,35 +702,18 @@ namespace TVProgViewer.Services.Forums
         /// Updates the forum post
         /// </summary>
         /// <param name="forumPost">Forum post</param>
-        public virtual void UpdatePost(ForumPost forumPost)
+        public virtual async Task UpdatePostAsync(ForumPost forumPost)
         {
-            //validation
-            if (forumPost == null)
-            {
-                throw new ArgumentNullException(nameof(forumPost));
-            }
-
-            _forumPostRepository.Update(forumPost);
-
-            //event notification
-            _eventPublisher.EntityUpdated(forumPost);
+            await _forumPostRepository.UpdateAsync(forumPost);
         }
 
         /// <summary>
         /// Deletes a private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        public virtual void DeletePrivateMessage(PrivateMessage privateMessage)
+        public virtual async Task DeletePrivateMessageAsync(PrivateMessage privateMessage)
         {
-            if (privateMessage == null)
-            {
-                throw new ArgumentNullException(nameof(privateMessage));
-            }
-
-            _forumPrivateMessageRepository.Delete(privateMessage);
-
-            //event notification
-            _eventPublisher.EntityDeleted(privateMessage);
+            await _forumPrivateMessageRepository.DeleteAsync(privateMessage);
         }
 
         /// <summary>
@@ -863,20 +721,17 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="privateMessageId">The private message identifier</param>
         /// <returns>Private message</returns>
-        public virtual PrivateMessage GetPrivateMessageById(int privateMessageId)
+        public virtual async Task<PrivateMessage> GetPrivateMessageByIdAsync(int privateMessageId)
         {
-            if (privateMessageId == 0)
-                return null;
-
-            return _forumPrivateMessageRepository.ToCachedGetById(privateMessageId);
+            return await _forumPrivateMessageRepository.GetByIdAsync(privateMessageId, cache => default);
         }
 
         /// <summary>
         /// Gets private messages
         /// </summary>
         /// <param name="storeId">The store identifier; pass 0 to load all messages</param>
-        /// <param name="fromUserId">The User identifier who sent the message</param>
-        /// <param name="toUserId">The User identifier who should receive the message</param>
+        /// <param name="fromUserId">The user identifier who sent the message</param>
+        /// <param name="toUserId">The user identifier who should receive the message</param>
         /// <param name="isRead">A value indicating whether loaded messages are read. false - to load not read messages only, 1 to load read messages only, null to load all messages</param>
         /// <param name="isDeletedByAuthor">A value indicating whether loaded messages are deleted by author. false - messages are not deleted by author, null to load all messages</param>
         /// <param name="isDeletedByRecipient">A value indicating whether loaded messages are deleted by recipient. false - messages are not deleted by recipient, null to load all messages</param>
@@ -884,32 +739,34 @@ namespace TVProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Private messages</returns>
-        public virtual IPagedList<PrivateMessage> GetAllPrivateMessages(int storeId, int fromUserId,
+        public virtual async Task<IPagedList<PrivateMessage>> GetAllPrivateMessagesAsync(int storeId, int fromUserId,
             int toUserId, bool? isRead, bool? isDeletedByAuthor, bool? isDeletedByRecipient,
             string keywords, int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var query = _forumPrivateMessageRepository.Table;
-            if (storeId > 0)
-                query = query.Where(pm => storeId == pm.StoreId);
-            if (fromUserId > 0)
-                query = query.Where(pm => fromUserId == pm.FromUserId);
-            if (toUserId > 0)
-                query = query.Where(pm => toUserId == pm.ToUserId);
-            if (isRead.HasValue)
-                query = query.Where(pm => isRead.Value == pm.IsRead);
-            if (isDeletedByAuthor.HasValue)
-                query = query.Where(pm => isDeletedByAuthor.Value == pm.IsDeletedByAuthor);
-            if (isDeletedByRecipient.HasValue)
-                query = query.Where(pm => isDeletedByRecipient.Value == pm.IsDeletedByRecipient);
-            if (!string.IsNullOrEmpty(keywords))
+            var privateMessages = await _forumPrivateMessageRepository.GetAllPagedAsync(query =>
             {
-                query = query.Where(pm => pm.Subject.Contains(keywords));
-                query = query.Where(pm => pm.Text.Contains(keywords));
-            }
+                if (storeId > 0)
+                    query = query.Where(pm => storeId == pm.StoreId);
+                if (fromUserId > 0)
+                    query = query.Where(pm => fromUserId == pm.FromUserId);
+                if (toUserId > 0)
+                    query = query.Where(pm => toUserId == pm.ToUserId);
+                if (isRead.HasValue)
+                    query = query.Where(pm => isRead.Value == pm.IsRead);
+                if (isDeletedByAuthor.HasValue)
+                    query = query.Where(pm => isDeletedByAuthor.Value == pm.IsDeletedByAuthor);
+                if (isDeletedByRecipient.HasValue)
+                    query = query.Where(pm => isDeletedByRecipient.Value == pm.IsDeletedByRecipient);
+                if (!string.IsNullOrEmpty(keywords))
+                {
+                    query = query.Where(pm => pm.Subject.Contains(keywords));
+                    query = query.Where(pm => pm.Text.Contains(keywords));
+                }
 
-            query = query.OrderByDescending(pm => pm.CreatedOnUtc);
+                query = query.OrderByDescending(pm => pm.CreatedOnUtc);
 
-            var privateMessages = new PagedList<PrivateMessage>(query, pageIndex, pageSize);
+                return query;
+            }, pageIndex, pageSize);
 
             return privateMessages;
         }
@@ -918,72 +775,44 @@ namespace TVProgViewer.Services.Forums
         /// Inserts a private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        public virtual void InsertPrivateMessage(PrivateMessage privateMessage)
+        public virtual async Task InsertPrivateMessageAsync(PrivateMessage privateMessage)
         {
-            if (privateMessage == null)
-            {
-                throw new ArgumentNullException(nameof(privateMessage));
-            }
+            await _forumPrivateMessageRepository.InsertAsync(privateMessage);
 
-            _forumPrivateMessageRepository.Insert(privateMessage);
-
-            //event notification
-            _eventPublisher.EntityInserted(privateMessage);
-
-            var UserTo = _userService.GetUserById(privateMessage.ToUserId);
-            if (UserTo == null)
-            {
+            var userTo = await _userService.GetUserByIdAsync(privateMessage.ToUserId);
+            if (userTo == null)
                 throw new TvProgException("Recipient could not be loaded");
-            }
 
             //UI notification
-            _genericAttributeService.SaveAttribute(UserTo, TvProgUserDefaults.NotifiedAboutNewPrivateMessagesAttribute, false, privateMessage.StoreId);
+            await _genericAttributeService.SaveAttributeAsync(userTo, TvProgUserDefaults.NotifiedAboutNewPrivateMessagesAttribute, false, privateMessage.StoreId);
 
             //Email notification
             if (_forumSettings.NotifyAboutPrivateMessages)
-            {
-                _workflowMessageService.SendPrivateMessageNotification(privateMessage, _workContext.WorkingLanguage.Id);
-            }
+                await _workflowMessageService.SendPrivateMessageNotificationAsync(privateMessage, (await _workContext.GetWorkingLanguageAsync()).Id);
         }
 
         /// <summary>
         /// Updates the private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        public virtual void UpdatePrivateMessage(PrivateMessage privateMessage)
+        public virtual async Task UpdatePrivateMessageAsync(PrivateMessage privateMessage)
         {
             if (privateMessage == null)
                 throw new ArgumentNullException(nameof(privateMessage));
 
             if (privateMessage.IsDeletedByAuthor && privateMessage.IsDeletedByRecipient)
-            {
-                _forumPrivateMessageRepository.Delete(privateMessage);
-                //event notification
-                _eventPublisher.EntityDeleted(privateMessage);
-            }
+                await _forumPrivateMessageRepository.DeleteAsync(privateMessage);
             else
-            {
-                _forumPrivateMessageRepository.Update(privateMessage);
-                //event notification
-                _eventPublisher.EntityUpdated(privateMessage);
-            }
+                await _forumPrivateMessageRepository.UpdateAsync(privateMessage);
         }
 
         /// <summary>
         /// Deletes a forum subscription
         /// </summary>
         /// <param name="forumSubscription">Forum subscription</param>
-        public virtual void DeleteSubscription(ForumSubscription forumSubscription)
+        public virtual async Task DeleteSubscriptionAsync(ForumSubscription forumSubscription)
         {
-            if (forumSubscription == null)
-            {
-                throw new ArgumentNullException(nameof(forumSubscription));
-            }
-
-            _forumSubscriptionRepository.Delete(forumSubscription);
-
-            //event notification
-            _eventPublisher.EntityDeleted(forumSubscription);
+            await _forumSubscriptionRepository.DeleteAsync(forumSubscription);
         }
 
         /// <summary>
@@ -991,42 +820,43 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumSubscriptionId">The forum subscription identifier</param>
         /// <returns>Forum subscription</returns>
-        public virtual ForumSubscription GetSubscriptionById(int forumSubscriptionId)
+        public virtual async Task<ForumSubscription> GetSubscriptionByIdAsync(int forumSubscriptionId)
         {
-            if (forumSubscriptionId == 0)
-                return null;
-
-            return _forumSubscriptionRepository.ToCachedGetById(forumSubscriptionId);
+            return await _forumSubscriptionRepository.GetByIdAsync(forumSubscriptionId, cache => default);
         }
 
         /// <summary>
         /// Gets forum subscriptions
         /// </summary>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="forumId">The forum identifier</param>
         /// <param name="topicId">The topic identifier</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum subscriptions</returns>
-        public virtual IPagedList<ForumSubscription> GetAllSubscriptions(int UserId = 0, int forumId = 0,
+        public virtual async Task<IPagedList<ForumSubscription>> GetAllSubscriptionsAsync(int userId = 0, int forumId = 0,
             int topicId = 0, int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var fsQuery = from fs in _forumSubscriptionRepository.Table
-                          join c in _userRepository.Table on fs.UserId equals c.Id
-                          where
-                          (UserId == 0 || fs.UserId == UserId) &&
-                          (forumId == 0 || fs.ForumId == forumId) &&
-                          (topicId == 0 || fs.TopicId == topicId) && 
-                          c.Active && 
-                          c.Deleted == null
-                          select fs.SubscriptionGuid;
+            var forumSubscriptions = await _forumSubscriptionRepository.GetAllPagedAsync(query =>
+            {
+                var fsQuery = from fs in query
+                              join c in _userRepository.Table on fs.UserId equals c.Id
+                              where
+                                  (userId == 0 || fs.UserId == userId) &&
+                                  (forumId == 0 || fs.ForumId == forumId) &&
+                                  (topicId == 0 || fs.TopicId == topicId) &&
+                                  c.Active &&
+                                  !c.Deleted
+                              select fs.SubscriptionGuid;
 
-            var query = from fs in _forumSubscriptionRepository.Table
-                        where fsQuery.Contains(fs.SubscriptionGuid)
-                        orderby fs.CreatedOnUtc descending, fs.SubscriptionGuid descending
-                        select fs;
+                var rez = from fs in query
+                          where fsQuery.Contains(fs.SubscriptionGuid)
+                          orderby fs.CreatedOnUtc descending, fs.SubscriptionGuid descending
+                          select fs;
 
-            var forumSubscriptions = new PagedList<ForumSubscription>(query, pageIndex, pageSize);
+                return rez;
+            }, pageIndex, pageSize);
+
             return forumSubscriptions;
         }
 
@@ -1034,293 +864,211 @@ namespace TVProgViewer.Services.Forums
         /// Inserts a forum subscription
         /// </summary>
         /// <param name="forumSubscription">Forum subscription</param>
-        public virtual void InsertSubscription(ForumSubscription forumSubscription)
+        public virtual async Task InsertSubscriptionAsync(ForumSubscription forumSubscription)
         {
-            if (forumSubscription == null)
-            {
-                throw new ArgumentNullException(nameof(forumSubscription));
-            }
-
-            _forumSubscriptionRepository.Insert(forumSubscription);
-
-            //event notification
-            _eventPublisher.EntityInserted(forumSubscription);
+            await _forumSubscriptionRepository.InsertAsync(forumSubscription);
         }
 
         /// <summary>
-        /// Updates the forum subscription
+        /// Check whether user is allowed to create new topics
         /// </summary>
-        /// <param name="forumSubscription">Forum subscription</param>
-        public virtual void UpdateSubscription(ForumSubscription forumSubscription)
-        {
-            if (forumSubscription == null)
-            {
-                throw new ArgumentNullException(nameof(forumSubscription));
-            }
-
-            _forumSubscriptionRepository.Update(forumSubscription);
-
-            //event notification
-            _eventPublisher.EntityUpdated(forumSubscription);
-        }
-
-        /// <summary>
-        /// Check whether User is allowed to create new topics
-        /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="forum">Forum</param>
         /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToCreateTopic(User User, Forum forum)
+        public virtual async Task<bool> IsUserAllowedToCreateTopicAsync(User user, Forum forum)
         {
             if (forum == null)
-            {
                 return false;
-            }
 
-            if (User == null)
-            {
+            if (user == null)
                 return false;
-            }
 
-            if (_userService.IsGuest(User) && !_forumSettings.AllowGuestsToCreateTopics)
-            {
+            if (await _userService.IsGuestAsync(user) && !_forumSettings.AllowGuestsToCreateTopics)
                 return false;
-            }
 
             return true;
         }
 
         /// <summary>
-        /// Check whether User is allowed to edit topic
+        /// Check whether user is allowed to edit topic
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToEditTopic(User User, ForumTopic topic)
+        public virtual async Task<bool> IsUserAllowedToEditTopicAsync(User user, ForumTopic topic)
         {
             if (topic == null)
-            {
                 return false;
-            }
 
-            if (User == null)
-            {
+            if (user == null)
                 return false;
-            }
 
-            if (_userService.IsGuest(User))
-            {
+            if (await _userService.IsGuestAsync(user))
                 return false;
-            }
 
-            if (_userService.IsForumModerator(User))
-            {
+            if (await _userService.IsForumModeratorAsync(user))
                 return true;
-            }
 
-            if (!_forumSettings.AllowUsersToEditPosts) 
+            if (!_forumSettings.AllowUsersToEditPosts)
                 return false;
 
-            var ownTopic = User.Id == topic.UserId;
+            var ownTopic = user.Id == topic.UserId;
 
             return ownTopic;
         }
 
         /// <summary>
-        /// Check whether User is allowed to move topic
+        /// Check whether user is allowed to move topic
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToMoveTopic(User User, ForumTopic topic)
+        public virtual async Task<bool> IsUserAllowedToMoveTopicAsync(User user, ForumTopic topic)
         {
             if (topic == null)
-            {
                 return false;
-            }
 
-            if (User == null)
-            {
+            if (user == null)
                 return false;
-            }
 
-            if (_userService.IsGuest(User))
-            {
+            if (await _userService.IsGuestAsync(user))
                 return false;
-            }
 
-            return _userService.IsForumModerator(User);
+            return await _userService.IsForumModeratorAsync(user);
         }
 
         /// <summary>
-        /// Check whether User is allowed to delete topic
+        /// Check whether user is allowed to delete topic
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToDeleteTopic(User User, ForumTopic topic)
+        public virtual async Task<bool> IsUserAllowedToDeleteTopicAsync(User user, ForumTopic topic)
         {
             if (topic == null)
-            {
                 return false;
-            }
 
-            if (User == null)
-            {
+            if (user == null)
                 return false;
-            }
 
-            if (_userService.IsGuest(User))
-            {
+            if (await _userService.IsGuestAsync(user))
                 return false;
-            }
 
-            if (_userService.IsForumModerator(User))
-            {
+            if (await _userService.IsForumModeratorAsync(user))
                 return true;
-            }
-
-            if (!_forumSettings.AllowUsersToDeletePosts) 
-                return false;
-
-            var ownTopic = User.Id == topic.UserId;
-
-            return ownTopic;
-        }
-
-        /// <summary>
-        /// Check whether User is allowed to create new post
-        /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="topic">Topic</param>
-        /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToCreatePost(User User, ForumTopic topic)
-        {
-            if (topic == null)
-            {
-                return false;
-            }
-
-            if (User == null)
-            {
-                return false;
-            }
-
-            if (_userService.IsGuest(User) && !_forumSettings.AllowGuestsToCreatePosts)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Check whether User is allowed to edit post
-        /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="post">Topic</param>
-        /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToEditPost(User User, ForumPost post)
-        {
-            if (post == null)
-            {
-                return false;
-            }
-
-            if (User == null)
-            {
-                return false;
-            }
-
-            if (_userService.IsGuest(User))
-            {
-                return false;
-            }
-
-            if (_userService.IsForumModerator(User))
-            {
-                return true;
-            }
-
-            if (!_forumSettings.AllowUsersToEditPosts) 
-                return false;
-
-            var ownPost = User.Id == post.UserId;
-
-            return ownPost;
-        }
-
-        /// <summary>
-        /// Check whether User is allowed to delete post
-        /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="post">Topic</param>
-        /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToDeletePost(User User, ForumPost post)
-        {
-            if (post == null)
-            {
-                return false;
-            }
-
-            if (User == null)
-            {
-                return false;
-            }
-
-            if (_userService.IsGuest(User))
-            {
-                return false;
-            }
-
-            if (_userService.IsForumModerator(User))
-            {
-                return true;
-            }
 
             if (!_forumSettings.AllowUsersToDeletePosts)
                 return false;
-            var ownPost = User.Id == post.UserId;
+
+            var ownTopic = user.Id == topic.UserId;
+
+            return ownTopic;
+        }
+
+        /// <summary>
+        /// Check whether user is allowed to create new post
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="topic">Topic</param>
+        /// <returns>True if allowed, otherwise false</returns>
+        public virtual async Task<bool> IsUserAllowedToCreatePostAsync(User user, ForumTopic topic)
+        {
+            if (topic == null)
+                return false;
+
+            if (user == null)
+                return false;
+
+            if (await _userService.IsGuestAsync(user) && !_forumSettings.AllowGuestsToCreatePosts)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Check whether user is allowed to edit post
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="post">Topic</param>
+        /// <returns>True if allowed, otherwise false</returns>
+        public virtual async Task<bool> IsUserAllowedToEditPostAsync(User user, ForumPost post)
+        {
+            if (post == null)
+                return false;
+
+            if (user == null)
+                return false;
+
+            if (await _userService.IsGuestAsync(user))
+                return false;
+
+            if (await _userService.IsForumModeratorAsync(user))
+                return true;
+
+            if (!_forumSettings.AllowUsersToEditPosts)
+                return false;
+
+            var ownPost = user.Id == post.UserId;
 
             return ownPost;
         }
 
         /// <summary>
-        /// Check whether User is allowed to set topic priority
+        /// Check whether user is allowed to delete post
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
+        /// <param name="post">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToSetTopicPriority(User User)
+        public virtual async Task<bool> IsUserAllowedToDeletePostAsync(User user, ForumPost post)
         {
-            if (User == null)
-            {
+            if (post == null)
                 return false;
-            }
 
-            if (_userService.IsGuest(User))
-            {
+            if (user == null)
                 return false;
-            }
 
-            return _userService.IsForumModerator(User);
+            if (await _userService.IsGuestAsync(user))
+                return false;
+
+            if (await _userService.IsForumModeratorAsync(user))
+                return true;
+
+            if (!_forumSettings.AllowUsersToDeletePosts)
+                return false;
+
+            var ownPost = user.Id == post.UserId;
+
+            return ownPost;
         }
 
         /// <summary>
-        /// Check whether User is allowed to watch topics
+        /// Check whether user is allowed to set topic priority
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>True if allowed, otherwise false</returns>
-        public virtual bool IsUserAllowedToSubscribe(User User)
+        public virtual async Task<bool> IsUserAllowedToSetTopicPriorityAsync(User user)
         {
-            if (User == null)
-            {
+            if (user == null)
                 return false;
-            }
 
-            if (_userService.IsGuest(User))
-            {
+            if (await _userService.IsGuestAsync(user))
                 return false;
-            }
+
+            return await _userService.IsForumModeratorAsync(user);
+        }
+
+        /// <summary>
+        /// Check whether user is allowed to watch topics
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <returns>True if allowed, otherwise false</returns>
+        public virtual async Task<bool> IsUserAllowedToSubscribeAsync(User user)
+        {
+            if (user == null)
+                return false;
+
+            if (await _userService.IsGuestAsync(user))
+                return false;
 
             return true;
         }
@@ -1332,20 +1080,17 @@ namespace TVProgViewer.Services.Forums
         /// <param name="pageSize">Page size</param>
         /// <param name="postId">Post identifier</param>
         /// <returns>Page index</returns>
-        public virtual int CalculateTopicPageIndex(int forumTopicId, int pageSize, int postId)
+        public virtual async Task<int> CalculateTopicPageIndexAsync(int forumTopicId, int pageSize, int postId)
         {
             var pageIndex = 0;
-            var forumPosts = GetAllPosts(forumTopicId, ascSort: true);
+            var forumPosts = await GetAllPostsAsync(forumTopicId, ascSort: true);
 
             for (var i = 0; i < forumPosts.TotalCount; i++)
             {
-                if (forumPosts[i].Id != postId) 
+                if (forumPosts[i].Id != postId)
                     continue;
 
-                if (pageSize > 0)
-                {
-                    pageIndex = i / pageSize;
-                }
+                if (pageSize > 0) pageIndex = i / pageSize;
             }
 
             return pageIndex;
@@ -1355,83 +1100,63 @@ namespace TVProgViewer.Services.Forums
         /// Get a post vote 
         /// </summary>
         /// <param name="postId">Post identifier</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Post vote</returns>
-        public virtual ForumPostVote GetPostVote(int postId, User User)
+        public virtual async Task<ForumPostVote> GetPostVoteAsync(int postId, User user)
         {
-            if (User == null)
+            if (user == null)
                 return null;
 
-            return _forumPostVoteRepository.Table.FirstOrDefault(pv => pv.ForumPostId == postId && pv.UserId == User.Id);
+            return await _forumPostVoteRepository.Table
+                .FirstOrDefaultAsync(pv => pv.ForumPostId == postId && pv.UserId == user.Id);
         }
 
         /// <summary>
         /// Get post vote made since the parameter date
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="сreatedFromUtc">Date</param>
         /// <returns>Post votes count</returns>
-        public virtual int GetNumberOfPostVotes(User User, DateTime сreatedFromUtc)
+        public virtual async Task<int> GetNumberOfPostVotesAsync(User user, DateTime сreatedFromUtc)
         {
-            if (User == null)
+            if (user == null)
                 return 0;
 
-            return _forumPostVoteRepository.Table.Count(pv => pv.UserId == User.Id && pv.CreatedOnUtc > сreatedFromUtc);
+            return await _forumPostVoteRepository.Table
+                .CountAsync(pv => pv.UserId == user.Id && pv.CreatedOnUtc > сreatedFromUtc);
         }
 
         /// <summary>
         /// Insert a post vote
         /// </summary>
         /// <param name="postVote">Post vote</param>
-        public virtual void InsertPostVote(ForumPostVote postVote)
+        public virtual async Task InsertPostVoteAsync(ForumPostVote postVote)
         {
-            if (postVote == null)
-                throw new ArgumentNullException(nameof(postVote));
-
-            _forumPostVoteRepository.Insert(postVote);
+            await _forumPostVoteRepository.InsertAsync(postVote);
 
             //update post
-            var post = GetPostById(postVote.ForumPostId);
+            var post = await GetPostByIdAsync(postVote.ForumPostId);
             post.VoteCount = postVote.IsUp ? ++post.VoteCount : --post.VoteCount;
-            UpdatePost(post);
 
-            //event notification
-            _eventPublisher.EntityInserted(postVote);
-        }
-
-        /// <summary>
-        /// Update a post vote
-        /// </summary>
-        /// <param name="postVote">Post vote</param>
-        public virtual void UpdatePostVote(ForumPostVote postVote)
-        {
-            if (postVote == null)
-                throw new ArgumentNullException(nameof(postVote));
-
-            _forumPostVoteRepository.Update(postVote);
-
-            //event notification
-            _eventPublisher.EntityUpdated(postVote);
+            await UpdatePostAsync(post);
         }
 
         /// <summary>
         /// Delete a post vote
         /// </summary>
         /// <param name="postVote">Post vote</param>
-        public virtual void DeletePostVote(ForumPostVote postVote)
+        public virtual async Task DeletePostVoteAsync(ForumPostVote postVote)
         {
             if (postVote == null)
                 throw new ArgumentNullException(nameof(postVote));
 
-            _forumPostVoteRepository.Delete(postVote);
+            await _forumPostVoteRepository.DeleteAsync(postVote);
 
             // update post
-            var post = GetPostById(postVote.ForumPostId);
+            var post = await GetPostByIdAsync(postVote.ForumPostId);
             post.VoteCount = postVote.IsUp ? --post.VoteCount : ++post.VoteCount;
-            UpdatePost(post);
 
-            //event notification
-            _eventPublisher.EntityDeleted(postVote);
+            await UpdatePostAsync(post);
         }
 
         /// <summary>
@@ -1475,10 +1200,7 @@ namespace TVProgViewer.Services.Forums
         public virtual string StripTopicSubject(ForumTopic forumTopic)
         {
             var subject = forumTopic.Subject;
-            if (string.IsNullOrEmpty(subject))
-            {
-                return subject;
-            }
+            if (string.IsNullOrEmpty(subject)) return subject;
 
             var strippedTopicMaxLength = _forumSettings.StrippedTopicMaxLength;
             if (strippedTopicMaxLength <= 0)
@@ -1488,11 +1210,11 @@ namespace TVProgViewer.Services.Forums
                 return subject;
 
             var index = subject.IndexOf(" ", strippedTopicMaxLength, StringComparison.Ordinal);
-            
-            if (index <= 0) 
+
+            if (index <= 0)
                 return subject;
 
-            subject = subject.Substring(0, index);
+            subject = subject[0..index];
             subject += "...";
 
             return subject;
@@ -1530,42 +1252,16 @@ namespace TVProgViewer.Services.Forums
         }
 
         /// <summary>
-        /// Get forum last topic
-        /// </summary>
-        /// <param name="forum">Forum</param>
-        /// <returns>Forum topic</returns>
-        public virtual ForumTopic GetLastTopic(Forum forum)
-        {
-            if (forum == null)
-                throw new ArgumentNullException(nameof(forum));
-
-            return GetTopicById(forum.LastTopicId);
-        }
-
-        /// <summary>
-        /// Get forum last post
-        /// </summary>
-        /// <param name="forum">Forum</param>
-        /// <returns>Forum topic</returns>
-        public virtual ForumPost GetLastPost(Forum forum)
-        {
-            if (forum == null)
-                throw new ArgumentNullException(nameof(forum));
-
-            return GetPostById(forum.LastPostId);
-        }
-
-        /// <summary>
         /// Get first post
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
         /// <returns>Forum post</returns>
-        public virtual ForumPost GetFirstPost(ForumTopic forumTopic)
+        public virtual async Task<ForumPost> GetFirstPostAsync(ForumTopic forumTopic)
         {
             if (forumTopic == null)
                 throw new ArgumentNullException(nameof(forumTopic));
 
-            var forumPosts = GetAllPosts(forumTopic.Id, 0, string.Empty, 0, 1);
+            var forumPosts = await GetAllPostsAsync(forumTopic.Id, 0, string.Empty, 0, 1);
             if (forumPosts.Any())
                 return forumPosts[0];
 
@@ -1573,29 +1269,17 @@ namespace TVProgViewer.Services.Forums
         }
 
         /// <summary>
-        /// Get last post
-        /// </summary>
-        /// <param name="forumTopic">Forum topic</param>
-        /// <returns>Forum post</returns>
-        public virtual ForumPost GetLastPost(ForumTopic forumTopic)
-        {
-            if (forumTopic == null)
-                throw new ArgumentNullException(nameof(forumTopic));
-
-            return GetPostById(forumTopic.LastPostId);
-        }
-
-        /// <summary>
         /// Gets ForumGroup SE (search engine) name
         /// </summary>
         /// <param name="forumGroup">ForumGroup</param>
         /// <returns>ForumGroup SE (search engine) name</returns>
-        public virtual string GetForumGroupSeName(ForumGroup forumGroup)
+        public virtual async Task<string> GetForumGroupSeNameAsync(ForumGroup forumGroup)
         {
             if (forumGroup == null)
                 throw new ArgumentNullException(nameof(forumGroup));
 
-            var seName = _urlRecordService.GetSeName(forumGroup.Name, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
+            var seName = await _urlRecordService.GetSeNameAsync(forumGroup.Name, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
+
             return seName;
         }
 
@@ -1604,12 +1288,13 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forum">Forum</param>
         /// <returns>Forum SE (search engine) name</returns>
-        public virtual string GetForumSeName(Forum forum)
+        public virtual async Task<string> GetForumSeNameAsync(Forum forum)
         {
             if (forum == null)
                 throw new ArgumentNullException(nameof(forum));
 
-            var seName = _urlRecordService.GetSeName(forum.Name, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
+            var seName = await _urlRecordService.GetSeNameAsync(forum.Name, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
+
             return seName;
         }
 
@@ -1618,17 +1303,17 @@ namespace TVProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumTopic">ForumTopic</param>
         /// <returns>ForumTopic SE (search engine) name</returns>
-        public virtual string GetTopicSeName(ForumTopic forumTopic)
+        public virtual async Task<string> GetTopicSeNameAsync(ForumTopic forumTopic)
         {
             if (forumTopic == null)
                 throw new ArgumentNullException(nameof(forumTopic));
 
-            var seName = _urlRecordService.GetSeName(forumTopic.Subject, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
+            var seName = await _urlRecordService.GetSeNameAsync(forumTopic.Subject, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
 
             // Trim SE name to avoid URLs that are too long
             var maxLength = TvProgSeoDefaults.ForumTopicLength;
             if (seName.Length > maxLength)
-                seName = seName.Substring(0, maxLength);
+                seName = seName[0..maxLength];
 
             return seName;
         }

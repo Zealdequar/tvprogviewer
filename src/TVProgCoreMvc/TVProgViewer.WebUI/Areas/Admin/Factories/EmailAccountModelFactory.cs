@@ -5,6 +5,7 @@ using TVProgViewer.Services.Messages;
 using TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper.Extensions;
 using TVProgViewer.WebUI.Areas.Admin.Models.Messages;
 using TVProgViewer.Web.Framework.Models.Extensions;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -30,7 +31,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         }
 
         #endregion
-        
+
         #region Methods
 
         /// <summary>
@@ -38,7 +39,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Email account search model</param>
         /// <returns>Email account search model</returns>
-        public virtual EmailAccountSearchModel PrepareEmailAccountSearchModel(EmailAccountSearchModel searchModel)
+        public virtual Task<EmailAccountSearchModel> PrepareEmailAccountSearchModelAsync(EmailAccountSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -46,7 +47,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             //prepare page parameters
             searchModel.SetGridPageSize();
 
-            return searchModel;
+            return Task.FromResult(searchModel);
         }
 
         /// <summary>
@@ -54,13 +55,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Email account search model</param>
         /// <returns>Email account list model</returns>
-        public virtual EmailAccountListModel PrepareEmailAccountListModel(EmailAccountSearchModel searchModel)
+        public virtual async Task<EmailAccountListModel> PrepareEmailAccountListModelAsync(EmailAccountSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get email accounts
-            var emailAccounts = _emailAccountService.GetAllEmailAccounts().ToPagedList(searchModel);
+            var emailAccounts = (await _emailAccountService.GetAllEmailAccountsAsync()).ToPagedList(searchModel);
 
             //prepare grid model
             var model = new EmailAccountListModel().PrepareToGrid(searchModel, emailAccounts, () =>
@@ -87,7 +88,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="emailAccount">Email account</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>Email account model</returns>
-        public virtual EmailAccountModel PrepareEmailAccountModel(EmailAccountModel model,
+        public virtual Task<EmailAccountModel> PrepareEmailAccountModelAsync(EmailAccountModel model,
             EmailAccount emailAccount, bool excludeProperties = false)
         {
             //fill in model values from the entity
@@ -98,7 +99,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             if (emailAccount == null)
                 model.Port = 25;
 
-            return model;
+            return Task.FromResult(model);
         }
 
         #endregion

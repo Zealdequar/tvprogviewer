@@ -2,6 +2,7 @@
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -16,12 +17,12 @@ namespace TVProgViewer.WebUI.Components
             _newsletterModelFactory = newsletterModelFactory;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             if (_userSettings.HideNewsletterBlock)
                 return Content("");
 
-            var model = _newsletterModelFactory.PrepareNewsletterBoxModel();
+            var model = await _newsletterModelFactory.PrepareNewsletterBoxModelAsync();
             return View(model);
         }
     }

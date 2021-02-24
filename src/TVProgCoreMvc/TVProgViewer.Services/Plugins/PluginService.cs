@@ -6,10 +6,11 @@ using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Infrastructure;
-using TVProgViewer.Data;
 using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Localization;
 using TVProgViewer.Services.Logging;
+using System.Threading.Tasks;
+using TVProgViewer.Data.Migrations;
 
 namespace TVProgViewer.Services.Plugins
 {
@@ -22,7 +23,7 @@ namespace TVProgViewer.Services.Plugins
 
         private readonly CatalogSettings _catalogSettings;
         private readonly IUserService _userService;
-        private readonly IDataProvider _dataProvider;
+        private readonly IMigrationManager _migrationManager;
         private readonly ILogger _logger;
         private readonly ITvProgFileProvider _fileProvider;
         private readonly IPluginsInfo _pluginsInfo;
@@ -33,15 +34,15 @@ namespace TVProgViewer.Services.Plugins
         #region Ctor
 
         public PluginService(CatalogSettings catalogSettings,
-            IUserService UserService,
-            IDataProvider dataProvider,
+            IUserService userService,
+            IMigrationManager migrationManager,
             ILogger logger,
             ITvProgFileProvider fileProvider,
             IWebHelper webHelper)
         {
             _catalogSettings = catalogSettings;
-            _userService = UserService;
-            _dataProvider = dataProvider;
+            _userService = userService;
+            _migrationManager = migrationManager;
             _logger = logger;
             _fileProvider = fileProvider;
             _pluginsInfo = Singleton<IPluginsInfo>.Instance;
@@ -63,20 +64,13 @@ namespace TVProgViewer.Services.Plugins
             if (pluginDescriptor == null)
                 throw new ArgumentNullException(nameof(pluginDescriptor));
 
-            switch (loadMode)
+            return loadMode switch
             {
-                case LoadPluginsMode.All:
-                    return true;
-
-                case LoadPluginsMode.InstalledOnly:
-                    return pluginDescriptor.Installed;
-
-                case LoadPluginsMode.NotInstalledOnly:
-                    return !pluginDescriptor.Installed;
-
-                default:
-                    throw new NotSupportedException(nameof(loadMode));
-            }
+                LoadPluginsMode.All => true,
+                LoadPluginsMode.InstalledOnly => pluginDescriptor.Installed,
+                LoadPluginsMode.NotInstalledOnly => !pluginDescriptor.Installed,
+                _ => throw new NotSupportedException(nameof(loadMode)),
+            };
         }
 
         /// <summary>
@@ -97,23 +91,23 @@ namespace TVProgViewer.Services.Plugins
         }
 
         /// <summary>
-        /// Check whether to load the plugin based on the User passed
+        /// Check whether to load the plugin based on the user passed
         /// </summary>
         /// <param name="pluginDescriptor">Plugin descriptor to check</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Result of check</returns>
-        protected virtual bool FilterByUser(PluginDescriptor pluginDescriptor, User User)
+        protected virtual async Task<bool> FilterByUserAsync(PluginDescriptor pluginDescriptor, User user)
         {
             if (pluginDescriptor == null)
                 throw new ArgumentNullException(nameof(pluginDescriptor));
 
-            if (User == null || !pluginDescriptor.LimitedToUserRoles.Any())
+            if (user == null || !pluginDescriptor.LimitedToUserRoles.Any())
                 return true;
 
             if (_catalogSettings.IgnoreAcl)
                 return true;
 
-            return pluginDescriptor.LimitedToUserRoles.Intersect(_userService.GetUserRoleIds(User)).Any();
+            return pluginDescriptor.LimitedToUserRoles.Intersect(await _userService.GetUserRoleIdsAsync(user)).Any();
         }
 
         /// <summary>
@@ -154,20 +148,50 @@ namespace TVProgViewer.Services.Plugins
             return pluginDescriptor.DependsOn?.Contains(dependsOnSystemName) ?? false;
         }
 
+        /// <summary>
+        /// Check whether to load the plugin based on the plugin friendly name passed
+        /// </summary>
+        /// <param name="pluginDescriptor">Plugin descriptor to check</param>
+        /// <param name="friendlyName">Plugin friendly name</param>
+        /// <returns>Result of check</returns>
+        protected virtual bool FilterByPluginFriendlyName(PluginDescriptor pluginDescriptor, string friendlyName)
+        {
+            if (pluginDescriptor == null)
+                throw new ArgumentNullException(nameof(pluginDescriptor));
+
+            if (string.IsNullOrEmpty(friendlyName))
+                return true;
+
+            return pluginDescriptor.FriendlyName.Contains(friendlyName, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        /// <summary>
+        /// Check whether to load the plugin based on the plugin author passed
+        /// </summary>
+        /// <param name="pluginDescriptor">Plugin descriptor to check</param>
+        /// <param name="author">Plugin author</param>
+        /// <returns>Result of check</returns>
+        protected virtual bool FilterByPluginAuthor(PluginDescriptor pluginDescriptor, string author)
+        {
+            if (pluginDescriptor == null)
+                throw new ArgumentNullException(nameof(pluginDescriptor));
+
+            if (string.IsNullOrEmpty(author))
+                return true;
+
+            return pluginDescriptor.Author.Contains(author, StringComparison.InvariantCultureIgnoreCase);
+        }
+
         protected virtual void DeletePluginData(Type pluginType)
         {
             var assembly = Assembly.GetAssembly(pluginType);
-
-            _dataProvider.ApplyDownMigrations(assembly);
-            _dataProvider.DeleteDatabaseSchemaIfExists(assembly);
+            _migrationManager.ApplyDownMigrations(assembly);
         }
 
-        protected virtual void InsertPluginData(Type pluginType)
+        protected virtual void InsertPluginData(Type pluginType, bool isUpdateProcess = false)
         {
             var assembly = Assembly.GetAssembly(pluginType);
-
-            _dataProvider.CreateDatabaseSchemaIfNotExists(assembly);
-            _dataProvider.ApplyUpMigrations(assembly);
+            _migrationManager.ApplyUpMigrations(assembly, isUpdateProcess);
         }
 
         #endregion
@@ -179,27 +203,31 @@ namespace TVProgViewer.Services.Plugins
         /// </summary>
         /// <typeparam name="TPlugin">The type of plugins to get</typeparam>
         /// <param name="loadMode">Filter by load plugins mode</param>
-        /// <param name="User">Filter by  User; pass null to load all records</param>
+        /// <param name="user">Filter by  user; pass null to load all records</param>
         /// <param name="storeId">Filter by store; pass 0 to load all records</param>
         /// <param name="group">Filter by plugin group; pass null to load all records</param>
+        /// <param name="friendlyName">Filter by plugin friendly name; pass null to load all records</param>
+        /// <param name="author">Filter by plugin author; pass null to load all records</param>
         /// <param name="dependsOnSystemName">System name of the plugin to define dependencies</param>
         /// <returns>Plugin descriptors</returns>
-        public virtual IEnumerable<PluginDescriptor> GetPluginDescriptors<TPlugin>(LoadPluginsMode loadMode = LoadPluginsMode.InstalledOnly,
-            User User = null, int storeId = 0, string group = null, string dependsOnSystemName = "") where TPlugin : class, IPlugin
+        public virtual async Task<IList<PluginDescriptor>> GetPluginDescriptorsAsync<TPlugin>(LoadPluginsMode loadMode = LoadPluginsMode.InstalledOnly,
+            User user = null, int storeId = 0, string group = null, string dependsOnSystemName = "", string friendlyName = null, string author = null) where TPlugin : class, IPlugin
         {
             var pluginDescriptors = _pluginsInfo.PluginDescriptors;
 
             //filter plugins
-            pluginDescriptors = pluginDescriptors.Where(descriptor =>
+            pluginDescriptors = await pluginDescriptors.WhereAwait(async descriptor =>
                 FilterByLoadMode(descriptor, loadMode) &&
-                FilterByUser(descriptor, User) &&
+                await FilterByUserAsync(descriptor, user) &&
                 FilterByStore(descriptor, storeId) &&
                 FilterByPluginGroup(descriptor, group) &&
-                FilterByDependsOn(descriptor, dependsOnSystemName));
+                FilterByDependsOn(descriptor, dependsOnSystemName) &&
+                FilterByPluginFriendlyName(descriptor, friendlyName) &&
+                FilterByPluginAuthor(descriptor, author)).ToListAsync();
 
             //filter by the passed type
             if (typeof(TPlugin) != typeof(IPlugin))
-                pluginDescriptors = pluginDescriptors.Where(descriptor => typeof(TPlugin).IsAssignableFrom(descriptor.PluginType));
+                pluginDescriptors = pluginDescriptors.Where(descriptor => typeof(TPlugin).IsAssignableFrom(descriptor.PluginType)).ToList();
 
             //order by group name
             pluginDescriptors = pluginDescriptors.OrderBy(descriptor => descriptor.Group)
@@ -214,15 +242,15 @@ namespace TVProgViewer.Services.Plugins
         /// <typeparam name="TPlugin">The type of plugin to get</typeparam>
         /// <param name="systemName">Plugin system name</param>
         /// <param name="loadMode">Load plugins mode</param>
-        /// <param name="User">Filter by  User; pass null to load all records</param>
+        /// <param name="user">Filter by  user; pass null to load all records</param>
         /// <param name="storeId">Filter by store; pass 0 to load all records</param>
         /// <param name="group">Filter by plugin group; pass null to load all records</param>
         /// <returns>>Plugin descriptor</returns>
-        public virtual PluginDescriptor GetPluginDescriptorBySystemName<TPlugin>(string systemName,
+        public virtual async Task<PluginDescriptor> GetPluginDescriptorBySystemNameAsync<TPlugin>(string systemName,
             LoadPluginsMode loadMode = LoadPluginsMode.InstalledOnly,
-            User User = null, int storeId = 0, string group = null) where TPlugin : class, IPlugin
+            User user = null, int storeId = 0, string @group = null) where TPlugin : class, IPlugin
         {
-            return GetPluginDescriptors<TPlugin>(loadMode, User, storeId, group)
+            return (await GetPluginDescriptorsAsync<TPlugin>(loadMode, user, storeId, group))
                 .FirstOrDefault(descriptor => descriptor.SystemName.Equals(systemName));
         }
 
@@ -231,15 +259,16 @@ namespace TVProgViewer.Services.Plugins
         /// </summary>
         /// <typeparam name="TPlugin">The type of plugins to get</typeparam>
         /// <param name="loadMode">Filter by load plugins mode</param>
-        /// <param name="User">Filter by User; pass null to load all records</param>
+        /// <param name="user">Filter by user; pass null to load all records</param>
         /// <param name="storeId">Filter by store; pass 0 to load all records</param>
         /// <param name="group">Filter by plugin group; pass null to load all records</param>
         /// <returns>Plugins</returns>
-        public virtual IEnumerable<TPlugin> GetPlugins<TPlugin>(LoadPluginsMode loadMode = LoadPluginsMode.InstalledOnly,
-            User User = null, int storeId = 0, string group = null) where TPlugin : class, IPlugin
+        public virtual async Task<IList<TPlugin>> GetPluginsAsync<TPlugin>(
+            LoadPluginsMode loadMode = LoadPluginsMode.InstalledOnly,
+            User user = null, int storeId = 0, string @group = null) where TPlugin : class, IPlugin
         {
-            return GetPluginDescriptors<TPlugin>(loadMode, User, storeId, group)
-                .Select(descriptor => descriptor.Instance<TPlugin>());
+            return (await GetPluginDescriptorsAsync<TPlugin>(loadMode, user, storeId, group))
+                .Select(descriptor => descriptor.Instance<TPlugin>()).ToList();
         }
 
         /// <summary>
@@ -264,43 +293,43 @@ namespace TVProgViewer.Services.Plugins
         /// </summary>
         /// <param name="pluginDescriptor">Plugin descriptor</param>
         /// <returns>Logo URL</returns>
-        public virtual string GetPluginLogoUrl(PluginDescriptor pluginDescriptor)
+        public virtual Task<string> GetPluginLogoUrlAsync(PluginDescriptor pluginDescriptor)
         {
             var pluginDirectory = _fileProvider.GetDirectoryName(pluginDescriptor.OriginalAssemblyFile);
             if (string.IsNullOrEmpty(pluginDirectory))
-                return null;
+                return Task.FromResult<string>(null);
 
             //check for supported extensions
             var logoExtension = TvProgPluginDefaults.SupportedLogoImageExtensions
                 .FirstOrDefault(ext => _fileProvider.FileExists(_fileProvider.Combine(pluginDirectory, $"{TvProgPluginDefaults.LogoFileName}.{ext}")));
             if (string.IsNullOrWhiteSpace(logoExtension))
-                return null;
+                return Task.FromResult<string>(null);
 
             var storeLocation = _webHelper.GetStoreLocation();
             var logoUrl = $"{storeLocation}{TvProgPluginDefaults.PathName}/" +
                 $"{_fileProvider.GetDirectoryNameOnly(pluginDirectory)}/{TvProgPluginDefaults.LogoFileName}.{logoExtension}";
 
-            return logoUrl;
+            return Task.FromResult(logoUrl);
         }
 
         /// <summary>
         /// Prepare plugin to the installation
         /// </summary>
         /// <param name="systemName">Plugin system name</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="checkDependencies">Specifies whether to check plugin dependencies</param>
-        public virtual void PreparePluginToInstall(string systemName, User User = null, bool checkDependencies = true)
+        public virtual async Task PreparePluginToInstallAsync(string systemName, User user = null, bool checkDependencies = true)
         {
             //add plugin name to the appropriate list (if not yet contained) and save changes
             if (_pluginsInfo.PluginNamesToInstall.Any(item => item.SystemName == systemName))
                 return;
 
-            var pluginsAfterRestart = _pluginsInfo.InstalledPluginNames.Where(installedSystemName => !_pluginsInfo.PluginNamesToUninstall.Contains(installedSystemName)).ToList();
+            var pluginsAfterRestart = _pluginsInfo.InstalledPlugins.Select(pd => pd.SystemName).Where(installedSystemName => !_pluginsInfo.PluginNamesToUninstall.Contains(installedSystemName)).ToList();
             pluginsAfterRestart.AddRange(_pluginsInfo.PluginNamesToInstall.Select(item => item.SystemName));
 
             if (checkDependencies)
             {
-                var descriptor = GetPluginDescriptorBySystemName<IPlugin>(systemName, LoadPluginsMode.NotInstalledOnly);
+                var descriptor = await GetPluginDescriptorBySystemNameAsync<IPlugin>(systemName, LoadPluginsMode.NotInstalledOnly);
 
                 if (descriptor.DependsOn?.Any() ?? false)
                 {
@@ -314,29 +343,33 @@ namespace TVProgViewer.Services.Plugins
                         //do not inject services via constructor because it'll cause circular references
                         var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
 
-                        var errorMessage = string.Format(localizationService.GetResource("Admin.Plugins.Errors.InstallDependsOn"), string.IsNullOrEmpty(descriptor.FriendlyName) ? descriptor.SystemName : descriptor.FriendlyName, dependsOnSystemNames);
+                        var errorMessage = string.Format(await localizationService.GetResourceAsync("Admin.Plugins.Errors.InstallDependsOn"), string.IsNullOrEmpty(descriptor.FriendlyName) ? descriptor.SystemName : descriptor.FriendlyName, dependsOnSystemNames);
 
                         throw new TvProgException(errorMessage);
                     }
                 }
             }
 
-            _pluginsInfo.PluginNamesToInstall.Add((systemName, User?.UserGuid));
-            _pluginsInfo.Save();
+            _pluginsInfo.PluginNamesToInstall.Add((systemName, user?.UserGuid));
+            await _pluginsInfo.SaveAsync();
         }
 
         /// <summary>
         /// Prepare plugin to the uninstallation
         /// </summary>
         /// <param name="systemName">Plugin system name</param>
-        public virtual void PreparePluginToUninstall(string systemName)
+        /// <summary>
+        /// Prepare plugin to the uninstallation
+        /// </summary>
+        /// <param name="systemName">Plugin system name</param>
+        public virtual async Task PreparePluginToUninstallAsync(string systemName)
         {
             //add plugin name to the appropriate list (if not yet contained) and save changes
             if (_pluginsInfo.PluginNamesToUninstall.Contains(systemName))
                 return;
 
-            var dependentPlugins = GetPluginDescriptors<IPlugin>(dependsOnSystemName: systemName).ToList();
-            var descriptor = GetPluginDescriptorBySystemName<IPlugin>(systemName);
+            var dependentPlugins = await GetPluginDescriptorsAsync<IPlugin>(dependsOnSystemName: systemName);
+            var descriptor = await GetPluginDescriptorBySystemNameAsync<IPlugin>(systemName);
 
             if (dependentPlugins.Any())
             {
@@ -344,7 +377,7 @@ namespace TVProgViewer.Services.Plugins
 
                 foreach (var dependentPlugin in dependentPlugins)
                 {
-                    if (!_pluginsInfo.InstalledPluginNames.Contains(dependentPlugin.SystemName))
+                    if (!_pluginsInfo.InstalledPlugins.Select(pd => pd.SystemName).Contains(dependentPlugin.SystemName))
                         continue;
                     if (_pluginsInfo.PluginNamesToUninstall.Contains(dependentPlugin.SystemName))
                         continue;
@@ -361,7 +394,7 @@ namespace TVProgViewer.Services.Plugins
                     //do not inject services via constructor because it'll cause circular references
                     var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
 
-                    var errorMessage = string.Format(localizationService.GetResource("Admin.Plugins.Errors.UninstallDependsOn"),
+                    var errorMessage = string.Format(await localizationService.GetResourceAsync("Admin.Plugins.Errors.UninstallDependsOn"),
                         string.IsNullOrEmpty(descriptor.FriendlyName) ? descriptor.SystemName : descriptor.FriendlyName,
                         dependsOnSystemNames);
 
@@ -370,24 +403,26 @@ namespace TVProgViewer.Services.Plugins
             }
 
             var plugin = descriptor?.Instance<IPlugin>();
-            plugin?.PreparePluginToUninstall();
+
+            if (plugin != null)
+                await plugin.PreparePluginToUninstallAsync();
 
             _pluginsInfo.PluginNamesToUninstall.Add(systemName);
-            _pluginsInfo.Save();
+            await _pluginsInfo.SaveAsync();
         }
 
         /// <summary>
         /// Prepare plugin to the removing
         /// </summary>
         /// <param name="systemName">Plugin system name</param>
-        public virtual void PreparePluginToDelete(string systemName)
+        public virtual async Task PreparePluginToDeleteAsync(string systemName)
         {
             //add plugin name to the appropriate list (if not yet contained) and save changes
             if (_pluginsInfo.PluginNamesToDelete.Contains(systemName))
                 return;
 
             _pluginsInfo.PluginNamesToDelete.Add(systemName);
-            _pluginsInfo.Save();
+            await _pluginsInfo.SaveAsync();
         }
 
         /// <summary>
@@ -410,13 +445,13 @@ namespace TVProgViewer.Services.Plugins
         /// </summary>
         public virtual void ClearInstalledPluginsList()
         {
-            _pluginsInfo.InstalledPluginNames.Clear();
+            _pluginsInfo.InstalledPlugins.Clear();
         }
 
         /// <summary>
         /// Install plugins
         /// </summary>
-        public virtual void InstallPlugins()
+        public virtual async Task InstallPluginsAsync()
         {
             //get all uninstalled plugins
             var pluginDescriptors = _pluginsInfo.PluginDescriptors.Where(descriptor => !descriptor.Installed).ToList();
@@ -429,7 +464,7 @@ namespace TVProgViewer.Services.Plugins
 
             //do not inject services via constructor because it'll cause circular references
             var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-            var UserActivityService = EngineContext.Current.Resolve<IUserActivityService>();
+            var userActivityService = EngineContext.Current.Resolve<IUserActivityService>();
 
             //install plugins
             foreach (var descriptor in pluginDescriptors.OrderBy(pluginDescriptor => pluginDescriptor.DisplayOrder))
@@ -439,18 +474,18 @@ namespace TVProgViewer.Services.Plugins
                     InsertPluginData(descriptor.PluginType);
 
                     //try to install an instance
-                    descriptor.Instance<IPlugin>().Install();
+                    await descriptor.Instance<IPlugin>().InstallAsync();
 
                     //remove and add plugin system name to appropriate lists
                     var pluginToInstall = _pluginsInfo.PluginNamesToInstall
                         .FirstOrDefault(plugin => plugin.SystemName.Equals(descriptor.SystemName));
-                    _pluginsInfo.InstalledPluginNames.Add(descriptor.SystemName);
+                    _pluginsInfo.InstalledPlugins.Add(descriptor.GetBaseInfoCopy);
                     _pluginsInfo.PluginNamesToInstall.Remove(pluginToInstall);
 
                     //activity log
-                    var User = _userService.GetUserByGuid(pluginToInstall.UserGuid ?? Guid.Empty);
-                    UserActivityService.InsertActivity(User, "InstallNewPlugin",
-                        string.Format(localizationService.GetResource("ActivityLog.InstallNewPlugin"), descriptor.SystemName));
+                    var user = await _userService.GetUserByGuidAsync(pluginToInstall.UserGuid ?? Guid.Empty);
+                    await userActivityService.InsertActivityAsync(user, "InstallNewPlugin",
+                        string.Format(await localizationService.GetResourceAsync("ActivityLog.InstallNewPlugin"), descriptor.SystemName));
 
                     //mark the plugin as installed
                     descriptor.Installed = true;
@@ -459,19 +494,19 @@ namespace TVProgViewer.Services.Plugins
                 catch (Exception exception)
                 {
                     //log error
-                    var message = string.Format(localizationService.GetResource("Admin.Plugins.Errors.NotInstalled"), descriptor.SystemName);
-                    _logger.Error(message, exception);
+                    var message = string.Format(await localizationService.GetResourceAsync("Admin.Plugins.Errors.NotInstalled"), descriptor.SystemName);
+                    await _logger.ErrorAsync(message, exception);
                 }
             }
 
             //save changes
-            _pluginsInfo.Save();
+            await _pluginsInfo.SaveAsync();
         }
 
         /// <summary>
         /// Uninstall plugins
         /// </summary>
-        public virtual void UninstallPlugins()
+        public virtual async Task UninstallPluginsAsync()
         {
             //get all installed plugins
             var pluginDescriptors = _pluginsInfo.PluginDescriptors.Where(descriptor => descriptor.Installed).ToList();
@@ -484,7 +519,7 @@ namespace TVProgViewer.Services.Plugins
 
             //do not inject services via constructor because it'll cause circular references
             var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-            var UserActivityService = EngineContext.Current.Resolve<IUserActivityService>();
+            var userActivityService = EngineContext.Current.Resolve<IUserActivityService>();
 
             //uninstall plugins
             foreach (var descriptor in pluginDescriptors.OrderByDescending(pluginDescriptor => pluginDescriptor.DisplayOrder))
@@ -493,18 +528,18 @@ namespace TVProgViewer.Services.Plugins
                 {
                     var plugin = descriptor.Instance<IPlugin>();
                     //try to uninstall an instance
-                    plugin.Uninstall();
+                    await plugin.UninstallAsync();
 
                     //clear plugin data on the database
                     DeletePluginData(descriptor.PluginType);
 
                     //remove plugin system name from appropriate lists
-                    _pluginsInfo.InstalledPluginNames.Remove(descriptor.SystemName);
+                    _pluginsInfo.InstalledPlugins.Remove(descriptor);
                     _pluginsInfo.PluginNamesToUninstall.Remove(descriptor.SystemName);
 
                     //activity log
-                    UserActivityService.InsertActivity("UninstallPlugin",
-                        string.Format(localizationService.GetResource("ActivityLog.UninstallPlugin"), descriptor.SystemName));
+                    await userActivityService.InsertActivityAsync("UninstallPlugin",
+                        string.Format(await localizationService.GetResourceAsync("ActivityLog.UninstallPlugin"), descriptor.SystemName));
 
                     //mark the plugin as uninstalled
                     descriptor.Installed = false;
@@ -513,19 +548,19 @@ namespace TVProgViewer.Services.Plugins
                 catch (Exception exception)
                 {
                     //log error
-                    var message = string.Format(localizationService.GetResource("Admin.Plugins.Errors.NotUninstalled"), descriptor.SystemName);
-                    _logger.Error(message, exception);
+                    var message = string.Format(await localizationService.GetResourceAsync("Admin.Plugins.Errors.NotUninstalled"), descriptor.SystemName);
+                    await _logger.ErrorAsync(message, exception);
                 }
             }
 
             //save changes
-            _pluginsInfo.Save();
+            await _pluginsInfo.SaveAsync();
         }
 
         /// <summary>
         /// Delete plugins
         /// </summary>
-        public virtual void DeletePlugins()
+        public virtual async Task DeletePluginsAsync()
         {
             //get all uninstalled plugins (delete plugin only previously uninstalled)
             var pluginDescriptors = _pluginsInfo.PluginDescriptors.Where(descriptor => !descriptor.Installed).ToList();
@@ -538,7 +573,7 @@ namespace TVProgViewer.Services.Plugins
 
             //do not inject services via constructor because it'll cause circular references
             var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-            var UserActivityService = EngineContext.Current.Resolve<IUserActivityService>();
+            var userActivityService = EngineContext.Current.Resolve<IUserActivityService>();
 
             //delete plugins
             foreach (var descriptor in pluginDescriptors)
@@ -554,19 +589,19 @@ namespace TVProgViewer.Services.Plugins
                     _pluginsInfo.PluginNamesToDelete.Remove(descriptor.SystemName);
 
                     //activity log
-                    UserActivityService.InsertActivity("DeletePlugin",
-                        string.Format(localizationService.GetResource("ActivityLog.DeletePlugin"), descriptor.SystemName));
+                    await userActivityService.InsertActivityAsync("DeletePlugin",
+                        string.Format(await localizationService.GetResourceAsync("ActivityLog.DeletePlugin"), descriptor.SystemName));
                 }
                 catch (Exception exception)
                 {
                     //log error
-                    var message = string.Format(localizationService.GetResource("Admin.Plugins.Errors.NotDeleted"), descriptor.SystemName);
-                    _logger.Error(message, exception);
+                    var message = string.Format(await localizationService.GetResourceAsync("Admin.Plugins.Errors.NotDeleted"), descriptor.SystemName);
+                    await _logger.ErrorAsync(message, exception);
                 }
             }
 
             //save changes
-            _pluginsInfo.Save();
+            await _pluginsInfo.SaveAsync();
         }
 
         /// <summary>
@@ -579,6 +614,35 @@ namespace TVProgViewer.Services.Plugins
             return _pluginsInfo.PluginNamesToInstall.Any()
                 || _pluginsInfo.PluginNamesToUninstall.Any()
                 || _pluginsInfo.PluginNamesToDelete.Any();
+        }
+
+        /// <summary>
+        /// Update plugins
+        /// </summary>
+        public virtual async Task UpdatePluginsAsync()
+        {
+            foreach (var installedPlugin in _pluginsInfo.InstalledPlugins)
+            {
+                var newVersion = _pluginsInfo.PluginDescriptors.FirstOrDefault(pd =>
+                    pd.SystemName.Equals(installedPlugin.SystemName, StringComparison.InvariantCultureIgnoreCase));
+
+                if (newVersion == null)
+                    continue;
+
+                if (installedPlugin.Version == newVersion.Version)
+                    continue;
+
+                //run new migrations from the plugin if there are exists
+                InsertPluginData(newVersion.PluginType, true);
+
+                //run the plugin update logic
+                await newVersion.Instance<IPlugin>().UpdateAsync(installedPlugin.Version, newVersion.Version);
+
+                //update installed plugin info
+                installedPlugin.Version = newVersion.Version;
+            }
+
+            await _pluginsInfo.SaveAsync();
         }
 
         /// <summary>

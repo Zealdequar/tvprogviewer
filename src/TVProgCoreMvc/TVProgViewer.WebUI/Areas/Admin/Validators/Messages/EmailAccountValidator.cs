@@ -9,11 +9,11 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Messages
 {
     public partial class EmailAccountValidator : BaseTvProgValidator<EmailAccountModel>
     {
-        public EmailAccountValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public EmailAccountValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
             RuleFor(x => x.Email).NotEmpty();
-            RuleFor(x => x.Email).EmailAddress().WithMessage(localizationService.GetResource("Admin.Common.WrongEmail"));
-            
+            RuleFor(x => x.Email).EmailAddress().WithMessageAwait(localizationService.GetResourceAsync("Admin.Common.WrongEmail"));
+
             RuleFor(x => x.DisplayName).NotEmpty();
 
             SetDatabaseValidationRules<EmailAccount>(dataProvider);

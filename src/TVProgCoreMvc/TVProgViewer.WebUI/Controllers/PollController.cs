@@ -7,6 +7,7 @@ using TVProgViewer.Services.Localization;
 using TVProgViewer.Services.Polls;
 using TVProgViewer.Services.Stores;
 using TVProgViewer.WebUI.Factories;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -25,8 +26,8 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Ctor
 
-        public PollController(IUserService userService, 
-            ILocalizationService localizationService, 
+        public PollController(IUserService userService,
+            ILocalizationService localizationService,
             IPollModelFactory pollModelFactory,
             IPollService pollService,
             IStoreMappingService storeMappingService,
@@ -46,39 +47,40 @@ namespace TVProgViewer.WebUI.Controllers
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult Vote(int pollAnswerId)
+        public virtual async Task<IActionResult> Vote(int pollAnswerId)
         {
-            var pollAnswer = _pollService.GetPollAnswerById(pollAnswerId);
+            var pollAnswer = await _pollService.GetPollAnswerByIdAsync(pollAnswerId);
             if (pollAnswer == null)
                 return Json(new { error = "No poll answer found with the specified id" });
 
-            var poll = _pollService.GetPollById(pollAnswer.PollId);
+            var poll = await _pollService.GetPollByIdAsync(pollAnswer.PollId);
 
-            if (!poll.Published || !_storeMappingService.Authorize(poll))
+            if (!poll.Published || !await _storeMappingService.AuthorizeAsync(poll))
                 return Json(new { error = "Poll is not available" });
 
-            if (_userService.IsGuest(_workContext.CurrentUser) && !poll.AllowGuestsToVote)
-                return Json(new { error = _localizationService.GetResource("Polls.OnlyRegisteredUsersVote") });
+            if (await _userService.IsGuestAsync(await _workContext.GetCurrentUserAsync()) && !poll.AllowGuestsToVote)
+                return Json(new { error = await _localizationService.GetResourceAsync("Polls.OnlyRegisteredUsersVote") });
 
-            var alreadyVoted = _pollService.AlreadyVoted(poll.Id, _workContext.CurrentUser.Id);
+            var alreadyVoted = await _pollService.AlreadyVotedAsync(poll.Id, (await _workContext.GetCurrentUserAsync()).Id);
             if (!alreadyVoted)
             {
                 //vote
-                _pollService.InsertPollVotingRecord(new PollVotingRecord
+                await _pollService.InsertPollVotingRecordAsync(new PollVotingRecord
                 {
                     PollAnswerId = pollAnswer.Id,
-                    UserId = _workContext.CurrentUser.Id,
+                    UserId = (await _workContext.GetCurrentUserAsync()).Id,
                     CreatedOnUtc = DateTime.UtcNow
                 });
 
                 //update totals
-                pollAnswer.NumberOfVotes = _pollService.GetPollVotingRecordsByPollAnswer(pollAnswer.Id).Count;
-                _pollService.UpdatePoll(poll);
+                pollAnswer.NumberOfVotes = (await _pollService.GetPollVotingRecordsByPollAnswerAsync(pollAnswer.Id)).Count;
+                await _pollService.UpdatePollAnswerAsync(pollAnswer);
+                await _pollService.UpdatePollAsync(poll);
             }
 
             return Json(new
             {
-                html = RenderPartialViewToString("_Poll", _pollModelFactory.PreparePollModel(poll, true)),
+                html = await RenderPartialViewToStringAsync("_Poll", await _pollModelFactory.PreparePollModelAsync(poll, true)),
             });
         }
 

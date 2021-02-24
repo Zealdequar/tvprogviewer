@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Users;
 
 namespace TVProgViewer.Services.Users
@@ -9,27 +10,29 @@ namespace TVProgViewer.Services.Users
     public partial interface IUserAttributeParser
     {
         /// <summary>
-        /// Gets selected User attributes
+        /// Gets selected user attributes
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <returns>Selected User attributes</returns>
-        IList<UserAttribute> ParseUserAttributes(string attributesXml);
+        /// <returns>Selected user attributes</returns>
+        Task<IList<UserAttribute>> ParseUserAttributesAsync(string attributesXml);
 
         /// <summary>
-        /// Get User attribute values
+        /// Get user attribute values
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>User attribute values</returns>
-        IList<UserAttributeValue> ParseUserAttributeValues(string attributesXml);
+        Task<IList<UserAttributeValue>> ParseUserAttributeValuesAsync(string attributesXml);
 
+        //TODO: migrate to an extension method
         /// <summary>
-        /// Gets selected User attribute value
+        /// Gets selected user attribute value
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserAttributeId">User attribute identifier</param>
+        /// <param name="userAttributeId">User attribute identifier</param>
         /// <returns>User attribute value</returns>
-        IList<string> ParseValues(string attributesXml, int UserAttributeId);
+        IList<string> ParseValues(string attributesXml, int userAttributeId);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Adds an attribute
         /// </summary>
@@ -40,10 +43,10 @@ namespace TVProgViewer.Services.Users
         string AddUserAttribute(string attributesXml, UserAttribute ca, string value);
 
         /// <summary>
-        /// Validates User attributes
+        /// Validates user attributes
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Warnings</returns>
-        IList<string> GetAttributeWarnings(string attributesXml);
+        Task<IList<string>> GetAttributeWarningsAsync(string attributesXml);
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using Microsoft.AspNetCore.Routing;
 using TVProgViewer.Core.Infrastructure;
@@ -34,42 +35,40 @@ namespace TVProgViewer.Web.Framework.Menu
         /// Load sitemap
         /// </summary>
         /// <param name="physicalPath">Filepath to load a sitemap</param>
-        public virtual void LoadFrom(string physicalPath)
+        public virtual async Task LoadFromAsync(string physicalPath)
         {
             var fileProvider = EngineContext.Current.Resolve<ITvProgFileProvider>();
 
             var filePath = fileProvider.MapPath(physicalPath);
-            var content = fileProvider.ReadAllText(filePath, Encoding.UTF8);
+            var content = await fileProvider.ReadAllTextAsync(filePath, Encoding.UTF8);
 
             if (!string.IsNullOrEmpty(content))
             {
+                var doc = new XmlDocument();
                 using (var sr = new StringReader(content))
                 {
-                    using (var xr = XmlReader.Create(sr,
-                            new XmlReaderSettings
-                            {
-                                CloseInput = true,
-                                IgnoreWhitespace = true,
-                                IgnoreComments = true,
-                                IgnoreProcessingInstructions = true
-                            }))
-                    {
-                        var doc = new XmlDocument();
-                        doc.Load(xr);
-
-                        if ((doc.DocumentElement != null) && doc.HasChildNodes)
+                    using var xr = XmlReader.Create(sr,
+                        new XmlReaderSettings
                         {
-                            var xmlRootNode = doc.DocumentElement.FirstChild;
-                            Iterate(RootNode, xmlRootNode);
-                        }
-                    }
+                            CloseInput = true,
+                            IgnoreWhitespace = true,
+                            IgnoreComments = true,
+                            IgnoreProcessingInstructions = true
+                        });
+
+                    doc.Load(xr);
+                }
+                if ((doc.DocumentElement != null) && doc.HasChildNodes)
+                {
+                    var xmlRootNode = doc.DocumentElement.FirstChild;
+                    await IterateAsync(RootNode, xmlRootNode);
                 }
             }
         }
 
-        private static void Iterate(SiteMapNode siteMapNode, XmlNode xmlNode)
+        private static async Task IterateAsync(SiteMapNode siteMapNode, XmlNode xmlNode)
         {
-            PopulateNode(siteMapNode, xmlNode);
+            await PopulateNodeAsync(siteMapNode, xmlNode);
 
             foreach (XmlNode xmlChildNode in xmlNode.ChildNodes)
             {
@@ -78,20 +77,20 @@ namespace TVProgViewer.Web.Framework.Menu
                     var siteMapChildNode = new SiteMapNode();
                     siteMapNode.ChildNodes.Add(siteMapChildNode);
 
-                    Iterate(siteMapChildNode, xmlChildNode);
+                    await IterateAsync(siteMapChildNode, xmlChildNode);
                 }
             }
         }
 
-        private static void PopulateNode(SiteMapNode siteMapNode, XmlNode xmlNode)
+        private static async Task PopulateNodeAsync(SiteMapNode siteMapNode, XmlNode xmlNode)
         {
             //system name
             siteMapNode.SystemName = GetStringValueFromAttribute(xmlNode, "SystemName");
 
             //title
-            var TVProgViewerResource = GetStringValueFromAttribute(xmlNode, "TVProgViewerResource");
+            var nopResource = GetStringValueFromAttribute(xmlNode, "nopResource");
             var localizationService = EngineContext.Current.Resolve<ILocalizationService>();
-            siteMapNode.Title = localizationService.GetResource(TVProgViewerResource);
+            siteMapNode.Title = await localizationService.GetResourceAsync(nopResource);
 
             //routes, url
             var controllerName = GetStringValueFromAttribute(xmlNode, "controller");
@@ -102,7 +101,7 @@ namespace TVProgViewer.Web.Framework.Menu
                 siteMapNode.ControllerName = controllerName;
                 siteMapNode.ActionName = actionName;
 
-                //apply admin area as described here - https://www.TVProgViewercommerce.com/boards/topic/20478/broken-menus-in-admin-area-whilst-trying-to-make-a-plugin-admin-page
+                //apply admin area as described here - https://www.nopcommerce.com/boards/topic/20478/broken-menus-in-admin-area-whilst-trying-to-make-a-plugin-admin-page
                 siteMapNode.RouteValues = new RouteValueDictionary { { "area", AreaNames.Admin } };
             }
             else if (!string.IsNullOrEmpty(url))
@@ -118,8 +117,8 @@ namespace TVProgViewer.Web.Framework.Menu
             if (!string.IsNullOrEmpty(permissionNames))
             {
                 var permissionService = EngineContext.Current.Resolve<IPermissionService>();
-                siteMapNode.Visible = permissionNames.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                   .Any(permissionName => permissionService.Authorize(permissionName.Trim()));
+                siteMapNode.Visible = await permissionNames.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .AnyAwaitAsync(async permissionName => await permissionService.AuthorizeAsync(permissionName.Trim()));
             }
             else
             {

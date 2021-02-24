@@ -4,6 +4,8 @@ using System.Linq;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Shipping;
 using TVProgViewer.Services.Plugins;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Users;
 
 namespace TVProgViewer.Services.Shipping.Pickup
 {
@@ -20,8 +22,9 @@ namespace TVProgViewer.Services.Shipping.Pickup
 
         #region Ctor
 
-        public PickupPluginManager(IPluginService pluginService,
-            ShippingSettings shippingSettings) : base(pluginService)
+        public PickupPluginManager(IUserService userService,
+            IPluginService pluginService,
+            ShippingSettings shippingSettings) : base(userService, pluginService)
         {
             _shippingSettings = shippingSettings;
         }
@@ -33,13 +36,13 @@ namespace TVProgViewer.Services.Shipping.Pickup
         /// <summary>
         /// Load active pickup point providers
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <param name="systemName">Filter by pickup point provider system name; pass null to load all plugins</param>
         /// <returns>List of active pickup point providers</returns>
-        public virtual IList<IPickupPointProvider> LoadActivePlugins(User User = null, int storeId = 0, string systemName = null)
+        public virtual async Task<IList<IPickupPointProvider>> LoadActivePluginsAsync(User user = null, int storeId = 0, string systemName = null)
         {
-            var pickupPointProviders = LoadActivePlugins(_shippingSettings.ActivePickupPointProviderSystemNames, User, storeId);
+            var pickupPointProviders = await LoadActivePluginsAsync(_shippingSettings.ActivePickupPointProviderSystemNames, user, storeId);
 
             //filter by passed system name
             if (!string.IsNullOrEmpty(systemName))
@@ -66,12 +69,12 @@ namespace TVProgViewer.Services.Shipping.Pickup
         /// Check whether the pickup point provider with the passed system name is active
         /// </summary>
         /// <param name="systemName">System name of pickup point provider to check</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Result</returns>
-        public virtual bool IsPluginActive(string systemName, User User = null, int storeId = 0)
+        public virtual async Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0)
         {
-            var pickupPointProvider = LoadPluginBySystemName(systemName, User, storeId);
+            var pickupPointProvider = await LoadPluginBySystemNameAsync(systemName, user, storeId);
             return IsPluginActive(pickupPointProvider);
         }
 

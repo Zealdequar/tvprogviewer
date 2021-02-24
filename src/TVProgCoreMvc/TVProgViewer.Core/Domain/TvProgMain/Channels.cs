@@ -25,7 +25,7 @@ namespace TVProgViewer.Core.Domain.TvProgMain
         /// <summary>
         /// Дата создания
         /// </summary>
-        public DateTimeOffset CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         /// <summary>
         /// Название телеканала

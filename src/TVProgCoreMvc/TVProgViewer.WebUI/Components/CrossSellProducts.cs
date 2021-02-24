@@ -8,6 +8,7 @@ using TVProgViewer.Services.Security;
 using TVProgViewer.Services.Stores;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -41,17 +42,17 @@ namespace TVProgViewer.WebUI.Components
             _shoppingCartSettings = shoppingCartSettings;
         }
 
-        public IViewComponentResult Invoke(int? productThumbPictureSize)
+        public async Task<IViewComponentResult> InvokeAsync(int? productThumbPictureSize)
         {
-            var cart = _shoppingCartService.GetShoppingCart(_workContext.CurrentUser, ShoppingCartType.ShoppingCart, _storeContext.CurrentStore.Id);
+            var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentUserAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
 
-            var products = _productService.GetCrosssellProductsByShoppingCart(cart, _shoppingCartSettings.CrossSellsNumber);
+            var products = await (await _productService.GetCrosssellProductsByShoppingCartAsync(cart, _shoppingCartSettings.CrossSellsNumber))
             //ACL and store mapping
-            products = products.Where(p => _aclService.Authorize(p) && _storeMappingService.Authorize(p)).ToList();
+            .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            products = products.Where(p => _productService.ProductIsAvailable(p)).ToList();
+            .Where(p => _productService.ProductIsAvailable(p))
             //visible individually
-            products = products.Where(p => p.VisibleIndividually).ToList();
+            .Where(p => p.VisibleIndividually).ToListAsync();
 
             if (!products.Any())
                 return Content("");
@@ -60,8 +61,8 @@ namespace TVProgViewer.WebUI.Components
             //We know that the entire shopping cart page is not refresh
             //even if "ShoppingCartSettings.DisplayCartAfterAddingProduct" setting  is enabled.
             //That's why we force page refresh (redirect) in this case
-            var model = _productModelFactory.PrepareProductOverviewModels(products,
-                    productThumbPictureSize: productThumbPictureSize, forceRedirectionAfterAddingToCart: true)
+            var model = (await _productModelFactory.PrepareProductOverviewModelsAsync(products,
+                    productThumbPictureSize: productThumbPictureSize, forceRedirectionAfterAddingToCart: true))
                 .ToList();
 
             return View(model);

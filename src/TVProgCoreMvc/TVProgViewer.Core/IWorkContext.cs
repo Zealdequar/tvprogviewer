@@ -4,6 +4,7 @@ using TVProgViewer.Core.Domain.Localization;
 using TVProgViewer.Core.Domain.Tax;
 using TVProgViewer.Core.Domain.Vendors;
 using TVProgViewer.Core.Domain.TvProgMain;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Core
 {
@@ -15,7 +16,15 @@ namespace TVProgViewer.Core
         /// <summary>
         /// Gets or sets the current User
         /// </summary>
-        User CurrentUser { get; set; }
+        Task<User> GetCurrentUserAsync();
+
+        /// <summary>
+        /// Установка текущего пользователя
+        /// </summary>
+        /// <param name="user">Текущий пользователь</param>
+        /// <returns></returns>
+        Task SetCurrentUserAsync(User user = null);
+
 
         /// <summary>
         /// Gets the original User (in case the current one is impersonated)
@@ -25,41 +34,69 @@ namespace TVProgViewer.Core
         /// <summary>
         /// Gets the current vendor (logged-in manager)
         /// </summary>
-        Vendor CurrentVendor { get; }
+        Task<Vendor> GetCurrentVendorAsync();
 
         /// <summary>
         /// Gets or sets current user working language
         /// </summary>
-        Language WorkingLanguage { get; set; }
+        Task<Language> GetWorkingLanguageAsync();
+
+        /// <summary>
+        /// Установка рабочего языка
+        /// </summary>
+        /// <param name="language">Язык</param>
+        /// <returns></returns>
+        Task SetWorkingLanguageAsync(Language language);
 
         /// <summary>
         /// Для удаления
         /// </summary>
-        Currency WorkingCurrency { get; set; }
+        Task<Currency> GetWorkingCurrencyAsync();
+        
+        Task SetWorkingCurrencyAsync(Currency currency);
 
         /// <summary>
-        /// Получение или установка пользовательского ТВ-провайдера
+        /// Получение пользовательского ТВ-провайдера
         /// </summary>
-        TvProgProviders WorkingProvider { get; set; }
+        Task<TvProgProviders> GetWorkingProviderAsync();
+        
+        /// <summary>
+        /// Установка пользовательского ТВ-провайдера
+        /// </summary>
+        /// <param name="tvProgProviders">ТВ-провайдер</param>
+        /// <returns></returns>
+        Task SetWorkingProviderAsync(TvProgProviders tvProgProviders);
 
         /// <summary>
-        /// Получение или установка пользовательского типа ТВ-программы
+        /// Получение пользовательского типа ТВ-программы
         /// </summary>
-        TypeProg WorkingTypeProg { get; set; }
+        Task<TypeProg> GetWorkingTypeProgAsync();
 
         /// <summary>
-        /// Получение или установка пользовательской категории ТВ-программы
+        /// Установка пользователького типа ТВ-программы 
         /// </summary>
-        string WorkingCategory { get; set; }
+        /// <param name="typeProg">Тип ТВ-программы</param>
+        Task SetWorkingTypeProgAsync(TypeProg typeProg);
+
+        /// <summary>
+        /// Получение пользовательской категории ТВ-программы
+        /// </summary>
+        Task<string> GetWorkingCategoryAsync();
+
+        /// <summary>
+        /// Установка пользовательской категории ТВ-программы 
+        /// </summary>
+        /// <param name="category">Категория</param>
+        Task SetWorkingCategoryAsync(string category);
 
         /// <summary>
         /// Gets or sets current tax display type
         /// </summary>
-        TaxDisplayType TaxDisplayType { get; set; }
+        Task<TaxDisplayType> GetTaxDisplayTypeAsync();
 
         /// <summary>
-        /// Gets or sets value indicating whether we're in admin area
+        /// Sets current tax display type
         /// </summary>
-        bool IsAdmin { get; set; }
+        Task SetTaxDisplayTypeAsync(TaxDisplayType taxDisplayType);
     }
 }

@@ -210,3 +210,11 @@ GO
 UPDATE LocaleStringResource SET ResourceValue = 'Сообщите о нас'
 WHERE ResourceName = 'footer.followus'
 GO
+
+INSERT INTO LocaleStringResource (ResourceName, ResourceValue, LanguageId)
+VALUES ('footer.userservice', 'Сервисы', 2)
+GO
+
+INSERT INTO LocaleStringResource (ResourceName, ResourceValue, LanguageId)
+VALUES ('account.login.newuser', 'Новый пользователь', 2)
+GO

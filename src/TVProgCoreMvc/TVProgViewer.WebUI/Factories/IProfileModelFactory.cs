@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Users;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.WebUI.Models.Profile;
 
 namespace TVProgViewer.WebUI.Factories
@@ -14,14 +15,14 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="user">User</param>
         /// <param name="page">Number of posts page; pass null to disable paging</param>
         /// <returns>Profile index model</returns>
-        ProfileIndexModel PrepareProfileIndexModel(User user, int? page);
+        Task<ProfileIndexModel> PrepareProfileIndexModelAsync(User user, int? page);
 
         /// <summary>
         /// Prepare the profile info model
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>Profile info model</returns>
-        ProfileInfoModel PrepareProfileInfoModel(User user);
+        Task<ProfileInfoModel> PrepareProfileInfoModelAsync(User user);
 
         /// <summary>
         /// Prepare the profile posts model
@@ -29,6 +30,6 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="user">User</param>
         /// <param name="page">Number of posts page</param>
         /// <returns>Profile posts model</returns>  
-        ProfilePostsModel PrepareProfilePostsModel(User user, int page);
+        Task<ProfilePostsModel> PrepareProfilePostsModelAsync(User user, int page);
     }
 }

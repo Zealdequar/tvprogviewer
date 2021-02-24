@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Web.Framework.Models;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using TVProgViewer.Web.Framework.Models;
 using TVProgViewer.Web.Framework.Mvc.ModelBinding;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
@@ -66,7 +67,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.reCaptchaPrivateKey")]
         public string ReCaptchaPrivateKey { get; set; }
-        public bool ReCaptchaPrivateKey_OverrideForStore { get; set; }        
+        public bool ReCaptchaPrivateKey_OverrideForStore { get; set; }
+
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaType")]
+        public int CaptchaType { get; set; }
+        public bool CaptchaType_OverrideForStore { get; set; }
+        public SelectList CaptchaTypeValues { get; set; }
+
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.reCaptchaV3ScoreThreshold")]
+        public decimal ReCaptchaV3ScoreThreshold { get; set; }
+        public bool ReCaptchaV3ScoreThreshold_OverrideForStore { get; set; }
 
         #endregion
     }

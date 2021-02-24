@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Security;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Security
 {
@@ -10,110 +11,78 @@ namespace TVProgViewer.Services.Security
     public partial interface IPermissionService
     {
         /// <summary>
-        /// Delete a permission
-        /// </summary>
-        /// <param name="permission">Permission</param>
-        void DeletePermissionRecord(PermissionRecord permission);
-
-        /// <summary>
-        /// Gets a permission
-        /// </summary>
-        /// <param name="permissionId">Permission identifier</param>
-        /// <returns>Permission</returns>
-        PermissionRecord GetPermissionRecordById(int permissionId);
-
-        /// <summary>
-        /// Gets a permission
-        /// </summary>
-        /// <param name="systemName">Permission system name</param>
-        /// <returns>Permission</returns>
-        PermissionRecord GetPermissionRecordBySystemName(string systemName);
-
-        /// <summary>
         /// Gets all permissions
         /// </summary>
         /// <returns>Permissions</returns>
-        IList<PermissionRecord> GetAllPermissionRecords();
-
-        /// <summary>
-        /// Inserts a permission
-        /// </summary>
-        /// <param name="permission">Permission</param>
-        void InsertPermissionRecord(PermissionRecord permission);
+        Task<IList<PermissionRecord>> GetAllPermissionRecordsAsync();
 
         /// <summary>
         /// Updates the permission
         /// </summary>
         /// <param name="permission">Permission</param>
-        void UpdatePermissionRecord(PermissionRecord permission);
+        Task UpdatePermissionRecordAsync(PermissionRecord permission);
 
         /// <summary>
         /// Install permissions
         /// </summary>
         /// <param name="permissionProvider">Permission provider</param>
-        void InstallPermissions(IPermissionProvider permissionProvider);
-
-        /// <summary>
-        /// Uninstall permissions
-        /// </summary>
-        /// <param name="permissionProvider">Permission provider</param>
-        void UninstallPermissions(IPermissionProvider permissionProvider);
+        Task InstallPermissionsAsync(IPermissionProvider permissionProvider);
 
         /// <summary>
         /// Authorize permission
         /// </summary>
         /// <param name="permission">Permission record</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        bool Authorize(PermissionRecord permission);
+        Task<bool> AuthorizeAsync(PermissionRecord permission);
 
         /// <summary>
         /// Authorize permission
         /// </summary>
         /// <param name="permission">Permission record</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        bool Authorize(PermissionRecord permission, User User);
+        Task<bool> AuthorizeAsync(PermissionRecord permission, User user);
 
         /// <summary>
         /// Authorize permission
         /// </summary>
         /// <param name="permissionRecordSystemName">Permission record system name</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        bool Authorize(string permissionRecordSystemName);
+        Task<bool> AuthorizeAsync(string permissionRecordSystemName);
 
         /// <summary>
         /// Authorize permission
         /// </summary>
         /// <param name="permissionRecordSystemName">Permission record system name</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        bool Authorize(string permissionRecordSystemName, User User);
+        Task<bool> AuthorizeAsync(string permissionRecordSystemName, User user);
 
         /// <summary>
         /// Authorize permission
         /// </summary>
         /// <param name="permissionRecordSystemName">Permission record system name</param>
-        /// <param name="UserRoleId">User role identifier</param>
+        /// <param name="userRoleId">User role identifier</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        bool Authorize(string permissionRecordSystemName, int UserRoleId);
+        Task<bool> AuthorizeAsync(string permissionRecordSystemName, int userRoleId);
 
         /// <summary>
-        /// Gets a permission record-User role mapping
+        /// Gets a permission record-user role mapping
         /// </summary>
         /// <param name="permissionId">Permission identifier</param>
-        IList<PermissionRecordUserRoleMapping> GetMappingByPermissionRecordId(int permissionId);
+        Task<IList<PermissionRecordUserRoleMapping>> GetMappingByPermissionRecordIdAsync(int permissionId);
 
         /// <summary>
-        /// Delete a permission record-User role mapping
+        /// Delete a permission record-user role mapping
         /// </summary>
         /// <param name="permissionId">Permission identifier</param>
-        /// <param name="UserRoleId">User role identifier</param>
-        void DeletePermissionRecordUserRoleMapping(int permissionId, int UserRoleId);
+        /// <param name="userRoleId">User role identifier</param>
+        Task DeletePermissionRecordUserRoleMappingAsync(int permissionId, int userRoleId);
 
         /// <summary>
-        /// Inserts a permission record-User role mapping
+        /// Inserts a permission record-user role mapping
         /// </summary>
-        /// <param name="permissionRecordUserRoleMapping">Permission record-User role mapping</param>
-        void InsertPermissionRecordUserRoleMapping(PermissionRecordUserRoleMapping permissionRecordUserRoleMapping);
+        /// <param name="permissionRecordUserRoleMapping">Permission record-user role mapping</param>
+        Task InsertPermissionRecordUserRoleMappingAsync(PermissionRecordUserRoleMapping permissionRecordUserRoleMapping);
     }
 }

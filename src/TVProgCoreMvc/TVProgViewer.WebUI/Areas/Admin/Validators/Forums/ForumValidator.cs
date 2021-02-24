@@ -9,10 +9,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Forums
 {
     public partial class ForumValidator : BaseTvProgValidator<ForumModel>
     {
-        public ForumValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public ForumValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.ContentManagement.Forums.Forum.Fields.Name.Required"));
-            RuleFor(x => x.ForumGroupId).NotEmpty().WithMessage(localizationService.GetResource("Admin.ContentManagement.Forums.Forum.Fields.ForumGroupId.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.ContentManagement.Forums.Forum.Fields.Name.Required"));
+            RuleFor(x => x.ForumGroupId).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.ContentManagement.Forums.Forum.Fields.ForumGroupId.Required"));
 
             SetDatabaseValidationRules<Forum>(dataProvider);
         }

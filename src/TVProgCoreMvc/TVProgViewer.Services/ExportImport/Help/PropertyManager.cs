@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TVProgViewer.Core.Domain.Catalog;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.ExportImport.Help
 {
@@ -45,54 +46,40 @@ namespace TVProgViewer.Services.ExportImport.Help
         }
 
         /// <summary>
-        /// Add new property
-        /// </summary>
-        /// <param name="property">Property to add</param>
-        public void AddProperty(PropertyByName<T> property)
-        {
-            if (_properties.ContainsKey(property.PropertyName))
-                return;
-            
-            _properties.Add(property.PropertyName, property);
-        }
-
-        /// <summary>
         /// Export objects to XLSX
         /// </summary>
         /// <typeparam name="T">Type of object</typeparam>
         /// <param name="itemsToExport">The objects to export</param>
         /// <returns></returns>
-        public virtual byte[] ExportToXlsx(IEnumerable<T> itemsToExport)
+        public virtual async Task<byte[]> ExportToXlsxAsync(IEnumerable<T> itemsToExport)
         {
-            using (var stream = new MemoryStream())
+            await using var stream = new MemoryStream();
+            // ok, we can run the real code of the sample now
+            using (var xlPackage = new ExcelPackage(stream))
             {
-                // ok, we can run the real code of the sample now
-                using (var xlPackage = new ExcelPackage(stream))
+                // uncomment this line if you want the XML written out to the outputDir
+                //xlPackage.DebugMode = true; 
+
+                // get handles to the worksheets
+                var worksheet = xlPackage.Workbook.Worksheets.Add(typeof(T).Name);
+                var fWorksheet = xlPackage.Workbook.Worksheets.Add("DataForFilters");
+                fWorksheet.Hidden = eWorkSheetHidden.VeryHidden;
+
+                //create Headers and format them 
+                WriteCaption(worksheet);
+
+                var row = 2;
+                foreach (var items in itemsToExport)
                 {
-                    // uncomment this line if you want the XML written out to the outputDir
-                    //xlPackage.DebugMode = true; 
-
-                    // get handles to the worksheets
-                    var worksheet = xlPackage.Workbook.Worksheets.Add(typeof(T).Name);
-                    var fWorksheet = xlPackage.Workbook.Worksheets.Add("DataForFilters");
-                    fWorksheet.Hidden = eWorkSheetHidden.VeryHidden;
-
-                    //create Headers and format them 
-                    WriteCaption(worksheet);
-
-                    var row = 2;
-                    foreach (var items in itemsToExport)
-                    {
-                        CurrentObject = items;
-                        WriteToXlsx(worksheet, row++, fWorksheet: fWorksheet);
-                    }
-
-                    xlPackage.Save();
+                    CurrentObject = items;
+                    await WriteToXlsxAsync(worksheet, row++, fWorksheet: fWorksheet);
                 }
 
-                CurrentObject = default(T);
-                return stream.ToArray();
+                xlPackage.Save();
             }
+
+            CurrentObject = default;
+            return stream.ToArray();
         }
 
         /// <summary>
@@ -114,15 +101,6 @@ namespace TVProgViewer.Services.ExportImport.Help
         }
 
         /// <summary>
-        /// Access object by property name
-        /// </summary>
-        /// <param name="propertyName">Property name</param>
-        /// <returns>Property value</returns>
-        public object this[string propertyName] => _properties.ContainsKey(propertyName) && CurrentObject != null
-            ? _properties[propertyName].GetProperty(CurrentObject)
-            : null;
-
-        /// <summary>
         /// Remove object by property name
         /// </summary>
         /// <param name="propertyName">Property name</param>
@@ -138,11 +116,11 @@ namespace TVProgViewer.Services.ExportImport.Help
         /// <param name="row">Row index</param>
         /// <param name="cellOffset">Cell offset</param>
         /// <param name="fWorksheet">Filters worksheet</param>
-        public virtual void WriteToXlsx(ExcelWorksheet worksheet, int row, int cellOffset = 0, ExcelWorksheet fWorksheet = null)
+        public virtual async Task WriteToXlsxAsync(ExcelWorksheet worksheet, int row, int cellOffset = 0, ExcelWorksheet fWorksheet = null)
         {
             if (CurrentObject == null)
                 return;
-            
+
             foreach (var prop in _properties.Values)
             {
                 var cell = worksheet.Cells[row, prop.PropertyOrderPosition + cellOffset];
@@ -155,13 +133,13 @@ namespace TVProgViewer.Services.ExportImport.Help
                         continue;
                     }
 
-                    cell.Value = prop.GetItemText(prop.GetProperty(CurrentObject));
+                    cell.Value = prop.GetItemText(await prop.GetProperty(CurrentObject));
 
                     if (!UseDropdownLists)
                         continue;
 
                     var validator = cell.DataValidation.AddListDataValidation();
-                    
+
                     validator.AllowBlank = prop.AllowBlank;
 
                     if (fWorksheet == null)
@@ -174,7 +152,7 @@ namespace TVProgViewer.Services.ExportImport.Help
 
                         if (fCell.Value != null && fCell.Value.ToString() == dropDownElement)
                             break;
-                        
+
                         fCell.Value = dropDownElement;
                     }
 
@@ -182,11 +160,11 @@ namespace TVProgViewer.Services.ExportImport.Help
                 }
                 else
                 {
-                    cell.Value = prop.GetProperty(CurrentObject);
+                    cell.Value = await prop.GetProperty(CurrentObject);
                 }
             }
         }
-        
+
         /// <summary>
         /// Read object data from XLSX worksheet
         /// </summary>
@@ -268,10 +246,7 @@ namespace TVProgViewer.Services.ExportImport.Help
         /// <summary>
         /// Is caption
         /// </summary>
-        public bool IsCaption
-        {
-            get { return _properties.Values.All(p => p.IsCaption); }
-        }
+        public bool IsCaption => _properties.Values.All(p => p.IsCaption);
 
         /// <summary>
         /// Gets a value indicating whether need create dropdown list for export

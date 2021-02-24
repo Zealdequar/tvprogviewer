@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Web.Framework.Models;
+﻿using TVProgViewer.Core.Domain.Users;
+using TVProgViewer.Web.Framework.Models;
 
 namespace TVProgViewer.WebUI.Models.Common
 {
@@ -16,5 +17,6 @@ namespace TVProgViewer.WebUI.Models.Common
         public bool AllowPrivateMessages { get; set; }
         public string UnreadPrivateMessages { get; set; }
         public string AlertMessage { get; set; }
+        public UserRegistrationType RegistrationType { get; set; }
     }
 }

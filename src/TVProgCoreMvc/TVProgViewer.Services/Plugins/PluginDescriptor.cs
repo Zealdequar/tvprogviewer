@@ -11,7 +11,7 @@ namespace TVProgViewer.Services.Plugins
     /// <summary>
     /// Represents a plugin descriptor
     /// </summary>
-    public partial class PluginDescriptor : IDescriptor, IComparable<PluginDescriptor>
+    public partial class PluginDescriptor : PluginDescriptorBaseInfo, IDescriptor, IComparable<PluginDescriptor>
     {
         #region Ctor
 
@@ -20,6 +20,7 @@ namespace TVProgViewer.Services.Plugins
             SupportedVersions = new List<string>();
             LimitedToStores = new List<int>();
             LimitedToUserRoles = new List<int>();
+            DependsOn = new List<string>();
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace TVProgViewer.Services.Plugins
             //get plugin descriptor from the JSON file
             var descriptor = JsonConvert.DeserializeObject<PluginDescriptor>(text);
 
-            //TvProg 2.00 didn't have 'SupportedVersions' parameter, so let's set it to "2.00"
+            //nopCommerce 2.00 didn't have 'SupportedVersions' parameter, so let's set it to "2.00"
             if (!descriptor.SupportedVersions.Any())
                 descriptor.SupportedVersions.Add("2.00");
 
@@ -83,7 +84,7 @@ namespace TVProgViewer.Services.Plugins
             if (DisplayOrder != other.DisplayOrder)
                 return DisplayOrder.CompareTo(other.DisplayOrder);
 
-            return string.Compare(FriendlyName, other.FriendlyName, StringComparison.InvariantCultureIgnoreCase);
+            return string.Compare(SystemName, other.SystemName, StringComparison.InvariantCultureIgnoreCase);
         }
 
         /// <summary>
@@ -93,25 +94,6 @@ namespace TVProgViewer.Services.Plugins
         public override string ToString()
         {
             return FriendlyName;
-        }
-
-        /// <summary>
-        /// Determines whether this instance and another specified PluginDescriptor object have the same SystemName
-        /// </summary>
-        /// <param name="value">The PluginDescriptor to compare to this instance</param>
-        /// <returns>True if the SystemName of the value parameter is the same as the SystemName of this instance; otherwise, false</returns>
-        public override bool Equals(object value)
-        {
-            return SystemName?.Equals((value as PluginDescriptor)?.SystemName) ?? false;
-        }
-
-        /// <summary>
-        /// Returns the hash code for this plugin descriptor
-        /// </summary>
-        /// <returns>A 32-bit signed integer hash code</returns>
-        public override int GetHashCode()
-        {
-            return SystemName.GetHashCode();
         }
 
         /// <summary>
@@ -151,19 +133,7 @@ namespace TVProgViewer.Services.Plugins
         public virtual string FriendlyName { get; set; }
 
         /// <summary>
-        /// Gets or sets the plugin system name
-        /// </summary>
-        [JsonProperty(PropertyName = "SystemName")]
-        public virtual string SystemName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the version
-        /// </summary>
-        [JsonProperty(PropertyName = "Version")]
-        public virtual string Version { get; set; }
-
-        /// <summary>
-        /// Gets or sets the supported versions of TvProg
+        /// Gets or sets the supported versions of nopCommerce
         /// </summary>
         [JsonProperty(PropertyName = "SupportedVersions")]
         public virtual IList<string> SupportedVersions { get; set; }
@@ -199,11 +169,11 @@ namespace TVProgViewer.Services.Plugins
         public virtual IList<int> LimitedToStores { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of User role identifiers for which this plugin is available. If empty, then this plugin is available for all ones.
+        /// Gets or sets the list of user role identifiers for which this plugin is available. If empty, then this plugin is available for all ones.
         /// </summary>
         [JsonProperty(PropertyName = "LimitedToUserRoles")]
         public virtual IList<int> LimitedToUserRoles { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the list of plugins' system name that this plugin depends on
         /// </summary>

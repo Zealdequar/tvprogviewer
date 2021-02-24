@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Forums;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Forums
 {
@@ -15,99 +16,91 @@ namespace TVProgViewer.Services.Forums
         /// Deletes a forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        void DeleteForumGroup(ForumGroup forumGroup);
+        Task DeleteForumGroupAsync(ForumGroup forumGroup);
 
         /// <summary>
         /// Gets a forum group
         /// </summary>
         /// <param name="forumGroupId">The forum group identifier</param>
         /// <returns>Forum group</returns>
-        ForumGroup GetForumGroupById(int forumGroupId);
+        Task<ForumGroup> GetForumGroupByIdAsync(int forumGroupId);
 
         /// <summary>
         /// Gets all forum groups
         /// </summary>
         /// <returns>Forum groups</returns>
-        IList<ForumGroup> GetAllForumGroups();
+        Task<IList<ForumGroup>> GetAllForumGroupsAsync();
 
         /// <summary>
         /// Inserts a forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        void InsertForumGroup(ForumGroup forumGroup);
+        Task InsertForumGroupAsync(ForumGroup forumGroup);
 
         /// <summary>
         /// Updates the forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        void UpdateForumGroup(ForumGroup forumGroup);
+        Task UpdateForumGroupAsync(ForumGroup forumGroup);
 
         /// <summary>
         /// Deletes a forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        void DeleteForum(Forum forum);
+        Task DeleteForumAsync(Forum forum);
 
         /// <summary>
         /// Gets a forum
         /// </summary>
         /// <param name="forumId">The forum identifier</param>
         /// <returns>Forum</returns>
-        Forum GetForumById(int forumId);
+        Task<Forum> GetForumByIdAsync(int forumId);
 
         /// <summary>
         /// Gets forums by group identifier
         /// </summary>
         /// <param name="forumGroupId">The forum group identifier</param>
         /// <returns>Forums</returns>
-        IList<Forum> GetAllForumsByGroupId(int forumGroupId);
+        Task<IList<Forum>> GetAllForumsByGroupIdAsync(int forumGroupId);
 
         /// <summary>
         /// Inserts a forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        void InsertForum(Forum forum);
+        Task InsertForumAsync(Forum forum);
 
         /// <summary>
         /// Updates the forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        void UpdateForum(Forum forum);
+        Task UpdateForumAsync(Forum forum);
 
         /// <summary>
         /// Deletes a forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        void DeleteTopic(ForumTopic forumTopic);
+        Task DeleteTopicAsync(ForumTopic forumTopic);
 
         /// <summary>
         /// Gets a forum topic
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
         /// <returns>Forum Topic</returns>
-        ForumTopic GetTopicById(int forumTopicId);
-
-        /// <summary>
-        /// Gets a forum topic
-        /// </summary>
-        /// <param name="forumTopicId">The forum topic identifier</param>
-        /// <param name="increaseViews">The value indicating whether to increase forum topic views</param>
-        /// <returns>Forum Topic</returns>
-        ForumTopic GetTopicById(int forumTopicId, bool increaseViews);
+        Task<ForumTopic> GetTopicByIdAsync(int forumTopicId);
 
         /// <summary>
         /// Gets all forum topics
         /// </summary>
         /// <param name="forumId">The forum identifier</param>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="keywords">Keywords</param>
         /// <param name="searchType">Search type</param>
         /// <param name="limitDays">Limit by the last number days; 0 to load all topics</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum Topics</returns>
-        IPagedList<ForumTopic> GetAllTopics(int forumId = 0,
-            int UserId = 0, string keywords = "", ForumSearchType searchType = ForumSearchType.All,
+        Task<IPagedList<ForumTopic>> GetAllTopicsAsync(int forumId = 0,
+            int userId = 0, string keywords = "", ForumSearchType searchType = ForumSearchType.All,
             int limitDays = 0, int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
@@ -117,21 +110,21 @@ namespace TVProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum Topics</returns>
-        IPagedList<ForumTopic> GetActiveTopics(int forumId = 0,
+        Task<IPagedList<ForumTopic>> GetActiveTopicsAsync(int forumId = 0,
             int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
         /// Inserts a forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed Users</param>
-        void InsertTopic(ForumTopic forumTopic, bool sendNotifications);
+        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed users</param>
+        Task InsertTopicAsync(ForumTopic forumTopic, bool sendNotifications);
 
         /// <summary>
         /// Updates the forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        void UpdateTopic(ForumTopic forumTopic);
+        Task UpdateTopicAsync(ForumTopic forumTopic);
 
         /// <summary>
         /// Moves the forum topic
@@ -139,45 +132,45 @@ namespace TVProgViewer.Services.Forums
         /// <param name="forumTopicId">The forum topic identifier</param>
         /// <param name="newForumId">New forum identifier</param>
         /// <returns>Moved forum topic</returns>
-        ForumTopic MoveTopic(int forumTopicId, int newForumId);
+        Task<ForumTopic> MoveTopicAsync(int forumTopicId, int newForumId);
 
         /// <summary>
         /// Deletes a forum post
         /// </summary>
         /// <param name="forumPost">Forum post</param>
-        void DeletePost(ForumPost forumPost);
+        Task DeletePostAsync(ForumPost forumPost);
 
         /// <summary>
         /// Gets a forum post
         /// </summary>
         /// <param name="forumPostId">The forum post identifier</param>
         /// <returns>Forum Post</returns>
-        ForumPost GetPostById(int forumPostId);
+        Task<ForumPost> GetPostByIdAsync(int forumPostId);
 
         /// <summary>
         /// Gets all forum posts
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="keywords">Keywords</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Posts</returns>
-        IPagedList<ForumPost> GetAllPosts(int forumTopicId = 0,
-            int UserId = 0, string keywords = "",
+        Task<IPagedList<ForumPost>> GetAllPostsAsync(int forumTopicId = 0,
+            int userId = 0, string keywords = "",
             int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
         /// Gets all forum posts
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="keywords">Keywords</param>
         /// <param name="ascSort">Sort order</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum Posts</returns>
-        IPagedList<ForumPost> GetAllPosts(int forumTopicId = 0, int UserId = 0,
+        Task<IPagedList<ForumPost>> GetAllPostsAsync(int forumTopicId = 0, int userId = 0,
             string keywords = "", bool ascSort = false,
             int pageIndex = 0, int pageSize = int.MaxValue);
 
@@ -185,34 +178,34 @@ namespace TVProgViewer.Services.Forums
         /// Inserts a forum post
         /// </summary>
         /// <param name="forumPost">The forum post</param>
-        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed Users</param>
-        void InsertPost(ForumPost forumPost, bool sendNotifications);
+        /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed users</param>
+        Task InsertPostAsync(ForumPost forumPost, bool sendNotifications);
 
         /// <summary>
         /// Updates the forum post
         /// </summary>
         /// <param name="forumPost">Forum post</param>
-        void UpdatePost(ForumPost forumPost);
+        Task UpdatePostAsync(ForumPost forumPost);
 
         /// <summary>
         /// Deletes a private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        void DeletePrivateMessage(PrivateMessage privateMessage);
+        Task DeletePrivateMessageAsync(PrivateMessage privateMessage);
 
         /// <summary>
         /// Gets a private message
         /// </summary>
         /// <param name="privateMessageId">The private message identifier</param>
         /// <returns>Private message</returns>
-        PrivateMessage GetPrivateMessageById(int privateMessageId);
+        Task<PrivateMessage> GetPrivateMessageByIdAsync(int privateMessageId);
 
         /// <summary>
         /// Gets private messages
         /// </summary>
         /// <param name="storeId">The store identifier; pass 0 to load all messages</param>
-        /// <param name="fromUserId">The User identifier who sent the message</param>
-        /// <param name="toUserId">The User identifier who should receive the message</param>
+        /// <param name="fromUserId">The user identifier who sent the message</param>
+        /// <param name="toUserId">The user identifier who should receive the message</param>
         /// <param name="isRead">A value indicating whether loaded messages are read. false - to load not read messages only, 1 to load read messages only, null to load all messages</param>
         /// <param name="isDeletedByAuthor">A value indicating whether loaded messages are deleted by author. false - messages are not deleted by author, null to load all messages</param>
         /// <param name="isDeletedByRecipient">A value indicating whether loaded messages are deleted by recipient. false - messages are not deleted by recipient, null to load all messages</param>
@@ -220,7 +213,7 @@ namespace TVProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Private messages</returns>
-        IPagedList<PrivateMessage> GetAllPrivateMessages(int storeId, int fromUserId,
+        Task<IPagedList<PrivateMessage>> GetAllPrivateMessagesAsync(int storeId, int fromUserId,
             int toUserId, bool? isRead, bool? isDeletedByAuthor, bool? isDeletedByRecipient,
             string keywords, int pageIndex = 0, int pageSize = int.MaxValue);
 
@@ -228,120 +221,114 @@ namespace TVProgViewer.Services.Forums
         /// Inserts a private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        void InsertPrivateMessage(PrivateMessage privateMessage);
+        Task InsertPrivateMessageAsync(PrivateMessage privateMessage);
 
         /// <summary>
         /// Updates the private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        void UpdatePrivateMessage(PrivateMessage privateMessage);
+        Task UpdatePrivateMessageAsync(PrivateMessage privateMessage);
 
         /// <summary>
         /// Deletes a forum subscription
         /// </summary>
         /// <param name="forumSubscription">Forum subscription</param>
-        void DeleteSubscription(ForumSubscription forumSubscription);
+        Task DeleteSubscriptionAsync(ForumSubscription forumSubscription);
 
         /// <summary>
         /// Gets a forum subscription
         /// </summary>
         /// <param name="forumSubscriptionId">The forum subscription identifier</param>
         /// <returns>Forum subscription</returns>
-        ForumSubscription GetSubscriptionById(int forumSubscriptionId);
+        Task<ForumSubscription> GetSubscriptionByIdAsync(int forumSubscriptionId);
 
         /// <summary>
         /// Gets forum subscriptions
         /// </summary>
-        /// <param name="UserId">The User identifier</param>
+        /// <param name="userId">The user identifier</param>
         /// <param name="forumId">The forum identifier</param>
         /// <param name="topicId">The topic identifier</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Forum subscriptions</returns>
-        IPagedList<ForumSubscription> GetAllSubscriptions(int UserId = 0, int forumId = 0,
+        Task<IPagedList<ForumSubscription>> GetAllSubscriptionsAsync(int userId = 0, int forumId = 0,
             int topicId = 0, int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
         /// Inserts a forum subscription
         /// </summary>
         /// <param name="forumSubscription">Forum subscription</param>
-        void InsertSubscription(ForumSubscription forumSubscription);
+        Task InsertSubscriptionAsync(ForumSubscription forumSubscription);
 
         /// <summary>
-        /// Updates the forum subscription
+        /// Check whether user is allowed to create new topics
         /// </summary>
-        /// <param name="forumSubscription">Forum subscription</param>
-        void UpdateSubscription(ForumSubscription forumSubscription);
-
-        /// <summary>
-        /// Check whether User is allowed to create new topics
-        /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="forum">Forum</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToCreateTopic(User User, Forum forum);
+        Task<bool> IsUserAllowedToCreateTopicAsync(User user, Forum forum);
 
         /// <summary>
-        /// Check whether User is allowed to edit topic
+        /// Check whether user is allowed to edit topic
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToEditTopic(User User, ForumTopic topic);
+        Task<bool> IsUserAllowedToEditTopicAsync(User user, ForumTopic topic);
 
         /// <summary>
-        /// Check whether User is allowed to move topic
+        /// Check whether user is allowed to move topic
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToMoveTopic(User User, ForumTopic topic);
+        Task<bool> IsUserAllowedToMoveTopicAsync(User user, ForumTopic topic);
 
         /// <summary>
-        /// Check whether User is allowed to delete topic
+        /// Check whether user is allowed to delete topic
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToDeleteTopic(User User, ForumTopic topic);
+        Task<bool> IsUserAllowedToDeleteTopicAsync(User user, ForumTopic topic);
 
         /// <summary>
-        /// Check whether User is allowed to create new post
+        /// Check whether user is allowed to create new post
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToCreatePost(User User, ForumTopic topic);
+        Task<bool> IsUserAllowedToCreatePostAsync(User user, ForumTopic topic);
 
         /// <summary>
-        /// Check whether User is allowed to edit post
+        /// Check whether user is allowed to edit post
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="post">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToEditPost(User User, ForumPost post);
+        Task<bool> IsUserAllowedToEditPostAsync(User user, ForumPost post);
 
         /// <summary>
-        /// Check whether User is allowed to delete post
+        /// Check whether user is allowed to delete post
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="post">Topic</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToDeletePost(User User, ForumPost post);
+        Task<bool> IsUserAllowedToDeletePostAsync(User user, ForumPost post);
 
         /// <summary>
-        /// Check whether User is allowed to set topic priority
+        /// Check whether user is allowed to set topic priority
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToSetTopicPriority(User User);
+        Task<bool> IsUserAllowedToSetTopicPriorityAsync(User user);
 
         /// <summary>
-        /// Check whether User is allowed to watch topics
+        /// Check whether user is allowed to watch topics
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>True if allowed, otherwise false</returns>
-        bool IsUserAllowedToSubscribe(User User);
+        Task<bool> IsUserAllowedToSubscribeAsync(User user);
 
         /// <summary>
         /// Calculates topic page index by post identifier
@@ -350,42 +337,37 @@ namespace TVProgViewer.Services.Forums
         /// <param name="pageSize">Page size</param>
         /// <param name="postId">Post identifier</param>
         /// <returns>Page index</returns>
-        int CalculateTopicPageIndex(int forumTopicId, int pageSize, int postId);
+        Task<int> CalculateTopicPageIndexAsync(int forumTopicId, int pageSize, int postId);
 
         /// <summary>
         /// Get a post vote 
         /// </summary>
         /// <param name="postId">Post identifier</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Post vote</returns>
-        ForumPostVote GetPostVote(int postId, User User);
+        Task<ForumPostVote> GetPostVoteAsync(int postId, User user);
 
         /// <summary>
         /// Get post vote made since the parameter date
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="сreatedFromUtc">Date</param>
         /// <returns>Post votes count</returns>
-        int GetNumberOfPostVotes(User User, DateTime сreatedFromUtc);
+        Task<int> GetNumberOfPostVotesAsync(User user, DateTime сreatedFromUtc);
 
         /// <summary>
         /// Insert a post vote
         /// </summary>
         /// <param name="postVote">Post vote</param>
-        void InsertPostVote(ForumPostVote postVote);
-
-        /// <summary>
-        /// Update a post vote
-        /// </summary>
-        /// <param name="postVote">Post vote</param>
-        void UpdatePostVote(ForumPostVote postVote);
+        Task InsertPostVoteAsync(ForumPostVote postVote);
 
         /// <summary>
         /// Delete a post vote
         /// </summary>
         /// <param name="postVote">Post vote</param>
-        void DeletePostVote(ForumPostVote postVote);
+        Task DeletePostVoteAsync(ForumPostVote postVote);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Formats the forum post text
         /// </summary>
@@ -393,6 +375,7 @@ namespace TVProgViewer.Services.Forums
         /// <returns>Formatted text</returns>
         string FormatPostText(ForumPost forumPost);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Strips the topic subject
         /// </summary>
@@ -400,6 +383,7 @@ namespace TVProgViewer.Services.Forums
         /// <returns>Formatted subject</returns>
         string StripTopicSubject(ForumTopic forumTopic);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Formats the forum signature text
         /// </summary>
@@ -407,6 +391,7 @@ namespace TVProgViewer.Services.Forums
         /// <returns>Formatted text</returns>
         string FormatForumSignatureText(string text);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Formats the private message text
         /// </summary>
@@ -415,52 +400,31 @@ namespace TVProgViewer.Services.Forums
         string FormatPrivateMessageText(PrivateMessage pm);
 
         /// <summary>
-        /// Get forum last topic
-        /// </summary>
-        /// <param name="forum">Forum</param>
-        /// <returns>Forum topic</returns>
-        ForumTopic GetLastTopic(Forum forum);
-
-        /// <summary>
-        /// Get forum last post
-        /// </summary>
-        /// <param name="forum">Forum</param>
-        /// <returns>Forum topic</returns>
-        ForumPost GetLastPost(Forum forum);
-
-        /// <summary>
         /// Get first post
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
         /// <returns>Forum post</returns>
-        ForumPost GetFirstPost(ForumTopic forumTopic);
-
-        /// <summary>
-        /// Get last post
-        /// </summary>
-        /// <param name="forumTopic">Forum topic</param>
-        /// <returns>Forum post</returns>
-        ForumPost GetLastPost(ForumTopic forumTopic);
+        Task<ForumPost> GetFirstPostAsync(ForumTopic forumTopic);
 
         /// <summary>
         /// Gets ForumGroup SE (search engine) name
         /// </summary>
         /// <param name="forumGroup">ForumGroup</param>
         /// <returns>ForumGroup SE (search engine) name</returns>
-        string GetForumGroupSeName(ForumGroup forumGroup);
+        Task<string> GetForumGroupSeNameAsync(ForumGroup forumGroup);
 
         /// <summary>
         /// Gets Forum SE (search engine) name
         /// </summary>
         /// <param name="forum">Forum</param>
         /// <returns>Forum SE (search engine) name</returns>
-        string GetForumSeName(Forum forum);
+        Task<string> GetForumSeNameAsync(Forum forum);
 
         /// <summary>
         /// Gets ForumTopic SE (search engine) name
         /// </summary>
         /// <param name="forumTopic">ForumTopic</param>
         /// <returns>ForumTopic SE (search engine) name</returns>
-        string GetTopicSeName(ForumTopic forumTopic);
+        Task<string> GetTopicSeNameAsync(ForumTopic forumTopic);
     }
 }

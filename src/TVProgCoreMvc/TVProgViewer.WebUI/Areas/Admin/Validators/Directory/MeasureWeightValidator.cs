@@ -9,10 +9,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Directory
 {
     public partial class MeasureWeightValidator : BaseTvProgValidator<MeasureWeightModel>
     {
-        public MeasureWeightValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public MeasureWeightValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Shipping.Measures.Weights.Fields.Name.Required"));
-            RuleFor(x => x.SystemKeyword).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Shipping.Measures.Weights.Fields.SystemKeyword.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Shipping.Measures.Weights.Fields.Name.Required"));
+            RuleFor(x => x.SystemKeyword).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Shipping.Measures.Weights.Fields.SystemKeyword.Required"));
 
             SetDatabaseValidationRules<MeasureWeight>(dataProvider);
         }

@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Stores;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Stores;
 
 namespace TVProgViewer.Core
 {
@@ -10,11 +11,11 @@ namespace TVProgViewer.Core
         /// <summary>
         /// Gets the current store
         /// </summary>
-        Store CurrentStore { get; }
+        Task<Store> GetCurrentStoreAsync();
 
         /// <summary>
         /// Gets active store scope configuration
         /// </summary>
-        int ActiveStoreScopeConfiguration { get; }
+        Task<int> GetActiveStoreScopeConfigurationAsync();
     }
 }

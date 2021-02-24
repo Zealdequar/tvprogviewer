@@ -25,6 +25,9 @@ using TVProgViewer.Web.Framework.Mvc;
 using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
 using TVProgViewer.WebUI.Models.Catalog;
+using TVProgViewer.Core.Events;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -43,10 +46,12 @@ namespace TVProgViewer.WebUI.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IOrderService _orderService;
         private readonly IPermissionService _permissionService;
+        private readonly IProductAttributeParser _productAttributeParser;
         private readonly IProductModelFactory _productModelFactory;
         private readonly IProductService _productService;
         private readonly IRecentlyViewedProductsService _recentlyViewedProductsService;
         private readonly IReviewTypeService _reviewTypeService;
+        private readonly IShoppingCartModelFactory _shoppingCartModelFactory;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
@@ -71,10 +76,12 @@ namespace TVProgViewer.WebUI.Controllers
             ILocalizationService localizationService,
             IOrderService orderService,
             IPermissionService permissionService,
+            IProductAttributeParser productAttributeParser,
             IProductModelFactory productModelFactory,
             IProductService productService,
             IRecentlyViewedProductsService recentlyViewedProductsService,
             IReviewTypeService reviewTypeService,
+            IShoppingCartModelFactory shoppingCartModelFactory,
             IShoppingCartService shoppingCartService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
@@ -95,10 +102,12 @@ namespace TVProgViewer.WebUI.Controllers
             _localizationService = localizationService;
             _orderService = orderService;
             _permissionService = permissionService;
+            _productAttributeParser = productAttributeParser;
             _productModelFactory = productModelFactory;
             _productService = productService;
             _reviewTypeService = reviewTypeService;
             _recentlyViewedProductsService = recentlyViewedProductsService;
+            _shoppingCartModelFactory = shoppingCartModelFactory;
             _shoppingCartService = shoppingCartService;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
@@ -112,12 +121,41 @@ namespace TVProgViewer.WebUI.Controllers
 
         #endregion
 
+        #region Utilities
+
+        protected virtual async Task ValidateProductReviewAvailabilityAsync(Product product)
+        {
+            var user = await _workContext.GetCurrentUserAsync();
+            if (await _userService.IsGuestAsync(user) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
+                ModelState.AddModelError(string.Empty, await _localizationService.GetResourceAsync("Reviews.OnlyRegisteredUsersCanWriteReviews"));
+
+            if (!_catalogSettings.ProductReviewPossibleOnlyAfterPurchasing)
+                return;
+
+            var hasCompletedOrders = product.ProductType == ProductType.SimpleProduct
+                ? await HasCompletedOrdersAsync(product)
+                : await (await _productService.GetAssociatedProductsAsync(product.Id)).AnyAwaitAsync(HasCompletedOrdersAsync);
+
+            if (!hasCompletedOrders)
+                ModelState.AddModelError(string.Empty, await _localizationService.GetResourceAsync("Reviews.ProductReviewPossibleOnlyAfterPurchasing"));
+        }
+
+        protected virtual async ValueTask<bool> HasCompletedOrdersAsync(Product product)
+        {
+            var user = await _workContext.GetCurrentUserAsync();
+            return (await _orderService.SearchOrdersAsync(userId: user.Id,
+                productId: product.Id,
+                osIds: new List<int> { (int)OrderStatus.Complete },
+                pageSize: 1)).Any();
+        }
+
+        #endregion
+
         #region Product details page
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult ProductDetails(int productId, int updatecartitemid = 0)
+        public virtual async Task<IActionResult> ProductDetails(int productId, int updatecartitemid = 0)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted)
                 return InvokeHttp404();
 
@@ -125,14 +163,14 @@ namespace TVProgViewer.WebUI.Controllers
                 //published?
                 (!product.Published && !_catalogSettings.AllowViewUnpublishedProductPage) ||
                 //ACL (access control list) 
-                !_aclService.Authorize(product) ||
+                !await _aclService.AuthorizeAsync(product) ||
                 //Store mapping
-                !_storeMappingService.Authorize(product) ||
+                !await _storeMappingService.AuthorizeAsync(product) ||
                 //availability dates
                 !_productService.ProductIsAvailable(product);
             //Check whether the current user has a "Manage products" permission (usually a store owner)
             //We should allows him (her) to use "Preview" functionality
-            var hasAdminAccess = _permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageProducts);
+            var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts);
             if (notAvailable && !hasAdminAccess)
                 return InvokeHttp404();
 
@@ -140,71 +178,130 @@ namespace TVProgViewer.WebUI.Controllers
             if (!product.VisibleIndividually)
             {
                 //is this one an associated products?
-                var parentGroupedProduct = _productService.GetProductById(product.ParentGroupedProductId);
+                var parentGroupedProduct = await _productService.GetProductByIdAsync(product.ParentGroupedProductId);
                 if (parentGroupedProduct == null)
                     return RedirectToRoute("Homepage");
 
-                return RedirectToRoutePermanent("Product", new { SeName = _urlRecordService.GetSeName(parentGroupedProduct) });
+                return RedirectToRoutePermanent("Product", new { SeName = await _urlRecordService.GetSeNameAsync(parentGroupedProduct) });
             }
 
             //update existing shopping cart or wishlist  item?
             ShoppingCartItem updatecartitem = null;
             if (_shoppingCartSettings.AllowCartItemEditing && updatecartitemid > 0)
             {
-                var cart = _shoppingCartService.GetShoppingCart(_workContext.CurrentUser, storeId: _storeContext.CurrentStore.Id);
+                var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentUserAsync(), storeId: (await _storeContext.GetCurrentStoreAsync()).Id);
                 updatecartitem = cart.FirstOrDefault(x => x.Id == updatecartitemid);
                 //not found?
                 if (updatecartitem == null)
                 {
-                    return RedirectToRoute("Product", new { SeName = _urlRecordService.GetSeName(product) });
+                    return RedirectToRoute("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) });
                 }
                 //is it this product?
                 if (product.Id != updatecartitem.ProductId)
                 {
-                    return RedirectToRoute("Product", new { SeName = _urlRecordService.GetSeName(product) });
+                    return RedirectToRoute("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) });
                 }
             }
 
             //save as recently viewed
-            _recentlyViewedProductsService.AddProductToRecentlyViewedList(product.Id);
+            await _recentlyViewedProductsService.AddProductToRecentlyViewedListAsync(product.Id);
 
             //display "edit" (manage) link
-            if (_permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) &&
-                _permissionService.Authorize(StandardPermissionProvider.ManageProducts))
+            if (await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) &&
+                await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
             {
                 //a vendor should have access only to his products
-                if (_workContext.CurrentVendor == null || _workContext.CurrentVendor.Id == product.VendorId)
+                if (await _workContext.GetCurrentVendorAsync() == null || (await _workContext.GetCurrentVendorAsync()).Id == product.VendorId)
                 {
                     DisplayEditLink(Url.Action("Edit", "Product", new { id = product.Id, area = AreaNames.Admin }));
                 }
             }
 
             //activity log
-            _userActivityService.InsertActivity("PublicStore.ViewProduct",
-                string.Format(_localizationService.GetResource("ActivityLog.PublicStore.ViewProduct"), product.Name), product);
+            await _userActivityService.InsertActivityAsync("PublicStore.ViewProduct",
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.ViewProduct"), product.Name), product);
 
             //model
-            var model = _productModelFactory.PrepareProductDetailsModel(product, updatecartitem, false);
+            var model = await _productModelFactory.PrepareProductDetailsModelAsync(product, updatecartitem, false);
             //template
-            var productTemplateViewPath = _productModelFactory.PrepareProductTemplateViewPath(product);
+            var productTemplateViewPath = await _productModelFactory.PrepareProductTemplateViewPathAsync(product);
 
             return View(productTemplateViewPath, model);
+        }
+
+        [HttpPost]
+        public virtual async Task<IActionResult> EstimateShipping([FromQuery] ProductDetailsModel.ProductEstimateShippingModel model, IFormCollection form)
+        {
+            if (model == null)
+                model = new ProductDetailsModel.ProductEstimateShippingModel();
+
+            var errors = new List<string>();
+            if (string.IsNullOrEmpty(model.ZipPostalCode))
+                errors.Add(await _localizationService.GetResourceAsync("Shipping.EstimateShipping.ZipPostalCode.Required"));
+
+            if (model.CountryId == null || model.CountryId == 0)
+                errors.Add(await _localizationService.GetResourceAsync("Shipping.EstimateShipping.Country.Required"));
+
+            if (errors.Count > 0)
+                return Json(new
+                {
+                    Success = false,
+                    Errors = errors
+                });
+
+            var product = await _productService.GetProductByIdAsync(model.ProductId);
+            if (product == null || product.Deleted)
+            {
+                errors.Add(await _localizationService.GetResourceAsync("Shipping.EstimateShippingPopUp.Product.IsNotFound"));
+                return Json(new
+                {
+                    Success = false,
+                    Errors = errors
+                });
+            }
+
+            var wrappedProduct = new ShoppingCartItem()
+            {
+                StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
+                ShoppingCartTypeId = (int)ShoppingCartType.ShoppingCart,
+                UserId = (await _workContext.GetCurrentUserAsync()).Id,
+                ProductId = product.Id,
+                CreatedOnUtc = DateTime.UtcNow
+            };
+
+            var addToCartWarnings = new List<string>();
+            //user entered price
+            wrappedProduct.UserEnteredPrice = await _productAttributeParser.ParseUserEnteredPriceAsync(product, form);
+
+            //entered quantity
+            wrappedProduct.Quantity = _productAttributeParser.ParseEnteredQuantity(product, form);
+
+            //product and gift card attributes
+            wrappedProduct.AttributesXml = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
+
+            //rental attributes
+            _productAttributeParser.ParseRentalDates(product, form, out var rentalStartDate, out var rentalEndDate);
+            wrappedProduct.RentalStartDateUtc = rentalStartDate;
+            wrappedProduct.RentalEndDateUtc = rentalEndDate;
+
+            var result = await _shoppingCartModelFactory.PrepareEstimateShippingResultModelAsync(new[] { wrappedProduct }, model.CountryId, model.StateProvinceId, model.ZipPostalCode, false);
+
+            return Json(result);
         }
 
         #endregion
 
         #region Recently viewed products
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult RecentlyViewedProducts()
+        public virtual async Task<IActionResult> RecentlyViewedProducts()
         {
             if (!_catalogSettings.RecentlyViewedProductsEnabled)
                 return Content("");
 
-            var products = _recentlyViewedProductsService.GetRecentlyViewedProducts(_catalogSettings.RecentlyViewedProductsNumber);
+            var products = await _recentlyViewedProductsService.GetRecentlyViewedProductsAsync(_catalogSettings.RecentlyViewedProductsNumber);
 
             var model = new List<ProductOverviewModel>();
-            model.AddRange(_productModelFactory.PrepareProductOverviewModels(products));
+            model.AddRange(await _productModelFactory.PrepareProductOverviewModelsAsync(products));
 
             return View(model);
         }
@@ -213,29 +310,22 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region New (recently added) products page
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult NewProducts()
+        public virtual async Task<IActionResult> NewProducts()
         {
             if (!_catalogSettings.NewProductsEnabled)
                 return Content("");
 
-            var products = _productService.SearchProducts(
-                storeId: _storeContext.CurrentStore.Id,
-                visibleIndividuallyOnly: true,
-                markedAsNewOnly: true,
-                orderBy: ProductSortingEnum.CreatedOn,
-                pageSize: _catalogSettings.NewProductsNumber);
-
-            var model = new List<ProductOverviewModel>();
-            model.AddRange(_productModelFactory.PrepareProductOverviewModels(products));
+            var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;
+            var products = await _productService.GetProductsMarkedAsNewAsync(storeId);
+            var model = (await _productModelFactory.PrepareProductOverviewModelsAsync(products)).ToList();
 
             return View(model);
         }
 
-        public virtual IActionResult NewProductsRss()
+        public virtual async Task<IActionResult> NewProductsRss()
         {
             var feed = new RssFeed(
-                $"{_localizationService.GetLocalized(_storeContext.CurrentStore, x => x.Name)}: New products",
+                $"{await _localizationService.GetLocalizedAsync(await _storeContext.GetCurrentStoreAsync(), x => x.Name)}: New products",
                 "Information about products",
                 new Uri(_webHelper.GetStoreLocation()),
                 DateTime.UtcNow);
@@ -245,18 +335,15 @@ namespace TVProgViewer.WebUI.Controllers
 
             var items = new List<RssItem>();
 
-            var products = _productService.SearchProducts(
-                storeId: _storeContext.CurrentStore.Id,
-                visibleIndividuallyOnly: true,
-                markedAsNewOnly: true,
-                orderBy: ProductSortingEnum.CreatedOn,
-                pageSize: _catalogSettings.NewProductsNumber);
+            var storeId = (await _storeContext.GetCurrentStoreAsync()).Id;
+            var products = await _productService.GetProductsMarkedAsNewAsync(storeId);
+
             foreach (var product in products)
             {
-                var productUrl = Url.RouteUrl("Product", new { SeName = _urlRecordService.GetSeName(product) }, _webHelper.GetCurrentRequestProtocol());
-                var productName = _localizationService.GetLocalized(product, x => x.Name);
-                var productDescription = _localizationService.GetLocalized(product, x => x.ShortDescription);
-                var item = new RssItem(productName, productDescription, new Uri(productUrl), $"urn:store:{_storeContext.CurrentStore.Id}:newProducts:product:{product.Id}", product.CreatedOnUtc);
+                var productUrl = Url.RouteUrl("Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) }, _webHelper.GetCurrentRequestProtocol());
+                var productName = await _localizationService.GetLocalizedAsync(product, x => x.Name);
+                var productDescription = await _localizationService.GetLocalizedAsync(product, x => x.ShortDescription);
+                var item = new RssItem(productName, productDescription, new Uri(productUrl), $"urn:store:{(await _storeContext.GetCurrentStoreAsync()).Id}:newProducts:product:{product.Id}", product.CreatedOnUtc);
                 items.Add(item);
                 //uncomment below if you want to add RSS enclosure for pictures
                 //var picture = _pictureService.GetPicturesByProductId(product.Id, 1).FirstOrDefault();
@@ -275,31 +362,21 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Product reviews
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult ProductReviews(int productId)
+        public virtual async Task<IActionResult> ProductReviews(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted || !product.Published || !product.AllowUserReviews)
                 return RedirectToRoute("Homepage");
 
             var model = new ProductReviewsModel();
-            model = _productModelFactory.PrepareProductReviewsModel(model, product);
-            //only registered users can leave reviews
-            if (_userService.IsGuest(_workContext.CurrentUser) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
-                ModelState.AddModelError("", _localizationService.GetResource("Reviews.OnlyRegisteredUsersCanWriteReviews"));
+            model = await _productModelFactory.PrepareProductReviewsModelAsync(model, product);
 
-            if (_catalogSettings.ProductReviewPossibleOnlyAfterPurchasing)
-            {
-                var hasCompletedOrders = _orderService.SearchOrders(userId: _workContext.CurrentUser.Id,
-                    productId: productId,
-                    osIds: new List<long> { (long)OrderStatus.Complete },
-                    pageSize: 1).Any();
-                if (!hasCompletedOrders)
-                    ModelState.AddModelError(string.Empty, _localizationService.GetResource("Reviews.ProductReviewPossibleOnlyAfterPurchasing"));
-            }
+            await ValidateProductReviewAvailabilityAsync(product);
 
             //default value
             model.AddProductReview.Rating = _catalogSettings.DefaultProductRatingValue;
+
+            model.AddProductReview.CanAddNewReview = await _productService.CanAddReviewAsync(product.Id, (await _storeContext.GetCurrentStoreAsync()).Id);
 
             //default value for all additional review types
             if (model.ReviewTypeList.Count > 0)
@@ -311,35 +388,24 @@ namespace TVProgViewer.WebUI.Controllers
             return View(model);
         }
 
-        [HttpPost, ActionName("ProductReviews")]        
+        [HttpPost, ActionName("ProductReviews")]
         [FormValueRequired("add-review")]
         [ValidateCaptcha]
-        public virtual IActionResult ProductReviewsAdd(int productId, ProductReviewsModel model, bool captchaValid)
+        public virtual async Task<IActionResult> ProductReviewsAdd(int productId, ProductReviewsModel model, bool captchaValid)
         {
-            var product = _productService.GetProductById(productId);
-            if (product == null || product.Deleted || !product.Published || !product.AllowUserReviews)
+            var product = await _productService.GetProductByIdAsync(productId);
+
+            if (product == null || product.Deleted || !product.Published || !product.AllowUserReviews ||
+                !await _productService.CanAddReviewAsync(product.Id, (await _storeContext.GetCurrentStoreAsync()).Id))
                 return RedirectToRoute("Homepage");
 
             //validate CAPTCHA
             if (_captchaSettings.Enabled && _captchaSettings.ShowOnProductReviewPage && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
-            if (_userService.IsGuest(_workContext.CurrentUser) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
-            {
-                ModelState.AddModelError("", _localizationService.GetResource("Reviews.OnlyRegisteredUsersCanWriteReviews"));
-            }
-
-            if (_catalogSettings.ProductReviewPossibleOnlyAfterPurchasing)
-            {
-                var hasCompletedOrders = _orderService.SearchOrders(userId: _workContext.CurrentUser.Id,
-                    productId: productId,
-                    osIds: new List<long> { (long)OrderStatus.Complete },
-                    pageSize: 1).Any();
-                if (!hasCompletedOrders)
-                    ModelState.AddModelError(string.Empty, _localizationService.GetResource("Reviews.ProductReviewPossibleOnlyAfterPurchasing"));
-            }
+            await ValidateProductReviewAvailabilityAsync(product);
 
             if (ModelState.IsValid)
             {
@@ -352,7 +418,7 @@ namespace TVProgViewer.WebUI.Controllers
                 var productReview = new ProductReview
                 {
                     ProductId = product.Id,
-                    UserId = _workContext.CurrentUser.Id,
+                    UserId = (await _workContext.GetCurrentUserAsync()).Id,
                     Title = model.AddProductReview.Title,
                     ReviewText = model.AddProductReview.ReviewText,
                     Rating = rating,
@@ -360,10 +426,10 @@ namespace TVProgViewer.WebUI.Controllers
                     HelpfulNoTotal = 0,
                     IsApproved = isApproved,
                     CreatedOnUtc = DateTime.UtcNow,
-                    StoreId = _storeContext.CurrentStore.Id,
+                    StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
                 };
 
-                _productService.InsertProductReview(productReview);
+                await _productService.InsertProductReviewAsync(productReview);
 
                 //add product review and review type mapping                
                 foreach (var additionalReview in model.AddAdditionalProductReviewList)
@@ -375,87 +441,87 @@ namespace TVProgViewer.WebUI.Controllers
                         Rating = additionalReview.Rating
                     };
 
-                    _reviewTypeService.InsertProductReviewReviewTypeMappings(additionalProductReview);
+                    await _reviewTypeService.InsertProductReviewReviewTypeMappingsAsync(additionalProductReview);
                 }
 
                 //update product totals
-                _productService.UpdateProductReviewTotals(product);
+                await _productService.UpdateProductReviewTotalsAsync(product);
 
                 //notify store owner
                 if (_catalogSettings.NotifyStoreOwnerAboutNewProductReviews)
-                    _workflowMessageService.SendProductReviewNotificationMessage(productReview, _localizationSettings.DefaultAdminLanguageId);
+                    await _workflowMessageService.SendProductReviewNotificationMessageAsync(productReview, _localizationSettings.DefaultAdminLanguageId);
 
                 //activity log
-                _userActivityService.InsertActivity("PublicStore.AddProductReview",
-                    string.Format(_localizationService.GetResource("ActivityLog.PublicStore.AddProductReview"), product.Name), product);
+                await _userActivityService.InsertActivityAsync("PublicStore.AddProductReview",
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddProductReview"), product.Name), product);
 
                 //raise event
                 if (productReview.IsApproved)
-                    _eventPublisher.Publish(new ProductReviewApprovedEvent(productReview));
+                    await _eventPublisher.PublishAsync(new ProductReviewApprovedEvent(productReview));
 
-                model = _productModelFactory.PrepareProductReviewsModel(model, product);
+                model = await _productModelFactory.PrepareProductReviewsModelAsync(model, product);
                 model.AddProductReview.Title = null;
                 model.AddProductReview.ReviewText = null;
 
                 model.AddProductReview.SuccessfullyAdded = true;
                 if (!isApproved)
-                    model.AddProductReview.Result = _localizationService.GetResource("Reviews.SeeAfterApproving");
+                    model.AddProductReview.Result = await _localizationService.GetResourceAsync("Reviews.SeeAfterApproving");
                 else
-                    model.AddProductReview.Result = _localizationService.GetResource("Reviews.SuccessfullyAdded");
+                    model.AddProductReview.Result = await _localizationService.GetResourceAsync("Reviews.SuccessfullyAdded");
 
                 return View(model);
             }
 
             //If we got this far, something failed, redisplay form
-            model = _productModelFactory.PrepareProductReviewsModel(model, product);
+            model = await _productModelFactory.PrepareProductReviewsModelAsync(model, product);
             return View(model);
         }
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult SetProductReviewHelpfulness(int productReviewId, bool washelpful)
+        public virtual async Task<IActionResult> SetProductReviewHelpfulness(int productReviewId, bool washelpful)
         {
-            var productReview = _productService.GetProductReviewById(productReviewId);
+            var productReview = await _productService.GetProductReviewByIdAsync(productReviewId);
             if (productReview == null)
                 throw new ArgumentException("No product review found with the specified id");
 
-            if (_userService.IsGuest(_workContext.CurrentUser) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
+            if (await _userService.IsGuestAsync(await _workContext.GetCurrentUserAsync()) && !_catalogSettings.AllowAnonymousUsersToReviewProduct)
             {
                 return Json(new
                 {
-                    Result = _localizationService.GetResource("Reviews.Helpfulness.OnlyRegistered"),
+                    Result = await _localizationService.GetResourceAsync("Reviews.Helpfulness.OnlyRegistered"),
                     TotalYes = productReview.HelpfulYesTotal,
                     TotalNo = productReview.HelpfulNoTotal
                 });
             }
 
             //users aren't allowed to vote for their own reviews
-            if (productReview.UserId == _workContext.CurrentUser.Id)
+            if (productReview.UserId == (await _workContext.GetCurrentUserAsync()).Id)
             {
                 return Json(new
                 {
-                    Result = _localizationService.GetResource("Reviews.Helpfulness.YourOwnReview"),
+                    Result = await _localizationService.GetResourceAsync("Reviews.Helpfulness.YourOwnReview"),
                     TotalYes = productReview.HelpfulYesTotal,
                     TotalNo = productReview.HelpfulNoTotal
                 });
             }
 
-            _productService.SetProductReviewHelpfulness(productReview, washelpful);
+            await _productService.SetProductReviewHelpfulnessAsync(productReview, washelpful);
 
             //new totals
-            _productService.UpdateProductReviewHelpfulnessTotals(productReview);
+            await _productService.UpdateProductReviewHelpfulnessTotalsAsync(productReview);
 
             return Json(new
             {
-                Result = _localizationService.GetResource("Reviews.Helpfulness.SuccessfullyVoted"),
+                Result = await _localizationService.GetResourceAsync("Reviews.Helpfulness.SuccessfullyVoted"),
                 TotalYes = productReview.HelpfulYesTotal,
                 TotalNo = productReview.HelpfulNoTotal
             });
         }
 
-        public virtual IActionResult UserProductReviews(int? pageNumber)
+        public virtual async Task<IActionResult> UserProductReviews(int? pageNumber)
         {
-            if (_userService.IsGuest(_workContext.CurrentUser))
+            if (await _userService.IsGuestAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_catalogSettings.ShowProductReviewsTabOnAccountPage)
@@ -463,7 +529,8 @@ namespace TVProgViewer.WebUI.Controllers
                 return RedirectToRoute("UserInfo");
             }
 
-            var model = _productModelFactory.PrepareUserProductReviewsModel(pageNumber);
+            var model = await _productModelFactory.PrepareUserProductReviewsModelAsync(pageNumber);
+
             return View(model);
         }
 
@@ -471,56 +538,55 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Email a friend
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult ProductEmailAFriend(int productId)
+        public virtual async Task<IActionResult> ProductEmailAFriend(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted || !product.Published || !_catalogSettings.EmailAFriendEnabled)
                 return RedirectToRoute("Homepage");
 
             var model = new ProductEmailAFriendModel();
-            model = _productModelFactory.PrepareProductEmailAFriendModel(model, product, false);
+            model = await _productModelFactory.PrepareProductEmailAFriendModelAsync(model, product, false);
             return View(model);
         }
 
         [HttpPost, ActionName("ProductEmailAFriend")]
         [FormValueRequired("send-email")]
         [ValidateCaptcha]
-        public virtual IActionResult ProductEmailAFriendSend(ProductEmailAFriendModel model, bool captchaValid)
+        public virtual async Task<IActionResult> ProductEmailAFriendSend(ProductEmailAFriendModel model, bool captchaValid)
         {
-            var product = _productService.GetProductById(model.ProductId);
+            var product = await _productService.GetProductByIdAsync(model.ProductId);
             if (product == null || product.Deleted || !product.Published || !_catalogSettings.EmailAFriendEnabled)
                 return RedirectToRoute("Homepage");
 
             //validate CAPTCHA
             if (_captchaSettings.Enabled && _captchaSettings.ShowOnEmailProductToFriendPage && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
             //check whether the current user is guest and ia allowed to email a friend
-            if (_userService.IsGuest(_workContext.CurrentUser) && !_catalogSettings.AllowAnonymousUsersToEmailAFriend)
+            if (await _userService.IsGuestAsync(await _workContext.GetCurrentUserAsync()) && !_catalogSettings.AllowAnonymousUsersToEmailAFriend)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Products.EmailAFriend.OnlyRegisteredUsers"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Products.EmailAFriend.OnlyRegisteredUsers"));
             }
 
             if (ModelState.IsValid)
             {
                 //email
-                _workflowMessageService.SendProductEmailAFriendMessage(_workContext.CurrentUser,
-                        _workContext.WorkingLanguage.Id, product,
+                await _workflowMessageService.SendProductEmailAFriendMessageAsync(await _workContext.GetCurrentUserAsync(),
+                        (await _workContext.GetWorkingLanguageAsync()).Id, product,
                         model.YourEmailAddress, model.FriendEmail,
                         Core.Html.HtmlHelper.FormatText(model.PersonalMessage, false, true, false, false, false, false));
 
-                model = _productModelFactory.PrepareProductEmailAFriendModel(model, product, true);
+                model = await _productModelFactory.PrepareProductEmailAFriendModelAsync(model, product, true);
                 model.SuccessfullySent = true;
-                model.Result = _localizationService.GetResource("Products.EmailAFriend.SuccessfullySent");
+                model.Result = await _localizationService.GetResourceAsync("Products.EmailAFriend.SuccessfullySent");
 
                 return View(model);
             }
 
             //If we got this far, something failed, redisplay form
-            model = _productModelFactory.PrepareProductEmailAFriendModel(model, product, true);
+            model = await _productModelFactory.PrepareProductEmailAFriendModelAsync(model, product, true);
             return View(model);
         }
 
@@ -530,9 +596,9 @@ namespace TVProgViewer.WebUI.Controllers
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult AddProductToCompareList(int productId)
+        public virtual async Task<IActionResult> AddProductToCompareList(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted || !product.Published)
                 return Json(new
                 {
@@ -547,37 +613,36 @@ namespace TVProgViewer.WebUI.Controllers
                     message = "Product comparison is disabled"
                 });
 
-            _compareProductsService.AddProductToCompareList(productId);
+            await _compareProductsService.AddProductToCompareListAsync(productId);
 
             //activity log
-            _userActivityService.InsertActivity("PublicStore.AddToCompareList",
-                string.Format(_localizationService.GetResource("ActivityLog.PublicStore.AddToCompareList"), product.Name), product);
+            await _userActivityService.InsertActivityAsync("PublicStore.AddToCompareList",
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToCompareList"), product.Name), product);
 
             return Json(new
             {
                 success = true,
-                message = string.Format(_localizationService.GetResource("Products.ProductHasBeenAddedToCompareList.Link"), Url.RouteUrl("CompareProducts"))
+                message = string.Format(await _localizationService.GetResourceAsync("Products.ProductHasBeenAddedToCompareList.Link"), Url.RouteUrl("CompareProducts"))
                 //use the code below (commented) if you want a user to be automatically redirected to the compare products page
                 //redirect = Url.RouteUrl("CompareProducts"),
             });
         }
 
-        public virtual IActionResult RemoveProductFromCompareList(int productId)
+        public virtual async Task<IActionResult> RemoveProductFromCompareList(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null)
                 return RedirectToRoute("Homepage");
 
             if (!_catalogSettings.CompareProductsEnabled)
                 return RedirectToRoute("Homepage");
 
-            _compareProductsService.RemoveProductFromCompareList(productId);
+            await _compareProductsService.RemoveProductFromCompareListAsync(productId);
 
             return RedirectToRoute("CompareProducts");
         }
 
-        [HttpsRequirement(SslRequirement.No)]
-        public virtual IActionResult CompareProducts()
+        public virtual async Task<IActionResult> CompareProducts()
         {
             if (!_catalogSettings.CompareProductsEnabled)
                 return RedirectToRoute("Homepage");
@@ -588,17 +653,17 @@ namespace TVProgViewer.WebUI.Controllers
                 IncludeFullDescriptionInCompareProducts = _catalogSettings.IncludeFullDescriptionInCompareProducts,
             };
 
-            var products = _compareProductsService.GetComparedProducts();
-
+            var products = await (await _compareProductsService.GetComparedProductsAsync())
             //ACL and store mapping
-            products = products.Where(p => _aclService.Authorize(p) && _storeMappingService.Authorize(p)).ToList();
+            .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            products = products.Where(p => _productService.ProductIsAvailable(p)).ToList();
+            .Where(p => _productService.ProductIsAvailable(p)).ToListAsync();
 
             //prepare model
-            _productModelFactory.PrepareProductOverviewModels(products, prepareSpecificationAttributes: true)
+            (await _productModelFactory.PrepareProductOverviewModelsAsync(products, prepareSpecificationAttributes: true))
                 .ToList()
                 .ForEach(model.Products.Add);
+
             return View(model);
         }
 

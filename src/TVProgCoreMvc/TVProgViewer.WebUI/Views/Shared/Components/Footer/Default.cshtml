@@ -83,13 +83,13 @@
             <span class="footer-disclaimer">&copy; 2012 — @DateTime.Now.Year TVProgViewer. Все права защищены</span>
             @if (Model.DisplayTaxShippingInfoFooter)
             {
-                var inclTax = workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
                 <span class="footer-tax-shipping">
-                    @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", Url.RouteUrl("Topic", new {SeName = Html.GetTopicSeName("shippinginfo")}))
+                    @T(inclTax ? "Footer.TaxShipping.InclTax" : "Footer.TaxShipping.ExclTax", Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("shippinginfo") }))
                 </span>
             }
         </div>
-        @if (!Model.HidePoweredByTvProg)
+        @if (!Model.HidePoweredByTvProgViewer)
         {
             <div class="footer-powered-by">
                 @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?

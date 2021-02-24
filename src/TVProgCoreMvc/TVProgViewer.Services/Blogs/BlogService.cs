@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Blogs;
 using TVProgViewer.Core.Domain.Catalog;
-using TVProgViewer.Core.Domain.Stores;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
-using TVProgViewer.Services.Events;
+using TVProgViewer.Services.Stores;
+
 
 namespace TVProgViewer.Services.Blogs
 {
@@ -21,29 +20,26 @@ namespace TVProgViewer.Services.Blogs
         #region Fields
 
         private readonly CatalogSettings _catalogSettings;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<BlogComment> _blogCommentRepository;
         private readonly IRepository<BlogPost> _blogPostRepository;
-        private readonly IRepository<StoreMapping> _storeMappingRepository;
-        private readonly IStaticCacheManager _cacheManager;
+        private readonly IStaticCacheManager _staticCacheManager;
+        private readonly IStoreMappingService _storeMappingService;
 
         #endregion
 
         #region Ctor
 
         public BlogService(CatalogSettings catalogSettings,
-            IEventPublisher eventPublisher,
             IRepository<BlogComment> blogCommentRepository,
             IRepository<BlogPost> blogPostRepository,
-            IRepository<StoreMapping> storeMappingRepository,
-            IStaticCacheManager cacheManager)
+            IStaticCacheManager staticCacheManager,
+            IStoreMappingService storeMappingService)
         {
             _catalogSettings = catalogSettings;
-            _eventPublisher = eventPublisher;
             _blogCommentRepository = blogCommentRepository;
             _blogPostRepository = blogPostRepository;
-            _storeMappingRepository = storeMappingRepository;
-            _cacheManager = cacheManager;
+            _staticCacheManager = staticCacheManager;
+            _storeMappingService = storeMappingService;
         }
 
         #endregion
@@ -56,15 +52,9 @@ namespace TVProgViewer.Services.Blogs
         /// Deletes a blog post
         /// </summary>
         /// <param name="blogPost">Blog post</param>
-        public virtual void DeleteBlogPost(BlogPost blogPost)
+        public virtual async Task DeleteBlogPostAsync(BlogPost blogPost)
         {
-            if (blogPost == null)
-                throw new ArgumentNullException(nameof(blogPost));
-
-            _blogPostRepository.Delete(blogPost);
-
-            //event notification
-            _eventPublisher.EntityDeleted(blogPost);
+            await _blogPostRepository.DeleteAsync(blogPost);
         }
 
         /// <summary>
@@ -72,12 +62,9 @@ namespace TVProgViewer.Services.Blogs
         /// </summary>
         /// <param name="blogPostId">Blog post identifier</param>
         /// <returns>Blog post</returns>
-        public virtual BlogPost GetBlogPostById(int blogPostId)
+        public virtual async Task<BlogPost> GetBlogPostByIdAsync(int blogPostId)
         {
-            if (blogPostId == 0)
-                return null;
-
-            return _blogPostRepository.ToCachedGetById(blogPostId);
+            return await _blogPostRepository.GetByIdAsync(blogPostId, cache => default);
         }
 
         /// <summary>
@@ -90,41 +77,40 @@ namespace TVProgViewer.Services.Blogs
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
+        /// <param name="title">Filter by blog post title</param>
         /// <returns>Blog posts</returns>
-        public virtual IPagedList<BlogPost> GetAllBlogPosts(int storeId = 0, int languageId = 0,
+        public virtual async Task<IPagedList<BlogPost>> GetAllBlogPostsAsync(int storeId = 0, int languageId = 0,
             DateTime? dateFrom = null, DateTime? dateTo = null,
-            int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
+            int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false, string title = null)
         {
-            var query = _blogPostRepository.Table;
-            if (dateFrom.HasValue)
-                query = query.Where(b => dateFrom.Value <= (b.StartDateUtc ?? b.CreatedOnUtc));
-            if (dateTo.HasValue)
-                query = query.Where(b => dateTo.Value >= (b.StartDateUtc ?? b.CreatedOnUtc));
-            if (languageId > 0)
-                query = query.Where(b => languageId == b.LanguageId);
-            if (!showHidden)
+            return await _blogPostRepository.GetAllPagedAsync(async query =>
             {
-                query = query.Where(b => !b.StartDateUtc.HasValue || b.StartDateUtc <= DateTime.UtcNow);
-                query = query.Where(b => !b.EndDateUtc.HasValue || b.EndDateUtc >= DateTime.UtcNow);
-            }
+                if (dateFrom.HasValue)
+                    query = query.Where(b => dateFrom.Value <= (b.StartDateUtc ?? b.CreatedOnUtc));
 
-            if (storeId > 0 && !_catalogSettings.IgnoreStoreLimitations)
-            {
+                if (dateTo.HasValue)
+                    query = query.Where(b => dateTo.Value >= (b.StartDateUtc ?? b.CreatedOnUtc));
+
+                if (languageId > 0)
+                    query = query.Where(b => languageId == b.LanguageId);
+
+                if (!string.IsNullOrEmpty(title))
+                    query = query.Where(b => b.Title.Contains(title));
+
+                if (!showHidden)
+                {
+                    query = query.Where(b => !b.StartDateUtc.HasValue || b.StartDateUtc <= DateTime.UtcNow);
+                    query = query.Where(b => !b.EndDateUtc.HasValue || b.EndDateUtc >= DateTime.UtcNow);
+                }
+
                 //Store mapping
-                query = from bp in query
-                        join sm in _storeMappingRepository.Table
-                        on new { c1 = bp.Id, c2 = nameof(BlogPost) } equals new { c1 = sm.EntityId, c2 = sm.EntityName } into bp_sm
-                        from sm in bp_sm.DefaultIfEmpty()
-                        where !bp.LimitedToStores || storeId == sm.StoreId
-                        select bp;
+                if (!_catalogSettings.IgnoreStoreLimitations && await _storeMappingService.IsEntityMappingExistsAsync<BlogPost>(storeId))
+                    query = query.Where(_storeMappingService.ApplyStoreMapping<BlogPost>(storeId));
 
-                query = query.Distinct();
-            }
+                query = query.OrderByDescending(b => b.StartDateUtc ?? b.CreatedOnUtc);
 
-            query = query.OrderByDescending(b => b.StartDateUtc ?? b.CreatedOnUtc);
-
-            var blogPosts = new PagedList<BlogPost>(query, pageIndex, pageSize);
-            return blogPosts;
+                return query;
+            }, pageIndex, pageSize);
         }
 
         /// <summary>
@@ -137,18 +123,18 @@ namespace TVProgViewer.Services.Blogs
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>Blog posts</returns>
-        public virtual IPagedList<BlogPost> GetAllBlogPostsByTag(int storeId = 0,
+        public virtual async Task<IPagedList<BlogPost>> GetAllBlogPostsByTagAsync(int storeId = 0,
             int languageId = 0, string tag = "",
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
         {
             tag = tag.Trim();
 
             //we load all records and only then filter them by tag
-            var blogPostsAll = GetAllBlogPosts(storeId: storeId, languageId: languageId, showHidden: showHidden);
+            var blogPostsAll = await GetAllBlogPostsAsync(storeId: storeId, languageId: languageId, showHidden: showHidden);
             var taggedBlogPosts = new List<BlogPost>();
             foreach (var blogPost in blogPostsAll)
             {
-                var tags = ParseTags(blogPost);
+                var tags = await ParseTagsAsync(blogPost);
                 if (!string.IsNullOrEmpty(tags.FirstOrDefault(t => t.Equals(tag, StringComparison.InvariantCultureIgnoreCase))))
                     taggedBlogPosts.Add(blogPost);
             }
@@ -165,19 +151,19 @@ namespace TVProgViewer.Services.Blogs
         /// <param name="languageId">Language identifier. 0 if you want to get all blog posts</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>Blog post tags</returns>
-        public virtual IList<BlogPostTag> GetAllBlogPostTags(int storeId, int languageId, bool showHidden = false)
+        public virtual async Task<IList<BlogPostTag>> GetAllBlogPostTagsAsync(int storeId, int languageId, bool showHidden = false)
         {
-            var cacheKey = TvProgBlogsCachingDefaults.BlogTagsModelCacheKey.FillCacheKey(languageId, storeId);
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgBlogsDefaults.BlogTagsCacheKey, languageId, storeId, showHidden);
 
-            var blogPostTags = _cacheManager.Get(cacheKey, () =>
+            var blogPostTags = await _staticCacheManager.GetAsync(cacheKey, async () =>
             {
                 var rezBlogPostTags = new List<BlogPostTag>();
 
-                var blogPosts = GetAllBlogPosts(storeId, languageId, showHidden: showHidden);
+                var blogPosts = await GetAllBlogPostsAsync(storeId, languageId, showHidden: showHidden);
 
                 foreach (var blogPost in blogPosts)
                 {
-                    var tags = ParseTags(blogPost);
+                    var tags = await ParseTagsAsync(blogPost);
                     foreach (var tag in tags)
                     {
                         var foundBlogPostTag = rezBlogPostTags.Find(bpt =>
@@ -200,37 +186,24 @@ namespace TVProgViewer.Services.Blogs
             });
 
             return blogPostTags;
-
         }
 
         /// <summary>
         /// Inserts a blog post
         /// </summary>
         /// <param name="blogPost">Blog post</param>
-        public virtual void InsertBlogPost(BlogPost blogPost)
+        public virtual async Task InsertBlogPostAsync(BlogPost blogPost)
         {
-            if (blogPost == null)
-                throw new ArgumentNullException(nameof(blogPost));
-
-            _blogPostRepository.Insert(blogPost);
-
-            //event notification
-            _eventPublisher.EntityInserted(blogPost);
+            await _blogPostRepository.InsertAsync(blogPost);
         }
 
         /// <summary>
         /// Updates the blog post
         /// </summary>
         /// <param name="blogPost">Blog post</param>
-        public virtual void UpdateBlogPost(BlogPost blogPost)
+        public virtual async Task UpdateBlogPostAsync(BlogPost blogPost)
         {
-            if (blogPost == null)
-                throw new ArgumentNullException(nameof(blogPost));
-
-            _blogPostRepository.Update(blogPost);
-
-            //event notification
-            _eventPublisher.EntityUpdated(blogPost);
+            await _blogPostRepository.UpdateAsync(blogPost);
         }
 
         /// <summary>
@@ -240,14 +213,16 @@ namespace TVProgViewer.Services.Blogs
         /// <param name="dateFrom">Date from</param>
         /// <param name="dateTo">Date to</param>
         /// <returns>Filtered posts</returns>
-        public virtual IList<BlogPost> GetPostsByDate(IList<BlogPost> blogPosts, DateTime dateFrom, DateTime dateTo)
+        public virtual async Task<IList<BlogPost>> GetPostsByDateAsync(IList<BlogPost> blogPosts, DateTime dateFrom, DateTime dateTo)
         {
             if (blogPosts == null)
                 throw new ArgumentNullException(nameof(blogPosts));
 
-            return blogPosts
+            var rez = await blogPosts
                 .Where(p => dateFrom.Date <= (p.StartDateUtc ?? p.CreatedOnUtc) && (p.StartDateUtc ?? p.CreatedOnUtc).Date <= dateTo)
-                .ToList();
+                .ToListAsync();
+
+            return rez;
         }
 
         /// <summary>
@@ -255,7 +230,7 @@ namespace TVProgViewer.Services.Blogs
         /// </summary>
         /// <param name="blogPost">Blog post</param>
         /// <returns>Tags</returns>
-        public virtual IList<string> ParseTags(BlogPost blogPost) 
+        public virtual async Task<IList<string>> ParseTagsAsync(BlogPost blogPost)
         {
             if (blogPost == null)
                 throw new ArgumentNullException(nameof(blogPost));
@@ -263,9 +238,10 @@ namespace TVProgViewer.Services.Blogs
             if (blogPost.Tags == null)
                 return new List<string>();
 
-            var tags = blogPost.Tags.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            var tags = await blogPost.Tags.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(tag => tag.Trim())
-                .Where(tag => !string.IsNullOrEmpty(tag)).ToList();
+                .Where(tag => !string.IsNullOrEmpty(tag))
+                .ToListAsync();
 
             return tags;
         }
@@ -297,7 +273,7 @@ namespace TVProgViewer.Services.Blogs
         /// <summary>
         /// Gets all comments
         /// </summary>
-        /// <param name="UserId">User identifier; 0 to load all records</param>
+        /// <param name="userId">User identifier; 0 to load all records</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
         /// <param name="blogPostId">Blog post ID; 0 or null to load all records</param>
         /// <param name="approved">A value indicating whether to content is approved; null to load all records</param> 
@@ -305,35 +281,36 @@ namespace TVProgViewer.Services.Blogs
         /// <param name="toUtc">Item creation to; null to load all records</param>
         /// <param name="commentText">Search comment text; null to load all records</param>
         /// <returns>Comments</returns>
-        public virtual IList<BlogComment> GetAllComments(int UserId = 0, int storeId = 0, int? blogPostId = null,
+        public virtual async Task<IList<BlogComment>> GetAllCommentsAsync(int userId = 0, int storeId = 0, int? blogPostId = null,
             bool? approved = null, DateTime? fromUtc = null, DateTime? toUtc = null, string commentText = null)
         {
-            var query = _blogCommentRepository.Table;
+            return await _blogCommentRepository.GetAllAsync(query =>
+            {
+                if (approved.HasValue)
+                    query = query.Where(comment => comment.IsApproved == approved);
 
-            if (approved.HasValue)
-                query = query.Where(comment => comment.IsApproved == approved);
+                if (blogPostId > 0)
+                    query = query.Where(comment => comment.BlogPostId == blogPostId);
 
-            if (blogPostId > 0)
-                query = query.Where(comment => comment.BlogPostId == blogPostId);
+                if (userId > 0)
+                    query = query.Where(comment => comment.UserId == userId);
 
-            if (UserId > 0)
-                query = query.Where(comment => comment.UserId == UserId);
+                if (storeId > 0)
+                    query = query.Where(comment => comment.StoreId == storeId);
 
-            if (storeId > 0)
-                query = query.Where(comment => comment.StoreId == storeId);
+                if (fromUtc.HasValue)
+                    query = query.Where(comment => fromUtc.Value <= comment.CreatedOnUtc);
 
-            if (fromUtc.HasValue)
-                query = query.Where(comment => fromUtc.Value <= comment.CreatedOnUtc);
+                if (toUtc.HasValue)
+                    query = query.Where(comment => toUtc.Value >= comment.CreatedOnUtc);
 
-            if (toUtc.HasValue)
-                query = query.Where(comment => toUtc.Value >= comment.CreatedOnUtc);
+                if (!string.IsNullOrEmpty(commentText))
+                    query = query.Where(c => c.CommentText.Contains(commentText));
 
-            if (!string.IsNullOrEmpty(commentText))
-                query = query.Where(c => c.CommentText.Contains(commentText));
+                query = query.OrderBy(comment => comment.CreatedOnUtc);
 
-            query = query.OrderBy(comment => comment.CreatedOnUtc);
-
-            return query.ToList();
+                return query;
+            });
         }
 
         /// <summary>
@@ -341,12 +318,9 @@ namespace TVProgViewer.Services.Blogs
         /// </summary>
         /// <param name="blogCommentId">Blog comment identifier</param>
         /// <returns>Blog comment</returns>
-        public virtual BlogComment GetBlogCommentById(int blogCommentId)
+        public virtual async Task<BlogComment> GetBlogCommentByIdAsync(int blogCommentId)
         {
-            if (blogCommentId == 0)
-                return null;
-
-            return _blogCommentRepository.ToCachedGetById(blogCommentId);
+            return await _blogCommentRepository.GetByIdAsync(blogCommentId, cache => default);
         }
 
         /// <summary>
@@ -354,25 +328,9 @@ namespace TVProgViewer.Services.Blogs
         /// </summary>
         /// <param name="commentIds">Blog comment identifiers</param>
         /// <returns>Blog comments</returns>
-        public virtual IList<BlogComment> GetBlogCommentsByIds(int[] commentIds)
+        public virtual async Task<IList<BlogComment>> GetBlogCommentsByIdsAsync(int[] commentIds)
         {
-            if (commentIds == null || commentIds.Length == 0)
-                return new List<BlogComment>();
-
-            var query = from bc in _blogCommentRepository.Table
-                        where commentIds.Contains(bc.Id)
-                        select bc;
-            var comments = query.ToList();
-            //sort by passed identifiers
-            var sortedComments = new List<BlogComment>();
-            foreach (var id in commentIds)
-            {
-                var comment = comments.Find(x => x.Id == id);
-                if (comment != null)
-                    sortedComments.Add(comment);
-            }
-
-            return sortedComments;
+            return await _blogCommentRepository.GetByIdsAsync(commentIds);
         }
 
         /// <summary>
@@ -382,7 +340,7 @@ namespace TVProgViewer.Services.Blogs
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
         /// <param name="isApproved">A value indicating whether to count only approved or not approved comments; pass null to get number of all comments</param>
         /// <returns>Number of blog comments</returns>
-        public virtual int GetBlogCommentsCount(BlogPost blogPost, int storeId = 0, bool? isApproved = null)
+        public virtual async Task<int> GetBlogCommentsCountAsync(BlogPost blogPost, int storeId = 0, bool? isApproved = null)
         {
             var query = _blogCommentRepository.Table.Where(comment => comment.BlogPostId == blogPost.Id);
 
@@ -392,54 +350,45 @@ namespace TVProgViewer.Services.Blogs
             if (isApproved.HasValue)
                 query = query.Where(comment => comment.IsApproved == isApproved.Value);
 
-            var cacheKey = TvProgBlogsCachingDefaults.BlogCommentsNumberCacheKey.FillCacheKey(blogPost, storeId, true);
-            
-            return _cacheManager.Get(cacheKey, () => query.Count());
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgBlogsDefaults.BlogCommentsNumberCacheKey, blogPost, storeId, isApproved);
+
+            return await _staticCacheManager.GetAsync(cacheKey, async () => await query.CountAsync());
         }
 
         /// <summary>
         /// Deletes a blog comment
         /// </summary>
         /// <param name="blogComment">Blog comment</param>
-        public virtual void DeleteBlogComment(BlogComment blogComment)
+        public virtual async Task DeleteBlogCommentAsync(BlogComment blogComment)
         {
-            if (blogComment == null)
-                throw new ArgumentNullException(nameof(blogComment));
-
-            _blogCommentRepository.Delete(blogComment);
-
-            //event notification
-            _eventPublisher.EntityDeleted(blogComment);
+            await _blogCommentRepository.DeleteAsync(blogComment);
         }
 
         /// <summary>
         /// Deletes blog comments
         /// </summary>
         /// <param name="blogComments">Blog comments</param>
-        public virtual void DeleteBlogComments(IList<BlogComment> blogComments)
+        public virtual async Task DeleteBlogCommentsAsync(IList<BlogComment> blogComments)
         {
-            if (blogComments == null)
-                throw new ArgumentNullException(nameof(blogComments));
-
-            foreach (var blogComment in blogComments)
-            {
-                DeleteBlogComment(blogComment);
-            }
+            await _blogCommentRepository.DeleteAsync(blogComments);
         }
 
         /// <summary>
         /// Inserts a blog comment
         /// </summary>
         /// <param name="blogComment">Blog comment</param>
-        public virtual void InsertBlogComment(BlogComment blogComment)
+        public virtual async Task InsertBlogCommentAsync(BlogComment blogComment)
         {
-            if (blogComment == null)
-                throw new ArgumentNullException(nameof(blogComment));
+            await _blogCommentRepository.InsertAsync(blogComment);
+        }
 
-            _blogCommentRepository.Insert(blogComment);
-
-            //event notification
-            _eventPublisher.EntityInserted(blogComment);
+        /// <summary>
+        /// Update a blog comment
+        /// </summary>
+        /// <param name="blogComment">Blog comment</param>
+        public virtual async Task UpdateBlogCommentAsync(BlogComment blogComment)
+        {
+            await _blogCommentRepository.UpdateAsync(blogComment);
         }
 
         #endregion

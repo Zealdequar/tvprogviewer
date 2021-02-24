@@ -83,9 +83,8 @@ namespace TVProgViewer.Core
         /// <summary>
         /// Restart application domain
         /// </summary>
-        /// <param name="makeRedirect">A value indicating whether we should made redirection after restart</param>
-        void RestartAppDomain(bool makeRedirect = false);
-        
+        void RestartAppDomain();
+
         /// <summary>
         /// Gets a value that indicates whether the client is being redirected to a new location
         /// </summary>

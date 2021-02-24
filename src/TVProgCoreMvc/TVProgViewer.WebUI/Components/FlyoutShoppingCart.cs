@@ -3,6 +3,7 @@ using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Services.Security;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -21,15 +22,15 @@ namespace TVProgViewer.WebUI.Components
             _shoppingCartSettings = shoppingCartSettings;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             if (!_shoppingCartSettings.MiniShoppingCartEnabled)
                 return Content("");
 
-            if (!_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.EnableShoppingCart))
                 return Content("");
 
-            var model = _shoppingCartModelFactory.PrepareMiniShoppingCartModel();
+            var model = await _shoppingCartModelFactory.PrepareMiniShoppingCartModelAsync();
             return View(model);
         }
     }

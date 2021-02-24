@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -17,16 +18,17 @@ namespace TVProgViewer.WebUI.Components
             _catalogModelFactory = catalogModelFactory;
         }
 
-        public IViewComponentResult Invoke(int currentManufacturerId)
+        public async Task<IViewComponentResult> InvokeAsync(int currentManufacturerId)
         {
             if (_catalogSettings.ManufacturersBlockItemsToDisplay == 0)
                 return Content("");
 
-            var model = _catalogModelFactory.PrepareManufacturerNavigationModel(currentManufacturerId);
+            var model = await _catalogModelFactory.PrepareManufacturerNavigationModelAsync(currentManufacturerId);
             if (!model.Manufacturers.Any())
                 return Content("");
 
             return View(model);
+
         }
     }
 }

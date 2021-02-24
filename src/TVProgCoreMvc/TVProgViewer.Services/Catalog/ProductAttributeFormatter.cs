@@ -10,6 +10,7 @@ using TVProgViewer.Services.Directory;
 using TVProgViewer.Services.Localization;
 using TVProgViewer.Services.Media;
 using TVProgViewer.Services.Tax;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Catalog
 {
@@ -71,10 +72,10 @@ namespace TVProgViewer.Services.Catalog
         /// <param name="product">Product</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Attributes</returns>
-        public virtual string FormatAttributes(Product product, string attributesXml)
+        public virtual async Task<string> FormatAttributesAsync(Product product, string attributesXml)
         {
-            var customer = _workContext.CurrentUser;
-            return FormatAttributes(product, attributesXml, customer);
+            var user = await _workContext.GetCurrentUserAsync();
+            return await FormatAttributesAsync(product, attributesXml, user);
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="product">Product</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="customer">User</param>
+        /// <param name="user">User</param>
         /// <param name="separator">Separator</param>
         /// <param name="htmlEncode">A value indicating whether to encode (HTML) values</param>
         /// <param name="renderPrices">A value indicating whether to render prices</param>
@@ -90,8 +91,8 @@ namespace TVProgViewer.Services.Catalog
         /// <param name="renderGiftCardAttributes">A value indicating whether to render gift card attributes</param>
         /// <param name="allowHyperlinks">A value indicating whether to HTML hyperink tags could be rendered (if required)</param>
         /// <returns>Attributes</returns>
-        public virtual string FormatAttributes(Product product, string attributesXml,
-            User customer, string separator = "<br />", bool htmlEncode = true, bool renderPrices = true,
+        public virtual async Task<string> FormatAttributesAsync(Product product, string attributesXml,
+            User user, string separator = "<br />", bool htmlEncode = true, bool renderPrices = true,
             bool renderProductAttributes = true, bool renderGiftCardAttributes = true,
             bool allowHyperlinks = true)
         {
@@ -100,10 +101,10 @@ namespace TVProgViewer.Services.Catalog
             //attributes
             if (renderProductAttributes)
             {
-                foreach (var attribute in _productAttributeParser.ParseProductAttributeMappings(attributesXml))
+                foreach (var attribute in await _productAttributeParser.ParseProductAttributeMappingsAsync(attributesXml))
                 {
-                    var productAttrubute = _productAttributeService.GetProductAttributeById(attribute.ProductAttributeId);
-                    var attributeName = _localizationService.GetLocalized(productAttrubute, a => a.Name, _workContext.WorkingLanguage.Id);
+                    var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(attribute.ProductAttributeId);
+                    var attributeName = await _localizationService.GetLocalizedAsync(productAttribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id);
 
                     //attributes without values
                     if (!attribute.ShouldHaveValues())
@@ -124,7 +125,7 @@ namespace TVProgViewer.Services.Catalog
                             {
                                 //file upload
                                 Guid.TryParse(value, out var downloadGuid);
-                                var download = _downloadService.GetDownloadByGuid(downloadGuid);
+                                var download = await _downloadService.GetDownloadByGuidAsync(downloadGuid);
                                 if (download != null)
                                 {
                                     var fileName = $"{download.Filename ?? download.DownloadGuid.ToString()}{download.Extension}";
@@ -133,7 +134,6 @@ namespace TVProgViewer.Services.Catalog
                                     if (htmlEncode)
                                         fileName = WebUtility.HtmlEncode(fileName);
 
-                                    //TODO add a method for getting URL (use routing because it handles all SEO friendly URLs)
                                     var attributeText = allowHyperlinks ? $"<a href=\"{_webHelper.GetStoreLocation(false)}download/getfileupload/?downloadId={download.DownloadGuid}\" class=\"fileuploadattribute\">{fileName}</a>"
                                         : fileName;
 
@@ -165,9 +165,9 @@ namespace TVProgViewer.Services.Catalog
                     //product attribute values
                     else
                     {
-                        foreach (var attributeValue in _productAttributeParser.ParseProductAttributeValues(attributesXml, attribute.Id))
+                        foreach (var attributeValue in await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml, attribute.Id))
                         {
-                            var formattedAttribute = $"{attributeName}: {_localizationService.GetLocalized(attributeValue, a => a.Name, _workContext.WorkingLanguage.Id)}";
+                            var formattedAttribute = $"{attributeName}: {await _localizationService.GetLocalizedAsync(attributeValue, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id)}";
 
                             if (renderPrices)
                             {
@@ -176,33 +176,33 @@ namespace TVProgViewer.Services.Catalog
                                     if (attributeValue.PriceAdjustment > decimal.Zero)
                                     {
                                         formattedAttribute += string.Format(
-                                                _localizationService.GetResource("FormattedAttributes.PriceAdjustment"),
+                                                await _localizationService.GetResourceAsync("FormattedAttributes.PriceAdjustment"),
                                                 "+", attributeValue.PriceAdjustment.ToString("G29"), "%");
                                     }
                                     else if (attributeValue.PriceAdjustment < decimal.Zero)
                                     {
                                         formattedAttribute += string.Format(
-                                                _localizationService.GetResource("FormattedAttributes.PriceAdjustment"),
+                                                await _localizationService.GetResourceAsync("FormattedAttributes.PriceAdjustment"),
                                                 string.Empty, attributeValue.PriceAdjustment.ToString("G29"), "%");
                                     }
                                 }
                                 else
                                 {
-                                    var attributeValuePriceAdjustment = _priceCalculationService.GetProductAttributeValuePriceAdjustment(product, attributeValue, customer);
-                                    var priceAdjustmentBase = _taxService.GetProductPrice(product, attributeValuePriceAdjustment, customer, out var _);
-                                    var priceAdjustment = _currencyService.ConvertFromPrimaryStoreCurrency(priceAdjustmentBase, new Core.Domain.Directory.Currency());
+                                    var attributeValuePriceAdjustment = await _priceCalculationService.GetProductAttributeValuePriceAdjustmentAsync(product, attributeValue, user);
+                                    var (priceAdjustmentBase, _) = await _taxService.GetProductPriceAsync(product, attributeValuePriceAdjustment, user);
+                                    var priceAdjustment = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(priceAdjustmentBase, await _workContext.GetWorkingCurrencyAsync());
 
                                     if (priceAdjustmentBase > decimal.Zero)
                                     {
                                         formattedAttribute += string.Format(
-                                                _localizationService.GetResource("FormattedAttributes.PriceAdjustment"),
-                                                "+", _priceFormatter.FormatPrice(priceAdjustment, false, false), string.Empty);
+                                                await _localizationService.GetResourceAsync("FormattedAttributes.PriceAdjustment"),
+                                                "+", await _priceFormatter.FormatPriceAsync(priceAdjustment, false, false), string.Empty);
                                     }
                                     else if (priceAdjustmentBase < decimal.Zero)
                                     {
                                         formattedAttribute += string.Format(
-                                                _localizationService.GetResource("FormattedAttributes.PriceAdjustment"),
-                                                "-", _priceFormatter.FormatPrice(-priceAdjustment, false, false), string.Empty);
+                                                await _localizationService.GetResourceAsync("FormattedAttributes.PriceAdjustment"),
+                                                "-", await _priceFormatter.FormatPriceAsync(-priceAdjustment, false, false), string.Empty);
                                     }
                                 }
                             }
@@ -212,7 +212,7 @@ namespace TVProgViewer.Services.Catalog
                             {
                                 //render only when more than 1
                                 if (attributeValue.Quantity > 1)
-                                    formattedAttribute += string.Format(_localizationService.GetResource("ProductAttributes.Quantity"), attributeValue.Quantity);
+                                    formattedAttribute += string.Format(await _localizationService.GetResourceAsync("ProductAttributes.Quantity"), attributeValue.Quantity);
                             }
 
                             //encode (if required)
@@ -241,12 +241,12 @@ namespace TVProgViewer.Services.Catalog
 
             //sender
             var giftCardFrom = product.GiftCardType == GiftCardType.Virtual ?
-                string.Format(_localizationService.GetResource("GiftCardAttribute.From.Virtual"), giftCardSenderName, giftCardSenderEmail) :
-                string.Format(_localizationService.GetResource("GiftCardAttribute.From.Physical"), giftCardSenderName);
+                string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.From.Virtual"), giftCardSenderName, giftCardSenderEmail) :
+                string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.From.Physical"), giftCardSenderName);
             //recipient
             var giftCardFor = product.GiftCardType == GiftCardType.Virtual ?
-                string.Format(_localizationService.GetResource("GiftCardAttribute.For.Virtual"), giftCardRecipientName, giftCardRecipientEmail) :
-                string.Format(_localizationService.GetResource("GiftCardAttribute.For.Physical"), giftCardRecipientName);
+                string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.For.Virtual"), giftCardRecipientName, giftCardRecipientEmail) :
+                string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.For.Physical"), giftCardRecipientName);
 
             //encode (if required)
             if (htmlEncode)

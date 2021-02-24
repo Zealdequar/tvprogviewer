@@ -7,7 +7,7 @@ namespace TVProgViewer.Core.Configuration
     /// <summary>
     /// Represents startup hosting configuration parameters
     /// </summary>
-    public partial class HostingConfig
+    public partial class HostingConfig : IConfig
     {
         /// <summary>
         /// Gets or sets custom forwarded HTTP header (e.g. CF-Connecting-IP, X-FORWARDED-PROTO, etc)

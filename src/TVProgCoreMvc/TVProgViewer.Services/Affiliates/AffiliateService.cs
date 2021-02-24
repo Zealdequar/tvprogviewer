@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Affiliates;
 using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Core.Domain.Seo;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Common;
-using TVProgViewer.Services.Defaults;
-using TVProgViewer.Services.Events;
 using TVProgViewer.Services.Seo;
 
 namespace TVProgViewer.Services.Affiliates
@@ -22,7 +20,6 @@ namespace TVProgViewer.Services.Affiliates
         #region Fields
 
         private readonly IAddressService _addressService;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<Address> _addressRepository;
         private readonly IRepository<Affiliate> _affiliateRepository;
         private readonly IRepository<Order> _orderRepository;
@@ -35,7 +32,6 @@ namespace TVProgViewer.Services.Affiliates
         #region Ctor
 
         public AffiliateService(IAddressService addressService,
-            IEventPublisher eventPublisher,
             IRepository<Address> addressRepository,
             IRepository<Affiliate> affiliateRepository,
             IRepository<Order> orderRepository,
@@ -44,7 +40,6 @@ namespace TVProgViewer.Services.Affiliates
             SeoSettings seoSettings)
         {
             _addressService = addressService;
-            _eventPublisher = eventPublisher;
             _addressRepository = addressRepository;
             _affiliateRepository = affiliateRepository;
             _orderRepository = orderRepository;
@@ -62,12 +57,9 @@ namespace TVProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="affiliateId">Affiliate identifier</param>
         /// <returns>Affiliate</returns>
-        public virtual Affiliate GetAffiliateById(long affiliateId)
+        public virtual async Task<Affiliate> GetAffiliateByIdAsync(int affiliateId)
         {
-            if (affiliateId == 0)
-                return null;
-
-            return _affiliateRepository.ToCachedGetById(affiliateId);
+            return await _affiliateRepository.GetByIdAsync(affiliateId, cache => default);
         }
 
         /// <summary>
@@ -75,7 +67,7 @@ namespace TVProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="friendlyUrlName">Friendly URL name</param>
         /// <returns>Affiliate</returns>
-        public virtual Affiliate GetAffiliateByFriendlyUrlName(string friendlyUrlName)
+        public virtual async Task<Affiliate> GetAffiliateByFriendlyUrlNameAsync(string friendlyUrlName)
         {
             if (string.IsNullOrWhiteSpace(friendlyUrlName))
                 return null;
@@ -84,7 +76,8 @@ namespace TVProgViewer.Services.Affiliates
                         orderby a.Id
                         where a.FriendlyUrlName == friendlyUrlName
                         select a;
-            var affiliate = query.FirstOrDefault();
+            var affiliate = await query.FirstOrDefaultAsync();
+
             return affiliate;
         }
 
@@ -92,16 +85,9 @@ namespace TVProgViewer.Services.Affiliates
         /// Marks affiliate as deleted 
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
-        public virtual void DeleteAffiliate(Affiliate affiliate)
+        public virtual async Task DeleteAffiliateAsync(Affiliate affiliate)
         {
-            if (affiliate == null)
-                throw new ArgumentNullException(nameof(affiliate));
-
-            affiliate.Deleted = true;
-            UpdateAffiliate(affiliate);
-
-            //event notification
-            _eventPublisher.EntityDeleted(affiliate);
+            await _affiliateRepository.DeleteAsync(affiliate);
         }
 
         /// <summary>
@@ -110,90 +96,77 @@ namespace TVProgViewer.Services.Affiliates
         /// <param name="friendlyUrlName">Friendly URL name; null to load all records</param>
         /// <param name="firstName">First name; null to load all records</param>
         /// <param name="lastName">Last name; null to load all records</param>
-        /// <param name="loadOnlyWithOrders">Value indicating whether to load affiliates only with orders placed (by affiliated Users)</param>
+        /// <param name="loadOnlyWithOrders">Value indicating whether to load affiliates only with orders placed (by affiliated users)</param>
         /// <param name="ordersCreatedFromUtc">Orders created date from (UTC); null to load all records. It's used only with "loadOnlyWithOrders" parameter st to "true".</param>
         /// <param name="ordersCreatedToUtc">Orders created date to (UTC); null to load all records. It's used only with "loadOnlyWithOrders" parameter st to "true".</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>Affiliates</returns>
-        public virtual IPagedList<Affiliate> GetAllAffiliates(string friendlyUrlName = null,
+        public virtual async Task<IPagedList<Affiliate>> GetAllAffiliatesAsync(string friendlyUrlName = null,
             string firstName = null, string lastName = null,
             bool loadOnlyWithOrders = false,
             DateTime? ordersCreatedFromUtc = null, DateTime? ordersCreatedToUtc = null,
             int pageIndex = 0, int pageSize = int.MaxValue,
             bool showHidden = false)
         {
-            var query = _affiliateRepository.Table;
-
-            if (!string.IsNullOrWhiteSpace(friendlyUrlName))
-                query = query.Where(a => a.FriendlyUrlName.Contains(friendlyUrlName));
-
-            if (!string.IsNullOrWhiteSpace(firstName))
-                query = from aff in query
-                         join addr in _addressRepository.Table on aff.AddressId equals addr.Id
-                         where addr.FirstName.Contains(firstName)
-                         select aff;
-
-            if (!string.IsNullOrWhiteSpace(lastName))
-                query = from aff in query
-                         join addr in _addressRepository.Table on aff.AddressId equals addr.Id
-                         where addr.LastName.Contains(lastName)
-                         select aff;
-
-            if (!showHidden)
-                query = query.Where(a => a.Active);
-            query = query.Where(a => !a.Deleted);
-
-            if (loadOnlyWithOrders)
+            return await _affiliateRepository.GetAllPagedAsync(query =>
             {
-                var ordersQuery = _orderRepository.Table;
-                if (ordersCreatedFromUtc.HasValue)
-                    ordersQuery = ordersQuery.Where(o => ordersCreatedFromUtc.Value <= o.CreatedOnUtc);
-                if (ordersCreatedToUtc.HasValue)
-                    ordersQuery = ordersQuery.Where(o => ordersCreatedToUtc.Value >= o.CreatedOnUtc);
-                ordersQuery = ordersQuery.Where(o => !o.Deleted);
+                if (!string.IsNullOrWhiteSpace(friendlyUrlName))
+                    query = query.Where(a => a.FriendlyUrlName.Contains(friendlyUrlName));
 
-                query = from a in query
-                        join o in ordersQuery on a.Id equals o.AffiliateId into a_o
-                        where a_o.Any()
-                        select a;
-            }
+                if (!string.IsNullOrWhiteSpace(firstName))
+                    query = from aff in query
+                            join addr in _addressRepository.Table on aff.AddressId equals addr.Id
+                            where addr.FirstName.Contains(firstName)
+                            select aff;
 
-            query = query.OrderByDescending(a => a.Id);
+                if (!string.IsNullOrWhiteSpace(lastName))
+                    query = from aff in query
+                            join addr in _addressRepository.Table on aff.AddressId equals addr.Id
+                            where addr.LastName.Contains(lastName)
+                            select aff;
 
-            var affiliates = new PagedList<Affiliate>(query, pageIndex, pageSize);
-            return affiliates;
+                if (!showHidden)
+                    query = query.Where(a => a.Active);
+                query = query.Where(a => !a.Deleted);
+
+                if (loadOnlyWithOrders)
+                {
+                    var ordersQuery = _orderRepository.Table;
+                    if (ordersCreatedFromUtc.HasValue)
+                        ordersQuery = ordersQuery.Where(o => ordersCreatedFromUtc.Value <= o.CreatedOnUtc);
+                    if (ordersCreatedToUtc.HasValue)
+                        ordersQuery = ordersQuery.Where(o => ordersCreatedToUtc.Value >= o.CreatedOnUtc);
+                    ordersQuery = ordersQuery.Where(o => !o.Deleted);
+
+                    query = from a in query
+                            join o in ordersQuery on a.Id equals o.AffiliateId
+                            select a;
+                }
+
+                query = query.Distinct().OrderByDescending(a => a.Id);
+
+                return query;
+            }, pageIndex, pageSize);
         }
 
         /// <summary>
         /// Inserts an affiliate
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
-        public virtual void InsertAffiliate(Affiliate affiliate)
+        public virtual async Task InsertAffiliateAsync(Affiliate affiliate)
         {
-            if (affiliate == null)
-                throw new ArgumentNullException(nameof(affiliate));
-
-            _affiliateRepository.Insert(affiliate);
-
-            //event notification
-            _eventPublisher.EntityInserted(affiliate);
+            await _affiliateRepository.InsertAsync(affiliate);
         }
 
         /// <summary>
         /// Updates the affiliate
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
-        public virtual void UpdateAffiliate(Affiliate affiliate)
+        public virtual async Task UpdateAffiliateAsync(Affiliate affiliate)
         {
-            if (affiliate == null)
-                throw new ArgumentNullException(nameof(affiliate));
-
-            _affiliateRepository.Update(affiliate);
-
-            //event notification
-            _eventPublisher.EntityUpdated(affiliate);
+            await _affiliateRepository.UpdateAsync(affiliate);
         }
 
         /// <summary>
@@ -201,12 +174,12 @@ namespace TVProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
         /// <returns>Affiliate full name</returns>
-        public virtual string GetAffiliateFullName(Affiliate affiliate)
+        public virtual async Task<string> GetAffiliateFullNameAsync(Affiliate affiliate)
         {
             if (affiliate == null)
                 throw new ArgumentNullException(nameof(affiliate));
 
-            var affiliateAddress = _addressService.GetAddressById(affiliate.AddressId);
+            var affiliateAddress = await _addressService.GetAddressByIdAsync(affiliate.AddressId);
 
             if (affiliateAddress == null)
                 return string.Empty;
@@ -221,7 +194,7 @@ namespace TVProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
         /// <returns>Generated affiliate URL</returns>
-        public virtual string GenerateUrl(Affiliate affiliate)
+        public virtual Task<string> GenerateUrlAsync(Affiliate affiliate)
         {
             if (affiliate == null)
                 throw new ArgumentNullException(nameof(affiliate));
@@ -229,11 +202,11 @@ namespace TVProgViewer.Services.Affiliates
             var storeUrl = _webHelper.GetStoreLocation(false);
             var url = !string.IsNullOrEmpty(affiliate.FriendlyUrlName) ?
                 //use friendly URL
-                _webHelper.ModifyQueryString(storeUrl, TVProgViewerAffiliateDefaults.AffiliateQueryParameter, affiliate.FriendlyUrlName) :
+                _webHelper.ModifyQueryString(storeUrl, TvProgAffiliateDefaults.AffiliateQueryParameter, affiliate.FriendlyUrlName) :
                 //use ID
-                _webHelper.ModifyQueryString(storeUrl, TVProgViewerAffiliateDefaults.AffiliateIdQueryParameter, affiliate.Id.ToString());
+                _webHelper.ModifyQueryString(storeUrl, TvProgAffiliateDefaults.AffiliateIdQueryParameter, affiliate.Id.ToString());
 
-            return url;
+            return Task.FromResult(url);
         }
 
         /// <summary>
@@ -242,17 +215,17 @@ namespace TVProgViewer.Services.Affiliates
         /// <param name="affiliate">Affiliate</param>
         /// <param name="friendlyUrlName">Friendly URL name</param>
         /// <returns>Valid friendly name</returns>
-        public virtual string ValidateFriendlyUrlName(Affiliate affiliate, string friendlyUrlName)
+        public virtual async Task<string> ValidateFriendlyUrlNameAsync(Affiliate affiliate, string friendlyUrlName)
         {
             if (affiliate == null)
                 throw new ArgumentNullException(nameof(affiliate));
 
             //ensure we have only valid chars
-            friendlyUrlName = _urlRecordService.GetSeName(friendlyUrlName, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
+            friendlyUrlName = await _urlRecordService.GetSeNameAsync(friendlyUrlName, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
 
             //max length
             //(consider a store URL + probably added {0}-{1} below)
-            friendlyUrlName = CommonHelper.EnsureMaximumLength(friendlyUrlName, TVProgViewerAffiliateDefaults.FriendlyUrlNameLength);
+            friendlyUrlName = CommonHelper.EnsureMaximumLength(friendlyUrlName, TvProgAffiliateDefaults.FriendlyUrlNameLength);
 
             //ensure this name is not reserved yet
             //empty? nothing to check
@@ -263,7 +236,7 @@ namespace TVProgViewer.Services.Affiliates
             var tempName = friendlyUrlName;
             while (true)
             {
-                var affiliateByFriendlyUrlName = GetAffiliateByFriendlyUrlName(tempName);
+                var affiliateByFriendlyUrlName = await GetAffiliateByFriendlyUrlNameAsync(tempName);
                 var reserved = affiliateByFriendlyUrlName != null && affiliateByFriendlyUrlName.Id != affiliate.Id;
                 if (!reserved)
                     break;

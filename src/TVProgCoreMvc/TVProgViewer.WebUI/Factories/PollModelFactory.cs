@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Polls;
@@ -18,7 +19,7 @@ namespace TVProgViewer.WebUI.Factories
         #region Fields
 
         private readonly IPollService _pollService;
-        private readonly IStaticCacheManager _cacheManager;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
         private readonly IWorkContext _workContext;
 
@@ -27,12 +28,12 @@ namespace TVProgViewer.WebUI.Factories
         #region Ctor
 
         public PollModelFactory(IPollService pollService,
-            IStaticCacheManager cacheManager,
+            IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IWorkContext workContext)
         {
             _pollService = pollService;
-            _cacheManager = cacheManager;
+            _staticCacheManager = staticCacheManager;
             _storeContext = storeContext;
             _workContext = workContext;
         }
@@ -47,7 +48,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="poll">Poll</param>
         /// <param name="setAlreadyVotedProperty">Whether to load a value indicating that user already voted for this poll</param>
         /// <returns>Poll model</returns>
-        public virtual PollModel PreparePollModel(Poll poll, bool setAlreadyVotedProperty)
+        public virtual async Task<PollModel> PreparePollModelAsync(Poll poll, bool setAlreadyVotedProperty)
         {
             if (poll == null)
                 throw new ArgumentNullException(nameof(poll));
@@ -55,11 +56,11 @@ namespace TVProgViewer.WebUI.Factories
             var model = new PollModel
             {
                 Id = poll.Id,
-                AlreadyVoted = setAlreadyVotedProperty && _pollService.AlreadyVoted(poll.Id, _workContext.CurrentUser.Id),
+                AlreadyVoted = setAlreadyVotedProperty && await _pollService.AlreadyVotedAsync(poll.Id, (await _workContext.GetCurrentUserAsync()).Id),
                 Name = poll.Name
             };
-            var answers = _pollService.GetPollAnswerByPoll(poll.Id);
-            
+            var answers = await _pollService.GetPollAnswerByPollAsync(poll.Id);
+
             foreach (var answer in answers)
                 model.TotalVotes += answer.NumberOfVotes;
             foreach (var pa in answers)
@@ -81,25 +82,25 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="systemKeyword">Poll system keyword</param>
         /// <returns>Poll model</returns>
-        public virtual PollModel PreparePollModelBySystemName(string systemKeyword)
+        public virtual async Task<PollModel> PreparePollModelBySystemNameAsync(string systemKeyword)
         {
             if (string.IsNullOrWhiteSpace(systemKeyword))
                 return null;
 
-            var cacheKey = TvProgModelCacheDefaults.PollBySystemNameModelKey.FillCacheKey(
-                systemKeyword, _workContext.WorkingLanguage.Id, _storeContext.CurrentStore.Id);
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgModelCacheDefaults.PollBySystemNameModelKey,
+                systemKeyword, await _workContext.GetWorkingLanguageAsync(), await _storeContext.GetCurrentStoreAsync());
 
-            var cachedModel = _cacheManager.Get(cacheKey, () =>
+            var cachedModel = await _staticCacheManager.GetAsync(cacheKey, async () =>
             {
-                var poll = _pollService
-                    .GetPolls(_storeContext.CurrentStore.Id, _workContext.WorkingLanguage.Id, systemKeyword: systemKeyword)
+                var poll = (await _pollService
+                    .GetPollsAsync((await _storeContext.GetCurrentStoreAsync()).Id, (await _workContext.GetWorkingLanguageAsync()).Id, systemKeyword: systemKeyword))
                     .FirstOrDefault();
 
                 //we do not cache nulls. that's why let's return an empty record (ID = 0)
                 if (poll == null)
                     return new PollModel { Id = 0 };
 
-                return PreparePollModel(poll, false);
+                return await PreparePollModelAsync(poll, false);
             });
 
             if ((cachedModel?.Id ?? 0) == 0)
@@ -108,7 +109,7 @@ namespace TVProgViewer.WebUI.Factories
             //"AlreadyVoted" property of "PollModel" object depends on the current user. Let's update it.
             //But first we need to clone the cached model (the updated one should not be cached)
             var model = cachedModel with { };
-            model.AlreadyVoted = _pollService.AlreadyVoted(model.Id, _workContext.CurrentUser.Id);
+            model.AlreadyVoted = await _pollService.AlreadyVotedAsync(model.Id, (await _workContext.GetCurrentUserAsync()).Id);
 
             return model;
         }
@@ -117,14 +118,14 @@ namespace TVProgViewer.WebUI.Factories
         /// Prepare the home page poll models
         /// </summary>
         /// <returns>List of the poll model</returns>
-        public virtual List<PollModel> PrepareHomepagePollModels()
+        public virtual async Task<List<PollModel>> PrepareHomepagePollModelsAsync()
         {
-            var cacheKey = TvProgModelCacheDefaults.HomepagePollsModelKey.FillCacheKey(
-                _workContext.WorkingLanguage.Id, _storeContext.CurrentStore.Id);
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgModelCacheDefaults.HomepagePollsModelKey,
+                await _workContext.GetWorkingLanguageAsync(), await _storeContext.GetCurrentStoreAsync());
 
-            var cachedPolls = _cacheManager.Get(cacheKey, () =>
-                _pollService.GetPolls(_storeContext.CurrentStore.Id, _workContext.WorkingLanguage.Id, loadShownOnHomepageOnly: true)
-                    .Select(poll => PreparePollModel(poll, false)).ToList());
+            var cachedPolls = await (await _staticCacheManager.GetAsync(cacheKey, async () =>
+                (await _pollService.GetPollsAsync((await _storeContext.GetCurrentStoreAsync()).Id, (await _workContext.GetWorkingLanguageAsync()).Id, loadShownOnHomepageOnly: true))
+                   .SelectAwait(async poll => await PreparePollModelAsync(poll, false)).ToListAsync()));
 
             //"AlreadyVoted" property of "PollModel" object depends on the current user. Let's update it.
             //But first we need to clone the cached model (the updated one should not be cached)
@@ -132,10 +133,10 @@ namespace TVProgViewer.WebUI.Factories
             foreach (var poll in cachedPolls)
             {
                 var pollModel = poll with { };
-                pollModel.AlreadyVoted = _pollService.AlreadyVoted(pollModel.Id, _workContext.CurrentUser.Id);
+                pollModel.AlreadyVoted = await _pollService.AlreadyVotedAsync(pollModel.Id, (await _workContext.GetCurrentUserAsync()).Id);
                 model.Add(pollModel);
             }
-            
+
             return model;
         }
 

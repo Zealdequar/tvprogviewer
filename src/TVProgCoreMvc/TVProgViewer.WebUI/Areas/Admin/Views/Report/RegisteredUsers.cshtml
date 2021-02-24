@@ -1,0 +1,45 @@
+﻿@model UserReportsSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Reports.Users.RegisteredUsers").Text;
+    //active menu item (system name)
+    Html.SetActiveMenuItemSystemName("Registered users");
+}
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        @T("Admin.Reports.Users.RegisteredUsers")
+    </h1>
+</div>
+<section class="content">
+    <div class="container-fluid">    
+        <div class="form-horizontal">
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                       @await Html.PartialAsync("Table", new DataTablesModel
+                       {
+                           Name = "registered-users-grid",
+                           UrlRead = new DataUrl("ReportRegisteredUsersList", "Report", null),
+                           Length = Model.RegisteredUsers.PageSize,
+                           LengthMenu = Model.RegisteredUsers.AvailablePageSizes,
+                           ColumnCollection = new List<ColumnProperty>
+                           {
+                               new ColumnProperty(nameof(RegisteredUsersReportModel.Period))
+                               {
+                                   Title = T("Admin.Reports.Users.RegisteredUsers.Fields.Period").Text
+                               },
+                               new ColumnProperty(nameof(RegisteredUsersReportModel.Users))
+                               {
+                                   Title = T("Admin.Reports.Users.RegisteredUsers.Fields.Users").Text,
+                                   Width = "150"
+                               }
+                           }
+                       })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

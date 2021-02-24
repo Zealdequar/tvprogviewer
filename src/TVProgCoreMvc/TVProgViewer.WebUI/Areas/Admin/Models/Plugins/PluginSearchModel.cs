@@ -28,6 +28,12 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Plugins
         [TvProgResourceDisplayName("Admin.Configuration.Plugins.Group")]
         public string SearchGroup { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Configuration.Plugins.FriendlyName")]
+        public string SearchFriendlyName { get; set; }
+
+        [TvProgResourceDisplayName("Admin.Configuration.Plugins.Author")]
+        public string SearchAuthor { get; set; }
+
         [TvProgResourceDisplayName("Admin.Configuration.Plugins.LoadMode")]
         public IList<SelectListItem> AvailableLoadModes { get; set; }
 

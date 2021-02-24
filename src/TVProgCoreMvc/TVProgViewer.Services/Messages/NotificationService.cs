@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
 using TVProgViewer.Core;
-using TVProgViewer.Services.Defaults;
 using TVProgViewer.Services.Logging;
 
 namespace TVProgViewer.Services.Messages
@@ -52,8 +52,8 @@ namespace TVProgViewer.Services.Messages
             var tempData = _tempDataDictionaryFactory.GetTempData(context);
 
             //Messages have stored in a serialized list
-            var messages = tempData.ContainsKey(TVProgViewerMessageDefaults.NotificationListKey)
-                ? JsonConvert.DeserializeObject<IList<NotifyData>>(tempData[TVProgViewerMessageDefaults.NotificationListKey].ToString())
+            var messages = tempData.ContainsKey(TvProgMessageDefaults.NotificationListKey)
+                ? JsonConvert.DeserializeObject<IList<NotifyData>>(tempData[TvProgMessageDefaults.NotificationListKey].ToString())
                 : new List<NotifyData>();
 
             messages.Add(new NotifyData
@@ -63,19 +63,19 @@ namespace TVProgViewer.Services.Messages
                 Encode = encode
             });
 
-            tempData[TVProgViewerMessageDefaults.NotificationListKey] = JsonConvert.SerializeObject(messages);
+            tempData[TvProgMessageDefaults.NotificationListKey] = JsonConvert.SerializeObject(messages);
         }
 
         /// <summary>
         /// Log exception
         /// </summary>
         /// <param name="exception">Exception</param>
-        protected virtual void LogException(Exception exception)
+        protected virtual async Task LogExceptionAsync(Exception exception)
         {
             if (exception == null)
                 return;
-            var User = _workContext.CurrentUser;
-            _logger.Error(exception.Message, exception, User);
+            var user = await _workContext.GetCurrentUserAsync();
+            await _logger.ErrorAsync(exception.Message, exception, user);
         }
 
         #endregion
@@ -128,13 +128,13 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="exception">Exception</param>
         /// <param name="logException">A value indicating whether exception should be logged</param>
-        public virtual void ErrorNotification(Exception exception, bool logException = true)
+        public virtual async Task ErrorNotificationAsync(Exception exception, bool logException = true)
         {
             if (exception == null)
                 return;
 
             if (logException)
-                LogException(exception);
+                await LogExceptionAsync(exception);
 
             ErrorNotification(exception.Message);
         }

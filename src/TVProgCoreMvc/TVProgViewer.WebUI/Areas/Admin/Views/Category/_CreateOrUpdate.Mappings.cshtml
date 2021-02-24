@@ -1,7 +1,7 @@
 ﻿@model CategoryModel
 
-<div class="panel-body">
-    <div class="form-group advanced-setting">
+<div class="card-body">
+    <div class="form-group advanced-setting row">
         <div class="col-md-3">
             <tvprog-label asp-for="SelectedDiscountIds" />
         </div>
@@ -30,17 +30,17 @@
             </script>
         </div>
     </div>
-    <div class="form-group advanced-setting">
+    <div class="form-group advanced-setting row">
         <div class="col-md-3">
-            <tvprog-label asp-for="SelecteduserRoleIds" />
+            <tvprog-label asp-for="SelectedUserRoleIds" />
         </div>
         <div class="col-md-9">
             <div class="row">
                 <div class="col-md-4">
-                    <tvprog-select asp-for="SelecteduserRoleIds" asp-items="Model.AvailableUserRoles" asp-multiple="true" />
+                    <tvprog-select asp-for="SelectedUserRoleIds" asp-items="Model.AvailableUserRoles" asp-multiple="true" />
                     <script>
 						$(document).ready(function() {
-							var rolesIdsInput = $('#@Html.IdFor(model => model.SelecteduserRoleIds)')
+							var rolesIdsInput = $('#@Html.IdFor(model => model.SelectedUserRoleIds)')
 								.data("kendoMultiSelect");
 							rolesIdsInput.setOptions({
 								autoClose: false,
@@ -67,7 +67,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group advanced-setting">
+    <div class="form-group advanced-setting row">
         <div class="col-md-3">
             <tvprog-label asp-for="SelectedStoreIds" />
         </div>
@@ -85,16 +85,16 @@
 							});
 
 							@if (Model.AvailableStores.Count == 0)
-						{
-							<text>
+							{
+								<text>
 								storesIdsInput.setOptions({
 									enable: false,
 									placeholder: 'No stores available'
 								});
 								storesIdsInput._placeholder();
 								storesIdsInput._enable();
-							</text>
-						}
+								</text>
+							}
 						});
                     </script>
                 </div>

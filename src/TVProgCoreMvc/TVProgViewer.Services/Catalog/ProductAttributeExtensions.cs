@@ -83,7 +83,7 @@ namespace TVProgViewer.Services.Catalog
 
             //we can add a new property to "ProductAttributeMapping" entity indicating whether it's combinable/non-combinable
             //but we assume that attributes
-            //which cannot have values (any value can be entered by a customer)
+            //which cannot have values (any value can be entered by a user)
             //are non-combinable
             var result = !ShouldHaveValues(productAttributeMapping);
             return result;

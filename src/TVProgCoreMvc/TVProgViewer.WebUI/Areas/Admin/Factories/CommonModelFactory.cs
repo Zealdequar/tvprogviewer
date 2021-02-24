@@ -39,6 +39,12 @@ using TVProgViewer.WebUI.Areas.Admin.Models.Common;
 using TVProgViewer.WebUI.Areas.Admin.Models.Localization;
 using TVProgViewer.Web.Framework.Models.Extensions;
 using TVProgViewer.Web.Framework.Security;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Events;
+using TVProgViewer.Services.Authentication.MultiFactor;
+using TVProgViewer.Data;
+using Autofac;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -50,12 +56,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         #region Fields
 
         private readonly AdminAreaSettings _adminAreaSettings;
+        private readonly AppSettings _appSettings;
         private readonly CatalogSettings _catalogSettings;
         private readonly CurrencySettings _currencySettings;
         private readonly IActionContextAccessor _actionContextAccessor;
         private readonly IAuthenticationPluginManager _authenticationPluginManager;
+        private readonly IBaseAdminModelFactory _baseAdminModelFactory;
+        private readonly IComponentContext _componentContext;
         private readonly ICurrencyService _currencyService;
         private readonly IUserService _userService;
+        private readonly ITvProgDataProvider _dataProvider;
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IExchangeRatePluginManager _exchangeRatePluginManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -63,6 +73,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         private readonly ILocalizationService _localizationService;
         private readonly IMaintenanceService _maintenanceService;
         private readonly IMeasureService _measureService;
+        private readonly IMultiFactorAuthenticationPluginManager _multiFactorAuthenticationPluginManager;
         private readonly ITvProgFileProvider _fileProvider;
         private readonly IOrderService _orderService;
         private readonly IPaymentPluginManager _paymentPluginManager;
@@ -72,7 +83,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         private readonly IReturnRequestService _returnRequestService;
         private readonly ISearchTermService _searchTermService;
         private readonly IShippingPluginManager _shippingPluginManager;
-        private readonly IStaticCacheManager _cacheManager;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
         private readonly IStoreService _storeService;
         private readonly ITaxPluginManager _taxPluginManager;
@@ -82,7 +93,6 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         private readonly IWidgetPluginManager _widgetPluginManager;
         private readonly IWorkContext _workContext;
         private readonly MeasureSettings _measureSettings;
-        private readonly TvProgConfig _nopConfig;
         private readonly TvProgHttpClient _nopHttpClient;
         private readonly ProxySettings _proxySettings;
 
@@ -91,12 +101,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         #region Ctor
 
         public CommonModelFactory(AdminAreaSettings adminAreaSettings,
+            AppSettings appSettings,
             CatalogSettings catalogSettings,
             CurrencySettings currencySettings,
             IActionContextAccessor actionContextAccessor,
             IAuthenticationPluginManager authenticationPluginManager,
+            IBaseAdminModelFactory baseAdminModelFactory,
+            IComponentContext componentContext,
             ICurrencyService currencyService,
             IUserService userService,
+            ITvProgDataProvider dataProvider,
             IDateTimeHelper dateTimeHelper,
             ITvProgFileProvider fileProvider,
             IExchangeRatePluginManager exchangeRatePluginManager,
@@ -105,6 +119,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             ILocalizationService localizationService,
             IMaintenanceService maintenanceService,
             IMeasureService measureService,
+            IMultiFactorAuthenticationPluginManager multiFactorAuthenticationPluginManager,
             IOrderService orderService,
             IPaymentPluginManager paymentPluginManager,
             IPickupPluginManager pickupPluginManager,
@@ -113,7 +128,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             IReturnRequestService returnRequestService,
             ISearchTermService searchTermService,
             IShippingPluginManager shippingPluginManager,
-            IStaticCacheManager cacheManager,
+            IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IStoreService storeService,
             ITaxPluginManager taxPluginManager,
@@ -123,17 +138,20 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             IWidgetPluginManager widgetPluginManager,
             IWorkContext workContext,
             MeasureSettings measureSettings,
-            TvProgConfig nopConfig,
             TvProgHttpClient nopHttpClient,
             ProxySettings proxySettings)
         {
             _adminAreaSettings = adminAreaSettings;
+            _appSettings = appSettings;
             _catalogSettings = catalogSettings;
             _currencySettings = currencySettings;
             _actionContextAccessor = actionContextAccessor;
             _authenticationPluginManager = authenticationPluginManager;
+            _baseAdminModelFactory = baseAdminModelFactory;
+            _componentContext = componentContext;
             _currencyService = currencyService;
             _userService = userService;
+            _dataProvider = dataProvider;
             _dateTimeHelper = dateTimeHelper;
             _exchangeRatePluginManager = exchangeRatePluginManager;
             _httpContextAccessor = httpContextAccessor;
@@ -141,6 +159,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             _localizationService = localizationService;
             _maintenanceService = maintenanceService;
             _measureService = measureService;
+            _multiFactorAuthenticationPluginManager = multiFactorAuthenticationPluginManager;
             _fileProvider = fileProvider;
             _orderService = orderService;
             _paymentPluginManager = paymentPluginManager;
@@ -150,7 +169,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             _returnRequestService = returnRequestService;
             _searchTermService = searchTermService;
             _shippingPluginManager = shippingPluginManager;
-            _cacheManager = cacheManager;
+            _staticCacheManager = staticCacheManager;
             _storeContext = storeContext;
             _storeService = storeService;
             _taxPluginManager = taxPluginManager;
@@ -160,7 +179,6 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             _widgetPluginManager = widgetPluginManager;
             _workContext = workContext;
             _measureSettings = measureSettings;
-            _nopConfig = nopConfig;
             _nopHttpClient = nopHttpClient;
             _proxySettings = proxySettings;
         }
@@ -173,13 +191,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare store URL warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PrepareStoreUrlWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PrepareStoreUrlWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
 
             //check whether current store URL matches the store configured URL
-            var currentStoreUrl = _storeContext.CurrentStore.Url;
+            var currentStoreUrl = (await _storeContext.GetCurrentStoreAsync()).Url;
             if (!string.IsNullOrEmpty(currentStoreUrl) &&
                 (currentStoreUrl.Equals(_webHelper.GetStoreLocation(false), StringComparison.InvariantCultureIgnoreCase) ||
                 currentStoreUrl.Equals(_webHelper.GetStoreLocation(true), StringComparison.InvariantCultureIgnoreCase)))
@@ -187,7 +205,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Pass,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.URL.Match")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.URL.Match")
                 });
                 return;
             }
@@ -195,7 +213,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             models.Add(new SystemWarningModel
             {
                 Level = SystemWarningLevel.Fail,
-                Text = string.Format(_localizationService.GetResource("Admin.System.Warnings.URL.NoMatch"),
+                Text = string.Format(await _localizationService.GetResourceAsync("Admin.System.Warnings.URL.NoMatch"),
                     currentStoreUrl, _webHelper.GetStoreLocation(false))
             });
         }
@@ -204,7 +222,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare copyright removal key warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PrepareRemovalKeyWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PrepareRemovalKeyWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
@@ -216,9 +234,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             var warning = string.Empty;
             try
             {
-                warning = _nopHttpClient.GetCopyrightWarningAsync().Result;
+                warning = await _nopHttpClient.GetCopyrightWarningAsync();
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
+
             if (string.IsNullOrEmpty(warning))
                 return;
 
@@ -234,19 +256,19 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare primary exchange rate currency warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PrepareExchangeRateCurrencyWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PrepareExchangeRateCurrencyWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
 
             //check whether primary exchange rate currency set
-            var primaryExchangeRateCurrency = _currencyService.GetCurrencyById(_currencySettings.PrimaryExchangeRateCurrencyId);
+            var primaryExchangeRateCurrency = await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryExchangeRateCurrencyId);
             if (primaryExchangeRateCurrency == null)
             {
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.ExchangeCurrency.NotSet")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.ExchangeCurrency.NotSet")
                 });
                 return;
             }
@@ -254,7 +276,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             models.Add(new SystemWarningModel
             {
                 Level = SystemWarningLevel.Pass,
-                Text = _localizationService.GetResource("Admin.System.Warnings.ExchangeCurrency.Set")
+                Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.ExchangeCurrency.Set")
             });
 
             //check whether primary exchange rate currency rate configured
@@ -263,7 +285,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.ExchangeCurrency.Rate1")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.ExchangeCurrency.Rate1")
                 });
             }
         }
@@ -272,19 +294,19 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare primary store currency warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PreparePrimaryStoreCurrencyWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PreparePrimaryStoreCurrencyWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
 
             //check whether primary store currency set
-            var primaryStoreCurrency = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId);
+            var primaryStoreCurrency = await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId);
             if (primaryStoreCurrency == null)
             {
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.PrimaryCurrency.NotSet")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.PrimaryCurrency.NotSet")
                 });
                 return;
             }
@@ -292,7 +314,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             models.Add(new SystemWarningModel
             {
                 Level = SystemWarningLevel.Pass,
-                Text = _localizationService.GetResource("Admin.System.Warnings.PrimaryCurrency.Set")
+                Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.PrimaryCurrency.Set")
             });
         }
 
@@ -300,19 +322,19 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare base weight warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PrepareBaseWeightWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PrepareBaseWeightWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
 
             //check whether base measure weight set
-            var baseWeight = _measureService.GetMeasureWeightById(_measureSettings.BaseWeightId);
+            var baseWeight = await _measureService.GetMeasureWeightByIdAsync(_measureSettings.BaseWeightId);
             if (baseWeight == null)
             {
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.DefaultWeight.NotSet")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.DefaultWeight.NotSet")
                 });
                 return;
             }
@@ -320,7 +342,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             models.Add(new SystemWarningModel
             {
                 Level = SystemWarningLevel.Pass,
-                Text = _localizationService.GetResource("Admin.System.Warnings.DefaultWeight.Set")
+                Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.DefaultWeight.Set")
             });
 
             //check whether base measure weight ratio configured
@@ -329,7 +351,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.DefaultWeight.Ratio1")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.DefaultWeight.Ratio1")
                 });
             }
         }
@@ -338,19 +360,19 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare base dimension warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PrepareBaseDimensionWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PrepareBaseDimensionWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
 
             //check whether base measure dimension set
-            var baseDimension = _measureService.GetMeasureDimensionById(_measureSettings.BaseDimensionId);
+            var baseDimension = await _measureService.GetMeasureDimensionByIdAsync(_measureSettings.BaseDimensionId);
             if (baseDimension == null)
             {
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.DefaultDimension.NotSet")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.DefaultDimension.NotSet")
                 });
                 return;
             }
@@ -358,7 +380,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             models.Add(new SystemWarningModel
             {
                 Level = SystemWarningLevel.Pass,
-                Text = _localizationService.GetResource("Admin.System.Warnings.DefaultDimension.Set")
+                Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.DefaultDimension.Set")
             });
 
             //check whether base measure dimension ratio configured
@@ -367,7 +389,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.DefaultDimension.Ratio1")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.DefaultDimension.Ratio1")
                 });
             }
         }
@@ -376,18 +398,18 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare payment methods warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PreparePaymentMethodsWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PreparePaymentMethodsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
 
             //check whether payment methods activated
-            if (_paymentPluginManager.LoadAllPlugins().Any())
+            if ((await _paymentPluginManager.LoadAllPluginsAsync()).Any())
             {
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Pass,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.PaymentMethods.OK")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.PaymentMethods.OK")
                 });
                 return;
             }
@@ -395,7 +417,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             models.Add(new SystemWarningModel
             {
                 Level = SystemWarningLevel.Fail,
-                Text = _localizationService.GetResource("Admin.System.Warnings.PaymentMethods.NoActive")
+                Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.PaymentMethods.NoActive")
             });
         }
 
@@ -403,7 +425,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare plugins warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PreparePluginsWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PreparePluginsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
@@ -414,7 +436,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Warning,
-                    Text = string.Format(_localizationService.GetResource("Admin.System.Warnings.PluginNotLoaded"), pluginName)
+                    Text = string.Format(await _localizationService.GetResourceAsync("Admin.System.Warnings.PluginNotLoaded"), pluginName)
                 });
             }
 
@@ -422,16 +444,41 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             foreach (var assembly in _pluginService.GetAssemblyCollisions())
             {
                 //get plugin references message
-                var message = assembly.Collisions
-                    .Select(item => string.Format(_localizationService
-                        .GetResource("Admin.System.Warnings.PluginRequiredAssembly"), item.PluginName, item.AssemblyName))
-                    .Aggregate("", (curent, all) => all + ", " + curent).TrimEnd(',', ' ');
+                var message = (await assembly.Collisions
+                    .SelectAwait(async item => string.Format(await _localizationService
+                        .GetResourceAsync("Admin.System.Warnings.PluginRequiredAssembly"), item.PluginName, item.AssemblyName))
+                    .AggregateAsync("", (curent, all) => all + ", " + curent)).TrimEnd(',', ' ');
 
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Warning,
-                    Text = string.Format(_localizationService.GetResource("Admin.System.Warnings.AssemblyHasCollision"),
+                    Text = string.Format(await _localizationService.GetResourceAsync("Admin.System.Warnings.AssemblyHasCollision"),
                         assembly.ShortName, assembly.AssemblyFullNameInMemory, message)
+                });
+            }
+
+            //check whether there are different plugins which try to override the same interface
+            var baseLibraries = new[] { "TvProg.Core", "TvProg.Data", "TvProg.Services", "TvProg.Web", "TvProg.Web.Framework" };
+            var overridenServices = _componentContext.ComponentRegistry.Registrations.Where(p =>
+                    p.Services.Any(s =>
+                        s.Description.StartsWith("TvProg.", StringComparison.InvariantCulture) &&
+                        !s.Description.StartsWith(typeof(IConsumer<>).FullName?.Replace("~1", string.Empty) ?? string.Empty,
+                            StringComparison.InvariantCulture))).SelectMany(p => p.Services.Select(x =>
+                    KeyValuePair.Create(x.Description, p.Target.Activator.LimitType.Assembly.GetName().Name)))
+                .Where(p => baseLibraries.All(library => !p.Value.StartsWith(library, StringComparison.InvariantCultureIgnoreCase)))
+                .GroupBy(p => p.Key, p => p.Value)
+                .Where(p => p.Count() > 1)
+                .ToDictionary(p => p.Key, p => p.ToList());
+
+            foreach (var overridenService in overridenServices)
+            {
+                var assemblies = overridenService.Value
+                    .Aggregate("", (current, all) => all + ", " + current).TrimEnd(',', ' ');
+
+                models.Add(new SystemWarningModel
+                {
+                    Level = SystemWarningLevel.Warning,
+                    Text = string.Format(await _localizationService.GetResourceAsync("Admin.System.Warnings.PluginsOverrideSameService"), overridenService.Key, assemblies)
                 });
             }
         }
@@ -440,18 +487,18 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare performance settings warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PreparePerformanceSettingsWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PreparePerformanceSettingsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
 
             //check whether "IgnoreStoreLimitations" setting disabled
-            if (!_catalogSettings.IgnoreStoreLimitations && _storeService.GetAllStores().Count == 1)
+            if (!_catalogSettings.IgnoreStoreLimitations && (await _storeService.GetAllStoresAsync()).Count == 1)
             {
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Recommendation,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.Performance.IgnoreStoreLimitations")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.Performance.IgnoreStoreLimitations")
                 });
             }
 
@@ -461,7 +508,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Recommendation,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.Performance.IgnoreAcl")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.Performance.IgnoreAcl")
                 });
             }
         }
@@ -470,7 +517,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare file permissions warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PrepareFilePermissionsWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PrepareFilePermissionsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
@@ -485,7 +532,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Warning,
-                    Text = string.Format(_localizationService.GetResource("Admin.System.Warnings.DirectoryPermission.Wrong"),
+                    Text = string.Format(await _localizationService.GetResourceAsync("Admin.System.Warnings.DirectoryPermission.Wrong"),
                         CurrentOSUser.FullName, dir)
                 });
                 dirPermissionsOk = false;
@@ -496,7 +543,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Pass,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.DirectoryPermission.OK")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.DirectoryPermission.OK")
                 });
             }
 
@@ -510,7 +557,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Warning,
-                    Text = string.Format(_localizationService.GetResource("Admin.System.Warnings.FilePermission.Wrong"),
+                    Text = string.Format(await _localizationService.GetResourceAsync("Admin.System.Warnings.FilePermission.Wrong"),
                         CurrentOSUser.FullName, file)
                 });
                 filePermissionsOk = false;
@@ -521,7 +568,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Pass,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.FilePermission.OK")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.FilePermission.OK")
                 });
             }
         }
@@ -546,11 +593,12 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare plugins enabled warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PreparePluginsEnabledWarningModel(List<SystemWarningModel> models)
+        protected virtual async Task PreparePluginsEnabledWarningModelAsync(List<SystemWarningModel> models)
         {
-            var plugins = _pluginService.GetPlugins<IPlugin>();
+            var plugins = await _pluginService.GetPluginsAsync<IPlugin>();
 
             var notEnabled = new List<string>();
+            var notEnabledSystemNames = new List<string>();
 
             foreach (var plugin in plugins)
             {
@@ -578,6 +626,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                         isEnabled = _authenticationPluginManager.IsPluginActive(externalAuthenticationMethod);
                         break;
 
+                    case IMultiFactorAuthenticationMethod multiFactorAuthenticationMethod:
+                        isEnabled = _multiFactorAuthenticationPluginManager.IsPluginActive(multiFactorAuthenticationMethod);
+                        break;
+
                     case IWidgetPlugin widgetPlugin:
                         isEnabled = _widgetPluginManager.IsPluginActive(widgetPlugin);
                         break;
@@ -591,18 +643,24 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     continue;
 
                 notEnabled.Add(plugin.PluginDescriptor.FriendlyName);
+                notEnabledSystemNames.Add(plugin.PluginDescriptor.SystemName);
             }
 
             if (notEnabled.Any())
             {
+                //get URL helper
+                var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
+
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Warning,
-                    Text = $"{_localizationService.GetResource("Admin.System.Warnings.PluginNotEnabled")}: {string.Join(", ", notEnabled)}"
+                    DontEncode = true,
+
+                    Text = $"{await _localizationService.GetResourceAsync("Admin.System.Warnings.PluginNotEnabled")}: {string.Join(", ", notEnabled)} (<a href=\"{urlHelper.Action("UninstallAndDeleteUnusedPlugins", "Plugin", new { names = notEnabledSystemNames.ToArray() })}\">{await _localizationService.GetResourceAsync("Admin.System.Warnings.PluginNotEnabled.AutoFixAndRestart")}</a>)"
                 });
             }
         }
-        
+
         #endregion
 
         #region Methods
@@ -612,26 +670,29 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">System info model</param>
         /// <returns>System info model</returns>
-        public virtual SystemInfoModel PrepareSystemInfoModel(SystemInfoModel model)
+        public virtual async Task<SystemInfoModel> PrepareSystemInfoModelAsync(SystemInfoModel model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            model.TvProgVersion = TvProgVersion.CurrentVersion;
+            model.TvProgVersion = TvProgVersion.FULL_VERSION;
             model.ServerTimeZone = TimeZoneInfo.Local.StandardName;
             model.ServerLocalTime = DateTime.Now;
             model.UtcTime = DateTime.UtcNow;
-            model.CurrentUserTime = _dateTimeHelper.ConvertToUserTime(DateTime.Now);
+            model.CurrentUserTime = await _dateTimeHelper.ConvertToUserTimeAsync(DateTime.Now);
             model.HttpHost = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Host];
 
             //ensure no exception is thrown
             try
             {
                 model.OperatingSystem = Environment.OSVersion.VersionString;
-                model.AspNetInfo = RuntimeEnvironment.GetSystemVersion();
-                model.IsFullTrust = AppDomain.CurrentDomain.IsFullyTrusted.ToString();
+                model.AspNetInfo = RuntimeInformation.FrameworkDescription;
+                model.IsFullTrust = AppDomain.CurrentDomain.IsFullyTrusted;
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             foreach (var header in _httpContextAccessor.HttpContext.Request.Headers)
             {
@@ -662,18 +723,22 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     loadedAssemblyModel.BuildDate = assembly.IsDynamic ? null : (DateTime?)TimeZoneInfo.ConvertTimeFromUtc(_fileProvider.GetLastWriteTimeUtc(assembly.Location), TimeZoneInfo.Local);
 
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
+
                 model.LoadedAssemblies.Add(loadedAssemblyModel);
             }
-            
-            model.CurrentStaticCacheManager = _cacheManager.GetType().Name;
 
-            model.RedisEnabled = _nopConfig.RedisEnabled;
-            model.UseRedisToStoreDataProtectionKeys = _nopConfig.UseRedisToStoreDataProtectionKeys;
-            model.UseRedisForCaching = _nopConfig.UseRedisForCaching;
-            model.UseRedisToStorePluginsInfo = _nopConfig.UseRedisToStorePluginsInfo;
+            model.CurrentStaticCacheManager = _staticCacheManager.GetType().Name;
 
-           // model.AzureBlobStorageEnabled = _nopConfig.AzureBlobStorageEnabled;
+            model.RedisEnabled = _appSettings.RedisConfig.Enabled;
+            model.UseRedisToStoreDataProtectionKeys = _appSettings.RedisConfig.StoreDataProtectionKeys;
+            model.UseRedisForCaching = _appSettings.RedisConfig.UseCaching;
+            model.UseRedisToStorePluginsInfo = _appSettings.RedisConfig.StorePluginsInfo;
+
+            model.AzureBlobStorageEnabled = _appSettings.AzureBlobConfig.Enabled;
 
             return model;
         }
@@ -682,7 +747,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare proxy connection warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        protected virtual void PrepareProxyConnectionWarningModel(IList<SystemWarningModel> models)
+        protected virtual async Task PrepareProxyConnectionWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
@@ -693,13 +758,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
 
             try
             {
-                _nopHttpClient.PingAsync().Wait();
+                await _nopHttpClient.PingAsync();
 
                 //connection is OK
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Pass,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.ProxyConnection.OK")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.ProxyConnection.OK")
                 });
             }
             catch
@@ -708,7 +773,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 models.Add(new SystemWarningModel
                 {
                     Level = SystemWarningLevel.Fail,
-                    Text = _localizationService.GetResource("Admin.System.Warnings.ProxyConnection.Failed")
+                    Text = await _localizationService.GetResourceAsync("Admin.System.Warnings.ProxyConnection.Failed")
                 });
             }
         }
@@ -717,45 +782,45 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare system warning models
         /// </summary>
         /// <returns>List of system warning models</returns>
-        public virtual IList<SystemWarningModel> PrepareSystemWarningModels()
+        public virtual async Task<IList<SystemWarningModel>> PrepareSystemWarningModelsAsync()
         {
             var models = new List<SystemWarningModel>();
 
             //store URL
-            PrepareStoreUrlWarningModel(models);
+            await PrepareStoreUrlWarningModelAsync(models);
 
             //removal key
-            PrepareRemovalKeyWarningModel(models);
+            await PrepareRemovalKeyWarningModelAsync(models);
 
             //primary exchange rate currency
-            PrepareExchangeRateCurrencyWarningModel(models);
+            await PrepareExchangeRateCurrencyWarningModelAsync(models);
 
             //primary store currency
-            PreparePrimaryStoreCurrencyWarningModel(models);
+            await PreparePrimaryStoreCurrencyWarningModelAsync(models);
 
             //base measure weight
-            PrepareBaseWeightWarningModel(models);
+            await PrepareBaseWeightWarningModelAsync(models);
 
             //base dimension weight
-            PrepareBaseDimensionWarningModel(models);
+            await PrepareBaseDimensionWarningModelAsync(models);
 
             //payment methods
-            PreparePaymentMethodsWarningModel(models);
+            await PreparePaymentMethodsWarningModelAsync(models);
 
-            //incompatible plugins
-            PreparePluginsWarningModel(models);
+            //plugins
+            await PreparePluginsWarningModelAsync(models);
 
             //performance settings
-            PreparePerformanceSettingsWarningModel(models);
+            await PreparePerformanceSettingsWarningModelAsync(models);
 
             //validate write permissions (the same procedure like during installation)
-            PrepareFilePermissionsWarningModel(models);
+            await PrepareFilePermissionsWarningModelAsync(models);
 
             //not active plugins
-            PreparePluginsEnabledWarningModel(models);
+            await PreparePluginsEnabledWarningModelAsync(models);
 
             //proxy connection
-            PrepareProxyConnectionWarningModel(models);
+            await PrepareProxyConnectionWarningModelAsync(models);
 
             return models;
         }
@@ -765,7 +830,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Maintenance model</param>
         /// <returns>Maintenance model</returns>
-        public virtual MaintenanceModel PrepareMaintenanceModel(MaintenanceModel model)
+        public virtual Task<MaintenanceModel> PrepareMaintenanceModelAsync(MaintenanceModel model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
@@ -776,10 +841,12 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
 
             model.DeleteAlreadySentQueuedEmails.EndDate = DateTime.UtcNow.AddDays(-7);
 
+            model.BackupSupported = _dataProvider.BackupSupported;
+
             //prepare nested search model
             PrepareBackupFileSearchModel(model.BackupFileSearchModel);
 
-            return model;
+            return Task.FromResult(model);
         }
 
         /// <summary>
@@ -787,7 +854,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Backup file search model</param>
         /// <returns>Backup file list model</returns>
-        public virtual BackupFileListModel PrepareBackupFileListModel(BackupFileSearchModel searchModel)
+        public virtual Task<BackupFileListModel> PrepareBackupFileListModelAsync(BackupFileSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -796,18 +863,20 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             var backupFiles = _maintenanceService.GetAllBackupFiles().ToPagedList(searchModel);
 
             //prepare list model
-            var model = new BackupFileListModel().PrepareToGrid(searchModel, backupFiles, ()=>
+            var model = new BackupFileListModel().PrepareToGrid(searchModel, backupFiles, () =>
             {
                 return backupFiles.Select(file => new BackupFileModel
                 {
                     Name = _fileProvider.GetFileName(file),
+
                     //fill in additional values (not existing in the entity)
                     Length = $"{_fileProvider.FileLength(file) / 1024f / 1024f:F2} Mb",
-                    Link = $"{_webHelper.GetStoreLocation(false)}db_backups/{_fileProvider.GetFileName(file)}"
+
+                    Link = $"{(_webHelper.GetStoreLocation(false))}db_backups/{_fileProvider.GetFileName(file)}"
                 });
             });
 
-            return model;
+            return Task.FromResult(model);
         }
 
         /// <summary>
@@ -815,10 +884,36 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">URL record search model</param>
         /// <returns>URL record search model</returns>
-        public virtual UrlRecordSearchModel PrepareUrlRecordSearchModel(UrlRecordSearchModel searchModel)
+        public virtual async Task<UrlRecordSearchModel> PrepareUrlRecordSearchModelAsync(UrlRecordSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
+
+            //prepare available languages
+            //we insert 0 as 'Standard' language.
+            //let's insert -1 for 'All' language selection.
+            await _baseAdminModelFactory.PrepareLanguagesAsync(searchModel.AvailableLanguages,
+                defaultItemText: await _localizationService.GetResourceAsync("Admin.System.SeNames.List.Language.Standard"));
+            searchModel.AvailableLanguages.Insert(0,
+                new SelectListItem { Text = await _localizationService.GetResourceAsync("Admin.Common.All"), Value = "-1" });
+            searchModel.LanguageId = -1;
+
+            //prepare "is active" filter (0 - all; 1 - active only; 2 - inactive only)
+            searchModel.AvailableActiveOptions.Add(new SelectListItem
+            {
+                Value = "0",
+                Text = await _localizationService.GetResourceAsync("Admin.System.SeNames.List.IsActive.All")
+            });
+            searchModel.AvailableActiveOptions.Add(new SelectListItem
+            {
+                Value = "1",
+                Text = await _localizationService.GetResourceAsync("Admin.System.SeNames.List.IsActive.ActiveOnly")
+            });
+            searchModel.AvailableActiveOptions.Add(new SelectListItem
+            {
+                Value = "2",
+                Text = await _localizationService.GetResourceAsync("Admin.System.SeNames.List.IsActive.InactiveOnly")
+            });
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -831,22 +926,26 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">URL record search model</param>
         /// <returns>URL record list model</returns>
-        public virtual UrlRecordListModel PrepareUrlRecordListModel(UrlRecordSearchModel searchModel)
+        public virtual async Task<UrlRecordListModel> PrepareUrlRecordListModelAsync(UrlRecordSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
+            var isActive = searchModel.IsActiveId == 0 ? null : (bool?)(searchModel.IsActiveId == 1);
+            var languageId = searchModel.LanguageId < 0 ? null : (int?)(searchModel.LanguageId);
+
             //get URL records
-            var urlRecords = _urlRecordService.GetAllUrlRecords(slug: searchModel.SeName,
+            var urlRecords = await _urlRecordService.GetAllUrlRecordsAsync(slug: searchModel.SeName,
+                languageId: languageId, isActive: isActive,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //get URL helper
             var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
 
             //prepare list model
-            var model = new UrlRecordListModel().PrepareToGrid(searchModel, urlRecords, () =>
+            var model = await new UrlRecordListModel().PrepareToGridAsync(searchModel, urlRecords, () =>
             {
-                return urlRecords.Select(urlRecord =>
+                return urlRecords.SelectAwait(async urlRecord =>
                 {
                     //fill in model values from the entity
                     var urlRecordModel = urlRecord.ToModel<UrlRecordModel>();
@@ -854,8 +953,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     //fill in additional values (not existing in the entity)
                     urlRecordModel.Name = urlRecord.Slug;
                     urlRecordModel.Language = urlRecord.LanguageId == 0
-                        ? _localizationService.GetResource("Admin.System.SeNames.Language.Standard")
-                        : _languageService.GetLanguageById(urlRecord.LanguageId)?.Name ?? "Unknown";
+                        ? await _localizationService.GetResourceAsync("Admin.System.SeNames.Language.Standard")
+                        : (await _languageService.GetLanguageByIdAsync(urlRecord.LanguageId))?.Name ?? "Unknown";
 
                     //details URL
                     var detailsUrl = string.Empty;
@@ -897,13 +996,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare language selector model
         /// </summary>
         /// <returns>Language selector model</returns>
-        public virtual LanguageSelectorModel PrepareLanguageSelectorModel()
+        public virtual async Task<LanguageSelectorModel> PrepareLanguageSelectorModelAsync()
         {
             var model = new LanguageSelectorModel
             {
-                CurrentLanguage = _workContext.WorkingLanguage.ToModel<LanguageModel>(),
-                AvailableLanguages = _languageService
-                    .GetAllLanguages(storeId: _storeContext.CurrentStore.Id)
+                CurrentLanguage = (await _workContext.GetWorkingLanguageAsync()).ToModel<LanguageModel>(),
+                AvailableLanguages = (await _languageService
+                    .GetAllLanguagesAsync(storeId: (await _storeContext.GetCurrentStoreAsync()).Id))
                     .Select(language => language.ToModel<LanguageModel>()).ToList()
             };
 
@@ -915,7 +1014,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Popular search term search model</param>
         /// <returns>Popular search term search model</returns>
-        public virtual PopularSearchTermSearchModel PreparePopularSearchTermSearchModel(PopularSearchTermSearchModel searchModel)
+        public virtual Task<PopularSearchTermSearchModel> PreparePopularSearchTermSearchModelAsync(PopularSearchTermSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -923,7 +1022,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             //prepare page parameters
             searchModel.SetGridPageSize(5);
 
-            return searchModel;
+            return Task.FromResult(searchModel);
         }
 
         /// <summary>
@@ -931,13 +1030,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Popular search term search model</param>
         /// <returns>Popular search term list model</returns>
-        public virtual PopularSearchTermListModel PreparePopularSearchTermListModel(PopularSearchTermSearchModel searchModel)
+        public virtual async Task<PopularSearchTermListModel> PreparePopularSearchTermListModelAsync(PopularSearchTermSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get popular search terms
-            var searchTermRecordLines = _searchTermService.GetStats(pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
+            var searchTermRecordLines = await _searchTermService.GetStatsAsync(pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare list model
             var model = new PopularSearchTermListModel().PrepareToGrid(searchModel, searchTermRecordLines, () =>
@@ -956,24 +1055,24 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare common statistics model
         /// </summary>
         /// <returns>Common statistics model</returns>
-        public virtual CommonStatisticsModel PrepareCommonStatisticsModel()
+        public virtual async Task<CommonStatisticsModel> PrepareCommonStatisticsModelAsync()
         {
             var model = new CommonStatisticsModel
             {
-                NumberOfOrders = _orderService.SearchOrders(pageIndex: 0, pageSize: 1, getOnlyTotalCount: true).TotalCount
+                NumberOfOrders = (await _orderService.SearchOrdersAsync(pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount
             };
 
-            var userRoleIds = new[] { _userService.GetUserRoleBySystemName(TvProgUserDefaults.RegisteredRoleName).Id };
-            model.NumberOfUsers = _userService.GetAllUsers(userRoleIds: userRoleIds,
-                pageIndex: 0, pageSize: 1, getOnlyTotalCount: true).TotalCount;
+            var userRoleIds = new[] { (await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.RegisteredRoleName)).Id };
+            model.NumberOfUsers = (await _userService.GetAllUsersAsync(userRoleIds: userRoleIds,
+                pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
 
             var returnRequestStatus = ReturnRequestStatus.Pending;
-            model.NumberOfPendingReturnRequests = _returnRequestService.SearchReturnRequests(rs: returnRequestStatus,
-                pageIndex: 0, pageSize: 1, getOnlyTotalCount: true).TotalCount;
+            model.NumberOfPendingReturnRequests = (await _returnRequestService.SearchReturnRequestsAsync(rs: returnRequestStatus,
+                pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
 
             model.NumberOfLowStockProducts =
-                _productService.GetLowStockProducts(getOnlyTotalCount: true).TotalCount +
-                _productService.GetLowStockProductCombinations(getOnlyTotalCount: true).TotalCount;
+                (await _productService.GetLowStockProductsAsync(getOnlyTotalCount: true)).TotalCount +
+                (await _productService.GetLowStockProductCombinationsAsync(getOnlyTotalCount: true)).TotalCount;
 
             return model;
         }

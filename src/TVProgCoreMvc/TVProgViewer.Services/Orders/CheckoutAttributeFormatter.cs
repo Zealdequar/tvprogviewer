@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Users;
@@ -63,25 +64,14 @@ namespace TVProgViewer.Services.Orders
         /// Formats attributes
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <returns>Attributes</returns>
-        public virtual string FormatAttributes(string attributesXml)
-        {
-            var User = _workContext.CurrentUser;
-            return FormatAttributes(attributesXml, User);
-        }
-
-        /// <summary>
-        /// Formats attributes
-        /// </summary>
-        /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="separator">Separator</param>
         /// <param name="htmlEncode">A value indicating whether to encode (HTML) values</param>
         /// <param name="renderPrices">A value indicating whether to render prices</param>
         /// <param name="allowHyperlinks">A value indicating whether to HTML hyperlink tags could be rendered (if required)</param>
         /// <returns>Attributes</returns>
-        public virtual string FormatAttributes(string attributesXml,
-            User User,
+        public virtual async Task<string> FormatAttributesAsync(string attributesXml,
+            User user,
             string separator = "<br />",
             bool htmlEncode = true,
             bool renderPrices = true,
@@ -89,7 +79,7 @@ namespace TVProgViewer.Services.Orders
         {
             var result = new StringBuilder();
 
-            var attributes = _checkoutAttributeParser.ParseCheckoutAttributes(attributesXml);
+            var attributes = await _checkoutAttributeParser.ParseCheckoutAttributesAsync(attributesXml);
             for (var i = 0; i < attributes.Count; i++)
             {
                 var attribute = attributes[i];
@@ -104,7 +94,7 @@ namespace TVProgViewer.Services.Orders
                         if (attribute.AttributeControlType == AttributeControlType.MultilineTextbox)
                         {
                             //multiline textbox
-                            var attributeName = _localizationService.GetLocalized(attribute, a => a.Name, _workContext.WorkingLanguage.Id);
+                            var attributeName = await _localizationService.GetLocalizedAsync(attribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id);
                             //encode (if required)
                             if (htmlEncode)
                                 attributeName = WebUtility.HtmlEncode(attributeName);
@@ -115,10 +105,9 @@ namespace TVProgViewer.Services.Orders
                         {
                             //file upload
                             Guid.TryParse(valueStr, out var downloadGuid);
-                            var download = _downloadService.GetDownloadByGuid(downloadGuid);
+                            var download = await _downloadService.GetDownloadByGuidAsync(downloadGuid);
                             if (download != null)
                             {
-                                //TODO add a method for getting URL (use routing because it handles all SEO friendly URLs)
                                 string attributeText;
                                 var fileName = $"{download.Filename ?? download.DownloadGuid.ToString()}{download.Extension}";
                                 //encode (if required)
@@ -136,7 +125,7 @@ namespace TVProgViewer.Services.Orders
                                     attributeText = fileName;
                                 }
 
-                                var attributeName = _localizationService.GetLocalized(attribute, a => a.Name, _workContext.WorkingLanguage.Id);
+                                var attributeName = await _localizationService.GetLocalizedAsync(attribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id);
                                 //encode (if required)
                                 if (htmlEncode)
                                     attributeName = WebUtility.HtmlEncode(attributeName);
@@ -146,7 +135,7 @@ namespace TVProgViewer.Services.Orders
                         else
                         {
                             //other attributes (textbox, datepicker)
-                            formattedAttribute = $"{_localizationService.GetLocalized(attribute, a => a.Name, _workContext.WorkingLanguage.Id)}: {valueStr}";
+                            formattedAttribute = $"{await _localizationService.GetLocalizedAsync(attribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id)}: {valueStr}";
                             //encode (if required)
                             if (htmlEncode)
                                 formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
@@ -156,20 +145,20 @@ namespace TVProgViewer.Services.Orders
                     {
                         if (int.TryParse(valueStr, out var attributeValueId))
                         {
-                            var attributeValue = _checkoutAttributeService.GetCheckoutAttributeValueById(attributeValueId);
+                            var attributeValue = await _checkoutAttributeService.GetCheckoutAttributeValueByIdAsync(attributeValueId);
 
                             if (attributeValue != null)
                             {
-                                formattedAttribute = $"{_localizationService.GetLocalized(attribute, a => a.Name, _workContext.WorkingLanguage.Id)}: {_localizationService.GetLocalized(attributeValue, a => a.Name, _workContext.WorkingLanguage.Id)}";
+                                formattedAttribute = $"{await _localizationService.GetLocalizedAsync(attribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id)}: {await _localizationService.GetLocalizedAsync(attributeValue, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id)}";
                                 if (renderPrices)
                                 {
-                                    var priceAdjustmentBase = _taxService.GetCheckoutAttributePrice(attribute, attributeValue, User);
-                                    var priceAdjustment = _currencyService.ConvertFromPrimaryStoreCurrency(priceAdjustmentBase, new Core.Domain.Directory.Currency());
+                                    var priceAdjustmentBase = (await _taxService.GetCheckoutAttributePriceAsync(attribute, attributeValue, user)).price;
+                                    var priceAdjustment = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(priceAdjustmentBase, await _workContext.GetWorkingCurrencyAsync());
                                     if (priceAdjustmentBase > 0)
                                     {
                                         formattedAttribute += string.Format(
-                                                _localizationService.GetResource("FormattedAttributes.PriceAdjustment"),
-                                                "+", _priceFormatter.FormatPrice(priceAdjustment), string.Empty);
+                                                await _localizationService.GetResourceAsync("FormattedAttributes.PriceAdjustment"),
+                                                "+", await _priceFormatter.FormatPriceAsync(priceAdjustment), string.Empty);
                                     }
                                 }
                             }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Directory;
 using TVProgViewer.Services.Plugins;
 
@@ -14,6 +15,6 @@ namespace TVProgViewer.Services.Directory
         /// </summary>
         /// <param name="exchangeRateCurrencyCode">Exchange rate currency code</param>
         /// <returns>Exchange rates</returns>
-        IList<ExchangeRate> GetCurrencyLiveRates(string exchangeRateCurrencyCode);
+        Task<IList<ExchangeRate>> GetCurrencyLiveRatesAsync(string exchangeRateCurrencyCode);
     }
 }

@@ -7,6 +7,8 @@ using TVProgViewer.Core.Domain.Payments;
 using TVProgViewer.Core.Domain.Shipping;
 using TVProgViewer.Data;
 using TVProgViewer.Services.Helpers;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Orders;
 
 namespace TVProgViewer.Services.Users
 {
@@ -26,14 +28,14 @@ namespace TVProgViewer.Services.Users
 
         #region Ctor
 
-        public UserReportService(IUserService UserService,
+        public UserReportService(IUserService userService,
             IDateTimeHelper dateTimeHelper,
-            IRepository<User> UserRepository,
+            IRepository<User> userRepository,
             IRepository<Order> orderRepository)
         {
-            _userService = UserService;
+            _userService = userService;
             _dateTimeHelper = dateTimeHelper;
-            _userRepository = UserRepository;
+            _userRepository = userRepository;
             _orderRepository = orderRepository;
         }
 
@@ -42,7 +44,7 @@ namespace TVProgViewer.Services.Users
         #region Methods
 
         /// <summary>
-        /// Получить лучших пользователей
+        /// Get best users
         /// </summary>
         /// <param name="createdFromUtc">Order created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Order created date to (UTC); null to load all records</param>
@@ -53,8 +55,8 @@ namespace TVProgViewer.Services.Users
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Report</returns>
-        public virtual IPagedList<BestUserReportLine> GetBestUsersReport(DateTime? createdFromUtc,
-            DateTime? createdToUtc, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, int orderBy,
+        public virtual async Task<IPagedList<BestUserReportLine>> GetBestUsersReportAsync(DateTime? createdFromUtc,
+            DateTime? createdToUtc, OrderStatus? os, PaymentStatus? ps, ShippingStatus? ss, OrderByEnum orderBy,
             int pageIndex = 0, int pageSize = 214748364)
         {
             int? orderStatusId = null;
@@ -76,7 +78,7 @@ namespace TVProgViewer.Services.Users
                          (!paymentStatusId.HasValue || paymentStatusId == o.PaymentStatusId) &&
                          (!shippingStatusId.HasValue || shippingStatusId == o.ShippingStatusId) &&
                          !o.Deleted &&
-                         c.Deleted == null
+                         !c.Deleted
                          select new { c, o };
 
             var query2 = from co in query1
@@ -89,37 +91,36 @@ namespace TVProgViewer.Services.Users
                          };
             query2 = orderBy switch
             {
-                1 => query2.OrderByDescending(x => x.OrderTotal),
-                2 => query2 = query2.OrderByDescending(x => x.OrderCount),
-                _ => throw new ArgumentException("Wrong orderBy parameter", nameof(orderBy))
+                OrderByEnum.OrderByQuantity => query2.OrderByDescending(x => x.OrderTotal),
+                OrderByEnum.OrderByTotalAmount => query2.OrderByDescending(x => x.OrderCount),
+                _ => throw new ArgumentException("Wrong orderBy parameter", nameof(orderBy)),
             };
-
-            var tmp = new PagedList<dynamic>(query2, pageIndex, pageSize);
+            var tmp = await query2.ToPagedListAsync(pageIndex, pageSize);
             return new PagedList<BestUserReportLine>(tmp.Select(x => new BestUserReportLine
             {
                 UserId = x.UserId,
                 OrderTotal = x.OrderTotal,
                 OrderCount = x.OrderCount
-            }),
+            }).ToList(),
                 tmp.PageIndex, tmp.PageSize, tmp.TotalCount);
         }
 
         /// <summary>
-        /// Gets a report of Users registered in the last days
+        /// Gets a report of users registered in the last days
         /// </summary>
         /// <param name="days">Users registered in the last days</param>
-        /// <returns>Number of registered Users</returns>
-        public virtual int GetRegisteredUsersReport(int days)
+        /// <returns>Number of registered users</returns>
+        public virtual async Task<int> GetRegisteredUsersReportAsync(int days)
         {
-            var date = _dateTimeHelper.ConvertToUserTime(DateTime.Now).AddDays(-days);
+            var date = (await _dateTimeHelper.ConvertToUserTimeAsync(DateTime.Now)).AddDays(-days);
 
-            var registeredUserRole = _userService.GetUserRoleBySystemName(TvProgUserDefaults.RegisteredRoleName);
+            var registeredUserRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.RegisteredRoleName);
             if (registeredUserRole == null)
                 return 0;
 
-            return _userService.GetAllUsers(
-                createdFromUtc: date,
-                userRoleIds: new int[] { registeredUserRole.Id }).Count();
+            return (await _userService.GetAllUsersAsync(
+                date,
+                userRoleIds: new[] { registeredUserRole.Id })).Count;
         }
 
         #endregion

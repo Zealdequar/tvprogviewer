@@ -5,34 +5,31 @@
 @inject IPluginManager<IAdminMenuPlugin> adminMenuPluginManager
 @inject IWorkContext workContext
 
-<ul class="sidebar-menu" data-widget="tree">
-    @{
-        //load sitemap
-        var siteMap = new XmlSiteMap();
-        siteMap.LoadFrom("~/Areas/Admin/sitemap.config");
+<ul class="nav nav-pills nav-sidebar flex-column nav-legacy" data-widget="treeview" role="menu">
+    @{ //load sitemap
+                    var siteMap = new XmlSiteMap();
+                    await siteMap.LoadFromAsync("~/Areas/Admin/sitemap.config");
 
-        //standard (default) items
-        var rootNode = siteMap.RootNode;
+                    //standard (default) items
+                    var rootNode = siteMap.RootNode;
 
-        //plugins
-        var adminMenuPlugins = adminMenuPluginManager.LoadAllPlugins(workContext.CurrentUser);
-        foreach (var adminMenuPlugin in adminMenuPlugins)
-        {
-            adminMenuPlugin.ManageSiteMap(rootNode);
-        }
+                    //plugins
+                    var adminMenuPlugins = await adminMenuPluginManager.LoadAllPluginsAsync(await workContext.GetCurrentUserAsync());
+                    foreach (var adminMenuPlugin in adminMenuPlugins)
+                    {
+                        adminMenuPlugin.ManageSiteMap(rootNode);
+                    }
 
-        //"Plugins" menu item should be visible when it has some child nodes
-        var pluginNode = rootNode.ChildNodes.FirstOrDefault(x => x.SystemName == "Third party plugins");
-        if (pluginNode != null && pluginNode.Visible)
-        {
-            var hasManagePluginsPermission = permissionService.Authorize(StandardPermissionProvider.ManagePlugins);
-            pluginNode.Visible = hasManagePluginsPermission && pluginNode.ChildNodes.Any(x => x.Visible);
-        }
+                    //"Plugins" menu item should be visible when it has some child nodes
+                    var pluginNode = rootNode.ChildNodes.FirstOrDefault(x => x.SystemName == "Third party plugins");
+                    if (pluginNode != null && pluginNode.Visible)
+                    {
+                        var hasManagePluginsPermission = await permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins);
+                        pluginNode.Visible = hasManagePluginsPermission && pluginNode.ChildNodes.Any(x => x.Visible);
+                    }
 
-        //display menu items
-        foreach (var item in rootNode.ChildNodes.Where(x => x.Visible))
-        {
-            @await Html.PartialAsync("_MenuItem", item)
-        }
-    }
+                    //display menu items
+                    foreach (var item in rootNode.ChildNodes.Where(x => x.Visible))
+                    {
+        @await Html.PartialAsync("_MenuItem", item) } }
 </ul>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Areas.Admin.Factories;
 using TVProgViewer.Web.Framework.Components;
 
@@ -30,10 +31,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Components
         /// Invoke view component
         /// </summary>
         /// <returns>View component result</returns>
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             //prepare model
-            var model = _settingModelFactory.PrepareStoreScopeConfigurationModel();
+            var model = await _settingModelFactory.PrepareStoreScopeConfigurationModelAsync();
 
             if (model.Stores.Count < 2)
                 return Content(string.Empty);

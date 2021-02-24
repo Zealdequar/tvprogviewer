@@ -17,7 +17,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Common
         public string AspNetInfo { get; set; }
 
         [TvProgResourceDisplayName("Admin.System.SystemInfo.IsFullTrust")]
-        public string IsFullTrust { get; set; }
+        public bool IsFullTrust { get; set; }
 
         [TvProgResourceDisplayName("Admin.System.SystemInfo.TvProgVersion")]
         public string TvProgVersion { get; set; }

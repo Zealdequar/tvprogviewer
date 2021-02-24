@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Logging;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Logging
 {
@@ -22,18 +23,18 @@ namespace TVProgViewer.Services.Logging
         /// Deletes a log item
         /// </summary>
         /// <param name="log">Log item</param>
-        void DeleteLog(Log log);
+        Task DeleteLogAsync(Log log);
 
         /// <summary>
         /// Deletes a log items
         /// </summary>
         /// <param name="logs">Log items</param>
-        void DeleteLogs(IList<Log> logs);
+        Task DeleteLogsAsync(IList<Log> logs);
 
         /// <summary>
         /// Clears a log
         /// </summary>
-        void ClearLog();
+        Task ClearLogAsync();
 
         /// <summary>
         /// Gets all log items
@@ -45,7 +46,7 @@ namespace TVProgViewer.Services.Logging
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Log item items</returns>
-        IPagedList<Log> GetAllLogs(DateTime? fromUtc = null, DateTime? toUtc = null,
+        Task<IPagedList<Log>> GetAllLogsAsync(DateTime? fromUtc = null, DateTime? toUtc = null,
             string message = "", LogLevel? logLevel = null,
             int pageIndex = 0, int pageSize = int.MaxValue);
 
@@ -54,14 +55,14 @@ namespace TVProgViewer.Services.Logging
         /// </summary>
         /// <param name="logId">Log item identifier</param>
         /// <returns>Log item</returns>
-        Log GetLogById(int logId);
+        Task<Log> GetLogByIdAsync(int logId);
 
         /// <summary>
         /// Get log items by identifiers
         /// </summary>
         /// <param name="logIds">Log item identifiers</param>
         /// <returns>Log items</returns>
-        IList<Log> GetLogByIds(int[] logIds);
+        Task<IList<Log>> GetLogByIdsAsync(int[] logIds);
 
         /// <summary>
         /// Inserts a log item
@@ -69,32 +70,32 @@ namespace TVProgViewer.Services.Logging
         /// <param name="logLevel">Log level</param>
         /// <param name="shortMessage">The short message</param>
         /// <param name="fullMessage">The full message</param>
-        /// <param name="User">The User to associate log record with</param>
+        /// <param name="user">The user to associate log record with</param>
         /// <returns>A log item</returns>
-        Log InsertLog(LogLevel logLevel, string shortMessage, string fullMessage = "", User User = null);
+        Task<Log> InsertLogAsync(LogLevel logLevel, string shortMessage, string fullMessage = "", User user = null);
 
         /// <summary>
         /// Information
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
-        /// <param name="User">User</param>
-        void Information(string message, Exception exception = null, User User = null);
+        /// <param name="user">User</param>
+        Task InformationAsync(string message, Exception exception = null, User user = null);
 
         /// <summary>
         /// Warning
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
-        /// <param name="User">User</param>
-        void Warning(string message, Exception exception = null, User User = null);
+        /// <param name="user">User</param>
+        Task WarningAsync(string message, Exception exception = null, User user = null);
 
         /// <summary>
         /// Error
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
-        /// <param name="User">User</param>
-        void Error(string message, Exception exception = null, User User = null);
+        /// <param name="user">User</param>
+        Task ErrorAsync(string message, Exception exception = null, User user = null);
     }
 }

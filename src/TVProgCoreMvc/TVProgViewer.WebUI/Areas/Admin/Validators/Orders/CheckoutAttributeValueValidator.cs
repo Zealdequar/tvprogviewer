@@ -9,11 +9,11 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Orders
 {
     public partial class CheckoutAttributeValueValidator : BaseTvProgValidator<CheckoutAttributeValueModel>
     {
-        public CheckoutAttributeValueValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public CheckoutAttributeValueValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Catalog.Attributes.CheckoutAttributes.Values.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Catalog.Attributes.CheckoutAttributes.Values.Fields.Name.Required"));
 
-            SetDatabaseValidationRules<CheckoutAttributeValue>(dataProvider);;
+            SetDatabaseValidationRules<CheckoutAttributeValue>(dataProvider);
         }
     }
 }

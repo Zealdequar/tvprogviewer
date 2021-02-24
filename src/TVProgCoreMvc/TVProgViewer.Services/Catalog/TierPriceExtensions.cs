@@ -25,6 +25,27 @@ namespace TVProgViewer.Services.Catalog
         }
 
         /// <summary>
+        /// Filter tier prices by user roles
+        /// </summary>
+        /// <param name="source">Tier prices</param>
+        /// <param name="userRoleIds">User role identifiers</param>
+        /// <returns>Filtered tier prices</returns>
+        public static IEnumerable<TierPrice> FilterByUserRole(this IEnumerable<TierPrice> source, int[] userRoleIds)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (userRoleIds == null)
+                throw new ArgumentNullException(nameof(userRoleIds));
+
+            if (!userRoleIds.Any())
+                return source;
+
+            return source.Where(tierPrice =>
+                !tierPrice.UserRoleId.HasValue || tierPrice.UserRoleId == 0 || userRoleIds.Contains(tierPrice.UserRoleId.Value));
+        }
+
+        /// <summary>
         /// Remove duplicated quantities (leave only an tier price with minimum price)
         /// </summary>
         /// <param name="source">Tier prices</param>

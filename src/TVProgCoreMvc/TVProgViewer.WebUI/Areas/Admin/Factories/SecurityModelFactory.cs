@@ -7,6 +7,7 @@ using TVProgViewer.Services.Security;
 using TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper.Extensions;
 using TVProgViewer.WebUI.Areas.Admin.Models.Users;
 using TVProgViewer.WebUI.Areas.Admin.Models.Security;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -43,19 +44,19 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Permission mapping model</param>
         /// <returns>Permission mapping model</returns>
-        public virtual PermissionMappingModel PreparePermissionMappingModel(PermissionMappingModel model)
+        public virtual async Task<PermissionMappingModel> PreparePermissionMappingModelAsync(PermissionMappingModel model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            var userRoles = _userService.GetAllUserRoles(true);
+            var userRoles = await _userService.GetAllUserRolesAsync(true);
             model.AvailableUserRoles = userRoles.Select(role => role.ToModel<UserRoleModel>()).ToList();
 
-            foreach (var permissionRecord in _permissionService.GetAllPermissionRecords())
+            foreach (var permissionRecord in await _permissionService.GetAllPermissionRecordsAsync())
             {
                 model.AvailablePermissions.Add(new PermissionRecordModel
                 {
-                    Name = _localizationService.GetLocalizedPermissionName(permissionRecord),
+                    Name = await _localizationService.GetLocalizedPermissionNameAsync(permissionRecord),
                     SystemName = permissionRecord.SystemName
                 });
 
@@ -63,8 +64,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 {
                     if (!model.Allowed.ContainsKey(permissionRecord.SystemName))
                         model.Allowed[permissionRecord.SystemName] = new Dictionary<int, bool>();
-                    model.Allowed[permissionRecord.SystemName][role.Id] = 
-                        _permissionService.GetMappingByPermissionRecordId(permissionRecord.Id).Any(mapping => mapping.UserRoleId == role.Id);
+                    model.Allowed[permissionRecord.SystemName][role.Id] =
+                        (await _permissionService.GetMappingByPermissionRecordIdAsync(permissionRecord.Id)).Any(mapping => mapping.UserRoleId == role.Id);
                 }
             }
 

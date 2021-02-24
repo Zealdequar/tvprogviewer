@@ -14,6 +14,10 @@ using TVProgViewer.Services.Common;
 using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Directory;
 using TVProgViewer.Services.Logging;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Events;
+using TVProgViewer.Services.Tax.Events;
+using System.Collections.Generic;
 
 namespace TVProgViewer.Services.Tax
 {
@@ -24,31 +28,33 @@ namespace TVProgViewer.Services.Tax
     {
         #region Fields
 
-        private readonly AddressSettings _addressSettings;
-        private readonly UserSettings _UserSettings;
-        private readonly IAddressService _addressService;
-        private readonly ICountryService _countryService;
-        private readonly IUserService _UserService;
-        private readonly IGenericAttributeService _genericAttributeService;
-        private readonly IGeoLookupService _geoLookupService;
-        private readonly ILogger _logger;
-        private readonly IStateProvinceService _stateProvinceService;
-        private readonly IStoreContext _storeContext;
-        private readonly ITaxPluginManager _taxPluginManager;
-        private readonly IWebHelper _webHelper;
-        private readonly IWorkContext _workContext;
-        private readonly ShippingSettings _shippingSettings;
-        private readonly TaxSettings _taxSettings;
+        protected readonly AddressSettings _addressSettings;
+        protected readonly UserSettings _userSettings;
+        protected readonly IAddressService _addressService;
+        protected readonly ICountryService _countryService;
+        protected readonly IUserService _userService;
+        protected readonly IEventPublisher _eventPublisher;
+        protected readonly IGenericAttributeService _genericAttributeService;
+        protected readonly IGeoLookupService _geoLookupService;
+        protected readonly ILogger _logger;
+        protected readonly IStateProvinceService _stateProvinceService;
+        protected readonly IStoreContext _storeContext;
+        protected readonly ITaxPluginManager _taxPluginManager;
+        protected readonly IWebHelper _webHelper;
+        protected readonly IWorkContext _workContext;
+        protected readonly ShippingSettings _shippingSettings;
+        protected readonly TaxSettings _taxSettings;
 
         #endregion
 
         #region Ctor
 
         public TaxService(AddressSettings addressSettings,
-            UserSettings UserSettings,
+            UserSettings userSettings,
             IAddressService addressService,
             ICountryService countryService,
-            IUserService UserService,
+            IUserService userService,
+            IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
             IGeoLookupService geoLookupService,
             ILogger logger,
@@ -61,10 +67,11 @@ namespace TVProgViewer.Services.Tax
             TaxSettings taxSettings)
         {
             _addressSettings = addressSettings;
-            _UserSettings = UserSettings;
+            _userSettings = userSettings;
             _addressService = addressService;
             _countryService = countryService;
-            _UserService = UserService;
+            _userService = userService;
+            _eventPublisher = eventPublisher;
             _genericAttributeService = genericAttributeService;
             _geoLookupService = geoLookupService;
             _logger = logger;
@@ -82,22 +89,26 @@ namespace TVProgViewer.Services.Tax
         #region Utilities
 
         /// <summary>
-        /// Get a value indicating whether a User is consumer (a person, not a company) located in Europe Union
+        /// Get a value indicating whether a user is consumer (a person, not a company) located in Europe Union
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Result</returns>
-        protected virtual bool IsEuConsumer(User User)
+        protected virtual async Task<bool> IsEuConsumerAsync(User user)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             Country country = null;
 
+            //get country from billing address
+            if (_addressSettings.CountryEnabled && await _userService.GetUserShippingAddressAsync(user) is Address billingAddress)
+                country = await _countryService.GetCountryByAddressAsync(billingAddress);
+
             //get country specified during registration?
-            if (country == null && _UserSettings.CountryEnabled)
+            if (country == null && _userSettings.CountryEnabled)
             {
-                var countryId = _genericAttributeService.GetAttribute<User, int>(User.Id, TvProgUserDefaults.CountryIdAttribute);
-                country = _countryService.GetCountryById(countryId);
+                var countryId = await _genericAttributeService.GetAttributeAsync<User, int>(user.Id, TvProgUserDefaults.CountryIdAttribute);
+                country = await _countryService.GetCountryByIdAsync(countryId);
             }
 
             //get country by IP address
@@ -105,7 +116,7 @@ namespace TVProgViewer.Services.Tax
             {
                 var ipAddress = _webHelper.GetCurrentIpAddress();
                 var countryIsoCode = _geoLookupService.LookupCountryIsoCode(ipAddress);
-                country = _countryService.GetCountryByTwoLetterIsoCode(countryIsoCode);
+                country = await _countryService.GetCountryByTwoLetterIsoCodeAsync(countryIsoCode);
             }
 
             //we cannot detect country
@@ -117,11 +128,9 @@ namespace TVProgViewer.Services.Tax
                 return false;
 
             //company (business) or consumer?
-            var UserVatStatus = (VatNumberStatus)_genericAttributeService.GetAttribute<int>(User, TvProgUserDefaults.VatNumberStatusIdAttribute);
-            if (UserVatStatus == VatNumberStatus.Valid)
+            var userVatStatus = (VatNumberStatus)await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.VatNumberStatusIdAttribute);
+            if (userVatStatus == VatNumberStatus.Valid)
                 return false;
-
-            //TODO: use specified company name? (both address and registration one)
 
             //consumer
             return true;
@@ -131,11 +140,11 @@ namespace TVProgViewer.Services.Tax
         /// Gets a default tax address
         /// </summary>
         /// <returns>Address</returns>
-        protected virtual Address LoadDefaultTaxAddress()
+        protected virtual async Task<Address> LoadDefaultTaxAddressAsync()
         {
             var addressId = _taxSettings.DefaultTaxAddressId;
 
-            return _addressService.GetAddressById(addressId);
+            return await _addressService.GetAddressByIdAsync(addressId);
         }
 
         /// <summary>
@@ -143,13 +152,13 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="pickupPoint">Pickup point</param>
         /// <returns>Address</returns>
-        protected virtual Address LoadPickupPointTaxAddress(PickupPoint pickupPoint)
+        protected virtual async Task<Address> LoadPickupPointTaxAddressAsync(PickupPoint pickupPoint)
         {
             if (pickupPoint == null)
                 throw new ArgumentNullException(nameof(pickupPoint));
 
-            var country = _countryService.GetCountryByTwoLetterIsoCode(pickupPoint.CountryCode);
-            var state = _stateProvinceService.GetStateProvinceByAbbreviation(pickupPoint.StateAbbreviation, country?.Id);
+            var country = await _countryService.GetCountryByTwoLetterIsoCodeAsync(pickupPoint.CountryCode);
+            var state = await _stateProvinceService.GetStateProvinceByAbbreviationAsync(pickupPoint.StateAbbreviation, country?.Id);
 
             return new Address
             {
@@ -161,7 +170,83 @@ namespace TVProgViewer.Services.Tax
                 ZipPostalCode = pickupPoint.ZipPostalCode
             };
         }
-        
+
+        /// <summary>
+        /// Prepare request to get tax rate
+        /// </summary>
+        /// <param name="product">Product</param>
+        /// <param name="taxCategoryId">Tax category identifier</param>
+        /// <param name="user">User</param>
+        /// <param name="price">Price</param>
+        /// <returns>Package for tax calculation</returns>
+        protected virtual async Task<TaxRateRequest> PrepareTaxRateRequestAsync(Product product, int taxCategoryId, User user, decimal price)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var taxRateRequest = new TaxRateRequest
+            {
+                User = user,
+                Product = product,
+                Price = price,
+                TaxCategoryId = taxCategoryId > 0 ? taxCategoryId : product?.TaxCategoryId ?? 0,
+                CurrentStoreId = (await _storeContext.GetCurrentStoreAsync()).Id
+            };
+
+            var basedOn = _taxSettings.TaxBasedOn;
+
+            //new EU VAT rules starting January 1st 2015
+            //find more info at http://ec.europa.eu/taxation_customs/taxation/vat/how_vat_works/telecom/index_en.htm#new_rules
+            var overriddenBasedOn =
+                //EU VAT enabled?
+                _taxSettings.EuVatEnabled &&
+                //telecommunications, broadcasting and electronic services?
+                product != null && product.IsTelecommunicationsOrBroadcastingOrElectronicServices &&
+                //January 1st 2015 passed? Yes, not required anymore
+                //DateTime.UtcNow > new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc) &&
+                //Europe Union consumer?
+                await IsEuConsumerAsync(user);
+            if (overriddenBasedOn)
+            {
+                //We must charge VAT in the EU country where the user belongs (not where the business is based)
+                basedOn = TaxBasedOn.BillingAddress;
+            }
+
+            //tax is based on pickup point address
+            if (!overriddenBasedOn && _taxSettings.TaxBasedOnPickupPointAddress && _shippingSettings.AllowPickupInStore)
+            {
+                var pickupPoint = await _genericAttributeService.GetAttributeAsync<PickupPoint>(user,
+                    TvProgUserDefaults.SelectedPickupPointAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
+                if (pickupPoint != null)
+                {
+                    taxRateRequest.Address = await LoadPickupPointTaxAddressAsync(pickupPoint);
+                    return taxRateRequest;
+                }
+            }
+
+            if (basedOn == TaxBasedOn.BillingAddress && user.BillingAddressId == null ||
+                basedOn == TaxBasedOn.ShippingAddress && user.ShippingAddressId == null)
+                basedOn = TaxBasedOn.DefaultAddress;
+
+            switch (basedOn)
+            {
+                case TaxBasedOn.BillingAddress:
+                    var billingAddress = await _userService.GetUserBillingAddressAsync(user);
+                    taxRateRequest.Address = billingAddress;
+                    break;
+                case TaxBasedOn.ShippingAddress:
+                    var shippingAddress = await _userService.GetUserShippingAddressAsync(user);
+                    taxRateRequest.Address = shippingAddress;
+                    break;
+                case TaxBasedOn.DefaultAddress:
+                default:
+                    taxRateRequest.Address = await LoadDefaultTaxAddressAsync();
+                    break;
+            }
+
+            return taxRateRequest;
+        }
+
         /// <summary>
         /// Calculated price
         /// </summary>
@@ -188,21 +273,182 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="product">Product</param>
         /// <param name="taxCategoryId">Tax category identifier</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="price">Price (taxable value)</param>
-        /// <param name="taxRate">Calculated tax rate</param>
-        /// <param name="isTaxable">A value indicating whether a request is taxable</param>
-        protected virtual void GetTaxRate(Product product, int taxCategoryId,
-            User User, decimal price, out decimal taxRate, out bool isTaxable)
+        /// <returns>Calculated tax rate. A value indicating whether a request is taxable</returns>
+        protected virtual async Task<(decimal taxRate, bool isTaxable)> GetTaxRateAsync(Product product, int taxCategoryId,
+            User user, decimal price)
         {
-            taxRate = decimal.Zero;
-            isTaxable = true;
+            var taxRate = decimal.Zero;
 
             //active tax provider
-            var activeTaxProvider = _taxPluginManager.LoadPrimaryPlugin(User, _storeContext.CurrentStore.Id);
+            var activeTaxProvider = await _taxPluginManager.LoadPrimaryPluginAsync(user, (await _storeContext.GetCurrentStoreAsync()).Id);
             if (activeTaxProvider == null)
-                return;
+                return (taxRate, true);
 
+            //tax request
+            var taxRateRequest = await PrepareTaxRateRequestAsync(product, taxCategoryId, user, price);
+
+            var isTaxable = !await IsTaxExemptAsync(product, taxRateRequest.User);
+
+            //tax exempt
+
+            //make EU VAT exempt validation (the European Union Value Added Tax)
+            if (isTaxable &&
+                _taxSettings.EuVatEnabled &&
+                await IsVatExemptAsync(taxRateRequest.Address, taxRateRequest.User))
+                //VAT is not chargeable
+                isTaxable = false;
+
+            //get tax rate
+            var taxRateResult = await activeTaxProvider.GetTaxRateAsync(taxRateRequest);
+
+            //tax rate is calculated, now consumers can adjust it
+            await _eventPublisher.PublishAsync(new TaxRateCalculatedEvent(taxRateResult));
+
+            if (taxRateResult.Success)
+            {
+                //ensure that tax is equal or greater than zero
+                if (taxRateResult.TaxRate < decimal.Zero)
+                    taxRateResult.TaxRate = decimal.Zero;
+
+                taxRate = taxRateResult.TaxRate;
+            }
+            else if (_taxSettings.LogErrors)
+                foreach (var error in taxRateResult.Errors)
+                    await _logger.ErrorAsync($"{activeTaxProvider.PluginDescriptor.FriendlyName} - {error}", null, user);
+
+            return (taxRate, isTaxable);
+        }
+
+        /// <summary>
+        /// Gets VAT Number status
+        /// </summary>
+        /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
+        /// <param name="vatNumber">VAT number</param>
+        /// <returns>VAT Number status. Name (if received). Address (if received)</returns>
+        protected virtual async Task<(VatNumberStatus vatNumberStatus, string name, string address)> GetVatNumberStatusAsync(string twoLetterIsoCode, string vatNumber)
+        {
+            var name = string.Empty;
+            var address = string.Empty;
+
+            if (string.IsNullOrEmpty(twoLetterIsoCode))
+                return (VatNumberStatus.Empty, name, address);
+
+            if (string.IsNullOrEmpty(vatNumber))
+                return (VatNumberStatus.Empty, name, address);
+
+            if (_taxSettings.EuVatAssumeValid)
+                return (VatNumberStatus.Valid, name, address);
+
+            if (!_taxSettings.EuVatUseWebService)
+                return (VatNumberStatus.Unknown, name, address);
+
+            var rez = await DoVatCheckAsync(twoLetterIsoCode, vatNumber);
+
+            return (rez.vatNumberStatus, rez.name, rez.address);
+        }
+
+        /// <summary>
+        /// Performs a basic check of a VAT number for validity
+        /// </summary>
+        /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
+        /// <param name="vatNumber">VAT number</param>
+        /// <returns>VAT number status. Company name. Address. Exception</returns>
+        protected virtual async Task<(VatNumberStatus vatNumberStatus, string name, string address, Exception exception)> DoVatCheckAsync(string twoLetterIsoCode, string vatNumber)
+        {
+            if (vatNumber == null)
+                vatNumber = string.Empty;
+            vatNumber = vatNumber.Trim().Replace(" ", string.Empty);
+
+            if (twoLetterIsoCode == null)
+                twoLetterIsoCode = string.Empty;
+            if (!string.IsNullOrEmpty(twoLetterIsoCode))
+                //The service returns INVALID_INPUT for country codes that are not uppercase.
+                twoLetterIsoCode = twoLetterIsoCode.ToUpper();
+
+            string name;
+            string address;
+
+            try
+            {
+                var s = new EuropaCheckVatService.checkVatPortTypeClient();
+                var result = await s.checkVatAsync(new EuropaCheckVatService.checkVatRequest
+                {
+                    vatNumber = vatNumber,
+                    countryCode = twoLetterIsoCode
+                });
+
+                var valid = result.valid;
+                name = result.name;
+                address = result.address;
+
+                return (valid ? VatNumberStatus.Valid : VatNumberStatus.Invalid, name, address, null);
+            }
+            catch (Exception ex)
+            {
+                name = address = string.Empty;
+                var exception = ex;
+
+                return (VatNumberStatus.Unknown, name, address, exception);
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether a product is tax exempt
+        /// </summary>
+        /// <param name="product">Product</param>
+        /// <param name="user">User</param>
+        /// <returns>A value indicating whether a product is tax exempt</returns>
+        protected virtual async Task<bool> IsTaxExemptAsync(Product product, User user)
+        {
+            if (user != null)
+            {
+                if (user.IsTaxExempt)
+                    return true;
+
+                if ((await _userService.GetUserRolesAsync(user)).Any(cr => cr.TaxExempt))
+                    return true;
+            }
+
+            if (product == null)
+                return false;
+
+            if (product.IsTaxExempt)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether EU VAT exempt (the European Union Value Added Tax)
+        /// </summary>
+        /// <param name="address">Address</param>
+        /// <param name="user">User</param>
+        /// <returns>Result</returns>
+        protected virtual async Task<bool> IsVatExemptAsync(Address address, User user)
+        {
+            if (!_taxSettings.EuVatEnabled)
+                return false;
+
+            if (user == null || address == null)
+                return false;
+
+            var country = await _countryService.GetCountryByIdAsync(address.CountryId ?? 0);
+            if (country == null)
+                return false;
+
+            if (!country.SubjectToVat)
+                // VAT not chargeable if shipping outside VAT zone
+                return true;
+
+            // VAT not chargeable if address, user and config meet our VAT exemption requirements:
+            // returns true if this user is VAT exempt because they are shipping within the EU but outside our shop country, they have supplied a validated VAT number, and the shop is configured to allow VAT exemption
+            var userVatStatus = (VatNumberStatus)await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.VatNumberStatusIdAttribute);
+
+            return country.Id != _taxSettings.EuVatShopCountryId &&
+                   userVatStatus == VatNumberStatus.Valid &&
+                   _taxSettings.EuVatAllowVatExemption;
         }
 
         #endregion
@@ -216,13 +462,12 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="product">Product</param>
         /// <param name="price">Price</param>
-        /// <param name="taxRate">Tax rate</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetProductPrice(Product product, decimal price,
-            out decimal taxRate)
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price)
         {
-            var User = _workContext.CurrentUser;
-            return GetProductPrice(product, price, User, out taxRate);
+            var user = await _workContext.GetCurrentUserAsync();
+
+            return await GetProductPriceAsync(product, price, user);
         }
 
         /// <summary>
@@ -230,14 +475,13 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="product">Product</param>
         /// <param name="price">Price</param>
-        /// <param name="User">User</param>
-        /// <param name="taxRate">Tax rate</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetProductPrice(Product product, decimal price,
-            User User, out decimal taxRate)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price,
+            User user)
         {
-            var includingTax = _workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
-            return GetProductPrice(product, price, includingTax, User, out taxRate);
+            var includingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+            return await GetProductPriceAsync(product, price, includingTax, user);
         }
 
         /// <summary>
@@ -246,16 +490,14 @@ namespace TVProgViewer.Services.Tax
         /// <param name="product">Product</param>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
-        /// <param name="taxRate">Tax rate</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetProductPrice(Product product, decimal price,
-            bool includingTax, User User, out decimal taxRate)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price,
+            bool includingTax, User user)
         {
             var priceIncludesTax = _taxSettings.PricesIncludeTax;
             var taxCategoryId = 0;
-            return GetProductPrice(product, taxCategoryId, price, includingTax,
-                User, priceIncludesTax, out taxRate);
+            return await GetProductPriceAsync(product, taxCategoryId, price, includingTax, user, priceIncludesTax);
         }
 
         /// <summary>
@@ -265,22 +507,22 @@ namespace TVProgViewer.Services.Tax
         /// <param name="taxCategoryId">Tax category identifier</param>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="priceIncludesTax">A value indicating whether price already includes tax</param>
-        /// <param name="taxRate">Tax rate</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetProductPrice(Product product, int taxCategoryId,
-            decimal price, bool includingTax, User User,
-            bool priceIncludesTax, out decimal taxRate)
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, int taxCategoryId,
+            decimal price, bool includingTax, User user,
+            bool priceIncludesTax)
         {
+            var taxRate = decimal.Zero;
+
             //no need to calculate tax rate if passed "price" is 0
             if (price == decimal.Zero)
-            {
-                taxRate = decimal.Zero;
-                return taxRate;
-            }
+                return (price, taxRate);
 
-            GetTaxRate(product, taxCategoryId, User, price, out taxRate, out var isTaxable);
+            bool isTaxable;
+
+            (taxRate, isTaxable) = await GetTaxRateAsync(product, taxCategoryId, user, price);
 
             if (priceIncludesTax)
             {
@@ -325,7 +567,7 @@ namespace TVProgViewer.Services.Tax
             //if (price < decimal.Zero)
             //    price = decimal.Zero;
 
-            return price;
+            return (price, taxRate);
         }
 
         #endregion
@@ -336,12 +578,13 @@ namespace TVProgViewer.Services.Tax
         /// Gets shipping price
         /// </summary>
         /// <param name="price">Price</param>
-        /// <param name="User">User</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetShippingPrice(decimal price, User User)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetShippingPriceAsync(decimal price, User user)
         {
-            var includingTax = _workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
-            return GetShippingPrice(price, includingTax, User);
+            var includingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+
+            return await GetShippingPriceAsync(price, includingTax, user);
         }
 
         /// <summary>
@@ -349,34 +592,21 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetShippingPrice(decimal price, bool includingTax, User User)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetShippingPriceAsync(decimal price, bool includingTax, User user)
         {
-            return GetShippingPrice(price, includingTax, User, out var _);
-        }
-
-        /// <summary>
-        /// Gets shipping price
-        /// </summary>
-        /// <param name="price">Price</param>
-        /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
-        /// <param name="taxRate">Tax rate</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetShippingPrice(decimal price, bool includingTax, User User, out decimal taxRate)
-        {
-            taxRate = decimal.Zero;
+            var taxRate = decimal.Zero;
 
             if (!_taxSettings.ShippingIsTaxable)
             {
-                return price;
+                return (price, taxRate);
             }
 
             var taxClassId = _taxSettings.ShippingTaxClassId;
             var priceIncludesTax = _taxSettings.ShippingPriceIncludesTax;
-            return GetProductPrice(null, taxClassId, price, includingTax, User,
-                priceIncludesTax, out taxRate);
+
+            return await GetProductPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
         }
 
         #endregion
@@ -387,12 +617,13 @@ namespace TVProgViewer.Services.Tax
         /// Gets payment method additional handling fee
         /// </summary>
         /// <param name="price">Price</param>
-        /// <param name="User">User</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetPaymentMethodAdditionalFee(decimal price, User User)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetPaymentMethodAdditionalFeeAsync(decimal price, User user)
         {
-            var includingTax = _workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
-            return GetPaymentMethodAdditionalFee(price, includingTax, User);
+            var includingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+
+            return await GetPaymentMethodAdditionalFeeAsync(price, includingTax, user);
         }
 
         /// <summary>
@@ -400,34 +631,20 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetPaymentMethodAdditionalFee(decimal price, bool includingTax, User User)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetPaymentMethodAdditionalFeeAsync(decimal price, bool includingTax, User user)
         {
-            return GetPaymentMethodAdditionalFee(price, includingTax, User, out var _);
-        }
-
-        /// <summary>
-        /// Gets payment method additional handling fee
-        /// </summary>
-        /// <param name="price">Price</param>
-        /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
-        /// <param name="taxRate">Tax rate</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetPaymentMethodAdditionalFee(decimal price, bool includingTax, User User, out decimal taxRate)
-        {
-            taxRate = decimal.Zero;
+            var taxRate = decimal.Zero;
 
             if (!_taxSettings.PaymentMethodAdditionalFeeIsTaxable)
             {
-                return price;
+                return (price, taxRate);
             }
 
             var taxClassId = _taxSettings.PaymentMethodAdditionalFeeTaxClassId;
             var priceIncludesTax = _taxSettings.PaymentMethodAdditionalFeeIncludesTax;
-            return GetProductPrice(null, taxClassId, price, includingTax, User,
-                priceIncludesTax, out taxRate);
+            return await GetProductPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
         }
 
         #endregion
@@ -439,11 +656,12 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="ca">Checkout attribute</param>
         /// <param name="cav">Checkout attribute value</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetCheckoutAttributePrice(CheckoutAttribute ca, CheckoutAttributeValue cav)
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetCheckoutAttributePriceAsync(CheckoutAttribute ca, CheckoutAttributeValue cav)
         {
-            var User = _workContext.CurrentUser;
-            return GetCheckoutAttributePrice(ca, cav, User);
+            var user = await _workContext.GetCurrentUserAsync();
+
+            return await GetCheckoutAttributePriceAsync(ca, cav, user);
         }
 
         /// <summary>
@@ -451,12 +669,13 @@ namespace TVProgViewer.Services.Tax
         /// </summary>
         /// <param name="ca">Checkout attribute</param>
         /// <param name="cav">Checkout attribute value</param>
-        /// <param name="User">User</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetCheckoutAttributePrice(CheckoutAttribute ca, CheckoutAttributeValue cav, User User)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetCheckoutAttributePriceAsync(CheckoutAttribute ca, CheckoutAttributeValue cav, User user)
         {
-            var includingTax = _workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
-            return GetCheckoutAttributePrice(ca, cav, includingTax, User);
+            var includingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+
+            return await GetCheckoutAttributePriceAsync(ca, cav, includingTax, user);
         }
 
         /// <summary>
@@ -465,41 +684,24 @@ namespace TVProgViewer.Services.Tax
         /// <param name="ca">Checkout attribute</param>
         /// <param name="cav">Checkout attribute value</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetCheckoutAttributePrice(CheckoutAttribute ca, CheckoutAttributeValue cav,
-            bool includingTax, User User)
-        {
-            return GetCheckoutAttributePrice(ca, cav, includingTax, User, out var _);
-        }
-        
-        /// <summary>
-        /// Gets checkout attribute value price
-        /// </summary>
-        /// <param name="ca">Checkout attribute</param>
-        /// <param name="cav">Checkout attribute value</param>
-        /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="User">User</param>
-        /// <param name="taxRate">Tax rate</param>
-        /// <returns>Price</returns>
-        public virtual decimal GetCheckoutAttributePrice(CheckoutAttribute ca, CheckoutAttributeValue cav,
-            bool includingTax, User User, out decimal taxRate)
+        /// <param name="user">User</param>
+        /// <returns>Price. Tax rate</returns>
+        public virtual async Task<(decimal price, decimal taxRate)> GetCheckoutAttributePriceAsync(CheckoutAttribute ca, CheckoutAttributeValue cav,
+            bool includingTax, User user)
         {
             if (cav == null)
                 throw new ArgumentNullException(nameof(cav));
 
-            taxRate = decimal.Zero;
+            var taxRate = decimal.Zero;
 
             var price = cav.PriceAdjustment;
             if (ca.IsTaxExempt)
-            {
-                return price;
-            }
+                return (price, taxRate);
 
             var priceIncludesTax = _taxSettings.PricesIncludeTax;
             var taxClassId = ca.TaxCategoryId;
-            return GetProductPrice(null, taxClassId, price, includingTax, User,
-                priceIncludesTax, out taxRate);
+
+            return await GetProductPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
         }
 
         #endregion
@@ -510,27 +712,14 @@ namespace TVProgViewer.Services.Tax
         /// Gets VAT Number status
         /// </summary>
         /// <param name="fullVatNumber">Two letter ISO code of a country and VAT number (e.g. GB 111 1111 111)</param>
-        /// <returns>VAT Number status</returns>
-        public virtual VatNumberStatus GetVatNumberStatus(string fullVatNumber)
+        /// <returns>VAT Number status. Name (if received). Address (if received)</returns>
+        public virtual async Task<(VatNumberStatus vatNumberStatus, string name, string address)> GetVatNumberStatusAsync(string fullVatNumber)
         {
-            return GetVatNumberStatus(fullVatNumber, out var _, out var _);
-        }
-
-        /// <summary>
-        /// Gets VAT Number status
-        /// </summary>
-        /// <param name="fullVatNumber">Two letter ISO code of a country and VAT number (e.g. GB 111 1111 111)</param>
-        /// <param name="name">Name (if received)</param>
-        /// <param name="address">Address (if received)</param>
-        /// <returns>VAT Number status</returns>
-        public virtual VatNumberStatus GetVatNumberStatus(string fullVatNumber,
-            out string name, out string address)
-        {
-            name = string.Empty;
-            address = string.Empty;
+            var name = string.Empty;
+            var address = string.Empty;
 
             if (string.IsNullOrWhiteSpace(fullVatNumber))
-                return VatNumberStatus.Empty;
+                return (VatNumberStatus.Empty, name, address);
             fullVatNumber = fullVatNumber.Trim();
 
             //GB 111 1111 111 or GB 1111111111
@@ -538,173 +727,53 @@ namespace TVProgViewer.Services.Tax
             var r = new Regex(@"^(\w{2})(.*)");
             var match = r.Match(fullVatNumber);
             if (!match.Success)
-                return VatNumberStatus.Invalid;
+                return (VatNumberStatus.Invalid, name, address);
+
             var twoLetterIsoCode = match.Groups[1].Value;
             var vatNumber = match.Groups[2].Value;
 
-            return GetVatNumberStatus(twoLetterIsoCode, vatNumber, out name, out address);
-        }
-
-        /// <summary>
-        /// Gets VAT Number status
-        /// </summary>
-        /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
-        /// <param name="vatNumber">VAT number</param>
-        /// <returns>VAT Number status</returns>
-        public virtual VatNumberStatus GetVatNumberStatus(string twoLetterIsoCode, string vatNumber)
-        {
-            return GetVatNumberStatus(twoLetterIsoCode, vatNumber, out var _, out var _);
-        }
-
-        /// <summary>
-        /// Gets VAT Number status
-        /// </summary>
-        /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
-        /// <param name="vatNumber">VAT number</param>
-        /// <param name="name">Name (if received)</param>
-        /// <param name="address">Address (if received)</param>
-        /// <returns>VAT Number status</returns>
-        public virtual VatNumberStatus GetVatNumberStatus(string twoLetterIsoCode, string vatNumber,
-            out string name, out string address)
-        {
-            name = string.Empty;
-            address = string.Empty;
-
-            if (string.IsNullOrEmpty(twoLetterIsoCode))
-                return VatNumberStatus.Empty;
-
-            if (string.IsNullOrEmpty(vatNumber))
-                return VatNumberStatus.Empty;
-
-            if (_taxSettings.EuVatAssumeValid)
-                return VatNumberStatus.Valid;
-
-            if (!_taxSettings.EuVatUseWebService)
-                return VatNumberStatus.Unknown;
-
-            return DoVatCheck(twoLetterIsoCode, vatNumber, out name, out address, out var _);
-        }
-
-        /// <summary>
-        /// Performs a basic check of a VAT number for validity
-        /// </summary>
-        /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
-        /// <param name="vatNumber">VAT number</param>
-        /// <param name="name">Company name</param>
-        /// <param name="address">Address</param>
-        /// <param name="exception">Exception</param>
-        /// <returns>VAT number status</returns>
-        public virtual VatNumberStatus DoVatCheck(string twoLetterIsoCode, string vatNumber,
-            out string name, out string address, out Exception exception)
-        {
-            name = string.Empty;
-            address = string.Empty;
-
-            if (vatNumber == null)
-                vatNumber = string.Empty;
-            vatNumber = vatNumber.Trim().Replace(" ", string.Empty);
-
-            if (twoLetterIsoCode == null)
-                twoLetterIsoCode = string.Empty;
-            if (!string.IsNullOrEmpty(twoLetterIsoCode))
-                //The service returns INVALID_INPUT for country codes that are not uppercase.
-                twoLetterIsoCode = twoLetterIsoCode.ToUpper();
-
-            try
-            {
-                var s = new EuropaCheckVatService.checkVatPortTypeClient();
-                var task = s.checkVatAsync(new EuropaCheckVatService.checkVatRequest
-                {
-                    vatNumber = vatNumber,
-                    countryCode = twoLetterIsoCode
-                });
-                task.Wait();
-
-                var result = task.Result;
-
-                var valid = result.valid;
-                name = result.name;
-                address = result.address;
-
-                exception = null;
-                return valid ? VatNumberStatus.Valid : VatNumberStatus.Invalid;
-            }
-            catch (Exception ex)
-            {
-                name = address = string.Empty;
-                exception = ex;
-                return VatNumberStatus.Unknown;
-            }
-            finally
-            {
-                if (name == null)
-                    name = string.Empty;
-
-                if (address == null)
-                    address = string.Empty;
-            }
+            return await GetVatNumberStatusAsync(twoLetterIsoCode, vatNumber);
         }
 
         #endregion
 
-        #region Exempts
+        #region Tax total
 
         /// <summary>
-        /// Gets a value indicating whether a product is tax exempt
+        /// Get tax total for the passed shopping cart
         /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="User">User</param>
-        /// <returns>A value indicating whether a product is tax exempt</returns>
-        public virtual bool IsTaxExempt(Product product, User User)
-        {
-            if (User != null)
-            {
-               
-                if (_UserService.GetUserRoles(User).Any(cr => cr.TaxExempt))
-                    return true;
-            }
-
-            if (product == null)
-            {
-                return false;
-            }
-
-            if (product.IsTaxExempt)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether EU VAT exempt (the European Union Value Added Tax)
-        /// </summary>
-        /// <param name="address">Address</param>
-        /// <param name="User">User</param>
+        /// <param name="cart">Shopping cart</param>
+        /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating tax</param>
         /// <returns>Result</returns>
-        public virtual bool IsVatExempt(Address address, User User)
+        public virtual async Task<TaxTotalResult> GetTaxTotalAsync(IList<ShoppingCartItem> cart, bool usePaymentMethodAdditionalFee = true)
         {
-            if (!_taxSettings.EuVatEnabled)
-                return false;
+            var user = await _userService.GetShoppingCartUserAsync(cart);
+            var activeTaxProvider = await _taxPluginManager.LoadPrimaryPluginAsync(user, (await _storeContext.GetCurrentStoreAsync()).Id);
+            if (activeTaxProvider == null)
+                return null;
 
-            if (User == null || address == null)
-                return false;
+            //get result by using primary tax provider
+            var taxTotalResult = await activeTaxProvider.GetTaxTotalAsync(new TaxTotalRequest
+            {
+                ShoppingCart = cart,
+                User = user,
+                StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
+                UsePaymentMethodAdditionalFee = usePaymentMethodAdditionalFee
+            });
 
-            var country = _countryService.GetCountryById(address.CountryId ?? 0);
-            if (country == null)
-                return false;
+            //tax total is calculated, now consumers can adjust it
+            await _eventPublisher.PublishAsync(new TaxTotalCalculatedEvent(taxTotalResult));
 
-            if (!country.SubjectToVat)
-                // VAT not chargeable if shipping outside VAT zone
-                return true;
+            //error logging
+            if (taxTotalResult != null && !taxTotalResult.Success && _taxSettings.LogErrors)
+            {
+                foreach (var error in taxTotalResult.Errors)
+                {
+                    await _logger.ErrorAsync($"{activeTaxProvider.PluginDescriptor.FriendlyName} - {error}", null, user);
+                }
+            }
 
-            // VAT not chargeable if address, User and config meet our VAT exemption requirements:
-            // returns true if this User is VAT exempt because they are shipping within the EU but outside our shop country, they have supplied a validated VAT number, and the shop is configured to allow VAT exemption
-            var UserVatStatus = (VatNumberStatus)_genericAttributeService.GetAttribute<int>(User, TvProgUserDefaults.VatNumberStatusIdAttribute);
-            return country.Id != _taxSettings.EuVatShopCountryId &&
-                   UserVatStatus == VatNumberStatus.Valid &&
-                   _taxSettings.EuVatAllowVatExemption;
+            return taxTotalResult;
         }
 
         #endregion

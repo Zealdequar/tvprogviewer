@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using TVProgViewer.Core.Configuration;
 using TVProgViewer.Core.Domain.Affiliates;
 using TVProgViewer.Core.Domain.Blogs;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Domain.Configuration;
-using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Directory;
 using TVProgViewer.Core.Domain.Discounts;
 using TVProgViewer.Core.Domain.Forums;
@@ -23,21 +23,23 @@ using TVProgViewer.Core.Domain.Stores;
 using TVProgViewer.Core.Domain.Tasks;
 using TVProgViewer.Core.Domain.Tax;
 using TVProgViewer.Core.Domain.Topics;
+using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Vendors;
 using TVProgViewer.Core.Infrastructure.Mapper;
 using TVProgViewer.Services.Authentication.External;
+using TVProgViewer.Services.Authentication.MultiFactor;
 using TVProgViewer.Services.Cms;
 using TVProgViewer.Services.Payments;
 using TVProgViewer.Services.Plugins;
 using TVProgViewer.Services.Shipping;
 using TVProgViewer.Services.Shipping.Pickup;
 using TVProgViewer.Services.Tax;
+using TVProgViewer.Web.Framework.Models;
 using TVProgViewer.WebUI.Areas.Admin.Models.Affiliates;
 using TVProgViewer.WebUI.Areas.Admin.Models.Blogs;
 using TVProgViewer.WebUI.Areas.Admin.Models.Catalog;
 using TVProgViewer.WebUI.Areas.Admin.Models.Cms;
 using TVProgViewer.WebUI.Areas.Admin.Models.Common;
-using TVProgViewer.WebUI.Areas.Admin.Models.Users;
 using TVProgViewer.WebUI.Areas.Admin.Models.Directory;
 using TVProgViewer.WebUI.Areas.Admin.Models.Discounts;
 using TVProgViewer.WebUI.Areas.Admin.Models.ExternalAuthentication;
@@ -45,6 +47,7 @@ using TVProgViewer.WebUI.Areas.Admin.Models.Forums;
 using TVProgViewer.WebUI.Areas.Admin.Models.Localization;
 using TVProgViewer.WebUI.Areas.Admin.Models.Logging;
 using TVProgViewer.WebUI.Areas.Admin.Models.Messages;
+using TVProgViewer.WebUI.Areas.Admin.Models.MultiFactorAuthentication;
 using TVProgViewer.WebUI.Areas.Admin.Models.News;
 using TVProgViewer.WebUI.Areas.Admin.Models.Orders;
 using TVProgViewer.WebUI.Areas.Admin.Models.Payments;
@@ -58,8 +61,8 @@ using TVProgViewer.WebUI.Areas.Admin.Models.Tasks;
 using TVProgViewer.WebUI.Areas.Admin.Models.Tax;
 using TVProgViewer.WebUI.Areas.Admin.Models.Templates;
 using TVProgViewer.WebUI.Areas.Admin.Models.Topics;
+using TVProgViewer.WebUI.Areas.Admin.Models.Users;
 using TVProgViewer.WebUI.Areas.Admin.Models.Vendors;
-using TVProgViewer.Web.Framework.Models;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
 {
@@ -73,8 +76,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
         public AdminMapperConfiguration()
         {
             //create specific maps
+            CreateConfigMaps();
             CreateAffiliatesMaps();
             CreateAuthenticationMaps();
+            CreateMultiFactorAuthenticationMaps();
             CreateBlogsMaps();
             CreateCatalogMaps();
             CreateCmsMaps();
@@ -116,6 +121,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 //exclude ActiveStoreScopeConfiguration from mapping ISettingsModel
                 if (typeof(ISettingsModel).IsAssignableFrom(mapConfiguration.DestinationType))
                     map.ForMember(nameof(ISettingsModel.ActiveStoreScopeConfiguration), options => options.Ignore());
+
+                //exclude some properties from mapping configuration and models
+                if (typeof(IConfig).IsAssignableFrom(mapConfiguration.DestinationType))
+                    map.ForMember(nameof(IConfig.Name), options => options.Ignore());
 
                 //exclude Locales from mapping ILocalizedModel
                 if (typeof(ILocalizedModel).IsAssignableFrom(mapConfiguration.DestinationType))
@@ -169,6 +178,35 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
         #region Utilities
 
         /// <summary>
+        /// Create configuration maps 
+        /// </summary>
+        protected virtual void CreateConfigMaps()
+        {
+            CreateMap<CacheConfig, CacheConfigModel>();
+            CreateMap<CacheConfigModel, CacheConfig>();
+
+            CreateMap<HostingConfig, HostingConfigModel>();
+            CreateMap<HostingConfigModel, HostingConfig>();
+
+            CreateMap<RedisConfig, RedisConfigModel>();
+            CreateMap<RedisConfigModel, RedisConfig>();
+
+            CreateMap<AzureBlobConfig, AzureBlobConfigModel>();
+            CreateMap<AzureBlobConfigModel, AzureBlobConfig>()
+                .ForMember(entity => entity.Enabled, options => options.Ignore())
+                .ForMember(entity => entity.DataProtectionKeysEncryptWithVault, options => options.Ignore());
+
+            CreateMap<InstallationConfig, InstallationConfigModel>();
+            CreateMap<InstallationConfigModel, InstallationConfig>();
+
+            CreateMap<PluginConfig, PluginConfigModel>();
+            CreateMap<PluginConfigModel, PluginConfig>();
+
+            CreateMap<CommonConfig, CommonConfigModel>();
+            CreateMap<CommonConfigModel, CommonConfig>();
+        }
+
+        /// <summary>
         /// Create affiliates maps 
         /// </summary>
         protected virtual void CreateAffiliatesMaps()
@@ -202,6 +240,14 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
         }
 
         /// <summary>
+        /// Create multi-factor authentication maps 
+        /// </summary>
+        protected virtual void CreateMultiFactorAuthenticationMaps()
+        {
+            CreateMap<IMultiFactorAuthenticationMethod, MultiFactorAuthenticationMethodModel>();
+        }
+
+        /// <summary>
         /// Create blogs maps 
         /// </summary>new
         protected virtual void CreateBlogsMaps()
@@ -226,7 +272,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.CreatedOn, options => options.Ignore())
                 .ForMember(model => model.LanguageName, options => options.Ignore())
                 .ForMember(model => model.NotApprovedComments, options => options.Ignore())
-                .ForMember(model => model.SeName, options => options.Ignore());
+                .ForMember(model => model.SeName, options => options.Ignore())
+                .ForMember(model => model.InitialBlogTags, options => options.Ignore());
             CreateMap<BlogPostModel, BlogPost>()
                 .ForMember(entity => entity.CreatedOnUtc, options => options.Ignore());
 
@@ -284,6 +331,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.PageShareCode_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ProductReviewPossibleOnlyAfterPurchasing_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ProductReviewsMustBeApproved_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.OneReviewPerProductFromUser_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ProductReviewsPageSizeOnAccountPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ProductReviewsSortByCreatedDateAscending_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ProductsAlsoPurchasedEnabled_OverrideForStore, options => options.Ignore())
@@ -423,6 +471,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.ProductAttributeCombinationSearchModel, options => options.Ignore())
                 .ForMember(model => model.ProductAttributeMappingSearchModel, options => options.Ignore())
                 .ForMember(model => model.ProductAttributesExist, options => options.Ignore())
+                .ForMember(model => model.CanCreateCombinations, options => options.Ignore())
                 .ForMember(model => model.ProductEditorSettingsModel, options => options.Ignore())
                 .ForMember(model => model.ProductOrderSearchModel, options => options.Ignore())
                 .ForMember(model => model.ProductPictureModels, options => options.Ignore())
@@ -439,7 +488,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.StockQuantityHistory, options => options.Ignore())
                 .ForMember(model => model.StockQuantityHistorySearchModel, options => options.Ignore())
                 .ForMember(model => model.StockQuantityStr, options => options.Ignore())
-                .ForMember(model => model.TierPriceSearchModel, options => options.Ignore());
+                .ForMember(model => model.TierPriceSearchModel, options => options.Ignore())
+                .ForMember(model => model.InitialProductTags, options => options.Ignore());
             CreateMap<ProductModel, Product>()
                 .ForMember(entity => entity.ApprovedRatingSum, options => options.Ignore())
                 .ForMember(entity => entity.ApprovedTotalReviews, options => options.Ignore())
@@ -561,13 +611,17 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
 
             CreateMap<SpecificationAttribute, SpecificationAttributeModel>()
                 .ForMember(model => model.SpecificationAttributeOptionSearchModel, options => options.Ignore())
-                .ForMember(model => model.SpecificationAttributeProductSearchModel, options => options.Ignore());
+                .ForMember(model => model.SpecificationAttributeProductSearchModel, options => options.Ignore())
+                .ForMember(model => model.AvailableGroups, options => options.Ignore());
             CreateMap<SpecificationAttributeModel, SpecificationAttribute>();
 
             CreateMap<SpecificationAttributeOption, SpecificationAttributeOptionModel>()
                 .ForMember(model => model.EnableColorSquaresRgb, options => options.Ignore())
                 .ForMember(model => model.NumberOfAssociatedProducts, options => options.Ignore());
             CreateMap<SpecificationAttributeOptionModel, SpecificationAttributeOption>();
+
+            CreateMap<SpecificationAttributeGroup, SpecificationAttributeGroupModel>();
+            CreateMap<SpecificationAttributeGroupModel, SpecificationAttributeGroup>();
 
             CreateMap<StockQuantityHistory, StockQuantityHistoryModel>()
                 .ForMember(model => model.WarehouseName, options => options.Ignore())
@@ -683,6 +737,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(settings => settings.SuffixDeletedUsers, options => options.Ignore())
                 .ForMember(settings => settings.LastActivityMinutes, options => options.Ignore());
 
+            CreateMap<MultiFactorAuthenticationSettings, MultiFactorAuthenticationSettingsModel>();
+            CreateMap<MultiFactorAuthenticationSettingsModel, MultiFactorAuthenticationSettings>()
+                .ForMember(settings => settings.ActiveAuthenticationMethodSystemNames, option => option.Ignore());
+
             CreateMap<RewardPointsSettings, RewardPointsSettingsModel>()
                 .ForMember(model => model.ActivatePointsImmediately, options => options.Ignore())
                 .ForMember(model => model.ActivationDelay_OverrideForStore, options => options.Ignore())
@@ -768,6 +826,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.UserRewardPointsSearchModel, options => options.Ignore())
                 .ForMember(model => model.SendEmail, options => options.Ignore())
                 .ForMember(model => model.SendPm, options => options.Ignore())
+                .ForMember(model => model.AllowSendingOfPrivateMessage, options => options.Ignore())
                 .ForMember(model => model.AllowSendingOfWelcomeMessage, options => options.Ignore())
                 .ForMember(model => model.AllowReSendingOfActivationMessage, options => options.Ignore())
                 .ForMember(model => model.GdprEnabled, options => options.Ignore())
@@ -1197,6 +1256,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.DeleteGiftCardUsageHistory_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisableBillingAddressCheckoutStep_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisableOrderCompletedPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.DisplayPickupInStoreOnShippingMethodPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ExportWithProducts_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.IsReOrderAllowed_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MinOrderSubtotalAmountIncludingTax_OverrideForStore, options => options.Ignore())
@@ -1336,8 +1396,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.AvailableLanguages, options => options.Ignore())
                 .ForMember(model => model.PollAnswerSearchModel, options => options.Ignore())
                 .ForMember(model => model.LanguageName, options => options.Ignore());
-            CreateMap<PollModel, Poll>()
-                .ForMember(entity => entity.EndDateUtc, options => options.Ignore());
+            CreateMap<PollModel, Poll>();
         }
 
         /// <summary>
@@ -1359,7 +1418,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.ShowOnProductReviewPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnRegistrationPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnForgotPasswordPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowOnForum_OverrideForStore, options => options.Ignore());
+                .ForMember(model => model.ShowOnForum_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.CaptchaType_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ReCaptchaV3ScoreThreshold_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.CaptchaTypeValues, options => options.Ignore());
             CreateMap<CaptchaSettingsModel, CaptchaSettings>()
                 .ForMember(settings => settings.AutomaticallyChooseLanguage, options => options.Ignore())
                 .ForMember(settings => settings.ReCaptchaDefaultLanguage, options => options.Ignore())
@@ -1396,7 +1458,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<ProductAvailabilityRangeModel, ProductAvailabilityRange>();
 
             CreateMap<ShippingMethod, ShippingMethodModel>();
-            
+            CreateMap<ShippingMethodModel, ShippingMethod>();
+
             CreateMap<IShippingRateComputationMethod, ShippingProviderModel>();
 
             CreateMap<Shipment, ShipmentModel>()
@@ -1418,7 +1481,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.IgnoreAdditionalShippingChargeForPickupInStore_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayShipmentEventsToUsers_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayShipmentEventsToStoreOwner_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.EstimateShippingEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.EstimateShippingCartPageEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.EstimateShippingProductPageEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.FreeShippingOverXEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.FreeShippingOverXIncludingTax_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.FreeShippingOverXValue_OverrideForStore, options => options.Ignore())
@@ -1435,7 +1499,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(settings => settings.ActiveShippingRateComputationMethodSystemNames, options => options.Ignore())
                 .ForMember(settings => settings.ReturnValidOptionsIfThereAreAny, options => options.Ignore())
                 .ForMember(settings => settings.ShipSeparatelyOneItemEach, options => options.Ignore())
-                .ForMember(settings => settings.UseCubeRootMethod, options => options.Ignore());
+                .ForMember(settings => settings.UseCubeRootMethod, options => options.Ignore())
+                .ForMember(settings => settings.RequestDelay, options => options.Ignore());
         }
 
         /// <summary>

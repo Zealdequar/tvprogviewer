@@ -12,11 +12,12 @@ using TVProgViewer.Core.Domain.Shipping;
 using TVProgViewer.Core.Domain.Tax;
 using TVProgViewer.Services.Catalog;
 using TVProgViewer.Services.Common;
-using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Discounts;
 using TVProgViewer.Services.Payments;
 using TVProgViewer.Services.Shipping;
 using TVProgViewer.Services.Tax;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Users;
 
 namespace TVProgViewer.Services.Orders
 {
@@ -57,7 +58,7 @@ namespace TVProgViewer.Services.Orders
         public OrderTotalCalculationService(CatalogSettings catalogSettings,
             IAddressService addressService,
             ICheckoutAttributeParser checkoutAttributeParser,
-            IUserService UserService,
+            IUserService userService,
             IDiscountService discountService,
             IGenericAttributeService genericAttributeService,
             IGiftCardService giftCardService,
@@ -80,7 +81,7 @@ namespace TVProgViewer.Services.Orders
             _catalogSettings = catalogSettings;
             _addressService = addressService;
             _checkoutAttributeParser = checkoutAttributeParser;
-            _userService = UserService;
+            _userService = userService;
             _discountService = discountService;
             _genericAttributeService = genericAttributeService;
             _giftCardService = giftCardService;
@@ -108,25 +109,24 @@ namespace TVProgViewer.Services.Orders
         /// <summary>
         /// Gets an order discount (applied to order subtotal)
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="orderSubTotal">Order subtotal</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <returns>Order discount</returns>
-        protected virtual decimal GetOrderSubtotalDiscount(User User,
-            decimal orderSubTotal, out List<Discount> appliedDiscounts)
+        /// <returns>Order discount, Applied discounts</returns>
+        protected virtual async Task<(decimal orderDiscount, List<Discount> appliedDiscounts)> GetOrderSubtotalDiscountAsync(User user,
+            decimal orderSubTotal)
         {
-            appliedDiscounts = new List<Discount>();
+            var appliedDiscounts = new List<Discount>();
             var discountAmount = decimal.Zero;
             if (_catalogSettings.IgnoreDiscounts)
-                return discountAmount;
+                return (discountAmount, appliedDiscounts);
 
-            var allDiscounts = _discountService.GetAllDiscounts(DiscountType.AssignedToOrderSubTotal);
+            var allDiscounts = await _discountService.GetAllDiscountsAsync(DiscountType.AssignedToOrderSubTotal);
             var allowedDiscounts = new List<Discount>();
             if (allDiscounts != null)
             {
                 foreach (var discount in allDiscounts)
                     if (!_discountService.ContainsDiscount(allowedDiscounts, discount) &&
-                        _discountService.ValidateDiscount(discount, User).IsValid)
+                        (await _discountService.ValidateDiscountAsync(discount, user)).IsValid)
                     {
                         allowedDiscounts.Add(discount);
                     }
@@ -137,29 +137,28 @@ namespace TVProgViewer.Services.Orders
             if (discountAmount < decimal.Zero)
                 discountAmount = decimal.Zero;
 
-            return discountAmount;
+            return (discountAmount, appliedDiscounts);
         }
 
         /// <summary>
         /// Gets a shipping discount
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shippingTotal">Shipping total</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <returns>Shipping discount</returns>
-        protected virtual decimal GetShippingDiscount(User User, decimal shippingTotal, out List<Discount> appliedDiscounts)
+        /// <returns>Shipping discount. Applied discounts</returns>
+        protected virtual async Task<(decimal shippingDiscount, List<Discount> appliedDiscounts)> GetShippingDiscountAsync(User user, decimal shippingTotal)
         {
-            appliedDiscounts = new List<Discount>();
+            var appliedDiscounts = new List<Discount>();
             var shippingDiscountAmount = decimal.Zero;
             if (_catalogSettings.IgnoreDiscounts)
-                return shippingDiscountAmount;
+                return (shippingDiscountAmount, appliedDiscounts);
 
-            var allDiscounts = _discountService.GetAllDiscounts(DiscountType.AssignedToShipping);
+            var allDiscounts = await _discountService.GetAllDiscountsAsync(DiscountType.AssignedToShipping);
             var allowedDiscounts = new List<Discount>();
             if (allDiscounts != null)
                 foreach (var discount in allDiscounts)
                     if (!_discountService.ContainsDiscount(allowedDiscounts, discount) &&
-                        _discountService.ValidateDiscount(discount, User).IsValid)
+                        (await _discountService.ValidateDiscountAsync(discount, user)).IsValid)
                     {
                         allowedDiscounts.Add(discount);
                     }
@@ -170,31 +169,30 @@ namespace TVProgViewer.Services.Orders
                 shippingDiscountAmount = decimal.Zero;
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                shippingDiscountAmount = _priceCalculationService.RoundPrice(shippingDiscountAmount);
+                shippingDiscountAmount = await _priceCalculationService.RoundPriceAsync(shippingDiscountAmount);
 
-            return shippingDiscountAmount;
+            return (shippingDiscountAmount, appliedDiscounts);
         }
 
         /// <summary>
         /// Gets an order discount (applied to order total)
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="orderTotal">Order total</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <returns>Order discount</returns>
-        protected virtual decimal GetOrderTotalDiscount(User User, decimal orderTotal, out List<Discount> appliedDiscounts)
+        /// <returns>Order discount. Applied discounts</returns>
+        protected virtual async Task<(decimal orderDiscount, List<Discount> appliedDiscounts)> GetOrderTotalDiscountAsync(User user, decimal orderTotal)
         {
-            appliedDiscounts = new List<Discount>();
+            var appliedDiscounts = new List<Discount>();
             var discountAmount = decimal.Zero;
             if (_catalogSettings.IgnoreDiscounts)
-                return discountAmount;
+                return (discountAmount, appliedDiscounts);
 
-            var allDiscounts = _discountService.GetAllDiscounts(DiscountType.AssignedToOrderTotal);
+            var allDiscounts = await _discountService.GetAllDiscountsAsync(DiscountType.AssignedToOrderTotal);
             var allowedDiscounts = new List<Discount>();
             if (allDiscounts != null)
                 foreach (var discount in allDiscounts)
                     if (!_discountService.ContainsDiscount(allowedDiscounts, discount) &&
-                        _discountService.ValidateDiscount(discount, User).IsValid)
+                        (await _discountService.ValidateDiscountAsync(discount, user)).IsValid)
                     {
                         allowedDiscounts.Add(discount);
                     }
@@ -205,9 +203,9 @@ namespace TVProgViewer.Services.Orders
                 discountAmount = decimal.Zero;
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                discountAmount = _priceCalculationService.RoundPrice(discountAmount);
+                discountAmount = await _priceCalculationService.RoundPriceAsync(discountAmount);
 
-            return discountAmount;
+            return (discountAmount, appliedDiscounts);
         }
 
         /// <summary>
@@ -218,40 +216,38 @@ namespace TVProgViewer.Services.Orders
         /// <param name="discountAmountExclTax">Discount amount (excl tax)</param>
         /// <param name="shippingTotalExclTax">Shipping (excl tax)</param>
         /// <param name="taxTotal">Tax</param>
-        protected virtual void UpdateTotal(UpdateOrderParameters updateOrderParameters, decimal subTotalExclTax,
+        protected virtual async Task UpdateTotalAsync(UpdateOrderParameters updateOrderParameters, decimal subTotalExclTax,
             decimal discountAmountExclTax, decimal shippingTotalExclTax, decimal taxTotal)
         {
             var updatedOrder = updateOrderParameters.UpdatedOrder;
-            var User = _userService.GetUserById(updatedOrder.UserId);
+            var user = await _userService.GetUserByIdAsync(updatedOrder.UserId);
 
             var total = subTotalExclTax - discountAmountExclTax + shippingTotalExclTax + updatedOrder.PaymentMethodAdditionalFeeExclTax + taxTotal;
 
             //get discounts for the order total
-            var discountAmountTotal =
-                GetOrderTotalDiscount(User, total, out var orderAppliedDiscounts);
+            var (discountAmountTotal, orderAppliedDiscounts) = await GetOrderTotalDiscountAsync(user, total);
             if (total < discountAmountTotal)
                 discountAmountTotal = total;
             total -= discountAmountTotal;
 
             //applied giftcards
-            foreach (var giftCard in _giftCardService.GetAllGiftCards(usedWithOrderId: updatedOrder.Id))
+            foreach (var giftCard in await _giftCardService.GetAllGiftCardsAsync(usedWithOrderId: updatedOrder.Id))
             {
                 if (total <= decimal.Zero)
                     continue;
 
-                var remainingAmount = _giftCardService.GetGiftCardUsageHistory(giftCard)
+                var remainingAmount = (await _giftCardService.GetGiftCardUsageHistoryAsync(giftCard))
                     .Where(history => history.UsedWithOrderId == updatedOrder.Id).Sum(history => history.UsedValue);
                 var amountCanBeUsed = total > remainingAmount ? remainingAmount : total;
                 total -= amountCanBeUsed;
             }
 
             //reward points
-            var rewardPointsOfOrder = _rewardPointService.GetRewardPointsHistory(User.Id)
-                .FirstOrDefault(history => history.OrderId == updatedOrder.Id);
+            var rewardPointsOfOrder = await _rewardPointService.GetRewardPointsHistoryEntryByIdAsync(updatedOrder.RedeemedRewardPointsEntryId ?? 0);
             if (rewardPointsOfOrder != null)
             {
                 var rewardPoints = -rewardPointsOfOrder.Points;
-                var rewardPointsAmount = ConvertRewardPointsToAmount(rewardPoints);
+                var rewardPointsAmount = await ConvertRewardPointsToAmountAsync(rewardPoints);
                 if (total < rewardPointsAmount)
                 {
                     rewardPoints = ConvertAmountToRewardPoints(total);
@@ -263,13 +259,13 @@ namespace TVProgViewer.Services.Orders
 
                 //uncomment here for the return unused reward points if new order total less redeemed reward points amount
                 //if (rewardPoints < -rewardPointsOfOrder.Points)
-                //    _rewardPointService.AddRewardPointsHistoryEntry(User, -rewardPointsOfOrder.Points - rewardPoints, _storeContext.CurrentStore.Id, "Return unused reward points");
+                //    _rewardPointService.AddRewardPointsHistoryEntry(user, -rewardPointsOfOrder.Points - rewardPoints, (await _storeContext.GetCurrentStoreAsync()).Id, "Return unused reward points");
 
                 if (rewardPointsAmount != rewardPointsOfOrder.UsedAmount)
                 {
                     rewardPointsOfOrder.UsedAmount = rewardPointsAmount;
                     rewardPointsOfOrder.Points = -rewardPoints;
-                    _rewardPointService.UpdateRewardPointsHistoryEntry(rewardPointsOfOrder);
+                    await _rewardPointService.UpdateRewardPointsHistoryEntryAsync(rewardPointsOfOrder);
                 }
             }
 
@@ -277,7 +273,7 @@ namespace TVProgViewer.Services.Orders
             if (total < decimal.Zero)
                 total = decimal.Zero;
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                total = _priceCalculationService.RoundPrice(total);
+                total = await _priceCalculationService.RoundPriceAsync(total);
 
             updatedOrder.OrderDiscount = discountAmountTotal;
             updatedOrder.OrderTotal = total;
@@ -296,7 +292,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="shippingTaxRate">Shipping tax rates</param>
         /// <param name="updatedOrder">Order</param>
         /// <returns>Tax total</returns>
-        protected virtual decimal UpdateTaxRates(SortedDictionary<decimal, decimal> subTotalTaxRates, decimal shippingTotalInclTax,
+        protected virtual async Task<decimal> UpdateTaxRatesAsync(SortedDictionary<decimal, decimal> subTotalTaxRates, decimal shippingTotalInclTax,
             decimal shippingTotalExclTax, decimal shippingTaxRate, Order updatedOrder)
         {
             var taxRates = new SortedDictionary<decimal, decimal>();
@@ -364,11 +360,12 @@ namespace TVProgViewer.Services.Orders
 
             //round tax
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                taxTotal = _priceCalculationService.RoundPrice(taxTotal);
+                taxTotal = await _priceCalculationService.RoundPriceAsync(taxTotal);
 
             updatedOrder.OrderTax = taxTotal;
             updatedOrder.TaxRates = taxRates.Aggregate(string.Empty, (current, next) =>
                 $"{current}{next.Key.ToString(CultureInfo.InvariantCulture)}:{next.Value.ToString(CultureInfo.InvariantCulture)};   ");
+
             return taxTotal;
         }
 
@@ -379,22 +376,20 @@ namespace TVProgViewer.Services.Orders
         /// <param name="restoredCart">Cart</param>
         /// <param name="subTotalInclTax">Subtotal (incl tax)</param>
         /// <param name="subTotalExclTax">Subtotal (excl tax)</param>
-        /// <param name="shippingTotalInclTax">Shipping (incl tax)</param>
-        /// <param name="shippingTaxRate">Shipping tax rate</param>
-        /// <returns>Shipping total</returns>
-        protected virtual decimal UpdateShipping(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart,
-            decimal subTotalInclTax, decimal subTotalExclTax, out decimal shippingTotalInclTax, out decimal shippingTaxRate)
+        /// <returns>Shipping total. Shipping (incl tax). Shipping tax rate</returns>
+        protected virtual async Task<(decimal shippingTotal, decimal shippingTotalInclTax, decimal shippingTaxRate)> UpdateShippingAsync(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart,
+            decimal subTotalInclTax, decimal subTotalExclTax)
         {
             var shippingTotalExclTax = decimal.Zero;
-            shippingTotalInclTax = decimal.Zero;
-            shippingTaxRate = decimal.Zero;
+            var shippingTotalInclTax = decimal.Zero;
+            var shippingTaxRate = decimal.Zero;
 
             var updatedOrder = updateOrderParameters.UpdatedOrder;
-            var User = _userService.GetUserById(updatedOrder.UserId);
+            var user = await _userService.GetUserByIdAsync(updatedOrder.UserId);
 
-            if (_shoppingCartService.ShoppingCartRequiresShipping(restoredCart))
+            if (await _shoppingCartService.ShoppingCartRequiresShippingAsync(restoredCart))
             {
-                if (!IsFreeShipping(restoredCart, _shippingSettings.FreeShippingOverXIncludingTax ? subTotalInclTax : subTotalExclTax))
+                if (!await IsFreeShippingAsync(restoredCart, _shippingSettings.FreeShippingOverXIncludingTax ? subTotalInclTax : subTotalExclTax))
                 {
                     var shippingTotal = decimal.Zero;
                     if (!string.IsNullOrEmpty(updatedOrder.ShippingRateComputationMethodSystemName))
@@ -402,11 +397,11 @@ namespace TVProgViewer.Services.Orders
                         //in the updated order were shipping items
                         if (updatedOrder.PickupInStore)
                         {
-                            //User chose pickup in store method, try to get chosen pickup point
+                            //user chose pickup in store method, try to get chosen pickup point
                             if (_shippingSettings.AllowPickupInStore)
                             {
-                                var pickupPointsResponse = _shippingService.GetPickupPoints(updatedOrder.BillingAddressId, User,
-                                    updatedOrder.ShippingRateComputationMethodSystemName, _storeContext.CurrentStore.Id);
+                                var pickupPointsResponse = await _shippingService.GetPickupPointsAsync(updatedOrder.BillingAddressId, user,
+                                    updatedOrder.ShippingRateComputationMethodSystemName, (await _storeContext.GetCurrentStoreAsync()).Id);
                                 if (pickupPointsResponse.Success)
                                 {
                                     var selectedPickupPoint =
@@ -426,9 +421,9 @@ namespace TVProgViewer.Services.Orders
                         }
                         else
                         {
-                            //User chose shipping to address, try to get chosen shipping option
-                            var shippingAddress = _addressService.GetAddressById(updatedOrder.ShippingAddressId ?? 0);
-                            var shippingOptionsResponse = _shippingService.GetShippingOptions(restoredCart, shippingAddress, User, updatedOrder.ShippingRateComputationMethodSystemName, _storeContext.CurrentStore.Id);
+                            //user chose shipping to address, try to get chosen shipping option
+                            var shippingAddress = await _addressService.GetAddressByIdAsync(updatedOrder.ShippingAddressId ?? 0);
+                            var shippingOptionsResponse = await _shippingService.GetShippingOptionsAsync(restoredCart, shippingAddress, user, updatedOrder.ShippingRateComputationMethodSystemName, (await _storeContext.GetCurrentStoreAsync()).Id);
                             if (shippingOptionsResponse.Success)
                             {
                                 var shippingOption = shippingOptionsResponse.ShippingOptions.FirstOrDefault(option =>
@@ -449,7 +444,7 @@ namespace TVProgViewer.Services.Orders
                         if (_shippingSettings.AllowPickupInStore)
                         {
                             //try to get the cheapest pickup point
-                            var pickupPointsResponse = _shippingService.GetPickupPoints(updatedOrder.BillingAddressId, _workContext.CurrentUser, storeId: _storeContext.CurrentStore.Id);
+                            var pickupPointsResponse = await _shippingService.GetPickupPointsAsync(updatedOrder.BillingAddressId, await _workContext.GetCurrentUserAsync(), storeId: (await _storeContext.GetCurrentStoreAsync()).Id);
                             if (pickupPointsResponse.Success)
                             {
                                 updateOrderParameters.PickupPoint = pickupPointsResponse.PickupPoints
@@ -464,11 +459,29 @@ namespace TVProgViewer.Services.Orders
 
                         if (updateOrderParameters.PickupPoint == null)
                         {
-                            //or try to get the cheapest shipping option for the shipping to the User address 
-                            var shippingRateComputationMethods = _shippingPluginManager.LoadActivePlugins(_workContext.CurrentUser, _storeContext.CurrentStore.Id);
+                            //or try to get the cheapest shipping option for the shipping to the user address 
+                            var shippingRateComputationMethods = await _shippingPluginManager.LoadActivePluginsAsync();
                             if (shippingRateComputationMethods.Any())
                             {
-                              
+                                var userShippingAddress = await _userService.GetUserShippingAddressAsync(user);
+
+                                var shippingOptionsResponse = await _shippingService.GetShippingOptionsAsync(restoredCart, userShippingAddress, await _workContext.GetCurrentUserAsync(), storeId: (await _storeContext.GetCurrentStoreAsync()).Id);
+                                if (shippingOptionsResponse.Success)
+                                {
+                                    var shippingOption = shippingOptionsResponse.ShippingOptions.OrderBy(option => option.Rate)
+                                        .First();
+                                    updatedOrder.ShippingRateComputationMethodSystemName =
+                                        shippingOption.ShippingRateComputationMethodSystemName;
+                                    updatedOrder.ShippingMethod = shippingOption.Name;
+
+                                    var updatedShippingAddress = _addressService.CloneAddress(userShippingAddress);
+                                    await _addressService.InsertAddressAsync(updatedShippingAddress);
+                                    updatedOrder.ShippingAddressId = updatedShippingAddress.Id;
+
+                                    shippingTotal = shippingOption.Rate;
+                                }
+                                else
+                                    updateOrderParameters.Warnings.AddRange(shippingOptionsResponse.Errors);
                             }
                             else
                                 updateOrderParameters.Warnings.Add("Shipping rate computation method could not be loaded");
@@ -476,21 +489,22 @@ namespace TVProgViewer.Services.Orders
                     }
 
                     //additional shipping charge
-                    shippingTotal += GetShoppingCartAdditionalShippingCharge(restoredCart);
+                    shippingTotal += await GetShoppingCartAdditionalShippingChargeAsync(restoredCart);
 
                     //shipping discounts
-                    shippingTotal -= GetShippingDiscount(User, shippingTotal, out var shippingTotalDiscounts);
+                    var (shippingDiscount, shippingTotalDiscounts) = await GetShippingDiscountAsync(user, shippingTotal);
+                    shippingTotal -= shippingDiscount;
                     if (shippingTotal < decimal.Zero)
                         shippingTotal = decimal.Zero;
 
-                    shippingTotalExclTax = _taxService.GetShippingPrice(shippingTotal, false, User);
-                    shippingTotalInclTax = _taxService.GetShippingPrice(shippingTotal, true, User, out shippingTaxRate);
+                    shippingTotalExclTax = (await _taxService.GetShippingPriceAsync(shippingTotal, false, user)).price;
+                    (shippingTotalInclTax, shippingTaxRate) = await _taxService.GetShippingPriceAsync(shippingTotal, true, user);
 
                     //rounding
                     if (_shoppingCartSettings.RoundPricesDuringCalculation)
                     {
-                        shippingTotalExclTax = _priceCalculationService.RoundPrice(shippingTotalExclTax);
-                        shippingTotalInclTax = _priceCalculationService.RoundPrice(shippingTotalInclTax);
+                        shippingTotalExclTax = await _priceCalculationService.RoundPriceAsync(shippingTotalExclTax);
+                        shippingTotalInclTax = await _priceCalculationService.RoundPriceAsync(shippingTotalInclTax);
                     }
 
                     //change shipping status
@@ -510,7 +524,8 @@ namespace TVProgViewer.Services.Orders
 
             updatedOrder.OrderShippingExclTax = shippingTotalExclTax;
             updatedOrder.OrderShippingInclTax = shippingTotalInclTax;
-            return shippingTotalExclTax;
+
+            return (shippingTotalExclTax, shippingTotalInclTax, shippingTaxRate);
         }
 
         /// <summary>
@@ -518,16 +533,12 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="updateOrderParameters">UpdateOrderParameters</param>
         /// <param name="restoredCart">Cart</param>
-        /// <param name="subTotalInclTax">Subtotal (incl tax)</param>
-        /// <param name="subTotalTaxRates">Subtotal tax rates</param>
-        /// <param name="discountAmountExclTax">Discount amount (excl tax)</param>
-        /// <returns>Subtotal</returns>
-        protected virtual decimal UpdateSubTotal(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart,
-            out decimal subTotalInclTax, out SortedDictionary<decimal, decimal> subTotalTaxRates, out decimal discountAmountExclTax)
+        /// <returns>Subtotal. Subtotal (incl tax). Subtotal tax rates. Discount amount (excl tax)</returns>
+        protected virtual async Task<(decimal subtotal, decimal subTotalInclTax, SortedDictionary<decimal, decimal> subTotalTaxRates, decimal discountAmountExclTax)> UpdateSubTotalAsync(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart)
         {
             var subTotalExclTax = decimal.Zero;
-            subTotalInclTax = decimal.Zero;
-            subTotalTaxRates = new SortedDictionary<decimal, decimal>();
+            var subTotalInclTax = decimal.Zero;
+            var subTotalTaxRates = new SortedDictionary<decimal, decimal>();
 
             var updatedOrder = updateOrderParameters.UpdatedOrder;
             var updatedOrderItem = updateOrderParameters.UpdatedOrderItem;
@@ -555,7 +566,7 @@ namespace TVProgViewer.Services.Orders
                 else
                 {
                     //get the already calculated subtotal from the order item
-                    var order = _orderService.GetOrderItemById(shoppingCartItem.Id);
+                    var order = await _orderService.GetOrderItemByIdAsync(shoppingCartItem.Id);
                     itemSubTotalExclTax = order.PriceExclTax;
                     itemSubTotalInclTax = order.PriceInclTax;
 
@@ -584,8 +595,8 @@ namespace TVProgViewer.Services.Orders
 
             //We calculate discount amount on order subtotal excl tax (discount first)
             //calculate discount amount ('Applied to order subtotal' discount)
-            var User = _userService.GetUserById(updatedOrder.UserId);
-            discountAmountExclTax = GetOrderSubtotalDiscount(User, subTotalExclTax, out var subTotalDiscounts);
+            var user = await _userService.GetUserByIdAsync(updatedOrder.UserId);
+            var (discountAmountExclTax, subTotalDiscounts) = await GetOrderSubtotalDiscountAsync(user, subTotalExclTax);
             if (subTotalExclTax < discountAmountExclTax)
                 discountAmountExclTax = subTotalExclTax;
             var discountAmountInclTax = discountAmountExclTax;
@@ -605,10 +616,10 @@ namespace TVProgViewer.Services.Orders
             //rounding
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
             {
-                subTotalExclTax = _priceCalculationService.RoundPrice(subTotalExclTax);
-                subTotalInclTax = _priceCalculationService.RoundPrice(subTotalInclTax);
-                discountAmountExclTax = _priceCalculationService.RoundPrice(discountAmountExclTax);
-                discountAmountInclTax = _priceCalculationService.RoundPrice(discountAmountInclTax);
+                subTotalExclTax = await _priceCalculationService.RoundPriceAsync(subTotalExclTax);
+                subTotalInclTax = await _priceCalculationService.RoundPriceAsync(subTotalInclTax);
+                discountAmountExclTax = await _priceCalculationService.RoundPriceAsync(discountAmountExclTax);
+                discountAmountInclTax = await _priceCalculationService.RoundPriceAsync(discountAmountInclTax);
             }
 
             updatedOrder.OrderSubtotalExclTax = subTotalExclTax;
@@ -619,7 +630,8 @@ namespace TVProgViewer.Services.Orders
             foreach (var discount in subTotalDiscounts)
                 if (!_discountService.ContainsDiscount(updateOrderParameters.AppliedDiscounts, discount))
                     updateOrderParameters.AppliedDiscounts.Add(discount);
-            return subTotalExclTax;
+
+            return (subTotalExclTax, subTotalInclTax, subTotalTaxRates, discountAmountExclTax);
         }
 
         /// <summary>
@@ -628,30 +640,30 @@ namespace TVProgViewer.Services.Orders
         /// <param name="redeemedRewardPoints">Redeemed reward points</param>
         /// <param name="redeemedRewardPointsAmount">Redeemed reward points amount</param>
         /// <param name="useRewardPoints">A value indicating whether to use reward points</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="orderTotal">Order total</param>
-        protected virtual void SetRewardPoints(ref int redeemedRewardPoints, ref decimal redeemedRewardPointsAmount,
-            bool? useRewardPoints, User User, decimal orderTotal)
+        protected virtual async Task<(int redeemedRewardPoints, decimal redeemedRewardPointsAmount)> SetRewardPointsAsync(int redeemedRewardPoints, decimal redeemedRewardPointsAmount,
+            bool? useRewardPoints, User user, decimal orderTotal)
         {
             if (!_rewardPointsSettings.Enabled)
-                return;
+                return (redeemedRewardPoints, redeemedRewardPointsAmount);
 
             if (!useRewardPoints.HasValue)
-                useRewardPoints = _genericAttributeService.GetAttribute<bool>(User, TvProgUserDefaults.UseRewardPointsDuringCheckoutAttribute, _storeContext.CurrentStore.Id);
+                useRewardPoints = await _genericAttributeService.GetAttributeAsync<bool>(user, TvProgUserDefaults.UseRewardPointsDuringCheckoutAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
 
             if (!useRewardPoints.Value)
-                return;
+                return (redeemedRewardPoints, redeemedRewardPointsAmount);
 
-            var rewardPointsBalance = _rewardPointService.GetRewardPointsBalance(User.Id, _storeContext.CurrentStore.Id);
+            var rewardPointsBalance = await _rewardPointService.GetRewardPointsBalanceAsync(user.Id, (await _storeContext.GetCurrentStoreAsync()).Id);
             rewardPointsBalance = _rewardPointService.GetReducedPointsBalance(rewardPointsBalance);
 
             if (!CheckMinimumRewardPointsToUseRequirement(rewardPointsBalance))
-                return;
+                return (redeemedRewardPoints, redeemedRewardPointsAmount);
 
-            var rewardPointsBalanceAmount = ConvertRewardPointsToAmount(rewardPointsBalance);
+            var rewardPointsBalanceAmount = await ConvertRewardPointsToAmountAsync(rewardPointsBalance);
 
             if (orderTotal <= decimal.Zero)
-                return;
+                return (redeemedRewardPoints, redeemedRewardPointsAmount);
 
             if (orderTotal > rewardPointsBalanceAmount)
             {
@@ -663,6 +675,8 @@ namespace TVProgViewer.Services.Orders
                 redeemedRewardPointsAmount = orderTotal;
                 redeemedRewardPoints = ConvertAmountToRewardPoints(redeemedRewardPointsAmount);
             }
+
+            return (redeemedRewardPoints, redeemedRewardPointsAmount);
         }
 
         /// <summary>
@@ -670,25 +684,25 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <param name="appliedGiftCards">Applied gift cards</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="resultTemp"></param>
-        protected virtual void AppliedGiftCards(IList<ShoppingCartItem> cart, List<AppliedGiftCard> appliedGiftCards,
-            User User, ref decimal resultTemp)
+        protected virtual async Task<decimal> AppliedGiftCardsAsync(IList<ShoppingCartItem> cart, List<AppliedGiftCard> appliedGiftCards,
+            User user, decimal resultTemp)
         {
-            if (_shoppingCartService.ShoppingCartIsRecurring(cart))
-                return;
+            if (await _shoppingCartService.ShoppingCartIsRecurringAsync(cart))
+                return resultTemp;
 
             //we don't apply gift cards for recurring products
-            var giftCards = _giftCardService.GetActiveGiftCardsAppliedByUser(User);
+            var giftCards = await _giftCardService.GetActiveGiftCardsAppliedByUserAsync(user);
             if (giftCards == null)
-                return;
+                return resultTemp;
 
             foreach (var gc in giftCards)
             {
                 if (resultTemp <= decimal.Zero)
                     continue;
 
-                var remainingAmount = _giftCardService.GetGiftCardRemainingAmount(gc);
+                var remainingAmount = await _giftCardService.GetGiftCardRemainingAmountAsync(gc);
                 var amountCanBeUsed = resultTemp > remainingAmount ? remainingAmount : resultTemp;
 
                 //reduce subtotal
@@ -701,6 +715,34 @@ namespace TVProgViewer.Services.Orders
                 };
                 appliedGiftCards.Add(appliedGiftCard);
             }
+
+            return resultTemp;
+        }
+
+        /// <summary>
+        /// Gets shopping cart additional shipping charge
+        /// </summary>
+        /// <param name="cart">Cart</param>
+        /// <returns>Additional shipping charge</returns>
+        protected virtual async Task<decimal> GetShoppingCartAdditionalShippingChargeAsync(IList<ShoppingCartItem> cart)
+        {
+            return await cart.SumAwaitAsync(async shoppingCartItem => await _shippingService.GetAdditionalShippingChargeAsync(shoppingCartItem));
+        }
+
+        /// <summary>
+        /// Converts an amount to reward points
+        /// </summary>
+        /// <param name="amount">Amount</param>
+        /// <returns>Converted value</returns>
+        protected virtual int ConvertAmountToRewardPoints(decimal amount)
+        {
+            var result = 0;
+            if (amount <= 0)
+                return 0;
+
+            if (_rewardPointsSettings.ExchangeRate > 0)
+                result = (int)Math.Ceiling(amount / _rewardPointsSettings.ExchangeRate);
+            return result;
         }
 
         #endregion
@@ -712,57 +754,32 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="discountAmount">Applied discount amount</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <param name="subTotalWithoutDiscount">Sub total (without discount)</param>
-        /// <param name="subTotalWithDiscount">Sub total (with discount)</param>
-        public virtual void GetShoppingCartSubTotal(IList<ShoppingCartItem> cart, bool includingTax,
-            out decimal discountAmount, out List<Discount> appliedDiscounts,
-            out decimal subTotalWithoutDiscount, out decimal subTotalWithDiscount)
+        /// <returns>Applied discount amount. Applied discounts. Sub total (without discount). Sub total (with discount). Tax rates (of order sub total)</returns>
+        public virtual async Task<(decimal discountAmount, List<Discount> appliedDiscounts, decimal subTotalWithoutDiscount, decimal subTotalWithDiscount, SortedDictionary<decimal, decimal> taxRates)> GetShoppingCartSubTotalAsync(IList<ShoppingCartItem> cart,
+            bool includingTax)
         {
-            GetShoppingCartSubTotal(cart, includingTax,
-                out discountAmount, out appliedDiscounts,
-                out subTotalWithoutDiscount, out subTotalWithDiscount, out _);
-        }
-
-        /// <summary>
-        /// Gets shopping cart subtotal
-        /// </summary>
-        /// <param name="cart">Cart</param>
-        /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="discountAmount">Applied discount amount</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <param name="subTotalWithoutDiscount">Sub total (without discount)</param>
-        /// <param name="subTotalWithDiscount">Sub total (with discount)</param>
-        /// <param name="taxRates">Tax rates (of order sub total)</param>
-        public virtual void GetShoppingCartSubTotal(IList<ShoppingCartItem> cart,
-            bool includingTax,
-            out decimal discountAmount, out List<Discount> appliedDiscounts,
-            out decimal subTotalWithoutDiscount, out decimal subTotalWithDiscount,
-            out SortedDictionary<decimal, decimal> taxRates)
-        {
-            discountAmount = decimal.Zero;
-            appliedDiscounts = new List<Discount>();
-            subTotalWithoutDiscount = decimal.Zero;
-            subTotalWithDiscount = decimal.Zero;
-            taxRates = new SortedDictionary<decimal, decimal>();
+            var discountAmount = decimal.Zero;
+            var appliedDiscounts = new List<Discount>();
+            var subTotalWithoutDiscount = decimal.Zero;
+            var subTotalWithDiscount = decimal.Zero;
+            var taxRates = new SortedDictionary<decimal, decimal>();
 
             if (!cart.Any())
-                return;
+                return (discountAmount, appliedDiscounts, subTotalWithoutDiscount, subTotalWithDiscount, taxRates);
 
-            //get the User 
-            var User = _userService.GetShoppingCartUser(cart);
+            //get the user 
+            var user = await _userService.GetShoppingCartUserAsync(cart);
 
             //sub totals
             var subTotalExclTaxWithoutDiscount = decimal.Zero;
             var subTotalInclTaxWithoutDiscount = decimal.Zero;
             foreach (var shoppingCartItem in cart)
             {
-                var sciSubTotal = _shoppingCartService.GetSubTotal(shoppingCartItem);
-                var product = _productService.GetProductById(shoppingCartItem.ProductId);
+                var sciSubTotal = (await _shoppingCartService.GetSubTotalAsync(shoppingCartItem, true)).subTotal;
+                var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
-                var sciExclTax = _taxService.GetProductPrice(product, sciSubTotal, false, User, out var taxRate);
-                var sciInclTax = _taxService.GetProductPrice(product, sciSubTotal, true, User, out taxRate);
+                var (sciExclTax, taxRate) = await _taxService.GetProductPriceAsync(product, sciSubTotal, false, user);
+                var (sciInclTax, _) = await _taxService.GetProductPriceAsync(product, sciSubTotal, true, user);
                 subTotalExclTaxWithoutDiscount += sciExclTax;
                 subTotalInclTaxWithoutDiscount += sciInclTax;
 
@@ -782,18 +799,18 @@ namespace TVProgViewer.Services.Orders
             }
 
             //checkout attributes
-            if (User != null)
+            if (user != null)
             {
-                var checkoutAttributesXml = _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.CheckoutAttributes, _storeContext.CurrentStore.Id);
+                var checkoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.CheckoutAttributes, (await _storeContext.GetCurrentStoreAsync()).Id);
                 var attributeValues = _checkoutAttributeParser.ParseCheckoutAttributeValues(checkoutAttributesXml);
                 if (attributeValues != null)
                 {
-                    foreach (var (attribute, values) in attributeValues)
+                    await foreach (var (attribute, values) in attributeValues)
                     {
-                        foreach (var attributeValue in values)
+                        await foreach (var attributeValue in values)
                         {
-                            var caExclTax = _taxService.GetCheckoutAttributePrice(attribute, attributeValue, false, User, out var taxRate);
-                            var caInclTax = _taxService.GetCheckoutAttributePrice(attribute, attributeValue, true, User, out taxRate);
+                            var (caExclTax, taxRate) = await _taxService.GetCheckoutAttributePriceAsync(attribute, attributeValue, false, user);
+                            var (caInclTax, _) = await _taxService.GetCheckoutAttributePriceAsync(attribute, attributeValue, true, user);
 
                             subTotalExclTaxWithoutDiscount += caExclTax;
                             subTotalInclTaxWithoutDiscount += caInclTax;
@@ -822,11 +839,12 @@ namespace TVProgViewer.Services.Orders
                 subTotalWithoutDiscount = decimal.Zero;
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                subTotalWithoutDiscount = _priceCalculationService.RoundPrice(subTotalWithoutDiscount);
+                subTotalWithoutDiscount = await _priceCalculationService.RoundPriceAsync(subTotalWithoutDiscount);
 
             //We calculate discount amount on order subtotal excl tax (discount first)
             //calculate discount amount ('Applied to order subtotal' discount)
-            var discountAmountExclTax = GetOrderSubtotalDiscount(User, subTotalExclTaxWithoutDiscount, out appliedDiscounts);
+            decimal discountAmountExclTax;
+            (discountAmountExclTax, appliedDiscounts) = await GetOrderSubtotalDiscountAsync(user, subTotalExclTaxWithoutDiscount);
             if (subTotalExclTaxWithoutDiscount < discountAmountExclTax)
                 discountAmountExclTax = subTotalExclTaxWithoutDiscount;
             var discountAmountInclTax = discountAmountExclTax;
@@ -851,7 +869,7 @@ namespace TVProgViewer.Services.Orders
                     discountAmountInclTax += discountTax;
                     taxValue = taxRates[taxRate] - discountTax;
                     if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                        taxValue = _priceCalculationService.RoundPrice(taxValue);
+                        taxValue = await _priceCalculationService.RoundPriceAsync(taxValue);
                     taxRates[taxRate] = taxValue;
                 }
 
@@ -861,8 +879,8 @@ namespace TVProgViewer.Services.Orders
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
             {
-                discountAmountInclTax = _priceCalculationService.RoundPrice(discountAmountInclTax);
-                discountAmountExclTax = _priceCalculationService.RoundPrice(discountAmountExclTax);
+                discountAmountInclTax = await _priceCalculationService.RoundPriceAsync(discountAmountInclTax);
+                discountAmountExclTax = await _priceCalculationService.RoundPriceAsync(discountAmountExclTax);
             }
 
             if (includingTax)
@@ -880,7 +898,9 @@ namespace TVProgViewer.Services.Orders
                 subTotalWithDiscount = decimal.Zero;
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                subTotalWithDiscount = _priceCalculationService.RoundPrice(subTotalWithDiscount);
+                subTotalWithDiscount = await _priceCalculationService.RoundPriceAsync(subTotalWithDiscount);
+
+            return (discountAmount, appliedDiscounts, subTotalWithoutDiscount, subTotalWithDiscount, taxRates);
         }
 
         /// <summary>
@@ -888,29 +908,19 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="updateOrderParameters">Parameters for the updating order</param>
         /// <param name="restoredCart">Shopping cart</param>
-        public virtual void UpdateOrderTotals(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart)
+        public virtual async Task UpdateOrderTotalsAsync(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart)
         {
             //sub total
-            var subTotalExclTax = UpdateSubTotal(updateOrderParameters, restoredCart, out var subTotalInclTax, out var subTotalTaxRates, out var discountAmountExclTax);
+            var (subTotalExclTax, subTotalInclTax, subTotalTaxRates, discountAmountExclTax) = await UpdateSubTotalAsync(updateOrderParameters, restoredCart);
 
             //shipping
-            var shippingTotalExclTax = UpdateShipping(updateOrderParameters, restoredCart, subTotalInclTax, subTotalExclTax, out var shippingTotalInclTax, out var shippingTaxRate);
+            var (shippingTotalExclTax, shippingTotalInclTax, shippingTaxRate) = await UpdateShippingAsync(updateOrderParameters, restoredCart, subTotalInclTax, subTotalExclTax);
 
             //tax rates
-            var taxTotal = UpdateTaxRates(subTotalTaxRates, shippingTotalInclTax, shippingTotalExclTax, shippingTaxRate, updateOrderParameters.UpdatedOrder);
+            var taxTotal = await UpdateTaxRatesAsync(subTotalTaxRates, shippingTotalInclTax, shippingTotalExclTax, shippingTaxRate, updateOrderParameters.UpdatedOrder);
 
             //total
-            UpdateTotal(updateOrderParameters, subTotalExclTax, discountAmountExclTax, shippingTotalExclTax, taxTotal);
-        }
-
-        /// <summary>
-        /// Gets shopping cart additional shipping charge
-        /// </summary>
-        /// <param name="cart">Cart</param>
-        /// <returns>Additional shipping charge</returns>
-        public virtual decimal GetShoppingCartAdditionalShippingCharge(IList<ShoppingCartItem> cart)
-        {
-            return cart.Sum(shoppingCartItem => _shippingService.GetAdditionalShippingCharge(shoppingCartItem));
+            await UpdateTotalAsync(updateOrderParameters, subTotalExclTax, discountAmountExclTax, shippingTotalExclTax, taxTotal);
         }
 
         /// <summary>
@@ -919,16 +929,16 @@ namespace TVProgViewer.Services.Orders
         /// <param name="cart">Cart</param>
         /// <param name="subTotal">Subtotal amount; pass null to calculate subtotal</param>
         /// <returns>A value indicating whether shipping is free</returns>
-        public virtual bool IsFreeShipping(IList<ShoppingCartItem> cart, decimal? subTotal = null)
+        public virtual async Task<bool> IsFreeShippingAsync(IList<ShoppingCartItem> cart, decimal? subTotal = null)
         {
-            //check whether User is in a User role with free shipping applied
-            var User = _userService.GetUserById(cart.FirstOrDefault()?.UserId ?? 0);
+            //check whether user is in a user role with free shipping applied
+            var user = await _userService.GetUserByIdAsync(cart.FirstOrDefault()?.UserId ?? 0);
 
-            if (User != null && _userService.GetUserRoles(User).Any(role => role.FreeShipping))
+            if (user != null && (await _userService.GetUserRolesAsync(user)).Any(role => role.FreeShipping))
                 return true;
 
             //check whether all shopping cart items and their associated products marked as free shipping
-            if (cart.All(shoppingCartItem => _shippingService.IsFreeShipping(shoppingCartItem)))
+            if (await cart.AllAwaitAsync(async shoppingCartItem => await _shippingService.IsFreeShippingAsync(shoppingCartItem)))
                 return true;
 
             //free shipping over $X
@@ -937,7 +947,7 @@ namespace TVProgViewer.Services.Orders
 
             if (!subTotal.HasValue)
             {
-                GetShoppingCartSubTotal(cart, _shippingSettings.FreeShippingOverXIncludingTax, out _, out _, out _, out var subTotalWithDiscount);
+                var (_, _, _, subTotalWithDiscount, _) = await GetShoppingCartSubTotalAsync(cart, _shippingSettings.FreeShippingOverXIncludingTax);
                 subTotal = subTotalWithDiscount;
             }
 
@@ -953,360 +963,206 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="shippingRate">Shipping rate to adjust</param>
         /// <param name="cart">Cart</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <returns>Adjusted shipping rate</returns>
-        public virtual decimal AdjustShippingRate(decimal shippingRate,
-            IList<ShoppingCartItem> cart, out List<Discount> appliedDiscounts)
+        /// <param name="applyToPickupInStore">Adjust shipping rate to pickup in store shipping option rate</param>
+        /// <returns>Adjusted shipping rate. Applied discounts</returns>
+        public virtual async Task<(decimal adjustedShippingRate, List<Discount> appliedDiscounts)> AdjustShippingRateAsync(decimal shippingRate, IList<ShoppingCartItem> cart,
+            bool applyToPickupInStore = false)
         {
-            appliedDiscounts = new List<Discount>();
-
             //free shipping
-            if (IsFreeShipping(cart))
-                return decimal.Zero;
+            if (await IsFreeShippingAsync(cart))
+                return (decimal.Zero, new List<Discount>());
 
-            var User = _userService.GetShoppingCartUser(cart);
+            var user = await _userService.GetShoppingCartUserAsync(cart);
 
             //with additional shipping charges
-            var pickupPoint = _genericAttributeService.GetAttribute<PickupPoint>(User,
-                    TvProgUserDefaults.SelectedPickupPointAttribute, _storeContext.CurrentStore.Id);
+            var pickupPoint = await _genericAttributeService.GetAttributeAsync<PickupPoint>(user,
+                    TvProgUserDefaults.SelectedPickupPointAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
 
             var adjustedRate = shippingRate;
 
-            if (!_shippingSettings.AllowPickupInStore || pickupPoint == null || !_shippingSettings.IgnoreAdditionalShippingChargeForPickupInStore)
+            if (!(applyToPickupInStore && _shippingSettings.AllowPickupInStore && pickupPoint != null && _shippingSettings.IgnoreAdditionalShippingChargeForPickupInStore))
             {
-                adjustedRate += GetShoppingCartAdditionalShippingCharge(cart);
+                adjustedRate += await GetShoppingCartAdditionalShippingChargeAsync(cart);
             }
 
             //discount
-            var discountAmount = GetShippingDiscount(User, adjustedRate, out appliedDiscounts);
+            var (discountAmount, appliedDiscounts) = await GetShippingDiscountAsync(user, adjustedRate);
             adjustedRate -= discountAmount;
 
             adjustedRate = Math.Max(adjustedRate, decimal.Zero);
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                adjustedRate = _priceCalculationService.RoundPrice(adjustedRate);
+                adjustedRate = await _priceCalculationService.RoundPriceAsync(adjustedRate);
 
-            return adjustedRate;
+            return (adjustedRate, appliedDiscounts);
         }
 
         /// <summary>
         /// Gets shopping cart shipping total
         /// </summary>
         /// <param name="cart">Cart</param>
-        /// <param name="shippingRateComputationMethods">Shipping rate computation methods</param>
         /// <returns>Shipping total</returns>
-        public virtual decimal? GetShoppingCartShippingTotal(IList<ShoppingCartItem> cart, IList<IShippingRateComputationMethod> shippingRateComputationMethods)
+        public virtual async Task<decimal?> GetShoppingCartShippingTotalAsync(IList<ShoppingCartItem> cart)
         {
-            var includingTax = _workContext.TaxDisplayType == TaxDisplayType.IncludingTax;
-            return GetShoppingCartShippingTotal(cart, includingTax, shippingRateComputationMethods);
+            var includingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+            return (await GetShoppingCartShippingTotalAsync(cart, includingTax)).shippingTotal;
         }
+
 
         /// <summary>
         /// Gets shopping cart shipping total
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="shippingRateComputationMethods">Shipping rate computation methods</param>
-        /// <returns>Shipping total</returns>
-        public virtual decimal? GetShoppingCartShippingTotal(IList<ShoppingCartItem> cart, bool includingTax, IList<IShippingRateComputationMethod> shippingRateComputationMethods)
-        {
-            return GetShoppingCartShippingTotal(cart, includingTax, shippingRateComputationMethods, out _);
-        }
-
-        /// <summary>
-        /// Gets shopping cart shipping total
-        /// </summary>
-        /// <param name="cart">Cart</param>
-        /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="shippingRateComputationMethods">Shipping rate computation methods</param>
-        /// <param name="taxRate">Applied tax rate</param>
-        /// <returns>Shipping total</returns>
-        public virtual decimal? GetShoppingCartShippingTotal(IList<ShoppingCartItem> cart, bool includingTax, IList<IShippingRateComputationMethod> shippingRateComputationMethods,
-            out decimal taxRate)
-        {
-            return GetShoppingCartShippingTotal(cart, includingTax, shippingRateComputationMethods, out taxRate, out _);
-        }
-
-        /// <summary>
-        /// Gets shopping cart shipping total
-        /// </summary>
-        /// <param name="cart">Cart</param>
-        /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
-        /// <param name="shippingRateComputationMethods">Shipping rate computation methods</param>
-        /// <param name="taxRate">Applied tax rate</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <returns>Shipping total</returns>
-        public virtual decimal? GetShoppingCartShippingTotal(IList<ShoppingCartItem> cart, bool includingTax, IList<IShippingRateComputationMethod> shippingRateComputationMethods,
-            out decimal taxRate, out List<Discount> appliedDiscounts)
+        /// <returns>Shipping total. Applied tax rate. Applied discounts</returns>
+        public virtual async Task<(decimal? shippingTotal, decimal taxRate, List<Discount> appliedDiscounts)> GetShoppingCartShippingTotalAsync(IList<ShoppingCartItem> cart, bool includingTax)
         {
             decimal? shippingTotal = null;
-            appliedDiscounts = new List<Discount>();
-            taxRate = decimal.Zero;
+            var appliedDiscounts = new List<Discount>();
+            var taxRate = decimal.Zero;
 
-            var User = _userService.GetShoppingCartUser(cart);
+            var user = await _userService.GetShoppingCartUserAsync(cart);
 
-            var isFreeShipping = IsFreeShipping(cart);
+            var isFreeShipping = await IsFreeShippingAsync(cart);
             if (isFreeShipping)
-                return decimal.Zero;
+                return (decimal.Zero, taxRate, appliedDiscounts);
 
             ShippingOption shippingOption = null;
-            if (User != null) //TODO: User can't be null
-                shippingOption = _genericAttributeService.GetAttribute<ShippingOption>(User, TvProgUserDefaults.SelectedShippingOptionAttribute, _storeContext.CurrentStore.Id);
+            if (user != null)
+                shippingOption = await _genericAttributeService.GetAttributeAsync<ShippingOption>(user, TvProgUserDefaults.SelectedShippingOptionAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
 
             if (shippingOption != null)
             {
                 //use last shipping option (get from cache)
-                shippingTotal = AdjustShippingRate(shippingOption.Rate, cart, out appliedDiscounts);
+                (shippingTotal, appliedDiscounts) = await AdjustShippingRateAsync(shippingOption.Rate, cart, shippingOption.IsPickupInStore);
             }
             else
             {
                 //use fixed rate (if possible)
                 Address shippingAddress = null;
-                
-                if (shippingRateComputationMethods != null)
+                if (user != null)
+                    shippingAddress = await _userService.GetUserShippingAddressAsync(user);
+
+                var shippingRateComputationMethods = await _shippingPluginManager.LoadActivePluginsAsync(await _workContext.GetCurrentUserAsync(), (await _storeContext.GetCurrentStoreAsync()).Id);
+                if (!shippingRateComputationMethods.Any() && !_shippingSettings.AllowPickupInStore)
+                    throw new TvProgException("Shipping rate computation method could not be loaded");
+
+                if (shippingRateComputationMethods.Count == 1)
                 {
-                    if (!shippingRateComputationMethods.Any() && !_shippingSettings.AllowPickupInStore)
-                        throw new TvProgException("Shipping rate computation method could not be loaded");
+                    var shippingRateComputationMethod = shippingRateComputationMethods[0];
 
-                    if (shippingRateComputationMethods.Count == 1)
+                    var shippingOptionRequests = (await _shippingService.CreateShippingOptionRequestsAsync(cart,
+                        shippingAddress,
+                        (await _storeContext.GetCurrentStoreAsync()).Id)).shipmentPackages;
+
+                    decimal? fixedRate = null;
+                    foreach (var shippingOptionRequest in shippingOptionRequests)
                     {
-                        var shippingRateComputationMethod = shippingRateComputationMethods[0];
+                        //calculate fixed rates for each request-package
+                        var fixedRateTmp = await shippingRateComputationMethod.GetFixedRateAsync(shippingOptionRequest);
+                        if (!fixedRateTmp.HasValue)
+                            continue;
 
-                        var shippingOptionRequests = _shippingService.CreateShippingOptionRequests(cart,
-                            shippingAddress,
-                            _storeContext.CurrentStore.Id,
-                            out _);
-                        decimal? fixedRate = null;
-                        foreach (var shippingOptionRequest in shippingOptionRequests)
-                        {
-                            //calculate fixed rates for each request-package
-                            var fixedRateTmp = shippingRateComputationMethod.GetFixedRate(shippingOptionRequest);
-                            if (!fixedRateTmp.HasValue)
-                                continue;
+                        if (!fixedRate.HasValue)
+                            fixedRate = decimal.Zero;
 
-                            if (!fixedRate.HasValue)
-                                fixedRate = decimal.Zero;
+                        fixedRate += fixedRateTmp.Value;
+                    }
 
-                            fixedRate += fixedRateTmp.Value;
-                        }
-
-                        if (fixedRate.HasValue)
-                        {
-                            //adjust shipping rate
-                            shippingTotal = AdjustShippingRate(fixedRate.Value, cart, out appliedDiscounts);
-                        }
+                    if (fixedRate.HasValue)
+                    {
+                        //adjust shipping rate
+                        (shippingTotal, appliedDiscounts) = await AdjustShippingRateAsync(fixedRate.Value, cart);
                     }
                 }
             }
 
             if (!shippingTotal.HasValue)
-                return null;
+                return (null, taxRate, appliedDiscounts);
 
             if (shippingTotal.Value < decimal.Zero)
                 shippingTotal = decimal.Zero;
 
             //round
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                shippingTotal = _priceCalculationService.RoundPrice(shippingTotal.Value);
+                shippingTotal = await _priceCalculationService.RoundPriceAsync(shippingTotal.Value);
 
-            decimal? shippingTotalTaxed = _taxService.GetShippingPrice(shippingTotal.Value,
+            decimal? shippingTotalTaxed;
+
+            (shippingTotalTaxed, taxRate) = await _taxService.GetShippingPriceAsync(shippingTotal.Value,
                 includingTax,
-                User,
-                out taxRate);
+                user);
 
             //round
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                shippingTotalTaxed = _priceCalculationService.RoundPrice(shippingTotalTaxed.Value);
+                shippingTotalTaxed = await _priceCalculationService.RoundPriceAsync(shippingTotalTaxed.Value);
 
-            return shippingTotalTaxed;
+            return (shippingTotalTaxed, taxRate, appliedDiscounts);
         }
 
         /// <summary>
         /// Gets tax
         /// </summary>
         /// <param name="cart">Shopping cart</param>
-        /// <param name="shippingRateComputationMethods">Shipping rate computation methods</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating tax</param>
-        /// <returns>Tax total</returns>
-        public virtual decimal GetTaxTotal(IList<ShoppingCartItem> cart, IList<IShippingRateComputationMethod> shippingRateComputationMethods = null, bool usePaymentMethodAdditionalFee = true)
+        /// <returns>Tax total, Tax rates</returns>
+        public virtual async Task<(decimal taxTotal, SortedDictionary<decimal, decimal> taxRates)> GetTaxTotalAsync(IList<ShoppingCartItem> cart, bool usePaymentMethodAdditionalFee = true)
         {
             if (cart == null)
                 throw new ArgumentNullException(nameof(cart));
 
-            return GetTaxTotal(cart, shippingRateComputationMethods, out _, usePaymentMethodAdditionalFee);
-        }
+            var taxTotalResult = await _taxService.GetTaxTotalAsync(cart, usePaymentMethodAdditionalFee);
+            var taxRates = taxTotalResult?.TaxRates ?? new SortedDictionary<decimal, decimal>();
+            var taxTotal = taxTotalResult?.TaxTotal ?? decimal.Zero;
 
-        /// <summary>
-        /// Gets tax
-        /// </summary>
-        /// <param name="cart">Shopping cart</param>
-        /// <param name="shippingRateComputationMethods">Shipping rate computation methods</param>
-        /// <param name="taxRates">Tax rates</param>
-        /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating tax</param>
-        /// <returns>Tax total</returns>
-        public virtual decimal GetTaxTotal(IList<ShoppingCartItem> cart, IList<IShippingRateComputationMethod> shippingRateComputationMethods,
-            out SortedDictionary<decimal, decimal> taxRates, bool usePaymentMethodAdditionalFee = true)
-        {
-            if (cart == null)
-                throw new ArgumentNullException(nameof(cart));
-
-            taxRates = new SortedDictionary<decimal, decimal>();
-
-            var User = _userService.GetShoppingCartUser(cart);
-
-            var paymentMethodSystemName = string.Empty;
-            if (User != null)
-            {
-                paymentMethodSystemName = _genericAttributeService.GetAttribute<string>(User,
-                    TvProgUserDefaults.SelectedPaymentMethodAttribute, _storeContext.CurrentStore.Id);
-            }
-
-            //order sub total (items + checkout attributes)
-            var subTotalTaxTotal = decimal.Zero;
-            GetShoppingCartSubTotal(cart, false, out _, out _, out _, out _, out var orderSubTotalTaxRates);
-            foreach (var kvp in orderSubTotalTaxRates)
-            {
-                var taxRate = kvp.Key;
-                var taxValue = kvp.Value;
-                subTotalTaxTotal += taxValue;
-
-                if (taxRate <= decimal.Zero || taxValue <= decimal.Zero)
-                    continue;
-
-                if (!taxRates.ContainsKey(taxRate))
-                    taxRates.Add(taxRate, taxValue);
-                else
-                    taxRates[taxRate] = taxRates[taxRate] + taxValue;
-            }
-
-            //shipping
-            var shippingTax = decimal.Zero;
-            if (_taxSettings.ShippingIsTaxable)
-            {
-                var shippingExclTax = GetShoppingCartShippingTotal(cart, false, shippingRateComputationMethods, out var taxRate);
-                var shippingInclTax = GetShoppingCartShippingTotal(cart, true, shippingRateComputationMethods, out taxRate);
-                if (shippingExclTax.HasValue && shippingInclTax.HasValue)
-                {
-                    shippingTax = shippingInclTax.Value - shippingExclTax.Value;
-                    //ensure that tax is equal or greater than zero
-                    if (shippingTax < decimal.Zero)
-                        shippingTax = decimal.Zero;
-
-                    //tax rates
-                    if (taxRate > decimal.Zero && shippingTax > decimal.Zero)
-                    {
-                        if (!taxRates.ContainsKey(taxRate))
-                            taxRates.Add(taxRate, shippingTax);
-                        else
-                            taxRates[taxRate] = taxRates[taxRate] + shippingTax;
-                    }
-                }
-            }
-
-            //payment method additional fee
-            var paymentMethodAdditionalFeeTax = decimal.Zero;
-            if (usePaymentMethodAdditionalFee && _taxSettings.PaymentMethodAdditionalFeeIsTaxable)
-            {
-                var paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart, paymentMethodSystemName);
-                var paymentMethodAdditionalFeeExclTax = _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee, false, User, out var taxRate);
-                var paymentMethodAdditionalFeeInclTax = _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee, true, User, out taxRate);
-
-                paymentMethodAdditionalFeeTax = paymentMethodAdditionalFeeInclTax - paymentMethodAdditionalFeeExclTax;
-                //ensure that tax is equal or greater than zero
-                if (paymentMethodAdditionalFeeTax < decimal.Zero)
-                    paymentMethodAdditionalFeeTax = decimal.Zero;
-
-                //tax rates
-                if (taxRate > decimal.Zero && paymentMethodAdditionalFeeTax > decimal.Zero)
-                {
-                    if (!taxRates.ContainsKey(taxRate))
-                        taxRates.Add(taxRate, paymentMethodAdditionalFeeTax);
-                    else
-                        taxRates[taxRate] = taxRates[taxRate] + paymentMethodAdditionalFeeTax;
-                }
-            }
-
-            //add at least one tax rate (0%)
-            if (!taxRates.Any())
-                taxRates.Add(decimal.Zero, decimal.Zero);
-
-            //summarize taxes
-            var taxTotal = subTotalTaxTotal + shippingTax + paymentMethodAdditionalFeeTax;
-            //ensure that tax is equal or greater than zero
-            if (taxTotal < decimal.Zero)
-                taxTotal = decimal.Zero;
-            //round tax
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                taxTotal = _priceCalculationService.RoundPrice(taxTotal);
-            return taxTotal;
+                taxTotal = await _priceCalculationService.RoundPriceAsync(taxTotal);
+
+            return (taxTotal, taxRates);
         }
 
         /// <summary>
         /// Gets shopping cart total
         /// </summary>
         /// <param name="cart">Cart</param>
-        /// <param name="useRewardPoints">A value indicating reward points should be used; null to detect current choice of the User</param>
+        /// <param name="useRewardPoints">A value indicating reward points should be used; null to detect current choice of the user</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating order total</param>
-        /// <returns>Shopping cart total;Null if shopping cart total couldn't be calculated now</returns>
-        public virtual decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart,
+        /// <returns>Shopping cart total;Null if shopping cart total couldn't be calculated now. Applied gift cards. Applied discount amount. Applied discounts. Reward points to redeem. Reward points amount in primary store currency to redeem</returns>
+        public virtual async Task<(decimal? shoppingCartTotal, decimal discountAmount, List<Discount> appliedDiscounts, List<AppliedGiftCard> appliedGiftCards, int redeemedRewardPoints, decimal redeemedRewardPointsAmount)> GetShoppingCartTotalAsync(IList<ShoppingCartItem> cart,
             bool? useRewardPoints = null, bool usePaymentMethodAdditionalFee = true)
         {
-            return GetShoppingCartTotal(cart, out _, out _, out _, out _, out _, useRewardPoints, usePaymentMethodAdditionalFee);
-        }
+            var redeemedRewardPoints = 0;
+            var redeemedRewardPointsAmount = decimal.Zero;
 
-        /// <summary>
-        /// Gets shopping cart total
-        /// </summary>
-        /// <param name="cart">Cart</param>
-        /// <param name="appliedGiftCards">Applied gift cards</param>
-        /// <param name="discountAmount">Applied discount amount</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <param name="redeemedRewardPoints">Reward points to redeem</param>
-        /// <param name="redeemedRewardPointsAmount">Reward points amount in primary store currency to redeem</param>
-        /// <param name="useRewardPoints">A value indicating reward points should be used; null to detect current choice of the User</param>
-        /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating order total</param>
-        /// <returns>Shopping cart total;Null if shopping cart total couldn't be calculated now</returns>
-        public virtual decimal? GetShoppingCartTotal(IList<ShoppingCartItem> cart,
-            out decimal discountAmount, out List<Discount> appliedDiscounts,
-            out List<AppliedGiftCard> appliedGiftCards,
-            out int redeemedRewardPoints, out decimal redeemedRewardPointsAmount,
-            bool? useRewardPoints = null, bool usePaymentMethodAdditionalFee = true)
-        {
-            redeemedRewardPoints = 0;
-            redeemedRewardPointsAmount = decimal.Zero;
-
-            var User = _userService.GetShoppingCartUser(cart);
+            var user = await _userService.GetShoppingCartUserAsync(cart);
 
             var paymentMethodSystemName = string.Empty;
-            if (User != null)
+            if (user != null)
             {
-                paymentMethodSystemName = _genericAttributeService.GetAttribute<string>(User,
-                    TvProgUserDefaults.SelectedPaymentMethodAttribute, _storeContext.CurrentStore.Id);
+                paymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(user,
+                    TvProgUserDefaults.SelectedPaymentMethodAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
             }
 
             //subtotal without tax
-            GetShoppingCartSubTotal(cart, false, out _, out _, out _, out var subTotalWithDiscountBase);
+            var (_, _, _, subTotalWithDiscountBase, _) = await GetShoppingCartSubTotalAsync(cart, false);
             //subtotal with discount
             var subtotalBase = subTotalWithDiscountBase;
 
-            //LoadAllShippingRateComputationMethods
-            var shippingRateComputationMethods = _shippingPluginManager.LoadActivePlugins(_workContext.CurrentUser, _storeContext.CurrentStore.Id);
-
             //shipping without tax
-            var shoppingCartShipping = GetShoppingCartShippingTotal(cart, false, shippingRateComputationMethods);
+            var shoppingCartShipping = (await GetShoppingCartShippingTotalAsync(cart, false)).shippingTotal;
 
             //payment method additional fee without tax
             var paymentMethodAdditionalFeeWithoutTax = decimal.Zero;
             if (usePaymentMethodAdditionalFee && !string.IsNullOrEmpty(paymentMethodSystemName))
             {
-                var paymentMethodAdditionalFee = _paymentService.GetAdditionalHandlingFee(cart,
+                var paymentMethodAdditionalFee = await _paymentService.GetAdditionalHandlingFeeAsync(cart,
                     paymentMethodSystemName);
                 paymentMethodAdditionalFeeWithoutTax =
-                    _taxService.GetPaymentMethodAdditionalFee(paymentMethodAdditionalFee,
-                        false, User);
+                    (await _taxService.GetPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFee,
+                        false, user)).price;
             }
 
             //tax
-            var shoppingCartTax = GetTaxTotal(cart, shippingRateComputationMethods, usePaymentMethodAdditionalFee);
+            var shoppingCartTax = (await GetTaxTotalAsync(cart, usePaymentMethodAdditionalFee)).taxTotal;
 
             //order total
             var resultTemp = decimal.Zero;
@@ -1319,10 +1175,10 @@ namespace TVProgViewer.Services.Orders
             resultTemp += paymentMethodAdditionalFeeWithoutTax;
             resultTemp += shoppingCartTax;
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                resultTemp = _priceCalculationService.RoundPrice(resultTemp);
+                resultTemp = await _priceCalculationService.RoundPriceAsync(resultTemp);
 
             //order total discount
-            discountAmount = GetOrderTotalDiscount(User, resultTemp, out appliedDiscounts);
+            var (discountAmount, appliedDiscounts) = await GetOrderTotalDiscountAsync(user, resultTemp);
 
             //sub totals with discount        
             if (resultTemp < discountAmount)
@@ -1334,33 +1190,33 @@ namespace TVProgViewer.Services.Orders
             if (resultTemp < decimal.Zero)
                 resultTemp = decimal.Zero;
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                resultTemp = _priceCalculationService.RoundPrice(resultTemp);
+                resultTemp = await _priceCalculationService.RoundPriceAsync(resultTemp);
 
             //let's apply gift cards now (gift cards that can be used)
-            appliedGiftCards = new List<AppliedGiftCard>();
-            AppliedGiftCards(cart, appliedGiftCards, User, ref resultTemp);
+            var appliedGiftCards = new List<AppliedGiftCard>();
+            resultTemp = await AppliedGiftCardsAsync(cart, appliedGiftCards, user, resultTemp);
 
             if (resultTemp < decimal.Zero)
                 resultTemp = decimal.Zero;
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                resultTemp = _priceCalculationService.RoundPrice(resultTemp);
+                resultTemp = await _priceCalculationService.RoundPriceAsync(resultTemp);
 
             if (!shoppingCartShipping.HasValue)
             {
                 //we have errors
-                return null;
+                return (null, discountAmount, appliedDiscounts, appliedGiftCards, redeemedRewardPoints, redeemedRewardPointsAmount);
             }
 
             var orderTotal = resultTemp;
 
             //reward points
-            SetRewardPoints(ref redeemedRewardPoints, ref redeemedRewardPointsAmount, useRewardPoints, User, orderTotal);
+            (redeemedRewardPoints, redeemedRewardPointsAmount) = await SetRewardPointsAsync(redeemedRewardPoints, redeemedRewardPointsAmount, useRewardPoints, user, orderTotal);
 
             orderTotal -= redeemedRewardPointsAmount;
 
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                orderTotal = _priceCalculationService.RoundPrice(orderTotal);
-            return orderTotal;
+                orderTotal = await _priceCalculationService.RoundPriceAsync(orderTotal);
+            return (orderTotal, discountAmount, appliedDiscounts, appliedGiftCards, redeemedRewardPoints, redeemedRewardPointsAmount);
         }
 
         /// <summary>
@@ -1368,35 +1224,19 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="rewardPoints">Reward points</param>
         /// <returns>Converted value</returns>
-        public virtual decimal ConvertRewardPointsToAmount(int rewardPoints)
+        public virtual async Task<decimal> ConvertRewardPointsToAmountAsync(int rewardPoints)
         {
             if (rewardPoints <= 0)
                 return decimal.Zero;
 
             var result = rewardPoints * _rewardPointsSettings.ExchangeRate;
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                result = _priceCalculationService.RoundPrice(result);
+                result = await _priceCalculationService.RoundPriceAsync(result);
             return result;
         }
 
         /// <summary>
-        /// Converts an amount to reward points
-        /// </summary>
-        /// <param name="amount">Amount</param>
-        /// <returns>Converted value</returns>
-        public virtual int ConvertAmountToRewardPoints(decimal amount)
-        {
-            var result = 0;
-            if (amount <= 0)
-                return 0;
-
-            if (_rewardPointsSettings.ExchangeRate > 0)
-                result = (int)Math.Ceiling(amount / _rewardPointsSettings.ExchangeRate);
-            return result;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether a User has minimum amount of reward points to use (if enabled)
+        /// Gets a value indicating whether a user has minimum amount of reward points to use (if enabled)
         /// </summary>
         /// <param name="rewardPoints">Reward points to check</param>
         /// <returns>true - reward points could use; false - cannot be used.</returns>
@@ -1431,10 +1271,10 @@ namespace TVProgViewer.Services.Orders
         /// <summary>
         /// Calculate how much reward points will be earned/reduced based on certain amount spent
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="amount">Amount (in primary store currency)</param>
         /// <returns>Number of reward points</returns>
-        public virtual int CalculateRewardPoints(User User, decimal amount)
+        public virtual async Task<int> CalculateRewardPointsAsync(User user, decimal amount)
         {
             if (!_rewardPointsSettings.Enabled)
                 return 0;
@@ -1443,10 +1283,10 @@ namespace TVProgViewer.Services.Orders
                 return 0;
 
             //ensure that reward points are applied only to registered users
-            if (User == null || _userService.IsGuest(User))
+            if (user == null || await _userService.IsGuestAsync(user))
                 return 0;
 
-            var points = (int)Math.Truncate(amount / _rewardPointsSettings.PointsForPurchases_Amount * _rewardPointsSettings.PointsForPurchases_Points);
+            var points = (int)Math.Truncate(amount / _rewardPointsSettings.PointsForPurchases_Amount) * _rewardPointsSettings.PointsForPurchases_Points;
             return points;
         }
 

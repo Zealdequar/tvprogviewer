@@ -2,6 +2,8 @@
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Tax;
 using TVProgViewer.Services.Plugins;
+using TVProgViewer.Services.Users;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Tax
 {
@@ -18,8 +20,9 @@ namespace TVProgViewer.Services.Tax
 
         #region Ctor
 
-        public TaxPluginManager(IPluginService pluginService,
-            TaxSettings taxSettings) : base(pluginService)
+        public TaxPluginManager(IUserService userService,
+            IPluginService pluginService,
+            TaxSettings taxSettings) : base(userService, pluginService)
         {
             _taxSettings = taxSettings;
         }
@@ -31,12 +34,12 @@ namespace TVProgViewer.Services.Tax
         /// <summary>
         /// Load primary active tax provider
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Tax provider</returns>
-        public virtual ITaxProvider LoadPrimaryPlugin(User User = null, int storeId = 0)
+        public virtual async Task<ITaxProvider> LoadPrimaryPluginAsync(User user = null, int storeId = 0)
         {
-            return LoadPrimaryPlugin(_taxSettings.ActiveTaxProviderSystemName, User, storeId);
+            return await LoadPrimaryPluginAsync(_taxSettings.ActiveTaxProviderSystemName, user, storeId);
         }
 
         /// <summary>
@@ -53,12 +56,12 @@ namespace TVProgViewer.Services.Tax
         /// Check whether the tax provider with the passed system name is active
         /// </summary>
         /// <param name="systemName">System name of tax provider to check</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Result</returns>
-        public virtual bool IsPluginActive(string systemName, User User = null, int storeId = 0)
+        public virtual async Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0)
         {
-            var taxProvider = LoadPluginBySystemName(systemName, User, storeId);
+            var taxProvider = await LoadPluginBySystemNameAsync(systemName, user, storeId);
             return IsPluginActive(taxProvider);
         }
 

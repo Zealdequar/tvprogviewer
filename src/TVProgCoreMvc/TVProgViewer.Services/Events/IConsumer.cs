@@ -1,4 +1,6 @@
-﻿namespace TVProgViewer.Services.Events
+﻿using System.Threading.Tasks;
+
+namespace TVProgViewer.Services.Events
 {
     /// <summary>
     /// Consumer interface
@@ -10,6 +12,6 @@
         /// Handle event
         /// </summary>
         /// <param name="eventMessage">Event</param>
-        void HandleEvent(T eventMessage);
+        Task HandleEventAsync(T eventMessage);
     }
 }

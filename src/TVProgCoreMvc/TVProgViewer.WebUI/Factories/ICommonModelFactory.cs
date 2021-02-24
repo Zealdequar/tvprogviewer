@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Vendors;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Vendors;
 using TVProgViewer.WebUI.Models.Common;
 
 namespace TVProgViewer.WebUI.Factories
@@ -12,61 +13,61 @@ namespace TVProgViewer.WebUI.Factories
         /// Prepare the logo model
         /// </summary>
         /// <returns>Logo model</returns>
-        LogoModel PrepareLogoModel();
+        Task<LogoModel> PrepareLogoModelAsync();
 
         /// <summary>
         /// Prepare the language selector model
         /// </summary>
         /// <returns>Language selector model</returns>
-        LanguageSelectorModel PrepareLanguageSelectorModel();
+        Task<LanguageSelectorModel> PrepareLanguageSelectorModelAsync();
 
         /// <summary>
         /// Подготовка модели для выбора провайдера ТВ-программы
         /// </summary>
         /// <returns>Модель для выбора провайдера ТВ-программы</returns>
-        TvProgProviderSelectorModel PrepareTvProgProviderSelectorModel();
+        Task<TvProgProviderSelectorModel> PrepareTvProgProviderSelectorModelAsync();
 
         /// <summary>
         /// Подготовка модели для выбора типа ТВ-программы
         /// </summary>
         /// <returns>Модель для выбора типа ТВ-программы</returns>
-        TvTypeProgSelectorModel PrepareTvTypeProgSelectorModel();
+        Task<TvTypeProgSelectorModel> PrepareTvTypeProgSelectorModelAsync();
 
         /// <summary>
         /// Подготовка модели для выбора категории ТВ-программы
         /// </summary>
         /// <returns>Модель для выбора категории ТВ-программы</returns>
-        TvCategorySelectorModel PrepareTvCategorySelectorModel();
-
+        Task<TvCategorySelectorModel> PrepareTvCategorySelectorModelAsync();
+       
         /// <summary>
         /// Prepare the tax type selector model
         /// </summary>
         /// <returns>Tax type selector model</returns>
-        TaxTypeSelectorModel PrepareTaxTypeSelectorModel();
+        Task<TaxTypeSelectorModel> PrepareTaxTypeSelectorModelAsync();
 
         /// <summary>
         /// Prepare the header links model
         /// </summary>
         /// <returns>Header links model</returns>
-        HeaderLinksModel PrepareHeaderLinksModel();
+        Task<HeaderLinksModel> PrepareHeaderLinksModelAsync();
 
         /// <summary>
         /// Prepare the admin header links model
         /// </summary>
         /// <returns>Admin header links model</returns>
-        AdminHeaderLinksModel PrepareAdminHeaderLinksModel();
+        Task<AdminHeaderLinksModel> PrepareAdminHeaderLinksModelAsync();
 
         /// <summary>
         /// Prepare the social model
         /// </summary>
         /// <returns>Social model</returns>
-        SocialModel PrepareSocialModel();
+        Task<SocialModel> PrepareSocialModelAsync();
 
         /// <summary>
         /// Prepare the footer model
         /// </summary>
         /// <returns>Footer model</returns>
-        FooterModel PrepareFooterModel();
+        Task<FooterModel> PrepareFooterModelAsync();
 
         /// <summary>
         /// Prepare the contact us model
@@ -74,7 +75,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="model">Contact us model</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>Contact us model</returns>
-        ContactUsModel PrepareContactUsModel(ContactUsModel model, bool excludeProperties);
+        Task<ContactUsModel> PrepareContactUsModelAsync(ContactUsModel model, bool excludeProperties);
 
         /// <summary>
         /// Prepare the contact vendor model
@@ -83,7 +84,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="vendor">Vendor</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>Contact vendor model</returns>
-        ContactVendorModel PrepareContactVendorModel(ContactVendorModel model, Vendor vendor,
+        Task<ContactVendorModel> PrepareContactVendorModelAsync(ContactVendorModel model, Vendor vendor,
             bool excludeProperties);
 
         /// <summary>
@@ -91,31 +92,31 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pageModel">Sitemap page model</param>
         /// <returns>Sitemap model</returns>
-        SitemapModel PrepareSitemapModel(SitemapPageModel pageModel);
+        Task<SitemapModel> PrepareSitemapModelAsync(SitemapPageModel pageModel);
 
         /// <summary>
         /// Get the sitemap in XML format
         /// </summary>
         /// <param name="id">Sitemap identifier; pass null to load the first sitemap or sitemap index file</param>
         /// <returns>Sitemap as string in XML format</returns>
-        string PrepareSitemapXml( int? id);
+        Task<string> PrepareSitemapXmlAsync( int? id);
 
         /// <summary>
         /// Prepare the store theme selector model
         /// </summary>
         /// <returns>Store theme selector model</returns>
-        StoreThemeSelectorModel PrepareStoreThemeSelectorModel();
+        Task<StoreThemeSelectorModel> PrepareStoreThemeSelectorModelAsync();
 
         /// <summary>
         /// Prepare the favicon model
         /// </summary>
         /// <returns>Favicon model</returns>
-        FaviconAndAppIconsModel PrepareFaviconAndAppIconsModel();
+        Task<FaviconAndAppIconsModel> PrepareFaviconAndAppIconsModelAsync();
 
         /// <summary>
         /// Get robots.txt file
         /// </summary>
         /// <returns>Robots.txt file as string</returns>
-        string PrepareRobotsTextFile();
+        Task<string> PrepareRobotsTextFileAsync();
     }
 }

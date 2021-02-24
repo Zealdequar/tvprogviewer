@@ -20,7 +20,7 @@ namespace TVProgViewer.Core.Domain.TvProgMain
         /// <summary>
         /// Дата создания
         /// </summary>
-        public DateTimeOffset CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         /// <summary>
         /// Наименование рейтинга
@@ -35,6 +35,6 @@ namespace TVProgViewer.Core.Domain.TvProgMain
         /// <summary>
         /// Дата удаления
         /// </summary>
-        public DateTimeOffset? DeleteDate { get; set; }
+        public DateTime? DeleteDate { get; set; }
     }
 }

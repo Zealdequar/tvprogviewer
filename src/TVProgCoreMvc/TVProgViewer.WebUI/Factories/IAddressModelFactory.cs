@@ -4,6 +4,7 @@ using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Directory;
 using TVProgViewer.WebUI.Models.Common;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Factories
 {
@@ -23,10 +24,10 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="prePopulateWithUserFields">Whether to populate model properties with the user fields (used with the user entity)</param>
         /// <param name="user">User entity; required if prePopulateWithUserFields is true</param>
         /// <param name="overrideAttributesXml">Overridden address attributes in XML format; pass null to use CustomAttributes of the address entity</param>
-        void PrepareAddressModel(AddressModel model,
+        Task PrepareAddressModelAsync(AddressModel model,
             Address address, bool excludeProperties,
             AddressSettings addressSettings,
-            Func<IList<Country>> loadCountries = null,
+            Func<Task<IList<Country>>> loadCountries = null,
             bool prePopulateWithUserFields = false,
             User user = null,
             string overrideAttributesXml = "");

@@ -1,10 +1,9 @@
 ﻿@using Newtonsoft.Json
-@using TVProgViewer.Services.Defaults
 @using TVProgViewer.Services.Messages
 @{
     //Get messages from TempData
-    var notes = TempData.ContainsKey(TVProgViewerMessageDefaults.NotificationListKey)
-        ? JsonConvert.DeserializeObject<IList<NotifyData>>(TempData[TVProgViewerMessageDefaults.NotificationListKey].ToString())
+    var notes = TempData.ContainsKey(TvProgMessageDefaults.NotificationListKey)
+        ? JsonConvert.DeserializeObject<IList<NotifyData>>(TempData[TvProgMessageDefaults.NotificationListKey].ToString())
         : null;
     if (notes != null)
     {

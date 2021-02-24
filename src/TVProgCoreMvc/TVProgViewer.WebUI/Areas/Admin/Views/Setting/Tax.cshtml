@@ -9,22 +9,22 @@
 
 @{
     const string hideCommonBlockAttributeName = "TaxSettingsPage.HideCommonBlock";
-    var hideCommonBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideCommonBlockAttributeName);
+    var hideCommonBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideCommonBlockAttributeName);
 
     const string hideDefaultTaxAddressBlockAttributeName = "TaxSettingsPage.HideDefaultTaxAddressBlock";
-    var hideDefaultTaxAddressBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideDefaultTaxAddressBlockAttributeName);
+    var hideDefaultTaxAddressBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideDefaultTaxAddressBlockAttributeName);
 
     const string hideTaxDisplayingBlockAttributeName = "TaxSettingsPage.HideTaxDisplayingBlock";
-    var hideTaxDisplayingBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideTaxDisplayingBlockAttributeName);
+    var hideTaxDisplayingBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideTaxDisplayingBlockAttributeName);
 
     const string hideShippingBlockAttributeName = "TaxSettingsPage.HideShippingBlock";
-    var hideShippingBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideShippingBlockAttributeName);
+    var hideShippingBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideShippingBlockAttributeName);
 
     const string hidePaymentBlockAttributeName = "TaxSettingsPage.HidePaymentBlock";
-    var hidePaymentBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hidePaymentBlockAttributeName);
+    var hidePaymentBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hidePaymentBlockAttributeName);
 
     const string hideVATBlockAttributeName = "TaxSettingsPage.HideVATBlock";
-    var hideVATBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideVATBlockAttributeName);
+    var hideVATBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideVATBlockAttributeName);
 }
 
     <form asp-controller="Setting" asp-action="Tax" method="post">
@@ -33,7 +33,7 @@
                 @T("Admin.Configuration.Settings.Tax")
             </h1>
             <div class="pull-right">
-                <button type="submit" name="save" class="btn bg-blue">
+                <button type="submit" name="save" class="btn btn-primary">
                     <i class="fa fa-floppy-o"></i>
                     @T("Admin.Common.Save")
                 </button>
@@ -41,22 +41,24 @@
             </div>
         </div>
 
-        <div class="content">
-            <div class="form-horizontal">
-                @await Component.InvokeAsync("StoreScopeConfiguration")
-                @await Component.InvokeAsync("SettingMode")
-                <div asp-validation-summary="All"></div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="form-horizontal">
+                    @await Component.InvokeAsync("StoreScopeConfiguration")
+                    @await Component.InvokeAsync("SettingMode")
+                    <div asp-validation-summary="All"></div>
 
-                <tvprog-panels id="taxsettings-panels">
-                    <tvprog-panel asp-name="taxsettings-common" asp-icon="fa fa-info" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.Common")" asp-hide-block-attribute-name="@hideCommonBlockAttributeName" asp-hide="@hideCommonBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.Common", Model)</tvprog-panel>
-                    <tvprog-panel asp-name="taxsettings-default-tax-address" asp-icon="fa fa-address-book-o" asp-title="@T("Admin.Configuration.Settings.Tax.DefaultTaxAddress")" asp-hide-block-attribute-name="@hideDefaultTaxAddressBlockAttributeName" asp-hide="@hideDefaultTaxAddressBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.DefaultTaxAddress", Model)</tvprog-panel>
-                    <tvprog-panel asp-name="taxsettings-tax-displaying" asp-icon="fa fa-television" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.TaxDisplaying")" asp-hide-block-attribute-name="@hideTaxDisplayingBlockAttributeName" asp-hide="@hideTaxDisplayingBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.TaxDisplaying", Model)</tvprog-panel>
-                    <tvprog-panel asp-name="taxsettings-shipping" asp-icon="fa fa-truck" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.Shipping")" asp-hide-block-attribute-name="@hideShippingBlockAttributeName" asp-hide="@hideShippingBlock" asp-advanced="true">@await Html.PartialAsync("_Tax.Shipping", Model)</tvprog-panel>
-                    <tvprog-panel asp-name="taxsettings-payment" asp-icon="fa fa-credit-card" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.Payment")" asp-hide-block-attribute-name="@hidePaymentBlockAttributeName" asp-hide="@hidePaymentBlock" asp-advanced="true">@await Html.PartialAsync("_Tax.Payment", Model)</tvprog-panel>
-                    <tvprog-panel asp-name="taxsettings-vat" asp-icon="fa fa-percent" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.VAT")" asp-hide-block-attribute-name="@hideVATBlockAttributeName" asp-hide="@hideVATBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.VAT", Model)</tvprog-panel>
-                   
-                    @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.TaxSettingsDetailsBlock, additionalData = Model })
-                </tvprog-panels>
+                    <tvprog-cards id="taxsettings-cards">
+                        <tvprog-card asp-name="taxsettings-common" asp-icon="fa fa-info" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.Common")" asp-hide-block-attribute-name="@hideCommonBlockAttributeName" asp-hide="@hideCommonBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.Common", Model)</tvprog-card>
+                        <tvprog-card asp-name="taxsettings-default-tax-address" asp-icon="fa fa-address-book-o" asp-title="@T("Admin.Configuration.Settings.Tax.DefaultTaxAddress")" asp-hide-block-attribute-name="@hideDefaultTaxAddressBlockAttributeName" asp-hide="@hideDefaultTaxAddressBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.DefaultTaxAddress", Model)</tvprog-card>
+                        <tvprog-card asp-name="taxsettings-tax-displaying" asp-icon="fa fa-television" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.TaxDisplaying")" asp-hide-block-attribute-name="@hideTaxDisplayingBlockAttributeName" asp-hide="@hideTaxDisplayingBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.TaxDisplaying", Model)</tvprog-card>
+                        <tvprog-card asp-name="taxsettings-shipping" asp-icon="fa fa-truck" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.Shipping")" asp-hide-block-attribute-name="@hideShippingBlockAttributeName" asp-hide="@hideShippingBlock" asp-advanced="true">@await Html.PartialAsync("_Tax.Shipping", Model)</tvprog-card>
+                        <tvprog-card asp-name="taxsettings-payment" asp-icon="fa fa-credit-card" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.Payment")" asp-hide-block-attribute-name="@hidePaymentBlockAttributeName" asp-hide="@hidePaymentBlock" asp-advanced="true">@await Html.PartialAsync("_Tax.Payment", Model)</tvprog-card>
+                        <tvprog-card asp-name="taxsettings-vat" asp-icon="fa fa-percent" asp-title="@T("Admin.Configuration.Settings.Tax.BlockTitle.VAT")" asp-hide-block-attribute-name="@hideVATBlockAttributeName" asp-hide="@hideVATBlock" asp-advanced="false">@await Html.PartialAsync("_Tax.VAT", Model)</tvprog-card>
+
+                        @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.TaxSettingsDetailsBlock, additionalData = Model })
+                    </tvprog-cards>
+                </div>
             </div>
-        </div>
-    </form>
+        </section>
+</form>

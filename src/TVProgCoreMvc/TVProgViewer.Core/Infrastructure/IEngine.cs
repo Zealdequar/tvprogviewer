@@ -1,10 +1,9 @@
-﻿using Autofac;
+﻿using System;
+using System.Collections.Generic;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using TVProgViewer.Core.Configuration;
 
 namespace TVProgViewer.Core.Infrastructure
@@ -20,8 +19,7 @@ namespace TVProgViewer.Core.Infrastructure
         /// </summary>
         /// <param name="services">Коллекция дескрипторов сервисов</param>
         /// <param name="configuration">Конфигурация приложения</param>
-        /// <param name="TvProgConfig">Конфигурация параметров</param>
-        void ConfigureServices(IServiceCollection services, IConfiguration configuration, TvProgConfig tvProgConfig);
+        void ConfigureServices(IServiceCollection services, IConfiguration configuration);
 
         /// <summary>
         /// Конфигурация HTTP запрос 
@@ -61,8 +59,7 @@ namespace TVProgViewer.Core.Infrastructure
         /// Регистрация зависимостей
         /// </summary>
         /// <param name="containerBuilder">Контейнер-строитель</param>
-        /// <param name="nopConfig">Параметры конфигурации TvProgViewer</param>
-        void RegisterDependencies(ContainerBuilder containerBuilder, TvProgConfig nopConfig);
-
+        /// <param name="appSettings">Параметры конфигурации TvProgViewer</param>
+        void RegisterDependencies(ContainerBuilder containerBuilder, AppSettings appSettings);
     }
 }

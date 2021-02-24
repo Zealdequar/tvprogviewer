@@ -3,6 +3,7 @@ using TVProgViewer.Core.Configuration;
 using TVProgViewer.Core.Infrastructure;
 using TVProgViewer.Core.Redis;
 using StackExchange.Redis;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Plugins
 {
@@ -19,15 +20,24 @@ namespace TVProgViewer.Services.Plugins
 
         #region Ctor
 
-        public RedisPluginsInfo(ITvProgFileProvider fileProvider, IRedisConnectionWrapper connectionWrapper, TvProgConfig config)
+        public RedisPluginsInfo(AppSettings appSettings, ITvProgFileProvider fileProvider, IRedisConnectionWrapper connectionWrapper)
             : base(fileProvider)
         {
-            _db = connectionWrapper.GetDatabase(config.RedisDatabaseId ?? (int)RedisDatabaseNumber.Plugin);
+            _db = connectionWrapper.GetDatabase(appSettings.RedisConfig.DatabaseId ?? (int)RedisDatabaseNumber.Plugin);
         }
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Save plugins info to the redis
+        /// </summary>
+        public override async Task SaveAsync()
+        {
+            var text = JsonConvert.SerializeObject(this, Formatting.Indented);
+            await _db.StringSetAsync(nameof(RedisPluginsInfo), text);
+        }
 
         /// <summary>
         /// Save plugins info to the redis
@@ -42,29 +52,29 @@ namespace TVProgViewer.Services.Plugins
         /// Get plugins info
         /// </summary>
         /// <returns>True if data are loaded, otherwise False</returns>
-        public override bool LoadPluginInfo()
+        public override async Task<bool> LoadPluginInfoAsync()
         {
             //try to get plugin info from the JSON file
-            var serializedItem = _db.StringGet(nameof(RedisPluginsInfo));
+            var serializedItem = await _db.StringGetAsync(nameof(RedisPluginsInfo));
 
             var loaded = false;
 
-            if (serializedItem.HasValue) 
+            if (serializedItem.HasValue)
                 loaded = DeserializePluginInfo(serializedItem);
 
             if (loaded)
                 return true;
 
-            if (base.LoadPluginInfo())
+            if (await base.LoadPluginInfoAsync())
             {
-                Save();
+                await SaveAsync();
                 loaded = true;
             }
 
             //delete the plugins info file
             var filePath = _fileProvider.MapPath(TvProgPluginDefaults.PluginsInfoFilePath);
             _fileProvider.DeleteFile(filePath);
-            
+
             return loaded;
         }
 

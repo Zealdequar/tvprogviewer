@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Services.Plugins;
 
 namespace TVProgViewer.Services.Cms
@@ -17,7 +18,7 @@ namespace TVProgViewer.Services.Cms
         /// Gets widget zones where this widget should be rendered
         /// </summary>
         /// <returns>Widget zones</returns>
-        IList<string> GetWidgetZones();
+        Task<IList<string>> GetWidgetZonesAsync();
 
         /// <summary>
         /// Gets a name of a view component for displaying widget

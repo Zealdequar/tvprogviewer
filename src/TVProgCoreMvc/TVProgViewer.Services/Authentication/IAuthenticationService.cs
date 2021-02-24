@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Users;
 
 namespace TVProgViewer.Services.Authentication
@@ -10,19 +11,19 @@ namespace TVProgViewer.Services.Authentication
         /// <summary>
         /// Sign in
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="isPersistent">Whether the authentication session is persisted across multiple requests</param>
-        void SignIn(User User, bool isPersistent);
+        Task SignInAsync(User user, bool isPersistent);
 
         /// <summary>
         /// Sign out
         /// </summary>
-        void SignOut();
+        Task SignOutAsync();
 
         /// <summary>
-        /// Get authenticated User
+        /// Get authenticated user
         /// </summary>
         /// <returns>User</returns>
-        User GetAuthenticatedUser();
+        Task<User> GetAuthenticatedUserAsync();
     }
 }

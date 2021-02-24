@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Services.Plugins;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Services.Plugins;
 
 namespace TVProgViewer.Services.Discounts
 {
@@ -10,9 +11,9 @@ namespace TVProgViewer.Services.Discounts
         /// <summary>
         /// Check discount requirement
         /// </summary>
-        /// <param name="request">Object that contains all information required to check the requirement (Current User, discount, etc)</param>
+        /// <param name="request">Object that contains all information required to check the requirement (Current user, discount, etc)</param>
         /// <returns>Result</returns>
-        DiscountRequirementValidationResult CheckRequirement(DiscountRequirementValidationRequest request);
+        Task<DiscountRequirementValidationResult> CheckRequirementAsync(DiscountRequirementValidationRequest request);
 
         /// <summary>
         /// Get URL for rule configuration

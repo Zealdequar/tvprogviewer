@@ -8,6 +8,8 @@ using TVProgViewer.Services.Security;
 using TVProgViewer.WebUI.Areas.Admin.Factories;
 using TVProgViewer.WebUI.Areas.Admin.Models.ExternalAuthentication;
 using TVProgViewer.Web.Framework.Mvc;
+using TVProgViewer.Core.Events;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Controllers
 {
@@ -45,9 +47,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
 
         #region Methods
 
-        public virtual IActionResult Methods()
+        public virtual async Task<IActionResult> Methods()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageExternalAuthenticationMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageExternalAuthenticationMethods))
                 return AccessDeniedView();
 
             //prepare model
@@ -58,31 +60,31 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public virtual IActionResult Methods(ExternalAuthenticationMethodSearchModel searchModel)
+        public virtual async Task<IActionResult> Methods(ExternalAuthenticationMethodSearchModel searchModel)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageExternalAuthenticationMethods))
-                return AccessDeniedDataTablesJson();
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageExternalAuthenticationMethods))
+                return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = _externalAuthenticationMethodModelFactory.PrepareExternalAuthenticationMethodListModel(searchModel);
+            var model = await _externalAuthenticationMethodModelFactory.PrepareExternalAuthenticationMethodListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
-        public virtual IActionResult MethodUpdate(ExternalAuthenticationMethodModel model)
+        public virtual async Task<IActionResult> MethodUpdate(ExternalAuthenticationMethodModel model)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageExternalAuthenticationMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageExternalAuthenticationMethods))
                 return AccessDeniedView();
 
-            var method = _authenticationPluginManager.LoadPluginBySystemName(model.SystemName);
+            var method = await _authenticationPluginManager.LoadPluginBySystemNameAsync(model.SystemName);
             if (_authenticationPluginManager.IsPluginActive(method))
             {
                 if (!model.IsActive)
                 {
                     //mark as disabled
                     _externalAuthenticationSettings.ActiveAuthenticationMethodSystemNames.Remove(method.PluginDescriptor.SystemName);
-                    _settingService.SaveSetting(_externalAuthenticationSettings);
+                    await _settingService.SaveSettingAsync(_externalAuthenticationSettings);
                 }
             }
             else
@@ -91,7 +93,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
                 {
                     //mark as active
                     _externalAuthenticationSettings.ActiveAuthenticationMethodSystemNames.Add(method.PluginDescriptor.SystemName);
-                    _settingService.SaveSetting(_externalAuthenticationSettings);
+                    await _settingService.SaveSettingAsync(_externalAuthenticationSettings);
                 }
             }
 
@@ -102,7 +104,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
             pluginDescriptor.Save();
 
             //raise event
-            _eventPublisher.Publish(new PluginUpdatedEvent(pluginDescriptor));
+            await _eventPublisher.PublishAsync(new PluginUpdatedEvent(pluginDescriptor));
 
             return new NullJsonResult();
         }

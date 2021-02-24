@@ -5,6 +5,7 @@ using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Services.Orders;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -26,11 +27,11 @@ namespace TVProgViewer.WebUI.Components
             _workContext = workContext;
         }
 
-        public IViewComponentResult Invoke(bool isEditable)
+        public async Task<IViewComponentResult> InvokeAsync(bool isEditable)
         {
-            var cart = _shoppingCartService.GetShoppingCart(_workContext.CurrentUser, ShoppingCartType.ShoppingCart, _storeContext.CurrentStore.Id);
+            var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentUserAsync(), ShoppingCartType.ShoppingCart, (await _storeContext.GetCurrentStoreAsync()).Id);
 
-            var model = _shoppingCartModelFactory.PrepareOrderTotalsModel(cart, isEditable);
+            var model = await _shoppingCartModelFactory.PrepareOrderTotalsModelAsync(cart, isEditable);
             return View(model);
         }
     }

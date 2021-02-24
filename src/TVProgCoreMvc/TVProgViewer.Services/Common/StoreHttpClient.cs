@@ -2,7 +2,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using TVProgViewer.Core;
-using TVProgViewer.Core.Defaults;
 
 namespace TVProgViewer.Services.Common
 {

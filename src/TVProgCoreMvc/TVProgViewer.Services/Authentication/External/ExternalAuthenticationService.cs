@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TVProgViewer.Services.Caching.Extensions;
-using TVProgViewer.Services.Common;
-using TVProgViewer.Services.Users;
-using TVProgViewer.Services.Events;
-using TVProgViewer.Services.Localization;
-using TVProgViewer.Services.Logging;
-using TVProgViewer.Services.Messages;
-using TVProgViewer.Services.Orders;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Localization;
+using TVProgViewer.Core.Events;
 using TVProgViewer.Data;
+using TVProgViewer.Services.Common;
+using TVProgViewer.Services.Users;
+using TVProgViewer.Services.Localization;
+using TVProgViewer.Services.Messages;
 
 namespace TVProgViewer.Services.Authentication.External
 {
@@ -27,51 +25,44 @@ namespace TVProgViewer.Services.Authentication.External
         private readonly UserSettings _userSettings;
         private readonly ExternalAuthenticationSettings _externalAuthenticationSettings;
         private readonly IAuthenticationPluginManager _authenticationPluginManager;
-        private readonly IAuthenticationService _authenticationService;
-        private readonly IUserActivityService _UserActivityService;
-        private readonly IUserRegistrationService _UserRegistrationService;
+        private readonly IUserRegistrationService _userRegistrationService;
         private readonly IUserService _userService;
         private readonly IEventPublisher _eventPublisher;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ILocalizationService _localizationService;
-        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IRepository<ExternalAuthenticationRecord> _externalAuthenticationRecordRepository;
         private readonly IStoreContext _storeContext;
         private readonly IWorkContext _workContext;
         private readonly IWorkflowMessageService _workflowMessageService;
         private readonly LocalizationSettings _localizationSettings;
-        private readonly IRepository<ExternalAuthenticationRecord> _externalAuthenticationRecordRepository;
 
         #endregion
 
         #region Ctor
 
-        public ExternalAuthenticationService(UserSettings UserSettings,
+        public ExternalAuthenticationService(UserSettings userSettings,
             ExternalAuthenticationSettings externalAuthenticationSettings,
             IAuthenticationPluginManager authenticationPluginManager,
-            IAuthenticationService authenticationService,
-            IUserActivityService UserActivityService,
-            IUserRegistrationService UserRegistrationService,
-            IUserService UserService,
+            IUserRegistrationService userRegistrationService,
+            IUserService userService,
             IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
             ILocalizationService localizationService,
-            IShoppingCartService shoppingCartService,
+            IRepository<ExternalAuthenticationRecord> externalAuthenticationRecordRepository,
             IStoreContext storeContext,
             IWorkContext workContext,
             IWorkflowMessageService workflowMessageService,
             LocalizationSettings localizationSettings)
         {
-            _userSettings = UserSettings;
+            _userSettings = userSettings;
             _externalAuthenticationSettings = externalAuthenticationSettings;
             _authenticationPluginManager = authenticationPluginManager;
-            _authenticationService = authenticationService;
-            _UserActivityService = UserActivityService;
-            _UserRegistrationService = UserRegistrationService;
-            _userService = UserService;
+            _userRegistrationService = userRegistrationService;
+            _userService = userService;
             _eventPublisher = eventPublisher;
             _genericAttributeService = genericAttributeService;
             _localizationService = localizationService;
-            _shoppingCartService = shoppingCartService;
+            _externalAuthenticationRecordRepository = externalAuthenticationRecordRepository;
             _storeContext = storeContext;
             _workContext = workContext;
             _workflowMessageService = workflowMessageService;
@@ -89,16 +80,15 @@ namespace TVProgViewer.Services.Authentication.External
         /// <param name="currentLoggedInUser">Current logged-in user</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>Result of an authentication</returns>
-        protected virtual IActionResult AuthenticateExistingUser(User associatedUser, User currentLoggedInUser, string returnUrl)
+        protected virtual async Task<IActionResult> AuthenticateExistingUserAsync(User associatedUser, User currentLoggedInUser, string returnUrl)
         {
             //log in guest user
             if (currentLoggedInUser == null)
-                return LoginUser(associatedUser, returnUrl);
+                return await _userRegistrationService.SignInUserAsync(associatedUser, returnUrl);
 
             //account is already assigned to another user
             if (currentLoggedInUser.Id != associatedUser.Id)
-                //TODO create locale for error
-                return ErrorAuthentication(new[] { "Account is already assigned" }, returnUrl);
+                return ErrorAuthentication(new[] { await _localizationService.GetResourceAsync("Account.AssociatedExternalAuth.AccountAlreadyAssigned") }, returnUrl);
 
             //or the user try to log in as himself. bit weird
             return SuccessfulAuthentication(returnUrl);
@@ -111,18 +101,19 @@ namespace TVProgViewer.Services.Authentication.External
         /// <param name="parameters">Authentication parameters received from external authentication method</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>Result of an authentication</returns>
-        protected virtual IActionResult AuthenticateNewUser(User currentLoggedInUser, ExternalAuthenticationParameters parameters, string returnUrl)
+        protected virtual async Task<IActionResult> AuthenticateNewUserAsync(User currentLoggedInUser, ExternalAuthenticationParameters parameters, string returnUrl)
         {
             //associate external account with logged-in user
             if (currentLoggedInUser != null)
             {
-                AssociateExternalAccountWithUser(currentLoggedInUser, parameters);
+                await AssociateExternalAccountWithUserAsync(currentLoggedInUser, parameters);
+
                 return SuccessfulAuthentication(returnUrl);
             }
 
             //or try to register new user
             if (_userSettings.UserRegistrationType != UserRegistrationType.Disabled)
-                return RegisterNewUser(parameters, returnUrl);
+                return await RegisterNewUserAsync(parameters, returnUrl);
 
             //registration is disabled
             return ErrorAuthentication(new[] { "Registration is disabled" }, returnUrl);
@@ -134,12 +125,12 @@ namespace TVProgViewer.Services.Authentication.External
         /// <param name="parameters">Authentication parameters received from external authentication method</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>Result of an authentication</returns>
-        protected virtual IActionResult RegisterNewUser(ExternalAuthenticationParameters parameters, string returnUrl)
+        protected virtual async Task<IActionResult> RegisterNewUserAsync(ExternalAuthenticationParameters parameters, string returnUrl)
         {
             //check whether the specified email has been already registered
-            if (_userService.GetUserByEmail(parameters.Email) != null)
+            if (await _userService.GetUserByEmailAsync(parameters.Email) != null)
             {
-                var alreadyExistsError = string.Format(_localizationService.GetResource("Account.AssociatedExternalAuth.EmailAlreadyExists"),
+                var alreadyExistsError = string.Format(await _localizationService.GetResourceAsync("Account.AssociatedExternalAuth.EmailAlreadyExists"),
                     !string.IsNullOrEmpty(parameters.ExternalDisplayIdentifier) ? parameters.ExternalDisplayIdentifier : parameters.ExternalIdentifier);
                 return ErrorAuthentication(new[] { alreadyExistsError }, returnUrl);
             }
@@ -149,79 +140,57 @@ namespace TVProgViewer.Services.Authentication.External
                 (_userSettings.UserRegistrationType == UserRegistrationType.EmailValidation && !_externalAuthenticationSettings.RequireEmailValidation);
 
             //create registration request
-            var registrationRequest = new UserRegistrationRequest(_workContext.CurrentUser,
+            var registrationRequest = new UserRegistrationRequest(await _workContext.GetCurrentUserAsync(),
                 parameters.Email, parameters.Email,
                 CommonHelper.GenerateRandomDigitCode(20),
                 PasswordFormat.Hashed,
-                _storeContext.CurrentStore.Id,
+                (await _storeContext.GetCurrentStoreAsync()).Id,
                 registrationIsApproved);
 
             //whether registration request has been completed successfully
-            var registrationResult = _UserRegistrationService.RegisterUser(registrationRequest);
+            var registrationResult = await _userRegistrationService.RegisterUserAsync(registrationRequest);
             if (!registrationResult.Success)
                 return ErrorAuthentication(registrationResult.Errors, returnUrl);
 
-            //allow to save other User values by consuming this event
-            _eventPublisher.Publish(new UserAutoRegisteredByExternalMethodEvent(_workContext.CurrentUser, parameters));
+            //allow to save other user values by consuming this event
+            await _eventPublisher.PublishAsync(new UserAutoRegisteredByExternalMethodEvent(await _workContext.GetCurrentUserAsync(), parameters));
 
-            //raise User registered event
-            _eventPublisher.Publish(new UserRegisteredEvent(_workContext.CurrentUser));
+            //raise user registered event
+            await _eventPublisher.PublishAsync(new UserRegisteredEvent(await _workContext.GetCurrentUserAsync()));
 
             //store owner notifications
             if (_userSettings.NotifyNewUserRegistration)
-                _workflowMessageService.SendUserRegisteredNotificationMessage(_workContext.CurrentUser, _localizationSettings.DefaultAdminLanguageId);
+                await _workflowMessageService.SendUserRegisteredNotificationMessageAsync(await _workContext.GetCurrentUserAsync(), _localizationSettings.DefaultAdminLanguageId);
 
             //associate external account with registered user
-            AssociateExternalAccountWithUser(_workContext.CurrentUser, parameters);
+            await AssociateExternalAccountWithUserAsync(await _workContext.GetCurrentUserAsync(), parameters);
 
             //authenticate
             if (registrationIsApproved)
             {
-                _authenticationService.SignIn(_workContext.CurrentUser, false);
-                _workflowMessageService.SendUserWelcomeMessage(_workContext.CurrentUser, _workContext.WorkingLanguage.Id);
+                await _workflowMessageService.SendUserWelcomeMessageAsync(await _workContext.GetCurrentUserAsync(), (await _workContext.GetWorkingLanguageAsync()).Id);
 
-                return new RedirectToRouteResult("RegisterResult", new { resultId = (int)UserRegistrationType.Standard, returnUrl });
+                //raise event       
+                await _eventPublisher.PublishAsync(new UserActivatedEvent(await _workContext.GetCurrentUserAsync()));
+
+                return await _userRegistrationService.SignInUserAsync(await _workContext.GetCurrentUserAsync(), returnUrl, true);
             }
 
             //registration is succeeded but isn't activated
             if (_userSettings.UserRegistrationType == UserRegistrationType.EmailValidation)
             {
                 //email validation message
-                _genericAttributeService.SaveAttribute(_workContext.CurrentUser, TvProgUserDefaults.AccountActivationTokenAttribute, Guid.NewGuid().ToString());
-                _workflowMessageService.SendUserEmailValidationMessage(_workContext.CurrentUser, _workContext.WorkingLanguage.Id);
+                await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(), TvProgUserDefaults.AccountActivationTokenAttribute, Guid.NewGuid().ToString());
+                await _workflowMessageService.SendUserEmailValidationMessageAsync(await _workContext.GetCurrentUserAsync(), (await _workContext.GetWorkingLanguageAsync()).Id);
 
-                return new RedirectToRouteResult("RegisterResult", new { resultId = (int)UserRegistrationType.EmailValidation });
+                return new RedirectToRouteResult("RegisterResult", new { resultId = (int)UserRegistrationType.EmailValidation, returnUrl });
             }
 
             //registration is succeeded but isn't approved by admin
             if (_userSettings.UserRegistrationType == UserRegistrationType.AdminApproval)
-                return new RedirectToRouteResult("RegisterResult", new { resultId = (int)UserRegistrationType.AdminApproval });
+                return new RedirectToRouteResult("RegisterResult", new { resultId = (int)UserRegistrationType.AdminApproval, returnUrl });
 
             return ErrorAuthentication(new[] { "Error on registration" }, returnUrl);
-        }
-
-        /// <summary>
-        /// Login passed user
-        /// </summary>
-        /// <param name="user">User to login</param>
-        /// <param name="returnUrl">URL to which the user will return after authentication</param>
-        /// <returns>Result of an authentication</returns>
-        protected virtual IActionResult LoginUser(User user, string returnUrl)
-        {
-            //migrate shopping cart
-            _shoppingCartService.MigrateShoppingCart(_workContext.CurrentUser, user, true);
-
-            //authenticate
-            _authenticationService.SignIn(user, false);
-
-            //raise event       
-            _eventPublisher.Publish(new UserLoggedinEvent(user));
-
-            //activity log
-            _UserActivityService.InsertActivity(user, "PublicStore.Login",
-                _localizationService.GetResource("ActivityLog.PublicStore.Login"), user);
-
-            return SuccessfulAuthentication(returnUrl);
         }
 
         /// <summary>
@@ -252,6 +221,63 @@ namespace TVProgViewer.Services.Authentication.External
             return new RedirectToRouteResult("Homepage", null);
         }
 
+        /// <summary>
+        /// Associate external account with user
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="parameters">External authentication parameters</param>
+        protected virtual async Task AssociateExternalAccountWithUserAsync(User user, ExternalAuthenticationParameters parameters)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            var externalAuthenticationRecord = new ExternalAuthenticationRecord
+            {
+                UserId = user.Id,
+                Email = parameters.Email,
+                ExternalIdentifier = parameters.ExternalIdentifier,
+                ExternalDisplayIdentifier = parameters.ExternalDisplayIdentifier,
+                OAuthAccessToken = parameters.AccessToken,
+                ProviderSystemName = parameters.ProviderSystemName
+            };
+
+            await _externalAuthenticationRecordRepository.InsertAsync(externalAuthenticationRecord, false);
+        }
+
+        /// <summary>
+        /// Get the particular user with specified parameters
+        /// </summary>
+        /// <param name="parameters">External authentication parameters</param>
+        /// <returns>User</returns>
+        protected virtual async Task<User> GetUserByExternalAuthenticationParametersAsync(ExternalAuthenticationParameters parameters)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            var associationRecord = _externalAuthenticationRecordRepository.Table.FirstOrDefault(record =>
+                record.ExternalIdentifier.Equals(parameters.ExternalIdentifier) && record.ProviderSystemName.Equals(parameters.ProviderSystemName));
+            if (associationRecord == null)
+                return null;
+
+            return await _userService.GetUserByIdAsync(associationRecord.UserId);
+        }
+
+        /// <summary>
+        /// Remove the association
+        /// </summary>
+        /// <param name="parameters">External authentication parameters</param>
+        protected virtual async Task RemoveAssociationAsync(ExternalAuthenticationParameters parameters)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            var associationRecord = await _externalAuthenticationRecordRepository.Table.FirstOrDefaultAsync(record =>
+                record.ExternalIdentifier.Equals(parameters.ExternalIdentifier) && record.ProviderSystemName.Equals(parameters.ProviderSystemName));
+
+            if (associationRecord != null)
+                await _externalAuthenticationRecordRepository.DeleteAsync(associationRecord, false);
+        }
+
         #endregion
 
         #region Methods
@@ -264,123 +290,63 @@ namespace TVProgViewer.Services.Authentication.External
         /// <param name="parameters">External authentication parameters</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>Result of an authentication</returns>
-        public virtual IActionResult Authenticate(ExternalAuthenticationParameters parameters, string returnUrl = null)
+        public virtual async Task<IActionResult> AuthenticateAsync(ExternalAuthenticationParameters parameters, string returnUrl = null)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
-            if (!_authenticationPluginManager.IsPluginActive(parameters.ProviderSystemName))
+            if (!await _authenticationPluginManager.IsPluginActiveAsync(parameters.ProviderSystemName, await _workContext.GetCurrentUserAsync(), (await _storeContext.GetCurrentStoreAsync()).Id))
                 return ErrorAuthentication(new[] { "External authentication method cannot be loaded" }, returnUrl);
 
             //get current logged-in user
-            var currentLoggedInUser = _userService.IsRegistered(_workContext.CurrentUser) ? _workContext.CurrentUser : null;
+            var currentLoggedInUser = await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()) ? await _workContext.GetCurrentUserAsync() : null;
 
             //authenticate associated user if already exists
-            var associatedUser = GetUserByExternalAuthenticationParameters(parameters);
+            var associatedUser = await GetUserByExternalAuthenticationParametersAsync(parameters);
             if (associatedUser != null)
-                return AuthenticateExistingUser(associatedUser, currentLoggedInUser, returnUrl);
+                return await AuthenticateExistingUserAsync(associatedUser, currentLoggedInUser, returnUrl);
 
             //or associate and authenticate new user
-            return AuthenticateNewUser(currentLoggedInUser, parameters, returnUrl);
+            return await AuthenticateNewUserAsync(currentLoggedInUser, parameters, returnUrl);
         }
 
         #endregion
-
-        /// <summary>
-        /// Associate external account with User
-        /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="parameters">External authentication parameters</param>
-        public virtual void AssociateExternalAccountWithUser(User User, ExternalAuthenticationParameters parameters)
-        {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
-
-            var externalAuthenticationRecord = new ExternalAuthenticationRecord
-            {
-                UserId = User.Id,
-                Email = parameters.Email,
-                ExternalIdentifier = parameters.ExternalIdentifier,
-                ExternalDisplayIdentifier = parameters.ExternalDisplayIdentifier,
-                OAuthAccessToken = parameters.AccessToken,
-                ProviderSystemName = parameters.ProviderSystemName
-            };
-
-            _externalAuthenticationRecordRepository.Insert(externalAuthenticationRecord);
-        }
-
-        /// <summary>
-        /// Get the particular user with specified parameters
-        /// </summary>
-        /// <param name="parameters">External authentication parameters</param>
-        /// <returns>User</returns>
-        public virtual User GetUserByExternalAuthenticationParameters(ExternalAuthenticationParameters parameters)
-        {
-            if (parameters == null)
-                throw new ArgumentNullException(nameof(parameters));
-
-            var associationRecord = _externalAuthenticationRecordRepository.Table.FirstOrDefault(record =>
-                record.ExternalIdentifier.Equals(parameters.ExternalIdentifier) && record.ProviderSystemName.Equals(parameters.ProviderSystemName));
-            if (associationRecord == null)
-                return null;
-                
-            return _userService.GetUserById(associationRecord.UserId);
-        }
 
         /// <summary>
         /// Get the external authentication records by identifier
         /// </summary>
         /// <param name="externalAuthenticationRecordId">External authentication record identifier</param>
         /// <returns>Result</returns>
-        public virtual ExternalAuthenticationRecord GetExternalAuthenticationRecordById(int externalAuthenticationRecordId)
+        public virtual async Task<ExternalAuthenticationRecord> GetExternalAuthenticationRecordByIdAsync(int externalAuthenticationRecordId)
         {
-            if (externalAuthenticationRecordId == 0)
-                return null;
-
-            return _externalAuthenticationRecordRepository.ToCachedGetById(externalAuthenticationRecordId);
+            return await _externalAuthenticationRecordRepository.GetByIdAsync(externalAuthenticationRecordId, cache => default);
         }
 
         /// <summary>
-        /// Get list of the external authentication records by User
+        /// Get list of the external authentication records by user
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Result</returns>
-        public virtual IList<ExternalAuthenticationRecord> GetUserExternalAuthenticationRecords(User User)
+        public virtual async Task<IList<ExternalAuthenticationRecord>> GetUserExternalAuthenticationRecordsAsync(User user)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
-            var associationRecords = _externalAuthenticationRecordRepository.Table.Where(ear => ear.UserId == User.Id);
+            var associationRecords = _externalAuthenticationRecordRepository.Table.Where(ear => ear.UserId == user.Id);
 
-            return associationRecords.ToList();
-        }
-
-        /// <summary>
-        /// Remove the association
-        /// </summary>
-        /// <param name="parameters">External authentication parameters</param>
-        public virtual void RemoveAssociation(ExternalAuthenticationParameters parameters)
-        {
-            if (parameters == null)
-                throw new ArgumentNullException(nameof(parameters));
-
-            var associationRecord = _externalAuthenticationRecordRepository.Table.FirstOrDefault(record =>
-                record.ExternalIdentifier.Equals(parameters.ExternalIdentifier) && record.ProviderSystemName.Equals(parameters.ProviderSystemName));
-
-            if (associationRecord != null)
-                _externalAuthenticationRecordRepository.Delete(associationRecord);
+            return await associationRecords.ToListAsync();
         }
 
         /// <summary>
         /// Delete the external authentication record
         /// </summary>
         /// <param name="externalAuthenticationRecord">External authentication record</param>
-        public virtual void DeleteExternalAuthenticationRecord(ExternalAuthenticationRecord externalAuthenticationRecord)
+        public virtual async Task DeleteExternalAuthenticationRecordAsync(ExternalAuthenticationRecord externalAuthenticationRecord)
         {
             if (externalAuthenticationRecord == null)
                 throw new ArgumentNullException(nameof(externalAuthenticationRecord));
 
-            _externalAuthenticationRecordRepository.Delete(externalAuthenticationRecord);
+            await _externalAuthenticationRecordRepository.DeleteAsync(externalAuthenticationRecord, false);
         }
 
         #endregion

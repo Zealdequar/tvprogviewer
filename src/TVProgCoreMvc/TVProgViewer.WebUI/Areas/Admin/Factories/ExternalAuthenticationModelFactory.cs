@@ -4,6 +4,7 @@ using TVProgViewer.Services.Authentication.External;
 using TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper.Extensions;
 using TVProgViewer.WebUI.Areas.Admin.Models.ExternalAuthentication;
 using TVProgViewer.Web.Framework.Models.Extensions;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -51,14 +52,14 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">External authentication method search model</param>
         /// <returns>External authentication method list model</returns>
-        public virtual ExternalAuthenticationMethodListModel PrepareExternalAuthenticationMethodListModel(
+        public virtual async Task<ExternalAuthenticationMethodListModel> PrepareExternalAuthenticationMethodListModelAsync(
             ExternalAuthenticationMethodSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get external authentication methods
-            var externalAuthenticationMethods = _authenticationPluginManager.LoadAllPlugins().ToPagedList(searchModel);
+            var externalAuthenticationMethods = (await _authenticationPluginManager.LoadAllPluginsAsync()).ToPagedList(searchModel);
 
             //prepare grid model
             var model = new ExternalAuthenticationMethodListModel().PrepareToGrid(searchModel, externalAuthenticationMethods, () =>

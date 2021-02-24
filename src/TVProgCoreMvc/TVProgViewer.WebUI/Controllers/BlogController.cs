@@ -23,10 +23,11 @@ using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
 using TVProgViewer.WebUI.Models.Blogs;
 using TVProgViewer.WebUI.Controllers;
+using TVProgViewer.Core.Events;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
-    [HttpsRequirement(SslRequirement.No)]
     [AutoValidateAntiforgeryToken]
     public partial class BlogController : BasePublicController
     {
@@ -92,37 +93,37 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Methods
 
-        public virtual IActionResult List(BlogPagingFilteringModel command)
+        public virtual async Task<IActionResult> List(BlogPagingFilteringModel command)
         {
             if (!_blogSettings.Enabled)
                 return RedirectToRoute("Homepage");
 
-            var model = _blogModelFactory.PrepareBlogPostListModel(command);
+            var model = await _blogModelFactory.PrepareBlogPostListModelAsync(command);
             return View("List", model);
         }
 
-        public virtual IActionResult BlogByTag(BlogPagingFilteringModel command)
+        public virtual async Task<IActionResult> BlogByTag(BlogPagingFilteringModel command)
         {
             if (!_blogSettings.Enabled)
                 return RedirectToRoute("Homepage");
 
-            var model = _blogModelFactory.PrepareBlogPostListModel(command);
+            var model = await _blogModelFactory.PrepareBlogPostListModelAsync(command);
             return View("List", model);
         }
 
-        public virtual IActionResult BlogByMonth(BlogPagingFilteringModel command)
+        public virtual async Task<IActionResult> BlogByMonth(BlogPagingFilteringModel command)
         {
             if (!_blogSettings.Enabled)
                 return RedirectToRoute("Homepage");
 
-            var model = _blogModelFactory.PrepareBlogPostListModel(command);
+            var model = await _blogModelFactory.PrepareBlogPostListModelAsync(command);
             return View("List", model);
         }
 
-        public virtual IActionResult ListRss(int languageId)
+        public virtual async Task<IActionResult> ListRss(int languageId)
         {
             var feed = new RssFeed(
-                $"{_localizationService.GetLocalized(_storeContext.CurrentStore, x => x.Name)}: Blog",
+                $"{await _localizationService.GetLocalizedAsync(await _storeContext.GetCurrentStoreAsync(), x => x.Name)}: Blog",
                 "Blog",
                 new Uri(_webHelper.GetStoreLocation()),
                 DateTime.UtcNow);
@@ -131,24 +132,23 @@ namespace TVProgViewer.WebUI.Controllers
                 return new RssActionResult(feed, _webHelper.GetThisPageUrl(false));
 
             var items = new List<RssItem>();
-            var blogPosts = _blogService.GetAllBlogPosts(_storeContext.CurrentStore.Id, languageId);
+            var blogPosts = await _blogService.GetAllBlogPostsAsync((await _storeContext.GetCurrentStoreAsync()).Id, languageId);
             foreach (var blogPost in blogPosts)
             {
-                var blogPostUrl = Url.RouteUrl("BlogPost", new { SeName = _urlRecordService.GetSeName(blogPost, blogPost.LanguageId, ensureTwoPublishedLanguages: false) }
-                , _webHelper.GetCurrentRequestProtocol());
+                var blogPostUrl = Url.RouteUrl("BlogPost", new { SeName = await _urlRecordService.GetSeNameAsync(blogPost, blogPost.LanguageId, ensureTwoPublishedLanguages: false) }, _webHelper.GetCurrentRequestProtocol());
                 items.Add(new RssItem(blogPost.Title, blogPost.Body, new Uri(blogPostUrl),
-                    $"urn:store:{_storeContext.CurrentStore.Id}:blog:post:{blogPost.Id}", blogPost.CreatedOnUtc));
+                    $"urn:store:{(await _storeContext.GetCurrentStoreAsync()).Id}:blog:post:{blogPost.Id}", blogPost.CreatedOnUtc));
             }
             feed.Items = items;
             return new RssActionResult(feed, _webHelper.GetThisPageUrl(false));
         }
 
-        public virtual IActionResult BlogPost(int blogPostId)
+        public virtual async Task<IActionResult> BlogPost(int blogPostId)
         {
             if (!_blogSettings.Enabled)
                 return RedirectToRoute("Homepage");
 
-            var blogPost = _blogService.GetBlogPostById(blogPostId);
+            var blogPost = await _blogService.GetBlogPostByIdAsync(blogPostId);
             if (blogPost == null)
                 return InvokeHttp404();
 
@@ -156,10 +156,10 @@ namespace TVProgViewer.WebUI.Controllers
                 //availability dates
                 !_blogService.BlogPostIsAvailable(blogPost) ||
                 //Store mapping
-                !_storeMappingService.Authorize(blogPost);
+                !await _storeMappingService.AuthorizeAsync(blogPost);
             //Check whether the current user has a "Manage blog" permission (usually a store owner)
             //We should allows him (her) to use "Preview" functionality
-            var hasAdminAccess = _permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageBlog);
+            var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageBlog);
             if (notAvailable && !hasAdminAccess)
                 return InvokeHttp404();
 
@@ -168,32 +168,32 @@ namespace TVProgViewer.WebUI.Controllers
                 DisplayEditLink(Url.Action("BlogPostEdit", "Blog", new { id = blogPost.Id, area = AreaNames.Admin }));
 
             var model = new BlogPostModel();
-            _blogModelFactory.PrepareBlogPostModel(model, blogPost, true);
+            await _blogModelFactory.PrepareBlogPostModelAsync(model, blogPost, true);
 
             return View(model);
         }
 
-        [HttpPost, ActionName("BlogPost")]        
+        [HttpPost, ActionName("BlogPost")]
         [FormValueRequired("add-comment")]
         [ValidateCaptcha]
-        public virtual IActionResult BlogCommentAdd(int blogPostId, BlogPostModel model, bool captchaValid)
+        public virtual async Task<IActionResult> BlogCommentAdd(int blogPostId, BlogPostModel model, bool captchaValid)
         {
             if (!_blogSettings.Enabled)
                 return RedirectToRoute("Homepage");
 
-            var blogPost = _blogService.GetBlogPostById(blogPostId);
+            var blogPost = await _blogService.GetBlogPostByIdAsync(blogPostId);
             if (blogPost == null || !blogPost.AllowComments)
                 return RedirectToRoute("Homepage");
 
-            if (_userService.IsGuest(_workContext.CurrentUser) && !_blogSettings.AllowNotRegisteredUsersToLeaveComments)
+            if (await _userService.IsGuestAsync(await _workContext.GetCurrentUserAsync()) && !_blogSettings.AllowNotRegisteredUsersToLeaveComments)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Blog.Comments.OnlyRegisteredUsersLeaveComments"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Blog.Comments.OnlyRegisteredUsersLeaveComments"));
             }
 
             //validate CAPTCHA
             if (_captchaSettings.Enabled && _captchaSettings.ShowOnBlogCommentPage && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
             if (ModelState.IsValid)
@@ -201,37 +201,38 @@ namespace TVProgViewer.WebUI.Controllers
                 var comment = new BlogComment
                 {
                     BlogPostId = blogPost.Id,
-                    UserId = _workContext.CurrentUser.Id,
+                    UserId = (await _workContext.GetCurrentUserAsync()).Id,
                     CommentText = model.AddNewComment.CommentText,
                     IsApproved = !_blogSettings.BlogCommentsMustBeApproved,
-                    StoreId = _storeContext.CurrentStore.Id,
+                    StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
                     CreatedOnUtc = DateTime.UtcNow,
                 };
 
-                _blogService.InsertBlogComment(comment);
+                await _blogService.InsertBlogCommentAsync(comment);
 
                 //notify a store owner
                 if (_blogSettings.NotifyAboutNewBlogComments)
-                    _workflowMessageService.SendBlogCommentNotificationMessage(comment, _localizationSettings.DefaultAdminLanguageId);
+                    await _workflowMessageService.SendBlogCommentNotificationMessageAsync(comment, _localizationSettings.DefaultAdminLanguageId);
 
                 //activity log
-                _userActivityService.InsertActivity("PublicStore.AddBlogComment",
-                    _localizationService.GetResource("ActivityLog.PublicStore.AddBlogComment"), comment);
+                await _userActivityService.InsertActivityAsync("PublicStore.AddBlogComment",
+                    await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddBlogComment"), comment);
 
                 //raise event
                 if (comment.IsApproved)
-                    _eventPublisher.Publish(new BlogCommentApprovedEvent(comment));
+                    await _eventPublisher.PublishAsync(new BlogCommentApprovedEvent(comment));
 
                 //The text boxes should be cleared after a comment has been posted
                 //That' why we reload the page
                 TempData["nop.blog.addcomment.result"] = comment.IsApproved
-                    ? _localizationService.GetResource("Blog.Comments.SuccessfullyAdded")
-                    : _localizationService.GetResource("Blog.Comments.SeeAfterApproving");
-                return RedirectToRoute("BlogPost", new { SeName = _urlRecordService.GetSeName(blogPost, blogPost.LanguageId, ensureTwoPublishedLanguages: false) });
+                    ? await _localizationService.GetResourceAsync("Blog.Comments.SuccessfullyAdded")
+                    : await _localizationService.GetResourceAsync("Blog.Comments.SeeAfterApproving");
+                return RedirectToRoute("BlogPost", new { SeName = await _urlRecordService.GetSeNameAsync(blogPost, blogPost.LanguageId, ensureTwoPublishedLanguages: false) });
             }
 
             //If we got this far, something failed, redisplay form
-            _blogModelFactory.PrepareBlogPostModel(model, blogPost, true);
+            await _blogModelFactory.PrepareBlogPostModelAsync(model, blogPost, true);
+
             return View(model);
         }
 

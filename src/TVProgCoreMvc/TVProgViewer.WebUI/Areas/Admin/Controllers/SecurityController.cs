@@ -14,6 +14,7 @@ using TVProgViewer.Services.Messages;
 using TVProgViewer.Services.Security;
 using TVProgViewer.WebUI.Areas.Admin.Factories;
 using TVProgViewer.WebUI.Areas.Admin.Models.Security;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Controllers
 {
@@ -54,39 +55,39 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
 
         #region Methods
 
-        public virtual IActionResult AccessDenied(string pageUrl)
+        public virtual async Task<IActionResult> AccessDenied(string pageUrl)
         {
-            var currentUser = _workContext.CurrentUser;
-            if (currentUser == null || _userService.IsGuest(currentUser))
+            var currentUser = await _workContext.GetCurrentUserAsync();
+            if (currentUser == null || await _userService.IsGuestAsync(currentUser))
             {
-                _logger.Information($"Access denied to anonymous request on {pageUrl}");
+                await _logger.InformationAsync($"Access denied to anonymous request on {pageUrl}");
                 return View();
             }
 
-            _logger.Information($"Access denied to user #{currentUser.Email} '{currentUser.Email}' on {pageUrl}");
+            await _logger.InformationAsync($"Access denied to user #{currentUser.Email} '{currentUser.Email}' on {pageUrl}");
 
             return View();
         }
 
-        public virtual IActionResult Permissions()
+        public virtual async Task<IActionResult> Permissions()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageAcl))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAcl))
                 return AccessDeniedView();
 
             //prepare model
-            var model = _securityModelFactory.PreparePermissionMappingModel(new PermissionMappingModel());
+            var model = await _securityModelFactory.PreparePermissionMappingModelAsync(new PermissionMappingModel());
 
             return View(model);
         }
 
         [HttpPost, ActionName("Permissions")]
-        public virtual IActionResult PermissionsSave(PermissionMappingModel model, IFormCollection form)
+        public virtual async Task<IActionResult> PermissionsSave(PermissionMappingModel model, IFormCollection form)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageAcl))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAcl))
                 return AccessDeniedView();
 
-            var permissionRecords = _permissionService.GetAllPermissionRecords();
-            var userRoles = _userService.GetAllUserRoles(true);
+            var permissionRecords = await _permissionService.GetAllPermissionRecordsAsync();
+            var userRoles = await _userService.GetAllUserRolesAsync(true);
 
             foreach (var cr in userRoles)
             {
@@ -99,23 +100,23 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
                 {
                     var allow = permissionRecordSystemNamesToRestrict.Contains(pr.SystemName);
 
-                    if (allow == _permissionService.Authorize(pr.SystemName, cr.Id))
+                    if (allow == await _permissionService.AuthorizeAsync(pr.SystemName, cr.Id))
                         continue;
 
                     if (allow)
                     {
-                        _permissionService.InsertPermissionRecordUserRoleMapping(new PermissionRecordUserRoleMapping { PermissionRecordId = pr.Id, UserRoleId = cr.Id });
+                        await _permissionService.InsertPermissionRecordUserRoleMappingAsync(new PermissionRecordUserRoleMapping { PermissionRecordId = pr.Id, UserRoleId = cr.Id });
                     }
                     else
                     {
-                        _permissionService.DeletePermissionRecordUserRoleMapping(pr.Id, cr.Id);                        
+                        await _permissionService.DeletePermissionRecordUserRoleMappingAsync(pr.Id, cr.Id);
                     }
 
-                    _permissionService.UpdatePermissionRecord(pr);
+                    await _permissionService.UpdatePermissionRecordAsync(pr);
                 }
             }
 
-            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Configuration.ACL.Updated"));
+            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.ACL.Updated"));
 
             return RedirectToAction("Permissions");
         }

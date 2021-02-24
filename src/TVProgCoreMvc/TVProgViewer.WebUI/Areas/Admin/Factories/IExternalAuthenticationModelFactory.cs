@@ -1,4 +1,5 @@
-﻿using TVProgViewer.WebUI.Areas.Admin.Models.ExternalAuthentication;
+﻿using System.Threading.Tasks;
+using TVProgViewer.WebUI.Areas.Admin.Models.ExternalAuthentication;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -20,7 +21,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">External authentication method search model</param>
         /// <returns>External authentication method list model</returns>
-        ExternalAuthenticationMethodListModel PrepareExternalAuthenticationMethodListModel(
+        Task<ExternalAuthenticationMethodListModel> PrepareExternalAuthenticationMethodListModelAsync(
             ExternalAuthenticationMethodSearchModel searchModel);
     }
 }

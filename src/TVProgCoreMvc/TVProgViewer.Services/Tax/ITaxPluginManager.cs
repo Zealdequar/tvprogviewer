@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Users;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Services.Plugins;
 
 namespace TVProgViewer.Services.Tax
@@ -11,10 +12,10 @@ namespace TVProgViewer.Services.Tax
         /// <summary>
         /// Load primary active tax provider
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Tax provider</returns>
-        ITaxProvider LoadPrimaryPlugin(User User = null, int storeId = 0);
+        Task<ITaxProvider> LoadPrimaryPluginAsync(User user = null, int storeId = 0);
 
         /// <summary>
         /// Check whether the passed tax provider is active
@@ -27,9 +28,9 @@ namespace TVProgViewer.Services.Tax
         /// Check whether the tax provider with the passed system name is active
         /// </summary>
         /// <param name="systemName">System name of tax provider to check</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Result</returns>
-        bool IsPluginActive(string systemName, User User = null, int storeId = 0);
+        Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0);
     }
 }

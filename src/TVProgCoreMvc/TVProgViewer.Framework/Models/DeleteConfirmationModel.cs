@@ -7,6 +7,11 @@ namespace TVProgViewer.Web.Framework.Models
     public record DeleteConfirmationModel : BaseTvProgEntityModel
     {
         /// <summary>
+        /// Identifier
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
         /// Controller name
         /// </summary>
         public string ControllerName { get; set; }

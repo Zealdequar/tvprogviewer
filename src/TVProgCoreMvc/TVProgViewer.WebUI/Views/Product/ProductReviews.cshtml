@@ -23,6 +23,12 @@
                 @Model.AddProductReview.Result
             </div>
         }
+        else if (!Model.AddProductReview.CanAddNewReview)
+        {
+            <div class="result review-already-added">
+                @T("Reviews.AlreadyAddedProductReviews")
+            </div>
+        }
         else
         {
             <div class="write-review" id="review-form">
@@ -97,9 +103,7 @@
 
                             @if (Model.AddProductReview.DisplayCaptcha)
                             {
-                                <div class="captcha-box">
-                                    <tvprog-captcha />
-                                </div>
+                                <tvprog-captcha />
                             }
                         </div>
                     </div>
@@ -130,8 +134,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="review-item-head">
-                            <div class="review-title">
+                        <div class="review-content">
+                            <div class="review-text">
                                 @if (!string.IsNullOrEmpty(review.UserAvatarUrl))
                                 {
                                     <div class="avatar">
@@ -147,14 +151,10 @@
                                         }
                                     </div>
                                 }
+                                <div class="text-body">
+                                    @Html.Raw(TVProgViewer.Core.Html.HtmlHelper.FormatText(review.ReviewText, false, true, false, false, false, false))
+                                </div>
                             </div>
-                            &nbsp
-                            <div class="review-text">
-                                &nbsp
-                                @Html.Raw(TVProgViewer.Core.Html.HtmlHelper.FormatText(review.ReviewText, false, true, false, false, false, false))
-                            </div>
-                        </div>
-                        <div class="review-content">
                             @foreach (var reviewType in review.AdditionalProductReviewList.Where(x => x.Rating > 0 && x.VisibleToAllUsers))
                             {
                                 var ratingExtPercent = reviewType.Rating * 20;
@@ -169,7 +169,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <br /><br />
                             }
                             <div class="review-info">
                                 <span class="user">
@@ -180,7 +179,7 @@
                                     }
                                     else
                                     {
-                                        @review.UserName
+                                        <span>@review.UserName</span>
                                     }
                                 </span>
                                 <span class="separator">|</span>

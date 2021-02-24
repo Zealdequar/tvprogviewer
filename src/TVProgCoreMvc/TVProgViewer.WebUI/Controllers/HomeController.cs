@@ -3,11 +3,11 @@ using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using TVProgViewer.Core.Caching;
-using TVProgViewer.Services.Caching.CachingDefaults;
 using TVProgViewer.Services.TvProgMain;
 using TVProgViewer.Data.TvProgMain.ProgObjs;
 using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -41,9 +41,9 @@ namespace TVProgViewer.WebUI.Controllers
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public JsonResult GetGenres()
+        public async Task<JsonResult> GetGenres()
         {
-            return Json(_genreService.GetGenres(null, true));
+            return Json(await _genreService.GetGenresAsync(null, true));
         }
 
         /// <summary>
@@ -52,9 +52,9 @@ namespace TVProgViewer.WebUI.Controllers
         /// <returns></returns>
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public JsonResult GetCategories()
+        public async Task<JsonResult> GetCategories()
         {
-            return Json(_programmeService.GetCategories());
+            return Json(await _programmeService.GetCategoriesAsync());
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace TVProgViewer.WebUI.Controllers
         /// <returns></returns>
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public JsonResult GetSystemProgrammeAtNow(int progType, string category, string sidx, string sord, int page, int rows, string genres)
+        public async Task<JsonResult> GetSystemProgrammeAtNow(int progType, string category, string sidx, string sord, int page, int rows, string genres)
         {
             object jsonData;
             KeyValuePair<int, List<SystemProgramme>> result;
@@ -81,7 +81,7 @@ namespace TVProgViewer.WebUI.Controllers
                 jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
                 return Json(jsonData, JsonRequestBehavior.AllowGet);*/
             }
-            result = _programmeService.GetSystemProgrammes(progType, DateTimeOffset.Now, 1, (category != "Все категории") ? category : null,
+            result = await _programmeService.GetSystemProgrammesAsync(progType, DateTimeOffset.Now, 1, (category != "Все категории") ? category : null,
                 sidx, sord, page, rows, genres);
 
             jsonData = GetJsonPagingInfo(page, rows, result);
@@ -90,7 +90,7 @@ namespace TVProgViewer.WebUI.Controllers
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public JsonResult GetSystemProgrammeAtNext(int progType, string category, string sidx, string sord, int page, int rows, string genres)
+        public async Task<JsonResult> GetSystemProgrammeAtNext(int progType, string category, string sidx, string sord, int page, int rows, string genres)
         {
             object jsonData;
             KeyValuePair<int, List<SystemProgramme>> result;
@@ -102,7 +102,7 @@ namespace TVProgViewer.WebUI.Controllers
                 return Json(jsonData, JsonRequestBehavior.AllowGet);*/
             }
 
-            result = _programmeService.GetSystemProgrammes(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), 2, (category != "Все категории") ? category : null,
+            result = await _programmeService.GetSystemProgrammesAsync(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), 2, (category != "Все категории") ? category : null,
                 sidx, sord, page, rows, genres);
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
@@ -110,7 +110,7 @@ namespace TVProgViewer.WebUI.Controllers
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public JsonResult SearchProgramme(int progType, string findTitle, string category,
+        public async Task<JsonResult> SearchProgramme(int progType, string findTitle, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string dates)
         {
             object jsonData;
@@ -123,7 +123,7 @@ namespace TVProgViewer.WebUI.Controllers
                 jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
                 return Json(jsonData, JsonRequestBehavior.AllowGet);*/
             }
-            result = _programmeService.SearchProgramme(progType, findTitle, (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, dates);
+            result = await _programmeService.SearchProgrammeAsync(progType, findTitle, (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, dates);
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
         }
@@ -157,10 +157,10 @@ namespace TVProgViewer.WebUI.Controllers
         /// <returns></returns>
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public JsonResult GetSystemProgrammePeriod(int? progType)
+        public async Task<JsonResult> GetSystemProgrammePeriod(int? progType)
         {
             if (progType.HasValue)
-                return Json(_programmeService.GetSystemProgrammePeriod(progType.Value));
+                return Json( await _programmeService.GetSystemProgrammePeriodAsync(progType.Value));
             return new JsonResult(null);
         }
 

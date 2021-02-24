@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -17,6 +18,7 @@ using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Domain.Security;
 using TVProgViewer.Core.Infrastructure;
 using TVProgViewer.Data;
+using TVProgViewer.Data.Migrations;
 using TVProgViewer.Services.Authentication;
 using TVProgViewer.Services.Common;
 using TVProgViewer.Services.Installation;
@@ -56,10 +58,36 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
                 Services.Tasks.TaskManager.Instance.Start();
 
                 //log application start
-                engine.Resolve<ILogger>().Information("Application started");
+                engine.Resolve<ILogger>().InformationAsync("Приложение запущено").Wait();
+
+                /*var pluginService = engine.Resolve<IPluginService>();
 
                 //install plugins
-               // engine.Resolve<IPluginService>().InstallPlugins();
+                pluginService.InstallPluginsAsync().Wait();
+                
+                //update plugins
+                pluginService.UpdatePluginsAsync().Wait();
+                 */
+
+                //update TVProgViewer core
+                var migrationManager = engine.Resolve<IMigrationManager>();
+                var assembly = Assembly.GetAssembly(typeof(ApplicationBuilderExtensions));
+                migrationManager.ApplyUpMigrations(assembly, true);
+                //update TVProgViewer database
+                assembly = Assembly.GetAssembly(typeof(IMigrationManager));
+                migrationManager.ApplyUpMigrations(assembly, true);
+
+#if DEBUG
+
+                if (!DataSettingsManager.IsDatabaseInstalled())
+                    return;
+
+                //prevent save the update migrations into the DB during the developing process  
+                var versions = EngineContext.Current.Resolve<IRepository<MigrationVersionInfo>>();
+                versions.DeleteAsync(mvi => mvi.Description.StartsWith(string.Format(TvProgMigrationDefaults.UpdateMigrationDescriptionPrefix, TvProgVersion.FULL_VERSION)));
+
+#endif
+
             }
         }
 
@@ -70,9 +98,9 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
         /// <param name="application">Builder for configuring an application's request pipeline</param>
         public static void UseTvProgExceptionHandler(this IApplicationBuilder application)
         {
-            var tvProgConfig = EngineContext.Current.Resolve<TvProgConfig>();
+            var appSettings = EngineContext.Current.Resolve<AppSettings>();
             var webHostEnvironment = EngineContext.Current.Resolve<IWebHostEnvironment>();
-            var useDetailedExceptionPage = tvProgConfig.DisplayFullErrorStack || webHostEnvironment.IsDevelopment();
+            var useDetailedExceptionPage = appSettings.CommonConfig.DisplayFullErrorStack || webHostEnvironment.IsDevelopment();
             if (useDetailedExceptionPage)
             {
                 //get detailed exceptions for developing and testing purposes
@@ -87,22 +115,22 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
             //log errors
             application.UseExceptionHandler(handler =>
             {
-                handler.Run(context =>
+                handler.Run(async context =>
                 {
                     var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
                     if (exception == null)
-                        return Task.CompletedTask;
+                        return;
 
                     try
                     {
                         //check whether database is installed
-                        if (DataSettingsManager.IsDatabaseInstalled())
+                        if (await DataSettingsManager.IsDatabaseInstalledAsync())
                         {
                             //get current User
-                            var currentUser = EngineContext.Current.Resolve<IWorkContext>().CurrentUser;
+                            var currentUser = await EngineContext.Current.Resolve<IWorkContext>().GetCurrentUserAsync();
 
                             //log error
-                            EngineContext.Current.Resolve<ILogger>().Error(exception.Message, exception, currentUser);
+                            await EngineContext.Current.Resolve<ILogger>().ErrorAsync(exception.Message, exception, currentUser);
                         }
                     }
                     finally
@@ -110,8 +138,6 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
                         //rethrow the exception to show the error page
                         ExceptionDispatchInfo.Throw(exception);
                     }
-
-                    return Task.CompletedTask;
                 });
             });
         }
@@ -133,19 +159,26 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
                         //get original path and query
                         var originalPath = context.HttpContext.Request.Path;
                         var originalQueryString = context.HttpContext.Request.QueryString;
-
-                        //store the original paths in special feature, so we can use it later
-                        context.HttpContext.Features.Set<IStatusCodeReExecuteFeature>(new StatusCodeReExecuteFeature
+                        
+                        if (await DataSettingsManager.IsDatabaseInstalledAsync())
                         {
-                            OriginalPathBase = context.HttpContext.Request.PathBase.Value,
-                            OriginalPath = originalPath.Value,
-                            OriginalQueryString = originalQueryString.HasValue ? originalQueryString.Value : null
-                        });
+                            var commonSettings = EngineContext.Current.Resolve<CommonSettings>();
+
+                            if (commonSettings.Log404Errors)
+                            {
+                                var logger = EngineContext.Current.Resolve<ILogger>();
+                                var workContext = EngineContext.Current.Resolve<IWorkContext>();
+
+                                await logger.ErrorAsync($"Error 404. The requested page ({originalPath}) was not found",
+                                    user: await workContext.GetCurrentUserAsync());
+                            }
+                        }
 
                         try
                         {
                             //get new path
                             var pageNotFoundPath = "/page-not-found";
+                            //re-execute request with new path
                             context.HttpContext.Response.Redirect(context.HttpContext.Request.PathBase + pageNotFoundPath);
                         }
                         finally
@@ -153,7 +186,6 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
                             //return original path to request
                             context.HttpContext.Request.QueryString = originalQueryString;
                             context.HttpContext.Request.Path = originalPath;
-                            context.HttpContext.Features.Set<IStatusCodeReExecuteFeature>(null);
                         }
                     }
 
@@ -168,17 +200,15 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
         /// <param name="application">Builder for configuring an application's request pipeline</param>
         public static void UseBadRequestResult(this IApplicationBuilder application)
         {
-            application.UseStatusCodePages(context =>
+            application.UseStatusCodePages(async context =>
             {
                 //handle 404 (Bad request)
                 if (context.HttpContext.Response.StatusCode == StatusCodes.Status400BadRequest)
                 {
                     var logger = EngineContext.Current.Resolve<ILogger>();
                     var workContext = EngineContext.Current.Resolve<IWorkContext>();
-                    logger.Error("Error 400. Bad request", null, User: workContext.CurrentUser);
+                    await logger.ErrorAsync("Error 400. Bad request", null, user: await workContext.GetCurrentUserAsync());
                 }
-
-                return Task.CompletedTask;
             });
         }
 
@@ -323,29 +353,20 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
         /// <param name="application">Builder for configuring an application's request pipeline</param>
         public static void UseTVProgViewerRequestLocalization(this IApplicationBuilder application)
         {
-            application.UseRequestLocalization(options =>
+            application.UseRequestLocalization(async options =>
             {
-                if (!DataSettingsManager.IsDatabaseInstalled())
+                if (!await DataSettingsManager.IsDatabaseInstalledAsync())
                     return;
 
                 //prepare supported cultures
-                var cultures = EngineContext.Current.Resolve<ILanguageService>().GetAllLanguages()
+                var cultures = (await EngineContext.Current.Resolve<ILanguageService>().GetAllLanguagesAsync())
                     .OrderBy(language => language.DisplayOrder)
                     .Select(language => new CultureInfo(language.LanguageCulture)).ToList();
                 options.SupportedCultures = cultures;
                 options.DefaultRequestCulture = new RequestCulture(cultures.FirstOrDefault());
-            });
-        }
 
-        /// <summary>
-        /// Set current culture info
-        /// </summary>
-        /// <param name="application">Builder for configuring an application's request pipeline</param>
-        public static void UseCulture(this IApplicationBuilder application)
-        {
-            //check whether database is installed
-            if (!DataSettingsManager.IsDatabaseInstalled())
-            application.UseMiddleware<CultureMiddleware>();
+                options.AddInitialRequestCultureProvider(new TvProgRequestCultureProvider(options));
+            });
         }
 
         /// <summary>

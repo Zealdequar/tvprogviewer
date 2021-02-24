@@ -1,4 +1,4 @@
-﻿@inherits TVProgViewer.Web.Framework.Mvc.Razor.TVProgViewerRazorPage<TModel>
+﻿@inherits TVProgViewer.Web.Framework.Mvc.Razor.TvProgRazorPage<TModel>
 @inject TVProgViewer.Services.Common.IGenericAttributeService genericAttributeService
 @inject IWorkContext workContext
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
@@ -7,10 +7,11 @@
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Mvc.ViewFeatures
 @using Microsoft.AspNetCore.Routing
+@using Microsoft.Extensions.Primitives
 @using TVProgViewer.Core
 @using TVProgViewer.Core.Domain.Common
+@using TVProgViewer.Core.Events
 @using TVProgViewer.Core.Infrastructure
-@using TVProgViewer.Services.Events
 @using TVProgViewer.WebUI.Areas.Admin.Models.Affiliates
 @using TVProgViewer.WebUI.Areas.Admin.Models.Blogs
 @using TVProgViewer.WebUI.Areas.Admin.Models.Catalog
@@ -25,6 +26,7 @@
 @using TVProgViewer.WebUI.Areas.Admin.Models.Localization
 @using TVProgViewer.WebUI.Areas.Admin.Models.Logging
 @using TVProgViewer.WebUI.Areas.Admin.Models.Messages
+@using TVProgViewer.WebUI.Areas.Admin.Models.MultiFactorAuthentication
 @using TVProgViewer.WebUI.Areas.Admin.Models.News
 @using TVProgViewer.WebUI.Areas.Admin.Models.Orders
 @using TVProgViewer.WebUI.Areas.Admin.Models.Payments

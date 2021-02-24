@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Caching;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Blogs;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Configuration;
@@ -34,17 +35,12 @@ namespace TVProgViewer.WebUI.Infrastructure.Cache
         IConsumer<EntityInsertedEvent<Vendor>>,
         IConsumer<EntityUpdatedEvent<Vendor>>,
         IConsumer<EntityDeletedEvent<Vendor>>,
-        //product manufacturers
-        IConsumer<EntityInsertedEvent<ProductManufacturer>>,
-        IConsumer<EntityUpdatedEvent<ProductManufacturer>>,
-        IConsumer<EntityDeletedEvent<ProductManufacturer>>,
         //categories
         IConsumer<EntityInsertedEvent<Category>>,
         IConsumer<EntityUpdatedEvent<Category>>,
         IConsumer<EntityDeletedEvent<Category>>,
         //product categories
         IConsumer<EntityInsertedEvent<ProductCategory>>,
-        IConsumer<EntityUpdatedEvent<ProductCategory>>,
         IConsumer<EntityDeletedEvent<ProductCategory>>,
         //products
         IConsumer<EntityInsertedEvent<Product>>,
@@ -104,15 +100,15 @@ namespace TVProgViewer.WebUI.Infrastructure.Cache
         #region Fields
 
         private readonly CatalogSettings _catalogSettings;
-        private readonly IStaticCacheManager _cacheManager;
+        private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
 
         #region Ctor
 
-        public ModelCacheEventConsumer(CatalogSettings catalogSettings, IStaticCacheManager cacheManager)
+        public ModelCacheEventConsumer(CatalogSettings catalogSettings, IStaticCacheManager staticCacheManager)
         {
-            _cacheManager = cacheManager;
+            _staticCacheManager = staticCacheManager;
             _catalogSettings = catalogSettings;
         }
 
@@ -122,459 +118,431 @@ namespace TVProgViewer.WebUI.Infrastructure.Cache
 
         #region Languages
 
-        public void HandleEvent(EntityInsertedEvent<Language> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Language> eventMessage)
         {
             //clear all localizable models
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Language> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Language> eventMessage)
         {
             //clear all localizable models
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<Language> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Language> eventMessage)
         {
             //clear all localizable models
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
         }
 
         #endregion
-        
+
         #region Setting
 
-        public void HandleEvent(EntityUpdatedEvent<Setting> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Setting> eventMessage)
         {
             //clear models which depend on settings
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey); //depends on CatalogSettings.ManufacturersBlockItemsToDisplay
-            _cacheManager.Remove(TvProgModelCacheDefaults.VendorNavigationModelKey); //depends on VendorSettings.VendorBlockItemsToDisplay
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey); //depends on CatalogSettings.ShowCategoryProductNumber and CatalogSettings.ShowCategoryProductNumberIncludingSubcategories
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey); //depends on CatalogSettings.NumberOfBestsellersOnHomepage
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey); //depends on CatalogSettings.ProductsAlsoPurchasedNumber
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.BlogPrefixCacheKey); //depends on BlogSettings.NumberOfTags
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.NewsPrefixCacheKey); //depends on NewsSettings.MainPageNewsCount
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey); //depends on distinct sitemap settings
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.WidgetPrefixCacheKey); //depends on WidgetSettings and certain settings of widgets
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.StoreLogoPathPrefixCacheKey); //depends on StoreInformationSettings.LogoPictureId
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey); //depends on CatalogSettings.ManufacturersBlockItemsToDisplay
+            await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey); //depends on VendorSettings.VendorBlockItemsToDisplay
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey); //depends on CatalogSettings.ShowCategoryProductNumber and CatalogSettings.ShowCategoryProductNumberIncludingSubcategories
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey); //depends on CatalogSettings.NumberOfBestsellersOnHomepage
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey); //depends on CatalogSettings.ProductsAlsoPurchasedNumber
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey); //depends on BlogSettings.NumberOfTags
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey); //depends on NewsSettings.MainPageNewsCount
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey); //depends on distinct sitemap settings
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.WidgetPrefixCacheKey); //depends on WidgetSettings and certain settings of widgets
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.StoreLogoPathPrefixCacheKey); //depends on StoreInformationSettings.LogoPictureId
         }
 
         #endregion
 
         #region Vendors
 
-        public void HandleEvent(EntityInsertedEvent<Vendor> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Vendor> eventMessage)
         {
-            _cacheManager.Remove(TvProgModelCacheDefaults.VendorNavigationModelKey);
+            await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Vendor> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Vendor> eventMessage)
         {
-            _cacheManager.Remove(TvProgModelCacheDefaults.VendorNavigationModelKey);
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.VendorPicturePrefixCacheKeyById, eventMessage.Entity.Id));
+            await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.VendorPicturePrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        public void HandleEvent(EntityDeletedEvent<Vendor> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Vendor> eventMessage)
         {
-            _cacheManager.Remove(TvProgModelCacheDefaults.VendorNavigationModelKey);
+            await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey);
         }
 
         #endregion
 
         #region  Manufacturers
 
-        public void HandleEvent(EntityInsertedEvent<Manufacturer> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Manufacturer> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Manufacturer> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Manufacturer> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKeyById, eventMessage.Entity.Id));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        public void HandleEvent(EntityDeletedEvent<Manufacturer> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Manufacturer> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
-        }
-
-        #endregion
-
-        #region  Product manufacturers
-
-        public void HandleEvent(EntityInsertedEvent<ProductManufacturer> eventMessage)
-        {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ManufacturerHasFeaturedProductsPrefixCacheKeyById, eventMessage.Entity.ManufacturerId));
-        }
-
-        public void HandleEvent(EntityUpdatedEvent<ProductManufacturer> eventMessage)
-        {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ManufacturerHasFeaturedProductsPrefixCacheKeyById, eventMessage.Entity.ManufacturerId));
-        }
-
-        public void HandleEvent(EntityDeletedEvent<ProductManufacturer> eventMessage)
-        {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ManufacturerHasFeaturedProductsPrefixCacheKeyById, eventMessage.Entity.ManufacturerId));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
         #region Categories
 
-        public void HandleEvent(EntityInsertedEvent<Category> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Category> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryHomepagePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryHomepagePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Category> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Category> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryHomepagePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKeyById, eventMessage.Entity.Id));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryHomepagePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        public void HandleEvent(EntityDeletedEvent<Category> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Category> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryHomepagePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryHomepagePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
         #region Product categories
 
-        public void HandleEvent(EntityInsertedEvent<ProductCategory> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<ProductCategory> eventMessage)
         {
             if (_catalogSettings.ShowCategoryProductNumber)
             {
                 //depends on CatalogSettings.ShowCategoryProductNumber (when enabled)
                 //so there's no need to clear this cache in other cases
-                _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-                _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+                await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+                await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
             }
-
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.CategoryHasFeaturedProductsPrefixCacheKeyById, eventMessage.Entity.CategoryId));
         }
 
-        public void HandleEvent(EntityUpdatedEvent<ProductCategory> eventMessage)
-        {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.CategoryHasFeaturedProductsPrefixCacheKeyById, eventMessage.Entity.CategoryId));
-        }
-
-        public void HandleEvent(EntityDeletedEvent<ProductCategory> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<ProductCategory> eventMessage)
         {
             if (_catalogSettings.ShowCategoryProductNumber)
             {
                 //depends on CatalogSettings.ShowCategoryProductNumber (when enabled)
                 //so there's no need to clear this cache in other cases
-                _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
-                _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
+                await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
+                await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
             }
-
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.CategoryHasFeaturedProductsPrefixCacheKeyById, eventMessage.Entity.CategoryId));
         }
 
         #endregion
 
         #region Products
 
-        public void HandleEvent(EntityInsertedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Product> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Product> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductReviewsPrefixCacheKeyById, eventMessage.Entity.Id));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductReviewsPrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        public void HandleEvent(EntityDeletedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Product> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
         #region Product tags
 
-        public void HandleEvent(EntityInsertedEvent<ProductTag> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<ProductTag> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<ProductTag> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<ProductTag> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<ProductTag> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<ProductTag> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
         #region Specification attributes
 
-        public void HandleEvent(EntityUpdatedEvent<SpecificationAttribute> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<SpecificationAttribute> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<SpecificationAttribute> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<SpecificationAttribute> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
         }
 
         #endregion
 
         #region Specification attribute options
 
-        public void HandleEvent(EntityUpdatedEvent<SpecificationAttributeOption> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<SpecificationAttributeOption> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<SpecificationAttributeOption> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<SpecificationAttributeOption> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
         }
 
         #endregion
 
         #region Product specification attribute
 
-        public void HandleEvent(EntityInsertedEvent<ProductSpecificationAttribute> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<ProductSpecificationAttribute> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<ProductSpecificationAttribute> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<ProductSpecificationAttribute> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<ProductSpecificationAttribute> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<ProductSpecificationAttribute> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SpecsFilterPrefixCacheKey);
         }
 
         #endregion
 
         #region Product attributes
 
-        public void HandleEvent(EntityUpdatedEvent<ProductAttributeValue> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<ProductAttributeValue> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributeImageSquarePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributeImageSquarePicturePrefixCacheKey);
         }
 
         #endregion
 
         #region Topics
 
-        public void HandleEvent(EntityInsertedEvent<Topic> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Topic> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Topic> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Topic> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<Topic> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Topic> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
         #region Orders
 
-        public void HandleEvent(EntityInsertedEvent<Order> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Order> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Order> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Order> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<Order> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Order> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
         }
 
         #endregion
 
         #region Pictures
 
-        public void HandleEvent(EntityInsertedEvent<Picture> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Picture> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Picture> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Picture> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.VendorPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.VendorPicturePrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<Picture> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Picture> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.VendorPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.VendorPicturePrefixCacheKey);
         }
 
         #endregion
 
         #region Product picture mappings
 
-        public void HandleEvent(EntityInsertedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<ProductPicture> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKeyById, eventMessage.Entity.ProductId));
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<ProductPicture> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKeyById, eventMessage.Entity.ProductId));
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<ProductPicture> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKeyById, eventMessage.Entity.ProductId));
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDefaultPicturePrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
         }
 
         #endregion
 
         #region Polls
 
-        public void HandleEvent(EntityInsertedEvent<Poll> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<Poll> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.PollsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.PollsPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<Poll> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<Poll> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.PollsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.PollsPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<Poll> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<Poll> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.PollsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.PollsPrefixCacheKey);
         }
 
         #endregion
 
         #region Blog posts
 
-        public void HandleEvent(EntityInsertedEvent<BlogPost> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<BlogPost> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.BlogPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<BlogPost> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<BlogPost> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.BlogPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<BlogPost> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<BlogPost> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.BlogPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
         #region News items
 
-        public void HandleEvent(EntityInsertedEvent<NewsItem> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<NewsItem> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.NewsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityUpdatedEvent<NewsItem> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<NewsItem> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.NewsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        public void HandleEvent(EntityDeletedEvent<NewsItem> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<NewsItem> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.NewsPrefixCacheKey);
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
-        
+
         #region Shopping cart items
 
-        public void HandleEvent(EntityUpdatedEvent<ShoppingCartItem> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<ShoppingCartItem> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
         }
 
         #endregion
 
         #region Product reviews
 
-        public void HandleEvent(EntityDeletedEvent<ProductReview> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<ProductReview> eventMessage)
         {
-            _cacheManager.RemoveByPrefix(string.Format(TvProgModelCacheDefaults.ProductReviewsPrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductReviewsPrefixCacheKeyById, eventMessage.Entity.ProductId));
         }
 
         #endregion
@@ -585,10 +553,10 @@ namespace TVProgViewer.WebUI.Infrastructure.Cache
         /// Handle plugin updated event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
-        public void HandleEvent(PluginUpdatedEvent eventMessage)
+        public async Task HandleEventAsync(PluginUpdatedEvent eventMessage)
         {
             if (eventMessage?.Plugin?.Instance<IWidgetPlugin>() != null)
-                _cacheManager.RemoveByPrefix(TvProgModelCacheDefaults.WidgetPrefixCacheKey);
+                await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.WidgetPrefixCacheKey);
         }
 
         #endregion

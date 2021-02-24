@@ -6,10 +6,9 @@ using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Security;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Localization;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Security
 {
@@ -31,14 +30,14 @@ namespace TVProgViewer.Services.Security
 
         #region Ctor
 
-        public PermissionService(IUserService UserService,
+        public PermissionService(IUserService userService,
             ILocalizationService localizationService,
             IRepository<PermissionRecord> permissionRecordRepository,
             IRepository<PermissionRecordUserRoleMapping> permissionRecordUserRoleMappingRepository,
             IStaticCacheManager staticCacheManager,
             IWorkContext workContext)
         {
-            _userService = UserService;
+            _userService = userService;
             _localizationService = localizationService;
             _permissionRecordRepository = permissionRecordRepository;
             _permissionRecordUserRoleMappingRepository = permissionRecordUserRoleMappingRepository;
@@ -51,51 +50,31 @@ namespace TVProgViewer.Services.Security
         #region Utilities
 
         /// <summary>
-        /// Get permission records by User role identifier
+        /// Get permission records by user role identifier
         /// </summary>
-        /// <param name="UserRoleId">User role identifier</param>
+        /// <param name="userRoleId">User role identifier</param>
         /// <returns>Permissions</returns>
-        protected virtual IList<PermissionRecord> GetPermissionRecordsByUserRoleId(int UserRoleId)
+        protected virtual async Task<IList<PermissionRecord>> GetPermissionRecordsByUserRoleIdAsync(int userRoleId)
         {
-            var key = TvProgSecurityCachingDefaults.PermissionsAllByUserRoleIdCacheKey.FillCacheKey(UserRoleId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgSecurityDefaults.PermissionRecordsAllCacheKey, userRoleId);
 
             var query = from pr in _permissionRecordRepository.Table
-                join prcrm in _permissionRecordUserRoleMappingRepository.Table on pr.Id equals prcrm
-                    .PermissionRecordId
-                where prcrm.UserRoleId == UserRoleId
-                orderby pr.Id
-                select pr;
+                        join prcrm in _permissionRecordUserRoleMappingRepository.Table on pr.Id equals prcrm
+                            .PermissionRecordId
+                        where prcrm.UserRoleId == userRoleId
+                        orderby pr.Id
+                        select pr;
 
-            return query.ToCachedList(key);
+            return await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
         }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// Delete a permission
         /// </summary>
         /// <param name="permission">Permission</param>
-        public virtual void DeletePermissionRecord(PermissionRecord permission)
+        protected virtual async Task DeletePermissionRecordAsync(PermissionRecord permission)
         {
-            if (permission == null)
-                throw new ArgumentNullException(nameof(permission));
-
-            _permissionRecordRepository.Delete(permission);
-        }
-
-        /// <summary>
-        /// Gets a permission
-        /// </summary>
-        /// <param name="permissionId">Permission identifier</param>
-        /// <returns>Permission</returns>
-        public virtual PermissionRecord GetPermissionRecordById(int permissionId)
-        {
-            if (permissionId == 0)
-                return null;
-
-            return _permissionRecordRepository.ToCachedGetById(permissionId);
+            await _permissionRecordRepository.DeleteAsync(permission);
         }
 
         /// <summary>
@@ -103,7 +82,7 @@ namespace TVProgViewer.Services.Security
         /// </summary>
         /// <param name="systemName">Permission system name</param>
         /// <returns>Permission</returns>
-        public virtual PermissionRecord GetPermissionRecordBySystemName(string systemName)
+        protected virtual async Task<PermissionRecord> GetPermissionRecordBySystemNameAsync(string systemName)
         {
             if (string.IsNullOrWhiteSpace(systemName))
                 return null;
@@ -113,61 +92,62 @@ namespace TVProgViewer.Services.Security
                         orderby pr.Id
                         select pr;
 
-            var permissionRecord = query.FirstOrDefault();
+            var permissionRecord = await query.FirstOrDefaultAsync();
             return permissionRecord;
-        }
-
-        /// <summary>
-        /// Gets all permissions
-        /// </summary>
-        /// <returns>Permissions</returns>
-        public virtual IList<PermissionRecord> GetAllPermissionRecords()
-        {
-            var query = from pr in _permissionRecordRepository.Table
-                        orderby pr.Name
-                        select pr;
-            var permissions = query.ToList();
-            return permissions;
         }
 
         /// <summary>
         /// Inserts a permission
         /// </summary>
         /// <param name="permission">Permission</param>
-        public virtual void InsertPermissionRecord(PermissionRecord permission)
+        protected virtual async Task InsertPermissionRecordAsync(PermissionRecord permission)
         {
-            if (permission == null)
-                throw new ArgumentNullException(nameof(permission));
+            await _permissionRecordRepository.InsertAsync(permission);
+        }
 
-            _permissionRecordRepository.Insert(permission);
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Gets all permissions
+        /// </summary>
+        /// <returns>Permissions</returns>
+        public virtual async Task<IList<PermissionRecord>> GetAllPermissionRecordsAsync()
+        {
+            var permissions = await _permissionRecordRepository.GetAllAsync(query =>
+            {
+                return from pr in query
+                       orderby pr.Name
+                       select pr;
+            });
+
+            return permissions;
         }
 
         /// <summary>
         /// Updates the permission
         /// </summary>
         /// <param name="permission">Permission</param>
-        public virtual void UpdatePermissionRecord(PermissionRecord permission)
+        public virtual async Task UpdatePermissionRecordAsync(PermissionRecord permission)
         {
-            if (permission == null)
-                throw new ArgumentNullException(nameof(permission));
-
-            _permissionRecordRepository.Update(permission);
+            await _permissionRecordRepository.UpdateAsync(permission);
         }
 
         /// <summary>
         /// Install permissions
         /// </summary>
         /// <param name="permissionProvider">Permission provider</param>
-        public virtual void InstallPermissions(IPermissionProvider permissionProvider)
+        public virtual async Task InstallPermissionsAsync(IPermissionProvider permissionProvider)
         {
             //install new permissions
             var permissions = permissionProvider.GetPermissions();
-            //default User role mappings
+            //default user role mappings
             var defaultPermissions = permissionProvider.GetDefaultPermissions().ToList();
 
             foreach (var permission in permissions)
             {
-                var permission1 = GetPermissionRecordBySystemName(permission.SystemName);
+                var permission1 = await GetPermissionRecordBySystemNameAsync(permission.SystemName);
                 if (permission1 != null)
                     continue;
 
@@ -180,21 +160,21 @@ namespace TVProgViewer.Services.Security
                 };
 
                 //save new permission
-                InsertPermissionRecord(permission1);
+                await InsertPermissionRecordAsync(permission1);
 
                 foreach (var defaultPermission in defaultPermissions)
                 {
-                    var UserRole = _userService.GetUserRoleBySystemName(defaultPermission.systemRoleName);
-                    if (UserRole == null)
+                    var userRole = await _userService.GetUserRoleBySystemNameAsync(defaultPermission.systemRoleName);
+                    if (userRole == null)
                     {
                         //new role (save it)
-                        UserRole = new UserRole
+                        userRole = new UserRole
                         {
                             Name = defaultPermission.systemRoleName,
                             Active = true,
                             SystemName = defaultPermission.systemRoleName
                         };
-                        _userService.InsertUserRole(UserRole);
+                        await _userService.InsertUserRoleAsync(userRole);
                     }
 
                     var defaultMappingProvided = defaultPermission.permissions.Any(p => p.SystemName == permission1.SystemName);
@@ -202,31 +182,11 @@ namespace TVProgViewer.Services.Security
                     if (!defaultMappingProvided)
                         continue;
 
-                    InsertPermissionRecordUserRoleMapping(new PermissionRecordUserRoleMapping { UserRoleId = UserRole.Id, PermissionRecordId = permission1.Id });
+                    await InsertPermissionRecordUserRoleMappingAsync(new PermissionRecordUserRoleMapping { UserRoleId = userRole.Id, PermissionRecordId = permission1.Id });
                 }
 
                 //save localization
-                _localizationService.SaveLocalizedPermissionName(permission1);
-            }
-        }
-
-        /// <summary>
-        /// Uninstall permissions
-        /// </summary>
-        /// <param name="permissionProvider">Permission provider</param>
-        public virtual void UninstallPermissions(IPermissionProvider permissionProvider)
-        {
-            var permissions = permissionProvider.GetPermissions();
-            foreach (var permission in permissions)
-            {
-                var permission1 = GetPermissionRecordBySystemName(permission.SystemName);
-                if (permission1 == null)
-                    continue;
-
-                DeletePermissionRecord(permission1);
-
-                //delete permission locales
-                _localizationService.DeleteLocalizedPermissionName(permission1);
+                await _localizationService.SaveLocalizedPermissionNameAsync(permission1);
             }
         }
 
@@ -235,34 +195,26 @@ namespace TVProgViewer.Services.Security
         /// </summary>
         /// <param name="permission">Permission record</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        public virtual bool Authorize(PermissionRecord permission)
+        public virtual async Task<bool> AuthorizeAsync(PermissionRecord permission)
         {
-            return Authorize(permission, _workContext.CurrentUser);
+            return await AuthorizeAsync(permission, await _workContext.GetCurrentUserAsync());
         }
 
         /// <summary>
         /// Authorize permission
         /// </summary>
         /// <param name="permission">Permission record</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        public virtual bool Authorize(PermissionRecord permission, User User)
+        public virtual async Task<bool> AuthorizeAsync(PermissionRecord permission, User user)
         {
             if (permission == null)
                 return false;
 
-            if (User == null)
+            if (user == null)
                 return false;
 
-            //old implementation of Authorize method
-            //var UserRoles = User.UserRoles.Where(cr => cr.Active);
-            //foreach (var role in UserRoles)
-            //    foreach (var permission1 in role.PermissionRecords)
-            //        if (permission1.SystemName.Equals(permission.SystemName, StringComparison.InvariantCultureIgnoreCase))
-            //            return true;
-            //return false;
-
-            return Authorize(permission.SystemName, User);
+            return await AuthorizeAsync(permission.SystemName, user);
         }
 
         /// <summary>
@@ -270,25 +222,25 @@ namespace TVProgViewer.Services.Security
         /// </summary>
         /// <param name="permissionRecordSystemName">Permission record system name</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        public virtual bool Authorize(string permissionRecordSystemName)
+        public virtual async Task<bool> AuthorizeAsync(string permissionRecordSystemName)
         {
-            return Authorize(permissionRecordSystemName, _workContext.CurrentUser);
+            return await AuthorizeAsync(permissionRecordSystemName, await _workContext.GetCurrentUserAsync());
         }
 
         /// <summary>
         /// Authorize permission
         /// </summary>
         /// <param name="permissionRecordSystemName">Permission record system name</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        public virtual bool Authorize(string permissionRecordSystemName, User user)
+        public virtual async Task<bool> AuthorizeAsync(string permissionRecordSystemName, User user)
         {
             if (string.IsNullOrEmpty(permissionRecordSystemName))
                 return false;
 
-            var userRoles = _userService.GetUserRoles(user);
+            var userRoles = await _userService.GetUserRolesAsync(user);
             foreach (var role in userRoles)
-                if (Authorize(permissionRecordSystemName, role.Id))
+                if (await AuthorizeAsync(permissionRecordSystemName, role.Id))
                     //yes, we have such permission
                     return true;
 
@@ -300,19 +252,20 @@ namespace TVProgViewer.Services.Security
         /// Authorize permission
         /// </summary>
         /// <param name="permissionRecordSystemName">Permission record system name</param>
-        /// <param name="UserRoleId">User role identifier</param>
+        /// <param name="userRoleId">User role identifier</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        public virtual bool Authorize(string permissionRecordSystemName, int userRoleId)
+        public virtual async Task<bool> AuthorizeAsync(string permissionRecordSystemName, int userRoleId)
         {
             if (string.IsNullOrEmpty(permissionRecordSystemName))
                 return false;
 
-            var key = TvProgSecurityCachingDefaults.PermissionsAllowedCacheKey.FillCacheKey(permissionRecordSystemName, userRoleId);
-            return _staticCacheManager.Get(key, () =>
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgSecurityDefaults.PermissionAllowedCacheKey, permissionRecordSystemName, userRoleId);
+
+            return await _staticCacheManager.GetAsync(key, async () =>
             {
-                var permissions = GetPermissionRecordsByUserRoleId(userRoleId);
-                foreach (var permission1 in permissions)
-                    if (permission1.SystemName.Equals(permissionRecordSystemName, StringComparison.InvariantCultureIgnoreCase))
+                var permissions = await GetPermissionRecordsByUserRoleIdAsync(userRoleId);
+                foreach (var permission in permissions)
+                    if (permission.SystemName.Equals(permissionRecordSystemName, StringComparison.InvariantCultureIgnoreCase))
                         return true;
 
                 return false;
@@ -320,43 +273,40 @@ namespace TVProgViewer.Services.Security
         }
 
         /// <summary>
-        /// Gets a permission record-User role mapping
+        /// Gets a permission record-user role mapping
         /// </summary>
         /// <param name="permissionId">Permission identifier</param>
-        public virtual IList<PermissionRecordUserRoleMapping> GetMappingByPermissionRecordId(int permissionId)
+        public virtual async Task<IList<PermissionRecordUserRoleMapping>> GetMappingByPermissionRecordIdAsync(int permissionId)
         {
             var query = _permissionRecordUserRoleMappingRepository.Table;
 
             query = query.Where(x => x.PermissionRecordId == permissionId);
 
-            return query.ToList();
+            return await query.ToListAsync();
         }
 
         /// <summary>
-        /// Delete a permission record-User role mapping
+        /// Delete a permission record-user role mapping
         /// </summary>
         /// <param name="permissionId">Permission identifier</param>
-        /// <param name="UserRoleId">User role identifier</param>
-        public virtual void DeletePermissionRecordUserRoleMapping(int permissionId, int UserRoleId)
+        /// <param name="userRoleId">User role identifier</param>
+        public virtual async Task DeletePermissionRecordUserRoleMappingAsync(int permissionId, int userRoleId)
         {
-            var mapping = _permissionRecordUserRoleMappingRepository.Table.FirstOrDefault(prcm => prcm.UserRoleId == UserRoleId && prcm.PermissionRecordId == permissionId);
-
+            var mapping = _permissionRecordUserRoleMappingRepository.Table
+                .FirstOrDefault(prcm => prcm.UserRoleId == userRoleId && prcm.PermissionRecordId == permissionId);
             if (mapping is null)
-                throw new Exception(string.Empty);
+                return;
 
-            _permissionRecordUserRoleMappingRepository.Delete(mapping);
+            await _permissionRecordUserRoleMappingRepository.DeleteAsync(mapping);
         }
 
         /// <summary>
-        /// Inserts a permission record-User role mapping
+        /// Inserts a permission record-user role mapping
         /// </summary>
-        /// <param name="permissionRecordUserRoleMapping">Permission record-User role mapping</param>
-        public virtual void InsertPermissionRecordUserRoleMapping(PermissionRecordUserRoleMapping permissionRecordUserRoleMapping)
+        /// <param name="permissionRecordUserRoleMapping">Permission record-user role mapping</param>
+        public virtual async Task InsertPermissionRecordUserRoleMappingAsync(PermissionRecordUserRoleMapping permissionRecordUserRoleMapping)
         {
-            if (permissionRecordUserRoleMapping is null)
-                throw new ArgumentNullException(nameof(permissionRecordUserRoleMapping));
-
-            _permissionRecordUserRoleMappingRepository.Insert(permissionRecordUserRoleMapping);
+            await _permissionRecordUserRoleMappingRepository.InsertAsync(permissionRecordUserRoleMapping);
         }
 
         #endregion

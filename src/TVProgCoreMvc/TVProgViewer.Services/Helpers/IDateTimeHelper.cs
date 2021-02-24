@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Users;
 
 namespace TVProgViewer.Services.Helpers
@@ -10,13 +11,6 @@ namespace TVProgViewer.Services.Helpers
     public partial interface IDateTimeHelper
     {
         /// <summary>
-        /// Retrieves a System.TimeZoneInfo object from the registry based on its identifier.
-        /// </summary>
-        /// <param name="id">The time zone identifier, which corresponds to the System.TimeZoneInfo.Id property.</param>
-        /// <returns>A System.TimeZoneInfo object whose identifier is the value of the id parameter.</returns>
-        TimeZoneInfo FindTimeZoneById(string id);
-
-        /// <summary>
         /// Returns a sorted collection of all the time zones
         /// </summary>
         /// <returns>A read-only collection of System.TimeZoneInfo objects.</returns>
@@ -26,24 +20,16 @@ namespace TVProgViewer.Services.Helpers
         /// Converts the date and time to current user date and time
         /// </summary>
         /// <param name="dt">The date and time (represents local system time or UTC time) to convert.</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
-        DateTime ConvertToUserTime(DateTime dt);
+        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in user time zone.</returns>
+        Task<DateTime> ConvertToUserTimeAsync(DateTime dt);
 
         /// <summary>
         /// Converts the date and time to current user date and time
         /// </summary>
         /// <param name="dt">The date and time (represents local system time or UTC time) to convert.</param>
         /// <param name="sourceDateTimeKind">The source datetimekind</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
-        DateTime ConvertToUserTime(DateTime dt, DateTimeKind sourceDateTimeKind);
-
-        /// <summary>
-        /// Converts the date and time to current user date and time
-        /// </summary>
-        /// <param name="dt">The date and time to convert.</param>
-        /// <param name="sourceTimeZone">The time zone of dateTime.</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
-        DateTime ConvertToUserTime(DateTime dt, TimeZoneInfo sourceTimeZone);
+        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in user time zone.</returns>
+        Task<DateTime> ConvertToUserTimeAsync(DateTime dt, DateTimeKind sourceDateTimeKind);
 
         /// <summary>
         /// Converts the date and time to current user date and time
@@ -51,7 +37,7 @@ namespace TVProgViewer.Services.Helpers
         /// <param name="dt">The date and time to convert.</param>
         /// <param name="sourceTimeZone">The time zone of dateTime.</param>
         /// <param name="destinationTimeZone">The time zone to convert dateTime to.</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
+        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in user time zone.</returns>
         DateTime ConvertToUserTime(DateTime dt, TimeZoneInfo sourceTimeZone, TimeZoneInfo destinationTimeZone);
 
         /// <summary>
@@ -78,20 +64,24 @@ namespace TVProgViewer.Services.Helpers
         DateTime ConvertToUtcTime(DateTime dt, TimeZoneInfo sourceTimeZone);
 
         /// <summary>
-        /// Gets a User time zone
+        /// Gets a user time zone
         /// </summary>
-        /// <param name="User">User</param>
-        /// <returns>User time zone; if User is null, then default store time zone</returns>
-        TimeZoneInfo GetUserTimeZone(User User);
+        /// <param name="user">User</param>
+        /// <returns>User time zone; if user is null, then default store time zone</returns>
+        Task<TimeZoneInfo> GetUserTimeZoneAsync(User user);
+
+        /// <summary>
+        /// Gets the current user time zone
+        /// </summary>
+        /// <returns>Current user time zone</returns>
+        Task<TimeZoneInfo> GetCurrentTimeZoneAsync();
 
         /// <summary>
         /// Gets or sets a default store time zone
         /// </summary>
-        TimeZoneInfo DefaultStoreTimeZone { get; set; }
-
-        /// <summary>
-        /// Gets or sets the current user time zone
-        /// </summary>
-        TimeZoneInfo CurrentTimeZone { get; set; }
+        TimeZoneInfo DefaultStoreTimeZone
+        {
+            get;
+        }
     }
 }

@@ -15,6 +15,8 @@
         public static string AllSettingListButtons => "admin_all_setting_list_buttons";
         public static string AllSettingsBottom => "admin_all_settings_bottom";
         public static string AllSettingsTop => "admin_all_settings_top";
+        public static string AppSettingsBlock => "admin_app_settings_block";
+        public static string AppSettingsButtons => "admin_app_settings_buttons";
         public static string BlogCommentListButtons => "admin_blog_comment_list_buttons";
         public static string BlogDetailsBlock => "admin_blog_details_block";
         public static string BlogDetailsButtons => "admin_blog_details_buttons";
@@ -27,7 +29,7 @@
         public static string CampaignListButtons => "admin_campaign_list_buttons";
         public static string CatalogSettingsDetailsBlock => "admin_catalog_settings_details_block";
         public static string CatalogSettingsButtons => "admin_catalog_settings_buttons";
-        public static string CategoryDetailsBlock => "admin_category_details_block"; 
+        public static string CategoryDetailsBlock => "admin_category_details_block";
         public static string CategoryDetailsButtons => "admin_category_details_buttons";
         public static string CategoryListButtons => "admin_category_list_buttons";
         public static string CategoryTemplateListButtons => "admin_category_template_list_buttons";
@@ -48,26 +50,26 @@
         public static string CurrencyDetailsTop => "admin_currency_details_top";
         public static string CurrencyListButtons => "admin_currency_list_buttons";
         public static string CurrentShoppingCartListButtons => "admin_current_shopping_cart_list_buttons";
-        public static string UserAddressDetailsBottom => "admin_User_address_details_bottom";
-        public static string UserAddressDetailsButtons => "admin_User_address_details_buttons";
-        public static string UserAddressDetailsTop => "admin_User_address_details_top";
-        public static string UserAttributeDetailsButtons => "admin_User_attribute_details_buttons";
-        public static string UserAttributeDetailsBlock => "admin_User_attribute_details_block";
-        public static string UserAttributeValueDetailsBottom => "admin_User_attribute_value_details_bottom";
-        public static string UserAttributeValueDetailsButtons => "admin_User_attribute_value_details_buttons";
-        public static string UserAttributeValueDetailsTop => "admin_User_attribute_value_details_top";
-        public static string UserDetailsBlock => "admin_User_details_block";
-        public static string UserDetailsButtons => "admin_User_details_buttons";
-        public static string UserListButtons => "admin_User_list_buttons";
-        public static string UserRoleDetailsBottom => "admin_User_role_details_bottom";
-        public static string UserRoleDetailsButtons => "admin_User_role_details_buttons";
-        public static string UserRoleDetailsTop => "admin_User_role_details_top";
-        public static string UserRoleListButtons => "admin_User_role_list_buttons";
-        public static string UserUserDetailsBlock => "admin_User_user_details_block";
-        public static string UserUserSettingsButtons => "admin_User_user_settings_buttons";
+        public static string UserAddressDetailsBottom => "admin_user_address_details_bottom";
+        public static string UserAddressDetailsButtons => "admin_user_address_details_buttons";
+        public static string UserAddressDetailsTop => "admin_user_address_details_top";
+        public static string UserAttributeDetailsButtons => "admin_user_attribute_details_buttons";
+        public static string UserAttributeDetailsBlock => "admin_user_attribute_details_block";
+        public static string UserAttributeValueDetailsBottom => "admin_user_attribute_value_details_bottom";
+        public static string UserAttributeValueDetailsButtons => "admin_user_attribute_value_details_buttons";
+        public static string UserAttributeValueDetailsTop => "admin_user_attribute_value_details_top";
+        public static string UserDetailsBlock => "admin_user_details_block";
+        public static string UserDetailsButtons => "admin_user_details_buttons";
+        public static string UserListButtons => "admin_user_list_buttons";
+        public static string UserRoleDetailsBottom => "admin_user_role_details_bottom";
+        public static string UserRoleDetailsButtons => "admin_user_role_details_buttons";
+        public static string UserRoleDetailsTop => "admin_user_role_details_top";
+        public static string UserRoleListButtons => "admin_user_role_list_buttons";
+        public static string UserUserDetailsBlock => "admin_user_user_details_block";
+        public static string UserUserSettingsButtons => "admin_user_user_settings_buttons";
         public static string DashboardBottom => "admin_dashboard_bottom";
         public static string DashboardCommonstatisticsAfter => "admin_dashboard_commonstatistics_after";
-        public static string DashboardUserorderchartsAfter => "admin_dashboard_Userordercharts_after";
+        public static string DashboardUserorderchartsAfter => "admin_dashboard_userordercharts_after";
         public static string DashboardLatestordersSearchtermsAfter => "admin_dashboard_latestorders_searchterms_after";
         public static string DashboardNewsAfter => "admin_dashboard_news_after";
         public static string DashboardOrderreportsAfter => "admin_dashboard_orderreports_after";
@@ -109,7 +111,6 @@
         public static string HeaderMiddle => "admin_header_middle";
         public static string HeaderNavbarAfter => "admin_header_navbar_after";
         public static string HeaderNavbarBefore => "admin_header_navbar_before";
-        public static string HeaderToggleAfter => "admin_header_toggle_after";
         public static string LanguageDetailsBlock => "admin_language_details_block";
         public static string LanguageDetailsButtons => "admin_language_details_buttons";
         public static string LanguageListButtons => "admin_language_list_buttons";
@@ -132,6 +133,7 @@
         public static string MessageTemplateDetailsTop => "admin_message_template_details_top";
         public static string MessageTemplateListButtons => "admin_message_template_list_buttons";
         public static string MessageTemplateTestButtons => "admin_message_template_test_buttons";
+        public static string MultiFactorAuthenticationListButtons => "admin_multifactor_authentication_list_buttons";
         public static string NewsCommentListButtons => "admin_news_comment_list_buttons";
         public static string NewsDetailsBlock => "admin_news_details_block";
         public static string NewsDetailsButtons => "admin_news_details_buttons";
@@ -139,7 +141,7 @@
         public static string NewsLetterSubscriptionListButtons => "admin_newsletter_subscription_list_buttons";
         public static string NewsListButtons => "admin_news_list_buttons";
         public static string NewsSettingsButtons => "admin_news_settings_buttons";
-        public static string OnlineUserListButtons => "admin_online_User_list_buttons";
+        public static string OnlineUserListButtons => "admin_online_user_list_buttons";
         public static string OrderAddressDetailsBottom => "admin_order_address_details_bottom";
         public static string OrderAddressDetailsButtons => "admin_order_address_details_buttons";
         public static string OrderAddressDetailsTop => "admin_order_address_details_top";
@@ -252,6 +254,8 @@
         public static string SpecificationAttributeOptionDetailsBottom => "admin_specification_attribute_option_details_bottom";
         public static string SpecificationAttributeOptionDetailsButtons => "admin_specification_attribute_option_details_buttons";
         public static string SpecificationAttributeOptionDetailsTop => "admin_specification_attribute_option_details_top";
+        public static string SpecificationAttributeGroupDetailsButtons => "admin_specification_attribute_group_details_buttons";
+        public static string SpecificationAttributeGroupDetailsBlock => "admin_specification_attribute_group_details_block";
         public static string StoreDetailsBottom => "admin_store_details_bottom";
         public static string StoreDetailsButtons => "admin_store_details_buttons";
         public static string StoreDetailsTop => "admin_store_details_top";
@@ -286,5 +290,6 @@
         public static string WarningsButtons => "admin_warnings_buttons";
         public static string WarningsTop => "admin_warnings_top";
         public static string WidgetListButtons => "admin_widget_list_buttons";
+
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TVProgViewer.Web.Framework.Mvc.ModelBinding;
 using TVProgViewer.Web.Framework.Models;
+using System.Linq;
 
 namespace TVProgViewer.WebUI.Models.ShoppingCart
 {
@@ -13,13 +14,13 @@ namespace TVProgViewer.WebUI.Models.ShoppingCart
             AvailableStates = new List<SelectListItem>();
         }
 
+        public int RequestDelay { get; set; }
+
         public bool Enabled { get; set; }
 
-        [TvProgResourceDisplayName("ShoppingCart.EstimateShipping.Country")]
+        
         public int? CountryId { get; set; }
-        [TvProgResourceDisplayName("ShoppingCart.EstimateShipping.StateProvince")]
         public int? StateProvinceId { get; set; }
-        [TvProgResourceDisplayName("ShoppingCart.EstimateShipping.ZipPostalCode")]
         public string ZipPostalCode { get; set; }
         
         public IList<SelectListItem> AvailableCountries { get; set; }
@@ -31,12 +32,14 @@ namespace TVProgViewer.WebUI.Models.ShoppingCart
         public EstimateShippingResultModel()
         {
             ShippingOptions = new List<ShippingOptionModel>();
-            Warnings = new List<string>();
+            Errors = new List<string>();
         }
 
         public IList<ShippingOptionModel> ShippingOptions { get; set; }
 
-        public IList<string> Warnings { get; set; }
+        public bool Success => !Errors.Any();
+
+        public IList<string> Errors { get; set; }
 
         #region Nested Classes
 
@@ -44,9 +47,17 @@ namespace TVProgViewer.WebUI.Models.ShoppingCart
         {
             public string Name { get; set; }
 
+            public string ShippingRateComputationMethodSystemName { get; set; }
+
             public string Description { get; set; }
 
             public string Price { get; set; }
+
+            public decimal Rate { get; set; }
+
+            public string DeliveryDateFormat { get; set; }
+
+            public bool Selected { get; set; }
         }
 
         #endregion

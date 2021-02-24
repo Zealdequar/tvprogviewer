@@ -10,10 +10,10 @@
 
 @{
     const string hideCommonBlockAttributeName = "NewsSettingsPage.HideCommonBlock";
-    var hideCommonBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideCommonBlockAttributeName);
+    var hideCommonBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideCommonBlockAttributeName);
 
     const string hideCommentsBlockAttributeName = "NewsSettingsPage.HideCommentsBlock";
-    var hideCommentsBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideCommentsBlockAttributeName);
+    var hideCommentsBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideCommentsBlockAttributeName);
 }
 
 <form asp-controller="Setting" asp-action="News" method="post">
@@ -22,7 +22,7 @@
             @T("Admin.Configuration.Settings.News")
         </h1>
         <div class="pull-right">
-            <button type="submit" name="save" class="btn bg-blue">
+            <button type="submit" name="save" class="btn btn-primary">
                 <i class="fa fa-floppy-o"></i>
                 @T("Admin.Common.Save")
             </button>
@@ -30,18 +30,20 @@
         </div>
     </div>
 
-    <div class="content">
-        <div class="form-horizontal">
-            @await Component.InvokeAsync("StoreScopeConfiguration")
-            @await Component.InvokeAsync("SettingMode")
-            <div asp-validation-summary="All"></div>
-            
-            <tvprog-panels id="newsettings-panels">
-                <tvprog-panel asp-name="newsettings-common" asp-icon="fa fa-info" asp-title="@T("Admin.Configuration.Settings.News.BlockTitle.Common")" asp-hide-block-attribute-name="@hideCommonBlockAttributeName" asp-hide="@hideCommonBlock" asp-advanced="false">@await Html.PartialAsync("_News.Common", Model)</tvprog-panel>
-                <tvprog-panel asp-name="newsettings-comments" asp-icon="fa fa-comments-o" asp-title="@T("Admin.Configuration.Settings.News.BlockTitle.NewsComments")" asp-hide-block-attribute-name="@hideCommentsBlockAttributeName" asp-hide="@hideCommentsBlock" asp-advanced="false">@await Html.PartialAsync("_News.Comments", Model)</tvprog-panel>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                @await Component.InvokeAsync("StoreScopeConfiguration")
+                @await Component.InvokeAsync("SettingMode")
+                <div asp-validation-summary="All"></div>
 
-                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.NewsDetailsBlock, additionalData = Model })
-            </tvprog-panels>
+                <tvprog-cards id="newsettings-cards">
+                    <tvprog-card asp-name="newsettings-common" asp-icon="fa fa-info" asp-title="@T("Admin.Configuration.Settings.News.BlockTitle.Common")" asp-hide-block-attribute-name="@hideCommonBlockAttributeName" asp-hide="@hideCommonBlock" asp-advanced="false">@await Html.PartialAsync("_News.Common", Model)</tvprog-card>
+                    <tvprog-card asp-name="newsettings-comments" asp-icon="fa fa-comments-o" asp-title="@T("Admin.Configuration.Settings.News.BlockTitle.NewsComments")" asp-hide-block-attribute-name="@hideCommentsBlockAttributeName" asp-hide="@hideCommentsBlock" asp-advanced="false">@await Html.PartialAsync("_News.Comments", Model)</tvprog-card>
+
+                    @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.NewsDetailsBlock, additionalData = Model })
+                </tvprog-cards>
+            </div>
         </div>
-    </div>
+    </section>
 </form>

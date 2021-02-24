@@ -1,4 +1,5 @@
-﻿using TVProgViewer.WebUI.Areas.Admin.Models.Logging;
+﻿using System.Threading.Tasks;
+using TVProgViewer.WebUI.Areas.Admin.Models.Logging;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -12,20 +13,20 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Activity log search model</param>
         /// <returns>Activity log search model</returns>
-        ActivityLogSearchModel PrepareActivityLogSearchModel(ActivityLogSearchModel searchModel);
+        Task<ActivityLogSearchModel> PrepareActivityLogSearchModelAsync(ActivityLogSearchModel searchModel);
 
         /// <summary>
         /// Prepare activity log types search model
         /// </summary>
         /// <param name="searchModel">Activity log types search model</param>
         /// <returns>Activity log types search model</returns>
-        ActivityLogTypeSearchModel PrepareActivityLogTypeSearchModel(ActivityLogTypeSearchModel searchModel);
+        Task<ActivityLogTypeSearchModel> PrepareActivityLogTypeSearchModelAsync(ActivityLogTypeSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged activity log list model
         /// </summary>
         /// <param name="searchModel">Activity log search model</param>
         /// <returns>Activity log list model</returns>
-        ActivityLogListModel PrepareActivityLogListModel(ActivityLogSearchModel searchModel);
+        Task<ActivityLogListModel> PrepareActivityLogListModelAsync(ActivityLogSearchModel searchModel);
     }
 }

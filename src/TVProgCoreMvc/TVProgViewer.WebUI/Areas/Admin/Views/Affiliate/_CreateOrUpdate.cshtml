@@ -2,29 +2,31 @@
 
 @{
     const string hideInfoBlockAttributeName = "AffiliatePage.HideInfoBlock";
-    var hideInfoBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideInfoBlockAttributeName);
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideInfoBlockAttributeName);
 
     const string hideUsersBlockAttributeName = "AffiliatePage.HideUsersBlock";
-    var hideUsersBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideUsersBlockAttributeName, defaultValue: true);
+    var hideUsersBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideUsersBlockAttributeName, defaultValue: true);
 
     const string hideOrdersBlockAttributeName = "AffiliatePage.HideOrdersBlock";
-    var hideOrdersBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideOrdersBlockAttributeName, defaultValue: true);
+    var hideOrdersBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideOrdersBlockAttributeName, defaultValue: true);
 }
 
 <div asp-validation-summary="All"></div>
 <input asp-for="Id" type="hidden" />
 
-<div class="content">
-    <div class="form-horizontal">
-        <tvprog-panels id="affiliate-panels">
-            <tvprog-panel asp-name="affiliate-info" asp-icon="fa fa-info" asp-title="@T("Admin.Affiliates.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-panel>
-            @if (Model.Id > 0)
-            {
-                <tvprog-panel asp-name="affiliate-users" asp-icon="fa fa-user" asp-title="@T("Admin.Affiliates.Users")" asp-hide-block-attribute-name="@hideUsersBlockAttributeName" asp-hide="@hideUsersBlock">@await Html.PartialAsync("_CreateOrUpdate.Users", Model)</tvprog-panel>
-                <tvprog-panel asp-name="affiliate-orders" asp-icon="fa fa-cart-plus" asp-title="@T("Admin.Affiliates.Orders")" asp-hide-block-attribute-name="@hideOrdersBlockAttributeName" asp-hide="@hideOrdersBlock">@await Html.PartialAsync("_CreateOrUpdate.Orders", Model)</tvprog-panel>
-            }
-            
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.AffiliateDetailsBlock, additionalData = Model })
-        </tvprog-panels>
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <tvprog-cards id="affiliate-cards">
+                <tvprog-card asp-name="affiliate-info" asp-icon="fa fa-info" asp-title="@T("Admin.Affiliates.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>
+                @if (Model.Id > 0)
+                {
+                    <tvprog-card asp-name="affiliate-users" asp-icon="fa fa-user" asp-title="@T("Admin.Affiliates.Users")" asp-hide-block-attribute-name="@hideUsersBlockAttributeName" asp-hide="@hideUsersBlock">@await Html.PartialAsync("_CreateOrUpdate.Users", Model)</tvprog-card>
+                    <tvprog-card asp-name="affiliate-orders" asp-icon="fa fa-cart-plus" asp-title="@T("Admin.Affiliates.Orders")" asp-hide-block-attribute-name="@hideOrdersBlockAttributeName" asp-hide="@hideOrdersBlock">@await Html.PartialAsync("_CreateOrUpdate.Orders", Model)</tvprog-card>
+                }
+
+                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.AffiliateDetailsBlock, additionalData = Model })
+            </tvprog-cards>
+        </div>
     </div>
-</div>
+</section>

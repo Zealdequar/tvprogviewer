@@ -5,7 +5,7 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Security;
-using TVProgViewer.Services.Defaults;
+using TVProgViewer.Services.Security;
 
 namespace TVProgViewer.Web.Framework.Security.Captcha
 {
@@ -34,7 +34,7 @@ namespace TVProgViewer.Web.Framework.Security.Captcha
 
             //configure client
             client.BaseAddress = new Uri(captchaSettings.ReCaptchaApiUrl);
-            client.DefaultRequestHeaders.Add(HeaderNames.UserAgent, $"TvProg-{TvProgVersion.CurrentVersion}");
+            client.DefaultRequestHeaders.Add(HeaderNames.UserAgent, $"TvProg-{TvProgVersion.CURRENT_VERSION}");
 
             if (captchaSettings.ReCaptchaRequestTimeout is int timeout && timeout > 0)
                 client.Timeout = TimeSpan.FromSeconds(timeout);
@@ -52,7 +52,7 @@ namespace TVProgViewer.Web.Framework.Security.Captcha
         public virtual async Task<CaptchaResponse> ValidateCaptchaAsync(string responseValue)
         {
             //prepare URL to request
-            var url = string.Format(TVProgViewerSecurityDefaults.RecaptchaValidationPath,
+            var url = string.Format(TvProgSecurityDefaults.RecaptchaValidationPath,
                 _captchaSettings.ReCaptchaPrivateKey,
                 responseValue,
                 _webHelper.GetCurrentIpAddress());

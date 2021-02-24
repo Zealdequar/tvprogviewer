@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Caching;
-using TVProgViewer.Core.Defaults;
 using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Rss;
 using TVProgViewer.Services.Localization;
@@ -41,9 +40,9 @@ namespace TVProgViewer.Services.Common
             IWorkContext workContext)
         {
             //configure client
-            client.BaseAddress = new Uri("https://www.TVProgViewercommerce.com/");
-            client.Timeout = TimeSpan.FromMilliseconds(5000);
-            client.DefaultRequestHeaders.Add(HeaderNames.UserAgent, $"TvProg-{TvProgVersion.CurrentVersion}");
+            client.BaseAddress = new Uri("https://www.nopcommerce.com/");
+            client.Timeout = TimeSpan.FromSeconds(5);
+            client.DefaultRequestHeaders.Add(HeaderNames.UserAgent, $"nopCommerce-{TvProgVersion.CURRENT_VERSION}");
 
             _adminAreaSettings = adminAreaSettings;
             _httpClient = client;
@@ -74,9 +73,9 @@ namespace TVProgViewer.Services.Common
         public virtual async Task<string> GetCopyrightWarningAsync()
         {
             //prepare URL to request
-            var language = _languageService.GetTwoLetterIsoLanguageName(_workContext.WorkingLanguage);
-            var url = string.Format(TvProgCommonDefaults.TVProgViewerCopyrightWarningPath,
-                _storeContext.CurrentStore.Url,
+            var language = _languageService.GetTwoLetterIsoLanguageName(await _workContext.GetWorkingLanguageAsync());
+            var url = string.Format(TvProgCommonDefaults.TvProgCopyrightWarningPath,
+                (await _storeContext.GetCurrentStoreAsync()).Url,
                 _webHelper.IsLocalRequest(_httpContextAccessor.HttpContext.Request),
                 language).ToLowerInvariant();
 
@@ -91,17 +90,42 @@ namespace TVProgViewer.Services.Common
         public virtual async Task<RssFeed> GetNewsRssAsync()
         {
             //prepare URL to request
-            var language = _languageService.GetTwoLetterIsoLanguageName(_workContext.WorkingLanguage);
-            var url = string.Format(TvProgCommonDefaults.TVProgViewerNewsRssPath,
-                TvProgVersion.CurrentVersion,
+            var language = _languageService.GetTwoLetterIsoLanguageName(await _workContext.GetWorkingLanguageAsync());
+            var url = string.Format(TvProgCommonDefaults.TvProgNewsRssPath,
+                TvProgVersion.CURRENT_VERSION,
                 _webHelper.IsLocalRequest(_httpContextAccessor.HttpContext.Request),
                 _adminAreaSettings.HideAdvertisementsOnAdminArea,
                 _webHelper.GetStoreLocation(),
                 language).ToLowerInvariant();
 
             //get news feed
-            using var stream = await _httpClient.GetStreamAsync(url);
-                return await RssFeed.LoadAsync(stream);
+            await using var stream = await _httpClient.GetStreamAsync(url);
+            return await RssFeed.LoadAsync(stream);
+        }
+
+        /// <summary>
+        /// Notification about the successful installation
+        /// </summary>
+        /// <param name="email">Admin email</param>
+        /// <param name="languageCode">Language code</param>
+        /// <param name="culture">Culture name</param>
+        /// <returns>The asynchronous task whose result contains the result string</returns>
+        public virtual async Task<string> InstallationCompletedAsync(string email, string languageCode, string culture)
+        {
+            //prepare URL to request
+            var url = string.Format(TvProgCommonDefaults.TvProgInstallationCompletedPath,
+                TvProgVersion.CURRENT_VERSION,
+                _webHelper.IsLocalRequest(_httpContextAccessor.HttpContext.Request),
+                WebUtility.UrlEncode(email),
+                _webHelper.GetStoreLocation(),
+                languageCode,
+                culture)
+                .ToLowerInvariant();
+
+            //this request takes some more time
+            _httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+            return await _httpClient.GetStringAsync(url);
         }
 
         /// <summary>
@@ -111,8 +135,8 @@ namespace TVProgViewer.Services.Common
         public virtual async Task<string> GetExtensionsCategoriesAsync()
         {
             //prepare URL to request
-            var language = _languageService.GetTwoLetterIsoLanguageName(_workContext.WorkingLanguage);
-            var url = string.Format(TvProgCommonDefaults.TVProgViewerExtensionsCategoriesPath, language).ToLowerInvariant();
+            var language = _languageService.GetTwoLetterIsoLanguageName(await _workContext.GetWorkingLanguageAsync());
+            var url = string.Format(TvProgCommonDefaults.TvProgExtensionsCategoriesPath, language).ToLowerInvariant();
 
             //get XML response
             return await _httpClient.GetStringAsync(url);
@@ -125,8 +149,8 @@ namespace TVProgViewer.Services.Common
         public virtual async Task<string> GetExtensionsVersionsAsync()
         {
             //prepare URL to request
-            var language = _languageService.GetTwoLetterIsoLanguageName(_workContext.WorkingLanguage);
-            var url = string.Format(TvProgCommonDefaults.TVProgViewerExtensionsVersionsPath, language).ToLowerInvariant();
+            var language = _languageService.GetTwoLetterIsoLanguageName(await _workContext.GetWorkingLanguageAsync());
+            var url = string.Format(TvProgCommonDefaults.TvProgExtensionsVersionsPath, language).ToLowerInvariant();
 
             //get XML response
             return await _httpClient.GetStringAsync(url);
@@ -147,8 +171,8 @@ namespace TVProgViewer.Services.Common
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
             //prepare URL to request
-            var language = _languageService.GetTwoLetterIsoLanguageName(_workContext.WorkingLanguage);
-            var url = string.Format(TvProgCommonDefaults.TVProgViewerExtensionsPath,
+            var language = _languageService.GetTwoLetterIsoLanguageName(await _workContext.GetWorkingLanguageAsync());
+            var url = string.Format(TvProgCommonDefaults.TvProgExtensionsPath,
                 categoryId, versionId, price, WebUtility.UrlEncode(searchTerm), pageIndex, pageSize, language).ToLowerInvariant();
 
             //get XML response

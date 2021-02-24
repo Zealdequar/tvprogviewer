@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Topics;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Topics;
 using TVProgViewer.WebUI.Areas.Admin.Models.Topics;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
@@ -11,16 +12,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <summary>
         /// Prepare topic search model
         /// </summary>
-        /// <param name="model">Topic search model</param>
+        /// <param name="searchModel">Topic search model</param>
         /// <returns>Topic search model</returns>
-        TopicSearchModel PrepareTopicSearchModel(TopicSearchModel searchModel);
+        Task<TopicSearchModel> PrepareTopicSearchModelAsync(TopicSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged topic list model
         /// </summary>
         /// <param name="searchModel">Topic search model</param>
         /// <returns>Topic list model</returns>
-        TopicListModel PrepareTopicListModel(TopicSearchModel searchModel);
+        Task<TopicListModel> PrepareTopicListModelAsync(TopicSearchModel searchModel);
 
         /// <summary>
         /// Prepare topic model
@@ -29,6 +30,6 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="topic">Topic</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>Topic model</returns>
-        TopicModel PrepareTopicModel(TopicModel model, Topic topic, bool excludeProperties = false);
+        Task<TopicModel> PrepareTopicModelAsync(TopicModel model, Topic topic, bool excludeProperties = false);
     }
 }

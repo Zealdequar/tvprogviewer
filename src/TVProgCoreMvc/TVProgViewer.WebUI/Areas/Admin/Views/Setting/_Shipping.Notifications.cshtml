@@ -1,7 +1,7 @@
 @model ShippingSettingsModel
 
-<div class="panel-body">
-    <div class="form-group">
+<div class="card-body">
+    <div class="form-group row">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="NotifyUserAboutShippingFromMultipleLocations_OverrideForStore" asp-input="NotifyUserAboutShippingFromMultipleLocations" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="NotifyUserAboutShippingFromMultipleLocations" />
@@ -11,7 +11,7 @@
             <span asp-validation-for="NotifyUserAboutShippingFromMultipleLocations"></span>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="DisplayShipmentEventsToUsers_OverrideForStore" asp-input="DisplayShipmentEventsToUsers" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="DisplayShipmentEventsToUsers" />
@@ -21,7 +21,7 @@
             <span asp-validation-for="DisplayShipmentEventsToUsers"></span>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="DisplayShipmentEventsToStoreOwner_OverrideForStore" asp-input="DisplayShipmentEventsToStoreOwner" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="DisplayShipmentEventsToStoreOwner" />

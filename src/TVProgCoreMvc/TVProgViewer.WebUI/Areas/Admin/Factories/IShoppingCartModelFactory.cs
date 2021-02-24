@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Users;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.WebUI.Areas.Admin.Models.ShoppingCart;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
@@ -13,14 +14,14 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shopping cart search model</param>
         /// <returns>Shopping cart search model</returns>
-        ShoppingCartSearchModel PrepareShoppingCartSearchModel(ShoppingCartSearchModel searchModel);
+        Task<ShoppingCartSearchModel> PrepareShoppingCartSearchModelAsync(ShoppingCartSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged shopping cart list model
         /// </summary>
         /// <param name="searchModel">Shopping cart search model</param>
         /// <returns>Shopping cart list model</returns>
-        ShoppingCartListModel PrepareShoppingCartListModel(ShoppingCartSearchModel searchModel);
+        Task<ShoppingCartListModel> PrepareShoppingCartListModelAsync(ShoppingCartSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged shopping cart item list model
@@ -28,6 +29,6 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Shopping cart item search model</param>
         /// <param name="user">User</param>
         /// <returns>Shopping cart item list model</returns>
-        ShoppingCartItemListModel PrepareShoppingCartItemListModel(ShoppingCartItemSearchModel searchModel, User user);
+        Task<ShoppingCartItemListModel> PrepareShoppingCartItemListModelAsync(ShoppingCartItemSearchModel searchModel, User user);
     }
 }

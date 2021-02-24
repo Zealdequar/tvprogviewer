@@ -9,20 +9,20 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Catalog
 {
     public partial class ProductAttributeValueModelValidator : BaseTvProgValidator<ProductAttributeValueModel>
     {
-        public ProductAttributeValueModelValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public ProductAttributeValueModelValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .WithMessage(localizationService.GetResource("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Name.Required"));
+                .WithMessageAwait(localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Name.Required"));
 
             RuleFor(x => x.Quantity)
                 .GreaterThanOrEqualTo(1)
-                .WithMessage(localizationService.GetResource("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Quantity.GreaterThanOrEqualTo1"))
+                .WithMessageAwait(localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.Quantity.GreaterThanOrEqualTo1"))
                 .When(x => x.AttributeValueTypeId == (int)AttributeValueType.AssociatedToProduct && !x.UserEntersQty);
 
             RuleFor(x => x.AssociatedProductId)
                 .GreaterThanOrEqualTo(1)
-                .WithMessage(localizationService.GetResource("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct.Choose"))
+                .WithMessageAwait(localizationService.GetResourceAsync("Admin.Catalog.Products.ProductAttributes.Attributes.Values.Fields.AssociatedProduct.Choose"))
                 .When(x => x.AttributeValueTypeId == (int)AttributeValueType.AssociatedToProduct);
 
             SetDatabaseValidationRules<ProductAttributeValue>(dataProvider);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.WebUI.Models.User;
 
 namespace TVProgViewer.WebUI.Factories
@@ -12,6 +13,6 @@ namespace TVProgViewer.WebUI.Factories
         /// Prepare the external authentication method model
         /// </summary>
         /// <returns>List of the external authentication method model</returns>
-        List<ExternalAuthenticationMethodModel> PrepareExternalMethodsModel();
+        Task<List<ExternalAuthenticationMethodModel>> PrepareExternalMethodsModelAsync();
     }
 }

@@ -11,7 +11,6 @@ using TVProgViewer.Web.Framework.Security;
 namespace TVProgViewer.WebUI.Areas.Admin.Controllers
 {
     [Area(AreaNames.Admin)]
-    [HttpsRequirement(SslRequirement.Yes)]
     [AutoValidateAntiforgeryToken]
     [ValidateIpAddress]
     [AuthorizeAdmin]

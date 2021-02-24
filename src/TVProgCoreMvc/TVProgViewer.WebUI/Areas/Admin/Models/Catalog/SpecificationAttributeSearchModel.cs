@@ -7,5 +7,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Catalog
     /// </summary>
     public partial record SpecificationAttributeSearchModel : BaseSearchModel
     {
+        #region Properties
+
+        public int SpecificationAttributeGroupId { get; set; }
+
+        #endregion
     }
 }

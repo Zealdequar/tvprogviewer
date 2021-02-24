@@ -9,10 +9,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Messages
 {
     public partial class NewsLetterSubscriptionValidator : BaseTvProgValidator<NewsletterSubscriptionModel>
     {
-        public NewsLetterSubscriptionValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public NewsLetterSubscriptionValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Email).NotEmpty().WithMessage(localizationService.GetResource("Admin.Promotions.NewsLetterSubscriptions.Fields.Email.Required"));
-            RuleFor(x => x.Email).EmailAddress().WithMessage(localizationService.GetResource("Admin.Common.WrongEmail"));
+            RuleFor(x => x.Email).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Promotions.NewsLetterSubscriptions.Fields.Email.Required"));
+            RuleFor(x => x.Email).EmailAddress().WithMessageAwait(localizationService.GetResourceAsync("Admin.Common.WrongEmail"));
 
             SetDatabaseValidationRules<NewsLetterSubscription>(dataProvider);
         }

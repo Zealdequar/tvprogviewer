@@ -22,6 +22,9 @@ using TVProgViewer.Services.Shipping;
 using TVProgViewer.Services.Vendors;
 using TVProgViewer.WebUI.Models.Common;
 using TVProgViewer.WebUI.Models.Order;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Directory;
+using TVProgViewer.Services.Users;
 
 namespace TVProgViewer.WebUI.Factories
 {
@@ -38,8 +41,8 @@ namespace TVProgViewer.WebUI.Factories
         private readonly IAddressService _addressService;
         private readonly ICountryService _countryService;
         private readonly ICurrencyService _currencyService;
+        private readonly IUserService _userService;
         private readonly IDateTimeHelper _dateTimeHelper;
-        private readonly IDownloadService _downloadService;
         private readonly IGiftCardService _giftCardService;
         private readonly ILocalizationService _localizationService;
         private readonly IOrderProcessingService _orderProcessingService;
@@ -51,6 +54,7 @@ namespace TVProgViewer.WebUI.Factories
         private readonly IProductService _productService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShipmentService _shipmentService;
+        private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IVendorService _vendorService;
@@ -72,8 +76,8 @@ namespace TVProgViewer.WebUI.Factories
             IAddressService addressService,
             ICountryService countryService,
             ICurrencyService currencyService,
+            IUserService userService,
             IDateTimeHelper dateTimeHelper,
-            IDownloadService downloadService,
             IGiftCardService giftCardService,
             ILocalizationService localizationService,
             IOrderProcessingService orderProcessingService,
@@ -85,6 +89,7 @@ namespace TVProgViewer.WebUI.Factories
             IProductService productService,
             IRewardPointService rewardPointService,
             IShipmentService shipmentService,
+            IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
             IUrlRecordService urlRecordService,
             IVendorService vendorService,
@@ -102,8 +107,8 @@ namespace TVProgViewer.WebUI.Factories
             _addressService = addressService;
             _countryService = countryService;
             _currencyService = currencyService;
+            _userService = userService;
             _dateTimeHelper = dateTimeHelper;
-            _downloadService = downloadService;
             _giftCardService = giftCardService;
             _localizationService = localizationService;
             _orderProcessingService = orderProcessingService;
@@ -115,6 +120,7 @@ namespace TVProgViewer.WebUI.Factories
             _productService = productService;
             _rewardPointService = rewardPointService;
             _shipmentService = shipmentService;
+            _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
             _urlRecordService = urlRecordService;
             _vendorService = vendorService;
@@ -135,48 +141,48 @@ namespace TVProgViewer.WebUI.Factories
         /// Prepare the user order list model
         /// </summary>
         /// <returns>User order list model</returns>
-        public virtual UserOrderListModel PrepareUserOrderListModel()
+        public virtual async Task<UserOrderListModel> PrepareUserOrderListModelAsync()
         {
             var model = new UserOrderListModel();
-            var orders = _orderService.SearchOrders(storeId: _storeContext.CurrentStore.Id,
-                userId: _workContext.CurrentUser.Id);
+            var orders = await _orderService.SearchOrdersAsync(storeId: (await _storeContext.GetCurrentStoreAsync()).Id,
+                userId: (await _workContext.GetCurrentUserAsync()).Id);
             foreach (var order in orders)
             {
                 var orderModel = new UserOrderListModel.OrderDetailsModel
                 {
                     Id = order.Id,
-                    CreatedOn = _dateTimeHelper.ConvertToUserTime(order.CreatedOnUtc, DateTimeKind.Utc),
+                    CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(order.CreatedOnUtc, DateTimeKind.Utc),
                     OrderStatusEnum = order.OrderStatus,
-                    OrderStatus = _localizationService.GetLocalizedEnum(order.OrderStatus),
-                    PaymentStatus = _localizationService.GetLocalizedEnum(order.PaymentStatus),
-                    ShippingStatus = _localizationService.GetLocalizedEnum(order.ShippingStatus),
-                    IsReturnRequestAllowed = _orderProcessingService.IsReturnRequestAllowed(order),
+                    OrderStatus = await _localizationService.GetLocalizedEnumAsync(order.OrderStatus),
+                    PaymentStatus = await _localizationService.GetLocalizedEnumAsync(order.PaymentStatus),
+                    ShippingStatus = await _localizationService.GetLocalizedEnumAsync(order.ShippingStatus),
+                    IsReturnRequestAllowed = await _orderProcessingService.IsReturnRequestAllowedAsync(order),
                     CustomOrderNumber = order.CustomOrderNumber
                 };
                 var orderTotalInUserCurrency = _currencyService.ConvertCurrency(order.OrderTotal, order.CurrencyRate);
-                orderModel.OrderTotal = _priceFormatter.FormatPrice(orderTotalInUserCurrency, true, order.UserCurrencyCode, false, _workContext.WorkingLanguage);
+                orderModel.OrderTotal = await _priceFormatter.FormatPriceAsync(orderTotalInUserCurrency, true, order.UserCurrencyCode, false, (await _workContext.GetWorkingLanguageAsync()).Id);
 
                 model.Orders.Add(orderModel);
             }
 
-            var recurringPayments = _orderService.SearchRecurringPayments(_storeContext.CurrentStore.Id,
-                _workContext.CurrentUser.Id);
+            var recurringPayments = await _orderService.SearchRecurringPaymentsAsync((await _storeContext.GetCurrentStoreAsync()).Id,
+                (await _workContext.GetCurrentUserAsync()).Id);
             foreach (var recurringPayment in recurringPayments)
             {
-                var order = _orderService.GetOrderById(recurringPayment.InitialOrderId);
+                var order = await _orderService.GetOrderByIdAsync(recurringPayment.InitialOrderId);
 
                 var recurringPaymentModel = new UserOrderListModel.RecurringOrderModel
                 {
                     Id = recurringPayment.Id,
-                    StartDate = _dateTimeHelper.ConvertToUserTime(recurringPayment.StartDateUtc, DateTimeKind.Utc).ToString(),
-                    CycleInfo = $"{recurringPayment.CycleLength} {_localizationService.GetLocalizedEnum(recurringPayment.CyclePeriod)}",
-                    NextPayment = _orderProcessingService.GetNextPaymentDate(recurringPayment) is DateTime nextPaymentDate ? _dateTimeHelper.ConvertToUserTime(nextPaymentDate, DateTimeKind.Utc).ToString() : "",
+                    StartDate = (await _dateTimeHelper.ConvertToUserTimeAsync(recurringPayment.StartDateUtc, DateTimeKind.Utc)).ToString(),
+                    CycleInfo = $"{recurringPayment.CycleLength} {await _localizationService.GetLocalizedEnumAsync(recurringPayment.CyclePeriod)}",
+                    NextPayment = await _orderProcessingService.GetNextPaymentDateAsync(recurringPayment) is DateTime nextPaymentDate ? (await _dateTimeHelper.ConvertToUserTimeAsync(nextPaymentDate, DateTimeKind.Utc)).ToString() : "",
                     TotalCycles = recurringPayment.TotalCycles,
-                    CyclesRemaining = _orderProcessingService.GetCyclesRemaining(recurringPayment),
+                    CyclesRemaining = await _orderProcessingService.GetCyclesRemainingAsync(recurringPayment),
                     InitialOrderId = order.Id,
                     InitialOrderNumber = order.CustomOrderNumber,
-                    CanCancel = _orderProcessingService.CanCancelRecurringPayment(_workContext.CurrentUser, recurringPayment),
-                    CanRetryLastPayment = _orderProcessingService.CanRetryLastRecurringPayment(_workContext.CurrentUser, recurringPayment)
+                    CanCancel = await _orderProcessingService.CanCancelRecurringPaymentAsync(await _workContext.GetCurrentUserAsync(), recurringPayment),
+                    CanRetryLastPayment = await _orderProcessingService.CanRetryLastRecurringPaymentAsync(await _workContext.GetCurrentUserAsync(), recurringPayment)
                 };
 
                 model.RecurringOrders.Add(recurringPaymentModel);
@@ -190,22 +196,22 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>Order details model</returns>
-        public virtual OrderDetailsModel PrepareOrderDetailsModel(Order order)
+        public virtual async Task<OrderDetailsModel> PrepareOrderDetailsModelAsync(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
             var model = new OrderDetailsModel
             {
                 Id = order.Id,
-                CreatedOn = _dateTimeHelper.ConvertToUserTime(order.CreatedOnUtc, DateTimeKind.Utc),
-                OrderStatus = _localizationService.GetLocalizedEnum(order.OrderStatus),
+                CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(order.CreatedOnUtc, DateTimeKind.Utc),
+                OrderStatus = await _localizationService.GetLocalizedEnumAsync(order.OrderStatus),
                 IsReOrderAllowed = _orderSettings.IsReOrderAllowed,
-                IsReturnRequestAllowed = _orderProcessingService.IsReturnRequestAllowed(order),
+                IsReturnRequestAllowed = await _orderProcessingService.IsReturnRequestAllowedAsync(order),
                 PdfInvoiceDisabled = _pdfSettings.DisablePdfInvoicesForPendingOrders && order.OrderStatus == OrderStatus.Pending,
                 CustomOrderNumber = order.CustomOrderNumber,
 
                 //shipping info
-                ShippingStatus = _localizationService.GetLocalizedEnum(order.ShippingStatus)
+                ShippingStatus = await _localizationService.GetLocalizedEnumAsync(order.ShippingStatus)
             };
             if (order.ShippingStatus != ShippingStatus.ShippingNotRequired)
             {
@@ -213,21 +219,26 @@ namespace TVProgViewer.WebUI.Factories
                 model.PickupInStore = order.PickupInStore;
                 if (!order.PickupInStore)
                 {
-                    var shippingAddress = _addressService.GetAddressById(order.ShippingAddressId ?? 0);
+                    var shippingAddress = await _addressService.GetAddressByIdAsync(order.ShippingAddressId ?? 0);
 
-                    _addressModelFactory.PrepareAddressModel(model.ShippingAddress,
+                    await _addressModelFactory.PrepareAddressModelAsync(model.ShippingAddress,
                         address: shippingAddress,
                         excludeProperties: false,
                         addressSettings: _addressSettings);
                 }
-                else if (order.PickupAddressId.HasValue && _addressService.GetAddressById(order.PickupAddressId.Value) is Address pickupAddress)
+                else if (order.PickupAddressId.HasValue && await _addressService.GetAddressByIdAsync(order.PickupAddressId.Value) is Address pickupAddress)
                 {
                     model.PickupAddress = new AddressModel
                     {
                         Address1 = pickupAddress.Address1,
                         City = pickupAddress.City,
                         County = pickupAddress.County,
-                        CountryName = _countryService.GetCountryByAddress(pickupAddress)?.Name ?? string.Empty,
+                        StateProvinceName = await _stateProvinceService.GetStateProvinceByAddressAsync(pickupAddress) is StateProvince stateProvince
+                            ? await _localizationService.GetLocalizedAsync(stateProvince, entity => entity.Name)
+                            : string.Empty,
+                        CountryName = await _countryService.GetCountryByAddressAsync(pickupAddress) is Country country
+                            ? await _localizationService.GetLocalizedAsync(country, entity => entity.Name)
+                            : string.Empty,
                         ZipPostalCode = pickupAddress.ZipPostalCode
                     };
                 }
@@ -235,7 +246,7 @@ namespace TVProgViewer.WebUI.Factories
                 model.ShippingMethod = order.ShippingMethod;
 
                 //shipments (only already shipped)
-                var shipments = _shipmentService.GetShipmentsByOrderId(order.Id, true).OrderBy(x => x.CreatedOnUtc).ToList();
+                var shipments = (await _shipmentService.GetShipmentsByOrderIdAsync(order.Id, true)).OrderBy(x => x.CreatedOnUtc).ToList();
                 foreach (var shipment in shipments)
                 {
                     var shipmentModel = new OrderDetailsModel.ShipmentBriefModel
@@ -244,17 +255,17 @@ namespace TVProgViewer.WebUI.Factories
                         TrackingNumber = shipment.TrackingNumber,
                     };
                     if (shipment.ShippedDateUtc.HasValue)
-                        shipmentModel.ShippedDate = _dateTimeHelper.ConvertToUserTime(shipment.ShippedDateUtc.Value, DateTimeKind.Utc);
+                        shipmentModel.ShippedDate = await _dateTimeHelper.ConvertToUserTimeAsync(shipment.ShippedDateUtc.Value, DateTimeKind.Utc);
                     if (shipment.DeliveryDateUtc.HasValue)
-                        shipmentModel.DeliveryDate = _dateTimeHelper.ConvertToUserTime(shipment.DeliveryDateUtc.Value, DateTimeKind.Utc);
+                        shipmentModel.DeliveryDate = await _dateTimeHelper.ConvertToUserTimeAsync(shipment.DeliveryDateUtc.Value, DateTimeKind.Utc);
                     model.Shipments.Add(shipmentModel);
                 }
             }
 
-            var billingAddress = _addressService.GetAddressById(order.BillingAddressId);
+            var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
             //billing info
-            _addressModelFactory.PrepareAddressModel(model.BillingAddress,
+            await _addressModelFactory.PrepareAddressModelAsync(model.BillingAddress,
                 address: billingAddress,
                 excludeProperties: false,
                 addressSettings: _addressSettings);
@@ -262,11 +273,15 @@ namespace TVProgViewer.WebUI.Factories
             //VAT number
             model.VatNumber = order.VatNumber;
 
+            var languageId = (await _workContext.GetWorkingLanguageAsync()).Id;
+
             //payment method
-            var paymentMethod = _paymentPluginManager.LoadPluginBySystemName(order.PaymentMethodSystemName);
-            model.PaymentMethod = paymentMethod != null ? _localizationService.GetLocalizedFriendlyName(paymentMethod, _workContext.WorkingLanguage.Id) : order.PaymentMethodSystemName;
-            model.PaymentMethodStatus = _localizationService.GetLocalizedEnum(order.PaymentStatus);
-            model.CanRePostProcessPayment = _paymentService.CanRePostProcessPayment(order);
+            var user = await _userService.GetUserByIdAsync(order.UserId);
+            var paymentMethod = await _paymentPluginManager
+                .LoadPluginBySystemNameAsync(order.PaymentMethodSystemName, user, order.StoreId);
+            model.PaymentMethod = paymentMethod != null ? await _localizationService.GetLocalizedFriendlyNameAsync(paymentMethod, languageId) : order.PaymentMethodSystemName;
+            model.PaymentMethodStatus = await _localizationService.GetLocalizedEnumAsync(order.PaymentStatus);
+            model.CanRePostProcessPayment = await _paymentService.CanRePostProcessPaymentAsync(order);
             //custom values
             model.CustomValues = _paymentService.DeserializeCustomValues(order);
 
@@ -277,11 +292,11 @@ namespace TVProgViewer.WebUI.Factories
 
                 //order subtotal
                 var orderSubtotalInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubtotalInclTax, order.CurrencyRate);
-                model.OrderSubtotal = _priceFormatter.FormatPrice(orderSubtotalInclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, true);
+                model.OrderSubtotal = await _priceFormatter.FormatPriceAsync(orderSubtotalInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                 //discount (applied to order subtotal)
                 var orderSubTotalDiscountInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubTotalDiscountInclTax, order.CurrencyRate);
                 if (orderSubTotalDiscountInclTaxInUserCurrency > decimal.Zero)
-                    model.OrderSubTotalDiscount = _priceFormatter.FormatPrice(-orderSubTotalDiscountInclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, true);
+                    model.OrderSubTotalDiscount = await _priceFormatter.FormatPriceAsync(-orderSubTotalDiscountInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
             }
             else
             {
@@ -289,11 +304,11 @@ namespace TVProgViewer.WebUI.Factories
 
                 //order subtotal
                 var orderSubtotalExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubtotalExclTax, order.CurrencyRate);
-                model.OrderSubtotal = _priceFormatter.FormatPrice(orderSubtotalExclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, false);
+                model.OrderSubtotal = await _priceFormatter.FormatPriceAsync(orderSubtotalExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                 //discount (applied to order subtotal)
                 var orderSubTotalDiscountExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubTotalDiscountExclTax, order.CurrencyRate);
                 if (orderSubTotalDiscountExclTaxInUserCurrency > decimal.Zero)
-                    model.OrderSubTotalDiscount = _priceFormatter.FormatPrice(-orderSubTotalDiscountExclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, false);
+                    model.OrderSubTotalDiscount = await _priceFormatter.FormatPriceAsync(-orderSubTotalDiscountExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
             }
 
             if (order.UserTaxDisplayType == TaxDisplayType.IncludingTax)
@@ -302,11 +317,11 @@ namespace TVProgViewer.WebUI.Factories
 
                 //order shipping
                 var orderShippingInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderShippingInclTax, order.CurrencyRate);
-                model.OrderShipping = _priceFormatter.FormatShippingPrice(orderShippingInclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, true);
+                model.OrderShipping = await _priceFormatter.FormatShippingPriceAsync(orderShippingInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                 //payment method additional fee
                 var paymentMethodAdditionalFeeInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.PaymentMethodAdditionalFeeInclTax, order.CurrencyRate);
                 if (paymentMethodAdditionalFeeInclTaxInUserCurrency > decimal.Zero)
-                    model.PaymentMethodAdditionalFee = _priceFormatter.FormatPaymentMethodAdditionalFee(paymentMethodAdditionalFeeInclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, true);
+                    model.PaymentMethodAdditionalFee = await _priceFormatter.FormatPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFeeInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
             }
             else
             {
@@ -314,11 +329,11 @@ namespace TVProgViewer.WebUI.Factories
 
                 //order shipping
                 var orderShippingExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderShippingExclTax, order.CurrencyRate);
-                model.OrderShipping = _priceFormatter.FormatShippingPrice(orderShippingExclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, false);
+                model.OrderShipping = await _priceFormatter.FormatShippingPriceAsync(orderShippingExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                 //payment method additional fee
                 var paymentMethodAdditionalFeeExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.PaymentMethodAdditionalFeeExclTax, order.CurrencyRate);
                 if (paymentMethodAdditionalFeeExclTaxInUserCurrency > decimal.Zero)
-                    model.PaymentMethodAdditionalFee = _priceFormatter.FormatPaymentMethodAdditionalFee(paymentMethodAdditionalFeeExclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, false);
+                    model.PaymentMethodAdditionalFee = await _priceFormatter.FormatPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFeeExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
             }
 
             //tax
@@ -343,16 +358,14 @@ namespace TVProgViewer.WebUI.Factories
                     displayTax = !displayTaxRates;
 
                     var orderTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderTax, order.CurrencyRate);
-                    //TODO pass languageId to _priceFormatter.FormatPrice
-                    model.Tax = _priceFormatter.FormatPrice(orderTaxInUserCurrency, true, order.UserCurrencyCode, false, _workContext.WorkingLanguage);
+                    model.Tax = await _priceFormatter.FormatPriceAsync(orderTaxInUserCurrency, true, order.UserCurrencyCode, false, languageId);
 
                     foreach (var tr in taxRates)
                     {
                         model.TaxRates.Add(new OrderDetailsModel.TaxRate
                         {
                             Rate = _priceFormatter.FormatTaxRate(tr.Key),
-                            //TODO pass languageId to _priceFormatter.FormatPrice
-                            Value = _priceFormatter.FormatPrice(_currencyService.ConvertCurrency(tr.Value, order.CurrencyRate), true, order.UserCurrencyCode, false, _workContext.WorkingLanguage),
+                            Value = await _priceFormatter.FormatPriceAsync(_currencyService.ConvertCurrency(tr.Value, order.CurrencyRate), true, order.UserCurrencyCode, false, languageId),
                         });
                     }
                 }
@@ -365,34 +378,34 @@ namespace TVProgViewer.WebUI.Factories
             //discount (applied to order total)
             var orderDiscountInUserCurrency = _currencyService.ConvertCurrency(order.OrderDiscount, order.CurrencyRate);
             if (orderDiscountInUserCurrency > decimal.Zero)
-                model.OrderTotalDiscount = _priceFormatter.FormatPrice(-orderDiscountInUserCurrency, true, order.UserCurrencyCode, false, _workContext.WorkingLanguage);
+                model.OrderTotalDiscount = await _priceFormatter.FormatPriceAsync(-orderDiscountInUserCurrency, true, order.UserCurrencyCode, false, languageId);
 
             //gift cards
-            foreach (var gcuh in _giftCardService.GetGiftCardUsageHistory(order))
+            foreach (var gcuh in await _giftCardService.GetGiftCardUsageHistoryAsync(order))
             {
                 model.GiftCards.Add(new OrderDetailsModel.GiftCard
                 {
-                    CouponCode = _giftCardService.GetGiftCardById(gcuh.GiftCardId).GiftCardCouponCode,
-                    Amount = _priceFormatter.FormatPrice(-(_currencyService.ConvertCurrency(gcuh.UsedValue, order.CurrencyRate)), true, order.UserCurrencyCode, false, _workContext.WorkingLanguage),
+                    CouponCode = (await _giftCardService.GetGiftCardByIdAsync(gcuh.GiftCardId)).GiftCardCouponCode,
+                    Amount = await _priceFormatter.FormatPriceAsync(-(_currencyService.ConvertCurrency(gcuh.UsedValue, order.CurrencyRate)), true, order.UserCurrencyCode, false, languageId),
                 });
             }
 
             //reward points           
-            if (order.RedeemedRewardPointsEntryId.HasValue && _rewardPointService.GetRewardPointsHistoryEntryById(order.RedeemedRewardPointsEntryId.Value) is RewardPointsHistory redeemedRewardPointsEntry)
+            if (order.RedeemedRewardPointsEntryId.HasValue && await _rewardPointService.GetRewardPointsHistoryEntryByIdAsync(order.RedeemedRewardPointsEntryId.Value) is RewardPointsHistory redeemedRewardPointsEntry)
             {
                 model.RedeemedRewardPoints = -redeemedRewardPointsEntry.Points;
-                model.RedeemedRewardPointsAmount = _priceFormatter.FormatPrice(-(_currencyService.ConvertCurrency(redeemedRewardPointsEntry.UsedAmount, order.CurrencyRate)), true, order.UserCurrencyCode, false, _workContext.WorkingLanguage);
+                model.RedeemedRewardPointsAmount = await _priceFormatter.FormatPriceAsync(-(_currencyService.ConvertCurrency(redeemedRewardPointsEntry.UsedAmount, order.CurrencyRate)), true, order.UserCurrencyCode, false, languageId);
             }
 
             //total
             var orderTotalInUserCurrency = _currencyService.ConvertCurrency(order.OrderTotal, order.CurrencyRate);
-            model.OrderTotal = _priceFormatter.FormatPrice(orderTotalInUserCurrency, true, order.UserCurrencyCode, false, _workContext.WorkingLanguage);
+            model.OrderTotal = await _priceFormatter.FormatPriceAsync(orderTotalInUserCurrency, true, order.UserCurrencyCode, false, languageId);
 
             //checkout attributes
             model.CheckoutAttributeInfo = order.CheckoutAttributeDescription;
 
             //order notes
-            foreach (var orderNote in _orderService.GetOrderNotesByOrderId(order.Id, true)
+            foreach (var orderNote in (await _orderService.GetOrderNotesByOrderIdAsync(order.Id, true))
                 .OrderByDescending(on => on.CreatedOnUtc)
                 .ToList())
             {
@@ -401,7 +414,7 @@ namespace TVProgViewer.WebUI.Factories
                     Id = orderNote.Id,
                     HasDownload = orderNote.DownloadId > 0,
                     Note = _orderService.FormatOrderNoteText(orderNote),
-                    CreatedOn = _dateTimeHelper.ConvertToUserTime(orderNote.CreatedOnUtc, DateTimeKind.Utc)
+                    CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(orderNote.CreatedOnUtc, DateTimeKind.Utc)
                 });
             }
 
@@ -409,21 +422,21 @@ namespace TVProgViewer.WebUI.Factories
             model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
             model.ShowVendorName = _vendorSettings.ShowVendorOnOrderDetailsPage;
 
-            var orderItems = _orderService.GetOrderItems(order.Id);
+            var orderItems = await _orderService.GetOrderItemsAsync(order.Id);
 
             foreach (var orderItem in orderItems)
             {
-                var product = _productService.GetProductById(orderItem.ProductId);
+                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
                 var orderItemModel = new OrderDetailsModel.OrderItemModel
                 {
                     Id = orderItem.Id,
                     OrderItemGuid = orderItem.OrderItemGuid,
-                    Sku = _productService.FormatSku(product, orderItem.AttributesXml),
-                    VendorName = _vendorService.GetVendorById(product.VendorId)?.Name ?? string.Empty,
+                    Sku = await _productService.FormatSkuAsync(product, orderItem.AttributesXml),
+                    VendorName = (await _vendorService.GetVendorByIdAsync(product.VendorId))?.Name ?? string.Empty,
                     ProductId = product.Id,
-                    ProductName = _localizationService.GetLocalized(product, x => x.Name),
-                    ProductSeName = _urlRecordService.GetSeName(product),
+                    ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
+                    ProductSeName = await _urlRecordService.GetSeNameAsync(product),
                     Quantity = orderItem.Quantity,
                     AttributeInfo = orderItem.AttributeDescription,
                 };
@@ -434,7 +447,7 @@ namespace TVProgViewer.WebUI.Factories
                         ? _productService.FormatRentalDate(product, orderItem.RentalStartDateUtc.Value) : "";
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
                         ? _productService.FormatRentalDate(product, orderItem.RentalEndDateUtc.Value) : "";
-                    orderItemModel.RentalInfo = string.Format(_localizationService.GetResource("Order.Rental.FormattedDate"),
+                    orderItemModel.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                 }
                 model.Items.Add(orderItemModel);
@@ -444,25 +457,25 @@ namespace TVProgViewer.WebUI.Factories
                 {
                     //including tax
                     var unitPriceInclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.UnitPriceInclTax, order.CurrencyRate);
-                    orderItemModel.UnitPrice = _priceFormatter.FormatPrice(unitPriceInclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, true);
+                    orderItemModel.UnitPrice = await _priceFormatter.FormatPriceAsync(unitPriceInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
 
                     var priceInclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.PriceInclTax, order.CurrencyRate);
-                    orderItemModel.SubTotal = _priceFormatter.FormatPrice(priceInclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, true);
+                    orderItemModel.SubTotal = await _priceFormatter.FormatPriceAsync(priceInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                 }
                 else
                 {
                     //excluding tax
                     var unitPriceExclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.UnitPriceExclTax, order.CurrencyRate);
-                    orderItemModel.UnitPrice = _priceFormatter.FormatPrice(unitPriceExclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, false);
+                    orderItemModel.UnitPrice = await _priceFormatter.FormatPriceAsync(unitPriceExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
 
                     var priceExclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.PriceExclTax, order.CurrencyRate);
-                    orderItemModel.SubTotal = _priceFormatter.FormatPrice(priceExclTaxInUserCurrency, true, order.UserCurrencyCode, _workContext.WorkingLanguage, false);
+                    orderItemModel.SubTotal = await _priceFormatter.FormatPriceAsync(priceExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                 }
 
                 //downloadable products
-                if (_downloadService.IsDownloadAllowed(orderItem))
+                if (await _orderService.IsDownloadAllowedAsync(orderItem))
                     orderItemModel.DownloadId = product.DownloadId;
-                if (_downloadService.IsLicenseDownloadAllowed(orderItem))
+                if (await _orderService.IsLicenseDownloadAllowedAsync(orderItem))
                     orderItemModel.LicenseId = orderItem.LicenseDownloadId ?? 0;
             }
 
@@ -474,12 +487,12 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="shipment">Shipment</param>
         /// <returns>Shipment details model</returns>
-        public virtual ShipmentDetailsModel PrepareShipmentDetailsModel(Shipment shipment)
+        public virtual async Task<ShipmentDetailsModel> PrepareShipmentDetailsModelAsync(Shipment shipment)
         {
             if (shipment == null)
                 throw new ArgumentNullException(nameof(shipment));
 
-            var order = _orderService.GetOrderById(shipment.OrderId);
+            var order = await _orderService.GetOrderByIdAsync(shipment.OrderId);
 
             if (order == null)
                 throw new Exception("order cannot be loaded");
@@ -488,28 +501,28 @@ namespace TVProgViewer.WebUI.Factories
                 Id = shipment.Id
             };
             if (shipment.ShippedDateUtc.HasValue)
-                model.ShippedDate = _dateTimeHelper.ConvertToUserTime(shipment.ShippedDateUtc.Value, DateTimeKind.Utc);
+                model.ShippedDate = await _dateTimeHelper.ConvertToUserTimeAsync(shipment.ShippedDateUtc.Value, DateTimeKind.Utc);
             if (shipment.DeliveryDateUtc.HasValue)
-                model.DeliveryDate = _dateTimeHelper.ConvertToUserTime(shipment.DeliveryDateUtc.Value, DateTimeKind.Utc);
+                model.DeliveryDate = await _dateTimeHelper.ConvertToUserTimeAsync(shipment.DeliveryDateUtc.Value, DateTimeKind.Utc);
 
             //tracking number and shipment information
             if (!string.IsNullOrEmpty(shipment.TrackingNumber))
             {
                 model.TrackingNumber = shipment.TrackingNumber;
-                var shipmentTracker = _shipmentService.GetShipmentTracker(shipment);
+                var shipmentTracker = await _shipmentService.GetShipmentTrackerAsync(shipment);
                 if (shipmentTracker != null)
                 {
-                    model.TrackingNumberUrl = shipmentTracker.GetUrl(shipment.TrackingNumber);
+                    model.TrackingNumberUrl = await shipmentTracker.GetUrlAsync(shipment.TrackingNumber);
                     if (_shippingSettings.DisplayShipmentEventsToUsers)
                     {
-                        var shipmentEvents = shipmentTracker.GetShipmentEvents(shipment.TrackingNumber);
+                        var shipmentEvents = await shipmentTracker.GetShipmentEventsAsync(shipment.TrackingNumber);
                         if (shipmentEvents != null)
                             foreach (var shipmentEvent in shipmentEvents)
                             {
                                 var shipmentStatusEventModel = new ShipmentDetailsModel.ShipmentStatusEventModel();
-                                var shipmentEventCountry = _countryService.GetCountryByTwoLetterIsoCode(shipmentEvent.CountryCode);
+                                var shipmentEventCountry = await _countryService.GetCountryByTwoLetterIsoCodeAsync(shipmentEvent.CountryCode);
                                 shipmentStatusEventModel.Country = shipmentEventCountry != null
-                                    ? _localizationService.GetLocalized(shipmentEventCountry, x => x.Name) : shipmentEvent.CountryCode;
+                                    ? await _localizationService.GetLocalizedAsync(shipmentEventCountry, x => x.Name) : shipmentEvent.CountryCode;
                                 shipmentStatusEventModel.Date = shipmentEvent.Date;
                                 shipmentStatusEventModel.EventName = shipmentEvent.EventName;
                                 shipmentStatusEventModel.Location = shipmentEvent.Location;
@@ -521,21 +534,21 @@ namespace TVProgViewer.WebUI.Factories
 
             //products in this shipment
             model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
-            foreach (var shipmentItem in _shipmentService.GetShipmentItemsByShipmentId(shipment.Id))
+            foreach (var shipmentItem in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
             {
-                var orderItem = _orderService.GetOrderItemById(shipmentItem.OrderItemId);
+                var orderItem = await _orderService.GetOrderItemByIdAsync(shipmentItem.OrderItemId);
                 if (orderItem == null)
                     continue;
 
-                var product = _productService.GetProductById(orderItem.ProductId);
+                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
                 var shipmentItemModel = new ShipmentDetailsModel.ShipmentItemModel
                 {
                     Id = shipmentItem.Id,
-                    Sku = _productService.FormatSku(product, orderItem.AttributesXml),
+                    Sku = await _productService.FormatSkuAsync(product, orderItem.AttributesXml),
                     ProductId = product.Id,
-                    ProductName = _localizationService.GetLocalized(product, x => x.Name),
-                    ProductSeName = _urlRecordService.GetSeName(product),
+                    ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
+                    ProductSeName = await _urlRecordService.GetSeNameAsync(product),
                     AttributeInfo = orderItem.AttributeDescription,
                     QuantityOrdered = orderItem.Quantity,
                     QuantityShipped = shipmentItem.Quantity,
@@ -547,14 +560,14 @@ namespace TVProgViewer.WebUI.Factories
                         ? _productService.FormatRentalDate(product, orderItem.RentalStartDateUtc.Value) : "";
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
                         ? _productService.FormatRentalDate(product, orderItem.RentalEndDateUtc.Value) : "";
-                    shipmentItemModel.RentalInfo = string.Format(_localizationService.GetResource("Order.Rental.FormattedDate"),
+                    shipmentItemModel.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                 }
                 model.Items.Add(shipmentItemModel);
             }
 
             //order details model
-            model.Order = PrepareOrderDetailsModel(order);
+            model.Order = await PrepareOrderDetailsModelAsync(order);
 
             return model;
         }
@@ -564,31 +577,31 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="page">Number of items page; pass null to load the first page</param>
         /// <returns>User reward points model</returns>
-        public virtual UserRewardPointsModel PrepareUserRewardPoints(int? page)
+        public virtual async Task<UserRewardPointsModel> PrepareUserRewardPointsAsync(int? page)
         {
             //get reward points history
-            var user = _workContext.CurrentUser;
-            var store = _storeContext.CurrentStore;
+            var user = await _workContext.GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
             var pageSize = _rewardPointsSettings.PageSize;
-            var rewardPoints = _rewardPointService.GetRewardPointsHistory(user.Id, store.Id, true, pageIndex: --page ?? 0, pageSize: pageSize);
+            var rewardPoints = await _rewardPointService.GetRewardPointsHistoryAsync(user.Id, store.Id, true, pageIndex: --page ?? 0, pageSize: pageSize);
 
             //prepare model
             var model = new UserRewardPointsModel
             {
-                RewardPoints = rewardPoints.Select(historyEntry =>
+                RewardPoints = await rewardPoints.SelectAwait(async historyEntry =>
                 {
-                    var activatingDate = _dateTimeHelper.ConvertToUserTime(historyEntry.CreatedOnUtc, DateTimeKind.Utc);
+                    var activatingDate = await _dateTimeHelper.ConvertToUserTimeAsync(historyEntry.CreatedOnUtc, DateTimeKind.Utc);
                     return new UserRewardPointsModel.RewardPointsHistoryModel
                     {
                         Points = historyEntry.Points,
                         PointsBalance = historyEntry.PointsBalance.HasValue ? historyEntry.PointsBalance.ToString()
-                            : string.Format(_localizationService.GetResource("RewardPoints.ActivatedLater"), activatingDate),
+                            : string.Format(await _localizationService.GetResourceAsync("RewardPoints.ActivatedLater"), activatingDate),
                         Message = historyEntry.Message,
                         CreatedOn = activatingDate,
                         EndDate = !historyEntry.EndDateUtc.HasValue ? null :
-                            (DateTime?)_dateTimeHelper.ConvertToUserTime(historyEntry.EndDateUtc.Value, DateTimeKind.Utc)
+                            (DateTime?)(await _dateTimeHelper.ConvertToUserTimeAsync(historyEntry.EndDateUtc.Value, DateTimeKind.Utc))
                     };
-                }).ToList(),
+                }).ToListAsync(),
 
                 PagerModel = new PagerModel
                 {
@@ -603,18 +616,18 @@ namespace TVProgViewer.WebUI.Factories
             };
 
             //current amount/balance
-            var rewardPointsBalance = _rewardPointService.GetRewardPointsBalance(user.Id, _storeContext.CurrentStore.Id);
-            var rewardPointsAmountBase = _orderTotalCalculationService.ConvertRewardPointsToAmount(rewardPointsBalance);
-            var rewardPointsAmount = _currencyService.ConvertFromPrimaryStoreCurrency(rewardPointsAmountBase, _workContext.WorkingCurrency);
+            var rewardPointsBalance = await _rewardPointService.GetRewardPointsBalanceAsync(user.Id, (await _storeContext.GetCurrentStoreAsync()).Id);
+            var rewardPointsAmountBase = await _orderTotalCalculationService.ConvertRewardPointsToAmountAsync(rewardPointsBalance);
+            var rewardPointsAmount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(rewardPointsAmountBase, await _workContext.GetWorkingCurrencyAsync());
             model.RewardPointsBalance = rewardPointsBalance;
-            model.RewardPointsAmount = _priceFormatter.FormatPrice(rewardPointsAmount, true, false);
+            model.RewardPointsAmount = await _priceFormatter.FormatPriceAsync(rewardPointsAmount, true, false);
 
             //minimum amount/balance
             var minimumRewardPointsBalance = _rewardPointsSettings.MinimumRewardPointsToUse;
-            var minimumRewardPointsAmountBase = _orderTotalCalculationService.ConvertRewardPointsToAmount(minimumRewardPointsBalance);
-            var minimumRewardPointsAmount = _currencyService.ConvertFromPrimaryStoreCurrency(minimumRewardPointsAmountBase, _workContext.WorkingCurrency);
+            var minimumRewardPointsAmountBase = await _orderTotalCalculationService.ConvertRewardPointsToAmountAsync(minimumRewardPointsBalance);
+            var minimumRewardPointsAmount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(minimumRewardPointsAmountBase, await _workContext.GetWorkingCurrencyAsync());
             model.MinimumRewardPointsBalance = minimumRewardPointsBalance;
-            model.MinimumRewardPointsAmount = _priceFormatter.FormatPrice(minimumRewardPointsAmount, true, false);
+            model.MinimumRewardPointsAmount = await _priceFormatter.FormatPriceAsync(minimumRewardPointsAmount, true, false);
 
             return model;
         }

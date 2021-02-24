@@ -74,9 +74,6 @@ namespace TVProgViewer.Web.Framework.Infrastructure
 
             //use request localization
             application.UseTVProgViewerRequestLocalization();
-
-            //set request culture
-            application.UseCulture();
         }
 
         /// <summary>

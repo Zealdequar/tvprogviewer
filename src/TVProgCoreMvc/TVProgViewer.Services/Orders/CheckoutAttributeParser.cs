@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Core.Infrastructure;
@@ -48,14 +49,12 @@ namespace TVProgViewer.Services.Orders
 
                 foreach (XmlNode node in xmlDoc.SelectNodes(@"//Attributes/CheckoutAttribute"))
                 {
-                    if (node.Attributes?["ID"] == null) 
+                    if (node.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node.Attributes["ID"].InnerText.Trim();
                     if (int.TryParse(str1, out var id))
-                    {
                         ids.Add(id);
-                    }
                 }
             }
             catch (Exception exc)
@@ -75,7 +74,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Selected checkout attributes</returns>
-        public virtual IList<CheckoutAttribute> ParseCheckoutAttributes(string attributesXml)
+        public virtual async Task<IList<CheckoutAttribute>> ParseCheckoutAttributesAsync(string attributesXml)
         {
             var result = new List<CheckoutAttribute>();
             if (string.IsNullOrEmpty(attributesXml))
@@ -84,11 +83,9 @@ namespace TVProgViewer.Services.Orders
             var ids = ParseCheckoutAttributeIds(attributesXml);
             foreach (var id in ids)
             {
-                var attribute = _checkoutAttributeService.GetCheckoutAttributeById(id);
+                var attribute = await _checkoutAttributeService.GetCheckoutAttributeByIdAsync(id);
                 if (attribute != null)
-                {
                     result.Add(attribute);
-                }
             }
 
             return result;
@@ -99,12 +96,12 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Checkout attribute values</returns>
-        public virtual IEnumerable<(CheckoutAttribute attribute, IEnumerable<CheckoutAttributeValue> values)> ParseCheckoutAttributeValues(string attributesXml)
+        public virtual async IAsyncEnumerable<(CheckoutAttribute attribute, IAsyncEnumerable<CheckoutAttributeValue> values)> ParseCheckoutAttributeValues(string attributesXml)
         {
             if (string.IsNullOrEmpty(attributesXml))
                 yield break;
 
-            var attributes = ParseCheckoutAttributes(attributesXml);
+            var attributes = await ParseCheckoutAttributesAsync(attributesXml);
 
             foreach (var attribute in attributes)
             {
@@ -116,7 +113,7 @@ namespace TVProgViewer.Services.Orders
                 yield return (attribute, getValues(valuesStr));
             }
 
-            IEnumerable<CheckoutAttributeValue> getValues(IList<string> valuesStr)
+            async IAsyncEnumerable<CheckoutAttributeValue> getValues(IList<string> valuesStr)
             {
                 foreach (var valueStr in valuesStr)
                 {
@@ -126,7 +123,7 @@ namespace TVProgViewer.Services.Orders
                     if (!int.TryParse(valueStr, out var id))
                         continue;
 
-                    var value = _checkoutAttributeService.GetCheckoutAttributeValueById(id);
+                    var value = await _checkoutAttributeService.GetCheckoutAttributeValueByIdAsync(id);
                     if (value != null)
                         yield return value;
                 }
@@ -153,14 +150,14 @@ namespace TVProgViewer.Services.Orders
                 var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/CheckoutAttribute");
                 foreach (XmlNode node1 in nodeList1)
                 {
-                    if (node1.Attributes?["ID"] == null) 
+                    if (node1.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node1.Attributes["ID"].InnerText.Trim();
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != checkoutAttributeId) 
+                    if (id != checkoutAttributeId)
                         continue;
 
                     var nodeList2 = node1.SelectNodes(@"CheckoutAttributeValue/Value");
@@ -198,9 +195,7 @@ namespace TVProgViewer.Services.Orders
                     xmlDoc.AppendChild(element1);
                 }
                 else
-                {
                     xmlDoc.LoadXml(attributesXml);
-                }
 
                 var rootElement = (XmlElement)xmlDoc.SelectSingleNode(@"//Attributes");
 
@@ -209,15 +204,15 @@ namespace TVProgViewer.Services.Orders
                 var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/CheckoutAttribute");
                 foreach (XmlNode node1 in nodeList1)
                 {
-                    if (node1.Attributes?["ID"] == null) 
+                    if (node1.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node1.Attributes["ID"].InnerText.Trim();
 
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != ca.Id) 
+                    if (id != ca.Id)
                         continue;
 
                     attributeElement = (XmlElement)node1;
@@ -255,7 +250,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="cart">Shopping cart items</param>
         /// <returns>Updated attributes in XML format</returns>
-        public virtual string EnsureOnlyActiveAttributes(string attributesXml, IList<ShoppingCartItem> cart)
+        public virtual async Task<string> EnsureOnlyActiveAttributesAsync(string attributesXml, IList<ShoppingCartItem> cart)
         {
             if (string.IsNullOrEmpty(attributesXml))
                 return attributesXml;
@@ -264,12 +259,12 @@ namespace TVProgViewer.Services.Orders
 
             //removing "shippable" checkout attributes if there's no any shippable products in the cart
             var shoppingCartService = EngineContext.Current.Resolve<IShoppingCartService>();
-            if (shoppingCartService.ShoppingCartRequiresShipping(cart))
+            if (await shoppingCartService.ShoppingCartRequiresShippingAsync(cart))
                 return result;
 
             //find attribute IDs to remove
             var checkoutAttributeIdsToRemove = new List<int>();
-            var attributes = ParseCheckoutAttributes(attributesXml);
+            var attributes = await ParseCheckoutAttributesAsync(attributesXml);
 
             foreach (var ca in attributes)
                 if (ca.ShippableProductRequired)
@@ -283,24 +278,20 @@ namespace TVProgViewer.Services.Orders
                 var nodesToRemove = new List<XmlNode>();
                 foreach (XmlNode node in xmlDoc.SelectNodes(@"//Attributes/CheckoutAttribute"))
                 {
-                    if (node.Attributes?["ID"] == null) 
+                    if (node.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node.Attributes["ID"].InnerText.Trim();
 
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
                     if (checkoutAttributeIdsToRemove.Contains(id))
-                    {
                         nodesToRemove.Add(node);
-                    }
                 }
 
                 foreach (var node in nodesToRemove)
-                {
                     node.ParentNode.RemoveChild(node);
-                }
 
                 result = xmlDoc.OuterXml;
             }
@@ -318,7 +309,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="attribute">Checkout attribute</param>
         /// <param name="selectedAttributesXml">Selected attributes (XML format)</param>
         /// <returns>Result</returns>
-        public virtual bool? IsConditionMet(CheckoutAttribute attribute, string selectedAttributesXml)
+        public virtual async Task<bool?> IsConditionMetAsync(CheckoutAttribute attribute, string selectedAttributesXml)
         {
             if (attribute == null)
                 throw new ArgumentNullException(nameof(attribute));
@@ -329,7 +320,7 @@ namespace TVProgViewer.Services.Orders
                 return null;
 
             //load an attribute this one depends on
-            var dependOnAttribute = ParseCheckoutAttributes(conditionAttributeXml).FirstOrDefault();
+            var dependOnAttribute = (await ParseCheckoutAttributesAsync(conditionAttributeXml)).FirstOrDefault();
             if (dependOnAttribute == null)
                 return true;
 
@@ -377,9 +368,7 @@ namespace TVProgViewer.Services.Orders
                     xmlDoc.AppendChild(element1);
                 }
                 else
-                {
                     xmlDoc.LoadXml(attributesXml);
-                }
 
                 var rootElement = (XmlElement)xmlDoc.SelectSingleNode(@"//Attributes");
 
@@ -388,12 +377,12 @@ namespace TVProgViewer.Services.Orders
                 var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/CheckoutAttribute");
                 foreach (XmlNode node1 in nodeList1)
                 {
-                    if (node1.Attributes?["ID"] == null) 
+                    if (node1.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node1.Attributes["ID"].InnerText.Trim();
 
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
                     if (id != attribute.Id)
@@ -405,9 +394,7 @@ namespace TVProgViewer.Services.Orders
 
                 //found
                 if (attributeElement != null)
-                {
                     rootElement.RemoveChild(attributeElement);
-                }
 
                 result = xmlDoc.OuterXml;
             }

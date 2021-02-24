@@ -7,6 +7,7 @@ using TVProgViewer.Services.Messages;
 using TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper.Extensions;
 using TVProgViewer.WebUI.Areas.Admin.Models.Messages;
 using TVProgViewer.Web.Framework.Models.Extensions;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -38,7 +39,25 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         }
 
         #endregion
-        
+
+        #region Utilities
+
+        /// <summary>
+        /// Gets a friendly email account name
+        /// </summary>
+        protected virtual string GetEmailAccountName(EmailAccount emailAccount)
+        {
+            if (emailAccount == null)
+                return string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(emailAccount.DisplayName))
+                return emailAccount.Email + " (" + emailAccount.DisplayName + ")";
+
+            return emailAccount.Email;
+        }
+
+        #endregion
+
         #region Methods
 
         /// <summary>
@@ -46,7 +65,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Queued email search model</param>
         /// <returns>Queued email search model</returns>
-        public virtual QueuedEmailSearchModel PrepareQueuedEmailSearchModel(QueuedEmailSearchModel searchModel)
+        public virtual Task<QueuedEmailSearchModel> PrepareQueuedEmailSearchModelAsync(QueuedEmailSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -57,7 +76,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             //prepare page parameters
             searchModel.SetGridPageSize();
 
-            return searchModel;
+            return Task.FromResult(searchModel);
         }
 
         /// <summary>
@@ -65,19 +84,19 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Queued email search model</param>
         /// <returns>Queued email list model</returns>
-        public virtual QueuedEmailListModel PrepareQueuedEmailListModel(QueuedEmailSearchModel searchModel)
+        public virtual async Task<QueuedEmailListModel> PrepareQueuedEmailListModelAsync(QueuedEmailSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get parameters to filter emails
             var startDateValue = !searchModel.SearchStartDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.SearchStartDate.Value, _dateTimeHelper.CurrentTimeZone);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.SearchStartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
             var endDateValue = !searchModel.SearchEndDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.SearchEndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.SearchEndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
 
             //get queued emails
-            var queuedEmails = _queuedEmailService.SearchEmails(fromEmail: searchModel.SearchFromEmail,
+            var queuedEmails = await _queuedEmailService.SearchEmailsAsync(fromEmail: searchModel.SearchFromEmail,
                 toEmail: searchModel.SearchToEmail,
                 createdFromUtc: startDateValue,
                 createdToUtc: endDateValue,
@@ -88,9 +107,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare list model
-            var model = new QueuedEmailListModel().PrepareToGrid(searchModel, queuedEmails, () =>
+            var model = await new QueuedEmailListModel().PrepareToGridAsync(searchModel, queuedEmails, () =>
             {
-                return queuedEmails.Select(queuedEmail =>
+                return queuedEmails.SelectAwait(async queuedEmail =>
                 {
                     //fill in model values from the entity
                     var queuedEmailModel = queuedEmail.ToModel<QueuedEmailModel>();
@@ -99,19 +118,21 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     queuedEmailModel.Body = string.Empty;
 
                     //convert dates to the user time
-                    queuedEmailModel.CreatedOn = _dateTimeHelper.ConvertToUserTime(queuedEmail.CreatedOnUtc, DateTimeKind.Utc);
+                    queuedEmailModel.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(queuedEmail.CreatedOnUtc, DateTimeKind.Utc);
 
                     //fill in additional values (not existing in the entity)
-                    queuedEmailModel.EmailAccountName = _emailAccountService.GetEmailAccountById(queuedEmail.EmailAccountId)?.FriendlyName ?? string.Empty;
-                    queuedEmailModel.PriorityName = _localizationService.GetLocalizedEnum(queuedEmail.Priority);
+                    var emailAccount = await _emailAccountService.GetEmailAccountByIdAsync(queuedEmail.EmailAccountId);
+                    queuedEmailModel.EmailAccountName = GetEmailAccountName(emailAccount);
+                    queuedEmailModel.PriorityName = await _localizationService.GetLocalizedEnumAsync(queuedEmail.Priority);
+
                     if (queuedEmail.DontSendBeforeDateUtc.HasValue)
                     {
-                        queuedEmailModel.DontSendBeforeDate = _dateTimeHelper
-                            .ConvertToUserTime(queuedEmail.DontSendBeforeDateUtc.Value, DateTimeKind.Utc);
+                        queuedEmailModel.DontSendBeforeDate = await _dateTimeHelper
+                            .ConvertToUserTimeAsync(queuedEmail.DontSendBeforeDateUtc.Value, DateTimeKind.Utc);
                     }
 
                     if (queuedEmail.SentOnUtc.HasValue)
-                        queuedEmailModel.SentOn = _dateTimeHelper.ConvertToUserTime(queuedEmail.SentOnUtc.Value, DateTimeKind.Utc);
+                        queuedEmailModel.SentOn = await _dateTimeHelper.ConvertToUserTimeAsync(queuedEmail.SentOnUtc.Value, DateTimeKind.Utc);
 
                     return queuedEmailModel;
                 });
@@ -127,7 +148,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="queuedEmail">Queued email</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>Queued email model</returns>
-        public virtual QueuedEmailModel PrepareQueuedEmailModel(QueuedEmailModel model, QueuedEmail queuedEmail, bool excludeProperties = false)
+        public virtual async Task<QueuedEmailModel> PrepareQueuedEmailModelAsync(QueuedEmailModel model, QueuedEmail queuedEmail, bool excludeProperties = false)
         {
             if (queuedEmail == null)
                 return model;
@@ -135,15 +156,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             //fill in model values from the entity
             model ??= queuedEmail.ToModel<QueuedEmailModel>();
 
-            model.EmailAccountName = _emailAccountService.GetEmailAccountById(queuedEmail.EmailAccountId)?.FriendlyName ?? string.Empty;
-            model.PriorityName = _localizationService.GetLocalizedEnum(queuedEmail.Priority);
-            model.CreatedOn = _dateTimeHelper.ConvertToUserTime(queuedEmail.CreatedOnUtc, DateTimeKind.Utc);
+            model.EmailAccountName = GetEmailAccountName(await _emailAccountService.GetEmailAccountByIdAsync(queuedEmail.EmailAccountId));
+            model.PriorityName = await _localizationService.GetLocalizedEnumAsync(queuedEmail.Priority);
+            model.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(queuedEmail.CreatedOnUtc, DateTimeKind.Utc);
 
             if (queuedEmail.SentOnUtc.HasValue)
-                model.SentOn = _dateTimeHelper.ConvertToUserTime(queuedEmail.SentOnUtc.Value, DateTimeKind.Utc);
+                model.SentOn = await _dateTimeHelper.ConvertToUserTimeAsync(queuedEmail.SentOnUtc.Value, DateTimeKind.Utc);
             if (queuedEmail.DontSendBeforeDateUtc.HasValue)
-                model.DontSendBeforeDate = _dateTimeHelper.ConvertToUserTime(queuedEmail.DontSendBeforeDateUtc.Value, DateTimeKind.Utc);
-            else model.SendImmediately = true;
+                model.DontSendBeforeDate = await _dateTimeHelper.ConvertToUserTimeAsync(queuedEmail.DontSendBeforeDateUtc.Value, DateTimeKind.Utc);
+            else
+                model.SendImmediately = true;
 
             return model;
         }

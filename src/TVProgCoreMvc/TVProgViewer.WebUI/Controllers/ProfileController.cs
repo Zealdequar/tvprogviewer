@@ -4,12 +4,10 @@ using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Security;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework;
-using TVProgViewer.Web.Framework.Mvc.Filters;
-using TVProgViewer.Web.Framework.Security;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
-    [HttpsRequirement(SslRequirement.No)]
     public partial class ProfileController : BasePublicController
     {
         private readonly UserSettings _userSettings;
@@ -28,7 +26,7 @@ namespace TVProgViewer.WebUI.Controllers
             _profileModelFactory = profileModelFactory;
         }
 
-        public virtual IActionResult Index(int? id, int? pageNumber)
+        public virtual async Task<IActionResult> Index(int? id, int? pageNumber)
         {
             if (!_userSettings.AllowViewingProfiles)
             {
@@ -41,17 +39,17 @@ namespace TVProgViewer.WebUI.Controllers
                 userId = id.Value;
             }
 
-            var user = _userService.GetUserById(userId);
-            if (user == null || _userService.IsGuest(user))
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null || await _userService.IsGuestAsync(user))
             {
                 return RedirectToRoute("Homepage");
             }
 
             //display "edit" (manage) link
-            if (_permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel) && _permissionService.Authorize(StandardPermissionProvider.ManageUsers))
+            if (await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageUsers))
                 DisplayEditLink(Url.Action("Edit", "User", new { id = user.Id, area = AreaNames.Admin }));
 
-            var model = _profileModelFactory.PrepareProfileIndexModel(user, pageNumber);
+            var model = await _profileModelFactory.PrepareProfileIndexModelAsync(user, pageNumber);
             return View(model);
         }
     }

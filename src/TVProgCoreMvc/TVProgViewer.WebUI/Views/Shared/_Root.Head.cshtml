@@ -1,17 +1,18 @@
-﻿@using TVProgViewer.Core.Domain
-@using StackExchange.Profiling
+﻿@using StackExchange.Profiling
+@using TVProgViewer.Core.Configuration
 @using TVProgViewer.Core.Domain.Common
 @using TVProgViewer.Core.Domain.Seo
 @using TVProgViewer.Services.Events
 @using TVProgViewer.Services.Security
 @using TVProgViewer.Web.Framework.Events
 @using TVProgViewer.Core
+@using TVProgViewer.Core.Events
 @inject CommonSettings commonSettings
 @inject IEventPublisher eventPublisher
 @inject IPermissionService permissionService
 @inject IWorkContext workContext
 @inject SeoSettings seoSettings
-@inject StoreInformationSettings storeInformationSettings
+@inject AppSettings appSettings
 @inject TVProgViewer.Services.Localization.ILanguageService languageService
 @{
     Html.AppendCssFileParts(ResourceLocation.Head, "~/css/styles.css");
@@ -33,37 +34,34 @@
     Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-validate/jquery.validate.unobtrusive-v3.2.11/jquery.validate.unobtrusive.min.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery-validate/jquery.validate-v1.19.1/jquery.validate.min.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jquery/jquery-3.4.1.min.js");
-    //X-UA-Compatible tag
-    if (commonSettings.RenderXuaCompatible)
-    {
-        Html.AppendHeadCustomParts($"<meta http-equiv=\"X-UA-Compatible\" content=\"{commonSettings.XuaCompatibleValue}\"/>");
-    }
+    
     //custom tag(s);
     if (!string.IsNullOrEmpty(seoSettings.CustomHeadTags))
     {
         Html.AppendHeadCustomParts(seoSettings.CustomHeadTags);
     }
-    var displayMiniProfiler = storeInformationSettings.DisplayMiniProfilerInPublicStore
-        && (!storeInformationSettings.DisplayMiniProfilerForAdminOnly || permissionService.Authorize(StandardPermissionProvider.AccessAdminPanel));
+
+    var displayMiniProfiler = appSettings.CommonConfig.MiniProfilerEnabled && await permissionService.AuthorizeAsync(StandardPermissionProvider.AccessProfiling);
+
     //event
-    eventPublisher.Publish(new PageRenderingEvent(this.Html));
+    await eventPublisher.PublishAsync(new PageRenderingEvent(this.Html));
 }
 <!DOCTYPE html>
-<html lang="@languageService.GetTwoLetterIsoLanguageName(workContext.WorkingLanguage)" @(this.ShouldUseRtlTheme() ? Html.Raw(" dir=\"rtl\"") : null) @Html.TVProgViewerPageCssClasses()>
+<html lang="@languageService.GetTwoLetterIsoLanguageName(await workContext.GetWorkingLanguageAsync())" @(await this.ShouldUseRtlThemeAsync() ? Html.Raw(" dir=\"rtl\"") : null) @Html.TvProgPageCssClasses()>
 <head>
-    <title>@Html.TVProgViewerTitle()</title>
+    <title>@Html.TvProgTitle()</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    <meta name="description" content="@(Html.TVProgViewerMetaDescription())" />
-    <meta name="keywords" content="@(Html.TVProgViewerMetaKeywords())" />
+    <meta name="description" content="@(Html.TvProgMetaDescription())" />
+    <meta name="keywords" content="@(Html.TvProgMetaKeywords())" />
     <meta name="generator" content="nopCommerce" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    @Html.TVProgViewerHeadCustom()
+    @Html.TvProgHeadCustom()
     @*This is used so that themes can inject content into the header*@
     @await Html.PartialAsync("Head")
     @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.HeadHtmlTag })
-    @Html.TVProgViewerCssFiles(ResourceLocation.Head)
-    @Html.TVProgViewerScripts(ResourceLocation.Head)
-    @Html.TVProgViewerCanonicalUrls()
+    @Html.TvProgCssFiles(ResourceLocation.Head)
+    @Html.TvProgScripts(ResourceLocation.Head)
+    @Html.TvProgCanonicalUrls()
     @await Component.InvokeAsync("NewsRssHeaderLink")
     @await Component.InvokeAsync("BlogRssHeaderLink")
     @*Insert favicon and app icons head code*@
@@ -72,7 +70,7 @@
     {
         <mini-profiler />
     }
-    @Html.TVProgViewerInlineScripts(ResourceLocation.Head)
+    @Html.TvProgInlineScripts(ResourceLocation.Head)
 </head>
 <body>
     <div class="navbar navbar-inverse tvprog-navbar" role="navigation">
@@ -89,8 +87,8 @@
         </div>
     </div>
     @RenderBody()
-    @Html.TVProgViewerCssFiles(ResourceLocation.Footer)
-    @Html.TVProgViewerScripts(ResourceLocation.Footer)
-    @Html.TVProgViewerInlineScripts(ResourceLocation.Footer)
+    @Html.TvProgCssFiles(ResourceLocation.Footer)
+    @Html.TvProgScripts(ResourceLocation.Footer)
+    @Html.TvProgInlineScripts(ResourceLocation.Footer)
 </body>
 </html>

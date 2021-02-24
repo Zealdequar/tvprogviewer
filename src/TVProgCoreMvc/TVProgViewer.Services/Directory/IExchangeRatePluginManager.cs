@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Users;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Services.Plugins;
 
 namespace TVProgViewer.Services.Directory
@@ -11,10 +12,10 @@ namespace TVProgViewer.Services.Directory
         /// <summary>
         /// Load primary active exchange rate provider
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Exchange rate provider</returns>
-        IExchangeRateProvider LoadPrimaryPlugin(User User = null, int storeId = 0);
+        Task<IExchangeRateProvider> LoadPrimaryPluginAsync(User user = null, int storeId = 0);
 
         /// <summary>
         /// Check whether the passed exchange rate provider is active

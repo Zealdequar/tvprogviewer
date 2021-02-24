@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using TVProgViewer.Web.Framework.Components;
 using TVProgViewer.WebUI.Factories;
@@ -17,9 +14,9 @@ namespace TVProgViewer.WebUI.Components
             _commonModelFactory = commonModelFactory;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var model = _commonModelFactory.PrepareTvCategorySelectorModel();
+            var model = await _commonModelFactory.PrepareTvCategorySelectorModelAsync();
             return View(model);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -13,9 +14,9 @@ namespace TVProgViewer.WebUI.Components
             _catalogModelFactory = catalogModelFactory;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var model = _catalogModelFactory.PrepareSearchBoxModel();
+            var model = await _catalogModelFactory.PrepareSearchBoxModelAsync();
             return View(model);
         }
     }

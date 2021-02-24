@@ -2,6 +2,7 @@
 using TVProgViewer.Core.Domain.Tax;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -17,12 +18,12 @@ namespace TVProgViewer.WebUI.Components
             _taxSettings = taxSettings;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             if (!_taxSettings.AllowUsersToSelectTaxDisplayType)
                 return Content("");
 
-            var model = _commonModelFactory.PrepareTaxTypeSelectorModel();
+            var model = await _commonModelFactory.PrepareTaxTypeSelectorModelAsync();
             return View(model);
         }
     }

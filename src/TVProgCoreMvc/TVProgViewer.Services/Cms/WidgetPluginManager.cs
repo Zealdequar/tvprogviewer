@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Cms;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Services.Plugins;
+using TVProgViewer.Services.Users;
 
 namespace TVProgViewer.Services.Cms
 {
@@ -20,8 +22,9 @@ namespace TVProgViewer.Services.Cms
 
         #region Ctor
 
-        public WidgetPluginManager(WidgetSettings widgetSettings,
-            IPluginService pluginService) : base(pluginService)
+        public WidgetPluginManager(IUserService userService,
+            IPluginService pluginService,
+            WidgetSettings widgetSettings) : base(userService, pluginService)
         {
             _widgetSettings = widgetSettings;
         }
@@ -33,20 +36,18 @@ namespace TVProgViewer.Services.Cms
         /// <summary>
         /// Load active widgets
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <param name="widgetZone">Widget zone; pass null to load all plugins</param>
         /// <returns>List of active widget</returns>
-        public virtual IList<IWidgetPlugin> LoadActivePlugins(User User = null, int storeId = 0, string widgetZone = null)
+        public virtual async Task<IList<IWidgetPlugin>> LoadActivePluginsAsync(User user = null, int storeId = 0, string widgetZone = null)
         {
-            var widgets = LoadActivePlugins(_widgetSettings.ActiveWidgetSystemNames, User, storeId);
+            var widgets = await LoadActivePluginsAsync(_widgetSettings.ActiveWidgetSystemNames, user, storeId);
 
             //filter by widget zone
             if (!string.IsNullOrEmpty(widgetZone))
-            {
-                widgets = widgets.Where(widget =>
-                    widget.GetWidgetZones().Contains(widgetZone, StringComparer.InvariantCultureIgnoreCase)).ToList();
-            }
+                widgets = await widgets.WhereAwait(async widget =>
+                    (await widget.GetWidgetZonesAsync()).Contains(widgetZone, StringComparer.InvariantCultureIgnoreCase)).ToListAsync();
 
             return widgets;
         }
@@ -65,12 +66,13 @@ namespace TVProgViewer.Services.Cms
         /// Check whether the widget with the passed system name is active
         /// </summary>
         /// <param name="systemName">System name of widget to check</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Result</returns>
-        public virtual bool IsPluginActive(string systemName, User User = null, int storeId = 0)
+        public virtual async Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0)
         {
-            var widget = LoadPluginBySystemName(systemName, User, storeId);
+            var widget = await LoadPluginBySystemNameAsync(systemName, user, storeId);
+
             return IsPluginActive(widget);
         }
 

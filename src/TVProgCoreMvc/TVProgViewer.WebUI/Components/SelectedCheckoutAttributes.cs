@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -13,9 +14,9 @@ namespace TVProgViewer.WebUI.Components
             _shoppingCartModelFactory = shoppingCartModelFactory;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var attributes = _shoppingCartModelFactory.FormatSelectedCheckoutAttributes();
+            var attributes = await _shoppingCartModelFactory.FormatSelectedCheckoutAttributesAsync();
             return View(null, attributes);
         }
     }

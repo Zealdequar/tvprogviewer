@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Caching;
-using TVProgViewer.Core.Defaults;
 using TVProgViewer.Core.Infrastructure;
 using TVProgViewer.Services.Common;
 using TVProgViewer.Services.Themes;
@@ -63,7 +62,7 @@ namespace TVProgViewer.Services.Plugins
             //read the content of this entry if exists
             using var unzippedEntryStream = uploadedItemsFileEntry.Open();
             using var reader = new StreamReader(unzippedEntryStream);
-                return JsonConvert.DeserializeObject<IList<UploadedItem>>(reader.ReadToEnd());
+            return JsonConvert.DeserializeObject<IList<UploadedItem>>(reader.ReadToEnd());
         }
 
         /// <summary>
@@ -113,24 +112,22 @@ namespace TVProgViewer.Services.Plugins
                         continue;
 
                     using var unzippedEntryStream = entry.Open();
-                    using (var reader = new StreamReader(unzippedEntryStream))
+                    using var reader = new StreamReader(unzippedEntryStream);
+                    //whether a plugin is upload 
+                    if (isPluginDescriptor)
                     {
-                        //whether a plugin is upload 
-                        if (isPluginDescriptor)
-                        {
-                            descriptor = PluginDescriptor.GetPluginDescriptorFromText(reader.ReadToEnd());
+                        descriptor = PluginDescriptor.GetPluginDescriptorFromText(reader.ReadToEnd());
 
-                            //ensure that the plugin current version is supported
-                            if (!((PluginDescriptor)descriptor).SupportedVersions.Contains(TvProgVersion.CurrentVersion))
-                                throw new Exception($"This plugin doesn't support the current version - {TvProgVersion.CurrentVersion}");
-                        }
-
-                        //or whether a theme is upload 
-                        if (isThemeDescriptor)
-                            descriptor = _themeProvider.GetThemeDescriptorFromText(reader.ReadToEnd());
-
-                        break;
+                        //ensure that the plugin current version is supported
+                        if (!((PluginDescriptor)descriptor).SupportedVersions.Contains(TvProgVersion.CURRENT_VERSION))
+                            throw new Exception($"This plugin doesn't support the current version - {TvProgVersion.CURRENT_VERSION}");
                     }
+
+                    //or whether a theme is upload 
+                    if (isThemeDescriptor)
+                        descriptor = _themeProvider.GetThemeDescriptorFromText(reader.ReadToEnd());
+
+                    break;
                 }
             }
 
@@ -181,8 +178,8 @@ namespace TVProgViewer.Services.Plugins
                     if (!item.Type.HasValue)
                         continue;
 
-                    //ensure that the current version of TvProg is supported
-                    if (!item.SupportedVersions?.Contains(TvProgVersion.CurrentVersion) ?? true)
+                    //ensure that the current version of nopCommerce is supported
+                    if (!item.SupportedVersions?.Contains(TvProgVersion.CURRENT_VERSION) ?? true)
                         continue;
 
                     //the item path should end with a slash
@@ -203,22 +200,23 @@ namespace TVProgViewer.Services.Plugins
 
                     //try to get descriptor of the uploaded item
                     IDescriptor descriptor = null;
-                    using var unzippedEntryStream = descriptorEntry.Open();
-                    using var reader = new StreamReader(unzippedEntryStream);
+                    using (var unzippedEntryStream = descriptorEntry.Open())
+                    {
+                        using var reader = new StreamReader(unzippedEntryStream);
+                        //whether a plugin is upload 
+                        if (item.Type == UploadedItemType.Plugin)
+                            descriptor = PluginDescriptor.GetPluginDescriptorFromText(reader.ReadToEnd());
 
-                    //whether a plugin is upload 
-                    if (item.Type == UploadedItemType.Plugin)
-                        descriptor = PluginDescriptor.GetPluginDescriptorFromText(reader.ReadToEnd());
-
-                    //or whether a theme is upload 
-                    if (item.Type == UploadedItemType.Theme)
-                        descriptor = _themeProvider.GetThemeDescriptorFromText(reader.ReadToEnd());
+                        //or whether a theme is upload 
+                        if (item.Type == UploadedItemType.Theme)
+                            descriptor = _themeProvider.GetThemeDescriptorFromText(reader.ReadToEnd());
+                    }
 
                     if (descriptor == null)
                         continue;
 
                     //ensure that the plugin current version is supported
-                    if (descriptor is PluginDescriptor pluginDescriptor && !pluginDescriptor.SupportedVersions.Contains(TvProgVersion.CurrentVersion))
+                    if (descriptor is PluginDescriptor pluginDescriptor && !pluginDescriptor.SupportedVersions.Contains(TvProgVersion.CURRENT_VERSION))
                         continue;
 
                     //get path to upload
@@ -236,7 +234,7 @@ namespace TVProgViewer.Services.Plugins
                     foreach (var entry in entries)
                     {
                         //get name of the file
-                        var fileName = entry.FullName.Substring(itemPath.Length);
+                        var fileName = entry.FullName[itemPath.Length..];
                         if (string.IsNullOrEmpty(fileName))
                             continue;
 
@@ -266,6 +264,25 @@ namespace TVProgViewer.Services.Plugins
             }
 
             return descriptors;
+        }
+
+        /// <summary>
+        /// Creates the directory if not exist; otherwise deletes and creates directory 
+        /// </summary>
+        /// <param name="path"></param>
+        protected virtual void CreateDirectory(string path)
+        {
+            //if the folder does not exist, create it
+            //if the folder is already there - we delete it (since the pictures in the folder are in the unpacked version, there will be many files and it is easier for us to delete the folder than to delete all the files one by one) and create a new
+            if (!_fileProvider.DirectoryExists(path))
+            {
+                _fileProvider.CreateDirectory(path);
+            }
+            else
+            {
+                _fileProvider.DeleteDirectory(path);
+                _fileProvider.CreateDirectory(path);
+            }
         }
 
         #endregion
@@ -300,7 +317,7 @@ namespace TVProgViewer.Services.Plugins
                     archivefile.CopyTo(fileStream);
 
                 //try to get information about the uploaded items from the JSON file in the root of the archive
-                //you can find a sample of such descriptive file in Libraries\TVProgViewer.Core\Plugins\Samples\
+                //you can find a sample of such descriptive file in Libraries\TvProg.Core\Plugins\Samples\
                 var uploadedItems = GetUploadedItems(zipFilePath);
                 if (!uploadedItems?.Any() ?? true)
                 {
@@ -334,22 +351,12 @@ namespace TVProgViewer.Services.Plugins
             {
                 //only zip archives are supported
                 if (!_fileProvider.GetFileExtension(archivefile.FileName)?.Equals(".zip", StringComparison.InvariantCultureIgnoreCase) ?? true)
-                    throw new Exception("Only zip archives are supported");
+                    throw new Exception("Only zip archives are supported (*.zip)");
 
                 //check if there is a folder for favicon and app icons for the current store (all store icons folders are in wwwroot/icons and are called icons_{storeId})
-                //if the folder does not exist, create it
-                //if the folder is already there - we delete it (since the pictures in the folder are in the unpacked version, there will be many files and it is easier for us to delete the folder than to delete all the files one by one) and create anew
-                var storeIconsPath = _fileProvider.GetAbsolutePath(string.Format(TvProgCommonDefaults.FaviconAndAppIconsPath, _storeContext.ActiveStoreScopeConfiguration));
+                var storeIconsPath = _fileProvider.GetAbsolutePath(string.Format(TvProgCommonDefaults.FaviconAndAppIconsPath, _storeContext.GetActiveStoreScopeConfigurationAsync().Result));
 
-                if (!_fileProvider.DirectoryExists(storeIconsPath))
-                {
-                    _fileProvider.CreateDirectory(storeIconsPath);
-                }
-                else
-                {
-                    _fileProvider.DeleteDirectory(storeIconsPath);
-                    _fileProvider.CreateDirectory(storeIconsPath);
-                }
+                CreateDirectory(storeIconsPath);
 
                 zipFilePath = _fileProvider.Combine(storeIconsPath, archivefile.FileName);
                 using (var fileStream = new FileStream(zipFilePath, FileMode.Create))
@@ -366,9 +373,33 @@ namespace TVProgViewer.Services.Plugins
         }
 
         /// <summary>
-        /// Upload locale pattern for ccurrent culture
+        /// Upload single favicon
         /// </summary>
-        public virtual void UploadLocalePattern()
+        /// <param name="favicon">Favicon</param>
+        public virtual void UploadFavicon(IFormFile favicon)
+        {
+            if (favicon == null)
+                throw new ArgumentNullException(nameof(favicon));
+
+            //only icons are supported
+            if (!_fileProvider.GetFileExtension(favicon.FileName)?.Equals(".ico", StringComparison.InvariantCultureIgnoreCase) ?? true)
+                throw new Exception("Only icons are supported (*.ico)");
+
+            //check if there is a folder for favicon (favicon folder is in wwwroot/icons and is called icons_{storeId})
+            var storeFaviconPath = _fileProvider.GetAbsolutePath(string.Format(TvProgCommonDefaults.FaviconAndAppIconsPath, _storeContext.GetActiveStoreScopeConfigurationAsync().Result));
+
+            CreateDirectory(storeFaviconPath);
+
+            var faviconPath = _fileProvider.Combine(storeFaviconPath, favicon.FileName);
+            using var fileStream = new FileStream(faviconPath, FileMode.Create);
+            favicon.CopyTo(fileStream);
+        }
+
+        /// <summary>
+        /// Upload locale pattern for current culture
+        /// </summary>
+        /// <param name="cultureInfo">CultureInfo</param>
+        public virtual void UploadLocalePattern(CultureInfo cultureInfo = null)
         {
             string getPath(string dirPath, string dirName)
             {
@@ -379,7 +410,7 @@ namespace TVProgViewer.Services.Plugins
             {
                 return _fileProvider.DirectoryExists(getPath(dirPath, dirName));
             }
-            
+
             var tempFolder = "temp";
             try
             {
@@ -388,10 +419,10 @@ namespace TVProgViewer.Services.Plugins
                 if (!_fileProvider.GetFileExtension(ziplocalePatternPath)?.Equals(".zip", StringComparison.InvariantCultureIgnoreCase) ?? true)
                     throw new Exception($"Archive '{TvProgCommonDefaults.LocalePatternArchiveName}' to retrieve localization patterns not found.");
 
-                var currentCulture = CultureInfo.CurrentCulture;
+                var currentCulture = (cultureInfo is CultureInfo) ? cultureInfo : CultureInfo.CurrentCulture;
 
                 //2. Check if there is already an unpacked folder with locales for the current culture in the lib directory, if not then
-                if (!(checkDirectoryExists(TvProgCommonDefaults.LocalePatternPath, currentCulture.Name) || 
+                if (!(checkDirectoryExists(TvProgCommonDefaults.LocalePatternPath, currentCulture.Name) ||
                     checkDirectoryExists(TvProgCommonDefaults.LocalePatternPath, currentCulture.TwoLetterISOLanguageName)))
                 {
                     var cultureToUse = string.Empty;
@@ -457,7 +488,7 @@ namespace TVProgViewer.Services.Plugins
             public string SystemName { get; set; }
 
             /// <summary>
-            /// Gets or sets supported versions of TvProg
+            /// Gets or sets supported versions of nopCommerce
             /// </summary>
             [JsonProperty(PropertyName = "SupportedVersion")]
             public string SupportedVersions { get; set; }

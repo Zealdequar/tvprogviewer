@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Vendors
 {
     public partial class VendorAttributeValidator : BaseTvProgValidator<VendorAttributeModel>
     {
-        public VendorAttributeValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public VendorAttributeValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Vendors.VendorAttributes.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Vendors.VendorAttributes.Fields.Name.Required"));
 
             SetDatabaseValidationRules<VendorAttribute>(dataProvider);
         }

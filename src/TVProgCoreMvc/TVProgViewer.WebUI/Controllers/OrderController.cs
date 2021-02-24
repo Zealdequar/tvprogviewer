@@ -16,6 +16,7 @@ using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Controllers;
 using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -36,15 +37,15 @@ namespace TVProgViewer.WebUI.Controllers
 
         #endregion
 
-		#region Ctor
+        #region Ctor
 
         public OrderController(IUserService userService,
             IOrderModelFactory orderModelFactory,
-            IOrderProcessingService orderProcessingService, 
-            IOrderService orderService, 
-            IPaymentService paymentService, 
+            IOrderProcessingService orderProcessingService,
+            IOrderService orderService,
+            IPaymentService paymentService,
             IPdfService pdfService,
-            IShipmentService shipmentService, 
+            IShipmentService shipmentService,
             IWebHelper webHelper,
             IWorkContext workContext,
             RewardPointsSettings rewardPointsSettings)
@@ -66,13 +67,12 @@ namespace TVProgViewer.WebUI.Controllers
         #region Methods
 
         //My account / Orders
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult UserOrders()
+        public virtual async Task<IActionResult> UserOrders()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            var model = _orderModelFactory.PrepareUserOrderListModel();
+            var model = await _orderModelFactory.PrepareUserOrderListModelAsync();
             return View(model);
         }
 
@@ -80,28 +80,28 @@ namespace TVProgViewer.WebUI.Controllers
         [HttpPost, ActionName("UserOrders")]
         [AutoValidateAntiforgeryToken]
         [FormValueRequired(FormValueRequirement.StartsWith, "cancelRecurringPayment")]
-        public virtual IActionResult CancelRecurringPayment(IFormCollection form)
+        public virtual async Task<IActionResult> CancelRecurringPayment(IFormCollection form)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             //get recurring payment identifier
             var recurringPaymentId = 0;
             foreach (var formValue in form.Keys)
                 if (formValue.StartsWith("cancelRecurringPayment", StringComparison.InvariantCultureIgnoreCase))
-                    recurringPaymentId = Convert.ToInt32(formValue.Substring("cancelRecurringPayment".Length));
+                    recurringPaymentId = Convert.ToInt32(formValue["cancelRecurringPayment".Length..]);
 
-            var recurringPayment = _orderService.GetRecurringPaymentById(recurringPaymentId);
+            var recurringPayment = await _orderService.GetRecurringPaymentByIdAsync(recurringPaymentId);
             if (recurringPayment == null)
             {
                 return RedirectToRoute("UserOrders");
             }
 
-            if (_orderProcessingService.CanCancelRecurringPayment(_workContext.CurrentUser, recurringPayment))
+            if (await _orderProcessingService.CanCancelRecurringPaymentAsync(await _workContext.GetCurrentUserAsync(), recurringPayment))
             {
-                var errors = _orderProcessingService.CancelRecurringPayment(recurringPayment);
+                var errors = await _orderProcessingService.CancelRecurringPaymentAsync(recurringPayment);
 
-                var model = _orderModelFactory.PrepareUserOrderListModel();
+                var model = await _orderModelFactory.PrepareUserOrderListModelAsync();
                 model.RecurringPaymentErrors = errors;
 
                 return View(model);
@@ -114,99 +114,96 @@ namespace TVProgViewer.WebUI.Controllers
         [HttpPost, ActionName("UserOrders")]
         [AutoValidateAntiforgeryToken]
         [FormValueRequired(FormValueRequirement.StartsWith, "retryLastPayment")]
-        public virtual IActionResult RetryLastRecurringPayment(IFormCollection form)
+        public virtual async Task<IActionResult> RetryLastRecurringPayment(IFormCollection form)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             //get recurring payment identifier
             var recurringPaymentId = 0;
             if (!form.Keys.Any(formValue => formValue.StartsWith("retryLastPayment", StringComparison.InvariantCultureIgnoreCase) &&
-                int.TryParse(formValue.Substring(formValue.IndexOf('_') + 1), out recurringPaymentId)))
+                int.TryParse(formValue[(formValue.IndexOf('_') + 1)..], out recurringPaymentId)))
             {
                 return RedirectToRoute("UserOrders");
             }
 
-            var recurringPayment = _orderService.GetRecurringPaymentById(recurringPaymentId);
+            var recurringPayment = await _orderService.GetRecurringPaymentByIdAsync(recurringPaymentId);
             if (recurringPayment == null)
                 return RedirectToRoute("UserOrders");
 
-            if (!_orderProcessingService.CanRetryLastRecurringPayment(_workContext.CurrentUser, recurringPayment))
+            if (!await _orderProcessingService.CanRetryLastRecurringPaymentAsync(await _workContext.GetCurrentUserAsync(), recurringPayment))
                 return RedirectToRoute("UserOrders");
 
-            var errors = _orderProcessingService.ProcessNextRecurringPayment(recurringPayment);
-            var model = _orderModelFactory.PrepareUserOrderListModel();
+            var errors = await _orderProcessingService.ProcessNextRecurringPaymentAsync(recurringPayment);
+            var model = await _orderModelFactory.PrepareUserOrderListModelAsync();
             model.RecurringPaymentErrors = errors.ToList();
 
             return View(model);
         }
 
         //My account / Reward points
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult UserRewardPoints(int? pageNumber)
+        public virtual async Task<IActionResult> UserRewardPoints(int? pageNumber)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             if (!_rewardPointsSettings.Enabled)
                 return RedirectToRoute("UserInfo");
 
-            var model = _orderModelFactory.PrepareUserRewardPoints(pageNumber);
+            var model = await _orderModelFactory.PrepareUserRewardPointsAsync(pageNumber);
             return View(model);
         }
 
         //My account / Order details page
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult Details(int orderId)
+        public virtual async Task<IActionResult> Details(int orderId)
         {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
-            var model = _orderModelFactory.PrepareOrderDetailsModel(order);
+            var model = await _orderModelFactory.PrepareOrderDetailsModelAsync(order);
             return View(model);
         }
 
         //My account / Order details page / Print
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult PrintOrderDetails(int orderId)
+        public virtual async Task<IActionResult> PrintOrderDetails(int orderId)
         {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
-            var model = _orderModelFactory.PrepareOrderDetailsModel(order);
+            var model = await _orderModelFactory.PrepareOrderDetailsModelAsync(order);
             model.PrintMode = true;
 
             return View("Details", model);
         }
 
         //My account / Order details page / PDF invoice
-        public virtual IActionResult GetPdfInvoice(int orderId)
+        public virtual async Task<IActionResult> GetPdfInvoice(int orderId)
         {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
             var orders = new List<Order>();
             orders.Add(order);
             byte[] bytes;
-            using (var stream = new MemoryStream())
+            await using (var stream = new MemoryStream())
             {
-                _pdfService.PrintOrdersToPdf(stream, orders, _workContext.WorkingLanguage.Id);
+                await _pdfService.PrintOrdersToPdfAsync(stream, orders, (await _workContext.GetWorkingLanguageAsync()).Id);
                 bytes = stream.ToArray();
             }
             return File(bytes, MimeTypes.ApplicationPdf, $"order_{order.Id}.pdf");
         }
 
         //My account / Order details page / re-order
-        public virtual IActionResult ReOrder(int orderId)
+        public virtual async Task<IActionResult> ReOrder(int orderId)
         {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
-            _orderProcessingService.ReOrder(order);
+            await _orderProcessingService.ReOrderAsync(order);
             return RedirectToRoute("ShoppingCart");
         }
 
@@ -214,20 +211,20 @@ namespace TVProgViewer.WebUI.Controllers
         [HttpPost, ActionName("Details")]
         [AutoValidateAntiforgeryToken]
         [FormValueRequired("repost-payment")]
-        public virtual IActionResult RePostPayment(int orderId)
+        public virtual async Task<IActionResult> RePostPayment(int orderId)
         {
-            var order = _orderService.GetOrderById(orderId);
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(orderId);
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
-            if (!_paymentService.CanRePostProcessPayment(order))
+            if (!await _paymentService.CanRePostProcessPaymentAsync(order))
                 return RedirectToRoute("OrderDetails", new { orderId = orderId });
 
             var postProcessPaymentRequest = new PostProcessPaymentRequest
             {
                 Order = order
             };
-            _paymentService.PostProcessPayment(postProcessPaymentRequest);
+            await _paymentService.PostProcessPaymentAsync(postProcessPaymentRequest);
 
             if (_webHelper.IsRequestBeingRedirected || _webHelper.IsPostBeingDone)
             {
@@ -241,22 +238,21 @@ namespace TVProgViewer.WebUI.Controllers
         }
 
         //My account / Order details page / Shipment details page
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult ShipmentDetails(int shipmentId)
+        public virtual async Task<IActionResult> ShipmentDetails(int shipmentId)
         {
-            var shipment = _shipmentService.GetShipmentById(shipmentId);
+            var shipment = await _shipmentService.GetShipmentByIdAsync(shipmentId);
             if (shipment == null)
                 return Challenge();
 
-            var order = _orderService.GetOrderById(shipment.OrderId);
-            
-            if (order == null || order.Deleted || _workContext.CurrentUser.Id != order.UserId)
+            var order = await _orderService.GetOrderByIdAsync(shipment.OrderId);
+
+            if (order == null || order.Deleted || (await _workContext.GetCurrentUserAsync()).Id != order.UserId)
                 return Challenge();
 
-            var model = _orderModelFactory.PrepareShipmentDetailsModel(shipment);
+            var model = await _orderModelFactory.PrepareShipmentDetailsModelAsync(shipment);
             return View(model);
         }
-        
+
         #endregion
     }
 }

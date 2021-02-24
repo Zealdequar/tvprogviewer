@@ -10,6 +10,8 @@ using TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper.Extensions;
 using TVProgViewer.WebUI.Areas.Admin.Models.Tasks;
 using TVProgViewer.Web.Framework.Mvc;
 using TVProgViewer.Web.Framework.Mvc.ModelBinding;
+using System.Threading.Tasks;
+using Task = TVProgViewer.Services.Tasks.Task;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Controllers
 {
@@ -52,73 +54,73 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
             return RedirectToAction("List");
         }
 
-        public virtual IActionResult List()
+        public virtual async Task<IActionResult> List()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageScheduleTasks))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageScheduleTasks))
                 return AccessDeniedView();
 
             //prepare model
-            var model = _scheduleTaskModelFactory.PrepareScheduleTaskSearchModel(new ScheduleTaskSearchModel());
+            var model = await _scheduleTaskModelFactory.PrepareScheduleTaskSearchModelAsync(new ScheduleTaskSearchModel());
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual IActionResult List(ScheduleTaskSearchModel searchModel)
+        public virtual async Task<IActionResult> List(ScheduleTaskSearchModel searchModel)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageScheduleTasks))
-                return AccessDeniedDataTablesJson();
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageScheduleTasks))
+                return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = _scheduleTaskModelFactory.PrepareScheduleTaskListModel(searchModel);
+            var model = await _scheduleTaskModelFactory.PrepareScheduleTaskListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
-        public virtual IActionResult TaskUpdate(ScheduleTaskModel model)
+        public virtual async Task<IActionResult> TaskUpdate(ScheduleTaskModel model)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageScheduleTasks))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageScheduleTasks))
                 return AccessDeniedView();
 
             if (!ModelState.IsValid)
                 return ErrorJson(ModelState.SerializeErrors());
 
             //try to get a schedule task with the specified id
-            var scheduleTask = _scheduleTaskService.GetTaskById(model.Id)
+            var scheduleTask = await _scheduleTaskService.GetTaskByIdAsync(model.Id)
                                ?? throw new ArgumentException("Schedule task cannot be loaded");
 
             scheduleTask = model.ToEntity(scheduleTask);
 
-            _scheduleTaskService.UpdateTask(scheduleTask);
+            await _scheduleTaskService.UpdateTaskAsync(scheduleTask);
 
             //activity log
-            _userActivityService.InsertActivity("EditTask",
-                string.Format(_localizationService.GetResource("ActivityLog.EditTask"), scheduleTask.Id), scheduleTask);
+            await _userActivityService.InsertActivityAsync("EditTask",
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditTask"), scheduleTask.Id), scheduleTask);
 
             return new NullJsonResult();
         }
 
-        public virtual IActionResult RunNow(int id)
+        public virtual async Task<IActionResult> RunNow(int id)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManageScheduleTasks))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageScheduleTasks))
                 return AccessDeniedView();
 
             try
             {
                 //try to get a schedule task with the specified id
-                var scheduleTask = _scheduleTaskService.GetTaskById(id)
+                var scheduleTask = await _scheduleTaskService.GetTaskByIdAsync(id)
                                    ?? throw new ArgumentException("Schedule task cannot be loaded", nameof(id));
 
                 //ensure that the task is enabled
                 var task = new Task(scheduleTask) { Enabled = true };
-                task.Execute(true, false);
+                await task.ExecuteAsync(true, false);
 
-                _notificationService.SuccessNotification(_localizationService.GetResource("Admin.System.ScheduleTasks.RunNow.Done"));
+                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.System.ScheduleTasks.RunNow.Done"));
             }
             catch (Exception exc)
             {
-                _notificationService.ErrorNotification(exc);
+                await _notificationService.ErrorNotificationAsync(exc);
             }
 
             return RedirectToAction("List");

@@ -9,10 +9,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Messages
 {
     public partial class MessageTemplateValidator : BaseTvProgValidator<MessageTemplateModel>
     {
-        public MessageTemplateValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public MessageTemplateValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Subject).NotEmpty().WithMessage(localizationService.GetResource("Admin.ContentManagement.MessageTemplates.Fields.Subject.Required"));
-            RuleFor(x => x.Body).NotEmpty().WithMessage(localizationService.GetResource("Admin.ContentManagement.MessageTemplates.Fields.Body.Required"));
+            RuleFor(x => x.Subject).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.ContentManagement.MessageTemplates.Fields.Subject.Required"));
+            RuleFor(x => x.Body).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.ContentManagement.MessageTemplates.Fields.Body.Required"));
 
             SetDatabaseValidationRules<MessageTemplate>(dataProvider);
         }

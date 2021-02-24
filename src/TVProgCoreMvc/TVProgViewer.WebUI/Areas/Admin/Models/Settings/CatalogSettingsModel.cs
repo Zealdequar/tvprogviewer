@@ -25,11 +25,11 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         #region Properties
 
         public int ActiveStoreScopeConfiguration { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.AllowViewUnpublishedProductPage")]
         public bool AllowViewUnpublishedProductPage { get; set; }
         public bool AllowViewUnpublishedProductPage_OverrideForStore { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.DisplayDiscontinuedMessageForUnpublishedProducts")]
         public bool DisplayDiscontinuedMessageForUnpublishedProducts { get; set; }
         public bool DisplayDiscontinuedMessageForUnpublishedProducts_OverrideForStore { get; set; }
@@ -94,6 +94,10 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.ProductReviewsMustBeApproved")]
         public bool ProductReviewsMustBeApproved { get; set; }
         public bool ProductReviewsMustBeApproved_OverrideForStore { get; set; }
+
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.OneReviewPerProductFromUser")]
+        public bool OneReviewPerProductFromUser { get; set; }
+        public bool OneReviewPerProductFromUser_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.AllowAnonymousUsersToReviewProduct")]
         public bool AllowAnonymousUsersToReviewProduct { get; set; }
@@ -206,7 +210,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.ProductsAlsoPurchasedNumber")]
         public int ProductsAlsoPurchasedNumber { get; set; }
         public bool ProductsAlsoPurchasedNumber_OverrideForStore { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.NumberOfProductTags")]
         public int NumberOfProductTags { get; set; }
         public bool NumberOfProductTags_OverrideForStore { get; set; }
@@ -230,7 +234,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.IncludeFullDescriptionInCompareProducts")]
         public bool IncludeFullDescriptionInCompareProducts { get; set; }
         public bool IncludeFullDescriptionInCompareProducts_OverrideForStore { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.ManufacturersBlockItemsToDisplay")]
         public int ManufacturersBlockItemsToDisplay { get; set; }
         public bool ManufacturersBlockItemsToDisplay_OverrideForStore { get; set; }
@@ -266,7 +270,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.ExportImportProductSpecificationAttributes")]
         public bool ExportImportProductSpecificationAttributes { get; set; }
         public bool ExportImportProductSpecificationAttributes_OverrideForStore { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.ExportImportProductCategoryBreadcrumb")]
         public bool ExportImportProductCategoryBreadcrumb { get; set; }
         public bool ExportImportProductCategoryBreadcrumb_OverrideForStore { get; set; }

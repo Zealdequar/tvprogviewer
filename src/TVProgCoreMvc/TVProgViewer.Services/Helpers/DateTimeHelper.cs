@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Services.Common;
@@ -37,17 +38,21 @@ namespace TVProgViewer.Services.Helpers
 
         #endregion
 
-        #region Methods
+        #region Utilities
 
         /// <summary>
         /// Retrieves a System.TimeZoneInfo object from the registry based on its identifier.
         /// </summary>
         /// <param name="id">The time zone identifier, which corresponds to the System.TimeZoneInfo.Id property.</param>
         /// <returns>A System.TimeZoneInfo object whose identifier is the value of the id parameter.</returns>
-        public virtual TimeZoneInfo FindTimeZoneById(string id)
+        protected virtual TimeZoneInfo FindTimeZoneById(string id)
         {
             return TimeZoneInfo.FindSystemTimeZoneById(id);
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Returns a sorted collection of all the time zones
@@ -62,10 +67,10 @@ namespace TVProgViewer.Services.Helpers
         /// Converts the date and time to current user date and time
         /// </summary>
         /// <param name="dt">The date and time (represents local system time or UTC time) to convert.</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
-        public virtual DateTime ConvertToUserTime(DateTime dt)
+        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in user time zone.</returns>
+        public virtual async Task<DateTime> ConvertToUserTimeAsync(DateTime dt)
         {
-            return ConvertToUserTime(dt, dt.Kind);
+            return await ConvertToUserTimeAsync(dt, dt.Kind);
         }
 
         /// <summary>
@@ -73,14 +78,14 @@ namespace TVProgViewer.Services.Helpers
         /// </summary>
         /// <param name="dt">The date and time (represents local system time or UTC time) to convert.</param>
         /// <param name="sourceDateTimeKind">The source datetimekind</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
-        public virtual DateTime ConvertToUserTime(DateTime dt, DateTimeKind sourceDateTimeKind)
+        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in user time zone.</returns>
+        public virtual async Task<DateTime> ConvertToUserTimeAsync(DateTime dt, DateTimeKind sourceDateTimeKind)
         {
             dt = DateTime.SpecifyKind(dt, sourceDateTimeKind);
             if (sourceDateTimeKind == DateTimeKind.Local && TimeZoneInfo.Local.IsInvalidTime(dt))
                 return dt;
 
-            var currentUserTimeZoneInfo = CurrentTimeZone;
+            var currentUserTimeZoneInfo = await GetCurrentTimeZoneAsync();
             return TimeZoneInfo.ConvertTime(dt, currentUserTimeZoneInfo);
         }
 
@@ -89,20 +94,8 @@ namespace TVProgViewer.Services.Helpers
         /// </summary>
         /// <param name="dt">The date and time to convert.</param>
         /// <param name="sourceTimeZone">The time zone of dateTime.</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
-        public virtual DateTime ConvertToUserTime(DateTime dt, TimeZoneInfo sourceTimeZone)
-        {
-            var currentUserTimeZoneInfo = CurrentTimeZone;
-            return ConvertToUserTime(dt, sourceTimeZone, currentUserTimeZoneInfo);
-        }
-
-        /// <summary>
-        /// Converts the date and time to current user date and time
-        /// </summary>
-        /// <param name="dt">The date and time to convert.</param>
-        /// <param name="sourceTimeZone">The time zone of dateTime.</param>
         /// <param name="destinationTimeZone">The time zone to convert dateTime to.</param>
-        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in User time zone.</returns>
+        /// <returns>A DateTime value that represents time that corresponds to the dateTime parameter in user time zone.</returns>
         public virtual DateTime ConvertToUserTime(DateTime dt, TimeZoneInfo sourceTimeZone, TimeZoneInfo destinationTimeZone)
         {
             if (sourceTimeZone.IsInvalidTime(dt))
@@ -154,20 +147,20 @@ namespace TVProgViewer.Services.Helpers
         }
 
         /// <summary>
-        /// Gets a User time zone
+        /// Gets a user time zone
         /// </summary>
-        /// <param name="User">User</param>
-        /// <returns>User time zone; if User is null, then default store time zone</returns>
-        public virtual TimeZoneInfo GetUserTimeZone(User User)
+        /// <param name="user">User</param>
+        /// <returns>User time zone; if user is null, then default store time zone</returns>
+        public virtual async Task<TimeZoneInfo> GetUserTimeZoneAsync(User user)
         {
-            if (!_dateTimeSettings.AllowUsersToSetTimeZone) 
+            if (!_dateTimeSettings.AllowUsersToSetTimeZone)
                 return DefaultStoreTimeZone;
 
             TimeZoneInfo timeZoneInfo = null;
 
             var timeZoneId = string.Empty;
-            if (User != null)
-                timeZoneId = _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.TimeZoneIdAttribute);
+            if (user != null)
+                timeZoneId = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.TimeZoneIdAttribute);
 
             try
             {
@@ -180,6 +173,15 @@ namespace TVProgViewer.Services.Helpers
             }
 
             return timeZoneInfo ?? DefaultStoreTimeZone;
+        }
+
+        /// <summary>
+        /// Gets the current user time zone
+        /// </summary>
+        /// <returns>Current user time zone</returns>
+        public virtual async Task<TimeZoneInfo> GetCurrentTimeZoneAsync()
+        {
+            return await GetUserTimeZoneAsync(await _workContext.GetCurrentUserAsync());
         }
 
         /// <summary>
@@ -201,40 +203,6 @@ namespace TVProgViewer.Services.Helpers
                 }
 
                 return timeZoneInfo ?? TimeZoneInfo.Local;
-            }
-
-            set
-            {
-                var defaultTimeZoneId = string.Empty;
-                if (value != null)
-                {
-                    defaultTimeZoneId = value.Id;
-                }
-
-                _dateTimeSettings.DefaultStoreTimeZoneId = defaultTimeZoneId;
-                _settingService.SaveSetting(_dateTimeSettings);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current user time zone
-        /// </summary>
-        public virtual TimeZoneInfo CurrentTimeZone
-        {
-            get => GetUserTimeZone(_workContext.CurrentUser);
-            set
-            {
-                if (!_dateTimeSettings.AllowUsersToSetTimeZone)
-                    return;
-
-                var timeZoneId = string.Empty;
-                if (value != null)
-                {
-                    timeZoneId = value.Id;
-                }
-
-                _genericAttributeService.SaveAttribute(_workContext.CurrentUser,
-                    TvProgUserDefaults.TimeZoneIdAttribute, timeZoneId);
             }
         }
 

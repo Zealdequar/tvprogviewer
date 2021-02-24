@@ -1,36 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
-using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Users
 {
-    /// <summary>
-    /// User attribute service
-    /// </summary>
     public partial class UserAttributeService : IUserAttributeService
     {
         #region Fields
 
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<UserAttribute> _userAttributeRepository;
         private readonly IRepository<UserAttributeValue> _userAttributeValueRepository;
+        private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
 
         #region Ctor
 
-        public UserAttributeService(IEventPublisher eventPublisher,
-            IRepository<UserAttribute> userAttributeRepository,
-            IRepository<UserAttributeValue> UserAttributeValueRepository)
+        public UserAttributeService(IRepository<UserAttribute> userAttributeRepository,
+            IRepository<UserAttributeValue> userAttributeValueRepository,
+            IStaticCacheManager staticCacheManager)
         {
-            _eventPublisher = eventPublisher;
             _userAttributeRepository = userAttributeRepository;
-            _userAttributeValueRepository = UserAttributeValueRepository;
+            _userAttributeValueRepository = userAttributeValueRepository;
+            _staticCacheManager = staticCacheManager;
         }
 
         #endregion
@@ -38,150 +33,110 @@ namespace TVProgViewer.Services.Users
         #region Methods
 
         /// <summary>
-        /// Deletes a User attribute
+        /// Deletes a user attribute
         /// </summary>
-        /// <param name="UserAttribute">User attribute</param>
-        public virtual void DeleteUserAttribute(UserAttribute userAttribute)
+        /// <param name="userAttribute">User attribute</param>
+        public virtual async Task DeleteUserAttributeAsync(UserAttribute userAttribute)
         {
-            if (userAttribute == null)
-                throw new ArgumentNullException(nameof(userAttribute));
-
-            _userAttributeRepository.Delete(userAttribute);
-
-            //event notification
-            _eventPublisher.EntityDeleted(userAttribute);
+            await _userAttributeRepository.DeleteAsync(userAttribute);
         }
 
         /// <summary>
-        /// Gets all User attributes
+        /// Gets all user attributes
         /// </summary>
         /// <returns>User attributes</returns>
-        public virtual IList<UserAttribute> GetAllUserAttributes()
+        public virtual async Task<IList<UserAttribute>> GetAllUserAttributesAsync()
         {
-            var query = from ca in _userAttributeRepository.Table
-                orderby ca.DisplayOrder, ca.Id
-                select ca;
-
-            return query.ToCachedList(TvProgUserServiceCachingDefaults.UserAttributesAllCacheKey);
+            return await _userAttributeRepository.GetAllAsync(query =>
+            {
+                return from ca in query
+                       orderby ca.DisplayOrder, ca.Id
+                       select ca;
+            }, cache => default);
         }
 
         /// <summary>
-        /// Gets a User attribute 
+        /// Gets a user attribute 
         /// </summary>
-        /// <param name="UserAttributeId">User attribute identifier</param>
+        /// <param name="userAttributeId">User attribute identifier</param>
         /// <returns>User attribute</returns>
-        public virtual UserAttribute GetUserAttributeById(int userAttributeId)
+        public virtual async Task<UserAttribute> GetUserAttributeByIdAsync(int userAttributeId)
         {
-            if (userAttributeId == 0)
-                return null;
-
-            return _userAttributeRepository.ToCachedGetById(userAttributeId);
+            return await _userAttributeRepository.GetByIdAsync(userAttributeId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a User attribute
+        /// Inserts a user attribute
         /// </summary>
-        /// <param name="UserAttribute">User attribute</param>
-        public virtual void InsertUserAttribute(UserAttribute userAttribute)
+        /// <param name="userAttribute">User attribute</param>
+        public virtual async Task InsertUserAttributeAsync(UserAttribute userAttribute)
         {
-            if (userAttribute == null)
-                throw new ArgumentNullException(nameof(UserAttribute));
-
-            _userAttributeRepository.Insert(userAttribute);
-            
-            //event notification
-            _eventPublisher.EntityInserted(userAttribute);
+            await _userAttributeRepository.InsertAsync(userAttribute);
         }
 
         /// <summary>
-        /// Updates the User attribute
+        /// Updates the user attribute
         /// </summary>
-        /// <param name="UserAttribute">User attribute</param>
-        public virtual void UpdateUserAttribute(UserAttribute userAttribute)
+        /// <param name="userAttribute">User attribute</param>
+        public virtual async Task UpdateUserAttributeAsync(UserAttribute userAttribute)
         {
-            if (userAttribute == null)
-                throw new ArgumentNullException(nameof(userAttribute));
-
-            _userAttributeRepository.Update(userAttribute);
-
-            //event notification
-            _eventPublisher.EntityUpdated(userAttribute);
+            await _userAttributeRepository.UpdateAsync(userAttribute);
         }
 
         /// <summary>
-        /// Deletes a User attribute value
+        /// Deletes a user attribute value
         /// </summary>
-        /// <param name="UserAttributeValue">User attribute value</param>
-        public virtual void DeleteUserAttributeValue(UserAttributeValue userAttributeValue)
+        /// <param name="userAttributeValue">User attribute value</param>
+        public virtual async Task DeleteUserAttributeValueAsync(UserAttributeValue userAttributeValue)
         {
-            if (userAttributeValue == null)
-                throw new ArgumentNullException(nameof(userAttributeValue));
-
-            _userAttributeValueRepository.Delete(userAttributeValue);
-
-            //event notification
-            _eventPublisher.EntityDeleted(userAttributeValue);
+            await _userAttributeValueRepository.DeleteAsync(userAttributeValue);
         }
 
         /// <summary>
-        /// Gets User attribute values by User attribute identifier
+        /// Gets user attribute values by user attribute identifier
         /// </summary>
-        /// <param name="UserAttributeId">The User attribute identifier</param>
+        /// <param name="userAttributeId">The user attribute identifier</param>
         /// <returns>User attribute values</returns>
-        public virtual IList<UserAttributeValue> GetUserAttributeValues(int userAttributeId)
+        public virtual async Task<IList<UserAttributeValue>> GetUserAttributeValuesAsync(int userAttributeId)
         {
-            var key = TvProgUserServiceCachingDefaults.UserAttributeValuesAllCacheKey.FillCacheKey(userAttributeId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgUserServicesDefaults.UserAttributeValuesByAttributeCacheKey, userAttributeId);
 
             var query = from cav in _userAttributeValueRepository.Table
-                orderby cav.DisplayOrder, cav.Id
-                where cav.UserAttributeId == userAttributeId
-                select cav;
-            var userAttributeValues = query.ToCachedList(key);
+                        orderby cav.DisplayOrder, cav.Id
+                        where cav.UserAttributeId == userAttributeId
+                        select cav;
+
+            var userAttributeValues = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
 
             return userAttributeValues;
         }
 
         /// <summary>
-        /// Gets a User attribute value
+        /// Gets a user attribute value
         /// </summary>
-        /// <param name="UserAttributeValueId">User attribute value identifier</param>
+        /// <param name="userAttributeValueId">User attribute value identifier</param>
         /// <returns>User attribute value</returns>
-        public virtual UserAttributeValue GetUserAttributeValueById(int userAttributeValueId)
+        public virtual async Task<UserAttributeValue> GetUserAttributeValueByIdAsync(int userAttributeValueId)
         {
-            if (userAttributeValueId == 0)
-                return null;
-
-            return _userAttributeValueRepository.ToCachedGetById(userAttributeValueId);
+            return await _userAttributeValueRepository.GetByIdAsync(userAttributeValueId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a User attribute value
+        /// Inserts a user attribute value
         /// </summary>
-        /// <param name="UserAttributeValue">User attribute value</param>
-        public virtual void InsertUserAttributeValue(UserAttributeValue userAttributeValue)
+        /// <param name="userAttributeValue">User attribute value</param>
+        public virtual async Task InsertUserAttributeValueAsync(UserAttributeValue userAttributeValue)
         {
-            if (userAttributeValue == null)
-                throw new ArgumentNullException(nameof(userAttributeValue));
-
-            _userAttributeValueRepository.Insert(userAttributeValue);
-
-            //event notification
-            _eventPublisher.EntityInserted(userAttributeValue);
+            await _userAttributeValueRepository.InsertAsync(userAttributeValue);
         }
 
         /// <summary>
-        /// Updates the User attribute value
+        /// Updates the user attribute value
         /// </summary>
-        /// <param name="UserAttributeValue">User attribute value</param>
-        public virtual void UpdateUserAttributeValue(UserAttributeValue userAttributeValue)
+        /// <param name="userAttributeValue">User attribute value</param>
+        public virtual async Task UpdateUserAttributeValueAsync(UserAttributeValue userAttributeValue)
         {
-            if (userAttributeValue == null)
-                throw new ArgumentNullException(nameof(userAttributeValue));
-
-            _userAttributeValueRepository.Update(userAttributeValue);
-
-            //event notification
-            _eventPublisher.EntityUpdated(userAttributeValue);
+            await _userAttributeValueRepository.UpdateAsync(userAttributeValue);
         }
 
         #endregion

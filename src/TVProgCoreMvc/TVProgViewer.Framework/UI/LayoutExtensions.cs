@@ -20,7 +20,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="part">Title part</param>
         public static void AddTitleParts(this IHtmlHelper html, string part)
         {
-            var pageHeadBuilder  = EngineContext.Current.Resolve<IPageHeadBuilder>();
+            var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             pageHeadBuilder.AddTitleParts(part);
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="part">Title part</param>
         public static void AppendTitleParts(this IHtmlHelper html, string part)
         {
-            var pageHeadBuilder  = EngineContext.Current.Resolve<IPageHeadBuilder>();
+            var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             pageHeadBuilder.AppendTitleParts(part);
         }
         /// <summary>
@@ -40,7 +40,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="addDefaultTitle">A value indicating whether to insert a default title</param>
         /// <param name="part">Title part</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerTitle(this IHtmlHelper html, bool addDefaultTitle = true, string part = "")
+        public static IHtmlContent TvProgTitle(this IHtmlHelper html, bool addDefaultTitle = true, string part = "")
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             html.AppendTitleParts(part);
@@ -74,7 +74,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="html">HTML helper</param>
         /// <param name="part">Meta description part</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerMetaDescription(this IHtmlHelper html, string part = "")
+        public static IHtmlContent TvProgMetaDescription(this IHtmlHelper html, string part = "")
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             html.AppendMetaDescriptionParts(part);
@@ -108,7 +108,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="html">HTML helper</param>
         /// <param name="part">Meta keyword part</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerMetaKeywords(this IHtmlHelper html, string part = "")
+        public static IHtmlContent TvProgMetaKeywords(this IHtmlHelper html, string part = "")
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             html.AppendMetaKeywordParts(part);
@@ -179,7 +179,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="location">A location of the script element</param>
         /// <param name="bundleFiles">A value indicating whether to bundle script elements</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerScripts(this IHtmlHelper html, ResourceLocation location, bool? bundleFiles = null)
+        public static IHtmlContent TvProgScripts(this IHtmlHelper html, ResourceLocation location, bool? bundleFiles = null)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             return new HtmlString(pageHeadBuilder.GenerateScripts(location, bundleFiles));
@@ -217,7 +217,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="html">HTML helper</param>
         /// <param name="location">A location of the script element</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerInlineScripts(this IHtmlHelper html, ResourceLocation location)
+        public static IHtmlContent TvProgInlineScripts(this IHtmlHelper html, ResourceLocation location)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             return new HtmlString(pageHeadBuilder.GenerateInlineScripts(location));
@@ -242,7 +242,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="src">Script path (minified version)</param>
         /// <param name="debugSrc">Script path (full debug version). If empty, then minified version will be used</param>
         /// <param name="excludeFromBundle">A value indicating whether to exclude this script from bundling</param>
-        public static void AddCssFileParts(this IHtmlHelper html, ResourceLocation location, 
+        public static void AddCssFileParts(this IHtmlHelper html, ResourceLocation location,
             string src, string debugSrc = "", bool excludeFromBundle = false)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
@@ -267,7 +267,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="src">Script path (minified version)</param>
         /// <param name="debugSrc">Script path (full debug version). If empty, then minified version will be used</param>
         /// <param name="excludeFromBundle">A value indicating whether to exclude this script from bundling</param>
-        public static void AppendCssFileParts(this IHtmlHelper html, ResourceLocation location, 
+        public static void AppendCssFileParts(this IHtmlHelper html, ResourceLocation location,
             string src, string debugSrc = "", bool excludeFromBundle = false)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
@@ -280,7 +280,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="location">A location of the script element</param>
         /// <param name="bundleFiles">A value indicating whether to bundle script elements</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerCssFiles(this IHtmlHelper html, ResourceLocation location, bool? bundleFiles = null)
+        public static IHtmlContent TvProgCssFiles(this IHtmlHelper html, ResourceLocation location, bool? bundleFiles = null)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             return new HtmlString(pageHeadBuilder.GenerateCssFiles(location, bundleFiles));
@@ -322,7 +322,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="html">HTML helper</param>
         /// <param name="part">Canonical URL part</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerCanonicalUrls(this IHtmlHelper html, string part = "")
+        public static IHtmlContent TvProgCanonicalUrls(this IHtmlHelper html, string part = "")
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             html.AppendCanonicalUrlParts(part);
@@ -355,7 +355,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// </summary>
         /// <param name="html">HTML helper</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerHeadCustom(this IHtmlHelper html)
+        public static IHtmlContent TvProgHeadCustom(this IHtmlHelper html)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             return new HtmlString(pageHeadBuilder.GenerateHeadCustom());
@@ -389,7 +389,7 @@ namespace TVProgViewer.Web.Framework.UI
         /// <param name="part">CSS class</param>
         /// <param name="includeClassElement">A value indicating whether to include "class" attributes</param>
         /// <returns>Generated string</returns>
-        public static IHtmlContent TVProgViewerPageCssClasses(this IHtmlHelper html, string part = "", bool includeClassElement = true)
+        public static IHtmlContent TvProgPageCssClasses(this IHtmlHelper html, string part = "", bool includeClassElement = true)
         {
             var pageHeadBuilder = EngineContext.Current.Resolve<IPageHeadBuilder>();
             html.AppendPageCssClassParts(part);

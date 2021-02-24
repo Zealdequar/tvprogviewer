@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a connection string info
     /// </summary>
-    public interface ITVProgViewerConnectionStringInfo
+    public interface ITvProgConnectionStringInfo
     {
         /// <summary>
         /// DatabaseName
@@ -11,7 +11,7 @@
         string DatabaseName { get; set; }
 
         /// <summary>
-        /// Server name or IP adress
+        /// Server name or IP address
         /// </summary>
         string ServerName { get; set; }
 
@@ -29,7 +29,5 @@
         /// Password
         /// </summary>
         string Password { get; set; }
-
-        
     }
 }

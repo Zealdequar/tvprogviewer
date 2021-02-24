@@ -10,6 +10,7 @@ using TVProgViewer.Core;
 using TVProgViewer.Core.Http;
 using TVProgViewer.Core.Infrastructure;
 using TVProgViewer.Data;
+using TVProgViewer.Services.Common;
 
 namespace TVProgViewer.WebUI.Infrastructure.Installation
 {
@@ -40,7 +41,7 @@ namespace TVProgViewer.WebUI.Infrastructure.Installation
         }
 
         #endregion
-        
+
         #region Methods
 
         /// <summary>
@@ -65,6 +66,16 @@ namespace TVProgViewer.WebUI.Infrastructure.Installation
         }
 
         /// <summary>
+        /// Get current browser culture
+        /// </summary>
+        /// <returns>Current culture</returns>
+        public string GetBrowserCulture()
+        {
+            _httpContextAccessor.HttpContext.Request.Headers.TryGetValue(HeaderNames.AcceptLanguage, out var userLanguages);
+            return userLanguages.FirstOrDefault()?.Split(',').FirstOrDefault() ?? TvProgCommonDefaults.DefaultLanguageCulture;
+        }
+
+        /// <summary>
         /// Get current language for the installation page
         /// </summary>
         /// <returns>Current language</returns>
@@ -74,7 +85,7 @@ namespace TVProgViewer.WebUI.Infrastructure.Installation
 
             //try to get cookie
             var cookieName = $"{TvProgCookieDefaults.Prefix}{TvProgCookieDefaults.InstallationLanguageCookie}";
-            httpContext.Request.Cookies.TryGetValue(cookieName, out string cookieLanguageCode);
+            httpContext.Request.Cookies.TryGetValue(cookieName, out var cookieLanguageCode);
 
             //ensure it's available (it could be delete since the previous installation)
             var availableLanguages = GetAvailableLanguages();
@@ -87,7 +98,7 @@ namespace TVProgViewer.WebUI.Infrastructure.Installation
             //let's find by current browser culture
             if (httpContext.Request.Headers.TryGetValue(HeaderNames.AcceptLanguage, out var userLanguages))
             {
-                var userLanguage = userLanguages.FirstOrDefault()?.Split(',')[0] ?? string.Empty;
+                var userLanguage = userLanguages.FirstOrDefault()?.Split(',').FirstOrDefault() ?? string.Empty;
                 if (!string.IsNullOrEmpty(userLanguage))
                 {
                     //right. we do "StartsWith" (not "Equals") because we have shorten codes (not full culture names)
@@ -212,21 +223,19 @@ namespace TVProgViewer.WebUI.Infrastructure.Installation
         }
 
         /// <summary>
-        /// Get a list of available data provider types
+        /// Get a dictionary of available data provider types
         /// </summary>
-        /// <returns>Available installation data provider types</returns>
-        public IList<SelectListItem> GetAvailableProviderTypes()
+        /// <param name="valuesToExclude">Values to exclude</param>
+        /// <param name="useLocalization">Localize</param>
+        /// <returns>Key-value pairs of available data providers types</returns>
+        public Dictionary<int, string> GetAvailableProviderTypes(int[] valuesToExclude = null, bool useLocalization = true)
         {
-            //TODO 239 need to be implemented
-            return new List<SelectListItem>
-            {
-                new SelectListItem()
-                {
-                    Value = DataProviderType.SqlServer.ToString(),
-                    Text = GetResource(DataProviderType.SqlServer.ToString()),
-                    Selected = true
-                }
-            };
+            return Enum.GetValues(typeof(DataProviderType))
+                .Cast<DataProviderType>()
+                .Where(enumValue => enumValue != DataProviderType.Unknown && (valuesToExclude == null || !valuesToExclude.Contains(Convert.ToInt32(enumValue))))
+                .ToDictionary(
+                    enumValue => Convert.ToInt32(enumValue),
+                    enumValue => useLocalization ? GetResource(enumValue.ToString()) : CommonHelper.ConvertEnum(enumValue.ToString()));
         }
 
         #endregion

@@ -24,14 +24,14 @@
 
         @if (IsSectionDefined("Breadcrumb"))
         {
-            @RenderSection("Breadcrumb")
+            @RenderSection("Breadcrumb") 
         }
         <div class="master-column-wrapper">
             @RenderBody()
         </div>
         @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.ContentAfter })
     </div>
-        @await Component.InvokeAsync("Footer")
-    </div>
-    @await Component.InvokeAsync("EuCookieLaw")
-    @await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })
+    @await Component.InvokeAsync("Footer")
+</div>
+@await Component.InvokeAsync("EuCookieLaw")
+@await Component.InvokeAsync("Widget", new { widgetZone = PublicWidgetZones.BodyEndHtmlTagBefore })

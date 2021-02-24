@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
+using TVProgViewer.Core.Events;
 using TVProgViewer.Core.Infrastructure;
 using TVProgViewer.Services.Events;
 using TVProgViewer.Web.Framework.Events;
@@ -17,7 +18,7 @@ namespace TVProgViewer.Web.Framework.Components
         {
             //Components are not part of the controller life cycle.
             //Hence, we could no longer use Action Filters to intercept the Models being returned
-            //as we do in the /TVProgViewer.Web.Framework/Mvc/Filters/PublishModelEventsAttribute.cs for controllers
+            //as we do in the /TvProg.Web.Framework/Mvc/Filters/PublishModelEventsAttribute.cs for controllers
 
             //model prepared event
             if (model is BaseTvProgModel)
@@ -26,7 +27,7 @@ namespace TVProgViewer.Web.Framework.Components
 
                 //we publish the ModelPrepared event for all models as the BaseTvProgModel, 
                 //so you need to implement IConsumer<ModelPrepared<BaseTvProgModel>> interface to handle this event
-                eventPublisher.ModelPrepared(model as BaseTvProgModel);
+                eventPublisher.ModelPreparedAsync(model as BaseTvProgModel).Wait();
             }
 
             if (model is IEnumerable<BaseTvProgModel> modelCollection)
@@ -35,7 +36,7 @@ namespace TVProgViewer.Web.Framework.Components
 
                 //we publish the ModelPrepared event for collection as the IEnumerable<BaseTvProgModel>, 
                 //so you need to implement IConsumer<ModelPrepared<IEnumerable<BaseTvProgModel>>> interface to handle this event
-                eventPublisher.ModelPrepared(modelCollection);
+                eventPublisher.ModelPreparedAsync(modelCollection).Wait();
             }
         }
         /// <summary>

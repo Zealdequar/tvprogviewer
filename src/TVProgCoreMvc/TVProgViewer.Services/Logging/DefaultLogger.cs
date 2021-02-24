@@ -6,6 +6,7 @@ using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Logging;
 using TVProgViewer.Data;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Logging
 {
@@ -17,7 +18,7 @@ namespace TVProgViewer.Services.Logging
         #region Fields
 
         private readonly CommonSettings _commonSettings;
-        
+
         private readonly IRepository<Log> _logRepository;
         private readonly IWebHelper _webHelper;
 
@@ -53,7 +54,7 @@ namespace TVProgViewer.Services.Logging
 
             return _commonSettings
                 .IgnoreLogWordlist
-                .Any(x => message.IndexOf(x, StringComparison.InvariantCultureIgnoreCase) >= 0);
+                .Any(x => message.Contains(x, StringComparison.InvariantCultureIgnoreCase));
         }
 
         #endregion
@@ -70,7 +71,7 @@ namespace TVProgViewer.Services.Logging
             return level switch
             {
                 LogLevel.Debug => false,
-                _ => true
+                _ => true,
             };
         }
 
@@ -78,32 +79,29 @@ namespace TVProgViewer.Services.Logging
         /// Deletes a log item
         /// </summary>
         /// <param name="log">Log item</param>
-        public virtual void DeleteLog(Log log)
+        public virtual async Task DeleteLogAsync(Log log)
         {
             if (log == null)
                 throw new ArgumentNullException(nameof(log));
 
-            _logRepository.Delete(log);
+            await _logRepository.DeleteAsync(log, false);
         }
 
         /// <summary>
         /// Deletes a log items
         /// </summary>
         /// <param name="logs">Log items</param>
-        public virtual void DeleteLogs(IList<Log> logs)
+        public virtual async Task DeleteLogsAsync(IList<Log> logs)
         {
-            if (logs == null)
-                throw new ArgumentNullException(nameof(logs));
-
-            _logRepository.Delete(logs);
+            await _logRepository.DeleteAsync(logs, false);
         }
 
         /// <summary>
         /// Clears a log
         /// </summary>
-        public virtual void ClearLog()
+        public virtual async Task ClearLogAsync()
         {
-            _logRepository.Truncate();
+            await _logRepository.TruncateAsync();
         }
 
         /// <summary>
@@ -116,27 +114,30 @@ namespace TVProgViewer.Services.Logging
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Log item items</returns>
-        public virtual IPagedList<Log> GetAllLogs(DateTime? fromUtc = null, DateTime? toUtc = null,
+        public virtual async Task<IPagedList<Log>> GetAllLogsAsync(DateTime? fromUtc = null, DateTime? toUtc = null,
             string message = "", LogLevel? logLevel = null,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var query = _logRepository.Table;
-            if (fromUtc.HasValue)
-                query = query.Where(l => fromUtc.Value <= l.CreatedOnUtc);
-            if (toUtc.HasValue)
-                query = query.Where(l => toUtc.Value >= l.CreatedOnUtc);
-            if (logLevel.HasValue)
+            var logs = await _logRepository.GetAllPagedAsync(query =>
             {
-                var logLevelId = (int)logLevel.Value;
-                query = query.Where(l => logLevelId == l.LogLevelId);
-            }
+                if (fromUtc.HasValue)
+                    query = query.Where(l => fromUtc.Value <= l.CreatedOnUtc);
+                if (toUtc.HasValue)
+                    query = query.Where(l => toUtc.Value >= l.CreatedOnUtc);
+                if (logLevel.HasValue)
+                {
+                    var logLevelId = (int)logLevel.Value;
+                    query = query.Where(l => logLevelId == l.LogLevelId);
+                }
 
-            if (!string.IsNullOrEmpty(message))
-                query = query.Where(l => l.ShortMessage.Contains(message) || l.FullMessage.Contains(message));
-            query = query.OrderByDescending(l => l.CreatedOnUtc);
+                if (!string.IsNullOrEmpty(message))
+                    query = query.Where(l => l.ShortMessage.Contains(message) || l.FullMessage.Contains(message));
+                query = query.OrderByDescending(l => l.CreatedOnUtc);
 
-            var log = new PagedList<Log>(query, pageIndex, pageSize);
-            return log;
+                return query;
+            }, pageIndex, pageSize);
+
+            return logs;
         }
 
         /// <summary>
@@ -144,12 +145,9 @@ namespace TVProgViewer.Services.Logging
         /// </summary>
         /// <param name="logId">Log item identifier</param>
         /// <returns>Log item</returns>
-        public virtual Log GetLogById(int logId)
+        public virtual async Task<Log> GetLogByIdAsync(int logId)
         {
-            if (logId == 0)
-                return null;
-
-            return _logRepository.GetById(logId);
+            return await _logRepository.GetByIdAsync(logId);
         }
 
         /// <summary>
@@ -157,25 +155,9 @@ namespace TVProgViewer.Services.Logging
         /// </summary>
         /// <param name="logIds">Log item identifiers</param>
         /// <returns>Log items</returns>
-        public virtual IList<Log> GetLogByIds(int[] logIds)
+        public virtual async Task<IList<Log>> GetLogByIdsAsync(int[] logIds)
         {
-            if (logIds == null || logIds.Length == 0)
-                return new List<Log>();
-
-            var query = from l in _logRepository.Table
-                        where logIds.Contains(l.Id)
-                        select l;
-            var logItems = query.ToList();
-            //sort by passed identifiers
-            var sortedLogItems = new List<Log>();
-            foreach (var id in logIds)
-            {
-                var log = logItems.Find(x => x.Id == id);
-                if (log != null)
-                    sortedLogItems.Add(log);
-            }
-
-            return sortedLogItems;
+            return await _logRepository.GetByIdsAsync(logIds);
         }
 
         /// <summary>
@@ -184,9 +166,9 @@ namespace TVProgViewer.Services.Logging
         /// <param name="logLevel">Log level</param>
         /// <param name="shortMessage">The short message</param>
         /// <param name="fullMessage">The full message</param>
-        /// <param name="User">The User to associate log record with</param>
+        /// <param name="user">The user to associate log record with</param>
         /// <returns>A log item</returns>
-        public virtual Log InsertLog(LogLevel logLevel, string shortMessage, string fullMessage = "", User User = null)
+        public virtual async Task<Log> InsertLogAsync(LogLevel logLevel, string shortMessage, string fullMessage = "", User user = null)
         {
             //check ignore word/phrase list?
             if (IgnoreLog(shortMessage) || IgnoreLog(fullMessage))
@@ -198,13 +180,13 @@ namespace TVProgViewer.Services.Logging
                 ShortMessage = shortMessage,
                 FullMessage = fullMessage,
                 IpAddress = _webHelper.GetCurrentIpAddress(),
-                UserId = User?.Id,
+                UserId = user?.Id,
                 PageUrl = _webHelper.GetThisPageUrl(true),
                 ReferrerUrl = _webHelper.GetUrlReferrer(),
                 CreatedOnUtc = DateTime.UtcNow
             };
 
-            _logRepository.Insert(log);
+            await _logRepository.InsertAsync(log, false);
 
             return log;
         }
@@ -214,15 +196,15 @@ namespace TVProgViewer.Services.Logging
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
-        /// <param name="User">User</param>
-        public virtual void Information(string message, Exception exception = null, User User = null)
+        /// <param name="user">User</param>
+        public virtual async Task InformationAsync(string message, Exception exception = null, User user = null)
         {
             //don't log thread abort exception
             if (exception is System.Threading.ThreadAbortException)
                 return;
 
             if (IsEnabled(LogLevel.Information))
-                InsertLog(LogLevel.Information, message, exception?.ToString() ?? string.Empty, User);
+                await InsertLogAsync(LogLevel.Information, message, exception?.ToString() ?? string.Empty, user);
         }
 
         /// <summary>
@@ -230,15 +212,15 @@ namespace TVProgViewer.Services.Logging
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
-        /// <param name="User">User</param>
-        public virtual void Warning(string message, Exception exception = null, User User = null)
+        /// <param name="user">User</param>
+        public virtual async Task WarningAsync(string message, Exception exception = null, User user = null)
         {
             //don't log thread abort exception
             if (exception is System.Threading.ThreadAbortException)
                 return;
 
             if (IsEnabled(LogLevel.Warning))
-                InsertLog(LogLevel.Warning, message, exception?.ToString() ?? string.Empty, User);
+                await InsertLogAsync(LogLevel.Warning, message, exception?.ToString() ?? string.Empty, user);
         }
 
         /// <summary>
@@ -246,15 +228,15 @@ namespace TVProgViewer.Services.Logging
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
-        /// <param name="User">User</param>
-        public virtual void Error(string message, Exception exception = null, User User = null)
+        /// <param name="user">User</param>
+        public virtual async Task ErrorAsync(string message, Exception exception = null, User user = null)
         {
             //don't log thread abort exception
             if (exception is System.Threading.ThreadAbortException)
                 return;
 
             if (IsEnabled(LogLevel.Error))
-                InsertLog(LogLevel.Error, message, exception?.ToString() ?? string.Empty, User);
+                await InsertLogAsync(LogLevel.Error, message, exception?.ToString() ?? string.Empty, user);
         }
 
         #endregion

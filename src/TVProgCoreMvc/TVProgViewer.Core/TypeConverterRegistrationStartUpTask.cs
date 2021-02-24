@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using TVProgViewer.Core.ComponentModel;
 using TVProgViewer.Core.Domain.Shipping;
 using TVProgViewer.Core.Infrastructure;
@@ -14,7 +15,7 @@ namespace TVProgViewer.Core
         /// <summary>
         /// Executes a task
         /// </summary>
-        public void Execute()
+        public Task ExecuteAsync()
         {
             //lists
             TypeDescriptor.AddAttributes(typeof(List<int>), new TypeConverterAttribute(typeof(GenericListTypeConverter<int>)));
@@ -31,6 +32,8 @@ namespace TVProgViewer.Core
 
             //pickup point
             TypeDescriptor.AddAttributes(typeof(PickupPoint), new TypeConverterAttribute(typeof(PickupPointTypeConverter)));
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

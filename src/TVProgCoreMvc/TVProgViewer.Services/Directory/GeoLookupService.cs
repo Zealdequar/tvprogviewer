@@ -74,7 +74,7 @@ namespace TVProgViewer.Services.Directory
             catch (Exception exc)
             {
                 //do not throw exceptions
-                _logger.Warning("Cannot load MaxMind record", exc);
+                _logger.WarningAsync("Cannot load MaxMind record", exc).Wait();
                 return null;
             }
         }

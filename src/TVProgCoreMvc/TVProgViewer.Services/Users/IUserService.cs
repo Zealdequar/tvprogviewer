@@ -5,6 +5,7 @@ using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Core.Domain.Tax;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Users
 {
@@ -16,28 +17,28 @@ namespace TVProgViewer.Services.Users
         #region Users
 
         /// <summary>
-        /// Gets all Users
+        /// Gets all users
         /// </summary>
         /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
         /// <param name="affiliateId">Affiliate identifier</param>
         /// <param name="vendorId">Vendor identifier</param>
-        /// <param name="UserRoleIds">A list of User role identifiers to filter by (at least one match); pass null or empty list in order to load all Users; </param>
-        /// <param name="email">Email; null to load all Users</param>
-        /// <param name="username">Username; null to load all Users</param>
-        /// <param name="firstName">First name; null to load all Users</param>
-        /// <param name="lastName">Last name; null to load all Users</param>
-        /// <param name="dayOfBirth">Day of birth; 0 to load all Users</param>
-        /// <param name="monthOfBirth">Month of birth; 0 to load all Users</param>
-        /// <param name="company">Company; null to load all Users</param>
-        /// <param name="phone">Phone; null to load all Users</param>
-        /// <param name="zipPostalCode">Phone; null to load all Users</param>
-        /// <param name="ipAddress">IP address; null to load all Users</param>
+        /// <param name="userRoleIds">A list of user role identifiers to filter by (at least one match); pass null or empty list in order to load all users; </param>
+        /// <param name="email">Email; null to load all users</param>
+        /// <param name="username">Username; null to load all users</param>
+        /// <param name="firstName">First name; null to load all users</param>
+        /// <param name="lastName">Last name; null to load all users</param>
+        /// <param name="dayOfBirth">Day of birth; 0 to load all users</param>
+        /// <param name="monthOfBirth">Month of birth; 0 to load all users</param>
+        /// <param name="company">Company; null to load all users</param>
+        /// <param name="phone">Phone; null to load all users</param>
+        /// <param name="zipPostalCode">Phone; null to load all users</param>
+        /// <param name="ipAddress">IP address; null to load all users</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>Users</returns>
-        IPagedList<User> GetAllUsers(DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
+        Task<IPagedList<User>> GetAllUsersAsync(DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             int affiliateId = 0, int vendorId = 0, int[] userRoleIds = null,
             string email = null, string username = null, string firstName = null, string lastName = null,
             int dayOfBirth = 0, int monthOfBirth = 0,
@@ -45,18 +46,18 @@ namespace TVProgViewer.Services.Users
             int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);
 
         /// <summary>
-        /// Gets online Users
+        /// Gets online users
         /// </summary>
         /// <param name="lastActivityFromUtc">User last activity date (from)</param>
-        /// <param name="UserRoleIds">A list of User role identifiers to filter by (at least one match); pass null or empty list in order to load all Users; </param>
+        /// <param name="userRoleIds">A list of user role identifiers to filter by (at least one match); pass null or empty list in order to load all users; </param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Users</returns>
-        IPagedList<User> GetOnlineUsers(DateTime lastActivityFromUtc,
-            int[] UserRoleIds, int pageIndex = 0, int pageSize = int.MaxValue);
+        Task<IPagedList<User>> GetOnlineUsersAsync(DateTime lastActivityFromUtc,
+            int[] userRoleIds, int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
-        /// Gets Users with shopping carts
+        /// Gets users with shopping carts
         /// </summary>
         /// <param name="shoppingCartType">Shopping cart type; pass null to load all records</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
@@ -67,360 +68,411 @@ namespace TVProgViewer.Services.Users
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Users</returns>
-        IPagedList<User> GetUsersWithShoppingCarts(ShoppingCartType? shoppingCartType = null,
+        Task<IPagedList<User>> GetUsersWithShoppingCartsAsync(ShoppingCartType? shoppingCartType = null,
             int storeId = 0, int? productId = null,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null, int? countryId = null,
             int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
-        /// Gets User for shopping cart
+        /// Gets user for shopping cart
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <returns>Result</returns>
-        User GetShoppingCartUser(IList<ShoppingCartItem> shoppingCart);
+        Task<User> GetShoppingCartUserAsync(IList<ShoppingCartItem> shoppingCart);
 
         /// <summary>
-        /// Delete a User
+        /// Delete a user
         /// </summary>
-        /// <param name="User">User</param>
-        void DeleteUser(User User);
+        /// <param name="user">User</param>
+        Task DeleteUserAsync(User user);
 
         /// <summary>
-        /// Gets a User
+        /// Gets built-in system record used for background tasks
         /// </summary>
-        /// <param name="UserId">User identifier</param>
-        /// <returns>A User</returns>
-        User GetUserById(int UserId);
+        /// <returns>A user object</returns>
+        Task<User> GetOrCreateBackgroundTaskUserAsync();
 
         /// <summary>
-        /// Get Users by identifiers
+        /// Gets built-in system guest record used for requests from search engines
         /// </summary>
-        /// <param name="UserIds">User identifiers</param>
+        /// <returns>A user object</returns>
+        Task<User> GetOrCreateSearchEngineUserAsync();
+
+        /// <summary>
+        /// Gets a user
+        /// </summary>
+        /// <param name="userId">User identifier</param>
+        /// <returns>A user</returns>
+        Task<User> GetUserByIdAsync(int userId);
+
+        /// <summary>
+        /// Get users by identifiers
+        /// </summary>
+        /// <param name="userIds">User identifiers</param>
         /// <returns>Users</returns>
-        IList<User> GetUsersByIds(int[] UserIds);
+        Task<IList<User>> GetUsersByIdsAsync(int[] userIds);
 
         /// <summary>
-        /// Gets a User by GUID
+        /// Gets a user by GUID
         /// </summary>
-        /// <param name="UserGuid">User GUID</param>
-        /// <returns>A User</returns>
-        User GetUserByGuid(Guid UserGuid);
+        /// <param name="userGuid">User GUID</param>
+        /// <returns>A user</returns>
+        Task<User> GetUserByGuidAsync(Guid userGuid);
 
-        Address GetUserAddress(int userId, int addressId);
-        IEnumerable<Address> GetAddressesByUserId(int userID);
-        Address GetUserShippingAddress(User user);
-        Address GetUserBillingAddress(User user);
-        void RemoveUserAddress(User user, Address address);
         /// <summary>
-        /// Get User by email
+        /// Get user by email
         /// </summary>
         /// <param name="email">Email</param>
         /// <returns>User</returns>
-        User GetUserByEmail(string email);
+        Task<User> GetUserByEmailAsync(string email);
 
         /// <summary>
-        /// Get User by system role
+        /// Get user by system role
         /// </summary>
         /// <param name="systemName">System name</param>
         /// <returns>User</returns>
-        User GetUserBySystemName(string systemName);
+        Task<User> GetUserBySystemNameAsync(string systemName);
 
         /// <summary>
-        /// Get User by username
+        /// Get user by username
         /// </summary>
         /// <param name="username">Username</param>
         /// <returns>User</returns>
-        User GetUserByUsername(string username);
+        Task<User> GetUserByUsernameAsync(string username);
 
         /// <summary>
-        /// Insert a guest User
+        /// Insert a guest user
         /// </summary>
         /// <returns>User</returns>
-        User InsertGuestUser();
+        Task<User> InsertGuestUserAsync();
 
         /// <summary>
-        /// Insert a User
+        /// Insert a user
         /// </summary>
-        /// <param name="User">User</param>
-        void InsertUser(User user);
+        /// <param name="user">User</param>
+        Task InsertUserAsync(User user);
 
-
-        void InsertUserAddress(User user, Address address);
         /// <summary>
-        /// Updates the User
+        /// Updates the user
         /// </summary>
-        /// <param name="User">User</param>
-        void UpdateUser(User User);
+        /// <param name="user">User</param>
+        Task UpdateUserAsync(User user);
 
         /// <summary>
         /// Reset data required for checkout
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="clearCouponCodes">A value indicating whether to clear coupon code</param>
         /// <param name="clearCheckoutAttributes">A value indicating whether to clear selected checkout attributes</param>
         /// <param name="clearRewardPoints">A value indicating whether to clear "Use reward points" flag</param>
         /// <param name="clearShippingMethod">A value indicating whether to clear selected shipping method</param>
         /// <param name="clearPaymentMethod">A value indicating whether to clear selected payment method</param>
-        void ResetCheckoutData(User User, int storeId,
+        Task ResetCheckoutDataAsync(User user, int storeId,
             bool clearCouponCodes = false, bool clearCheckoutAttributes = false,
             bool clearRewardPoints = true, bool clearShippingMethod = true,
             bool clearPaymentMethod = true);
 
         /// <summary>
-        /// Delete guest User records
+        /// Delete guest user records
         /// </summary>
         /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
-        /// <param name="onlyWithoutShoppingCart">A value indicating whether to delete Users only without shopping cart</param>
-        /// <returns>Number of deleted Users</returns>
-        int DeleteGuestUsers(DateTime? createdFromUtc, DateTime? createdToUtc, bool onlyWithoutShoppingCart);
+        /// <param name="onlyWithoutShoppingCart">A value indicating whether to delete users only without shopping cart</param>
+        /// <returns>Number of deleted users</returns>
+        Task<int> DeleteGuestUsersAsync(DateTime? createdFromUtc, DateTime? createdToUtc, bool onlyWithoutShoppingCart);
 
         /// <summary>
         /// Gets a default tax display type (if configured)
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Result</returns>
-        TaxDisplayType? GetUserDefaultTaxDisplayType(User User);
+        Task<TaxDisplayType?> GetUserDefaultTaxDisplayTypeAsync(User user);
 
         /// <summary>
         /// Get full name
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>User full name</returns>
-        string GetUserFullName(User User);
+        Task<string> GetUserFullNameAsync(User user);
 
         /// <summary>
-        /// Formats the User name
+        /// Formats the user name
         /// </summary>
-        /// <param name="User">Source</param>
-        /// <param name="stripTooLong">Strip too long User name</param>
-        /// <param name="maxLength">Maximum User name length</param>
+        /// <param name="user">Source</param>
+        /// <param name="stripTooLong">Strip too long user name</param>
+        /// <param name="maxLength">Maximum user name length</param>
         /// <returns>Formatted text</returns>
-        string FormatUsername(User User, bool stripTooLong = false, int maxLength = 0);
+        Task<string> FormatUsernameAsync(User user, bool stripTooLong = false, int maxLength = 0);
 
         /// <summary>
         /// Gets coupon codes
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Coupon codes</returns>
-        string[] ParseAppliedDiscountCouponCodes(User User);
+        Task<string[]> ParseAppliedDiscountCouponCodesAsync(User user);
 
         /// <summary>
         /// Adds a coupon code
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code</param>
         /// <returns>New coupon codes document</returns>
-        void ApplyDiscountCouponCode(User User, string couponCode);
+        Task ApplyDiscountCouponCodeAsync(User user, string couponCode);
 
         /// <summary>
         /// Removes a coupon code
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code to remove</param>
         /// <returns>New coupon codes document</returns>
-        void RemoveDiscountCouponCode(User User, string couponCode);
+        Task RemoveDiscountCouponCodeAsync(User user, string couponCode);
 
         /// <summary>
         /// Gets coupon codes
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Coupon codes</returns>
-        string[] ParseAppliedGiftCardCouponCodes(User User);
+        Task<string[]> ParseAppliedGiftCardCouponCodesAsync(User user);
 
         /// <summary>
         /// Adds a coupon code
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code</param>
         /// <returns>New coupon codes document</returns>
-        void ApplyGiftCardCouponCode(User User, string couponCode);
+        Task ApplyGiftCardCouponCodeAsync(User user, string couponCode);
 
         /// <summary>
         /// Removes a coupon code
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code to remove</param>
         /// <returns>New coupon codes document</returns>
-        void RemoveGiftCardCouponCode(User User, string couponCode);
+        Task RemoveGiftCardCouponCodeAsync(User user, string couponCode);
 
         #endregion
 
         #region User roles
 
         /// <summary>
-        /// Add a User-User role mapping
+        /// Add a user-user role mapping
         /// </summary>
-        /// <param name="roleMapping">User-User role mapping</param>
-        void AddUserRoleMapping(UserUserRoleMapping roleMapping);
+        /// <param name="roleMapping">User-user role mapping</param>
+        Task AddUserRoleMappingAsync(UserUserRoleMapping roleMapping);
 
         /// <summary>
-        /// Remove a User-User role mapping
+        /// Remove a user-user role mapping
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="role">User role</param>
-        void RemoveUserRoleMapping(User User, UserRole role);
+        Task RemoveUserRoleMappingAsync(User user, UserRole role);
 
         /// <summary>
-        /// Delete a User role
+        /// Delete a user role
         /// </summary>
-        /// <param name="UserRole">User role</param>
-        void DeleteUserRole(UserRole UserRole);
+        /// <param name="userRole">User role</param>
+        Task DeleteUserRoleAsync(UserRole userRole);
 
         /// <summary>
-        /// Gets a User role
+        /// Gets a user role
         /// </summary>
-        /// <param name="UserRoleId">User role identifier</param>
+        /// <param name="userRoleId">User role identifier</param>
         /// <returns>User role</returns>
-        UserRole GetUserRoleById(int UserRoleId);
+        Task<UserRole> GetUserRoleByIdAsync(int userRoleId);
 
         /// <summary>
-        /// Gets a User role
+        /// Gets a user role
         /// </summary>
         /// <param name="systemName">User role system name</param>
         /// <returns>User role</returns>
-        UserRole GetUserRoleBySystemName(string systemName);
+        Task<UserRole> GetUserRoleBySystemNameAsync(string systemName);
 
         /// <summary>
-        /// Get User role identifiers
+        /// Get user role identifiers
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="showHidden">A value indicating whether to load hidden records</param>
         /// <returns>User role identifiers</returns>
-        int[] GetUserRoleIds(User User, bool showHidden = false);
+        Task<int[]> GetUserRoleIdsAsync(User user, bool showHidden = false);
 
         /// <summary>
-        /// Gets list of User roles
+        /// Gets list of user roles
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="showHidden">A value indicating whether to load hidden records</param>
         /// <returns>Result</returns>
-        IList<UserRole> GetUserRoles(User User, bool showHidden = false);
+        Task<IList<UserRole>> GetUserRolesAsync(User user, bool showHidden = false);
 
         /// <summary>
-        /// Gets all User roles
+        /// Gets all user roles
         /// </summary>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>User roles</returns>
-        IList<UserRole> GetAllUserRoles(bool showHidden = false);
+        Task<IList<UserRole>> GetAllUserRolesAsync(bool showHidden = false);
 
         /// <summary>
-        /// Inserts a User role
+        /// Inserts a user role
         /// </summary>
-        /// <param name="UserRole">User role</param>
-        void InsertUserRole(UserRole UserRole);
+        /// <param name="userRole">User role</param>
+        Task InsertUserRoleAsync(UserRole userRole);
 
         /// <summary>
-        /// Gets a value indicating whether User is in a certain User role
+        /// Gets a value indicating whether user is in a certain user role
         /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="UserRoleSystemName">User role system name</param>
-        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active User roles</param>
+        /// <param name="user">User</param>
+        /// <param name="userRoleSystemName">User role system name</param>
+        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>Result</returns>
-        bool IsInUserRole(User User, string UserRoleSystemName, bool onlyActiveUserRoles = true);
+        Task<bool> IsInUserRoleAsync(User user, string userRoleSystemName, bool onlyActiveUserRoles = true);
 
         /// <summary>
-        /// Gets a value indicating whether User is administrator
+        /// Gets a value indicating whether user is administrator
         /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active User roles</param>
+        /// <param name="user">User</param>
+        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>Result</returns>
-        bool IsAdmin(User User, bool onlyActiveUserRoles = true);
+        Task<bool> IsAdminAsync(User user, bool onlyActiveUserRoles = true);
 
         /// <summary>
-        /// Gets a value indicating whether User is a forum moderator
+        /// Gets a value indicating whether user is a forum moderator
         /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active User roles</param>
+        /// <param name="user">User</param>
+        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>Result</returns>
-        bool IsForumModerator(User User, bool onlyActiveUserRoles = true);
+        Task<bool> IsForumModeratorAsync(User user, bool onlyActiveUserRoles = true);
 
         /// <summary>
-        /// Gets a value indicating whether User is registered
+        /// Gets a value indicating whether user is registered
         /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active User roles</param>
+        /// <param name="user">User</param>
+        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>Result</returns>
-        bool IsRegistered(User User, bool onlyActiveUserRoles = true);
+        Task<bool> IsRegisteredAsync(User user, bool onlyActiveUserRoles = true);
 
         /// <summary>
-        /// Gets a value indicating whether User is guest
+        /// Gets a value indicating whether user is guest
         /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active User roles</param>
+        /// <param name="user">User</param>
+        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>Result</returns>
-        bool IsGuest(User User, bool onlyActiveUserRoles = true);
+        Task<bool> IsGuestAsync(User user, bool onlyActiveUserRoles = true);
 
         /// <summary>
-        /// Gets a value indicating whether User is vendor
+        /// Gets a value indicating whether user is vendor
         /// </summary>
-        /// <param name="User">User</param>
-        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active User roles</param>
+        /// <param name="user">User</param>
+        /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>Result</returns>
-        bool IsVendor(User User, bool onlyActiveUserRoles = true);
+        Task<bool> IsVendorAsync(User user, bool onlyActiveUserRoles = true);
 
         /// <summary>
-        /// Updates the User role
+        /// Updates the user role
         /// </summary>
-        /// <param name="UserRole">User role</param>
-        void UpdateUserRole(UserRole UserRole);
+        /// <param name="userRole">User role</param>
+        Task UpdateUserRoleAsync(UserRole userRole);
 
         #endregion
 
         #region User passwords
 
         /// <summary>
-        /// Gets User passwords
+        /// Gets user passwords
         /// </summary>
-        /// <param name="UserId">User identifier; pass null to load all records</param>
+        /// <param name="userId">User identifier; pass null to load all records</param>
         /// <param name="passwordFormat">Password format; pass null to load all records</param>
         /// <param name="passwordsToReturn">Number of returning passwords; pass null to load all records</param>
-        /// <returns>List of User passwords</returns>
-        IList<UserPassword> GetUserPasswords(int? UserId = null,
+        /// <returns>List of user passwords</returns>
+        Task<IList<UserPassword>> GetUserPasswordsAsync(int? userId = null,
             PasswordFormat? passwordFormat = null, int? passwordsToReturn = null);
 
         /// <summary>
-        /// Get current User password
+        /// Get current user password
         /// </summary>
-        /// <param name="UserId">User identifier</param>
+        /// <param name="userId">User identifier</param>
         /// <returns>User password</returns>
-        UserPassword GetCurrentPassword(int UserId);
+        Task<UserPassword> GetCurrentPasswordAsync(int userId);
 
         /// <summary>
-        /// Insert a User password
+        /// Insert a user password
         /// </summary>
-        /// <param name="UserPassword">User password</param>
-        void InsertUserPassword(UserPassword UserPassword);
+        /// <param name="userPassword">User password</param>
+        Task InsertUserPasswordAsync(UserPassword userPassword);
 
         /// <summary>
-        /// Update a User password
+        /// Update a user password
         /// </summary>
-        /// <param name="UserPassword">User password</param>
-        void UpdateUserPassword(UserPassword UserPassword);
+        /// <param name="userPassword">User password</param>
+        Task UpdateUserPasswordAsync(UserPassword userPassword);
 
         /// <summary>
         /// Check whether password recovery token is valid
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="token">Token to validate</param>
         /// <returns>Result</returns>
-        bool IsPasswordRecoveryTokenValid(User User, string token);
+        Task<bool> IsPasswordRecoveryTokenValidAsync(User user, string token);
 
         /// <summary>
         /// Check whether password recovery link is expired
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Result</returns>
-        bool IsPasswordRecoveryLinkExpired(User User);
+        Task<bool> IsPasswordRecoveryLinkExpiredAsync(User user);
 
         /// <summary>
-        /// Check whether User password is expired 
+        /// Check whether user password is expired 
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>True if password is expired; otherwise false</returns>
-        bool PasswordIsExpired(User User);
-      
+        Task<bool> PasswordIsExpiredAsync(User user);
+
+        #endregion
+
+        #region User address mapping
+
+        /// <summary>
+        /// Gets a list of addresses mapped to user
+        /// </summary>
+        /// <param name="userId">User identifier</param>
+        /// <returns></returns>
+        Task<IList<Address>> GetAddressesByUserIdAsync(int userId);
+
+        /// <summary>
+        /// Gets a address mapped to user
+        /// </summary>
+        /// <param name="userId">User identifier</param>
+        /// <param name="addressId">Address identifier</param>
+        /// <returns>Result</returns>
+        Task<Address> GetUserAddressAsync(int userId, int addressId);
+
+        /// <summary>
+        /// Gets a user billing address
+        /// </summary>
+        /// <param name="user">User identifier</param>
+        /// <returns>Result</returns>
+        Task<Address> GetUserBillingAddressAsync(User user);
+
+        /// <summary>
+        /// Gets a user shipping address
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <returns>Result</returns>
+        Task<Address> GetUserShippingAddressAsync(User user);
+
+        /// <summary>
+        /// Remove a user-address mapping record
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="address">Address</param>
+        Task RemoveUserAddressAsync(User user, Address address);
+
+        /// <summary>
+        /// Inserts a user-address mapping record
+        /// </summary>
+        /// <param name="user">User</param>
+        /// <param name="address">Address</param>
+        Task InsertUserAddressAsync(User user, Address address);
 
         #endregion
     }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Messages;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.Extensions;
-using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Messages
 {
@@ -16,17 +15,14 @@ namespace TVProgViewer.Services.Messages
     {
         #region Fields
 
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<QueuedEmail> _queuedEmailRepository;
 
         #endregion
 
         #region Ctor
 
-        public QueuedEmailService(IEventPublisher eventPublisher,
-            IRepository<QueuedEmail> queuedEmailRepository)
+        public QueuedEmailService(IRepository<QueuedEmail> queuedEmailRepository)
         {
-            _eventPublisher = eventPublisher;
             _queuedEmailRepository = queuedEmailRepository;
         }
 
@@ -38,63 +34,36 @@ namespace TVProgViewer.Services.Messages
         /// Inserts a queued email
         /// </summary>
         /// <param name="queuedEmail">Queued email</param>        
-        public virtual void InsertQueuedEmail(QueuedEmail queuedEmail)
+        public virtual async Task InsertQueuedEmailAsync(QueuedEmail queuedEmail)
         {
-            if (queuedEmail == null)
-                throw new ArgumentNullException(nameof(queuedEmail));
-
-            _queuedEmailRepository.Insert(queuedEmail);
-
-            //event notification
-            _eventPublisher.EntityInserted(queuedEmail);
+            await _queuedEmailRepository.InsertAsync(queuedEmail);
         }
 
         /// <summary>
         /// Updates a queued email
         /// </summary>
         /// <param name="queuedEmail">Queued email</param>
-        public virtual void UpdateQueuedEmail(QueuedEmail queuedEmail)
+        public virtual async Task UpdateQueuedEmailAsync(QueuedEmail queuedEmail)
         {
-            if (queuedEmail == null)
-                throw new ArgumentNullException(nameof(queuedEmail));
-
-            _queuedEmailRepository.Update(queuedEmail);
-
-            //event notification
-            _eventPublisher.EntityUpdated(queuedEmail);
+            await _queuedEmailRepository.UpdateAsync(queuedEmail);
         }
 
         /// <summary>
         /// Deleted a queued email
         /// </summary>
         /// <param name="queuedEmail">Queued email</param>
-        public virtual void DeleteQueuedEmail(QueuedEmail queuedEmail)
+        public virtual async Task DeleteQueuedEmailAsync(QueuedEmail queuedEmail)
         {
-            if (queuedEmail == null)
-                throw new ArgumentNullException(nameof(queuedEmail));
-
-            _queuedEmailRepository.Delete(queuedEmail);
-
-            //event notification
-            _eventPublisher.EntityDeleted(queuedEmail);
+            await _queuedEmailRepository.DeleteAsync(queuedEmail);
         }
 
         /// <summary>
         /// Deleted a queued emails
         /// </summary>
         /// <param name="queuedEmails">Queued emails</param>
-        public virtual void DeleteQueuedEmails(IList<QueuedEmail> queuedEmails)
+        public virtual async Task DeleteQueuedEmailsAsync(IList<QueuedEmail> queuedEmails)
         {
-            if (queuedEmails == null)
-                throw new ArgumentNullException(nameof(queuedEmails));
-
-            _queuedEmailRepository.Delete(queuedEmails);
-
-            //event notification
-            foreach (var queuedEmail in queuedEmails)
-            {
-                _eventPublisher.EntityDeleted(queuedEmail);
-            }
+            await _queuedEmailRepository.DeleteAsync(queuedEmails);
         }
 
         /// <summary>
@@ -102,12 +71,9 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="queuedEmailId">Queued email identifier</param>
         /// <returns>Queued email</returns>
-        public virtual QueuedEmail GetQueuedEmailById(int queuedEmailId)
+        public virtual async Task<QueuedEmail> GetQueuedEmailByIdAsync(int queuedEmailId)
         {
-            if (queuedEmailId == 0)
-                return null;
-
-            return _queuedEmailRepository.ToCachedGetById(queuedEmailId);
+            return await _queuedEmailRepository.GetByIdAsync(queuedEmailId, cache => default);
         }
 
         /// <summary>
@@ -115,25 +81,9 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="queuedEmailIds">queued email identifiers</param>
         /// <returns>Queued emails</returns>
-        public virtual IList<QueuedEmail> GetQueuedEmailsByIds(int[] queuedEmailIds)
+        public virtual async Task<IList<QueuedEmail>> GetQueuedEmailsByIdsAsync(int[] queuedEmailIds)
         {
-            if (queuedEmailIds == null || queuedEmailIds.Length == 0)
-                return new List<QueuedEmail>();
-
-            var query = from qe in _queuedEmailRepository.Table
-                        where queuedEmailIds.Contains(qe.Id)
-                        select qe;
-            var queuedEmails = query.ToList();
-            //sort by passed identifiers
-            var sortedQueuedEmails = new List<QueuedEmail>();
-            foreach (var id in queuedEmailIds)
-            {
-                var queuedEmail = queuedEmails.Find(x => x.Id == id);
-                if (queuedEmail != null)
-                    sortedQueuedEmails.Add(queuedEmail);
-            }
-
-            return sortedQueuedEmails;
+            return await _queuedEmailRepository.GetByIdsAsync(queuedEmailIds);
         }
 
         /// <summary>
@@ -150,7 +100,7 @@ namespace TVProgViewer.Services.Messages
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Email item list</returns>
-        public virtual IPagedList<QueuedEmail> SearchEmails(string fromEmail,
+        public virtual async Task<IPagedList<QueuedEmail>> SearchEmailsAsync(string fromEmail,
             string toEmail, DateTime? createdFromUtc, DateTime? createdToUtc,
             bool loadNotSentItemsOnly, bool loadOnlyItemsToBeSent, int maxSendTries,
             bool loadNewest, int pageIndex = 0, int pageSize = int.MaxValue)
@@ -182,16 +132,42 @@ namespace TVProgViewer.Services.Messages
                 //load by priority
                 query.OrderByDescending(qe => qe.PriorityId).ThenBy(qe => qe.CreatedOnUtc);
 
-            var queuedEmails = new PagedList<QueuedEmail>(query, pageIndex, pageSize);
+            var queuedEmails = await query.ToPagedListAsync(pageIndex, pageSize);
+
             return queuedEmails;
+        }
+
+        /// <summary>
+        /// Deletes already sent emails
+        /// </summary>
+        /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
+        /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
+        /// <returns>Number of deleted emails</returns>
+        public virtual async Task<int> DeleteAlreadySentEmailsAsync(DateTime? createdFromUtc, DateTime? createdToUtc)
+        {
+            var query = _queuedEmailRepository.Table;
+
+            // only sent emails
+            query = query.Where(qe => qe.SentOnUtc.HasValue);
+
+            if (createdFromUtc.HasValue)
+                query = query.Where(qe => qe.CreatedOnUtc >= createdFromUtc);
+            if (createdToUtc.HasValue)
+                query = query.Where(qe => qe.CreatedOnUtc <= createdToUtc);
+
+            var emails = query.ToArray();
+
+            await DeleteQueuedEmailsAsync(emails);
+
+            return emails.Length;
         }
 
         /// <summary>
         /// Delete all queued emails
         /// </summary>
-        public virtual void DeleteAllEmails()
+        public virtual async Task DeleteAllEmailsAsync()
         {
-            _queuedEmailRepository.Truncate();
+            await _queuedEmailRepository.TruncateAsync();
         }
 
         #endregion

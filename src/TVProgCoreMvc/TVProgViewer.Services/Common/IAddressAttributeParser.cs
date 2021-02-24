@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TVProgViewer.Core.Domain.Common;
 
@@ -14,15 +15,16 @@ namespace TVProgViewer.Services.Common
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Selected address attributes</returns>
-        IList<AddressAttribute> ParseAddressAttributes(string attributesXml);
+        Task<IList<AddressAttribute>> ParseAddressAttributesAsync(string attributesXml);
 
         /// <summary>
         /// Get address attribute values
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Address attribute values</returns>
-        IList<AddressAttributeValue> ParseAddressAttributeValues(string attributesXml);
+        Task<IList<AddressAttributeValue>> ParseAddressAttributeValuesAsync(string attributesXml);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Gets selected address attribute value
         /// </summary>
@@ -31,6 +33,7 @@ namespace TVProgViewer.Services.Common
         /// <returns>Address attribute value</returns>
         IList<string> ParseValues(string attributesXml, int addressAttributeId);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Adds an attribute
         /// </summary>
@@ -45,13 +48,13 @@ namespace TVProgViewer.Services.Common
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Warnings</returns>
-        IList<string> GetAttributeWarnings(string attributesXml);
+        Task<IList<string>> GetAttributeWarningsAsync(string attributesXml);
 
         /// <summary>
         /// Get custom address attributes from the passed form
         /// </summary>
         /// <param name="form">Form values</param>
         /// <returns>Attributes in XML format</returns>
-        string ParseCustomAddressAttributes(IFormCollection form);
+        Task<string> ParseCustomAddressAttributesAsync(IFormCollection form);
     }
 }

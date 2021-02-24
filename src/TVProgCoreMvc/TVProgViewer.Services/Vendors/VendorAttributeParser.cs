@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Xml;
 using TVProgViewer.Core.Domain.Vendors;
 using TVProgViewer.Services.Localization;
@@ -50,7 +51,7 @@ namespace TVProgViewer.Services.Vendors
 
                 foreach (XmlNode node in xmlDoc.SelectNodes(@"//Attributes/VendorAttribute"))
                 {
-                    if (node.Attributes?["ID"] == null) 
+                    if (node.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node.Attributes["ID"].InnerText.Trim();
@@ -77,7 +78,7 @@ namespace TVProgViewer.Services.Vendors
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>List of vendor attributes</returns>
-        public virtual IList<VendorAttribute> ParseVendorAttributes(string attributesXml)
+        public virtual async Task<IList<VendorAttribute>> ParseVendorAttributesAsync(string attributesXml)
         {
             var result = new List<VendorAttribute>();
             if (string.IsNullOrEmpty(attributesXml))
@@ -86,7 +87,7 @@ namespace TVProgViewer.Services.Vendors
             var ids = ParseVendorAttributeIds(attributesXml);
             foreach (var id in ids)
             {
-                var attribute = _vendorAttributeService.GetVendorAttributeById(id);
+                var attribute = await _vendorAttributeService.GetVendorAttributeByIdAsync(id);
                 if (attribute != null)
                 {
                     result.Add(attribute);
@@ -101,13 +102,13 @@ namespace TVProgViewer.Services.Vendors
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>List of vendor attribute values</returns>
-        public virtual IList<VendorAttributeValue> ParseVendorAttributeValues(string attributesXml)
+        public virtual async Task<IList<VendorAttributeValue>> ParseVendorAttributeValuesAsync(string attributesXml)
         {
             var values = new List<VendorAttributeValue>();
             if (string.IsNullOrEmpty(attributesXml))
                 return values;
 
-            var attributes = ParseVendorAttributes(attributesXml);
+            var attributes = await ParseVendorAttributesAsync(attributesXml);
             foreach (var attribute in attributes)
             {
                 if (!attribute.ShouldHaveValues())
@@ -116,13 +117,13 @@ namespace TVProgViewer.Services.Vendors
                 var valuesStr = ParseValues(attributesXml, attribute.Id);
                 foreach (var valueStr in valuesStr)
                 {
-                    if (string.IsNullOrEmpty(valueStr)) 
+                    if (string.IsNullOrEmpty(valueStr))
                         continue;
 
-                    if (!int.TryParse(valueStr, out var id)) 
+                    if (!int.TryParse(valueStr, out var id))
                         continue;
 
-                    var value = _vendorAttributeService.GetVendorAttributeValueById(id);
+                    var value = await _vendorAttributeService.GetVendorAttributeValueByIdAsync(id);
                     if (value != null)
                         values.Add(value);
                 }
@@ -151,14 +152,14 @@ namespace TVProgViewer.Services.Vendors
                 var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/VendorAttribute");
                 foreach (XmlNode node1 in nodeList1)
                 {
-                    if (node1.Attributes?["ID"] == null) 
+                    if (node1.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node1.Attributes["ID"].InnerText.Trim();
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != vendorAttributeId) 
+                    if (id != vendorAttributeId)
                         continue;
 
                     var nodeList2 = node1.SelectNodes(@"VendorAttributeValue/Value");
@@ -207,14 +208,14 @@ namespace TVProgViewer.Services.Vendors
                 var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/VendorAttribute");
                 foreach (XmlNode node1 in nodeList1)
                 {
-                    if (node1.Attributes?["ID"] == null) 
+                    if (node1.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node1.Attributes["ID"].InnerText.Trim();
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != vendorAttribute.Id) 
+                    if (id != vendorAttribute.Id)
                         continue;
 
                     attributeElement = (XmlElement)node1;
@@ -251,43 +252,43 @@ namespace TVProgViewer.Services.Vendors
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetAttributeWarnings(string attributesXml)
+        public virtual async Task<IList<string>> GetAttributeWarningsAsync(string attributesXml)
         {
             var warnings = new List<string>();
 
             //ensure it's our attributes
-            var attributes1 = ParseVendorAttributes(attributesXml);
+            var attributes1 = await ParseVendorAttributesAsync(attributesXml);
 
             //validate required vendor attributes (whether they're chosen/selected/entered)
-            var attributes2 = _vendorAttributeService.GetAllVendorAttributes();
+            var attributes2 = await _vendorAttributeService.GetAllVendorAttributesAsync();
             foreach (var a2 in attributes2)
             {
-                if (!a2.IsRequired) 
+                if (!a2.IsRequired)
                     continue;
 
                 var found = false;
                 //selected vendor attributes
                 foreach (var a1 in attributes1)
                 {
-                    if (a1.Id != a2.Id) 
+                    if (a1.Id != a2.Id)
                         continue;
 
                     var valuesStr = ParseValues(attributesXml, a1.Id);
                     foreach (var str1 in valuesStr)
                     {
-                        if (string.IsNullOrEmpty(str1.Trim())) 
+                        if (string.IsNullOrEmpty(str1.Trim()))
                             continue;
 
                         found = true;
                         break;
                     }
                 }
-                
-                if (found) 
+
+                if (found)
                     continue;
 
                 //if not found
-                var notFoundWarning = string.Format(_localizationService.GetResource("ShoppingCart.SelectAttribute"), _localizationService.GetLocalized(a2, a => a.Name));
+                var notFoundWarning = string.Format(await _localizationService.GetResourceAsync("ShoppingCart.SelectAttribute"), await _localizationService.GetLocalizedAsync(a2, a => a.Name));
 
                 warnings.Add(notFoundWarning);
             }

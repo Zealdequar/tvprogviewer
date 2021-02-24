@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Common
 {
     public partial class AddressAttributeValidator : BaseTvProgValidator<AddressAttributeModel>
     {
-        public AddressAttributeValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public AddressAttributeValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Address.AddressAttributes.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Address.AddressAttributes.Fields.Name.Required"));
 
             SetDatabaseValidationRules<AddressAttribute>(dataProvider);
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.Core;
 using TVProgViewer.Services.Common;
@@ -28,13 +29,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
         #region Methods
 
         [HttpPost]
-        public virtual IActionResult SavePreference(string name, bool value)
+        public virtual async Task<IActionResult> SavePreference(string name, bool value)
         {
             //permission validation is not required here
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException(nameof(name));
 
-            _genericAttributeService.SaveAttribute(_workContext.CurrentUser, name, value);
+            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(), name, value);
 
             return Json(new
             {

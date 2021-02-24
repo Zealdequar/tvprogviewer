@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +21,7 @@ using TVProgViewer.Web.Framework.Controllers;
 using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
 using TVProgViewer.WebUI.Models.Vendors;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -85,23 +86,23 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Utilities
 
-        protected virtual void UpdatePictureSeoNames(Vendor vendor)
+        protected virtual async Task UpdatePictureSeoNamesAsync(Vendor vendor)
         {
-            var picture = _pictureService.GetPictureById(vendor.PictureId);
+            var picture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
             if (picture != null)
-                _pictureService.SetSeoFilename(picture.Id, _pictureService.GetPictureSeName(vendor.Name));
+                await _pictureService.SetSeoFilenameAsync(picture.Id, await _pictureService.GetPictureSeNameAsync(vendor.Name));
         }
 
-        protected virtual string ParseVendorAttributes(IFormCollection form)
+        protected virtual async Task<string> ParseVendorAttributesAsync(IFormCollection form)
         {
             if (form == null)
                 throw new ArgumentNullException(nameof(form));
 
             var attributesXml = "";
-            var attributes = _vendorAttributeService.GetAllVendorAttributes();
+            var attributes = await _vendorAttributeService.GetAllVendorAttributesAsync();
             foreach (var attribute in attributes)
             {
-                var controlId = $"vendor_attribute_{attribute.Id}";
+                var controlId = $"{TvProgVendorDefaults.VendorAttributePrefix}{attribute.Id}";
                 switch (attribute.AttributeControlType)
                 {
                     case AttributeControlType.DropdownList:
@@ -136,7 +137,7 @@ namespace TVProgViewer.WebUI.Controllers
                     case AttributeControlType.ReadonlyCheckboxes:
                         {
                             //load read-only (already server-side selected) values
-                            var attributeValues = _vendorAttributeService.GetVendorAttributeValues(attribute.Id);
+                            var attributeValues = await _vendorAttributeService.GetVendorAttributeValuesAsync(attribute.Id);
                             foreach (var selectedAttributeId in attributeValues
                                 .Where(v => v.IsPreSelected)
                                 .Select(v => v.Id)
@@ -176,35 +177,37 @@ namespace TVProgViewer.WebUI.Controllers
 
         #region Methods
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult ApplyVendor()
+        public virtual async Task<IActionResult> ApplyVendor()
         {
             if (!_vendorSettings.AllowUsersToApplyForVendorAccount)
                 return RedirectToRoute("Homepage");
 
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
             var model = new ApplyVendorModel();
-            model = _vendorModelFactory.PrepareApplyVendorModel(model, true, false, null);
+            model = await _vendorModelFactory.PrepareApplyVendorModelAsync(model, true, false, null);
             return View(model);
         }
 
         [HttpPost, ActionName("ApplyVendor")]
         [AutoValidateAntiforgeryToken]
         [ValidateCaptcha]
-        public virtual IActionResult ApplyVendorSubmit(ApplyVendorModel model, bool captchaValid, IFormFile uploadedFile, IFormCollection form)
+        public virtual async Task<IActionResult> ApplyVendorSubmit(ApplyVendorModel model, bool captchaValid, IFormFile uploadedFile, IFormCollection form)
         {
             if (!_vendorSettings.AllowUsersToApplyForVendorAccount)
                 return RedirectToRoute("Homepage");
 
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
+
+            if (await _userService.IsAdminAsync(await _workContext.GetCurrentUserAsync()))
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Vendors.ApplyAccount.IsAdmin"));
 
             //validate CAPTCHA
             if (_captchaSettings.Enabled && _captchaSettings.ShowOnApplyVendorPage && !captchaValid)
             {
-                ModelState.AddModelError("", _localizationService.GetResource("Common.WrongCaptchaMessage"));
+                ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
             var pictureId = 0;
@@ -214,21 +217,21 @@ namespace TVProgViewer.WebUI.Controllers
                 try
                 {
                     var contentType = uploadedFile.ContentType;
-                    var vendorPictureBinary = _downloadService.GetDownloadBits(uploadedFile);
-                    var picture = _pictureService.InsertPicture(vendorPictureBinary, contentType, null);
+                    var vendorPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
+                    var picture = await _pictureService.InsertPictureAsync(vendorPictureBinary, contentType, null);
 
                     if (picture != null)
                         pictureId = picture.Id;
                 }
                 catch (Exception)
                 {
-                    ModelState.AddModelError("", _localizationService.GetResource("Vendors.ApplyAccount.Picture.ErrorMessage"));
+                    ModelState.AddModelError("", await _localizationService.GetResourceAsync("Vendors.ApplyAccount.Picture.ErrorMessage"));
                 }
             }
 
             //vendor attributes
-            var vendorAttributesXml = ParseVendorAttributes(form);
-            _vendorAttributeParser.GetAttributeWarnings(vendorAttributesXml).ToList()
+            var vendorAttributesXml = await ParseVendorAttributesAsync(form);
+            (await _vendorAttributeParser.GetAttributeWarningsAsync(vendorAttributesXml)).ToList()
                 .ForEach(warning => ModelState.AddModelError(string.Empty, warning));
 
             if (ModelState.IsValid)
@@ -246,60 +249,59 @@ namespace TVProgViewer.WebUI.Controllers
                     PictureId = pictureId,
                     Description = description
                 };
-                _vendorService.InsertVendor(vendor);
+                await _vendorService.InsertVendorAsync(vendor);
                 //search engine name (the same as vendor name)
-                var seName = _urlRecordService.ValidateSeName(vendor, vendor.Name, vendor.Name, true);
-                _urlRecordService.SaveSlug(vendor, seName, 0);
+                var seName = await _urlRecordService.ValidateSeNameAsync(vendor, vendor.Name, vendor.Name, true);
+                await _urlRecordService.SaveSlugAsync(vendor, seName, 0);
 
                 //associate to the current user
                 //but a store owner will have to manually add this user role to "Vendors" role
                 //if he wants to grant access to admin area
-                _workContext.CurrentUser.VendorId = vendor.Id;
-                _userService.UpdateUser(_workContext.CurrentUser);
+                (await _workContext.GetCurrentUserAsync()).VendorId = vendor.Id;
+                await _userService.UpdateUserAsync(await _workContext.GetCurrentUserAsync());
 
                 //update picture seo file name
-                UpdatePictureSeoNames(vendor);
+                await UpdatePictureSeoNamesAsync(vendor);
 
                 //save vendor attributes
-                _genericAttributeService.SaveAttribute(vendor, TvProgVendorDefaults.VendorAttributes, vendorAttributesXml);
+                await _genericAttributeService.SaveAttributeAsync(vendor, TvProgVendorDefaults.VendorAttributes, vendorAttributesXml);
 
                 //notify store owner here (email)
-                _workflowMessageService.SendNewVendorAccountApplyStoreOwnerNotification(_workContext.CurrentUser,
+                await _workflowMessageService.SendNewVendorAccountApplyStoreOwnerNotificationAsync(await _workContext.GetCurrentUserAsync(),
                     vendor, _localizationSettings.DefaultAdminLanguageId);
 
                 model.DisableFormInput = true;
-                model.Result = _localizationService.GetResource("Vendors.ApplyAccount.Submitted");
+                model.Result = await _localizationService.GetResourceAsync("Vendors.ApplyAccount.Submitted");
                 return View(model);
             }
 
             //If we got this far, something failed, redisplay form
-            model = _vendorModelFactory.PrepareApplyVendorModel(model, false, true, vendorAttributesXml);
+            model = await _vendorModelFactory.PrepareApplyVendorModelAsync(model, false, true, vendorAttributesXml);
             return View(model);
         }
 
-        [HttpsRequirement(SslRequirement.Yes)]
-        public virtual IActionResult Info()
+        public virtual async Task<IActionResult> Info()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            if (_workContext.CurrentVendor == null || !_vendorSettings.AllowVendorsToEditInfo)
+            if (await _workContext.GetCurrentVendorAsync() == null || !_vendorSettings.AllowVendorsToEditInfo)
                 return RedirectToRoute("UserInfo");
 
             var model = new VendorInfoModel();
-            model = _vendorModelFactory.PrepareVendorInfoModel(model, false);
+            model = await _vendorModelFactory.PrepareVendorInfoModelAsync(model, false);
             return View(model);
         }
 
         [HttpPost, ActionName("Info")]
         [AutoValidateAntiforgeryToken]
         [FormValueRequired("save-info-button")]
-        public virtual IActionResult Info(VendorInfoModel model, IFormFile uploadedFile, IFormCollection form)
+        public virtual async Task<IActionResult> Info(VendorInfoModel model, IFormFile uploadedFile, IFormCollection form)
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            if (_workContext.CurrentVendor == null || !_vendorSettings.AllowVendorsToEditInfo)
+            if (await _workContext.GetCurrentVendorAsync() == null || !_vendorSettings.AllowVendorsToEditInfo)
                 return RedirectToRoute("UserInfo");
 
             Picture picture = null;
@@ -309,21 +311,21 @@ namespace TVProgViewer.WebUI.Controllers
                 try
                 {
                     var contentType = uploadedFile.ContentType;
-                    var vendorPictureBinary = _downloadService.GetDownloadBits(uploadedFile);
-                    picture = _pictureService.InsertPicture(vendorPictureBinary, contentType, null);
+                    var vendorPictureBinary = await _downloadService.GetDownloadBitsAsync(uploadedFile);
+                    picture = await _pictureService.InsertPictureAsync(vendorPictureBinary, contentType, null);
                 }
                 catch (Exception)
                 {
-                    ModelState.AddModelError("", _localizationService.GetResource("Account.VendorInfo.Picture.ErrorMessage"));
+                    ModelState.AddModelError("", await _localizationService.GetResourceAsync("Account.VendorInfo.Picture.ErrorMessage"));
                 }
             }
 
-            var vendor = _workContext.CurrentVendor;
-            var prevPicture = _pictureService.GetPictureById(vendor.PictureId);
+            var vendor = await _workContext.GetCurrentVendorAsync();
+            var prevPicture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
 
             //vendor attributes
-            var vendorAttributesXml = ParseVendorAttributes(form);
-            _vendorAttributeParser.GetAttributeWarnings(vendorAttributesXml).ToList()
+            var vendorAttributesXml = await ParseVendorAttributesAsync(form);
+            (await _vendorAttributeParser.GetAttributeWarningsAsync(vendorAttributesXml)).ToList()
                 .ForEach(warning => ModelState.AddModelError(string.Empty, warning));
 
             if (ModelState.IsValid)
@@ -339,52 +341,52 @@ namespace TVProgViewer.WebUI.Controllers
                     vendor.PictureId = picture.Id;
 
                     if (prevPicture != null)
-                        _pictureService.DeletePicture(prevPicture);
+                        await _pictureService.DeletePictureAsync(prevPicture);
                 }
 
                 //update picture seo file name
-                UpdatePictureSeoNames(vendor);
+                await UpdatePictureSeoNamesAsync(vendor);
 
-                _vendorService.UpdateVendor(vendor);
+                await _vendorService.UpdateVendorAsync(vendor);
 
                 //save vendor attributes
-                _genericAttributeService.SaveAttribute(vendor, TvProgVendorDefaults.VendorAttributes, vendorAttributesXml);
+                await _genericAttributeService.SaveAttributeAsync(vendor, TvProgVendorDefaults.VendorAttributes, vendorAttributesXml);
 
                 //notifications
                 if (_vendorSettings.NotifyStoreOwnerAboutVendorInformationChange)
-                    _workflowMessageService.SendVendorInformationChangeNotification(vendor, _localizationSettings.DefaultAdminLanguageId);
+                    await _workflowMessageService.SendVendorInformationChangeNotificationAsync(vendor, _localizationSettings.DefaultAdminLanguageId);
 
                 return RedirectToAction("Info");
             }
 
             //If we got this far, something failed, redisplay form
-            model = _vendorModelFactory.PrepareVendorInfoModel(model, true, vendorAttributesXml);
+            model = await _vendorModelFactory.PrepareVendorInfoModelAsync(model, true, vendorAttributesXml);
             return View(model);
         }
 
         [HttpPost, ActionName("Info")]
         [AutoValidateAntiforgeryToken]
         [FormValueRequired("remove-picture")]
-        public virtual IActionResult RemovePicture()
+        public virtual async Task<IActionResult> RemovePicture()
         {
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            if (_workContext.CurrentVendor == null || !_vendorSettings.AllowVendorsToEditInfo)
+            if (await _workContext.GetCurrentVendorAsync() == null || !_vendorSettings.AllowVendorsToEditInfo)
                 return RedirectToRoute("UserInfo");
 
-            var vendor = _workContext.CurrentVendor;
-            var picture = _pictureService.GetPictureById(vendor.PictureId);
+            var vendor = await _workContext.GetCurrentVendorAsync();
+            var picture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
 
             if (picture != null)
-                _pictureService.DeletePicture(picture);
+                await _pictureService.DeletePictureAsync(picture);
 
             vendor.PictureId = 0;
-            _vendorService.UpdateVendor(vendor);
+            await _vendorService.UpdateVendorAsync(vendor);
 
             //notifications
             if (_vendorSettings.NotifyStoreOwnerAboutVendorInformationChange)
-                _workflowMessageService.SendVendorInformationChangeNotification(vendor, _localizationSettings.DefaultAdminLanguageId);
+                await _workflowMessageService.SendVendorInformationChangeNotificationAsync(vendor, _localizationSettings.DefaultAdminLanguageId);
 
             return RedirectToAction("Info");
         }

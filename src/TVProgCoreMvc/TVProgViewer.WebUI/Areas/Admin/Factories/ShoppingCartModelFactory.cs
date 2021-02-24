@@ -16,6 +16,7 @@ using TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper.Extensions;
 using TVProgViewer.WebUI.Areas.Admin.Models.ShoppingCart;
 using TVProgViewer.Web.Framework.Extensions;
 using TVProgViewer.Web.Framework.Models.Extensions;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -99,24 +100,24 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shopping cart search model</param>
         /// <returns>Shopping cart search model</returns>
-        public virtual ShoppingCartSearchModel PrepareShoppingCartSearchModel(ShoppingCartSearchModel searchModel)
+        public virtual async Task<ShoppingCartSearchModel> PrepareShoppingCartSearchModelAsync(ShoppingCartSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare available shopping cart types
-            _baseAdminModelFactory.PrepareShoppingCartTypes(searchModel.AvailableShoppingCartTypes, false);
+            await _baseAdminModelFactory.PrepareShoppingCartTypesAsync(searchModel.AvailableShoppingCartTypes, false);
 
             //set default search values
             searchModel.ShoppingCartType = ShoppingCartType.ShoppingCart;
 
             //prepare available billing countries
-            searchModel.AvailableCountries = _countryService.GetAllCountriesForBilling(showHidden: true)
+            searchModel.AvailableCountries = (await _countryService.GetAllCountriesForBillingAsync(showHidden: true))
                 .Select(country => new SelectListItem { Text = country.Name, Value = country.Id.ToString() }).ToList();
-            searchModel.AvailableCountries.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            searchModel.AvailableCountries.Insert(0, new SelectListItem { Text = await _localizationService.GetResourceAsync("Admin.Common.All"), Value = "0" });
 
             //prepare available stores
-            _baseAdminModelFactory.PrepareStores(searchModel.AvailableStores);
+            await _baseAdminModelFactory.PrepareStoresAsync(searchModel.AvailableStores);
 
             searchModel.HideStoresList = _catalogSettings.IgnoreStoreLimitations || searchModel.AvailableStores.SelectionIsNotPossible();
 
@@ -134,13 +135,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shopping cart search model</param>
         /// <returns>Shopping cart list model</returns>
-        public virtual ShoppingCartListModel PrepareShoppingCartListModel(ShoppingCartSearchModel searchModel)
+        public virtual async Task<ShoppingCartListModel> PrepareShoppingCartListModelAsync(ShoppingCartSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get users with shopping carts
-            var users = _userService.GetUsersWithShoppingCarts(searchModel.ShoppingCartType,
+            var users = await _userService.GetUsersWithShoppingCartsAsync(searchModel.ShoppingCartType,
                 storeId: searchModel.StoreId,
                 productId: searchModel.ProductId,
                 createdFromUtc: searchModel.StartDate,
@@ -149,9 +150,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare list model
-            var model = new ShoppingCartListModel().PrepareToGrid(searchModel, users, () =>
+            var model = await new ShoppingCartListModel().PrepareToGridAsync(searchModel, users, () =>
             {
-                return users.Select(user =>
+                return users.SelectAwait(async user =>
                 {
                     //fill in model values from the entity
                     var shoppingCartModel = new ShoppingCartModel
@@ -160,10 +161,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     };
 
                     //fill in additional values (not existing in the entity)
-                    shoppingCartModel.UserEmail = _userService.IsRegistered(user)
-                        ? user.Email : _localizationService.GetResource("Admin.Users.Guest");
-                    shoppingCartModel.TotalItems = _shoppingCartService.GetShoppingCart(user, searchModel.ShoppingCartType,
-                        searchModel.StoreId, searchModel.ProductId, searchModel.StartDate, searchModel.EndDate).Sum(item => item.Quantity);
+                    shoppingCartModel.UserEmail = (await _userService.IsRegisteredAsync(user))
+                        ? user.Email
+                        : await _localizationService.GetResourceAsync("Admin.Users.Guest");
+                    shoppingCartModel.TotalItems = (await _shoppingCartService
+                        .GetShoppingCartAsync(user, searchModel.ShoppingCartType,
+                            searchModel.StoreId, searchModel.ProductId, searchModel.StartDate, searchModel.EndDate))
+                        .Sum(item => item.Quantity);
 
                     return shoppingCartModel;
                 });
@@ -178,7 +182,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Shopping cart item search model</param>
         /// <param name="user">User</param>
         /// <returns>Shopping cart item list model</returns>
-        public virtual ShoppingCartItemListModel PrepareShoppingCartItemListModel(ShoppingCartItemSearchModel searchModel, User user)
+        public virtual async Task<ShoppingCartItemListModel> PrepareShoppingCartItemListModelAsync(ShoppingCartItemSearchModel searchModel, User user)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -187,39 +191,39 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 throw new ArgumentNullException(nameof(user));
 
             //get shopping cart items
-            var items = _shoppingCartService.GetShoppingCart(user, searchModel.ShoppingCartType,
-                searchModel.StoreId, searchModel.ProductId, searchModel.StartDate, searchModel.EndDate).ToPagedList(searchModel);
-            
+            var items = (await _shoppingCartService.GetShoppingCartAsync(user, searchModel.ShoppingCartType,
+                searchModel.StoreId, searchModel.ProductId, searchModel.StartDate, searchModel.EndDate)).ToPagedList(searchModel);
+
             var isSearchProduct = searchModel.ProductId > 0;
 
             Product product = null;
 
             if (isSearchProduct)
             {
-                product = _productService.GetProductById(searchModel.ProductId) ?? throw new Exception("Product is not found");
+                product = await _productService.GetProductByIdAsync(searchModel.ProductId) ?? throw new Exception("Product is not found");
             }
 
             //prepare list model
-            var model = new ShoppingCartItemListModel().PrepareToGrid(searchModel, items, () =>
+            var model = await new ShoppingCartItemListModel().PrepareToGridAsync(searchModel, items, () =>
             {
-                return items.Select(item =>
+                return items.SelectAwait(async item =>
                 {
                     //fill in model values from the entity
                     var itemModel = item.ToModel<ShoppingCartItemModel>();
 
                     if (!isSearchProduct)
-                        product = _productService.GetProductById(item.ProductId);
+                        product = await _productService.GetProductByIdAsync(item.ProductId);
 
                     //convert dates to the user time
-                    itemModel.UpdatedOn = _dateTimeHelper.ConvertToUserTime(item.UpdatedOnUtc, DateTimeKind.Utc);
+                    itemModel.UpdatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(item.UpdatedOnUtc, DateTimeKind.Utc);
 
                     //fill in additional values (not existing in the entity)
-                    itemModel.Store = _storeService.GetStoreById(item.StoreId)?.Name ?? "Deleted";
-                    itemModel.AttributeInfo = _productAttributeFormatter.FormatAttributes(product, item.AttributesXml, user);
-                    var unitPrice = _shoppingCartService.GetUnitPrice(item);
-                    itemModel.UnitPrice = _priceFormatter.FormatPrice(_taxService.GetProductPrice(product, unitPrice, out var _));
-                    var subTotal = _shoppingCartService.GetSubTotal(item);
-                    itemModel.Total = _priceFormatter.FormatPrice(_taxService.GetProductPrice(product, subTotal, out _));
+                    itemModel.Store = (await _storeService.GetStoreByIdAsync(item.StoreId))?.Name ?? "Deleted";
+                    itemModel.AttributeInfo = await _productAttributeFormatter.FormatAttributesAsync(product, item.AttributesXml, user);
+                    var (unitPrice, _, _) = await _shoppingCartService.GetUnitPriceAsync(item, true);
+                    itemModel.UnitPrice = await _priceFormatter.FormatPriceAsync((await _taxService.GetProductPriceAsync(product, unitPrice)).price);
+                    var (subTotal, _, _, _) = await _shoppingCartService.GetSubTotalAsync(item, true);
+                    itemModel.Total = await _priceFormatter.FormatPriceAsync((await _taxService.GetProductPriceAsync(product, subTotal)).price);
 
                     //set product name since it does not survive mapping
                     itemModel.ProductName = product.Name;

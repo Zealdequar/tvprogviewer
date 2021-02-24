@@ -2,6 +2,7 @@
 using TVProgViewer.Core.Domain;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -17,12 +18,12 @@ namespace TVProgViewer.WebUI.Components
             _storeInformationSettings = storeInformationSettings;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             if (!_storeInformationSettings.AllowUserToSelectTheme)
                 return Content("");
 
-            var model = _commonModelFactory.PrepareStoreThemeSelectorModel();
+            var model = await _commonModelFactory.PrepareStoreThemeSelectorModelAsync();
             return View(model);
         }
     }

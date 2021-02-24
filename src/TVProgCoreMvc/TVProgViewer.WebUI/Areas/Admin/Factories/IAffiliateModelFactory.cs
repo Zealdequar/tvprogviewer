@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.Affiliates;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Affiliates;
 using TVProgViewer.WebUI.Areas.Admin.Models.Affiliates;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
@@ -13,14 +14,14 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Affiliate search model</param>
         /// <returns>Affiliate search model</returns>
-        AffiliateSearchModel PrepareAffiliateSearchModel(AffiliateSearchModel searchModel);
+        Task<AffiliateSearchModel> PrepareAffiliateSearchModelAsync(AffiliateSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged affiliate list model
         /// </summary>
         /// <param name="searchModel">Affiliate search model</param>
         /// <returns>Affiliate list model</returns>
-        AffiliateListModel PrepareAffiliateListModel(AffiliateSearchModel searchModel);
+        Task<AffiliateListModel> PrepareAffiliateListModelAsync(AffiliateSearchModel searchModel);
 
         /// <summary>
         /// Prepare affiliate model
@@ -29,7 +30,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="affiliate">Affiliate</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>Affiliate model</returns>
-        AffiliateModel PrepareAffiliateModel(AffiliateModel model, Affiliate affiliate, bool excludeProperties = false);
+        Task<AffiliateModel> PrepareAffiliateModelAsync(AffiliateModel model, Affiliate affiliate, bool excludeProperties = false);
 
         /// <summary>
         /// Prepare paged affiliated order list model
@@ -37,7 +38,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Affiliated order search model</param>
         /// <param name="affiliate">Affiliate</param>
         /// <returns>Affiliated order list model</returns>
-        AffiliatedOrderListModel PrepareAffiliatedOrderListModel(AffiliatedOrderSearchModel searchModel, Affiliate affiliate);
+        Task<AffiliatedOrderListModel> PrepareAffiliatedOrderListModelAsync(AffiliatedOrderSearchModel searchModel, Affiliate affiliate);
 
         /// <summary>
         /// Prepare paged affiliated user list model
@@ -45,7 +46,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Affiliated user search model</param>
         /// <param name="affiliate">Affiliate</param>
         /// <returns>Affiliated user list model</returns>
-        AffiliatedUserListModel PrepareAffiliatedUserListModel(AffiliatedUserSearchModel searchModel, 
+        Task<AffiliatedUserListModel> PrepareAffiliatedUserListModelAsync(AffiliatedUserSearchModel searchModel,
             Affiliate affiliate);
     }
 }

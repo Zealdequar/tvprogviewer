@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.WebUI.Models.Directory;
 
 namespace TVProgViewer.WebUI.Factories
@@ -14,6 +15,6 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="countryId">Country identifier</param>
         /// <param name="addSelectStateItem">Whether to add "Select state" item to list of states</param>
         /// <returns>List of identifiers and names of states and provinces</returns>
-        IList<StateProvinceModel> GetStatesByCountryId(string countryId, bool addSelectStateItem);
+        Task<IList<StateProvinceModel>> GetStatesByCountryIdAsync(string countryId, bool addSelectStateItem);
     }
 }

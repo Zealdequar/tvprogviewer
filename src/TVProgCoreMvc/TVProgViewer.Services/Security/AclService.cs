@@ -6,10 +6,10 @@ using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Security;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Users;
-using TVProgViewer.Services.Events;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Caching;
+using System.Linq.Expressions;
 
 namespace TVProgViewer.Services.Security
 {
@@ -22,8 +22,8 @@ namespace TVProgViewer.Services.Security
 
         private readonly CatalogSettings _catalogSettings;
         private readonly IUserService _userService;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<AclRecord> _aclRecordRepository;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IWorkContext _workContext;
 
         #endregion
@@ -31,16 +31,29 @@ namespace TVProgViewer.Services.Security
         #region Ctor
 
         public AclService(CatalogSettings catalogSettings,
-            IUserService UserService,
-            IEventPublisher eventPublisher,
+            IUserService userService,
             IRepository<AclRecord> aclRecordRepository,
+            IStaticCacheManager staticCacheManager,
             IWorkContext workContext)
         {
             _catalogSettings = catalogSettings;
-            _userService = UserService;
-            _eventPublisher = eventPublisher;
+            _userService = userService;
             _aclRecordRepository = aclRecordRepository;
+            _staticCacheManager = staticCacheManager;
             _workContext = workContext;
+        }
+
+        #endregion
+
+        #region Utilities
+
+        /// <summary>
+        /// Inserts an ACL record
+        /// </summary>
+        /// <param name="aclRecord">ACL record</param>
+        protected virtual async Task InsertAclRecordAsync(AclRecord aclRecord)
+        {
+            await _aclRecordRepository.InsertAsync(aclRecord);
         }
 
         #endregion
@@ -48,40 +61,36 @@ namespace TVProgViewer.Services.Security
         #region Methods
 
         /// <summary>
-        /// Deletes an ACL record
+        /// Get an expression predicate to apply the ACL
         /// </summary>
-        /// <param name="aclRecord">ACL record</param>
-        public virtual void DeleteAclRecord(AclRecord aclRecord)
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
+        /// <param name="userRoleIds">Identifiers of user's roles</param>
+        /// <returns>Lambda expression</returns>
+        public virtual Expression<Func<TEntity, bool>> ApplyAcl<TEntity>(int[] userRoleIds) where TEntity : BaseEntity, IAclSupported
         {
-            if (aclRecord == null)
-                throw new ArgumentNullException(nameof(aclRecord));
-
-            _aclRecordRepository.Delete(aclRecord);
-
-            //event notification
-            _eventPublisher.EntityDeleted(aclRecord);
+            return (entity) =>
+                (from acl in _aclRecordRepository.Table
+                 where !entity.SubjectToAcl ||
+                    (acl.EntityId == entity.Id && acl.EntityName == typeof(TEntity).Name && userRoleIds.Contains(acl.UserRoleId))
+                 select acl.EntityId).Any();
         }
 
         /// <summary>
-        /// Gets an ACL record
+        /// Deletes an ACL record
         /// </summary>
-        /// <param name="aclRecordId">ACL record identifier</param>
-        /// <returns>ACL record</returns>
-        public virtual AclRecord GetAclRecordById(int aclRecordId)
+        /// <param name="aclRecord">ACL record</param>
+        public virtual async Task DeleteAclRecordAsync(AclRecord aclRecord)
         {
-            if (aclRecordId == 0)
-                return null;
-
-            return _aclRecordRepository.ToCachedGetById(aclRecordId);
+            await _aclRecordRepository.DeleteAsync(aclRecord);
         }
 
         /// <summary>
         /// Gets ACL records
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>ACL records</returns>
-        public virtual IList<AclRecord> GetAclRecords<T>(T entity) where T : BaseEntity, IAclSupported
+        public virtual async Task<IList<AclRecord>> GetAclRecordsAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -93,38 +102,24 @@ namespace TVProgViewer.Services.Security
                         where ur.EntityId == entityId &&
                         ur.EntityName == entityName
                         select ur;
-            var aclRecords = query.ToList();
+            var aclRecords = await query.ToListAsync();
+
             return aclRecords;
         }
 
         /// <summary>
         /// Inserts an ACL record
         /// </summary>
-        /// <param name="aclRecord">ACL record</param>
-        public virtual void InsertAclRecord(AclRecord aclRecord)
-        {
-            if (aclRecord == null)
-                throw new ArgumentNullException(nameof(aclRecord));
-
-            _aclRecordRepository.Insert(aclRecord);
-
-            //event notification
-            _eventPublisher.EntityInserted(aclRecord);
-        }
-
-        /// <summary>
-        /// Inserts an ACL record
-        /// </summary>
-        /// <typeparam name="T">Type</typeparam>
-        /// <param name="UserRoleId">User role id</param>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
-        public virtual void InsertAclRecord<T>(T entity, int UserRoleId) where T : BaseEntity, IAclSupported
+        /// <param name="userRoleId">User role id</param>
+        public virtual async Task InsertAclRecordAsync<TEntity>(TEntity entity, int userRoleId) where TEntity : BaseEntity, IAclSupported
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            if (UserRoleId == 0)
-                throw new ArgumentOutOfRangeException(nameof(UserRoleId));
+            if (userRoleId == 0)
+                throw new ArgumentOutOfRangeException(nameof(userRoleId));
 
             var entityId = entity.Id;
             var entityName = entity.GetType().Name;
@@ -133,34 +128,41 @@ namespace TVProgViewer.Services.Security
             {
                 EntityId = entityId,
                 EntityName = entityName,
-                UserRoleId = UserRoleId
+                UserRoleId = userRoleId
             };
 
-            InsertAclRecord(aclRecord);
+            await InsertAclRecordAsync(aclRecord);
         }
 
         /// <summary>
-        /// Updates the ACL record
+        /// Get a value indicating whether any ACL records exist for entity type are related to user roles
         /// </summary>
-        /// <param name="aclRecord">ACL record</param>
-        public virtual void UpdateAclRecord(AclRecord aclRecord)
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
+        /// <param name="userRoleIds">User's role identifiers</param>
+        /// <returns>True if exist; otherwise false</returns>
+        public virtual async Task<bool> IsEntityAclMappingExistAsync<TEntity>(int[] userRoleIds) where TEntity : BaseEntity, IAclSupported
         {
-            if (aclRecord == null)
-                throw new ArgumentNullException(nameof(aclRecord));
+            if (!userRoleIds.Any())
+                return false;
 
-            _aclRecordRepository.Update(aclRecord);
+            var entityName = typeof(TEntity).Name;
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgSecurityDefaults.EntityAclRecordExistsCacheKey, entityName, userRoleIds);
 
-            //event notification
-            _eventPublisher.EntityUpdated(aclRecord);
+            var query = from acl in _aclRecordRepository.Table
+                        where acl.EntityName == entityName &&
+                              userRoleIds.Contains(acl.UserRoleId)
+                        select acl;
+
+            return await _staticCacheManager.GetAsync(key, query.Any);
         }
 
         /// <summary>
-        /// Find User role identifiers with granted access
+        /// Find user role identifiers with granted access
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>User role identifiers</returns>
-        public virtual int[] GetuserRoleIdsWithAccess<T>(T entity) where T : BaseEntity, IAclSupported
+        public virtual async Task<int[]> GetUserRoleIdsWithAccessAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -168,40 +170,40 @@ namespace TVProgViewer.Services.Security
             var entityId = entity.Id;
             var entityName = entity.GetType().Name;
 
-            var key = TvProgSecurityCachingDefaults.AclRecordByEntityIdNameCacheKey.FillCacheKey(entityId, entityName);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgSecurityDefaults.AclRecordCacheKey, entityId, entityName);
 
             var query = from ur in _aclRecordRepository.Table
-                where ur.EntityId == entityId &&
-                      ur.EntityName == entityName
-                select ur.UserRoleId;
+                        where ur.EntityId == entityId &&
+                              ur.EntityName == entityName
+                        select ur.UserRoleId;
 
-            return query.ToCachedArray(key);
+            return await _staticCacheManager.GetAsync(key, () => query.ToArray());
         }
 
         /// <summary>
         /// Authorize ACL permission
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        public virtual bool Authorize<T>(T entity) where T : BaseEntity, IAclSupported
+        public virtual async Task<bool> AuthorizeAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported
         {
-            return Authorize(entity, _workContext.CurrentUser);
+            return await AuthorizeAsync(entity, await _workContext.GetCurrentUserAsync());
         }
 
         /// <summary>
         /// Authorize ACL permission
         /// </summary>
-        /// <typeparam name="T">Type</typeparam>
+        /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>true - authorized; otherwise, false</returns>
-        public virtual bool Authorize<T>(T entity, User User) where T : BaseEntity, IAclSupported
+        public virtual async Task<bool> AuthorizeAsync<TEntity>(TEntity entity, User user) where TEntity : BaseEntity, IAclSupported
         {
             if (entity == null)
                 return false;
 
-            if (User == null)
+            if (user == null)
                 return false;
 
             if (_catalogSettings.IgnoreAcl)
@@ -210,19 +212,14 @@ namespace TVProgViewer.Services.Security
             if (!entity.SubjectToAcl)
                 return true;
 
-            foreach (var role1 in _userService.GetUserRoles(User))
-                foreach (var role2Id in GetuserRoleIdsWithAccess(entity))
+            foreach (var role1 in await _userService.GetUserRolesAsync(user))
+                foreach (var role2Id in await GetUserRoleIdsWithAccessAsync(entity))
                     if (role1.Id == role2Id)
                         //yes, we have such permission
                         return true;
 
             //no permission found
             return false;
-        }
-
-        public int[] GetUserRoleIdsWithAccess<T>(T entity) where T : BaseEntity, IAclSupported
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

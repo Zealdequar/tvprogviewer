@@ -1,0 +1,32 @@
+﻿@model SpecificationAttributeModel
+
+@{
+    const string hideInfoBlockAttributeName = "SpecificationAttributePage.HideInfoBlock";
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideInfoBlockAttributeName);
+
+    const string hideOptionsBlockAttributeName = "SpecificationAttributePage.HideOptionsBlock";
+    var hideOptionsBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideOptionsBlockAttributeName, defaultValue: true);
+
+    const string hideUsedByProductsBlockAttributeName = "SpecificationAttributePage.HideUsedByProductsBlock";
+    var hideUsedByProductsBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideUsedByProductsBlockAttributeName, defaultValue: true);
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+
+            <tvprog-cards id="specification-attribute-cards">
+                <tvprog-card asp-name="specification-attribute-info" asp-icon="fa fa-info" asp-title="@T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateSpecificationAttribute.Info", Model)</tvprog-card>
+                <tvprog-card asp-name="specification-attribute-options" asp-icon="fa fa-object-group" asp-title="@T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options")" asp-hide-block-attribute-name="@hideOptionsBlockAttributeName" asp-hide="@hideOptionsBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateSpecificationAttribute.Options", Model)</tvprog-card>
+                @if (Model.Id > 0)
+                {
+                    <tvprog-card asp-name="specification-attribute-usedbyproducts" asp-icon="fa fa-check-square-o" asp-title="@T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts")" asp-hide-block-attribute-name="@hideUsedByProductsBlockAttributeName" asp-hide="@hideUsedByProductsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdateSpecificationAttribute.UsedByProducts", Model)</tvprog-card>
+                }
+                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.SpecificationAttributeDetailsBlock, additionalData = Model })
+            </tvprog-cards>
+        </div>
+    </div>
+</section>

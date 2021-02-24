@@ -26,6 +26,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Common
 
         public DeleteAlreadySentQueuedEmailsModel DeleteAlreadySentQueuedEmails { get; set; }
 
+        public bool BackupSupported {get; set;  }
+
         #region Nested recordes
 
         public partial record DeleteGuestsModel : BaseTvProgModel

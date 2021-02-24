@@ -1,4 +1,5 @@
 ﻿using TVProgViewer.Web.Framework.Models;
+using TVProgViewer.Web.Framework.Mvc.ModelBinding;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Models.News
 {
@@ -13,11 +14,15 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.News
         {
             NewsItems = new NewsItemSearchModel();
             NewsComments = new NewsCommentSearchModel();
+            SearchTitle = new NewsItemSearchModel().SearchTitle;
         }
 
         #endregion
 
         #region Properties
+
+        [TvProgResourceDisplayName("Admin.ContentManagement.News.NewsItems.List.SearchTitle")]
+        public string SearchTitle { get; set; }
 
         public NewsItemSearchModel NewsItems { get; set; }
 

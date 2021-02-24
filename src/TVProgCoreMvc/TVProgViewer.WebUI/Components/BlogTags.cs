@@ -2,6 +2,7 @@
 using TVProgViewer.Core.Domain.Blogs;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -16,12 +17,12 @@ namespace TVProgViewer.WebUI.Components
             _blogModelFactory = blogModelFactory;
         }
 
-        public IViewComponentResult Invoke(int currentCategoryId, int currentProductId)
+        public async Task<IViewComponentResult> InvokeAsync(int currentCategoryId, int currentProductId)
         {
             if (!_blogSettings.Enabled)
                 return Content("");
 
-            var model = _blogModelFactory.PrepareBlogPostTagListModel();
+            var model = await _blogModelFactory.PrepareBlogPostTagListModelAsync();
             return View(model);
         }
     }

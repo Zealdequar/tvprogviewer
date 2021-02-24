@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Hosting;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Caching;
+using TVProgViewer.Core.Configuration;
 using TVProgViewer.Core.Domain.Common;
 using TVProgViewer.Core.Domain.Seo;
 using TVProgViewer.Core.Infrastructure;
@@ -28,16 +29,17 @@ namespace TVProgViewer.Web.Framework.UI
 
         private static readonly object _lock = new object();
 
-        private readonly BundleFileProcessor _processor;
+        private readonly AppSettings _appSettings;
         private readonly CommonSettings _commonSettings;
         private readonly IActionContextAccessor _actionContextAccessor;
-        private readonly IWebHostEnvironment _webHostingEnvironment;
         private readonly ITvProgFileProvider _fileProvider;
-        private readonly IStaticCacheManager _cacheManager;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IUrlRecordService _urlRecordService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly SeoSettings _seoSettings;
 
+        private readonly BundleFileProcessor _processor;
         private readonly List<string> _titleParts;
         private readonly List<string> _metaDescriptionParts;
         private readonly List<string> _metaKeywordParts;
@@ -50,34 +52,31 @@ namespace TVProgViewer.Web.Framework.UI
         private string _activeAdminMenuSystemName;
         private string _editPageUrl;
 
-        //in minutes
-        private const int RECHECK_BUNDLED_FILES_PERIOD = 120;
-
         #endregion
 
         #region Ctor
-        
-        public PageHeadBuilder(
+
+        public PageHeadBuilder(AppSettings appSettings,
             CommonSettings commonSettings,
             IActionContextAccessor actionContextAccessor,
-            IWebHostEnvironment hostingEnvironment,
             ITvProgFileProvider fileProvider,
-            IStaticCacheManager cacheManager,
+            IStaticCacheManager staticCacheManager,
             IUrlHelperFactory urlHelperFactory,
             IUrlRecordService urlRecordService,
-            SeoSettings seoSettings         
-            )
+            IWebHostEnvironment webHostEnvironment,
+            SeoSettings seoSettings)
         {
-            _processor = new BundleFileProcessor();
+            _appSettings = appSettings;
             _commonSettings = commonSettings;
             _actionContextAccessor = actionContextAccessor;
-            _webHostingEnvironment = hostingEnvironment;
             _fileProvider = fileProvider;
-            _cacheManager = cacheManager;            
+            _staticCacheManager = staticCacheManager;
             _urlHelperFactory = urlHelperFactory;
             _urlRecordService = urlRecordService;
+            _webHostEnvironment = webHostEnvironment;
             _seoSettings = seoSettings;
 
+            _processor = new BundleFileProcessor();
             _titleParts = new List<string>();
             _metaDescriptionParts = new List<string>();
             _metaKeywordParts = new List<string>();
@@ -119,7 +118,7 @@ namespace TVProgViewer.Web.Framework.UI
                 hash = WebEncoders.Base64UrlEncode(input);
             }
             //ensure only valid chars
-            hash = _urlRecordService.GetSeName(hash, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls);
+            hash = _urlRecordService.GetSeNameAsync(hash, _seoSettings.ConvertNonWesternChars, _seoSettings.AllowUnicodeCharsInUrls).Result;
 
             return hash;
         }
@@ -151,9 +150,9 @@ namespace TVProgViewer.Web.Framework.UI
             _titleParts.Insert(0, part);
         }
         /// <summary>
-        /// Генерирование всех заголовочных частей
+        /// Generate all title parts
         /// </summary>
-        /// <param name="addDefaultTitle">Значение индицирующее должен ли вставляться заголовок по умолчанию</param>
+        /// <param name="addDefaultTitle">A value indicating whether to insert a default title</param>
         /// <returns>Generated string</returns>
         public virtual string GenerateTitle(bool addDefaultTitle)
         {
@@ -330,7 +329,7 @@ namespace TVProgViewer.Web.Framework.UI
 
             var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
 
-            var debugModel = _webHostingEnvironment.IsDevelopment();
+            var debugModel = _webHostEnvironment.IsDevelopment();
 
             if (!bundleFiles.HasValue)
             {
@@ -361,12 +360,12 @@ namespace TVProgViewer.Web.Framework.UI
                     foreach (var item in partsToBundle)
                     {
                         new PathString(urlHelper.Content(debugModel ? item.DebugSrc : item.Src))
-                            .StartsWithSegments(urlHelper.ActionContext.HttpContext.Request.PathBase, out PathString path);
+                            .StartsWithSegments(urlHelper.ActionContext.HttpContext.Request.PathBase, out var path);
                         var src = path.Value.TrimStart('/');
 
                         //check whether this file exists, if not it should be stored into /wwwroot directory
                         if (!_fileProvider.FileExists(_fileProvider.MapPath(path)))
-                            src = _fileProvider.Combine(_webHostingEnvironment.WebRootPath, _fileProvider.Combine(src.Split("/").ToArray()));
+                            src = _fileProvider.Combine(_webHostEnvironment.WebRootPath, _fileProvider.Combine(src.Split("/").ToArray()));
                         else
                             src = _fileProvider.MapPath(path);
 
@@ -375,7 +374,7 @@ namespace TVProgViewer.Web.Framework.UI
 
                     //output file
                     var outputFileName = GetBundleFileName(partsToBundle.Select(x => debugModel ? x.DebugSrc : x.Src).ToArray());
-                    bundle.OutputFileName = _fileProvider.Combine(_webHostingEnvironment.WebRootPath, "bundles", outputFileName + ".js");
+                    bundle.OutputFileName = _fileProvider.Combine(_webHostEnvironment.WebRootPath, "bundles", outputFileName + ".js");
                     //save
                     var configFilePath = _fileProvider.MapPath($"/{outputFileName}.json");
                     bundle.FileName = configFilePath;
@@ -385,9 +384,10 @@ namespace TVProgViewer.Web.Framework.UI
                     //so if we have minification enabled, it could take up to several minutes to see changes in updated resource files (or just reset the cache or restart the site)
                     var cacheKey = new CacheKey($"TvProg.minification.shouldrebuild.js-{outputFileName}")
                     {
-                        CacheTime = RECHECK_BUNDLED_FILES_PERIOD
+                        CacheTime = _appSettings.CacheConfig.BundledFilesCacheTime
                     };
-                    var shouldRebuild = _cacheManager.Get(cacheKey, () => true);
+
+                    var shouldRebuild = _staticCacheManager.GetAsync(_staticCacheManager.PrepareKey(cacheKey), () => true).Result;
 
                     if (shouldRebuild)
                     {
@@ -397,10 +397,10 @@ namespace TVProgViewer.Web.Framework.UI
                             //BundleHandler.AddBundle(configFilePath, bundle);
 
                             //process
-                            _processor.Process(configFilePath, new List<Bundle> {bundle});
+                            _processor.Process(configFilePath, new List<Bundle> { bundle });
                         }
 
-                        _cacheManager.Set(cacheKey, false);
+                        _staticCacheManager.SetAsync(cacheKey, false);
                     }
 
                     //render
@@ -445,6 +445,9 @@ namespace TVProgViewer.Web.Framework.UI
             if (string.IsNullOrEmpty(script))
                 return;
 
+            if (_inlineScriptParts[location].Contains(script))
+                return;
+
             _inlineScriptParts[location].Add(script);
         }
         /// <summary>
@@ -458,6 +461,9 @@ namespace TVProgViewer.Web.Framework.UI
                 _inlineScriptParts.Add(location, new List<string>());
 
             if (string.IsNullOrEmpty(script))
+                return;
+
+            if (_inlineScriptParts[location].Contains(script))
                 return;
 
             _inlineScriptParts[location].Insert(0, script);
@@ -550,7 +556,7 @@ namespace TVProgViewer.Web.Framework.UI
 
             var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
 
-            var debugModel = _webHostingEnvironment.IsDevelopment();
+            var debugModel = _webHostEnvironment.IsDevelopment();
 
             if (!bundleFiles.HasValue)
             {
@@ -586,19 +592,19 @@ namespace TVProgViewer.Web.Framework.UI
                     foreach (var item in partsToBundle)
                     {
                         new PathString(urlHelper.Content(debugModel ? item.DebugSrc : item.Src))
-                            .StartsWithSegments(urlHelper.ActionContext.HttpContext.Request.PathBase, out PathString path);
+                            .StartsWithSegments(urlHelper.ActionContext.HttpContext.Request.PathBase, out var path);
                         var src = path.Value.TrimStart('/');
 
                         //check whether this file exists 
                         if (!_fileProvider.FileExists(_fileProvider.MapPath(path)))
-                            src = _fileProvider.Combine(_webHostingEnvironment.WebRootPath, _fileProvider.Combine(src.Split("/").ToArray()));
+                            src = _fileProvider.Combine(_webHostEnvironment.WebRootPath, _fileProvider.Combine(src.Split("/").ToArray()));
                         else
                             src = _fileProvider.MapPath(path);
                         bundle.InputFiles.Add(src);
                     }
                     //output file
                     var outputFileName = GetBundleFileName(partsToBundle.Select(x => { return debugModel ? x.DebugSrc : x.Src; }).ToArray());
-                    bundle.OutputFileName = _fileProvider.Combine(_webHostingEnvironment.WebRootPath, "bundles", outputFileName + ".css");
+                    bundle.OutputFileName = _fileProvider.Combine(_webHostEnvironment.WebRootPath, "bundles", outputFileName + ".css");
                     //save
                     var configFilePath = _fileProvider.MapPath($"/{outputFileName}.json");
                     bundle.FileName = configFilePath;
@@ -608,9 +614,10 @@ namespace TVProgViewer.Web.Framework.UI
                     //so if we have minification enabled, it could take up to several minutes to see changes in updated resource files (or just reset the cache or restart the site)
                     var cacheKey = new CacheKey($"TvProg.minification.shouldrebuild.css-{outputFileName}")
                     {
-                        CacheTime = RECHECK_BUNDLED_FILES_PERIOD
+                        CacheTime = _appSettings.CacheConfig.BundledFilesCacheTime
                     };
-                    var shouldRebuild = _cacheManager.Get(cacheKey, () => true);
+
+                    var shouldRebuild = _staticCacheManager.GetAsync(_staticCacheManager.PrepareKey(cacheKey), () => true).Result;
 
                     if (shouldRebuild)
                     {
@@ -620,10 +627,10 @@ namespace TVProgViewer.Web.Framework.UI
                             //BundleHandler.AddBundle(configFilePath, bundle);
 
                             //process
-                            _processor.Process(configFilePath, new List<Bundle> {bundle});
+                            _processor.Process(configFilePath, new List<Bundle> { bundle });
                         }
 
-                        _cacheManager.Set(cacheKey, false);
+                        _staticCacheManager.SetAsync(cacheKey, false);
                     }
 
                     //render

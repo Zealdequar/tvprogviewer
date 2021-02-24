@@ -26,15 +26,6 @@ namespace TVProgViewer.Core.Infrastructure
 
         #endregion
 
-        #region Свойства
-
-        /// <summary>
-        /// Получение или установка провайдера сервиса
-        /// </summary>
-        private IServiceProvider _serviceProvider { get; set; }
-
-        #endregion
-
         #region Утилиты
 
         /// <summary>
@@ -68,7 +59,7 @@ namespace TVProgViewer.Core.Infrastructure
 
             // Выполнение задач:
             foreach (var task in instances)
-                task.Execute();
+                task.ExecuteAsync().Wait();
         }
 
         /// <summary>
@@ -76,7 +67,7 @@ namespace TVProgViewer.Core.Infrastructure
         /// </summary>
         /// <param name="containerBuilder">Контейнер-строитель</param>
         /// <param name="TvProgConfig">TVProgViewer параметры конфигурации</param>
-        public virtual void RegisterDependencies(ContainerBuilder containerBuilder, TvProgConfig tvProgConfig)
+        public virtual void RegisterDependencies(ContainerBuilder containerBuilder, AppSettings appSettings)
         {
             // Регистрация движка:
             containerBuilder.RegisterInstance(this).As<IEngine>().SingleInstance();
@@ -94,7 +85,7 @@ namespace TVProgViewer.Core.Infrastructure
 
             // Регистрация всех обеспечиваемых зависимостей
             foreach (var dependencyRegistrar in instances)
-                dependencyRegistrar.Register(containerBuilder, _typeFinder, tvProgConfig);
+                dependencyRegistrar.Register(containerBuilder, _typeFinder, appSettings);
         }
 
         /// <summary>
@@ -151,7 +142,7 @@ namespace TVProgViewer.Core.Infrastructure
         /// <param name="services">Коллекция указателей на сервисы</param>
         /// <param name="configuration">Конфигурация приложения</param>
         /// <param name="TvProgConfig">Параметры конфигурации TVProgViewer</param>
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration, TvProgConfig TvProgConfig)
+        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             // Поиск стартовых конфигураций, обеспечиваемых другиими сборками:
             _typeFinder = new WebAppTypeFinder();
@@ -182,7 +173,7 @@ namespace TVProgViewer.Core.Infrastructure
         /// <param name="application">Строитель для конфигурирования конвейера запросов приложения</param>
         public void ConfigureRequestPipeline(IApplicationBuilder application)
         {
-            _serviceProvider = application.ApplicationServices;
+            ServiceProvider = application.ApplicationServices;
 
             // Поиск стартовых конфигураций, обеспечиваемых другими сборками:
             var typeFinder = Resolve<ITypeFinder>();
@@ -250,7 +241,7 @@ namespace TVProgViewer.Core.Infrastructure
                     {
                         var service = Resolve(parameter.ParameterType);
                         if (service == null)
-                            throw new TvProgException("Unknown dependency");
+                            throw new TvProgException("Неизвестная зависимость");
                         return service;
                     });
 
@@ -263,17 +254,17 @@ namespace TVProgViewer.Core.Infrastructure
                 }
             }
 
-            throw new TvProgException("No constructor was found that had all the dependencies satisfied.", innerException);
+            throw new TvProgException("Не был найден конструктор, который удовлетворял всем зависимостям.", innerException);
         }
 
         #endregion
 
-        #region Properties
+        #region Свойства
 
         /// <summary>
         /// Провайдер сервисов
         /// </summary>
-        public virtual IServiceProvider ServiceProvider => _serviceProvider;
+        public virtual IServiceProvider ServiceProvider { get; protected set; }
 
         #endregion
     }

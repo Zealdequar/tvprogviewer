@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Domain.Common;
@@ -69,17 +70,17 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="vendorAttributesXml">Vendor attributes in XML format</param>
         /// <returns>List of the vendor attribute model</returns>
-        protected virtual IList<VendorAttributeModel> PrepareVendorAttributes(string vendorAttributesXml)
+        protected virtual async Task<IList<VendorAttributeModel>> PrepareVendorAttributesAsync(string vendorAttributesXml)
         {
             var result = new List<VendorAttributeModel>();
 
-            var vendorAttributes = _vendorAttributeService.GetAllVendorAttributes();
+            var vendorAttributes = await _vendorAttributeService.GetAllVendorAttributesAsync();
             foreach (var attribute in vendorAttributes)
             {
                 var attributeModel = new VendorAttributeModel
                 {
                     Id = attribute.Id,
-                    Name = _localizationService.GetLocalized(attribute, x => x.Name),
+                    Name = await _localizationService.GetLocalizedAsync(attribute, x => x.Name),
                     IsRequired = attribute.IsRequired,
                     AttributeControlType = attribute.AttributeControlType,
                 };
@@ -87,13 +88,13 @@ namespace TVProgViewer.WebUI.Factories
                 if (attribute.ShouldHaveValues())
                 {
                     //values
-                    var attributeValues = _vendorAttributeService.GetVendorAttributeValues(attribute.Id);
+                    var attributeValues = await _vendorAttributeService.GetVendorAttributeValuesAsync(attribute.Id);
                     foreach (var attributeValue in attributeValues)
                     {
                         var valueModel = new VendorAttributeValueModel
                         {
                             Id = attributeValue.Id,
-                            Name = _localizationService.GetLocalized(attributeValue, x => x.Name),
+                            Name = await _localizationService.GetLocalizedAsync(attributeValue, x => x.Name),
                             IsPreSelected = attributeValue.IsPreSelected
                         };
                         attributeModel.Values.Add(valueModel);
@@ -113,7 +114,7 @@ namespace TVProgViewer.WebUI.Factories
                                     item.IsPreSelected = false;
 
                                 //select new values
-                                var selectedValues = _vendorAttributeParser.ParseVendorAttributeValues(vendorAttributesXml);
+                                var selectedValues = await _vendorAttributeParser.ParseVendorAttributeValuesAsync(vendorAttributesXml);
                                 foreach (var attributeValue in selectedValues)
                                     foreach (var item in attributeModel.Values)
                                         if (attributeValue.Id == item.Id)
@@ -165,17 +166,17 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <param name="vendorAttributesXml">Vendor attributes in XML format</param>
         /// <returns>The apply vendor model</returns>
-        public virtual ApplyVendorModel PrepareApplyVendorModel(ApplyVendorModel model,
+        public virtual async Task<ApplyVendorModel> PrepareApplyVendorModelAsync(ApplyVendorModel model,
             bool validateVendor, bool excludeProperties, string vendorAttributesXml)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            if (validateVendor && _workContext.CurrentUser.VendorId > 0)
+            if (validateVendor && (await _workContext.GetCurrentUserAsync()).VendorId > 0)
             {
                 //already applied for vendor account
                 model.DisableFormInput = true;
-                model.Result = _localizationService.GetResource("Vendors.ApplyAccount.AlreadyApplied");
+                model.Result = await _localizationService.GetResourceAsync("Vendors.ApplyAccount.AlreadyApplied");
             }
 
             model.DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnApplyVendorPage;
@@ -184,11 +185,11 @@ namespace TVProgViewer.WebUI.Factories
 
             if (!excludeProperties)
             {
-                model.Email = _workContext.CurrentUser.Email;
+                model.Email = (await _workContext.GetCurrentUserAsync()).Email;
             }
 
             //vendor attributes
-            model.VendorAttributes = PrepareVendorAttributes(vendorAttributesXml);
+            model.VendorAttributes = await PrepareVendorAttributesAsync(vendorAttributesXml);
 
             return model;
         }
@@ -200,13 +201,13 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <param name="overriddenVendorAttributesXml">Overridden vendor attributes in XML format; pass null to use VendorAttributes of vendor</param>
         /// <returns>Vendor info model</returns>
-        public virtual VendorInfoModel PrepareVendorInfoModel(VendorInfoModel model,
+        public virtual async Task<VendorInfoModel> PrepareVendorInfoModelAsync(VendorInfoModel model,
             bool excludeProperties, string overriddenVendorAttributesXml = "")
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            var vendor = _workContext.CurrentVendor;
+            var vendor = await _workContext.GetCurrentVendorAsync();
             if (!excludeProperties)
             {
                 model.Description = vendor.Description;
@@ -214,14 +215,14 @@ namespace TVProgViewer.WebUI.Factories
                 model.Name = vendor.Name;
             }
 
-            var picture = _pictureService.GetPictureById(vendor.PictureId);
+            var picture = await _pictureService.GetPictureByIdAsync(vendor.PictureId);
             var pictureSize = _mediaSettings.AvatarPictureSize;
-            model.PictureUrl = picture != null ? _pictureService.GetPictureUrl(picture, pictureSize) : string.Empty;
+            (model.PictureUrl, _) = picture != null ? await _pictureService.GetPictureUrlAsync(picture, pictureSize) : (string.Empty, null);
 
             //vendor attributes
             if (string.IsNullOrEmpty(overriddenVendorAttributesXml))
-                overriddenVendorAttributesXml = _genericAttributeService.GetAttribute<string>(vendor, TvProgVendorDefaults.VendorAttributes);
-            model.VendorAttributes = PrepareVendorAttributes(overriddenVendorAttributesXml);
+                overriddenVendorAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(vendor, TvProgVendorDefaults.VendorAttributes);
+            model.VendorAttributes = await PrepareVendorAttributesAsync(overriddenVendorAttributesXml);
 
             return model;
         }

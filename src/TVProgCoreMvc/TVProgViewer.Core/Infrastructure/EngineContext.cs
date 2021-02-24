@@ -5,6 +5,9 @@ using System.Text;
 
 namespace TVProgViewer.Core.Infrastructure
 {
+    /// <summary>
+    /// Provides access to the singleton instance of the Nop engine.
+    /// </summary>
     public class EngineContext
     {
         #region Методы

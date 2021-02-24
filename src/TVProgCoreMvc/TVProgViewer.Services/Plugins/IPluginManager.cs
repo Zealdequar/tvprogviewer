@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Users;
 
 namespace TVProgViewer.Services.Plugins
@@ -12,37 +13,28 @@ namespace TVProgViewer.Services.Plugins
         /// <summary>
         /// Load all plugins
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>List of plugins</returns>
-        IList<TPlugin> LoadAllPlugins(User User = null, int storeId = 0);
+        Task<IList<TPlugin>> LoadAllPluginsAsync(User user = null, int storeId = 0);
 
         /// <summary>
         /// Load plugin by system name
         /// </summary>
         /// <param name="systemName">System name</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Plugin</returns>
-        TPlugin LoadPluginBySystemName(string systemName, User User = null, int storeId = 0);
-
-        /// <summary>
-        /// Load primary active plugin
-        /// </summary>
-        /// <param name="systemName">System name of primary active plugin</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
-        /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
-        /// <returns>Plugin</returns>
-        TPlugin LoadPrimaryPlugin(string systemName, User User = null, int storeId = 0);
+        Task<TPlugin> LoadPluginBySystemNameAsync(string systemName, User user = null, int storeId = 0);
 
         /// <summary>
         /// Load active plugins
         /// </summary>
         /// <param name="systemNames">System names of active plugins</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>List of active plugins</returns>
-        IList<TPlugin> LoadActivePlugins(List<string> systemNames, User User = null, int storeId = 0);
+        Task<IList<TPlugin>> LoadActivePluginsAsync(List<string> systemNames, User user = null, int storeId = 0);
 
         /// <summary>
         /// Check whether the passed plugin is active
@@ -57,6 +49,6 @@ namespace TVProgViewer.Services.Plugins
         /// </summary>
         /// <param name="plugin">Plugin</param>
         /// <returns>Logo URL</returns>
-        string GetPluginLogoUrl(TPlugin plugin);
+        Task<string> GetPluginLogoUrlAsync(TPlugin plugin);
     }
 }

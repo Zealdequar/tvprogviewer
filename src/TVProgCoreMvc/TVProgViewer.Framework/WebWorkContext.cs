@@ -1,7 +1,16 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using TVProgViewer.Core;
+using TVProgViewer.Core.Domain.Users;
+using TVProgViewer.Core.Domain.Directory;
+using TVProgViewer.Core.Domain.Localization;
+using TVProgViewer.Core.Domain.Tax;
+using TVProgViewer.Core.Domain.Vendors;
+using TVProgViewer.Core.Http;
+using TVProgViewer.Core.Security;
 using TVProgViewer.Services.Authentication;
 using TVProgViewer.Services.Common;
 using TVProgViewer.Services.Users;
@@ -10,14 +19,6 @@ using TVProgViewer.Services.Helpers;
 using TVProgViewer.Services.Localization;
 using TVProgViewer.Services.Stores;
 using TVProgViewer.Services.Vendors;
-using TVProgViewer.Core;
-using TVProgViewer.Core.Domain.Users;
-using TVProgViewer.Core.Domain.Directory;
-using TVProgViewer.Core.Domain.Localization;
-using TVProgViewer.Core.Domain.Tax;
-using TVProgViewer.Core.Domain.Vendors;
-using TVProgViewer.Core.Http;
-using TVProgViewer.Services.Tasks;
 using TVProgViewer.Core.Domain.TvProgMain;
 using TVProgViewer.Services.TvProgMain;
 
@@ -30,8 +31,8 @@ namespace TVProgViewer.Web.Framework
     {
         #region Поля
 
+        private readonly CookieSettings _cookieSettings;
         private readonly CurrencySettings _currencySettings;
-        private readonly ProgrammeSettings _programmeSettings;
         private readonly IAuthenticationService _authenticationService;
         private readonly ICurrencyService _currencyService;
         private readonly IUserService _userService;
@@ -43,8 +44,10 @@ namespace TVProgViewer.Web.Framework
         private readonly IStoreMappingService _storeMappingService;
         private readonly IUserAgentHelper _userAgentHelper;
         private readonly IVendorService _vendorService;
+        private readonly IWebHelper _webHelper;
         private readonly LocalizationSettings _localizationSettings;
         private readonly TaxSettings _taxSettings;
+        private readonly ProgrammeSettings _programmeSettings;
 
         private User _cachedUser;
         private User _originalUserIfImpersonated;
@@ -60,8 +63,8 @@ namespace TVProgViewer.Web.Framework
 
         #region Ctor
 
-        public WebWorkContext(CurrencySettings currencySettings,
-            ProgrammeSettings programmeSettings,
+        public WebWorkContext(CookieSettings cookieSettings,
+            CurrencySettings currencySettings,
             IAuthenticationService authenticationService,
             ICurrencyService currencyService,
             IUserService userService,
@@ -73,11 +76,13 @@ namespace TVProgViewer.Web.Framework
             IStoreMappingService storeMappingService,
             IUserAgentHelper userAgentHelper,
             IVendorService vendorService,
+            IWebHelper webHelper,
             LocalizationSettings localizationSettings,
-            TaxSettings taxSettings)
+            TaxSettings taxSettings,
+            ProgrammeSettings programmeSettings)
         {
+            _cookieSettings = cookieSettings;
             _currencySettings = currencySettings;
-            _programmeSettings = programmeSettings;
             _authenticationService = authenticationService;
             _currencyService = currencyService;
             _userService = userService;
@@ -89,8 +94,10 @@ namespace TVProgViewer.Web.Framework
             _storeMappingService = storeMappingService;
             _userAgentHelper = userAgentHelper;
             _vendorService = vendorService;
+            _webHelper = webHelper;
             _localizationSettings = localizationSettings;
             _taxSettings = taxSettings;
+            _programmeSettings = programmeSettings;
         }
 
         #endregion
@@ -113,7 +120,7 @@ namespace TVProgViewer.Web.Framework
         /// <param name="UserGuid">Guid of the User</param>
         protected virtual void SetUserCookie(Guid UserGuid)
         {
-            if (_httpContextAccessor.HttpContext?.Response == null)
+            if (_httpContextAccessor.HttpContext?.Response?.HasStarted ?? true)
                 return;
 
             //delete current cookie value
@@ -121,7 +128,7 @@ namespace TVProgViewer.Web.Framework
             _httpContextAccessor.HttpContext.Response.Cookies.Delete(cookieName);
 
             //get date of cookie expiration
-            var cookieExpires = 24 * 365; //TODO make configurable
+            var cookieExpires = _cookieSettings.UserCookieExpires;
             var cookieExpiresDate = DateTime.Now.AddHours(cookieExpires);
 
             //if passed guid is empty set cookie as expired
@@ -133,7 +140,7 @@ namespace TVProgViewer.Web.Framework
             {
                 HttpOnly = true,
                 Expires = cookieExpiresDate,
-                Secure = _httpContextAccessor.HttpContext.Request.IsHttps
+                Secure = _webHelper.IsCurrentConnectionSecured()
             };
             _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, UserGuid.ToString(), options);
         }
@@ -142,18 +149,20 @@ namespace TVProgViewer.Web.Framework
         /// Get language from the requested page URL
         /// </summary>
         /// <returns>The found language</returns>
-        protected virtual Language GetLanguageFromUrl()
+        protected virtual async Task<Language> GetLanguageFromUrlAsync()
         {
             if (_httpContextAccessor.HttpContext?.Request == null)
                 return null;
 
             //whether the requsted URL is localized
             var path = _httpContextAccessor.HttpContext.Request.Path.Value;
-            if (!path.IsLocalizedUrl(_httpContextAccessor.HttpContext.Request.PathBase, false, out Language language))
-                return null;
+            
+            var (isLocalized, language) = await path.IsLocalizedUrlAsync(_httpContextAccessor.HttpContext.Request.PathBase, false);
 
+            if (!isLocalized)
+                return null;
             //check language availability
-            if (!_storeMappingService.Authorize(language))
+            if (!await _storeMappingService.AuthorizeAsync(language))
                 return null;
 
             return language;
@@ -163,7 +172,7 @@ namespace TVProgViewer.Web.Framework
         /// Get language from the request
         /// </summary>
         /// <returns>The found language</returns>
-        protected virtual Language GetLanguageFromRequest()
+        protected virtual async Task<Language> GetLanguageFromRequestAsync()
         {
             if (_httpContextAccessor.HttpContext?.Request == null)
                 return null;
@@ -174,11 +183,11 @@ namespace TVProgViewer.Web.Framework
                 return null;
 
             //try to get language by culture name
-            var requestLanguage = _languageService.GetAllLanguages().FirstOrDefault(language =>
+            var requestLanguage = (await _languageService.GetAllLanguagesAsync()).FirstOrDefault(language =>
                 language.LanguageCulture.Equals(requestCulture.Culture.Name, StringComparison.InvariantCultureIgnoreCase));
 
             //check language availability
-            if (requestLanguage == null || !requestLanguage.Published || !_storeMappingService.Authorize(requestLanguage))
+            if (requestLanguage == null || !requestLanguage.Published || !await _storeMappingService.AuthorizeAsync(requestLanguage))
                 return null;
 
             return requestLanguage;
@@ -191,464 +200,536 @@ namespace TVProgViewer.Web.Framework
         /// <summary>
         /// Текущий пользователь
         /// </summary>
-        public virtual User CurrentUser
+        public virtual async Task<User> GetCurrentUserAsync()
         {
-            get
+            // Закэширован ли он сейчас:
+            if (_cachedUser != null)
+                return _cachedUser;
+
+            await SetCurrentUserAsync();
+
+            return _cachedUser;
+        }
+
+        /// <summary>
+        /// Sets the current user
+        /// </summary>
+        /// <param name="user">Current user</param>
+        public virtual async Task SetCurrentUserAsync(User user = null)
+        {
+            if (user == null)
             {
-                // Закэширован ли он сейчас:
-                if (_cachedUser != null)
-                    return _cachedUser;
-
-                User user = null;
-
-                // Проверить, сделан ли запрос фоновой (по расписанию) задачей:
-                if (_httpContextAccessor.HttpContext == null ||
-                    _httpContextAccessor.HttpContext.Request.Path.Equals(new PathString($"/{TvProgTaskDefaults.ScheduleTaskPath}"), StringComparison.InvariantCultureIgnoreCase))
+                //check whether request is made by a background (schedule) task
+                if (_httpContextAccessor.HttpContext?.Request
+                    ?.Path.Equals(new PathString($"/{Services.Tasks.TvProgTaskDefaults.ScheduleTaskPath}"), StringComparison.InvariantCultureIgnoreCase)
+                    ?? true)
                 {
-                    // В этом случае, вернуть встроенную пользовательскую запись для фоновой задачи:
-                    user = _userService.GetUserBySystemName(TvProgUserDefaults.BackgroundTaskUserName);
+                    //in this case return built-in user record for background task
+                    user = await _userService.GetOrCreateBackgroundTaskUserAsync();
                 }
 
-                if (user == null || user.Deleted != null || !user.Active || user.RequireReLogin)
+                if (user == null || user.Deleted || !user.Active || user.RequireReLogin)
                 {
-                    // Проверить, если запрос сделан поисковой системой, в этом случае возвращать встроенную запись пользователя для поисковых систем:
+                    //check whether request is made by a search engine, in this case return built-in user record for search engines
                     if (_userAgentHelper.IsSearchEngine())
-                        user = _userService.GetUserBySystemName(TvProgUserDefaults.SearchEngineUserName);
+                        user = await _userService.GetOrCreateSearchEngineUserAsync();
                 }
 
-                if (user == null || user.Deleted != null || !user.Active || user.RequireReLogin)
+                if (user == null || user.Deleted || !user.Active || user.RequireReLogin)
                 {
-                    // Попытка получить регистрированного пользователя:
-                    user = _authenticationService.GetAuthenticatedUser();
+                    //try to get registered user
+                    user = await _authenticationService.GetAuthenticatedUserAsync();
                 }
 
-                if (user != null && user.Deleted == null && user.Active && !user.RequireReLogin)
+                if (user != null && !user.Deleted && user.Active && !user.RequireReLogin)
                 {
-                    // Получить олицетворение пользователя, если требуется:
-                    var impersonatedUserId = _genericAttributeService
-                        .GetAttribute<int?>(user, TvProgUserDefaults.ImpersonatedUserIdAttribute);
+                    //get impersonate user if required
+                    var impersonatedUserId = await _genericAttributeService
+                        .GetAttributeAsync<int?>(user, TvProgUserDefaults.ImpersonatedUserIdAttribute);
                     if (impersonatedUserId.HasValue && impersonatedUserId.Value > 0)
                     {
-                        var impersonatedUser = _userService.GetUserById(impersonatedUserId.Value);
-                        if (impersonatedUser != null && impersonatedUser.Deleted != null && impersonatedUser.Active && !impersonatedUser.RequireReLogin)
+                        var impersonatedUser = await _userService.GetUserByIdAsync(impersonatedUserId.Value);
+                        if (impersonatedUser != null && !impersonatedUser.Deleted &&
+                            impersonatedUser.Active &&
+                            !impersonatedUser.RequireReLogin)
                         {
-                            // Установка олицетворения пользователя:
+                            //set impersonated user
                             _originalUserIfImpersonated = user;
                             user = impersonatedUser;
                         }
                     }
                 }
 
-                if (user == null || user.Deleted != null || !user.Active || user.RequireReLogin)
+                if (user == null || user.Deleted || !user.Active || user.RequireReLogin)
                 {
-                    // Получение гостевого пользователя
+                    //get guest user
                     var userCookie = GetUserCookie();
-                    if (!string.IsNullOrEmpty(userCookie))
+                    if (Guid.TryParse(userCookie, out var userGuid))
                     {
-                        if (Guid.TryParse(userCookie, out Guid userGuid))
-                        {
-                            // Получение пользователя из куки (не должен быть зарегистрирован(а)):
-                            var userByCookie = _userService.GetUserByGuid(userGuid);
-                            if (userByCookie != null && !_userService.IsRegistered(userByCookie))
-                                user = userByCookie;
-                        }
+                        //get user from cookie (should not be registered)
+                        var userByCookie = await _userService.GetUserByGuidAsync(userGuid);
+                        if (userByCookie != null && !await _userService.IsRegisteredAsync(userByCookie))
+                            user = userByCookie;
                     }
                 }
 
-                if (user == null || user.Deleted != null || !user.Active || user.RequireReLogin)
+                if (user == null || user.Deleted || !user.Active || user.RequireReLogin)
                 {
-                    // Создание гостя, если не существует
-                    user = _userService.InsertGuestUser();
+                    //create guest if not exists
+                    user = await _userService.InsertGuestUserAsync();
                 }
-
-                if (user.Deleted == null && user.Active && !user.RequireReLogin)
-                {
-                    // Установка пользовательского куки
-                    SetUserCookie(user.UserGuid);
-
-                    // Кэширование найденного пользователя
-                    _cachedUser = user;
-                }
-
-                return _cachedUser;
             }
-            set
+
+            if (!user.Deleted && user.Active && !user.RequireReLogin)
             {
-                SetUserCookie(value.UserGuid);
-                _cachedUser = value;
+                //set user cookie
+                SetUserCookie(user.UserGuid);
+
+                //cache the found user
+                _cachedUser = user;
             }
         }
 
         /// <summary>
         /// Gets the original User (in case the current one is impersonated)
         /// </summary>
-        public virtual User OriginalUserIfImpersonated
-        {
-            get { return _originalUserIfImpersonated; }
-        }
+        public virtual User OriginalUserIfImpersonated => _originalUserIfImpersonated;
+
 
         /// <summary>
         /// Gets the current vendor (logged-in manager)
         /// </summary>
-        public virtual Vendor CurrentVendor
+        public virtual async Task<Vendor> GetCurrentVendorAsync()
         {
-            get
-            {
-                //whether there is a cached value
-                if (_cachedVendor != null)
-                    return _cachedVendor;
-
-                if (CurrentUser == null)
-                    return null;
-
+            //whether there is a cached value
+            if (_cachedVendor != null)
                 return _cachedVendor;
-            }
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+                return null;
+
+
+            var vendor = await _vendorService.GetVendorByIdAsync(user.VendorId);
+            if (vendor == null || vendor.Deleted || !vendor.Active)
+                return null;
+
+            _cachedVendor = vendor;
+            return _cachedVendor;
         }
 
         /// <summary>
-        /// Gets or sets current user working language
+        /// Gets current user working language
         /// </summary>
-        public virtual Language WorkingLanguage
+        public virtual async Task<Language> GetWorkingLanguageAsync()
         {
-            get
-            {
-                //whether there is a cached value
-                if (_cachedLanguage != null)
-                    return _cachedLanguage;
-
-                Language detectedLanguage = null;
-
-                //localized URLs are enabled, so try to get language from the requested page URL
-                if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
-                    detectedLanguage = GetLanguageFromUrl();
-
-                //whether we should detect the language from the request
-                if (detectedLanguage == null && _localizationSettings.AutomaticallyDetectLanguage)
-                {
-                    //whether language already detected by this way
-                    var alreadyDetected = _genericAttributeService.GetAttribute<bool>(CurrentUser,
-                        TvProgUserDefaults.LanguageAutomaticallyDetectedAttribute, _storeContext.CurrentStore.Id);
-
-                    //if not, try to get language from the request
-                    if (!alreadyDetected)
-                    {
-                        detectedLanguage = GetLanguageFromRequest();
-                        if (detectedLanguage != null)
-                        {
-                            //language already detected
-                            _genericAttributeService.SaveAttribute(CurrentUser,
-                                TvProgUserDefaults.LanguageAutomaticallyDetectedAttribute, true, _storeContext.CurrentStore.Id);
-                        }
-                    }
-                }
-
-                //if the language is detected we need to save it
-                if (detectedLanguage != null)
-                {
-                    //get current saved language identifier
-                    var currentLanguageId = _genericAttributeService.GetAttribute<int>(CurrentUser,
-                        TvProgUserDefaults.LanguageIdAttribute, _storeContext.CurrentStore.Id);
-
-                    //save the detected language identifier if it differs from the current one
-                    if (detectedLanguage.Id != currentLanguageId)
-                    {
-                        _genericAttributeService.SaveAttribute(CurrentUser,
-                            TvProgUserDefaults.LanguageIdAttribute, detectedLanguage.Id, _storeContext.CurrentStore.Id);
-                    }
-                }
-
-                //get current User language identifier
-                var UserLanguageId = _genericAttributeService.GetAttribute<int>(CurrentUser,
-                    TvProgUserDefaults.LanguageIdAttribute, _storeContext.CurrentStore.Id);
-
-                var allStoreLanguages = _languageService.GetAllLanguages(storeId: _storeContext.CurrentStore.Id);
-
-                //check User language availability
-                var UserLanguage = allStoreLanguages.FirstOrDefault(language => language.Id == UserLanguageId);
-                if (UserLanguage == null)
-                {
-                    //it not found, then try to get the default language for the current store (if specified)
-                    UserLanguage = allStoreLanguages.FirstOrDefault(language => language.Id == _storeContext.CurrentStore.DefaultLanguageId);
-                }
-
-                //if the default language for the current store not found, then try to get the first one
-                if (UserLanguage == null)
-                    UserLanguage = allStoreLanguages.FirstOrDefault();
-
-                //if there are no languages for the current store try to get the first one regardless of the store
-                if (UserLanguage == null)
-                    UserLanguage = _languageService.GetAllLanguages().FirstOrDefault();
-
-                //cache the found language
-                _cachedLanguage = UserLanguage;
-
+            //whether there is a cached value
+            if (_cachedLanguage != null)
                 return _cachedLanguage;
-            }
-            set
+
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+
+            Language detectedLanguage = null;
+
+            //localized URLs are enabled, so try to get language from the requested page URL
+            if (_localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
+                detectedLanguage = await GetLanguageFromUrlAsync();
+
+            //whether we should detect the language from the request
+            if (detectedLanguage == null && _localizationSettings.AutomaticallyDetectLanguage)
             {
-                //get passed language identifier
-                var languageId = value?.Id ?? 0;
+                //whether language already detected by this way
+                var alreadyDetected = await _genericAttributeService
+                    .GetAttributeAsync<bool>(user, TvProgUserDefaults.LanguageAutomaticallyDetectedAttribute, store.Id);
 
-                //and save it
-                _genericAttributeService.SaveAttribute(CurrentUser,
-                    TvProgUserDefaults.LanguageIdAttribute, languageId, _storeContext.CurrentStore.Id);
-
-                //then reset the cached value
-                _cachedLanguage = null;
+                //if not, try to get language from the request
+                if (!alreadyDetected)
+                {
+                    detectedLanguage = await GetLanguageFromRequestAsync();
+                    if (detectedLanguage != null)
+                    {
+                        //language already detected
+                        await _genericAttributeService
+                            .SaveAttributeAsync(user, TvProgUserDefaults.LanguageAutomaticallyDetectedAttribute, true, store.Id);
+                    }
+                }
             }
+
+            //if the language is detected we need to save it
+            if (detectedLanguage != null)
+            {
+                //get current saved language identifier
+                var currentLanguageId = await _genericAttributeService
+                    .GetAttributeAsync<int>(user, TvProgUserDefaults.LanguageIdAttribute, store.Id);
+
+                //save the detected language identifier if it differs from the current one
+                if (detectedLanguage.Id != currentLanguageId)
+                {
+                    await _genericAttributeService
+                        .SaveAttributeAsync(user, TvProgUserDefaults.LanguageIdAttribute, detectedLanguage.Id, store.Id);
+                }
+            }
+
+            //get current user language identifier
+            var userLanguageId = await _genericAttributeService
+                .GetAttributeAsync<int>(user, TvProgUserDefaults.LanguageIdAttribute, store.Id);
+
+            var allStoreLanguages = await _languageService.GetAllLanguagesAsync(storeId: store.Id);
+
+            //check user language availability
+            var userLanguage = allStoreLanguages.FirstOrDefault(language => language.Id == userLanguageId);
+            if (userLanguage == null)
+            {
+                //it not found, then try to get the default language for the current store (if specified)
+                userLanguage = allStoreLanguages.FirstOrDefault(language => language.Id == store.DefaultLanguageId);
+            }
+
+            //if the default language for the current store not found, then try to get the first one
+            if (userLanguage == null)
+                userLanguage = allStoreLanguages.FirstOrDefault();
+
+            //if there are no languages for the current store try to get the first one regardless of the store
+            if (userLanguage == null)
+                userLanguage = (await _languageService.GetAllLanguagesAsync()).FirstOrDefault();
+
+            //cache the found language
+            _cachedLanguage = userLanguage;
+
+            return _cachedLanguage;
         }
-        
+
         /// <summary>
-        /// Для удаления
+        /// Sets current user working language
         /// </summary>
-        public virtual Currency WorkingCurrency { get; set; }
+        /// <param name="language">Language</param>
+        public virtual async Task SetWorkingLanguageAsync(Language language)
+        {
+            //save passed language identifier
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.LanguageIdAttribute, language?.Id ?? 0, store.Id);
+
+            //then reset the cached value
+            _cachedLanguage = null;
+        }
+
+        /// <summary>
+        /// Gets current user working currency
+        /// </summary>
+        public virtual async Task<Currency> GetWorkingCurrencyAsync()
+        {
+            //whether there is a cached value
+            if (_cachedCurrency != null)
+                return _cachedCurrency;
+
+            var adminAreaUrl = $"{_webHelper.GetStoreLocation()}admin";
+
+            //return primary store currency when we're in admin area/mode
+            if (_webHelper.GetThisPageUrl(false).StartsWith(adminAreaUrl, StringComparison.InvariantCultureIgnoreCase))
+            {
+                var primaryStoreCurrency = await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId);
+                if (primaryStoreCurrency != null)
+                {
+                    _cachedCurrency = primaryStoreCurrency;
+                    return primaryStoreCurrency;
+                }
+            }
+
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+
+            //find a currency previously selected by a user
+            var userCurrencyId = await _genericAttributeService
+                .GetAttributeAsync<int>(user, TvProgUserDefaults.CurrencyIdAttribute, store.Id);
+
+            var allStoreCurrencies = await _currencyService.GetAllCurrenciesAsync(storeId: store.Id);
+
+            //check user currency availability
+            var userCurrency = allStoreCurrencies.FirstOrDefault(currency => currency.Id == userCurrencyId);
+            if (userCurrency == null)
+            {
+                //it not found, then try to get the default currency for the current language (if specified)
+                var language = await GetWorkingLanguageAsync();
+                userCurrency = allStoreCurrencies
+                    .FirstOrDefault(currency => currency.Id == language.DefaultCurrencyId);
+            }
+
+            //if the default currency for the current store not found, then try to get the first one
+            if (userCurrency == null)
+                userCurrency = allStoreCurrencies.FirstOrDefault();
+
+            //if there are no currencies for the current store try to get the first one regardless of the store
+            if (userCurrency == null)
+                userCurrency = (await _currencyService.GetAllCurrenciesAsync()).FirstOrDefault();
+
+            //cache the found currency
+            _cachedCurrency = userCurrency;
+
+            return _cachedCurrency;
+        }
+
+        /// <summary>
+        /// Sets current user working currency
+        /// </summary>
+        /// <param name="currency">Currency</param>
+        public virtual async Task SetWorkingCurrencyAsync(Currency currency)
+        {
+            //save passed currency identifier
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CurrencyIdAttribute, currency?.Id ?? 0, store.Id);
+
+            //then reset the cached value
+            _cachedCurrency = null;
+        }
+
         /// <summary>
         /// Получение и установка ТВ-провайдера текущего пользователя
         /// </summary>
-        public virtual TvProgProviders WorkingProvider
+        public virtual async Task<TvProgProviders> GetWorkingProviderAsync()
         {
-            get 
-            {
-                // Убедиться, есть ли закешированное значение:
-                if (_cachedProvider != null)
-                    return _cachedProvider;
-
-                // Первичное значение провайдера, когда мы под пространством/режимом админа
-                if (IsAdmin)
-                {
-                    var primarySystemProvider = _programmeService.GetProviderById(_programmeSettings.PrimarySystemProviderId);
-                    if (primarySystemProvider != null)
-                    {
-                        _cachedProvider = primarySystemProvider;
-                        return primarySystemProvider;
-                    }
-                }
-
-                // Поиск ТВ-провайдера первоначально выбранного пользователем
-                var userProviderId = _genericAttributeService.GetAttribute<int>(CurrentUser,
-                    TvProgUserDefaults.ProviderIdAttribute, _storeContext.CurrentStore.Id);
-
-                var allStoreProviders = _programmeService.GetAllProviders();
-
-                // Проверка доступности ТВ-провайдера пользователю:
-                var userProvider = allStoreProviders.FirstOrDefault(provider => provider.Id == userProviderId);
-                if (userProvider == null)
-                {
-                   // Если он не найден, тогда попытаться получить ТВ-провайдера по умолчанию:
-                   userProvider = allStoreProviders.FirstOrDefault(provider => provider.Id == _programmeSettings.PrimarySystemProviderId);
-                }
-
-                // Если по умолчанию ТВ-провайдер Не найден, тогда попытаться получить первый попавшийся:
-                if (userProvider == null)
-                    userProvider = allStoreProviders.FirstOrDefault();
-
-                
-                // Кэширование найденного ТВ-провайдера:
-                _cachedProvider = userProvider;
-
+            // Убедиться, есть ли закешированное значение:
+            if (_cachedProvider != null)
                 return _cachedProvider;
-            }
-            set
+            var adminAreaUrl = $"{_webHelper.GetStoreLocation()}admin";
+            // Первичное значение провайдера, когда мы под пространством/режимом админа
+            if (_webHelper.GetThisPageUrl(false).StartsWith(adminAreaUrl, StringComparison.InvariantCultureIgnoreCase))
             {
-                // Получение идентификатора ТВ-провайдера
-                var providerId = value?.Id ?? 0;
+                var primarySystemProvider = await _programmeService.GetProviderByIdAsync(_programmeSettings.PrimarySystemProviderId);
+                if (primarySystemProvider != null)
+                {
+                    _cachedProvider = primarySystemProvider;
+                    return primarySystemProvider;
+                }
+            };
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
 
-                // И его сохранение
-                _genericAttributeService.SaveAttribute(CurrentUser,
-                    TvProgUserDefaults.ProviderIdAttribute, providerId, _storeContext.CurrentStore.Id);
+            // Поиск ТВ-провайдера первоначально выбранного пользователем
+            var userProviderId = await _genericAttributeService.GetAttributeAsync<int>(user,
+                TvProgUserDefaults.ProviderIdAttribute, store.Id);
 
-                // Тогда сбросим закэшированное значение
-                _cachedProvider = null;
+            var allStoreProviders = await _programmeService.GetAllProvidersAsync();
+
+            // Проверка доступности ТВ-провайдера пользователю:
+            var userProvider = allStoreProviders.FirstOrDefault(provider => provider.Id == userProviderId);
+            if (userProvider == null)
+            {
+                // Если он не найден, тогда попытаться получить ТВ-провайдера по умолчанию:
+                userProvider = allStoreProviders.FirstOrDefault(provider => provider.Id == _programmeSettings.PrimarySystemProviderId);
             }
-        }
 
+            // Если по умолчанию ТВ-провайдер Не найден, тогда попытаться получить первый попавшийся:
+            if (userProvider == null)
+            {
+                var providers = await _programmeService.GetAllProvidersAsync();
+                userProvider = providers.FirstOrDefault();
+            }
+
+            // Кэширование найденного ТВ-провайдера:
+            _cachedProvider = userProvider;
+
+            return _cachedProvider;
+        }
+        public virtual async Task SetWorkingProviderAsync(TvProgProviders provider)
+        {
+            //save passed currency identifier
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.ProviderIdAttribute, provider?.Id ?? 0, store.Id);
+
+            // Тогда сбросим закэшированное значение
+            _cachedProvider = null;
+        }
         /// <summary>
         /// Получение или установка типа ТВ-программы текущего пользователя
         /// </summary>
-        public virtual TypeProg WorkingTypeProg
+        public virtual async Task<TypeProg> GetWorkingTypeProgAsync()
         {
-            get 
-            {
-                // Убедиться, есть ли закешированное значение
-                if (_cachedTypeProg != null)
-                   return _cachedTypeProg;
-
-                // Первичное значение типа, когда мы под пространством/режимом админа
-                if (IsAdmin)
-                {
-                    var primarySystemTypeProg = _programmeService.GetTypeProgById(_programmeSettings.PrimarySystemTypeProgId);
-                    if (primarySystemTypeProg != null)
-                    {
-                        _cachedTypeProg = primarySystemTypeProg;
-                        return primarySystemTypeProg;
-                    }
-                }
-
-                // Поиск типа ТВ-программы, первоначально выбранного пользователем
-                var userTypeProgId = _genericAttributeService.GetAttribute<int>(CurrentUser,
-                    TvProgUserDefaults.TypeProgIdAttribute, _storeContext.CurrentStore.Id);
-
-                var allStoreTypeProgs = _programmeService.GetAllTypeProgs();
-
-                // Проверка доступности типа ТВ-программы пользователю:
-                var userTypeProg = allStoreTypeProgs.FirstOrDefault(typeProg => typeProg.Id == userTypeProgId);
-                if (userTypeProg == null)
-                {
-                    // Если он не найден, тогда попытаться получить тип ТВ-программы по умолчанию:
-                    userTypeProg = allStoreTypeProgs.FirstOrDefault(typeProg => typeProg.Id == _programmeSettings.PrimarySystemTypeProgId);
-                }
-
-                // Если по умолчанию тип ТВ-программы не найден, тогда попытаться получить первый попавшийся:
-                if (userTypeProg == null)
-                    userTypeProg = allStoreTypeProgs.FirstOrDefault();
-
-
-                // Кэширование найденного типа ТВ-программы:
-                _cachedTypeProg = userTypeProg;
-
+            // Убедиться, есть ли закешированное значение
+            if (_cachedTypeProg != null)
                 return _cachedTypeProg;
-            }
-            set
+            var adminAreaUrl = $"{_webHelper.GetStoreLocation()}admin";
+
+            // Первичное значение типа, когда мы под пространством/режимом админа
+            if (_webHelper.GetThisPageUrl(false).StartsWith(adminAreaUrl, StringComparison.InvariantCultureIgnoreCase))
             {
-                // Получение идентификатора типа ТВ-программы
-                var typeProgId = value?.Id ?? 0;
-
-                // И его сохранение
-                _genericAttributeService.SaveAttribute(CurrentUser,
-                    TvProgUserDefaults.TypeProgIdAttribute, typeProgId, _storeContext.CurrentStore.Id);
-
-                // Тогда сбросим закэшированное значение
-                _cachedTypeProg = null;
+                var primarySystemTypeProg = await _programmeService.GetTypeProgByIdAsync(_programmeSettings.PrimarySystemTypeProgId);
+                if (primarySystemTypeProg != null)
+                {
+                    _cachedTypeProg = primarySystemTypeProg;
+                    return primarySystemTypeProg;
+                }
             }
+
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+
+            // Поиск типа ТВ-программы, первоначально выбранного пользователем
+            var userTypeProgId = await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.TypeProgIdAttribute, store.Id);
+
+            var allStoreTypeProgs = await _programmeService.GetAllTypeProgsAsync(false);
+
+            // Проверка доступности типа ТВ-программы пользователю:
+            var userTypeProg = allStoreTypeProgs.FirstOrDefault(typeProg => typeProg.Id == userTypeProgId);
+            if (userTypeProg == null)
+            {
+                // Если он не найден, тогда попытаться получить тип ТВ-программы по умолчанию:
+                userTypeProg = allStoreTypeProgs.FirstOrDefault(typeProg => typeProg.Id == _programmeSettings.PrimarySystemTypeProgId);
+            }
+
+            // Если по умолчанию тип ТВ-программы не найден, тогда попытаться получить первый попавшийся:
+            if (userTypeProg == null)
+            {
+                var typeProgs = await _programmeService.GetAllTypeProgsAsync(false);
+                userTypeProg = typeProgs.FirstOrDefault();
+            }
+
+            // Кэширование найденного типа ТВ-программы:
+            _cachedTypeProg = userTypeProg;
+
+            return _cachedTypeProg;
         }
+
+
+
+        public virtual async Task SetWorkingTypeProgAsync(TypeProg typeProg)
+        {
+            //save passed currency identifier
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.ProviderIdAttribute, typeProg?.Id ?? 0, store.Id);
+
+            // Тогда сбросим закэшированное значение
+            _cachedTypeProg = null;
+        }
+
 
         /// <summary>
         /// Получение или установка пользовательской категории ТВ-программы
         /// </summary>
-        public virtual string WorkingCategory 
+        public virtual async Task<string> GetWorkingCategoryAsync()
         {
-            get
-            {
-                // Убедиться, есть ли закешированное значение
-                if (_cachedCategory != null)
-                    return _cachedCategory;
-
-                // Первичное значение типа, когда мы под пространством/режимом админа
-                if (IsAdmin)
-                {
-                    var primarySystemCategory = _programmeSettings.PrimarySystemCategory;
-                    if (primarySystemCategory != null)
-                    {
-                        _cachedCategory = primarySystemCategory;
-                        return primarySystemCategory;
-                    }
-                }
-
-                // Поиск категории ТВ-программы, первоначально выбранного пользователем
-                var userCategoryName = _genericAttributeService.GetAttribute<string>(CurrentUser,
-                    TvProgUserDefaults.CategoryAttribute, _storeContext.CurrentStore.Id);
-
-                var allStoreCategory = _programmeService.GetCategories();
-
-                // Проверка доступности категории ТВ-программы пользователю:
-                var userCategory = allStoreCategory.FirstOrDefault(category => category == userCategoryName);
-                if (userCategory == null)
-                {
-                    // Если он не найден, тогда попытаться получить категорию ТВ-программы по умолчанию:
-                    userCategory = allStoreCategory.FirstOrDefault(category => category == _programmeSettings.PrimarySystemCategory);
-                }
-
-                // Если по умолчанию категория ТВ-программы не найдена, тогда попытаться получить первую попавшуюся:
-                if (userCategory == null)
-                    userCategory = allStoreCategory.FirstOrDefault();
-
-
-                // Кэширование найденной категории ТВ-программы:
-                _cachedCategory = userCategory;
-
+            // Убедиться, есть ли закешированное значение
+            if (_cachedCategory != null)
                 return _cachedCategory;
-            } 
-            set 
+            var adminAreaUrl = $"{_webHelper.GetStoreLocation()}admin";
+
+            // Первичное значение типа, когда мы под пространством/режимом админа
+            if (_webHelper.GetThisPageUrl(false).StartsWith(adminAreaUrl, StringComparison.InvariantCultureIgnoreCase))
             {
-                // Получение категории ТВ-программы
-                var category = value ?? "Все категории";
+                var primarySystemCategory = _programmeSettings.PrimarySystemCategory;
+                if (primarySystemCategory != null)
+                {
+                    _cachedCategory = primarySystemCategory;
+                    return primarySystemCategory;
+                }
+            }
 
-                // И её сохранение
-                _genericAttributeService.SaveAttribute(CurrentUser,
-                    TvProgUserDefaults.CategoryAttribute, category, _storeContext.CurrentStore.Id);
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
 
-                // Тогда сбросим закэшированное значение
-                _cachedCategory = null;
-            } 
+            // Поиск категории ТВ-программы, первоначально выбранного пользователем
+            var userCategoryName = await _genericAttributeService.GetAttributeAsync<string>(user,
+                    TvProgUserDefaults.CategoryAttribute, store.Id);
+
+            var allStoreCategory = await _programmeService.GetCategoriesAsync();
+
+            // Проверка доступности категории ТВ-программы пользователю:
+            var userCategory = allStoreCategory.FirstOrDefault(category => category == userCategoryName);
+            if (userCategory == null)
+            {
+                // Если он не найден, тогда попытаться получить категорию ТВ-программы по умолчанию:
+                userCategory = allStoreCategory.FirstOrDefault(category => category == _programmeSettings.PrimarySystemCategory);
+            }
+
+            // Если по умолчанию категория ТВ-программы не найдена, тогда попытаться получить первую попавшуюся:
+            if (userCategory == null)
+            {
+                var categories = await _programmeService.GetCategoriesAsync();
+                userCategory = categories.FirstOrDefault();
+            }
+
+            // Кэширование найденной категории ТВ-программы:
+            _cachedCategory = userCategory;
+
+            return _cachedCategory;
         }
 
+        public virtual async Task SetWorkingCategoryAsync(string category)
+        {
+            // Получение категории ТВ-программы
+            var currCategory = category ?? "Все категории";
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+            // И её сохранение
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CategoryAttribute, currCategory, store.Id);
+
+            // Тогда сбросим закэшированное значение
+            _cachedCategory = null;
+        }
         /// <summary>
         /// Gets or sets current tax display type
         /// </summary>
-        public virtual TaxDisplayType TaxDisplayType
+        public virtual async Task<TaxDisplayType> GetTaxDisplayTypeAsync()
         {
-            get
-            {
-                //whether there is a cached value
-                if (_cachedTaxDisplayType.HasValue)
-                    return _cachedTaxDisplayType.Value;
-
-                var taxDisplayType = TaxDisplayType.IncludingTax;
-
-                //whether Users are allowed to select tax display type
-                if (_taxSettings.AllowUsersToSelectTaxDisplayType && CurrentUser != null)
-                {
-                    //try to get previously saved tax display type
-                    var taxDisplayTypeId = _genericAttributeService.GetAttribute<int?>(CurrentUser,
-                        TvProgUserDefaults.TaxDisplayTypeIdAttribute, _storeContext.CurrentStore.Id);
-                    if (taxDisplayTypeId.HasValue)
-                    {
-                        taxDisplayType = (TaxDisplayType)taxDisplayTypeId.Value;
-                    }
-                    else
-                    {
-                        //default tax type by User roles
-                        var defaultRoleTaxDisplayType = _userService.GetUserDefaultTaxDisplayType(CurrentUser);
-                        if (defaultRoleTaxDisplayType != null)
-                        {
-                            taxDisplayType = defaultRoleTaxDisplayType.Value;
-                        }
-                    }
-                }
-                else
-                {
-                    //default tax type by User roles
-                    var defaultRoleTaxDisplayType = _userService.GetUserDefaultTaxDisplayType(CurrentUser);
-                    if (defaultRoleTaxDisplayType != null)
-                    {
-                        taxDisplayType = defaultRoleTaxDisplayType.Value;
-                    }
-                    else
-                    {
-                        //or get the default tax display type
-                        taxDisplayType = _taxSettings.TaxDisplayType;
-                    }
-                }
-
-                //cache the value
-                _cachedTaxDisplayType = taxDisplayType;
-
+            //whether there is a cached value
+            if (_cachedTaxDisplayType.HasValue)
                 return _cachedTaxDisplayType.Value;
 
-            }
-            set
+            var taxDisplayType = TaxDisplayType.IncludingTax;
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+
+            //whether users are allowed to select tax display type
+            if (_taxSettings.AllowUsersToSelectTaxDisplayType && user != null)
             {
-                //whether Users are allowed to select tax display type
-                if (!_taxSettings.AllowUsersToSelectTaxDisplayType)
-                    return;
-
-                //save passed value
-                _genericAttributeService.SaveAttribute(CurrentUser,
-                    TvProgUserDefaults.TaxDisplayTypeIdAttribute, (int)value, _storeContext.CurrentStore.Id);
-
-                //then reset the cached value
-                _cachedTaxDisplayType = null;
+                //try to get previously saved tax display type
+                var taxDisplayTypeId = await _genericAttributeService
+                    .GetAttributeAsync<int?>(user, TvProgUserDefaults.TaxDisplayTypeIdAttribute, store.Id);
+                if (taxDisplayTypeId.HasValue)
+                    taxDisplayType = (TaxDisplayType)taxDisplayTypeId.Value;
+                else
+                {
+                    //default tax type by user roles
+                    var defaultRoleTaxDisplayType = await _userService.GetUserDefaultTaxDisplayTypeAsync(user);
+                    if (defaultRoleTaxDisplayType != null)
+                        taxDisplayType = defaultRoleTaxDisplayType.Value;
+                }
             }
+            else
+            {
+                //default tax type by user roles
+                var defaultRoleTaxDisplayType = await _userService.GetUserDefaultTaxDisplayTypeAsync(user);
+                if (defaultRoleTaxDisplayType != null)
+                    taxDisplayType = defaultRoleTaxDisplayType.Value;
+                else
+                {
+                    //or get the default tax display type
+                    taxDisplayType = _taxSettings.TaxDisplayType;
+                }
+            }
+
+            //cache the value
+            _cachedTaxDisplayType = taxDisplayType;
+
+            return _cachedTaxDisplayType.Value;
+        }
+
+        public virtual async Task SetTaxDisplayTypeAsync(TaxDisplayType taxDisplayType)
+        {
+            //whether users are allowed to select tax display type
+            if (!_taxSettings.AllowUsersToSelectTaxDisplayType)
+                return;
+
+            //save passed value
+            var user = await GetCurrentUserAsync();
+            var store = await _storeContext.GetCurrentStoreAsync();
+            await _genericAttributeService
+                .SaveAttributeAsync(user, TvProgUserDefaults.TaxDisplayTypeIdAttribute, (int)taxDisplayType, store.Id);
+
+            //then reset the cached value
+            _cachedTaxDisplayType = null;
         }
 
         /// <summary>

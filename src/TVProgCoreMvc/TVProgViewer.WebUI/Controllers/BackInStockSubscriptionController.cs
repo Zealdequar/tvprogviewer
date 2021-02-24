@@ -10,7 +10,8 @@ using TVProgViewer.Services.Localization;
 using TVProgViewer.Services.Seo;
 using TVProgViewer.WebUI.Models.Catalog;
 using TVProgViewer.WebUI.Models.Common;
-using TVProgViewer.WebUI.Controllers;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Messages;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -18,11 +19,12 @@ namespace TVProgViewer.WebUI.Controllers
     {
         #region Fields
 
+        private readonly IBackInStockSubscriptionService _backInStockSubscriptionService;
         private readonly CatalogSettings _catalogSettings;
         private readonly UserSettings _userSettings;
-        private readonly IBackInStockSubscriptionService _backInStockSubscriptionService;
         private readonly IUserService _userService;
         private readonly ILocalizationService _localizationService;
+        private readonly INotificationService _notificationService;
         private readonly IProductService _productService;
         private readonly IStoreContext _storeContext;
         private readonly IUrlRecordService _urlRecordService;
@@ -37,6 +39,7 @@ namespace TVProgViewer.WebUI.Controllers
             IBackInStockSubscriptionService backInStockSubscriptionService,
             IUserService userService,
             ILocalizationService localizationService,
+            INotificationService notificationService,
             IProductService productService,
             IStoreContext storeContext,
             IUrlRecordService urlRecordService,
@@ -47,6 +50,7 @@ namespace TVProgViewer.WebUI.Controllers
             _backInStockSubscriptionService = backInStockSubscriptionService;
             _userService = userService;
             _localizationService = localizationService;
+            _notificationService = notificationService;
             _productService = productService;
             _storeContext = storeContext;
             _urlRecordService = urlRecordService;
@@ -58,99 +62,96 @@ namespace TVProgViewer.WebUI.Controllers
         #region Methods
 
         // Product details page > back in stock subscribe
-        public virtual IActionResult SubscribePopup(int productId)
+        public virtual async Task<IActionResult> SubscribePopup(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted)
                 throw new ArgumentException("No product found with the specified id");
 
             var model = new BackInStockSubscribeModel
             {
                 ProductId = product.Id,
-                ProductName = _localizationService.GetLocalized(product, x => x.Name),
-                ProductSeName = _urlRecordService.GetSeName(product),
-                IsCurrentUserRegistered = _userService.IsRegistered(_workContext.CurrentUser),
+                ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
+                ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                IsCurrentUserRegistered = await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()),
                 MaximumBackInStockSubscriptions = _catalogSettings.MaximumBackInStockSubscriptions,
-                CurrentNumberOfBackInStockSubscriptions = _backInStockSubscriptionService
-                .GetAllSubscriptionsByUserId(_workContext.CurrentUser.Id, _storeContext.CurrentStore.Id, 0, 1)
+                CurrentNumberOfBackInStockSubscriptions = (await _backInStockSubscriptionService
+                .GetAllSubscriptionsByUserIdAsync((await _workContext.GetCurrentUserAsync()).Id, (await _storeContext.GetCurrentStoreAsync()).Id, 0, 1))
                 .TotalCount
             };
             if (product.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
                 product.BackorderMode == BackorderMode.NoBackorders &&
                 product.AllowBackInStockSubscriptions &&
-                _productService.GetTotalStockQuantity(product) <= 0)
+                await _productService.GetTotalStockQuantityAsync(product) <= 0)
             {
                 //out of stock
                 model.SubscriptionAllowed = true;
-                model.AlreadySubscribed = _backInStockSubscriptionService
-                    .FindSubscription(_workContext.CurrentUser.Id, product.Id, _storeContext.CurrentStore.Id) != null;
+                model.AlreadySubscribed = await _backInStockSubscriptionService
+                    .FindSubscriptionAsync((await _workContext.GetCurrentUserAsync()).Id, product.Id, (await _storeContext.GetCurrentStoreAsync()).Id) != null;
             }
+
             return PartialView(model);
         }
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult SubscribePopupPOST(int productId)
+        public virtual async Task<IActionResult> SubscribePopupPOST(int productId)
         {
-            var product = _productService.GetProductById(productId);
+            var product = await _productService.GetProductByIdAsync(productId);
             if (product == null || product.Deleted)
                 throw new ArgumentException("No product found with the specified id");
 
-            if (!_userService.IsRegistered(_workContext.CurrentUser))
-                return Content(_localizationService.GetResource("BackInStockSubscriptions.OnlyRegistered"));
+            if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
+                return Content(await _localizationService.GetResourceAsync("BackInStockSubscriptions.OnlyRegistered"));
 
             if (product.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
                 product.BackorderMode == BackorderMode.NoBackorders &&
                 product.AllowBackInStockSubscriptions &&
-                _productService.GetTotalStockQuantity(product) <= 0)
+                await _productService.GetTotalStockQuantityAsync(product) <= 0)
             {
                 //out of stock
-                var subscription = _backInStockSubscriptionService
-                    .FindSubscription(_workContext.CurrentUser.Id, product.Id, _storeContext.CurrentStore.Id);
+                var subscription = await _backInStockSubscriptionService
+                    .FindSubscriptionAsync((await _workContext.GetCurrentUserAsync()).Id, product.Id, (await _storeContext.GetCurrentStoreAsync()).Id);
                 if (subscription != null)
                 {
                     //subscription already exists
                     //unsubscribe
-                    _backInStockSubscriptionService.DeleteSubscription(subscription);
+                    await _backInStockSubscriptionService.DeleteSubscriptionAsync(subscription);
 
-                    return Json(new
-                    {
-                        result = "Unsubscribed"
-                    });
+                    _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("BackInStockSubscriptions.Notification.Unsubscribed"));
+                    return new OkResult();
                 }
 
                 //subscription does not exist
                 //subscribe
-                if (_backInStockSubscriptionService
-                    .GetAllSubscriptionsByUserId(_workContext.CurrentUser.Id, _storeContext.CurrentStore.Id, 0, 1)
+                if ((await _backInStockSubscriptionService
+                    .GetAllSubscriptionsByUserIdAsync((await _workContext.GetCurrentUserAsync()).Id, (await _storeContext.GetCurrentStoreAsync()).Id, 0, 1))
                     .TotalCount >= _catalogSettings.MaximumBackInStockSubscriptions)
                 {
                     return Json(new
                     {
-                        result = string.Format(_localizationService.GetResource("BackInStockSubscriptions.MaxSubscriptions"), _catalogSettings.MaximumBackInStockSubscriptions)
+                        result = string.Format(await _localizationService.GetResourceAsync("BackInStockSubscriptions.MaxSubscriptions"), _catalogSettings.MaximumBackInStockSubscriptions)
                     });
                 }
                 subscription = new BackInStockSubscription
                 {
-                    UserId = _workContext.CurrentUser.Id,
+                    UserId = (await _workContext.GetCurrentUserAsync()).Id,
                     ProductId = product.Id,
-                    StoreId = _storeContext.CurrentStore.Id,
+                    StoreId = (await _storeContext.GetCurrentStoreAsync()).Id,
                     CreatedOnUtc = DateTime.UtcNow
                 };
-                _backInStockSubscriptionService.InsertSubscription(subscription);
+                await _backInStockSubscriptionService.InsertSubscriptionAsync(subscription);
 
-                return Json(new
-                {
-                    result = "Subscribed"
-                });
+                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("BackInStockSubscriptions.Notification.Subscribed"));
+                return new OkResult();
             }
 
             //subscription not possible
-            return Content(_localizationService.GetResource("BackInStockSubscriptions.NotAllowed"));
+            return Content(await _localizationService.GetResourceAsync("BackInStockSubscriptions.NotAllowed"));
         }
 
         // My account / Back in stock subscriptions
-        public virtual IActionResult UserSubscriptions(int? pageNumber)
+        public virtual async Task<IActionResult> UserSubscriptions(int? pageNumber)
         {
             if (_userSettings.HideBackInStockSubscriptionsTab)
             {
@@ -164,15 +165,15 @@ namespace TVProgViewer.WebUI.Controllers
             }
             var pageSize = 10;
 
-            var user = _workContext.CurrentUser;
-            var list = _backInStockSubscriptionService.GetAllSubscriptionsByUserId(user.Id,
-                _storeContext.CurrentStore.Id, pageIndex, pageSize);
+            var user = await _workContext.GetCurrentUserAsync();
+            var list = await _backInStockSubscriptionService.GetAllSubscriptionsByUserIdAsync(user.Id,
+                (await _storeContext.GetCurrentStoreAsync()).Id, pageIndex, pageSize);
 
             var model = new UserBackInStockSubscriptionsModel();
 
             foreach (var subscription in list)
             {
-                var product = _productService.GetProductById(subscription.ProductId);
+                var product = await _productService.GetProductByIdAsync(subscription.ProductId);
 
                 if (product != null)
                 {
@@ -180,8 +181,8 @@ namespace TVProgViewer.WebUI.Controllers
                     {
                         Id = subscription.Id,
                         ProductId = product.Id,
-                        ProductName = _localizationService.GetLocalized(product, x => x.Name),
-                        SeName = _urlRecordService.GetSeName(product),
+                        ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
+                        SeName = await _urlRecordService.GetSeNameAsync(product),
                     };
                     model.Subscriptions.Add(subscriptionModel);
                 }
@@ -203,7 +204,7 @@ namespace TVProgViewer.WebUI.Controllers
 
         [HttpPost, ActionName("UserSubscriptions")]
         [IgnoreAntiforgeryToken]
-        public virtual IActionResult UserSubscriptionsPOST(IFormCollection formCollection)
+        public virtual async Task<IActionResult> UserSubscriptionsPOST(IFormCollection formCollection)
         {
             foreach (var key in formCollection.Keys)
             {
@@ -214,10 +215,10 @@ namespace TVProgViewer.WebUI.Controllers
                     var id = key.Replace("biss", "").Trim();
                     if (int.TryParse(id, out var subscriptionId))
                     {
-                        var subscription = _backInStockSubscriptionService.GetSubscriptionById(subscriptionId);
-                        if (subscription != null && subscription.UserId == _workContext.CurrentUser.Id)
+                        var subscription = await _backInStockSubscriptionService.GetSubscriptionByIdAsync(subscriptionId);
+                        if (subscription != null && subscription.UserId == (await _workContext.GetCurrentUserAsync()).Id)
                         {
-                            _backInStockSubscriptionService.DeleteSubscription(subscription);
+                            await _backInStockSubscriptionService.DeleteSubscriptionAsync(subscription);
                         }
                     }
                 }

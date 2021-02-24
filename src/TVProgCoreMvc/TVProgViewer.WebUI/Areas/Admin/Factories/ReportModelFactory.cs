@@ -16,6 +16,7 @@ using TVProgViewer.Services.Orders;
 using TVProgViewer.WebUI.Areas.Admin.Models.Reports;
 using TVProgViewer.Web.Framework.Models.DataTables;
 using TVProgViewer.Web.Framework.Models.Extensions;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -69,6 +70,39 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
 
         #endregion
 
+        #region Utilities
+
+        protected virtual async Task<IPagedList<BestsellersReportLine>> GetBestsellersReportAsync(BestsellerSearchModel searchModel)
+        {
+            //get parameters to filter bestsellers
+            var orderStatus = searchModel.OrderStatusId > 0 ? (OrderStatus?)searchModel.OrderStatusId : null;
+            var paymentStatus = searchModel.PaymentStatusId > 0 ? (PaymentStatus?)searchModel.PaymentStatusId : null;
+            if (await _workContext.GetCurrentVendorAsync() != null)
+                searchModel.VendorId = (await _workContext.GetCurrentVendorAsync()).Id;
+            var startDateValue = !searchModel.StartDate.HasValue ? null
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
+            var endDateValue = !searchModel.EndDate.HasValue ? null
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
+
+            //get bestsellers
+            var bestsellers = await _orderReportService.BestSellersReportAsync(showHidden: true,
+                createdFromUtc: startDateValue,
+                createdToUtc: endDateValue,
+                os: orderStatus,
+                ps: paymentStatus,
+                billingCountryId: searchModel.BillingCountryId,
+                orderBy: OrderByEnum.OrderByTotalAmount,
+                vendorId: searchModel.VendorId,
+                categoryId: searchModel.CategoryId,
+                manufacturerId: searchModel.ManufacturerId,
+                storeId: searchModel.StoreId,
+                pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
+
+            return bestsellers;
+        }
+
+        #endregion
+
         #region Methods
 
         #region LowStock
@@ -78,7 +112,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Low stock product search model</param>
         /// <returns>Low stock product search model</returns>
-        public virtual LowStockProductSearchModel PrepareLowStockProductSearchModel(LowStockProductSearchModel searchModel)
+        public virtual async Task<LowStockProductSearchModel> PrepareLowStockProductSearchModelAsync(LowStockProductSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -87,17 +121,17 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             searchModel.AvailablePublishedOptions.Add(new SelectListItem
             {
                 Value = "0",
-                Text = _localizationService.GetResource("Admin.Reports.LowStock.SearchPublished.All")
+                Text = await _localizationService.GetResourceAsync("Admin.Reports.LowStock.SearchPublished.All")
             });
             searchModel.AvailablePublishedOptions.Add(new SelectListItem
             {
                 Value = "1",
-                Text = _localizationService.GetResource("Admin.Reports.LowStock.SearchPublished.PublishedOnly")
+                Text = await _localizationService.GetResourceAsync("Admin.Reports.LowStock.SearchPublished.PublishedOnly")
             });
             searchModel.AvailablePublishedOptions.Add(new SelectListItem
             {
                 Value = "2",
-                Text = _localizationService.GetResource("Admin.Reports.LowStock.SearchPublished.UnpublishedOnly")
+                Text = await _localizationService.GetResourceAsync("Admin.Reports.LowStock.SearchPublished.UnpublishedOnly")
             });
 
             //prepare page parameters
@@ -111,53 +145,52 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Low stock product search model</param>
         /// <returns>Low stock product list model</returns>
-        public virtual LowStockProductListModel PrepareLowStockProductListModel(LowStockProductSearchModel searchModel)
+        public virtual async Task<LowStockProductListModel> PrepareLowStockProductListModelAsync(LowStockProductSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get parameters to filter comments
             var publishedOnly = searchModel.SearchPublishedId == 0 ? null : searchModel.SearchPublishedId == 1 ? true : (bool?)false;
-            var vendorId = _workContext.CurrentVendor?.Id ?? 0;
+            var vendorId = (await _workContext.GetCurrentVendorAsync())?.Id ?? 0;
 
             //get low stock product and product combinations
-            var products = _productService.GetLowStockProducts(vendorId: vendorId, loadPublishedOnly: publishedOnly);
-            var combinations = _productService.GetLowStockProductCombinations(vendorId: vendorId, loadPublishedOnly: publishedOnly);
+            var products = await _productService.GetLowStockProductsAsync(vendorId: vendorId, loadPublishedOnly: publishedOnly);
+            var combinations = await _productService.GetLowStockProductCombinationsAsync(vendorId: vendorId, loadPublishedOnly: publishedOnly);
 
             //prepare low stock product models
             var lowStockProductModels = new List<LowStockProductModel>();
-            lowStockProductModels.AddRange(products.Select(product => new LowStockProductModel
+            lowStockProductModels.AddRange(await products.SelectAwait(async product => new LowStockProductModel
             {
                 Id = product.Id,
                 Name = product.Name,
-                ManageInventoryMethod = _localizationService.GetLocalizedEnum(product.ManageInventoryMethod),
-                StockQuantity = _productService.GetTotalStockQuantity(product),
+
+                ManageInventoryMethod = await _localizationService.GetLocalizedEnumAsync(product.ManageInventoryMethod),
+                StockQuantity = await _productService.GetTotalStockQuantityAsync(product),
                 Published = product.Published
-            }));
+            }).ToListAsync());
 
-            lowStockProductModels.AddRange(combinations.Select(combination => {
-
-                var product = _productService.GetProductById(combination.ProductId);
-
+            lowStockProductModels.AddRange(await combinations.SelectAwait(async combination =>
+            {
+                var product = await _productService.GetProductByIdAsync(combination.ProductId);
                 return new LowStockProductModel
                 {
                     Id = combination.ProductId,
                     Name = product.Name,
-                    Attributes = _productAttributeFormatter
-                        .FormatAttributes(product, combination.AttributesXml, _workContext.CurrentUser, "<br />", true, true, true, false),
-                    ManageInventoryMethod = _localizationService.GetLocalizedEnum(product.ManageInventoryMethod),
+
+                    Attributes = await _productAttributeFormatter
+                        .FormatAttributesAsync(product, combination.AttributesXml, await _workContext.GetCurrentUserAsync(), "<br />", true, true, true, false),
+                    ManageInventoryMethod = await _localizationService.GetLocalizedEnumAsync(product.ManageInventoryMethod),
+
                     StockQuantity = combination.StockQuantity,
                     Published = product.Published
                 };
-            }));
+            }).ToListAsync());
 
             var pagesList = lowStockProductModels.ToPagedList(searchModel);
 
             //prepare list model
-            var model = new LowStockProductListModel().PrepareToGrid(searchModel, pagesList, () =>
-            {
-                return pagesList;
-            });
+            var model = new LowStockProductListModel().PrepareToGrid(searchModel, pagesList, () => pagesList);
 
             return model;
         }
@@ -171,35 +204,35 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Bestseller search model</param>
         /// <returns>Bestseller search model</returns>
-        public virtual BestsellerSearchModel PrepareBestsellerSearchModel(BestsellerSearchModel searchModel)
+        public virtual async Task<BestsellerSearchModel> PrepareBestsellerSearchModelAsync(BestsellerSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            searchModel.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
+            searchModel.IsLoggedInAsVendor = await _workContext.GetCurrentVendorAsync() != null;
 
             //prepare available stores
-            _baseAdminModelFactory.PrepareStores(searchModel.AvailableStores);
+            await _baseAdminModelFactory.PrepareStoresAsync(searchModel.AvailableStores);
 
             //prepare available order statuses
-            _baseAdminModelFactory.PrepareOrderStatuses(searchModel.AvailableOrderStatuses);
+            await _baseAdminModelFactory.PrepareOrderStatusesAsync(searchModel.AvailableOrderStatuses);
 
             //prepare available payment statuses
-            _baseAdminModelFactory.PreparePaymentStatuses(searchModel.AvailablePaymentStatuses);
+            await _baseAdminModelFactory.PreparePaymentStatusesAsync(searchModel.AvailablePaymentStatuses);
 
             //prepare available categories
-            _baseAdminModelFactory.PrepareCategories(searchModel.AvailableCategories);
+            await _baseAdminModelFactory.PrepareCategoriesAsync(searchModel.AvailableCategories);
 
             //prepare available manufacturers
-            _baseAdminModelFactory.PrepareManufacturers(searchModel.AvailableManufacturers);
+            await _baseAdminModelFactory.PrepareManufacturersAsync(searchModel.AvailableManufacturers);
 
             //prepare available billing countries
-            searchModel.AvailableCountries = _countryService.GetAllCountriesForBilling(showHidden: true)
+            searchModel.AvailableCountries = (await _countryService.GetAllCountriesForBillingAsync(showHidden: true))
                 .Select(country => new SelectListItem { Text = country.Name, Value = country.Id.ToString() }).ToList();
-            searchModel.AvailableCountries.Insert(0, new SelectListItem { Text = _localizationService.GetResource("Admin.Common.All"), Value = "0" });
+            searchModel.AvailableCountries.Insert(0, new SelectListItem { Text = await _localizationService.GetResourceAsync("Admin.Common.All"), Value = "0" });
 
             //prepare available vendors
-            _baseAdminModelFactory.PrepareVendors(searchModel.AvailableVendors);
+            await _baseAdminModelFactory.PrepareVendorsAsync(searchModel.AvailableVendors);
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -212,39 +245,17 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Bestseller search model</param>
         /// <returns>Bestseller list model</returns>
-        public virtual BestsellerListModel PrepareBestsellerListModel(BestsellerSearchModel searchModel)
+        public virtual async Task<BestsellerListModel> PrepareBestsellerListModelAsync(BestsellerSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get parameters to filter bestsellers
-            var orderStatus = searchModel.OrderStatusId > 0 ? (OrderStatus?)searchModel.OrderStatusId : null;
-            var paymentStatus = searchModel.PaymentStatusId > 0 ? (PaymentStatus?)searchModel.PaymentStatusId : null;
-            if (_workContext.CurrentVendor != null)
-                searchModel.VendorId = _workContext.CurrentVendor.Id;
-            var startDateValue = !searchModel.StartDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
-            var endDateValue = !searchModel.EndDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
-
-            //get bestsellers
-            var bestsellers = _orderReportService.BestSellersReport(showHidden: true,
-                createdFromUtc: startDateValue,
-                createdToUtc: endDateValue,
-                os: orderStatus,
-                ps: paymentStatus,
-                billingCountryId: searchModel.BillingCountryId,
-                orderBy: 2,
-                vendorId: searchModel.VendorId,
-                categoryId: searchModel.CategoryId,
-                manufacturerId: searchModel.ManufacturerId,
-                storeId: searchModel.StoreId,
-                pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
+            var bestsellers = await GetBestsellersReportAsync(searchModel);
 
             //prepare list model
-            var model = new BestsellerListModel().PrepareToGrid(searchModel, bestsellers, () =>
+            var model = await new BestsellerListModel().PrepareToGridAsync(searchModel, bestsellers, () =>
             {
-                return bestsellers.Select(bestseller =>
+                return bestsellers.SelectAwait(async bestseller =>
                 {
                     //fill in model values from the entity
                     var bestsellerModel = new BestsellerModel
@@ -254,14 +265,51 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     };
 
                     //fill in additional values (not existing in the entity)
-                    bestsellerModel.ProductName = _productService.GetProductById(bestseller.ProductId)?.Name;
-                    bestsellerModel.TotalAmount = _priceFormatter.FormatPrice(bestseller.TotalAmount, true, false);
+                    bestsellerModel.ProductName = (await _productService.GetProductByIdAsync(bestseller.ProductId))?.Name;
+                    bestsellerModel.TotalAmount = await _priceFormatter.FormatPriceAsync(bestseller.TotalAmount, true, false);
 
                     return bestsellerModel;
                 });
             });
 
             return model;
+        }
+
+        /// <summary>
+        /// Get a formatted bestsellers total amount
+        /// </summary>
+        /// <param name="searchModel">Bestseller search model</param>
+        /// <returns>Bestseller total amount</returns>
+        public virtual async Task<string> GetBestsellerTotalAmountAsync(BestsellerSearchModel searchModel)
+        {
+            if (searchModel == null)
+                throw new ArgumentNullException(nameof(searchModel));
+
+            //get parameters to filter bestsellers
+            var orderStatus = searchModel.OrderStatusId > 0 ? (OrderStatus?)searchModel.OrderStatusId : null;
+            var paymentStatus = searchModel.PaymentStatusId > 0 ? (PaymentStatus?)searchModel.PaymentStatusId : null;
+            var currentVendor = await _workContext.GetCurrentVendorAsync();
+            if (currentVendor != null)
+                searchModel.VendorId = currentVendor.Id;
+            var startDateValue = !searchModel.StartDate.HasValue ? null
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
+            var endDateValue = !searchModel.EndDate.HasValue ? null
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
+
+            //get a total amount
+            var totalAmount = await _orderReportService.BestSellersReportTotalAmountAsync(
+                showHidden: true,
+                createdFromUtc: startDateValue,
+                createdToUtc: endDateValue,
+                os: orderStatus,
+                ps: paymentStatus,
+                billingCountryId: searchModel.BillingCountryId,
+                vendorId: searchModel.VendorId,
+                categoryId: searchModel.CategoryId,
+                manufacturerId: searchModel.ManufacturerId,
+                storeId: searchModel.StoreId);
+
+            return await _priceFormatter.FormatPriceAsync(totalAmount, true, false);
         }
 
         #endregion
@@ -273,24 +321,24 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Never sold report search model</param>
         /// <returns>Never sold report search model</returns>
-        public virtual NeverSoldReportSearchModel PrepareNeverSoldSearchModel(NeverSoldReportSearchModel searchModel)
+        public virtual async Task<NeverSoldReportSearchModel> PrepareNeverSoldSearchModelAsync(NeverSoldReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            searchModel.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
+            searchModel.IsLoggedInAsVendor = await _workContext.GetCurrentVendorAsync() != null;
 
             //prepare available stores
-            _baseAdminModelFactory.PrepareStores(searchModel.AvailableStores);
+            await _baseAdminModelFactory.PrepareStoresAsync(searchModel.AvailableStores);
 
             //prepare available categories
-            _baseAdminModelFactory.PrepareCategories(searchModel.AvailableCategories);
+            await _baseAdminModelFactory.PrepareCategoriesAsync(searchModel.AvailableCategories);
 
             //prepare available manufacturers
-            _baseAdminModelFactory.PrepareManufacturers(searchModel.AvailableManufacturers);
+            await _baseAdminModelFactory.PrepareManufacturersAsync(searchModel.AvailableManufacturers);
 
             //prepare available vendors
-            _baseAdminModelFactory.PrepareVendors(searchModel.AvailableVendors);
+            await _baseAdminModelFactory.PrepareVendorsAsync(searchModel.AvailableVendors);
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -303,21 +351,21 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Never sold report search model</param>
         /// <returns>Never sold report list model</returns>
-        public virtual NeverSoldReportListModel PrepareNeverSoldListModel(NeverSoldReportSearchModel searchModel)
+        public virtual async Task<NeverSoldReportListModel> PrepareNeverSoldListModelAsync(NeverSoldReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get parameters to filter neverSoldReports
-            if (_workContext.CurrentVendor != null)
-                searchModel.SearchVendorId = _workContext.CurrentVendor.Id;
+            if (await _workContext.GetCurrentVendorAsync() != null)
+                searchModel.SearchVendorId = (await _workContext.GetCurrentVendorAsync()).Id;
             var startDateValue = !searchModel.StartDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
             var endDateValue = !searchModel.EndDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
 
             //get report items
-            var items = _orderReportService.ProductsNeverSold(showHidden: true,
+            var items = await _orderReportService.ProductsNeverSoldAsync(showHidden: true,
                 vendorId: searchModel.SearchVendorId,
                 storeId: searchModel.SearchStoreId,
                 categoryId: searchModel.SearchCategoryId,
@@ -349,16 +397,16 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Country report search model</param>
         /// <returns>Country report search model</returns>
-        public virtual CountryReportSearchModel PrepareCountrySalesSearchModel(CountryReportSearchModel searchModel)
+        public virtual async Task<CountryReportSearchModel> PrepareCountrySalesSearchModelAsync(CountryReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare available order statuses
-            _baseAdminModelFactory.PrepareOrderStatuses(searchModel.AvailableOrderStatuses);
+            await _baseAdminModelFactory.PrepareOrderStatusesAsync(searchModel.AvailableOrderStatuses);
 
             //prepare available payment statuses
-            _baseAdminModelFactory.PreparePaymentStatuses(searchModel.AvailablePaymentStatuses);
+            await _baseAdminModelFactory.PreparePaymentStatusesAsync(searchModel.AvailablePaymentStatuses);
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -371,7 +419,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Country report search model</param>
         /// <returns>Country report list model</returns>
-        public virtual CountryReportListModel PrepareCountrySalesListModel(CountryReportSearchModel searchModel)
+        public virtual async Task<CountryReportListModel> PrepareCountrySalesListModelAsync(CountryReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -380,20 +428,20 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             var orderStatus = searchModel.OrderStatusId > 0 ? (OrderStatus?)searchModel.OrderStatusId : null;
             var paymentStatus = searchModel.PaymentStatusId > 0 ? (PaymentStatus?)searchModel.PaymentStatusId : null;
             var startDateValue = !searchModel.StartDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
             var endDateValue = !searchModel.EndDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
 
             //get items
-            var items = _orderReportService.GetCountryReport(os: orderStatus,
+            var items = (await _orderReportService.GetCountryReportAsync(os: orderStatus,
                 ps: paymentStatus,
                 startTimeUtc: startDateValue,
-                endTimeUtc: endDateValue).ToPagedList(searchModel);
+                endTimeUtc: endDateValue)).ToPagedList(searchModel);
 
             //prepare list model
-            var model = new CountryReportListModel().PrepareToGrid(searchModel, items, () =>
+            var model = await new CountryReportListModel().PrepareToGridAsync(searchModel, items, () =>
             {
-                return items.Select(item =>
+                return items.SelectAwait(async item =>
                 {
                     //fill in model values from the entity
                     var countryReportModel = new CountryReportModel
@@ -402,8 +450,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     };
 
                     //fill in additional values (not existing in the entity)
-                    countryReportModel.SumOrders = _priceFormatter.FormatPrice(item.SumOrders, true, false);
-                    countryReportModel.CountryName = _countryService.GetCountryById(item.CountryId ?? 0)?.Name;
+                    countryReportModel.SumOrders = await _priceFormatter.FormatPriceAsync(item.SumOrders, true, false);
+                    countryReportModel.CountryName = (await _countryService.GetCountryByIdAsync(item.CountryId ?? 0))?.Name;
 
                     return countryReportModel;
                 });
@@ -421,15 +469,15 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User reports search model</param>
         /// <returns>User reports search model</returns>
-        public virtual UserReportsSearchModel PrepareUserReportsSearchModel(UserReportsSearchModel searchModel)
+        public virtual async Task<UserReportsSearchModel> PrepareUserReportsSearchModelAsync(UserReportsSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare nested search models
-            PrepareBestUsersReportByOrderTotalSearchModel(searchModel.BestUsersByOrderTotal);
-            PrepareBestUsersReportSearchModel(searchModel.BestUsersByNumberOfOrders);
-            PrepareRegisteredUsersReportSearchModel(searchModel.RegisteredUsers);
+            await PrepareBestUsersReportByOrderTotalSearchModelAsync(searchModel.BestUsersByOrderTotal);
+            await PrepareBestUsersReportSearchModelAsync(searchModel.BestUsersByNumberOfOrders);
+            await PrepareRegisteredUsersReportSearchModelAsync(searchModel.RegisteredUsers);
 
             return searchModel;
         }
@@ -439,15 +487,15 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Best users report search model</param>
         /// <returns>Best users report search model</returns>
-        protected virtual BestUsersReportSearchModel PrepareBestUsersReportSearchModel(BestUsersReportSearchModel searchModel)
+        protected virtual async Task<BestUsersReportSearchModel> PrepareBestUsersReportSearchModelAsync(BestUsersReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare available order, payment and shipping statuses
-            _baseAdminModelFactory.PrepareOrderStatuses(searchModel.AvailableOrderStatuses);
-            _baseAdminModelFactory.PreparePaymentStatuses(searchModel.AvailablePaymentStatuses);
-            _baseAdminModelFactory.PrepareShippingStatuses(searchModel.AvailableShippingStatuses);
+            await _baseAdminModelFactory.PrepareOrderStatusesAsync(searchModel.AvailableOrderStatuses);
+            await _baseAdminModelFactory.PreparePaymentStatusesAsync(searchModel.AvailablePaymentStatuses);
+            await _baseAdminModelFactory.PrepareShippingStatusesAsync(searchModel.AvailableShippingStatuses);
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -460,15 +508,15 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Best users report search model</param>
         /// <returns>Best users report search model</returns>
-        protected virtual BestUsersReportSearchModel PrepareBestUsersReportByOrderTotalSearchModel(BestUsersReportSearchModel searchModel)
+        protected virtual async Task<BestUsersReportSearchModel> PrepareBestUsersReportByOrderTotalSearchModelAsync(BestUsersReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //prepare available order, payment and shipping statuses
-            _baseAdminModelFactory.PrepareOrderStatuses(searchModel.AvailableOrderStatuses);
-            _baseAdminModelFactory.PreparePaymentStatuses(searchModel.AvailablePaymentStatuses);
-            _baseAdminModelFactory.PrepareShippingStatuses(searchModel.AvailableShippingStatuses);
+            await _baseAdminModelFactory.PrepareOrderStatusesAsync(searchModel.AvailableOrderStatuses);
+            await _baseAdminModelFactory.PreparePaymentStatusesAsync(searchModel.AvailablePaymentStatuses);
+            await _baseAdminModelFactory.PrepareShippingStatusesAsync(searchModel.AvailableShippingStatuses);
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -482,7 +530,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Registered users report search model</param>
         /// <returns>Registered users report search model</returns>
-        protected virtual RegisteredUsersReportSearchModel PrepareRegisteredUsersReportSearchModel(RegisteredUsersReportSearchModel searchModel)
+        protected virtual Task<RegisteredUsersReportSearchModel> PrepareRegisteredUsersReportSearchModelAsync(RegisteredUsersReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -490,7 +538,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             //prepare page parameters
             searchModel.SetGridPageSize();
 
-            return searchModel;
+            return Task.FromResult(searchModel);
         }
 
         /// <summary>
@@ -498,22 +546,22 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Best users report search model</param>
         /// <returns>Best users report list model</returns>
-        public virtual BestUsersReportListModel PrepareBestUsersReportListModel(BestUsersReportSearchModel searchModel)
+        public virtual async Task<BestUsersReportListModel> PrepareBestUsersReportListModelAsync(BestUsersReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get parameters to filter
             var startDateValue = !searchModel.StartDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, _dateTimeHelper.CurrentTimeZone);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
             var endDateValue = !searchModel.EndDate.HasValue ? null
-                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, _dateTimeHelper.CurrentTimeZone).AddDays(1);
+                : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
             var orderStatus = searchModel.OrderStatusId > 0 ? (OrderStatus?)searchModel.OrderStatusId : null;
             var paymentStatus = searchModel.PaymentStatusId > 0 ? (PaymentStatus?)searchModel.PaymentStatusId : null;
             var shippingStatus = searchModel.ShippingStatusId > 0 ? (ShippingStatus?)searchModel.ShippingStatusId : null;
 
             //get report items
-            var reportItems = _userReportService.GetBestUsersReport(createdFromUtc: startDateValue,
+            var reportItems = await _userReportService.GetBestUsersReportAsync(createdFromUtc: startDateValue,
                 createdToUtc: endDateValue,
                 os: orderStatus,
                 ps: paymentStatus,
@@ -522,39 +570,41 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare list model
-            var model = new BestUsersReportListModel().PrepareToGrid(searchModel, reportItems, () =>
+            var model = await new BestUsersReportListModel().PrepareToGridAsync(searchModel, reportItems, () =>
             {
-                return reportItems.Select(item =>
-               {
+                return reportItems.SelectAwait(async item =>
+                {
                     //fill in model values from the entity
                     var bestUsersReportModel = new BestUsersReportModel
-                   {
-                       UserId = item.UserId,
-                       OrderTotal = _priceFormatter.FormatPrice(item.OrderTotal, true, false),
-                       OrderCount = item.OrderCount
-                   };
+                    {
+                        UserId = item.UserId,
+
+                        OrderTotal = await _priceFormatter.FormatPriceAsync(item.OrderTotal, true, false),
+                        OrderCount = item.OrderCount
+                    };
 
                     //fill in additional values (not existing in the entity)
-                    var user = _userService.GetUserById(item.UserId);
-                   if (user != null)
-                   {
-                       bestUsersReportModel.UserName = _userService.IsRegistered(user) ? user.Email :
-                           _localizationService.GetResource("Admin.Users.Guest");
-                   }
+                    var user = await _userService.GetUserByIdAsync(item.UserId);
+                    if (user != null)
+                    {
+                        bestUsersReportModel.UserName = (await _userService.IsRegisteredAsync(user))
+                             ? user.Email
+                             : await _localizationService.GetResourceAsync("Admin.Users.Guest");
+                    }
 
-                   return bestUsersReportModel;
-               });
+                    return bestUsersReportModel;
+                });
             });
 
             return model;
         }
-                
+
         /// <summary>
         /// Prepare paged registered users report list model
         /// </summary>
         /// <param name="searchModel">Registered users report search model</param>
         /// <returns>Registered users report list model</returns>
-        public virtual RegisteredUsersReportListModel PrepareRegisteredUsersReportListModel(RegisteredUsersReportSearchModel searchModel)
+        public virtual async Task<RegisteredUsersReportListModel> PrepareRegisteredUsersReportListModelAsync(RegisteredUsersReportSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -564,33 +614,30 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             {
                 new RegisteredUsersReportModel
                 {
-                    Period = _localizationService.GetResource("Admin.Reports.Users.RegisteredUsers.Fields.Period.7days"),
-                    Users = _userReportService.GetRegisteredUsersReport(7)
+                    Period = await _localizationService.GetResourceAsync("Admin.Reports.Users.RegisteredUsers.Fields.Period.7days"),
+                    Users = await _userReportService.GetRegisteredUsersReportAsync(7)
                 },
                 new RegisteredUsersReportModel
                 {
-                    Period = _localizationService.GetResource("Admin.Reports.Users.RegisteredUsers.Fields.Period.14days"),
-                    Users = _userReportService.GetRegisteredUsersReport(14)
+                    Period = await _localizationService.GetResourceAsync("Admin.Reports.Users.RegisteredUsers.Fields.Period.14days"),
+                    Users = await _userReportService.GetRegisteredUsersReportAsync(14)
                 },
                 new RegisteredUsersReportModel
                 {
-                    Period = _localizationService.GetResource("Admin.Reports.Users.RegisteredUsers.Fields.Period.month"),
-                    Users = _userReportService.GetRegisteredUsersReport(30)
+                    Period = await _localizationService.GetResourceAsync("Admin.Reports.Users.RegisteredUsers.Fields.Period.month"),
+                    Users = await _userReportService.GetRegisteredUsersReportAsync(30)
                 },
                 new RegisteredUsersReportModel
                 {
-                    Period = _localizationService.GetResource("Admin.Reports.Users.RegisteredUsers.Fields.Period.year"),
-                    Users = _userReportService.GetRegisteredUsersReport(365)
+                    Period = await _localizationService.GetResourceAsync("Admin.Reports.Users.RegisteredUsers.Fields.Period.year"),
+                    Users = await _userReportService.GetRegisteredUsersReportAsync(365)
                 }
             };
 
             var pagedList = reportItems.ToPagedList(searchModel);
 
             //prepare list model
-            var model = new RegisteredUsersReportListModel().PrepareToGrid(searchModel, pagedList, () =>
-            {
-                return pagedList;
-            });
+            var model = new RegisteredUsersReportListModel().PrepareToGrid(searchModel, pagedList, () => pagedList);
 
             return model;
         }

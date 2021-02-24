@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Services.Plugins;
 
@@ -12,11 +13,11 @@ namespace TVProgViewer.Services.Cms
         /// <summary>
         /// Load active widgets
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <param name="widgetZone">Widget zone; pass null to load all plugins</param>
         /// <returns>List of active widget</returns>
-        IList<IWidgetPlugin> LoadActivePlugins(User User = null, int storeId = 0, string widgetZone = null);
+        Task<IList<IWidgetPlugin>> LoadActivePluginsAsync(User user = null, int storeId = 0, string widgetZone = null);
 
         /// <summary>
         /// Check whether the passed widget is active
@@ -29,9 +30,9 @@ namespace TVProgViewer.Services.Cms
         /// Check whether the widget with the passed system name is active
         /// </summary>
         /// <param name="systemName">System name of widget to check</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Result</returns>
-        bool IsPluginActive(string systemName, User User = null, int storeId = 0);
+        Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0);
     }
 }

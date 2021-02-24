@@ -106,6 +106,11 @@ namespace TVProgViewer.Core.Domain.Catalog
         public bool ProductReviewsMustBeApproved { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating that user can add only one review per product
+        /// </summary>
+        public bool OneReviewPerProductFromUser { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating the default rating value of the product reviews
         /// </summary>
         public int DefaultProductRatingValue { get; set; }

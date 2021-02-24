@@ -44,6 +44,8 @@ using TVProgViewer.Services.Seo;
 using TVProgViewer.Services.Shipping;
 using TVProgViewer.Services.Stores;
 using TVProgViewer.Services.Vendors;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Events;
 
 namespace TVProgViewer.Services.Messages
 {
@@ -62,10 +64,9 @@ namespace TVProgViewer.Services.Messages
         private readonly IBlogService _blogService;
         private readonly ICountryService _countryService;
         private readonly ICurrencyService _currencyService;
-        private readonly IUserAttributeFormatter _UserAttributeFormatter;
+        private readonly IUserAttributeFormatter _userAttributeFormatter;
         private readonly IUserService _userService;
         private readonly IDateTimeHelper _dateTimeHelper;
-        private readonly IDownloadService _downloadService;
         private readonly IEventPublisher _eventPublisher;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly IGiftCardService _giftCardService;
@@ -105,10 +106,9 @@ namespace TVProgViewer.Services.Messages
             IBlogService blogService,
             ICountryService countryService,
             ICurrencyService currencyService,
-            IUserAttributeFormatter UserAttributeFormatter,
-            IUserService UserService,
+            IUserAttributeFormatter userAttributeFormatter,
+            IUserService userService,
             IDateTimeHelper dateTimeHelper,
-            IDownloadService downloadService,
             IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
             IGiftCardService giftCardService,
@@ -142,10 +142,9 @@ namespace TVProgViewer.Services.Messages
             _blogService = blogService;
             _countryService = countryService;
             _currencyService = currencyService;
-            _UserAttributeFormatter = UserAttributeFormatter;
-            _userService = UserService;
+            _userAttributeFormatter = userAttributeFormatter;
+            _userService = userService;
             _dateTimeHelper = dateTimeHelper;
-            _downloadService = downloadService;
             _eventPublisher = eventPublisher;
             _genericAttributeService = genericAttributeService;
             _giftCardService = giftCardService;
@@ -203,7 +202,7 @@ namespace TVProgViewer.Services.Messages
                     "%YouTube.URL%"
                 });
 
-                //User tokens
+                //user tokens
                 _allowedTokens.Add(TokenGroupNames.UserTokens, new[]
                 {
                     "%User.Email%",
@@ -467,49 +466,49 @@ namespace TVProgViewer.Services.Messages
         /// <param name="languageId">Language identifier</param>
         /// <param name="vendorId">Vendor identifier (used to limit products by vendor</param>
         /// <returns>HTML table of products</returns>
-        protected virtual string ProductListToHtmlTable(Order order, int languageId, int vendorId)
+        protected virtual async Task<string> ProductListToHtmlTableAsync(Order order, int languageId, int vendorId)
         {
-            var language = _languageService.GetLanguageById(languageId);
+            var language = await _languageService.GetLanguageByIdAsync(languageId);
 
             var sb = new StringBuilder();
             sb.AppendLine("<table border=\"0\" style=\"width:100%;\">");
 
             sb.AppendLine($"<tr style=\"background-color:{_templatesSettings.Color1};text-align:center;\">");
-            sb.AppendLine($"<th>{_localizationService.GetResource("Messages.Order.Product(s).Name", languageId)}</th>");
-            sb.AppendLine($"<th>{_localizationService.GetResource("Messages.Order.Product(s).Price", languageId)}</th>");
-            sb.AppendLine($"<th>{_localizationService.GetResource("Messages.Order.Product(s).Quantity", languageId)}</th>");
-            sb.AppendLine($"<th>{_localizationService.GetResource("Messages.Order.Product(s).Total", languageId)}</th>");
+            sb.AppendLine($"<th>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).Name", languageId)}</th>");
+            sb.AppendLine($"<th>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).Price", languageId)}</th>");
+            sb.AppendLine($"<th>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).Quantity", languageId)}</th>");
+            sb.AppendLine($"<th>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).Total", languageId)}</th>");
             sb.AppendLine("</tr>");
 
-            var table = _orderService.GetOrderItems(order.Id, vendorId: vendorId);
+            var table = await _orderService.GetOrderItemsAsync(order.Id, vendorId: vendorId);
             for (var i = 0; i <= table.Count - 1; i++)
             {
                 var orderItem = table[i];
 
-                var product = _productService.GetProductById(orderItem.ProductId);
+                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
                 if (product == null)
                     continue;
 
                 sb.AppendLine($"<tr style=\"background-color: {_templatesSettings.Color2};text-align: center;\">");
                 //product name
-                var productName = _localizationService.GetLocalized(product, x => x.Name, languageId);
+                var productName = await _localizationService.GetLocalizedAsync(product, x => x.Name, languageId);
 
                 sb.AppendLine("<td style=\"padding: 0.6em 0.4em;text-align: left;\">" + WebUtility.HtmlEncode(productName));
 
                 //add download link
-                if (_downloadService.IsDownloadAllowed(orderItem))
+                if (await _orderService.IsDownloadAllowedAsync(orderItem))
                 {
-                    var downloadUrl = RouteUrl(order.StoreId, "GetDownload", new { orderItemId = orderItem.OrderItemGuid });
-                    var downloadLink = $"<a class=\"link\" href=\"{downloadUrl}\">{_localizationService.GetResource("Messages.Order.Product(s).Download", languageId)}</a>";
+                    var downloadUrl = await RouteUrlAsync(order.StoreId, "GetDownload", new { orderItemId = orderItem.OrderItemGuid });
+                    var downloadLink = $"<a class=\"link\" href=\"{downloadUrl}\">{await _localizationService.GetResourceAsync("Messages.Order.Product(s).Download", languageId)}</a>";
                     sb.AppendLine("<br />");
                     sb.AppendLine(downloadLink);
                 }
                 //add download link
-                if (_downloadService.IsLicenseDownloadAllowed(orderItem))
+                if (await _orderService.IsLicenseDownloadAllowedAsync(orderItem))
                 {
-                    var licenseUrl = RouteUrl(order.StoreId, "GetLicense", new { orderItemId = orderItem.OrderItemGuid });
-                    var licenseLink = $"<a class=\"link\" href=\"{licenseUrl}\">{_localizationService.GetResource("Messages.Order.Product(s).License", languageId)}</a>";
+                    var licenseUrl = await RouteUrlAsync(order.StoreId, "GetLicense", new { orderItemId = orderItem.OrderItemGuid });
+                    var licenseLink = $"<a class=\"link\" href=\"{licenseUrl}\">{await _localizationService.GetResourceAsync("Messages.Order.Product(s).License", languageId)}</a>";
                     sb.AppendLine("<br />");
                     sb.AppendLine(licenseLink);
                 }
@@ -526,7 +525,7 @@ namespace TVProgViewer.Services.Messages
                         ? _productService.FormatRentalDate(product, orderItem.RentalStartDateUtc.Value) : string.Empty;
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
                         ? _productService.FormatRentalDate(product, orderItem.RentalEndDateUtc.Value) : string.Empty;
-                    var rentalInfo = string.Format(_localizationService.GetResource("Order.Rental.FormattedDate"),
+                    var rentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                     sb.AppendLine("<br />");
                     sb.AppendLine(rentalInfo);
@@ -534,11 +533,11 @@ namespace TVProgViewer.Services.Messages
                 //SKU
                 if (_catalogSettings.ShowSkuOnProductDetailsPage)
                 {
-                    var sku = _productService.FormatSku(product, orderItem.AttributesXml);
+                    var sku = await _productService.FormatSkuAsync(product, orderItem.AttributesXml);
                     if (!string.IsNullOrEmpty(sku))
                     {
                         sb.AppendLine("<br />");
-                        sb.AppendLine(string.Format(_localizationService.GetResource("Messages.Order.Product(s).SKU", languageId), WebUtility.HtmlEncode(sku)));
+                        sb.AppendLine(string.Format(await _localizationService.GetResourceAsync("Messages.Order.Product(s).SKU", languageId), WebUtility.HtmlEncode(sku)));
                     }
                 }
 
@@ -549,13 +548,13 @@ namespace TVProgViewer.Services.Messages
                 {
                     //including tax
                     var unitPriceInclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.UnitPriceInclTax, order.CurrencyRate);
-                    unitPriceStr = _priceFormatter.FormatPrice(unitPriceInclTaxInUserCurrency, true, order.UserCurrencyCode, language, true);
+                    unitPriceStr = await _priceFormatter.FormatPriceAsync(unitPriceInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                 }
                 else
                 {
                     //excluding tax
                     var unitPriceExclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.UnitPriceExclTax, order.CurrencyRate);
-                    unitPriceStr = _priceFormatter.FormatPrice(unitPriceExclTaxInUserCurrency, true, order.UserCurrencyCode, language, false);
+                    unitPriceStr = await _priceFormatter.FormatPriceAsync(unitPriceExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                 }
 
                 sb.AppendLine($"<td style=\"padding: 0.6em 0.4em;text-align: right;\">{unitPriceStr}</td>");
@@ -567,13 +566,13 @@ namespace TVProgViewer.Services.Messages
                 {
                     //including tax
                     var priceInclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.PriceInclTax, order.CurrencyRate);
-                    priceStr = _priceFormatter.FormatPrice(priceInclTaxInUserCurrency, true, order.UserCurrencyCode, language, true);
+                    priceStr = await _priceFormatter.FormatPriceAsync(priceInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                 }
                 else
                 {
                     //excluding tax
                     var priceExclTaxInUserCurrency = _currencyService.ConvertCurrency(orderItem.PriceExclTax, order.CurrencyRate);
-                    priceStr = _priceFormatter.FormatPrice(priceExclTaxInUserCurrency, true, order.UserCurrencyCode, language, false);
+                    priceStr = await _priceFormatter.FormatPriceAsync(priceExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                 }
 
                 sb.AppendLine($"<td style=\"padding: 0.6em 0.4em;text-align: right;\">{priceStr}</td>");
@@ -593,7 +592,7 @@ namespace TVProgViewer.Services.Messages
                 }
 
                 //totals
-                WriteTotals(order, language, sb);
+                await WriteTotalsAsync(order, language, sb);
             }
 
             sb.AppendLine("</table>");
@@ -607,24 +606,25 @@ namespace TVProgViewer.Services.Messages
         /// <param name="order">Order</param>
         /// <param name="language">Language</param>
         /// <param name="sb">StringBuilder</param>
-        protected virtual void WriteTotals(Order order, Language language, StringBuilder sb)
+        protected virtual async Task WriteTotalsAsync(Order order, Language language, StringBuilder sb)
         {
             //subtotal
             string cusSubTotal;
             var displaySubTotalDiscount = false;
             var cusSubTotalDiscount = string.Empty;
+            var languageId = language.Id;
             if (order.UserTaxDisplayType == TaxDisplayType.IncludingTax && !_taxSettings.ForceTaxExclusionFromOrderSubtotal)
             {
                 //including tax
 
                 //subtotal
                 var orderSubtotalInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubtotalInclTax, order.CurrencyRate);
-                cusSubTotal = _priceFormatter.FormatPrice(orderSubtotalInclTaxInUserCurrency, true, order.UserCurrencyCode, language, true);
+                cusSubTotal = await _priceFormatter.FormatPriceAsync(orderSubtotalInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                 //discount (applied to order subtotal)
                 var orderSubTotalDiscountInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubTotalDiscountInclTax, order.CurrencyRate);
                 if (orderSubTotalDiscountInclTaxInUserCurrency > decimal.Zero)
                 {
-                    cusSubTotalDiscount = _priceFormatter.FormatPrice(-orderSubTotalDiscountInclTaxInUserCurrency, true, order.UserCurrencyCode, language, true);
+                    cusSubTotalDiscount = await _priceFormatter.FormatPriceAsync(-orderSubTotalDiscountInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                     displaySubTotalDiscount = true;
                 }
             }
@@ -634,12 +634,12 @@ namespace TVProgViewer.Services.Messages
 
                 //subtotal
                 var orderSubtotalExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubtotalExclTax, order.CurrencyRate);
-                cusSubTotal = _priceFormatter.FormatPrice(orderSubtotalExclTaxInUserCurrency, true, order.UserCurrencyCode, language, false);
+                cusSubTotal = await _priceFormatter.FormatPriceAsync(orderSubtotalExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                 //discount (applied to order subtotal)
                 var orderSubTotalDiscountExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderSubTotalDiscountExclTax, order.CurrencyRate);
                 if (orderSubTotalDiscountExclTaxInUserCurrency > decimal.Zero)
                 {
-                    cusSubTotalDiscount = _priceFormatter.FormatPrice(-orderSubTotalDiscountExclTaxInUserCurrency, true, order.UserCurrencyCode, language, false);
+                    cusSubTotalDiscount = await _priceFormatter.FormatPriceAsync(-orderSubTotalDiscountExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                     displaySubTotalDiscount = true;
                 }
             }
@@ -656,10 +656,10 @@ namespace TVProgViewer.Services.Messages
 
                 //shipping
                 var orderShippingInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderShippingInclTax, order.CurrencyRate);
-                cusShipTotal = _priceFormatter.FormatShippingPrice(orderShippingInclTaxInUserCurrency, true, order.UserCurrencyCode, language, true);
+                cusShipTotal = await _priceFormatter.FormatShippingPriceAsync(orderShippingInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
                 //payment method additional fee
                 var paymentMethodAdditionalFeeInclTaxInUserCurrency = _currencyService.ConvertCurrency(order.PaymentMethodAdditionalFeeInclTax, order.CurrencyRate);
-                cusPaymentMethodAdditionalFee = _priceFormatter.FormatPaymentMethodAdditionalFee(paymentMethodAdditionalFeeInclTaxInUserCurrency, true, order.UserCurrencyCode, language, true);
+                cusPaymentMethodAdditionalFee = await _priceFormatter.FormatPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFeeInclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, true);
             }
             else
             {
@@ -667,10 +667,10 @@ namespace TVProgViewer.Services.Messages
 
                 //shipping
                 var orderShippingExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderShippingExclTax, order.CurrencyRate);
-                cusShipTotal = _priceFormatter.FormatShippingPrice(orderShippingExclTaxInUserCurrency, true, order.UserCurrencyCode, language, false);
+                cusShipTotal = await _priceFormatter.FormatShippingPriceAsync(orderShippingExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
                 //payment method additional fee
                 var paymentMethodAdditionalFeeExclTaxInUserCurrency = _currencyService.ConvertCurrency(order.PaymentMethodAdditionalFeeExclTax, order.CurrencyRate);
-                cusPaymentMethodAdditionalFee = _priceFormatter.FormatPaymentMethodAdditionalFee(paymentMethodAdditionalFeeExclTaxInUserCurrency, true, order.UserCurrencyCode, language, false);
+                cusPaymentMethodAdditionalFee = await _priceFormatter.FormatPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFeeExclTaxInUserCurrency, true, order.UserCurrencyCode, languageId, false);
             }
 
             //shipping
@@ -704,8 +704,8 @@ namespace TVProgViewer.Services.Messages
                     displayTax = !displayTaxRates;
 
                     var orderTaxInUserCurrency = _currencyService.ConvertCurrency(order.OrderTax, order.CurrencyRate);
-                    var taxStr = _priceFormatter.FormatPrice(orderTaxInUserCurrency, true, order.UserCurrencyCode,
-                        false, language);
+                    var taxStr = await _priceFormatter.FormatPriceAsync(orderTaxInUserCurrency, true, order.UserCurrencyCode,
+                        false, languageId);
                     cusTaxTotal = taxStr;
                 }
             }
@@ -715,51 +715,49 @@ namespace TVProgViewer.Services.Messages
             if (order.OrderDiscount > decimal.Zero)
             {
                 var orderDiscountInUserCurrency = _currencyService.ConvertCurrency(order.OrderDiscount, order.CurrencyRate);
-                cusDiscount = _priceFormatter.FormatPrice(-orderDiscountInUserCurrency, true, order.UserCurrencyCode, false, language);
+                cusDiscount = await _priceFormatter.FormatPriceAsync(-orderDiscountInUserCurrency, true, order.UserCurrencyCode, false, languageId);
                 displayDiscount = true;
             }
 
             //total
             var orderTotalInUserCurrency = _currencyService.ConvertCurrency(order.OrderTotal, order.CurrencyRate);
-            var cusTotal = _priceFormatter.FormatPrice(orderTotalInUserCurrency, true, order.UserCurrencyCode, false, language);
-
-            var languageId = language.Id;
+            var cusTotal = await _priceFormatter.FormatPriceAsync(orderTotalInUserCurrency, true, order.UserCurrencyCode, false, languageId);
 
             //subtotal
-            sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{_localizationService.GetResource("Messages.Order.SubTotal", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusSubTotal}</strong></td></tr>");
+            sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{await _localizationService.GetResourceAsync("Messages.Order.SubTotal", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusSubTotal}</strong></td></tr>");
 
             //discount (applied to order subtotal)
             if (displaySubTotalDiscount)
             {
-                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{_localizationService.GetResource("Messages.Order.SubTotalDiscount", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusSubTotalDiscount}</strong></td></tr>");
+                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{await _localizationService.GetResourceAsync("Messages.Order.SubTotalDiscount", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusSubTotalDiscount}</strong></td></tr>");
             }
 
             //shipping
             if (displayShipping)
             {
-                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{_localizationService.GetResource("Messages.Order.Shipping", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusShipTotal}</strong></td></tr>");
+                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{await _localizationService.GetResourceAsync("Messages.Order.Shipping", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusShipTotal}</strong></td></tr>");
             }
 
             //payment method fee
             if (displayPaymentMethodFee)
             {
-                var paymentMethodFeeTitle = _localizationService.GetResource("Messages.Order.PaymentMethodAdditionalFee", languageId);
+                var paymentMethodFeeTitle = await _localizationService.GetResourceAsync("Messages.Order.PaymentMethodAdditionalFee", languageId);
                 sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{paymentMethodFeeTitle}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusPaymentMethodAdditionalFee}</strong></td></tr>");
             }
 
             //tax
             if (displayTax)
             {
-                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{_localizationService.GetResource("Messages.Order.Tax", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusTaxTotal}</strong></td></tr>");
+                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{await _localizationService.GetResourceAsync("Messages.Order.Tax", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusTaxTotal}</strong></td></tr>");
             }
 
             if (displayTaxRates)
             {
                 foreach (var item in taxRates)
                 {
-                    var taxRate = string.Format(_localizationService.GetResource("Messages.Order.TaxRateLine"),
+                    var taxRate = string.Format(await _localizationService.GetResourceAsync("Messages.Order.TaxRateLine"),
                         _priceFormatter.FormatTaxRate(item.Key));
-                    var taxValue = _priceFormatter.FormatPrice(item.Value, true, order.UserCurrencyCode, false, language);
+                    var taxValue = await _priceFormatter.FormatPriceAsync(item.Value, true, order.UserCurrencyCode, false, languageId);
                     sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{taxRate}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{taxValue}</strong></td></tr>");
                 }
             }
@@ -767,31 +765,31 @@ namespace TVProgViewer.Services.Messages
             //discount
             if (displayDiscount)
             {
-                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{_localizationService.GetResource("Messages.Order.TotalDiscount", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusDiscount}</strong></td></tr>");
+                sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{await _localizationService.GetResourceAsync("Messages.Order.TotalDiscount", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusDiscount}</strong></td></tr>");
             }
 
             //gift cards
-            foreach (var gcuh in _giftCardService.GetGiftCardUsageHistory(order))
+            foreach (var gcuh in await _giftCardService.GetGiftCardUsageHistoryAsync(order))
             {
-                var giftCardText = string.Format(_localizationService.GetResource("Messages.Order.GiftCardInfo", languageId),
-                    WebUtility.HtmlEncode(_giftCardService.GetGiftCardById(gcuh.GiftCardId)?.GiftCardCouponCode));
-                var giftCardAmount = _priceFormatter.FormatPrice(-_currencyService.ConvertCurrency(gcuh.UsedValue, order.CurrencyRate), true, order.UserCurrencyCode,
-                    false, language);
+                var giftCardText = string.Format(await _localizationService.GetResourceAsync("Messages.Order.GiftCardInfo", languageId),
+                    WebUtility.HtmlEncode((await _giftCardService.GetGiftCardByIdAsync(gcuh.GiftCardId))?.GiftCardCouponCode));
+                var giftCardAmount = await _priceFormatter.FormatPriceAsync(-_currencyService.ConvertCurrency(gcuh.UsedValue, order.CurrencyRate), true, order.UserCurrencyCode,
+                    false, languageId);
                 sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{giftCardText}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{giftCardAmount}</strong></td></tr>");
             }
 
             //reward points
-            if (order.RedeemedRewardPointsEntryId.HasValue && _rewardPointService.GetRewardPointsHistoryEntryById(order.RedeemedRewardPointsEntryId.Value) is RewardPointsHistory redeemedRewardPointsEntry)
+            if (order.RedeemedRewardPointsEntryId.HasValue && await _rewardPointService.GetRewardPointsHistoryEntryByIdAsync(order.RedeemedRewardPointsEntryId.Value) is RewardPointsHistory redeemedRewardPointsEntry)
             {
-                var rpTitle = string.Format(_localizationService.GetResource("Messages.Order.RewardPoints", languageId),
+                var rpTitle = string.Format(await _localizationService.GetResourceAsync("Messages.Order.RewardPoints", languageId),
                     -redeemedRewardPointsEntry.Points);
-                var rpAmount = _priceFormatter.FormatPrice(-_currencyService.ConvertCurrency(redeemedRewardPointsEntry.UsedAmount, order.CurrencyRate), true,
-                    order.UserCurrencyCode, false, language);
+                var rpAmount = await _priceFormatter.FormatPriceAsync(-_currencyService.ConvertCurrency(redeemedRewardPointsEntry.UsedAmount, order.CurrencyRate), true,
+                    order.UserCurrencyCode, false, languageId);
                 sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{rpTitle}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{rpAmount}</strong></td></tr>");
             }
 
             //total
-            sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{_localizationService.GetResource("Messages.Order.OrderTotal", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusTotal}</strong></td></tr>");
+            sb.AppendLine($"<tr style=\"text-align:right;\"><td>&nbsp;</td><td colspan=\"2\" style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{await _localizationService.GetResourceAsync("Messages.Order.OrderTotal", languageId)}</strong></td> <td style=\"background-color: {_templatesSettings.Color3};padding:0.6em 0.4 em;\"><strong>{cusTotal}</strong></td></tr>");
         }
 
         /// <summary>
@@ -800,33 +798,33 @@ namespace TVProgViewer.Services.Messages
         /// <param name="shipment">Shipment</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>HTML table of products</returns>
-        protected virtual string ProductListToHtmlTable(Shipment shipment, int languageId)
+        protected virtual async Task<string> ProductListToHtmlTableAsync(Shipment shipment, int languageId)
         {
             var sb = new StringBuilder();
             sb.AppendLine("<table border=\"0\" style=\"width:100%;\">");
 
             sb.AppendLine($"<tr style=\"background-color:{_templatesSettings.Color1};text-align:center;\">");
-            sb.AppendLine($"<th>{_localizationService.GetResource("Messages.Order.Product(s).Name", languageId)}</th>");
-            sb.AppendLine($"<th>{_localizationService.GetResource("Messages.Order.Product(s).Quantity", languageId)}</th>");
+            sb.AppendLine($"<th>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).Name", languageId)}</th>");
+            sb.AppendLine($"<th>{await _localizationService.GetResourceAsync("Messages.Order.Product(s).Quantity", languageId)}</th>");
             sb.AppendLine("</tr>");
 
-            var table = _shipmentService.GetShipmentItemsByShipmentId(shipment.Id);
+            var table = await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id);
             for (var i = 0; i <= table.Count - 1; i++)
             {
                 var si = table[i];
-                var orderItem = _orderService.GetOrderItemById(si.OrderItemId);
+                var orderItem = await _orderService.GetOrderItemByIdAsync(si.OrderItemId);
 
                 if (orderItem == null)
                     continue;
 
-                var product = _productService.GetProductById(orderItem?.ProductId ?? 0);
+                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
                 if (product == null)
                     continue;
 
                 sb.AppendLine($"<tr style=\"background-color: {_templatesSettings.Color2};text-align: center;\">");
                 //product name
-                var productName = _localizationService.GetLocalized(product, x => x.Name, languageId);
+                var productName = await _localizationService.GetLocalizedAsync(product, x => x.Name, languageId);
 
                 sb.AppendLine("<td style=\"padding: 0.6em 0.4em;text-align: left;\">" + WebUtility.HtmlEncode(productName));
 
@@ -844,7 +842,7 @@ namespace TVProgViewer.Services.Messages
                         ? _productService.FormatRentalDate(product, orderItem.RentalStartDateUtc.Value) : string.Empty;
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
                         ? _productService.FormatRentalDate(product, orderItem.RentalEndDateUtc.Value) : string.Empty;
-                    var rentalInfo = string.Format(_localizationService.GetResource("Order.Rental.FormattedDate"),
+                    var rentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                     sb.AppendLine("<br />");
                     sb.AppendLine(rentalInfo);
@@ -853,11 +851,11 @@ namespace TVProgViewer.Services.Messages
                 //SKU
                 if (_catalogSettings.ShowSkuOnProductDetailsPage)
                 {
-                    var sku = _productService.FormatSku(product, orderItem.AttributesXml);
+                    var sku = await _productService.FormatSkuAsync(product, orderItem.AttributesXml);
                     if (!string.IsNullOrEmpty(sku))
                     {
                         sb.AppendLine("<br />");
-                        sb.AppendLine(string.Format(_localizationService.GetResource("Messages.Order.Product(s).SKU", languageId), WebUtility.HtmlEncode(sku)));
+                        sb.AppendLine(string.Format(await _localizationService.GetResourceAsync("Messages.Order.Product(s).SKU", languageId), WebUtility.HtmlEncode(sku)));
                     }
                 }
 
@@ -880,10 +878,10 @@ namespace TVProgViewer.Services.Messages
         /// <param name="routeName">The name of the route that is used to generate URL</param>
         /// <param name="routeValues">An object that contains route values</param>
         /// <returns>Generated URL</returns>
-        protected virtual string RouteUrl(int storeId = 0, string routeName = null, object routeValues = null)
+        protected virtual async Task<string> RouteUrlAsync(int storeId = 0, string routeName = null, object routeValues = null)
         {
             //try to get a store by the passed identifier
-            var store = _storeService.GetStoreById(storeId) ?? _storeContext.CurrentStore
+            var store = await _storeService.GetStoreByIdAsync(storeId) ?? await _storeContext.GetCurrentStoreAsync()
                 ?? throw new Exception("No store could be loaded");
 
             //ensure that the store URL is specified
@@ -912,12 +910,12 @@ namespace TVProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="store">Store</param>
         /// <param name="emailAccount">Email account</param>
-        public virtual void AddStoreTokens(IList<Token> tokens, Store store, EmailAccount emailAccount)
+        public virtual async Task AddStoreTokensAsync(IList<Token> tokens, Store store, EmailAccount emailAccount)
         {
             if (emailAccount == null)
                 throw new ArgumentNullException(nameof(emailAccount));
 
-            tokens.Add(new Token("Store.Name", _localizationService.GetLocalized(store, x => x.Name)));
+            tokens.Add(new Token("Store.Name", await _localizationService.GetLocalizedAsync(store, x => x.Name)));
             tokens.Add(new Token("Store.URL", store.Url, true));
             tokens.Add(new Token("Store.Email", emailAccount.Email));
             tokens.Add(new Token("Store.CompanyName", store.CompanyName));
@@ -930,7 +928,7 @@ namespace TVProgViewer.Services.Messages
             tokens.Add(new Token("YouTube.URL", _storeInformationSettings.YoutubeLink));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(store, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(store, tokens);
         }
 
         /// <summary>
@@ -940,12 +938,12 @@ namespace TVProgViewer.Services.Messages
         /// <param name="order"></param>
         /// <param name="languageId">Language identifier</param>
         /// <param name="vendorId">Vendor identifier</param>
-        public virtual void AddOrderTokens(IList<Token> tokens, Order order, int languageId, int vendorId = 0)
+        public virtual async Task AddOrderTokensAsync(IList<Token> tokens, Order order, int languageId, int vendorId = 0)
         {
             //lambda expression for choosing correct order address
-            Address orderAddress(Order o) => _addressService.GetAddressById((o.PickupInStore ? o.PickupAddressId : o.ShippingAddressId) ?? 0);
+            async Task<Address> orderAddress(Order o) => await _addressService.GetAddressByIdAsync((o.PickupInStore ? o.PickupAddressId : o.ShippingAddressId) ?? 0);
 
-            var billingAddress = _addressService.GetAddressById(order.BillingAddressId);
+            var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
             tokens.Add(new Token("Order.OrderId", order.Id));
             tokens.Add(new Token("Order.OrderNumber", order.CustomOrderNumber));
@@ -963,31 +961,31 @@ namespace TVProgViewer.Services.Messages
             tokens.Add(new Token("Order.BillingAddress2", billingAddress.Address2));
             tokens.Add(new Token("Order.BillingCity", billingAddress.City));
             tokens.Add(new Token("Order.BillingCounty", billingAddress.County));
-            tokens.Add(new Token("Order.BillingStateProvince", _stateProvinceService.GetStateProvinceByAddress(billingAddress) is StateProvince billingStateProvince ? _localizationService.GetLocalized(billingStateProvince, x => x.Name) : string.Empty));
+            tokens.Add(new Token("Order.BillingStateProvince", await _stateProvinceService.GetStateProvinceByAddressAsync(billingAddress) is StateProvince billingStateProvince ? await _localizationService.GetLocalizedAsync(billingStateProvince, x => x.Name) : string.Empty));
             tokens.Add(new Token("Order.BillingZipPostalCode", billingAddress.ZipPostalCode));
-            tokens.Add(new Token("Order.BillingCountry", _countryService.GetCountryByAddress(billingAddress) is Country billingCountry ? _localizationService.GetLocalized(billingCountry, x => x.Name) : string.Empty));
-            tokens.Add(new Token("Order.BillingCustomAttributes", _addressAttributeFormatter.FormatAttributes(billingAddress.CustomAttributes), true));
+            tokens.Add(new Token("Order.BillingCountry", await _countryService.GetCountryByAddressAsync(billingAddress) is Country billingCountry ? await _localizationService.GetLocalizedAsync(billingCountry, x => x.Name) : string.Empty));
+            tokens.Add(new Token("Order.BillingCustomAttributes", await _addressAttributeFormatter.FormatAttributesAsync(billingAddress.CustomAttributes), true));
 
             tokens.Add(new Token("Order.Shippable", !string.IsNullOrEmpty(order.ShippingMethod)));
             tokens.Add(new Token("Order.ShippingMethod", order.ShippingMethod));
             tokens.Add(new Token("Order.PickupInStore", order.PickupInStore));
-            tokens.Add(new Token("Order.ShippingFirstName", orderAddress(order)?.FirstName ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingLastName", orderAddress(order)?.LastName ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingPhoneNumber", orderAddress(order)?.PhoneNumber ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingEmail", orderAddress(order)?.Email ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingFaxNumber", orderAddress(order)?.FaxNumber ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingCompany", orderAddress(order)?.Company ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingAddress1", orderAddress(order)?.Address1 ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingAddress2", orderAddress(order)?.Address2 ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingCity", orderAddress(order)?.City ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingCounty", orderAddress(order)?.County ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingStateProvince", _stateProvinceService.GetStateProvinceByAddress(orderAddress(order)) is StateProvince shippingStateProvince ? _localizationService.GetLocalized(shippingStateProvince, x => x.Name) : string.Empty));
-            tokens.Add(new Token("Order.ShippingZipPostalCode", orderAddress(order)?.ZipPostalCode ?? string.Empty));
-            tokens.Add(new Token("Order.ShippingCountry", _countryService.GetCountryByAddress(orderAddress(order)) is Country orderCountry ? _localizationService.GetLocalized(orderCountry, x => x.Name) : string.Empty));
-            tokens.Add(new Token("Order.ShippingCustomAttributes", _addressAttributeFormatter.FormatAttributes(orderAddress(order)?.CustomAttributes ?? string.Empty), true));
+            tokens.Add(new Token("Order.ShippingFirstName", (await orderAddress(order))?.FirstName ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingLastName", (await orderAddress(order))?.LastName ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingPhoneNumber", (await orderAddress(order))?.PhoneNumber ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingEmail", (await orderAddress(order))?.Email ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingFaxNumber", (await orderAddress(order))?.FaxNumber ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingCompany", (await orderAddress(order))?.Company ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingAddress1", (await orderAddress(order))?.Address1 ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingAddress2", (await orderAddress(order))?.Address2 ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingCity", (await orderAddress(order))?.City ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingCounty", (await orderAddress(order))?.County ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingStateProvince", await _stateProvinceService.GetStateProvinceByAddressAsync(await orderAddress(order)) is StateProvince shippingStateProvince ? await _localizationService.GetLocalizedAsync(shippingStateProvince, x => x.Name) : string.Empty));
+            tokens.Add(new Token("Order.ShippingZipPostalCode", (await orderAddress(order))?.ZipPostalCode ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingCountry", await _countryService.GetCountryByAddressAsync(await orderAddress(order)) is Country orderCountry ? await _localizationService.GetLocalizedAsync(orderCountry, x => x.Name) : string.Empty));
+            tokens.Add(new Token("Order.ShippingCustomAttributes", await _addressAttributeFormatter.FormatAttributesAsync((await orderAddress(order))?.CustomAttributes ?? string.Empty), true));
 
-            var paymentMethod = _paymentPluginManager.LoadPluginBySystemName(order.PaymentMethodSystemName);
-            var paymentMethodName = paymentMethod != null ? _localizationService.GetLocalizedFriendlyName(paymentMethod, _workContext.WorkingLanguage.Id) : order.PaymentMethodSystemName;
+            var paymentMethod = await _paymentPluginManager.LoadPluginBySystemNameAsync(order.PaymentMethodSystemName);
+            var paymentMethodName = paymentMethod != null ? await _localizationService.GetLocalizedFriendlyNameAsync(paymentMethod, (await _workContext.GetWorkingLanguageAsync()).Id) : order.PaymentMethodSystemName;
             tokens.Add(new Token("Order.PaymentMethod", paymentMethodName));
             tokens.Add(new Token("Order.VatNumber", order.VatNumber));
             var sbCustomValues = new StringBuilder();
@@ -1003,13 +1001,13 @@ namespace TVProgViewer.Services.Messages
 
             tokens.Add(new Token("Order.CustomValues", sbCustomValues.ToString(), true));
 
-            tokens.Add(new Token("Order.Product(s)", ProductListToHtmlTable(order, languageId, vendorId), true));
+            tokens.Add(new Token("Order.Product(s)", await ProductListToHtmlTableAsync(order, languageId, vendorId), true));
 
-            var language = _languageService.GetLanguageById(languageId);
+            var language = await _languageService.GetLanguageByIdAsync(languageId);
             if (language != null && !string.IsNullOrEmpty(language.LanguageCulture))
             {
-                var User = _userService.GetUserById(order.UserId);
-                var createdOn = _dateTimeHelper.ConvertToUserTime(order.CreatedOnUtc, TimeZoneInfo.Utc, _dateTimeHelper.GetUserTimeZone(User));
+                var user = await _userService.GetUserByIdAsync(order.UserId);
+                var createdOn = _dateTimeHelper.ConvertToUserTime(order.CreatedOnUtc, TimeZoneInfo.Utc, await _dateTimeHelper.GetUserTimeZoneAsync(user));
                 tokens.Add(new Token("Order.CreatedOn", createdOn.ToString("D", new CultureInfo(language.LanguageCulture))));
             }
             else
@@ -1017,11 +1015,11 @@ namespace TVProgViewer.Services.Messages
                 tokens.Add(new Token("Order.CreatedOn", order.CreatedOnUtc.ToString("D")));
             }
 
-            var orderUrl = RouteUrl(order.StoreId, "OrderDetails", new { orderId = order.Id });
+            var orderUrl = await RouteUrlAsync(order.StoreId, "OrderDetails", new { orderId = order.Id });
             tokens.Add(new Token("Order.OrderURLForUser", orderUrl, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(order, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(order, tokens);
         }
 
         /// <summary>
@@ -1030,20 +1028,20 @@ namespace TVProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="order">Order</param>
         /// <param name="refundedAmount">Refunded amount of order</param>
-        public virtual void AddOrderRefundedTokens(IList<Token> tokens, Order order, decimal refundedAmount)
+        public virtual async Task AddOrderRefundedTokensAsync(IList<Token> tokens, Order order, decimal refundedAmount)
         {
-            //should we convert it to User currency?
+            //should we convert it to user currency?
             //most probably, no. It can cause some rounding or legal issues
             //furthermore, exchange rate could be changed
             //so let's display it the primary store currency
 
-            var primaryStoreCurrencyCode = _currencyService.GetCurrencyById(_currencySettings.PrimaryStoreCurrencyId).CurrencyCode;
-            var refundedAmountStr = _priceFormatter.FormatPrice(refundedAmount, true, primaryStoreCurrencyCode, false, _workContext.WorkingLanguage);
+            var primaryStoreCurrencyCode = (await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId)).CurrencyCode;
+            var refundedAmountStr = await _priceFormatter.FormatPriceAsync(refundedAmount, true, primaryStoreCurrencyCode, false, (await _workContext.GetWorkingLanguageAsync()).Id);
 
             tokens.Add(new Token("Order.AmountRefunded", refundedAmountStr));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(order, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(order, tokens);
         }
 
         /// <summary>
@@ -1052,7 +1050,7 @@ namespace TVProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="shipment">Shipment item</param>
         /// <param name="languageId">Language identifier</param>
-        public virtual void AddShipmentTokens(IList<Token> tokens, Shipment shipment, int languageId)
+        public virtual async Task AddShipmentTokensAsync(IList<Token> tokens, Shipment shipment, int languageId)
         {
             tokens.Add(new Token("Shipment.ShipmentNumber", shipment.Id));
             tokens.Add(new Token("Shipment.TrackingNumber", shipment.TrackingNumber));
@@ -1060,19 +1058,19 @@ namespace TVProgViewer.Services.Messages
             if (!string.IsNullOrEmpty(shipment.TrackingNumber))
             {
                 var shipmentService = EngineContext.Current.Resolve<IShipmentService>();
-                var shipmentTracker = shipmentService.GetShipmentTracker(shipment);
+                var shipmentTracker = await shipmentService.GetShipmentTrackerAsync(shipment);
                 if (shipmentTracker != null)
-                    trackingNumberUrl = shipmentTracker.GetUrl(shipment.TrackingNumber);
+                    trackingNumberUrl = await shipmentTracker.GetUrlAsync(shipment.TrackingNumber);
             }
 
             tokens.Add(new Token("Shipment.TrackingNumberURL", trackingNumberUrl, true));
-            tokens.Add(new Token("Shipment.Product(s)", ProductListToHtmlTable(shipment, languageId), true));
+            tokens.Add(new Token("Shipment.Product(s)", await ProductListToHtmlTableAsync(shipment, languageId), true));
 
-            var shipmentUrl = RouteUrl(_orderService.GetOrderById(shipment.OrderId).StoreId, "ShipmentDetails", new { shipmentId = shipment.Id });
+            var shipmentUrl = await RouteUrlAsync((await _orderService.GetOrderByIdAsync(shipment.OrderId)).StoreId, "ShipmentDetails", new { shipmentId = shipment.Id });
             tokens.Add(new Token("Shipment.URLForUser", shipmentUrl, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(shipment, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(shipment, tokens);
         }
 
         /// <summary>
@@ -1080,16 +1078,16 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="orderNote">Order note</param>
-        public virtual void AddOrderNoteTokens(IList<Token> tokens, OrderNote orderNote)
+        public virtual async Task AddOrderNoteTokensAsync(IList<Token> tokens, OrderNote orderNote)
         {
-            var order = _orderService.GetOrderById(orderNote.OrderId);
+            var order = await _orderService.GetOrderByIdAsync(orderNote.OrderId);
 
             tokens.Add(new Token("Order.NewNoteText", _orderService.FormatOrderNoteText(orderNote), true));
-            var orderNoteAttachmentUrl = RouteUrl(order.StoreId, "GetOrderNoteFile", new { ordernoteid = orderNote.Id });
+            var orderNoteAttachmentUrl = await RouteUrlAsync(order.StoreId, "GetOrderNoteFile", new { ordernoteid = orderNote.Id });
             tokens.Add(new Token("Order.OrderNoteAttachmentUrl", orderNoteAttachmentUrl, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(orderNote, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(orderNote, tokens);
         }
 
         /// <summary>
@@ -1097,16 +1095,16 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="recurringPayment">Recurring payment</param>
-        public virtual void AddRecurringPaymentTokens(IList<Token> tokens, RecurringPayment recurringPayment)
+        public virtual async Task AddRecurringPaymentTokensAsync(IList<Token> tokens, RecurringPayment recurringPayment)
         {
             tokens.Add(new Token("RecurringPayment.ID", recurringPayment.Id));
             tokens.Add(new Token("RecurringPayment.CancelAfterFailedPayment",
                 recurringPayment.LastPaymentFailed && _paymentSettings.CancelRecurringPaymentsAfterFailedPayment));
-            if (_orderService.GetOrderById(recurringPayment.InitialOrderId) is Order order)
-                tokens.Add(new Token("RecurringPayment.RecurringPaymentType", _paymentService.GetRecurringPaymentType(order.PaymentMethodSystemName).ToString()));
+            if (await _orderService.GetOrderByIdAsync(recurringPayment.InitialOrderId) is Order order)
+                tokens.Add(new Token("RecurringPayment.RecurringPaymentType", (await _paymentService.GetRecurringPaymentTypeAsync(order.PaymentMethodSystemName)).ToString()));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(recurringPayment, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(recurringPayment, tokens);
         }
 
         /// <summary>
@@ -1115,9 +1113,9 @@ namespace TVProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="returnRequest">Return request</param>
         /// <param name="orderItem">Order item</param>
-        public virtual void AddReturnRequestTokens(IList<Token> tokens, ReturnRequest returnRequest, OrderItem orderItem)
+        public virtual async Task AddReturnRequestTokensAsync(IList<Token> tokens, ReturnRequest returnRequest, OrderItem orderItem)
         {
-            var product = _productService.GetProductById(orderItem.ProductId);
+            var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
 
             tokens.Add(new Token("ReturnRequest.CustomNumber", returnRequest.CustomNumber));
             tokens.Add(new Token("ReturnRequest.OrderId", orderItem.OrderId));
@@ -1127,10 +1125,10 @@ namespace TVProgViewer.Services.Messages
             tokens.Add(new Token("ReturnRequest.RequestedAction", returnRequest.RequestedAction));
             tokens.Add(new Token("ReturnRequest.UserComment", HtmlHelper.FormatText(returnRequest.UserComments, false, true, false, false, false, false), true));
             tokens.Add(new Token("ReturnRequest.StaffNotes", HtmlHelper.FormatText(returnRequest.StaffNotes, false, true, false, false, false, false), true));
-            tokens.Add(new Token("ReturnRequest.Status", _localizationService.GetLocalizedEnum(returnRequest.ReturnRequestStatus)));
+            tokens.Add(new Token("ReturnRequest.Status", await _localizationService.GetLocalizedEnumAsync(returnRequest.ReturnRequestStatus)));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(returnRequest, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(returnRequest, tokens);
         }
 
         /// <summary>
@@ -1138,69 +1136,69 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="giftCard">Gift card</param>
-        public virtual void AddGiftCardTokens(IList<Token> tokens, GiftCard giftCard)
+        public virtual async Task AddGiftCardTokensAsync(IList<Token> tokens, GiftCard giftCard)
         {
             tokens.Add(new Token("GiftCard.SenderName", giftCard.SenderName));
             tokens.Add(new Token("GiftCard.SenderEmail", giftCard.SenderEmail));
             tokens.Add(new Token("GiftCard.RecipientName", giftCard.RecipientName));
             tokens.Add(new Token("GiftCard.RecipientEmail", giftCard.RecipientEmail));
-            tokens.Add(new Token("GiftCard.Amount", _priceFormatter.FormatPrice(giftCard.Amount, true, false)));
+            tokens.Add(new Token("GiftCard.Amount", await _priceFormatter.FormatPriceAsync(giftCard.Amount, true, false)));
             tokens.Add(new Token("GiftCard.CouponCode", giftCard.GiftCardCouponCode));
 
-            var giftCardMesage = !string.IsNullOrWhiteSpace(giftCard.Message) ?
+            var giftCardMessage = !string.IsNullOrWhiteSpace(giftCard.Message) ?
                 HtmlHelper.FormatText(giftCard.Message, false, true, false, false, false, false) : string.Empty;
 
-            tokens.Add(new Token("GiftCard.Message", giftCardMesage, true));
+            tokens.Add(new Token("GiftCard.Message", giftCardMessage, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(giftCard, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(giftCard, tokens);
         }
 
         /// <summary>
-        /// Add User tokens
+        /// Add user tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="UserId">User identifier</param>
-        public virtual void AddUserTokens(IList<Token> tokens, int UserId)
+        /// <param name="userId">User identifier</param>
+        public virtual async Task AddUserTokensAsync(IList<Token> tokens, int userId)
         {
-            if (UserId <= 0)
-                throw new ArgumentOutOfRangeException(nameof(UserId));
+            if (userId <= 0)
+                throw new ArgumentOutOfRangeException(nameof(userId));
 
-            var User = _userService.GetUserById(UserId);
+            var user = await _userService.GetUserByIdAsync(userId);
 
-            AddUserTokens(tokens, User);
+            await AddUserTokensAsync(tokens, user);
         }
 
         /// <summary>
-        /// Add User tokens
+        /// Add user tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="User">User</param>
-        public virtual void AddUserTokens(IList<Token> tokens, User User)
+        /// <param name="user">User</param>
+        public virtual async Task AddUserTokensAsync(IList<Token> tokens, User user)
         {
-            tokens.Add(new Token("User.Email", User.Email));
-            tokens.Add(new Token("User.UserName", User.UserName));
-            tokens.Add(new Token("User.FullName", _userService.GetUserFullName(User)));
-            tokens.Add(new Token("User.FirstName", _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.FirstNameAttribute)));
-            tokens.Add(new Token("User.LastName", _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.LastNameAttribute)));
-            tokens.Add(new Token("User.VatNumber", _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.VatNumberAttribute)));
-            tokens.Add(new Token("User.VatNumberStatus", ((VatNumberStatus)_genericAttributeService.GetAttribute<int>(User, TvProgUserDefaults.VatNumberStatusIdAttribute)).ToString()));
+            tokens.Add(new Token("User.Email", user.Email));
+            tokens.Add(new Token("User.Username", user.Username));
+            tokens.Add(new Token("User.FullName", await _userService.GetUserFullNameAsync(user)));
+            tokens.Add(new Token("User.FirstName", await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.FirstNameAttribute)));
+            tokens.Add(new Token("User.LastName", await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.LastNameAttribute)));
+            tokens.Add(new Token("User.VatNumber", await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.VatNumberAttribute)));
+            tokens.Add(new Token("User.VatNumberStatus", ((VatNumberStatus)await _genericAttributeService.GetAttributeAsync<int>(user, TvProgUserDefaults.VatNumberStatusIdAttribute)).ToString()));
 
-            var customAttributesXml = _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.CustomUserAttributes);
-            tokens.Add(new Token("User.CustomAttributes", _UserAttributeFormatter.FormatAttributes(customAttributesXml), true));
+            var customAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.CustomUserAttributes);
+            tokens.Add(new Token("User.CustomAttributes", await _userAttributeFormatter.FormatAttributesAsync(customAttributesXml), true));
 
             //note: we do not use SEO friendly URLS for these links because we can get errors caused by having .(dot) in the URL (from the email address)
-            var passwordRecoveryUrl = RouteUrl(routeName: "PasswordRecoveryConfirm", routeValues: new { token = _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.PasswordRecoveryTokenAttribute), guid = User.UserGuid });
-            var accountActivationUrl = RouteUrl(routeName: "AccountActivation", routeValues: new { token = _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.AccountActivationTokenAttribute), guid = User.UserGuid });
-            var emailRevalidationUrl = RouteUrl(routeName: "EmailRevalidation", routeValues: new { token = _genericAttributeService.GetAttribute<string>(User, TvProgUserDefaults.EmailRevalidationTokenAttribute), guid = User.UserGuid });
-            var wishlistUrl = RouteUrl(routeName: "Wishlist", routeValues: new { UserGuid = User.UserGuid });
+            var passwordRecoveryUrl = await RouteUrlAsync(routeName: "PasswordRecoveryConfirm", routeValues: new { token = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute), guid = user.UserGuid });
+            var accountActivationUrl = await RouteUrlAsync(routeName: "AccountActivation", routeValues: new { token = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.AccountActivationTokenAttribute), guid = user.UserGuid });
+            var emailRevalidationUrl = await RouteUrlAsync(routeName: "EmailRevalidation", routeValues: new { token = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.EmailRevalidationTokenAttribute), guid = user.UserGuid });
+            var wishlistUrl = await RouteUrlAsync(routeName: "Wishlist", routeValues: new { userGuid = user.UserGuid });
             tokens.Add(new Token("User.PasswordRecoveryURL", passwordRecoveryUrl, true));
             tokens.Add(new Token("User.AccountActivationURL", accountActivationUrl, true));
             tokens.Add(new Token("User.EmailRevalidationURL", emailRevalidationUrl, true));
             tokens.Add(new Token("Wishlist.URLForUser", wishlistUrl, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(User, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(user, tokens);
         }
 
         /// <summary>
@@ -1208,16 +1206,16 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="vendor">Vendor</param>
-        public virtual void AddVendorTokens(IList<Token> tokens, Vendor vendor)
+        public virtual async Task AddVendorTokensAsync(IList<Token> tokens, Vendor vendor)
         {
             tokens.Add(new Token("Vendor.Name", vendor.Name));
             tokens.Add(new Token("Vendor.Email", vendor.Email));
 
-            var vendorAttributesXml = _genericAttributeService.GetAttribute<string>(vendor, TvProgVendorDefaults.VendorAttributes);
-            tokens.Add(new Token("Vendor.VendorAttributes", _vendorAttributeFormatter.FormatAttributes(vendorAttributesXml), true));
+            var vendorAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(vendor, TvProgVendorDefaults.VendorAttributes);
+            tokens.Add(new Token("Vendor.VendorAttributes", await _vendorAttributeFormatter.FormatAttributesAsync(vendorAttributesXml), true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(vendor, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(vendor, tokens);
         }
 
         /// <summary>
@@ -1225,18 +1223,18 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="subscription">Newsletter subscription</param>
-        public virtual void AddNewsLetterSubscriptionTokens(IList<Token> tokens, NewsLetterSubscription subscription)
+        public virtual async Task AddNewsLetterSubscriptionTokensAsync(IList<Token> tokens, NewsLetterSubscription subscription)
         {
             tokens.Add(new Token("NewsLetterSubscription.Email", subscription.Email));
 
-            var activationUrl = RouteUrl(routeName: "NewsletterActivation", routeValues: new { token = subscription.NewsLetterSubscriptionGuid, active = "true" });
+            var activationUrl = await RouteUrlAsync(routeName: "NewsletterActivation", routeValues: new { token = subscription.NewsLetterSubscriptionGuid, active = "true" });
             tokens.Add(new Token("NewsLetterSubscription.ActivationUrl", activationUrl, true));
 
-            var deactivationUrl = RouteUrl(routeName: "NewsletterActivation", routeValues: new { token = subscription.NewsLetterSubscriptionGuid, active = "false" });
+            var deactivationUrl = await RouteUrlAsync(routeName: "NewsletterActivation", routeValues: new { token = subscription.NewsLetterSubscriptionGuid, active = "false" });
             tokens.Add(new Token("NewsLetterSubscription.DeactivationUrl", deactivationUrl, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(subscription, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(subscription, tokens);
         }
 
         /// <summary>
@@ -1244,16 +1242,16 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="productReview">Product review</param>
-        public virtual void AddProductReviewTokens(IList<Token> tokens, ProductReview productReview)
+        public virtual async Task AddProductReviewTokensAsync(IList<Token> tokens, ProductReview productReview)
         {
-            tokens.Add(new Token("ProductReview.ProductName", _productService.GetProductById(productReview.ProductId)?.Name));
+            tokens.Add(new Token("ProductReview.ProductName", (await _productService.GetProductByIdAsync(productReview.ProductId))?.Name));
             tokens.Add(new Token("ProductReview.Title", productReview.Title));
             tokens.Add(new Token("ProductReview.IsApproved", productReview.IsApproved));
             tokens.Add(new Token("ProductReview.ReviewText", productReview.ReviewText));
             tokens.Add(new Token("ProductReview.ReplyText", productReview.ReplyText));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(productReview, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(productReview, tokens);
         }
 
         /// <summary>
@@ -1261,14 +1259,14 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="blogComment">Blog post comment</param>
-        public virtual void AddBlogCommentTokens(IList<Token> tokens, BlogComment blogComment)
+        public virtual async Task AddBlogCommentTokensAsync(IList<Token> tokens, BlogComment blogComment)
         {
-            var blogPost = _blogService.GetBlogPostById(blogComment.BlogPostId);
+            var blogPost = await _blogService.GetBlogPostByIdAsync(blogComment.BlogPostId);
 
             tokens.Add(new Token("BlogComment.BlogPostTitle", blogPost.Title));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(blogComment, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(blogComment, tokens);
         }
 
         /// <summary>
@@ -1276,14 +1274,14 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="newsComment">News comment</param>
-        public virtual void AddNewsCommentTokens(IList<Token> tokens, NewsComment newsComment)
+        public virtual async Task AddNewsCommentTokensAsync(IList<Token> tokens, NewsComment newsComment)
         {
-            var newsItem = _newsService.GetNewsById(newsComment.NewsItemId);
+            var newsItem = await _newsService.GetNewsByIdAsync(newsComment.NewsItemId);
 
             tokens.Add(new Token("NewsComment.NewsTitle", newsItem.Title));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(newsComment, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(newsComment, tokens);
         }
 
         /// <summary>
@@ -1292,19 +1290,19 @@ namespace TVProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="product">Product</param>
         /// <param name="languageId">Language identifier</param>
-        public virtual void AddProductTokens(IList<Token> tokens, Product product, int languageId)
+        public virtual async Task AddProductTokensAsync(IList<Token> tokens, Product product, int languageId)
         {
             tokens.Add(new Token("Product.ID", product.Id));
-            tokens.Add(new Token("Product.Name", _localizationService.GetLocalized(product, x => x.Name, languageId)));
-            tokens.Add(new Token("Product.ShortDescription", _localizationService.GetLocalized(product, x => x.ShortDescription, languageId), true));
+            tokens.Add(new Token("Product.Name", await _localizationService.GetLocalizedAsync(product, x => x.Name, languageId)));
+            tokens.Add(new Token("Product.ShortDescription", await _localizationService.GetLocalizedAsync(product, x => x.ShortDescription, languageId), true));
             tokens.Add(new Token("Product.SKU", product.Sku));
-            tokens.Add(new Token("Product.StockQuantity", _productService.GetTotalStockQuantity(product)));
+            tokens.Add(new Token("Product.StockQuantity", await _productService.GetTotalStockQuantityAsync(product)));
 
-            var productUrl = RouteUrl(routeName: "Product", routeValues: new { SeName = _urlRecordService.GetSeName(product) });
+            var productUrl = await RouteUrlAsync(routeName: "Product", routeValues: new { SeName = await _urlRecordService.GetSeNameAsync(product) });
             tokens.Add(new Token("Product.ProductURLForUser", productUrl, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(product, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(product, tokens);
         }
 
         /// <summary>
@@ -1313,26 +1311,26 @@ namespace TVProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="combination">Product attribute combination</param>
         /// <param name="languageId">Language identifier</param>
-        public virtual void AddAttributeCombinationTokens(IList<Token> tokens, ProductAttributeCombination combination, int languageId)
+        public virtual async Task AddAttributeCombinationTokensAsync(IList<Token> tokens, ProductAttributeCombination combination, int languageId)
         {
             //attributes
             //we cannot inject IProductAttributeFormatter into constructor because it'll cause circular references.
             //that's why we resolve it here this way
             var productAttributeFormatter = EngineContext.Current.Resolve<IProductAttributeFormatter>();
 
-            var product = _productService.GetProductById(combination.ProductId);
+            var product = await _productService.GetProductByIdAsync(combination.ProductId);
 
-            var attributes = productAttributeFormatter.FormatAttributes(product,
+            var attributes = await productAttributeFormatter.FormatAttributesAsync(product,
                 combination.AttributesXml,
-                _workContext.CurrentUser,
+                await _workContext.GetCurrentUserAsync(),
                 renderPrices: false);
 
             tokens.Add(new Token("AttributeCombination.Formatted", attributes, true));
-            tokens.Add(new Token("AttributeCombination.SKU", _productService.FormatSku(_productService.GetProductById(combination.ProductId), combination.AttributesXml)));
+            tokens.Add(new Token("AttributeCombination.SKU", await _productService.FormatSkuAsync(await _productService.GetProductByIdAsync(combination.ProductId), combination.AttributesXml)));
             tokens.Add(new Token("AttributeCombination.StockQuantity", combination.StockQuantity));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(combination, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(combination, tokens);
         }
 
         /// <summary>
@@ -1342,7 +1340,7 @@ namespace TVProgViewer.Services.Messages
         /// <param name="forumTopic">Forum topic</param>
         /// <param name="friendlyForumTopicPageIndex">Friendly (starts with 1) forum topic page to use for URL generation</param>
         /// <param name="appendedPostIdentifierAnchor">Forum post identifier</param>
-        public virtual void AddForumTopicTokens(IList<Token> tokens, ForumTopic forumTopic,
+        public virtual async Task AddForumTopicTokensAsync(IList<Token> tokens, ForumTopic forumTopic,
             int? friendlyForumTopicPageIndex = null, int? appendedPostIdentifierAnchor = null)
         {
             //attributes
@@ -1352,16 +1350,16 @@ namespace TVProgViewer.Services.Messages
 
             string topicUrl;
             if (friendlyForumTopicPageIndex.HasValue && friendlyForumTopicPageIndex.Value > 1)
-                topicUrl = RouteUrl(routeName: "TopicSlugPaged", routeValues: new { id = forumTopic.Id, slug = forumService.GetTopicSeName(forumTopic), pageNumber = friendlyForumTopicPageIndex.Value });
+                topicUrl = await RouteUrlAsync(routeName: "TopicSlugPaged", routeValues: new { id = forumTopic.Id, slug = await forumService.GetTopicSeNameAsync(forumTopic), pageNumber = friendlyForumTopicPageIndex.Value });
             else
-                topicUrl = RouteUrl(routeName: "TopicSlug", routeValues: new { id = forumTopic.Id, slug = forumService.GetTopicSeName(forumTopic) });
+                topicUrl = await RouteUrlAsync(routeName: "TopicSlug", routeValues: new { id = forumTopic.Id, slug = await forumService.GetTopicSeNameAsync(forumTopic) });
             if (appendedPostIdentifierAnchor.HasValue && appendedPostIdentifierAnchor.Value > 0)
                 topicUrl = $"{topicUrl}#{appendedPostIdentifierAnchor.Value}";
             tokens.Add(new Token("Forums.TopicURL", topicUrl, true));
             tokens.Add(new Token("Forums.TopicName", forumTopic.Subject));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(forumTopic, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(forumTopic, tokens);
         }
 
         /// <summary>
@@ -1369,20 +1367,20 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="forumPost">Forum post</param>
-        public virtual void AddForumPostTokens(IList<Token> tokens, ForumPost forumPost)
+        public virtual async Task AddForumPostTokensAsync(IList<Token> tokens, ForumPost forumPost)
         {
             //attributes
             //we cannot inject IForumService into constructor because it'll cause circular references.
             //that's why we resolve it here this way
             var forumService = EngineContext.Current.Resolve<IForumService>();
 
-            var User = _userService.GetUserById(forumPost.UserId);
+            var user = await _userService.GetUserByIdAsync(forumPost.UserId);
 
-            tokens.Add(new Token("Forums.PostAuthor", _userService.FormatUsername(User)));
+            tokens.Add(new Token("Forums.PostAuthor", await _userService.FormatUsernameAsync(user)));
             tokens.Add(new Token("Forums.PostBody", forumService.FormatPostText(forumPost), true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(forumPost, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(forumPost, tokens);
         }
 
         /// <summary>
@@ -1390,19 +1388,19 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="forum">Forum</param>
-        public virtual void AddForumTokens(IList<Token> tokens, Forum forum)
+        public virtual async Task AddForumTokensAsync(IList<Token> tokens, Forum forum)
         {
             //attributes
             //we cannot inject IForumService into constructor because it'll cause circular references.
             //that's why we resolve it here this way
             var forumService = EngineContext.Current.Resolve<IForumService>();
 
-            var forumUrl = RouteUrl(routeName: "ForumSlug", routeValues: new { id = forum.Id, slug = forumService.GetForumSeName(forum) });
+            var forumUrl = await RouteUrlAsync(routeName: "ForumSlug", routeValues: new { id = forum.Id, slug = await forumService.GetForumSeNameAsync(forum) });
             tokens.Add(new Token("Forums.ForumURL", forumUrl, true));
             tokens.Add(new Token("Forums.ForumName", forum.Name));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(forum, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(forum, tokens);
         }
 
         /// <summary>
@@ -1410,7 +1408,7 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="privateMessage">Private message</param>
-        public virtual void AddPrivateMessageTokens(IList<Token> tokens, PrivateMessage privateMessage)
+        public virtual async Task AddPrivateMessageTokensAsync(IList<Token> tokens, PrivateMessage privateMessage)
         {
             //attributes
             //we cannot inject IForumService into constructor because it'll cause circular references.
@@ -1421,7 +1419,7 @@ namespace TVProgViewer.Services.Messages
             tokens.Add(new Token("PrivateMessage.Text", forumService.FormatPrivateMessageText(privateMessage), true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(privateMessage, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(privateMessage, tokens);
         }
 
         /// <summary>
@@ -1429,28 +1427,28 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="subscription">BackInStock subscription</param>
-        public virtual void AddBackInStockTokens(IList<Token> tokens, BackInStockSubscription subscription)
+        public virtual async Task AddBackInStockTokensAsync(IList<Token> tokens, BackInStockSubscription subscription)
         {
-            var product = _productService.GetProductById(subscription.ProductId);
+            var product = await _productService.GetProductByIdAsync(subscription.ProductId);
 
             tokens.Add(new Token("BackInStockSubscription.ProductName", product.Name));
-            var productUrl = RouteUrl(subscription.StoreId, "Product", new { SeName = _urlRecordService.GetSeName(product) });
+            var productUrl = await RouteUrlAsync(subscription.StoreId, "Product", new { SeName = await _urlRecordService.GetSeNameAsync(product) });
             tokens.Add(new Token("BackInStockSubscription.ProductUrl", productUrl, true));
 
             //event notification
-            _eventPublisher.EntityTokensAdded(subscription, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(subscription, tokens);
         }
 
         /// <summary>
         /// Get collection of allowed (supported) message tokens for campaigns
         /// </summary>
         /// <returns>Collection of allowed (supported) message tokens for campaigns</returns>
-        public virtual IEnumerable<string> GetListOfCampaignAllowedTokens()
+        public virtual async Task<IEnumerable<string>> GetListOfCampaignAllowedTokensAsync()
         {
             var additionalTokens = new CampaignAdditionalTokensAddedEvent();
-            _eventPublisher.Publish(additionalTokens);
+            await _eventPublisher.PublishAsync(additionalTokens);
 
-            var allowedTokens = GetListOfAllowedTokens(new[] { TokenGroupNames.StoreTokens, TokenGroupNames.SubscriptionTokens }).ToList();
+            var allowedTokens = (await GetListOfAllowedTokensAsync(new[] { TokenGroupNames.StoreTokens, TokenGroupNames.SubscriptionTokens })).ToList();
             allowedTokens.AddRange(additionalTokens.AdditionalTokens);
 
             return allowedTokens.Distinct();
@@ -1461,10 +1459,10 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokenGroups">Collection of token groups; pass null to get all available tokens</param>
         /// <returns>Collection of allowed message tokens</returns>
-        public virtual IEnumerable<string> GetListOfAllowedTokens(IEnumerable<string> tokenGroups = null)
+        public virtual async Task<IEnumerable<string>> GetListOfAllowedTokensAsync(IEnumerable<string> tokenGroups = null)
         {
             var additionalTokens = new AdditionalTokensAddedEvent();
-            _eventPublisher.Publish(additionalTokens);
+            await _eventPublisher.PublishAsync(additionalTokens);
 
             var allowedTokens = AllowedTokens.Where(x => tokenGroups == null || tokenGroups.Contains(x.Key))
                 .SelectMany(x => x.Value).ToList();
@@ -1482,107 +1480,67 @@ namespace TVProgViewer.Services.Messages
         public virtual IEnumerable<string> GetTokenGroups(MessageTemplate messageTemplate)
         {
             //groups depend on which tokens are added at the appropriate methods in IWorkflowMessageService
-            switch (messageTemplate.Name)
+            return messageTemplate.Name switch
             {
-                case MessageTemplateSystemNames.UserRegisteredNotification:
-                case MessageTemplateSystemNames.UserWelcomeMessage:
-                case MessageTemplateSystemNames.UserEmailValidationMessage:
-                case MessageTemplateSystemNames.UserEmailRevalidationMessage:
-                case MessageTemplateSystemNames.UserPasswordRecoveryMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens };
+                MessageTemplateSystemNames.UserRegisteredNotification or
+                MessageTemplateSystemNames.UserWelcomeMessage or
+                MessageTemplateSystemNames.UserEmailValidationMessage or
+                MessageTemplateSystemNames.UserEmailRevalidationMessage or
+                MessageTemplateSystemNames.UserPasswordRecoveryMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens },
 
-                case MessageTemplateSystemNames.OrderPlacedVendorNotification:
-                case MessageTemplateSystemNames.OrderPlacedStoreOwnerNotification:
-                case MessageTemplateSystemNames.OrderPlacedAffiliateNotification:
-                case MessageTemplateSystemNames.OrderPaidStoreOwnerNotification:
-                case MessageTemplateSystemNames.OrderPaidUserNotification:
-                case MessageTemplateSystemNames.OrderPaidVendorNotification:
-                case MessageTemplateSystemNames.OrderPaidAffiliateNotification:
-                case MessageTemplateSystemNames.OrderPlacedUserNotification:
-                case MessageTemplateSystemNames.OrderCompletedUserNotification:
-                case MessageTemplateSystemNames.OrderCancelledUserNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens };
+                MessageTemplateSystemNames.OrderPlacedVendorNotification or
+                MessageTemplateSystemNames.OrderPlacedStoreOwnerNotification or
+                MessageTemplateSystemNames.OrderPlacedAffiliateNotification or
+                MessageTemplateSystemNames.OrderPaidStoreOwnerNotification or
+                MessageTemplateSystemNames.OrderPaidUserNotification or
+                MessageTemplateSystemNames.OrderPaidVendorNotification or
+                MessageTemplateSystemNames.OrderPaidAffiliateNotification or
+                MessageTemplateSystemNames.OrderPlacedUserNotification or
+                MessageTemplateSystemNames.OrderCompletedUserNotification or
+                MessageTemplateSystemNames.OrderCancelledUserNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens },
 
-                case MessageTemplateSystemNames.ShipmentSentUserNotification:
-                case MessageTemplateSystemNames.ShipmentDeliveredUserNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ShipmentTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens };
+                MessageTemplateSystemNames.ShipmentSentUserNotification or
+                MessageTemplateSystemNames.ShipmentDeliveredUserNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ShipmentTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens },
 
-                case MessageTemplateSystemNames.OrderRefundedStoreOwnerNotification:
-                case MessageTemplateSystemNames.OrderRefundedUserNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.RefundedOrderTokens, TokenGroupNames.UserTokens };
+                MessageTemplateSystemNames.OrderRefundedStoreOwnerNotification or
+                MessageTemplateSystemNames.OrderRefundedUserNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.RefundedOrderTokens, TokenGroupNames.UserTokens },
 
-                case MessageTemplateSystemNames.NewOrderNoteAddedUserNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderNoteTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens };
+                MessageTemplateSystemNames.NewOrderNoteAddedUserNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderNoteTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens },
 
-                case MessageTemplateSystemNames.RecurringPaymentCancelledStoreOwnerNotification:
-                case MessageTemplateSystemNames.RecurringPaymentCancelledUserNotification:
-                case MessageTemplateSystemNames.RecurringPaymentFailedUserNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens, TokenGroupNames.RecurringPaymentTokens };
+                MessageTemplateSystemNames.RecurringPaymentCancelledStoreOwnerNotification or
+                MessageTemplateSystemNames.RecurringPaymentCancelledUserNotification or
+                MessageTemplateSystemNames.RecurringPaymentFailedUserNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens, TokenGroupNames.RecurringPaymentTokens },
 
-                case MessageTemplateSystemNames.NewsletterSubscriptionActivationMessage:
-                case MessageTemplateSystemNames.NewsletterSubscriptionDeactivationMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.SubscriptionTokens };
+                MessageTemplateSystemNames.NewsletterSubscriptionActivationMessage or
+                MessageTemplateSystemNames.NewsletterSubscriptionDeactivationMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.SubscriptionTokens },
 
-                case MessageTemplateSystemNames.EmailAFriendMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.ProductTokens, TokenGroupNames.EmailAFriendTokens };
+                MessageTemplateSystemNames.EmailAFriendMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.ProductTokens, TokenGroupNames.EmailAFriendTokens },
+                MessageTemplateSystemNames.WishlistToFriendMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.WishlistToFriendTokens },
 
-                case MessageTemplateSystemNames.WishlistToFriendMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.WishlistToFriendTokens };
+                MessageTemplateSystemNames.NewReturnRequestStoreOwnerNotification or
+                MessageTemplateSystemNames.NewReturnRequestUserNotification or
+                MessageTemplateSystemNames.ReturnRequestStatusChangedUserNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens, TokenGroupNames.ReturnRequestTokens },
 
-                case MessageTemplateSystemNames.NewReturnRequestStoreOwnerNotification:
-                case MessageTemplateSystemNames.NewReturnRequestUserNotification:
-                case MessageTemplateSystemNames.ReturnRequestStatusChangedUserNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.OrderTokens, TokenGroupNames.UserTokens, TokenGroupNames.ReturnRequestTokens };
+                MessageTemplateSystemNames.NewForumTopicMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ForumTopicTokens, TokenGroupNames.ForumTokens, TokenGroupNames.UserTokens },
+                MessageTemplateSystemNames.NewForumPostMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ForumPostTokens, TokenGroupNames.ForumTopicTokens, TokenGroupNames.ForumTokens, TokenGroupNames.UserTokens },
+                MessageTemplateSystemNames.PrivateMessageNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.PrivateMessageTokens, TokenGroupNames.UserTokens },
+                MessageTemplateSystemNames.NewVendorAccountApplyStoreOwnerNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.VendorTokens },
+                MessageTemplateSystemNames.VendorInformationChangeNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.VendorTokens },
+                MessageTemplateSystemNames.GiftCardNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.GiftCardTokens },
 
-                case MessageTemplateSystemNames.NewForumTopicMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ForumTopicTokens, TokenGroupNames.ForumTokens, TokenGroupNames.UserTokens };
+                MessageTemplateSystemNames.ProductReviewStoreOwnerNotification or
+                MessageTemplateSystemNames.ProductReviewReplyUserNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ProductReviewTokens, TokenGroupNames.UserTokens },
 
-                case MessageTemplateSystemNames.NewForumPostMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ForumPostTokens, TokenGroupNames.ForumTopicTokens, TokenGroupNames.ForumTokens, TokenGroupNames.UserTokens };
-
-                case MessageTemplateSystemNames.PrivateMessageNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.PrivateMessageTokens, TokenGroupNames.UserTokens };
-
-                case MessageTemplateSystemNames.NewVendorAccountApplyStoreOwnerNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.VendorTokens };
-
-                case MessageTemplateSystemNames.VendorInformationChangeNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.VendorTokens };
-
-                case MessageTemplateSystemNames.GiftCardNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.GiftCardTokens };
-
-                case MessageTemplateSystemNames.ProductReviewStoreOwnerNotification:
-                case MessageTemplateSystemNames.ProductReviewReplyUserNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ProductReviewTokens, TokenGroupNames.UserTokens };
-
-                case MessageTemplateSystemNames.QuantityBelowStoreOwnerNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ProductTokens };
-
-                case MessageTemplateSystemNames.QuantityBelowAttributeCombinationStoreOwnerNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ProductTokens, TokenGroupNames.AttributeCombinationTokens };
-
-                case MessageTemplateSystemNames.NewVatSubmittedStoreOwnerNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.VatValidation };
-
-                case MessageTemplateSystemNames.BlogCommentNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.BlogCommentTokens, TokenGroupNames.UserTokens };
-
-                case MessageTemplateSystemNames.NewsCommentNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.NewsCommentTokens, TokenGroupNames.UserTokens };
-
-                case MessageTemplateSystemNames.BackInStockNotification:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.ProductBackInStockTokens };
-
-                case MessageTemplateSystemNames.ContactUsMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ContactUs };
-
-                case MessageTemplateSystemNames.ContactVendorMessage:
-                    return new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ContactVendor };
-
-                default:
-                    return Array.Empty<string>();
-            }
+                MessageTemplateSystemNames.QuantityBelowStoreOwnerNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ProductTokens },
+                MessageTemplateSystemNames.QuantityBelowAttributeCombinationStoreOwnerNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ProductTokens, TokenGroupNames.AttributeCombinationTokens },
+                MessageTemplateSystemNames.NewVatSubmittedStoreOwnerNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.VatValidation },
+                MessageTemplateSystemNames.BlogCommentNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.BlogCommentTokens, TokenGroupNames.UserTokens },
+                MessageTemplateSystemNames.NewsCommentNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.NewsCommentTokens, TokenGroupNames.UserTokens },
+                MessageTemplateSystemNames.BackInStockNotification => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.UserTokens, TokenGroupNames.ProductBackInStockTokens },
+                MessageTemplateSystemNames.ContactUsMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ContactUs },
+                MessageTemplateSystemNames.ContactVendorMessage => new[] { TokenGroupNames.StoreTokens, TokenGroupNames.ContactVendor },
+                _ => Array.Empty<string>(),
+            };
         }
 
         #endregion

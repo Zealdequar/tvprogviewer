@@ -8,6 +8,7 @@ using TVProgViewer.Services.Forums;
 using TVProgViewer.Services.Helpers;
 using TVProgViewer.WebUI.Models.Common;
 using TVProgViewer.WebUI.Models.PrivateMessages;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Factories
 {
@@ -57,7 +58,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="page">Number of items page; pass null to disable paging</param>
         /// <param name="tab">Tab name</param>
         /// <returns>Private message index model</returns>
-        public virtual PrivateMessageIndexModel PreparePrivateMessageIndexModel(int? page, string tab)
+        public virtual Task<PrivateMessageIndexModel> PreparePrivateMessageIndexModelAsync(int? page, string tab)
         {
             var inboxPage = 0;
             var sentItemsPage = 0;
@@ -92,7 +93,7 @@ namespace TVProgViewer.WebUI.Factories
                 SentItemsTabSelected = sentItemsTabSelected
             };
 
-            return model;
+            return Task.FromResult(model);
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="page">Number of items page</param>
         /// <param name="tab">Tab name</param>
         /// <returns>Private message list model</returns>
-        public virtual PrivateMessageListModel PrepareInboxModel(int page, string tab)
+        public virtual async Task<PrivateMessageListModel> PrepareInboxModelAsync(int page, string tab)
         {
             if (page > 0)
             {
@@ -112,10 +113,10 @@ namespace TVProgViewer.WebUI.Factories
 
             var messages = new List<PrivateMessageModel>();
 
-            var list = _forumService.GetAllPrivateMessages(_storeContext.CurrentStore.Id,
-                0, _workContext.CurrentUser.Id, null, null, false, string.Empty, page, pageSize);
+            var list = await _forumService.GetAllPrivateMessagesAsync((await _storeContext.GetCurrentStoreAsync()).Id,
+                0, (await _workContext.GetCurrentUserAsync()).Id, null, null, false, string.Empty, page, pageSize);
             foreach (var pm in list)
-                messages.Add(PreparePrivateMessageModel(pm));
+                messages.Add(await PreparePrivateMessageModelAsync(pm));
 
             var pagerModel = new PagerModel
             {
@@ -143,7 +144,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="page">Number of items page</param>
         /// <param name="tab">Tab name</param>
         /// <returns>Private message list model</returns>
-        public virtual PrivateMessageListModel PrepareSentModel(int page, string tab)
+        public virtual async Task<PrivateMessageListModel> PrepareSentModelAsync(int page, string tab)
         {
             if (page > 0)
             {
@@ -154,10 +155,10 @@ namespace TVProgViewer.WebUI.Factories
 
             var messages = new List<PrivateMessageModel>();
 
-            var list = _forumService.GetAllPrivateMessages(_storeContext.CurrentStore.Id,
-                _workContext.CurrentUser.Id, 0, null, false, null, string.Empty, page, pageSize);
+            var list = await _forumService.GetAllPrivateMessagesAsync((await _storeContext.GetCurrentStoreAsync()).Id,
+                (await _workContext.GetCurrentUserAsync()).Id, 0, null, false, null, string.Empty, page, pageSize);
             foreach (var pm in list)
-                messages.Add(PreparePrivateMessageModel(pm));
+                messages.Add(await PreparePrivateMessageModelAsync(pm));
 
             var pagerModel = new PagerModel
             {
@@ -185,7 +186,7 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="userTo">User, recipient of the message</param>
         /// <param name="replyToPM">Private message, pass if reply to a previous message is need</param>
         /// <returns>Send private message model</returns>
-        public virtual SendPrivateMessageModel PrepareSendPrivateMessageModel(User userTo, PrivateMessage replyToPM)
+        public virtual async Task<SendPrivateMessageModel> PrepareSendPrivateMessageModelAsync(User userTo, PrivateMessage replyToPM)
         {
             if (userTo == null)
                 throw new ArgumentNullException(nameof(userTo));
@@ -193,15 +194,15 @@ namespace TVProgViewer.WebUI.Factories
             var model = new SendPrivateMessageModel
             {
                 ToUserId = userTo.Id,
-                UserToName = _userService.FormatUsername(userTo),
-                AllowViewingToProfile = _userSettings.AllowViewingProfiles && !_userService.IsGuest(userTo)
+                UserToName = await _userService.FormatUsernameAsync(userTo),
+                AllowViewingToProfile = _userSettings.AllowViewingProfiles && !await _userService.IsGuestAsync(userTo)
             };
 
             if (replyToPM == null)
                 return model;
 
-            if (replyToPM.ToUserId == _workContext.CurrentUser.Id ||
-                replyToPM.FromUserId == _workContext.CurrentUser.Id)
+            if (replyToPM.ToUserId == (await _workContext.GetCurrentUserAsync()).Id ||
+                replyToPM.FromUserId == (await _workContext.GetCurrentUserAsync()).Id)
             {
                 model.ReplyToMessageId = replyToPM.Id;
                 model.Subject = $"Re: {replyToPM.Subject}";
@@ -215,26 +216,26 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pm">Private message</param>
         /// <returns>Private message model</returns>
-        public virtual PrivateMessageModel PreparePrivateMessageModel(PrivateMessage pm)
+        public virtual async Task<PrivateMessageModel> PreparePrivateMessageModelAsync(PrivateMessage pm)
         {
             if (pm == null)
                 throw new ArgumentNullException(nameof(pm));
 
-            var fromUser = _userService.GetUserById(pm.FromUserId);
-            var toUser = _userService.GetUserById(pm.ToUserId);
+            var fromUser = await _userService.GetUserByIdAsync(pm.FromUserId);
+            var toUser = await _userService.GetUserByIdAsync(pm.ToUserId);
 
             var model = new PrivateMessageModel
             {
                 Id = pm.Id,
                 FromUserId = pm.FromUserId,
-                UserFromName = _userService.FormatUsername(fromUser),
-                AllowViewingFromProfile = _userSettings.AllowViewingProfiles && !_userService.IsGuest(fromUser),
+                UserFromName = await _userService.FormatUsernameAsync(fromUser),
+                AllowViewingFromProfile = _userSettings.AllowViewingProfiles && !await _userService.IsGuestAsync(fromUser),
                 ToUserId = pm.ToUserId,
-                UserToName = _userService.FormatUsername(toUser),
-                AllowViewingToProfile = _userSettings.AllowViewingProfiles && !_userService.IsGuest(toUser),
+                UserToName = await _userService.FormatUsernameAsync(toUser),
+                AllowViewingToProfile = _userSettings.AllowViewingProfiles && !await _userService.IsGuestAsync(toUser),
                 Subject = pm.Subject,
                 Message = _forumService.FormatPrivateMessageText(pm),
-                CreatedOn = _dateTimeHelper.ConvertToUserTime(pm.CreatedOnUtc, DateTimeKind.Utc),
+                CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(pm.CreatedOnUtc, DateTimeKind.Utc),
                 IsRead = pm.IsRead,
             };
 

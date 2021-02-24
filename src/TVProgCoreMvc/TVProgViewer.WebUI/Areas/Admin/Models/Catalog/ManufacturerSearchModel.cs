@@ -15,6 +15,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Catalog
         public ManufacturerSearchModel()
         {
             AvailableStores = new List<SelectListItem>();
+            AvailablePublishedOptions = new List<SelectListItem>();
         }
 
         #endregion
@@ -28,6 +29,11 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Catalog
         public int SearchStoreId { get; set; }
 
         public IList<SelectListItem> AvailableStores { get; set; }
+
+        [TvProgResourceDisplayName("Admin.Catalog.Manufacturers.List.SearchPublished")]
+        public int SearchPublishedId { get; set; }
+
+        public IList<SelectListItem> AvailablePublishedOptions { get; set; }
 
         public bool HideStoresList { get; set; }
 

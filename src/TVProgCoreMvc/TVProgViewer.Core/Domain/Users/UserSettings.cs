@@ -38,6 +38,21 @@ namespace TVProgViewer.Core.Domain.Users
         public string UsernameValidationRule { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether phone number will be validated (when registering or changing on the 'My Account' page)
+        /// </summary>
+        public bool PhoneNumberValidationEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether phone number will be validated using regex (when registering or changing on the 'My Account' page)
+        /// </summary>
+        public bool PhoneNumberValidationUseRegex { get; set; }
+
+        /// <summary>
+        /// Gets or sets a phone number validation rule
+        /// </summary>
+        public string PhoneNumberValidationRule { get; set; }
+
+        /// <summary>
         /// Default password format for Users
         /// </summary>
         public PasswordFormat DefaultPasswordFormat { get; set; }

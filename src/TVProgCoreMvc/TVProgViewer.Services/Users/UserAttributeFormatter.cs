@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Html;
@@ -14,8 +15,8 @@ namespace TVProgViewer.Services.Users
     {
         #region Fields
 
-        private readonly IUserAttributeParser _UserAttributeParser;
-        private readonly IUserAttributeService _UserAttributeService;
+        private readonly IUserAttributeParser _userAttributeParser;
+        private readonly IUserAttributeService _userAttributeService;
         private readonly ILocalizationService _localizationService;
         private readonly IWorkContext _workContext;
 
@@ -23,13 +24,13 @@ namespace TVProgViewer.Services.Users
 
         #region Ctor
 
-        public UserAttributeFormatter(IUserAttributeParser UserAttributeParser,
-            IUserAttributeService UserAttributeService,
+        public UserAttributeFormatter(IUserAttributeParser userAttributeParser,
+            IUserAttributeService userAttributeService,
             ILocalizationService localizationService,
             IWorkContext workContext)
         {
-            _UserAttributeParser = UserAttributeParser;
-            _UserAttributeService = UserAttributeService;
+            _userAttributeParser = userAttributeParser;
+            _userAttributeService = userAttributeService;
             _localizationService = localizationService;
             _workContext = workContext;
         }
@@ -45,15 +46,15 @@ namespace TVProgViewer.Services.Users
         /// <param name="separator">Separator</param>
         /// <param name="htmlEncode">A value indicating whether to encode (HTML) values</param>
         /// <returns>Attributes</returns>
-        public virtual string FormatAttributes(string attributesXml, string separator = "<br />", bool htmlEncode = true)
+        public virtual async Task<string> FormatAttributesAsync(string attributesXml, string separator = "<br />", bool htmlEncode = true)
         {
             var result = new StringBuilder();
 
-            var attributes = _UserAttributeParser.ParseUserAttributes(attributesXml);
+            var attributes = await _userAttributeParser.ParseUserAttributesAsync(attributesXml);
             for (var i = 0; i < attributes.Count; i++)
             {
                 var attribute = attributes[i];
-                var valuesStr = _UserAttributeParser.ParseValues(attributesXml, attribute.Id);
+                var valuesStr = _userAttributeParser.ParseValues(attributesXml, attribute.Id);
                 for (var j = 0; j < valuesStr.Count; j++)
                 {
                     var valueStr = valuesStr[j];
@@ -64,7 +65,7 @@ namespace TVProgViewer.Services.Users
                         if (attribute.AttributeControlType == AttributeControlType.MultilineTextbox)
                         {
                             //multiline textbox
-                            var attributeName = _localizationService.GetLocalized(attribute, a => a.Name, _workContext.WorkingLanguage.Id);
+                            var attributeName = await _localizationService.GetLocalizedAsync(attribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id);
                             //encode (if required)
                             if (htmlEncode)
                                 attributeName = WebUtility.HtmlEncode(attributeName);
@@ -74,12 +75,12 @@ namespace TVProgViewer.Services.Users
                         else if (attribute.AttributeControlType == AttributeControlType.FileUpload)
                         {
                             //file upload
-                            //not supported for User attributes
+                            //not supported for user attributes
                         }
                         else
                         {
                             //other attributes (textbox, datepicker)
-                            formattedAttribute = $"{_localizationService.GetLocalized(attribute, a => a.Name, _workContext.WorkingLanguage.Id)}: {valueStr}";
+                            formattedAttribute = $"{await _localizationService.GetLocalizedAsync(attribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id)}: {valueStr}";
                             //encode (if required)
                             if (htmlEncode)
                                 formattedAttribute = WebUtility.HtmlEncode(formattedAttribute);
@@ -89,10 +90,10 @@ namespace TVProgViewer.Services.Users
                     {
                         if (int.TryParse(valueStr, out var attributeValueId))
                         {
-                            var attributeValue = _UserAttributeService.GetUserAttributeValueById(attributeValueId);
+                            var attributeValue = await _userAttributeService.GetUserAttributeValueByIdAsync(attributeValueId);
                             if (attributeValue != null)
                             {
-                                formattedAttribute = $"{_localizationService.GetLocalized(attribute, a => a.Name, _workContext.WorkingLanguage.Id)}: {_localizationService.GetLocalized(attributeValue, a => a.Name, _workContext.WorkingLanguage.Id)}";
+                                formattedAttribute = $"{await _localizationService.GetLocalizedAsync(attribute, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id)}: {await _localizationService.GetLocalizedAsync(attributeValue, a => a.Name, (await _workContext.GetWorkingLanguageAsync()).Id)}";
                             }
                             //encode (if required)
                             if (htmlEncode)
@@ -100,7 +101,7 @@ namespace TVProgViewer.Services.Users
                         }
                     }
 
-                    if (string.IsNullOrEmpty(formattedAttribute)) 
+                    if (string.IsNullOrEmpty(formattedAttribute))
                         continue;
 
                     if (i != 0 || j != 0)

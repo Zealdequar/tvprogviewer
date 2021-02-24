@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Services.Localization;
@@ -15,17 +16,17 @@ namespace TVProgViewer.Services.Users
     {
         #region Fields
 
-        private readonly IUserAttributeService _UserAttributeService;
+        private readonly IUserAttributeService _userAttributeService;
         private readonly ILocalizationService _localizationService;
 
         #endregion
 
         #region Ctor
 
-        public UserAttributeParser(IUserAttributeService UserAttributeService,
+        public UserAttributeParser(IUserAttributeService userAttributeService,
             ILocalizationService localizationService)
         {
-            _UserAttributeService = UserAttributeService;
+            _userAttributeService = userAttributeService;
             _localizationService = localizationService;
         }
 
@@ -34,10 +35,10 @@ namespace TVProgViewer.Services.Users
         #region Utilities
 
         /// <summary>
-        /// Gets selected User attribute identifiers
+        /// Gets selected user attribute identifiers
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <returns>Selected User attribute identifiers</returns>
+        /// <returns>Selected user attribute identifiers</returns>
         protected virtual IList<int> ParseUserAttributeIds(string attributesXml)
         {
             var ids = new List<int>();
@@ -51,14 +52,12 @@ namespace TVProgViewer.Services.Users
 
                 foreach (XmlNode node in xmlDoc.SelectNodes(@"//Attributes/UserAttribute"))
                 {
-                    if (node.Attributes?["ID"] == null) 
+                    if (node.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node.Attributes["ID"].InnerText.Trim();
                     if (int.TryParse(str1, out var id))
-                    {
                         ids.Add(id);
-                    }
                 }
             }
             catch (Exception exc)
@@ -74,11 +73,11 @@ namespace TVProgViewer.Services.Users
         #region Methods
 
         /// <summary>
-        /// Gets selected User attributes
+        /// Gets selected user attributes
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <returns>Selected User attributes</returns>
-        public virtual IList<UserAttribute> ParseUserAttributes(string attributesXml)
+        /// <returns>Selected user attributes</returns>
+        public virtual async Task<IList<UserAttribute>> ParseUserAttributesAsync(string attributesXml)
         {
             var result = new List<UserAttribute>();
             if (string.IsNullOrEmpty(attributesXml))
@@ -87,28 +86,26 @@ namespace TVProgViewer.Services.Users
             var ids = ParseUserAttributeIds(attributesXml);
             foreach (var id in ids)
             {
-                var attribute = _UserAttributeService.GetUserAttributeById(id);
+                var attribute = await _userAttributeService.GetUserAttributeByIdAsync(id);
                 if (attribute != null)
-                {
                     result.Add(attribute);
-                }
             }
 
             return result;
         }
 
         /// <summary>
-        /// Get User attribute values
+        /// Get user attribute values
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>User attribute values</returns>
-        public virtual IList<UserAttributeValue> ParseUserAttributeValues(string attributesXml)
+        public virtual async Task<IList<UserAttributeValue>> ParseUserAttributeValuesAsync(string attributesXml)
         {
             var values = new List<UserAttributeValue>();
             if (string.IsNullOrEmpty(attributesXml))
                 return values;
 
-            var attributes = ParseUserAttributes(attributesXml);
+            var attributes = await ParseUserAttributesAsync(attributesXml);
             foreach (var attribute in attributes)
             {
                 if (!attribute.ShouldHaveValues())
@@ -117,13 +114,13 @@ namespace TVProgViewer.Services.Users
                 var valuesStr = ParseValues(attributesXml, attribute.Id);
                 foreach (var valueStr in valuesStr)
                 {
-                    if (string.IsNullOrEmpty(valueStr)) 
+                    if (string.IsNullOrEmpty(valueStr))
                         continue;
 
-                    if (!int.TryParse(valueStr, out var id)) 
+                    if (!int.TryParse(valueStr, out var id))
                         continue;
 
-                    var value = _UserAttributeService.GetUserAttributeValueById(id);
+                    var value = await _userAttributeService.GetUserAttributeValueByIdAsync(id);
                     if (value != null)
                         values.Add(value);
                 }
@@ -133,12 +130,12 @@ namespace TVProgViewer.Services.Users
         }
 
         /// <summary>
-        /// Gets selected User attribute value
+        /// Gets selected user attribute value
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserAttributeId">User attribute identifier</param>
+        /// <param name="userAttributeId">User attribute identifier</param>
         /// <returns>User attribute value</returns>
-        public virtual IList<string> ParseValues(string attributesXml, int UserAttributeId)
+        public virtual IList<string> ParseValues(string attributesXml, int userAttributeId)
         {
             var selectedUserAttributeValues = new List<string>();
             if (string.IsNullOrEmpty(attributesXml))
@@ -152,15 +149,15 @@ namespace TVProgViewer.Services.Users
                 var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/UserAttribute");
                 foreach (XmlNode node1 in nodeList1)
                 {
-                    if (node1.Attributes?["ID"] == null) 
+                    if (node1.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node1.Attributes["ID"].InnerText.Trim();
 
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != UserAttributeId) 
+                    if (id != userAttributeId)
                         continue;
 
                     var nodeList2 = node1.SelectNodes(@"UserAttributeValue/Value");
@@ -198,9 +195,7 @@ namespace TVProgViewer.Services.Users
                     xmlDoc.AppendChild(element1);
                 }
                 else
-                {
                     xmlDoc.LoadXml(attributesXml);
-                }
 
                 var rootElement = (XmlElement)xmlDoc.SelectSingleNode(@"//Attributes");
 
@@ -209,15 +204,15 @@ namespace TVProgViewer.Services.Users
                 var nodeList1 = xmlDoc.SelectNodes(@"//Attributes/UserAttribute");
                 foreach (XmlNode node1 in nodeList1)
                 {
-                    if (node1.Attributes?["ID"] == null) 
+                    if (node1.Attributes?["ID"] == null)
                         continue;
 
                     var str1 = node1.Attributes["ID"].InnerText.Trim();
 
-                    if (!int.TryParse(str1, out var id)) 
+                    if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != ca.Id) 
+                    if (id != ca.Id)
                         continue;
 
                     attributeElement = (XmlElement)node1;
@@ -250,41 +245,41 @@ namespace TVProgViewer.Services.Users
         }
 
         /// <summary>
-        /// Validates User attributes
+        /// Validates user attributes
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetAttributeWarnings(string attributesXml)
+        public virtual async Task<IList<string>> GetAttributeWarningsAsync(string attributesXml)
         {
             var warnings = new List<string>();
 
             //ensure it's our attributes
-            var attributes1 = ParseUserAttributes(attributesXml);
+            var attributes1 = await ParseUserAttributesAsync(attributesXml);
 
-            //validate required User attributes (whether they're chosen/selected/entered)
-            var attributes2 = _UserAttributeService.GetAllUserAttributes();
+            //validate required user attributes (whether they're chosen/selected/entered)
+            var attributes2 = await _userAttributeService.GetAllUserAttributesAsync();
             foreach (var a2 in attributes2)
             {
-                if (!a2.IsRequired) 
+                if (!a2.IsRequired)
                     continue;
 
                 var found = false;
-                //selected User attributes
+                //selected user attributes
                 foreach (var a1 in attributes1)
                 {
-                    if (a1.Id != a2.Id) 
+                    if (a1.Id != a2.Id)
                         continue;
 
                     var valuesStr = ParseValues(attributesXml, a1.Id);
 
                     found = valuesStr.Any(str1 => !string.IsNullOrEmpty(str1.Trim()));
                 }
-                
-                if (found) 
+
+                if (found)
                     continue;
 
                 //if not found
-                var notFoundWarning = string.Format(_localizationService.GetResource("ShoppingCart.SelectAttribute"), _localizationService.GetLocalized(a2, a => a.Name));
+                var notFoundWarning = string.Format(await _localizationService.GetResourceAsync("ShoppingCart.SelectAttribute"), await _localizationService.GetLocalizedAsync(a2, a => a.Name));
 
                 warnings.Add(notFoundWarning);
             }

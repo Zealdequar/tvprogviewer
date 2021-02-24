@@ -2,6 +2,7 @@
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
 using TVProgViewer.WebUI.Models.Checkout;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -14,9 +15,9 @@ namespace TVProgViewer.WebUI.Components
             _checkoutModelFactory = checkoutModelFactory;
         }
 
-        public IViewComponentResult Invoke(CheckoutProgressStep step)
+        public async Task<IViewComponentResult> InvokeAsync(CheckoutProgressStep step)
         {
-            var model = _checkoutModelFactory.PrepareCheckoutProgressModel(step);
+            var model = await _checkoutModelFactory.PrepareCheckoutProgressModelAsync(step);
             return View(model);
         }
     }

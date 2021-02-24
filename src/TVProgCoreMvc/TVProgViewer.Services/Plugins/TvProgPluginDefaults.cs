@@ -99,6 +99,6 @@ namespace TVProgViewer.Services.Plugins
         /// <summary>
         /// Gets a key to clear cache
         /// </summary>
-        public static string AdminNavigationPluginsPrefixCacheKey => "TVProgViewer.plugins.adminnavigation";
+        public static string AdminNavigationPluginsPrefix => "TVProgViewer.plugins.adminnavigation";
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.WebUI.Models.Cms;
 
 namespace TVProgViewer.WebUI.Factories
@@ -14,6 +15,6 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="widgetZone">Name of widget zone</param>
         /// <param name="additionalData">Additional data object</param>
         /// <returns>List of the render widget models</returns>
-        List<RenderWidgetModel> PrepareRenderWidgetModel(string widgetZone, object additionalData = null);
+        Task<List<RenderWidgetModel>> PrepareRenderWidgetModelAsync(string widgetZone, object additionalData = null);
     }
 }

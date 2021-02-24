@@ -41,7 +41,7 @@ namespace TVProgViewer.Web.Framework.Validators
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <param name="dataProvider">Data provider</param>
         /// <param name="filterStringPropertyNames">Properties to skip</param>
-        protected virtual void SetDatabaseValidationRules<TEntity>(IDataProvider dataProvider, params string[] filterStringPropertyNames)
+        protected virtual void SetDatabaseValidationRules<TEntity>(ITvProgDataProvider dataProvider, params string[] filterStringPropertyNames)
             where TEntity : BaseEntity
         {
             if (dataProvider is null)
@@ -119,7 +119,7 @@ namespace TVProgViewer.Web.Framework.Validators
             foreach (var expression in maxValueExpressions)
             {
                 RuleFor(expression.Expression).IsDecimal(expression.MaxValue)
-                    .WithMessage(string.Format(localizationService.GetResource("TVProgViewer.Web.Framework.Validators.MaxDecimal"), expression.MaxValue - 1));
+                    .WithMessageAwait(localizationService.GetResourceAsync("TVProgViewer.Web.Framework.Validators.MaxDecimal"), expression.MaxValue - 1);
             }
         }
 

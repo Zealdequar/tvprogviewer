@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace TVProgViewer.Core.Domain.Common
 {
@@ -36,6 +36,5 @@ namespace TVProgViewer.Core.Domain.Common
         /// Gets or sets the created or updated date
         /// </summary>
         public DateTime? CreatedOrUpdatedDateUTC { get; set; }
-
     }
 }

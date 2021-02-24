@@ -13,6 +13,8 @@ namespace TVProgViewer.WebUI.Models.Catalog
         public int TotalReviews { get; set; }
 
         public bool AllowUserReviews { get; set; }
+
+        public bool CanAddNewReview { get; set; }
     }
 
     public partial record ProductReviewsModel : BaseTvProgModel
@@ -110,6 +112,8 @@ namespace TVProgViewer.WebUI.Models.Catalog
         public bool CanCurrentUserLeaveReview { get; set; }
 
         public bool SuccessfullyAdded { get; set; }
+
+        public bool CanAddNewReview { get; set; }
 
         public string Result { get; set; }
     }

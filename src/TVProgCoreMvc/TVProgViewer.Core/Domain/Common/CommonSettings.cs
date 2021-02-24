@@ -3,6 +3,9 @@ using TVProgViewer.Core.Configuration;
 
 namespace TVProgViewer.Core.Domain.Common
 {
+	/// <summary>
+    /// Общие настройки
+    /// </summary>
     public class CommonSettings: ISettings
     {
 
@@ -22,42 +25,19 @@ namespace TVProgViewer.Core.Domain.Common
         public bool UseSystemEmailForContactUsForm { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to use stored procedure (if supported) for loading categories (it's much faster in admin area with a large number of categories than the LINQ implementation)
-        /// </summary>
-        public bool UseStoredProcedureForLoadingCategories { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether to display a warning if java-script is disabled
         /// </summary>
         public bool DisplayJavaScriptDisabledWarning { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether full-text search is supported
-        /// </summary>
-        public bool UseFullTextSearch { get; set; }
-
-        /// <summary>
-        /// Gets or sets a Full-Text search mode
-        /// </summary>
-        public FulltextSearchMode FullTextMode { get; set; }
-        /// <summary>
-        /// Получает или устанавливает значение, означающее когда 404 ошибки (странца или файл не найден) должны логгироваться
+        /// Gets or sets a value indicating whether 404 errors (page or file not found) should be logged
         /// </summary>
         public bool Log404Errors { get; set; }
+
         /// <summary>
         /// Gets or sets a breadcrumb delimiter used on the site
         /// </summary>
         public string BreadcrumbDelimiter { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether we should render <meta http-equiv="X-UA-Compatible" content="IE=edge"/> tag
-        /// </summary>
-        public bool RenderXuaCompatible { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value of "X-UA-Compatible" META tag
-        /// </summary>
-        public string XuaCompatibleValue { get; set; }
 
         /// <summary>
         /// Gets or sets ignore words (phrases) to be ignored when logging errors/messages
@@ -91,7 +71,7 @@ namespace TVProgViewer.Core.Domain.Common
         public bool UseResponseCompression { get; set; }
 
         /// <summary>
-        /// Gets or sets a value of "Cache-Control" header value for static content
+        /// Gets or sets a value of "Cache-Control" header value for static content (in seconds)
         /// </summary>
         public string StaticFilesCacheControl { get; set; }
 
@@ -119,5 +99,10 @@ namespace TVProgViewer.Core.Domain.Common
         /// The length of time, in milliseconds, before the running schedule task times out. Set null to use default value
         /// </summary>
         public int? ScheduleTaskRunTimeout { get; set; }
+
+        /// <summary>
+        /// Gets or sets the timeout (in milliseconds) before restarting the application; set null to use default value
+        /// </summary>
+        public int? RestartTimeout { get; set; }
     }
 }

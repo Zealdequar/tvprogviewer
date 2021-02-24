@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Users;
 
 namespace TVProgViewer.Services.Users
@@ -9,66 +10,66 @@ namespace TVProgViewer.Services.Users
     public partial interface IUserAttributeService
     {
         /// <summary>
-        /// Deletes a User attribute
+        /// Deletes a user attribute
         /// </summary>
-        /// <param name="UserAttribute">User attribute</param>
-        void DeleteUserAttribute(UserAttribute UserAttribute);
+        /// <param name="userAttribute">User attribute</param>
+        Task DeleteUserAttributeAsync(UserAttribute userAttribute);
 
         /// <summary>
-        /// Gets all User attributes
+        /// Gets all user attributes
         /// </summary>
         /// <returns>User attributes</returns>
-        IList<UserAttribute> GetAllUserAttributes();
+        Task<IList<UserAttribute>> GetAllUserAttributesAsync();
 
         /// <summary>
-        /// Gets a User attribute 
+        /// Gets a user attribute 
         /// </summary>
-        /// <param name="UserAttributeId">User attribute identifier</param>
+        /// <param name="userAttributeId">User attribute identifier</param>
         /// <returns>User attribute</returns>
-        UserAttribute GetUserAttributeById(int UserAttributeId);
+        Task<UserAttribute> GetUserAttributeByIdAsync(int userAttributeId);
 
         /// <summary>
-        /// Inserts a User attribute
+        /// Inserts a user attribute
         /// </summary>
-        /// <param name="UserAttribute">User attribute</param>
-        void InsertUserAttribute(UserAttribute UserAttribute);
+        /// <param name="userAttribute">User attribute</param>
+        Task InsertUserAttributeAsync(UserAttribute userAttribute);
 
         /// <summary>
-        /// Updates the User attribute
+        /// Updates the user attribute
         /// </summary>
-        /// <param name="UserAttribute">User attribute</param>
-        void UpdateUserAttribute(UserAttribute UserAttribute);
+        /// <param name="userAttribute">User attribute</param>
+        Task UpdateUserAttributeAsync(UserAttribute userAttribute);
 
         /// <summary>
-        /// Deletes a User attribute value
+        /// Deletes a user attribute value
         /// </summary>
-        /// <param name="UserAttributeValue">User attribute value</param>
-        void DeleteUserAttributeValue(UserAttributeValue UserAttributeValue);
+        /// <param name="userAttributeValue">User attribute value</param>
+        Task DeleteUserAttributeValueAsync(UserAttributeValue userAttributeValue);
 
         /// <summary>
-        /// Gets User attribute values by User attribute identifier
+        /// Gets user attribute values by user attribute identifier
         /// </summary>
-        /// <param name="UserAttributeId">The User attribute identifier</param>
+        /// <param name="userAttributeId">The user attribute identifier</param>
         /// <returns>User attribute values</returns>
-        IList<UserAttributeValue> GetUserAttributeValues(int UserAttributeId);
+        Task<IList<UserAttributeValue>> GetUserAttributeValuesAsync(int userAttributeId);
 
         /// <summary>
-        /// Gets a User attribute value
+        /// Gets a user attribute value
         /// </summary>
-        /// <param name="UserAttributeValueId">User attribute value identifier</param>
+        /// <param name="userAttributeValueId">User attribute value identifier</param>
         /// <returns>User attribute value</returns>
-        UserAttributeValue GetUserAttributeValueById(int UserAttributeValueId);
+        Task<UserAttributeValue> GetUserAttributeValueByIdAsync(int userAttributeValueId);
 
         /// <summary>
-        /// Inserts a User attribute value
+        /// Inserts a user attribute value
         /// </summary>
-        /// <param name="UserAttributeValue">User attribute value</param>
-        void InsertUserAttributeValue(UserAttributeValue UserAttributeValue);
+        /// <param name="userAttributeValue">User attribute value</param>
+        Task InsertUserAttributeValueAsync(UserAttributeValue userAttributeValue);
 
         /// <summary>
-        /// Updates the User attribute value
+        /// Updates the user attribute value
         /// </summary>
-        /// <param name="UserAttributeValue">User attribute value</param>
-        void UpdateUserAttributeValue(UserAttributeValue UserAttributeValue);
+        /// <param name="userAttributeValue">User attribute value</param>
+        Task UpdateUserAttributeValueAsync(UserAttributeValue userAttributeValue);
     }
 }

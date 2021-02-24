@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -13,9 +14,9 @@ namespace TVProgViewer.WebUI.Components
             _privateMessagesModelFactory = privateMessagesModelFactory;
         }
 
-        public IViewComponentResult Invoke(int pageNumber, string tab)
+        public async Task<IViewComponentResult> InvokeAsync(int pageNumber, string tab)
         {
-            var model = _privateMessagesModelFactory.PrepareSentModel(pageNumber, tab);
+            var model = await _privateMessagesModelFactory.PrepareSentModelAsync(pageNumber, tab);
             return View(model);
         }
     }

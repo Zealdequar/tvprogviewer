@@ -2,6 +2,7 @@
 using TVProgViewer.Services.Forums;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -16,12 +17,13 @@ namespace TVProgViewer.WebUI.Components
             _forumService = forumService;
         }
 
-        public IViewComponentResult Invoke(int forumPostId, bool showTopic)
+        public async Task<IViewComponentResult> InvokeAsync(int forumPostId, bool showTopic)
         {
-            var forumPost = _forumService.GetPostById(forumPostId);
-            var model = _forumModelFactory.PrepareLastPostModel(forumPost, showTopic);
+            var forumPost = await _forumService.GetPostByIdAsync(forumPostId);
+            var model = await _forumModelFactory.PrepareLastPostModelAsync(forumPost, showTopic);
 
             return View(model);
+
         }
     }
 }

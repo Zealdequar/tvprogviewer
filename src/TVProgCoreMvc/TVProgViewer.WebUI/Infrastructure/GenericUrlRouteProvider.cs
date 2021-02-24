@@ -1,10 +1,6 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
-using TVProgViewer.Core.Domain.Localization;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Localization;
 using TVProgViewer.Web.Framework.Mvc.Routing;
 
 namespace TVProgViewer.WebUI.Infrastructure
@@ -12,7 +8,7 @@ namespace TVProgViewer.WebUI.Infrastructure
     /// <summary>
     /// Represents provider that provided generic routes
     /// </summary>
-    public partial class GenericUrlRouteProvider : IRouteProvider
+    public partial class GenericUrlRouteProvider : BaseRouteProvider, IRouteProvider
     {
         #region Methods
 
@@ -22,18 +18,10 @@ namespace TVProgViewer.WebUI.Infrastructure
         /// <param name="endpointRouteBuilder">Route builder</param>
         public void RegisterRoutes(IEndpointRouteBuilder endpointRouteBuilder)
         {
-            var pattern = "{SeName}";
+            var pattern = GetRouterPattern(endpointRouteBuilder, seoCode: "{SeName}");
+            
             if (DataSettingsManager.IsDatabaseInstalled())
-            {
-                var localizationSettings = endpointRouteBuilder.ServiceProvider.GetRequiredService<LocalizationSettings>();
-                if (localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
-                {
-                    var langservice = endpointRouteBuilder.ServiceProvider.GetRequiredService<ILanguageService>();
-                    var languages = langservice.GetAllLanguages().ToList();
-                    pattern = "{language:lang=" + languages.FirstOrDefault().UniqueSeoCode + "}/{SeName}";
-                }
-            }
-            endpointRouteBuilder.MapDynamicControllerRoute<SlugRouteTransformer>(pattern);
+                endpointRouteBuilder.MapDynamicControllerRoute<SlugRouteTransformer>(pattern);
 
             //and default one
             endpointRouteBuilder.MapControllerRoute(

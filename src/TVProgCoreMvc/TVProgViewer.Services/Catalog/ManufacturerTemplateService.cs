@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Catalog
@@ -16,17 +15,14 @@ namespace TVProgViewer.Services.Catalog
     {
         #region Fields
 
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<ManufacturerTemplate> _manufacturerTemplateRepository;
 
         #endregion
 
         #region Ctor
 
-        public ManufacturerTemplateService(IEventPublisher eventPublisher,
-            IRepository<ManufacturerTemplate> manufacturerTemplateRepository)
+        public ManufacturerTemplateService(IRepository<ManufacturerTemplate> manufacturerTemplateRepository)
         {
-            _eventPublisher = eventPublisher;
             _manufacturerTemplateRepository = manufacturerTemplateRepository;
         }
 
@@ -38,28 +34,23 @@ namespace TVProgViewer.Services.Catalog
         /// Delete manufacturer template
         /// </summary>
         /// <param name="manufacturerTemplate">Manufacturer template</param>
-        public virtual void DeleteManufacturerTemplate(ManufacturerTemplate manufacturerTemplate)
+        public virtual async Task DeleteManufacturerTemplateAsync(ManufacturerTemplate manufacturerTemplate)
         {
-            if (manufacturerTemplate == null)
-                throw new ArgumentNullException(nameof(manufacturerTemplate));
-
-            _manufacturerTemplateRepository.Delete(manufacturerTemplate);
-
-            //event notification
-            _eventPublisher.EntityDeleted(manufacturerTemplate);
+            await _manufacturerTemplateRepository.DeleteAsync(manufacturerTemplate);
         }
 
         /// <summary>
         /// Gets all manufacturer templates
         /// </summary>
         /// <returns>Manufacturer templates</returns>
-        public virtual IList<ManufacturerTemplate> GetAllManufacturerTemplates()
+        public virtual async Task<IList<ManufacturerTemplate>> GetAllManufacturerTemplatesAsync()
         {
-            var query = from pt in _manufacturerTemplateRepository.Table
-                        orderby pt.DisplayOrder, pt.Id
-                        select pt;
-
-            var templates = query.ToCachedList(TvProgCatalogCachingDefaults.ManufacturerTemplatesAllCacheKey);
+            var templates = await _manufacturerTemplateRepository.GetAllAsync(query =>
+            {
+                return from pt in query
+                       orderby pt.DisplayOrder, pt.Id
+                       select pt;
+            }, cache => default);
 
             return templates;
         }
@@ -69,42 +60,27 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="manufacturerTemplateId">Manufacturer template identifier</param>
         /// <returns>Manufacturer template</returns>
-        public virtual ManufacturerTemplate GetManufacturerTemplateById(int manufacturerTemplateId)
+        public virtual async Task<ManufacturerTemplate> GetManufacturerTemplateByIdAsync(int manufacturerTemplateId)
         {
-            if (manufacturerTemplateId == 0)
-                return null;
-
-            return _manufacturerTemplateRepository.ToCachedGetById(manufacturerTemplateId);
+            return await _manufacturerTemplateRepository.GetByIdAsync(manufacturerTemplateId, cache => default);
         }
 
         /// <summary>
         /// Inserts manufacturer template
         /// </summary>
         /// <param name="manufacturerTemplate">Manufacturer template</param>
-        public virtual void InsertManufacturerTemplate(ManufacturerTemplate manufacturerTemplate)
+        public virtual async Task InsertManufacturerTemplateAsync(ManufacturerTemplate manufacturerTemplate)
         {
-            if (manufacturerTemplate == null)
-                throw new ArgumentNullException(nameof(manufacturerTemplate));
-
-            _manufacturerTemplateRepository.Insert(manufacturerTemplate);
-
-            //event notification
-            _eventPublisher.EntityInserted(manufacturerTemplate);
+            await _manufacturerTemplateRepository.InsertAsync(manufacturerTemplate);
         }
 
         /// <summary>
         /// Updates the manufacturer template
         /// </summary>
         /// <param name="manufacturerTemplate">Manufacturer template</param>
-        public virtual void UpdateManufacturerTemplate(ManufacturerTemplate manufacturerTemplate)
+        public virtual async Task UpdateManufacturerTemplateAsync(ManufacturerTemplate manufacturerTemplate)
         {
-            if (manufacturerTemplate == null)
-                throw new ArgumentNullException(nameof(manufacturerTemplate));
-
-            _manufacturerTemplateRepository.Update(manufacturerTemplate);
-
-            //event notification
-            _eventPublisher.EntityUpdated(manufacturerTemplate);
+            await _manufacturerTemplateRepository.UpdateAsync(manufacturerTemplate);
         }
 
         #endregion

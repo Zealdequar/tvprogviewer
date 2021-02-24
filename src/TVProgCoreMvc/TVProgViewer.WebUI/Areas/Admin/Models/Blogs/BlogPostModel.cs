@@ -51,6 +51,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Blogs
         [TvProgResourceDisplayName("Admin.ContentManagement.Blog.BlogPosts.Fields.Tags")]
         public string Tags { get; set; }
 
+        public string InitialBlogTags { get; set; }
+
         public int ApprovedComments { get; set; }
 
         public int NotApprovedComments { get; set; }

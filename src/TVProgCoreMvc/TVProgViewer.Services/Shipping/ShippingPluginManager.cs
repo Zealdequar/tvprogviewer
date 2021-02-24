@@ -4,6 +4,8 @@ using System.Linq;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Shipping;
 using TVProgViewer.Services.Plugins;
+using System.Threading.Tasks;
+using TVProgViewer.Services.Users;
 
 namespace TVProgViewer.Services.Shipping
 {
@@ -20,8 +22,9 @@ namespace TVProgViewer.Services.Shipping
 
         #region Ctor
 
-        public ShippingPluginManager(IPluginService pluginService,
-            ShippingSettings shippingSettings) : base(pluginService)
+        public ShippingPluginManager(IUserService userService,
+            IPluginService pluginService,
+            ShippingSettings shippingSettings) : base(userService, pluginService)
         {
             _shippingSettings = shippingSettings;
         }
@@ -33,13 +36,14 @@ namespace TVProgViewer.Services.Shipping
         /// <summary>
         /// Load active shipping providers
         /// </summary>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <param name="systemName">Filter by shipping provider system name; pass null to load all plugins</param>
         /// <returns>List of active shipping providers</returns>
-        public virtual IList<IShippingRateComputationMethod> LoadActivePlugins(User User = null, int storeId = 0, string systemName = null)
+        public virtual async Task<IList<IShippingRateComputationMethod>> LoadActivePluginsAsync(User user = null,
+            int storeId = 0, string systemName = null)
         {
-            var shippingProviders = LoadActivePlugins(_shippingSettings.ActiveShippingRateComputationMethodSystemNames, User, storeId);
+            var shippingProviders = await LoadActivePluginsAsync(_shippingSettings.ActiveShippingRateComputationMethodSystemNames, user, storeId);
 
             //filter by passed system name
             if (!string.IsNullOrEmpty(systemName))
@@ -66,12 +70,12 @@ namespace TVProgViewer.Services.Shipping
         /// Check whether the shipping provider with the passed system name is active
         /// </summary>
         /// <param name="systemName">System name of shipping provider to check</param>
-        /// <param name="User">Filter by User; pass null to load all plugins</param>
+        /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>Result</returns>
-        public virtual bool IsPluginActive(string systemName, User User = null, int storeId = 0)
+        public virtual async Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0)
         {
-            var shippingProvider = LoadPluginBySystemName(systemName, User, storeId);
+            var shippingProvider = await LoadPluginBySystemNameAsync(systemName, user, storeId);
             return IsPluginActive(shippingProvider);
         }
 

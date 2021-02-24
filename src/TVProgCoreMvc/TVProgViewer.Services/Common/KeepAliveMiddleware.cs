@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TVProgViewer.Core;
-using TVProgViewer.Core.Caching;
-using TVProgViewer.Core.Defaults;
 using TVProgViewer.Data;
 
 namespace TVProgViewer.Services.Common

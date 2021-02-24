@@ -7,6 +7,7 @@ using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Web.Framework.Mvc.ModelBinding;
 using TVProgViewer.Web.Framework.Models;
 using TVProgViewer.WebUI.Models.Media;
+using TVProgViewer.WebUI.Models.ShoppingCart;
 
 namespace TVProgViewer.WebUI.Models.Catalog
 {
@@ -24,10 +25,11 @@ namespace TVProgViewer.WebUI.Models.Catalog
             VendorModel = new VendorBriefInfoModel();
             Breadcrumb = new ProductBreadcrumbModel();
             ProductTags = new List<ProductTagModel>();
-            ProductSpecifications= new List<ProductSpecificationModel>();
+            ProductSpecificationModel = new ProductSpecificationModel();
             ProductManufacturers = new List<ManufacturerBriefInfoModel>();
             ProductReviewOverview = new ProductReviewOverviewModel();
             TierPrices = new List<TierPriceModel>();
+            ProductEstimateShipping = new ProductEstimateShippingModel();
         }
 
         //picture(s)
@@ -93,11 +95,13 @@ namespace TVProgViewer.WebUI.Models.Catalog
 
         public IList<ProductAttributeModel> ProductAttributes { get; set; }
 
-        public IList<ProductSpecificationModel> ProductSpecifications { get; set; }
+        public ProductSpecificationModel ProductSpecificationModel { get; set; }
 
         public IList<ManufacturerBriefInfoModel> ProductManufacturers { get; set; }
 
         public ProductReviewOverviewModel ProductReviewOverview { get; set; }
+
+        public ProductEstimateShippingModel ProductEstimateShipping { get; set; }
 
         public IList<TierPriceModel> TierPrices { get; set; }
 
@@ -107,6 +111,8 @@ namespace TVProgViewer.WebUI.Models.Catalog
         public bool DisplayDiscontinuedMessage { get; set; }
 
         public string CurrentStoreName { get; set; }
+
+        public bool InStock { get; set; }
 
         #region Nested recordes
 
@@ -309,6 +315,10 @@ namespace TVProgViewer.WebUI.Models.Catalog
             public int Quantity { get; set; }
         }
 
+        public partial record ProductEstimateShippingModel : EstimateShippingModel
+        {
+            public int ProductId { get; set; }
+        }
         #endregion
     }
 }

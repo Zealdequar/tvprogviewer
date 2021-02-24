@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Common;
@@ -23,7 +24,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         private readonly ILogger _logger;
         private readonly IOrderModelFactory _orderModelFactory;
         private readonly ISettingService _settingService;
-        private readonly IStaticCacheManager _cacheManager;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IWorkContext _workContext;
         private readonly TvProgHttpClient _nopHttpClient;
 
@@ -36,7 +37,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             ILogger logger,
             IOrderModelFactory orderModelFactory,
             ISettingService settingService,
-            IStaticCacheManager cacheManager,
+            IStaticCacheManager staticCacheManager,
             IWorkContext workContext,
             TvProgHttpClient nopHttpClient)
         {
@@ -45,7 +46,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             _logger = logger;
             _orderModelFactory = orderModelFactory;
             _settingService = settingService;
-            _cacheManager = cacheManager;
+            _staticCacheManager = staticCacheManager;
             _workContext = workContext;
             _nopHttpClient = nopHttpClient;
         }
@@ -59,17 +60,17 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Dashboard model</param>
         /// <returns>Dashboard model</returns>
-        public virtual DashboardModel PrepareDashboardModel(DashboardModel model)
+        public virtual async Task<DashboardModel> PrepareDashboardModelAsync(DashboardModel model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
-            model.IsLoggedInAsVendor = _workContext.CurrentVendor != null;
+            model.IsLoggedInAsVendor = await _workContext.GetCurrentVendorAsync() != null;
 
             //prepare nested search models
-            _commonModelFactory.PreparePopularSearchTermSearchModel(model.PopularSearchTerms);
-            _orderModelFactory.PrepareBestsellerBriefSearchModel(model.BestsellersByAmount);
-            _orderModelFactory.PrepareBestsellerBriefSearchModel(model.BestsellersByQuantity);
+            await _commonModelFactory.PreparePopularSearchTermSearchModelAsync(model.PopularSearchTerms);
+            await _orderModelFactory.PrepareBestsellerBriefSearchModelAsync(model.BestsellersByAmount);
+            await _orderModelFactory.PrepareBestsellerBriefSearchModelAsync(model.BestsellersByQuantity);
 
             return model;
         }
@@ -78,7 +79,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare nopCommerce news model
         /// </summary>
         /// <returns>nopCommerce news model</returns>
-        public virtual TvProgNewsModel PrepareTvProgNewsModel()
+        public virtual async Task<TvProgNewsModel> PrepareTvProgNewsModelAsync()
         {
             var model = new TvProgNewsModel
             {
@@ -88,11 +89,11 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             try
             {
                 //try to get news RSS feed
-                var rssData = _cacheManager.Get(TvProgModelCacheDefaults.OfficialNewsModelKey, () =>
+                var rssData = await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(TvProgModelCacheDefaults.OfficialNewsModelKey), async () =>
                 {
                     try
                     {
-                        return _nopHttpClient.GetNewsRssAsync().Result;
+                        return await _nopHttpClient.GetNewsRssAsync();
                     }
                     catch (AggregateException exception)
                     {
@@ -107,7 +108,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                     var newsItem = new TvProgNewsDetailsModel
                     {
                         Title = item.TitleText,
-                        Summary = item.ContentText,
+                        Summary = XmlHelper.XmlDecode(item.Content?.Value ?? string.Empty),
                         Url = item.Url.OriginalString,
                         PublishDate = item.PublishDate
                     };
@@ -122,7 +123,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
                         continue;
 
                     _adminAreaSettings.LastNewsTitleAdminArea = newsItem.Title;
-                    _settingService.SaveSetting(_adminAreaSettings);
+                    await _settingService.SaveSettingAsync(_adminAreaSettings);
 
                     //new item
                     if (!firstRequest)
@@ -131,7 +132,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             }
             catch (Exception ex)
             {
-                _logger.Error("No access to the news. Website www.nopcommerce.com is not available.", ex);
+                await _logger.ErrorAsync("No access to the news. Website www.tvprogviewer.com is not available.", ex);
             }
 
             return model;

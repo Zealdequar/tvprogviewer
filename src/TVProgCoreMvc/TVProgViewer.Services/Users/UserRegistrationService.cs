@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.Core;
-using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Users;
+using TVProgViewer.Core.Events;
+using TVProgViewer.Services.Authentication;
+using TVProgViewer.Services.Authentication.MultiFactor;
 using TVProgViewer.Services.Common;
-using TVProgViewer.Services.Defaults;
-using TVProgViewer.Services.Events;
 using TVProgViewer.Services.Localization;
+using TVProgViewer.Services.Logging;
 using TVProgViewer.Services.Messages;
 using TVProgViewer.Services.Orders;
 using TVProgViewer.Services.Security;
@@ -22,13 +25,19 @@ namespace TVProgViewer.Services.Users
         #region Fields
 
         private readonly UserSettings _userSettings;
+        private readonly IAuthenticationService _authenticationService;
+        private readonly IUserActivityService _userActivityService;
         private readonly IUserService _userService;
         private readonly IEncryptionService _encryptionService;
         private readonly IEventPublisher _eventPublisher;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ILocalizationService _localizationService;
+        private readonly IMultiFactorAuthenticationPluginManager _multiFactorAuthenticationPluginManager;
         private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
+        private readonly INotificationService _notificationService;
         private readonly IRewardPointService _rewardPointService;
+        private readonly IShoppingCartService _shoppingCartService;
+        private readonly IStoreContext _storeContext;
         private readonly IStoreService _storeService;
         private readonly IWorkContext _workContext;
         private readonly IWorkflowMessageService _workflowMessageService;
@@ -38,27 +47,39 @@ namespace TVProgViewer.Services.Users
 
         #region Ctor
 
-        public UserRegistrationService(UserSettings UserSettings,
-            IUserService UserService,
+        public UserRegistrationService(UserSettings userSettings,
+            IAuthenticationService authenticationService,
+            IUserActivityService userActivityService,
+            IUserService userService,
             IEncryptionService encryptionService,
             IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
             ILocalizationService localizationService,
+            IMultiFactorAuthenticationPluginManager multiFactorAuthenticationPluginManager,
             INewsLetterSubscriptionService newsLetterSubscriptionService,
+            INotificationService notificationService,
             IRewardPointService rewardPointService,
+            IShoppingCartService shoppingCartService,
+            IStoreContext storeContext,
             IStoreService storeService,
             IWorkContext workContext,
             IWorkflowMessageService workflowMessageService,
             RewardPointsSettings rewardPointsSettings)
         {
-            _userSettings = UserSettings;
-            _userService = UserService;
+            _userSettings = userSettings;
+            _authenticationService = authenticationService;
+            _userActivityService = userActivityService;
+            _userService = userService;
             _encryptionService = encryptionService;
             _eventPublisher = eventPublisher;
             _genericAttributeService = genericAttributeService;
             _localizationService = localizationService;
+            _multiFactorAuthenticationPluginManager = multiFactorAuthenticationPluginManager;
             _newsLetterSubscriptionService = newsLetterSubscriptionService;
+            _notificationService = notificationService;
             _rewardPointService = rewardPointService;
+            _shoppingCartService = shoppingCartService;
+            _storeContext = storeContext;
             _storeService = storeService;
             _workContext = workContext;
             _workflowMessageService = workflowMessageService;
@@ -72,7 +93,7 @@ namespace TVProgViewer.Services.Users
         /// <summary>
         /// Check whether the entered password matches with a saved one
         /// </summary>
-        /// <param name="UserPassword">User password</param>
+        /// <param name="userPassword">User password</param>
         /// <param name="enteredPassword">The entered password</param>
         /// <returns>True if passwords match; otherwise false</returns>
         protected bool PasswordsMatch(UserPassword userPassword, string enteredPassword)
@@ -105,70 +126,77 @@ namespace TVProgViewer.Services.Users
         #region Methods
 
         /// <summary>
-        /// Валидация пользователя
+        /// Validate user
         /// </summary>
-        /// <param name="usernameOrEmail">Имя пользователя или адрес электронной почты</param>
-        /// <param name="password">Пароль</param>
-        /// <returns>Результат</returns>
-        public virtual UserLoginResults ValidateUser(string usernameOrEmail, string password)
+        /// <param name="usernameOrEmail">Username or email</param>
+        /// <param name="password">Password</param>
+        /// <returns>Result</returns>
+        public virtual async Task<UserLoginResults> ValidateUserAsync(string usernameOrEmail, string password)
         {
             var user = _userSettings.UsernamesEnabled ?
-                _userService.GetUserByUsername(usernameOrEmail) :
-                _userService.GetUserByEmail(usernameOrEmail);
+                await _userService.GetUserByUsernameAsync(usernameOrEmail) :
+                await _userService.GetUserByEmailAsync(usernameOrEmail);
 
             if (user == null)
                 return UserLoginResults.UserNotExist;
-            if (user.Deleted != null)
+            if (user.Deleted)
                 return UserLoginResults.Deleted;
             if (!user.Active)
                 return UserLoginResults.NotActive;
-            // Только зарегистрированные могут залогиниться:
-            if (!_userService.IsRegistered(user))
+            //only registered can login
+            if (!await _userService.IsRegisteredAsync(user))
                 return UserLoginResults.NotRegistered;
-            // Проверить, не заблокирован ли пользователь:
+            //check whether a user is locked out
             if (user.CannotLoginUntilDateUtc.HasValue && user.CannotLoginUntilDateUtc.Value > DateTime.UtcNow)
                 return UserLoginResults.LockedOut;
 
-            if (!PasswordsMatch(_userService.GetCurrentPassword(user.Id), password))
+            if (!PasswordsMatch(await _userService.GetCurrentPasswordAsync(user.Id), password))
             {
-                // Некорректный пароль:
+                //wrong password
                 user.FailedLoginAttempts++;
                 if (_userSettings.FailedPasswordAllowedAttempts > 0 &&
                     user.FailedLoginAttempts >= _userSettings.FailedPasswordAllowedAttempts)
                 {
-                    // Заблокировать:
+                    //lock out
                     user.CannotLoginUntilDateUtc = DateTime.UtcNow.AddMinutes(_userSettings.FailedPasswordLockoutMinutes);
-                    // Очистить счётчик:
+                    //reset the counter
                     user.FailedLoginAttempts = 0;
                 }
 
-                _userService.UpdateUser(user);
+                await _userService.UpdateUserAsync(user);
 
                 return UserLoginResults.WrongPassword;
             }
 
-            // Обновление деталей входа:
+            var selectedProvider = await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.SelectedMultiFactorAuthenticationProviderAttribute);
+            var methodIsActive = await _multiFactorAuthenticationPluginManager.IsPluginActiveAsync(selectedProvider, user, (await _storeContext.GetCurrentStoreAsync()).Id);
+            if (methodIsActive)
+                return UserLoginResults.MultiFactorAuthenticationRequired;
+            if (!string.IsNullOrEmpty(selectedProvider))
+                _notificationService.WarningNotification(await _localizationService.GetResourceAsync("MultiFactorAuthentication.Notification.SelectedMethodIsNotActive"));
+
+            //update login details
             user.FailedLoginAttempts = 0;
             user.CannotLoginUntilDateUtc = null;
             user.RequireReLogin = false;
             user.LastLoginDateUtc = DateTime.UtcNow;
-            _userService.UpdateUser(user);
+            await _userService.UpdateUserAsync(user);
 
             return UserLoginResults.Successful;
         }
 
         /// <summary>
-        /// Register User
+        /// Register user
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Result</returns>
-        public virtual UserRegistrationResult RegisterUser(UserRegistrationRequest request)
+        public virtual async Task<UserRegistrationResult> RegisterUserAsync(UserRegistrationRequest request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
             if (request.User == null)
-                throw new ArgumentException("Can't load current User");
+                throw new ArgumentException("Can't load current user");
 
             var result = new UserRegistrationResult();
             if (request.User.IsSearchEngineAccount())
@@ -183,51 +211,51 @@ namespace TVProgViewer.Services.Users
                 return result;
             }
 
-            if (_userService.IsRegistered(request.User))
+            if (await _userService.IsRegisteredAsync(request.User))
             {
-                result.AddError("Current User is already registered");
+                result.AddError("Current user is already registered");
                 return result;
             }
 
             if (string.IsNullOrEmpty(request.Email))
             {
-                result.AddError(_localizationService.GetResource("Account.Register.Errors.EmailIsNotProvided"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.Register.Errors.EmailIsNotProvided"));
                 return result;
             }
 
             if (!CommonHelper.IsValidEmail(request.Email))
             {
-                result.AddError(_localizationService.GetResource("Common.WrongEmail"));
+                result.AddError(await _localizationService.GetResourceAsync("Common.WrongEmail"));
                 return result;
             }
 
             if (string.IsNullOrWhiteSpace(request.Password))
             {
-                result.AddError(_localizationService.GetResource("Account.Register.Errors.PasswordIsNotProvided"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.Register.Errors.PasswordIsNotProvided"));
                 return result;
             }
 
             if (_userSettings.UsernamesEnabled && string.IsNullOrEmpty(request.Username))
             {
-                result.AddError(_localizationService.GetResource("Account.Register.Errors.UsernameIsNotProvided"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.Register.Errors.UsernameIsNotProvided"));
                 return result;
             }
 
             //validate unique user
-            if (_userService.GetUserByEmail(request.Email) != null)
+            if (await _userService.GetUserByEmailAsync(request.Email) != null)
             {
-                result.AddError(_localizationService.GetResource("Account.Register.Errors.EmailAlreadyExists"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.Register.Errors.EmailAlreadyExists"));
                 return result;
             }
 
-            if (_userSettings.UsernamesEnabled && _userService.GetUserByUsername(request.Username) != null)
+            if (_userSettings.UsernamesEnabled && await _userService.GetUserByUsernameAsync(request.Username) != null)
             {
-                result.AddError(_localizationService.GetResource("Account.Register.Errors.UsernameAlreadyExists"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.Register.Errors.UsernameAlreadyExists"));
                 return result;
             }
 
             //at this point request is valid
-            request.User.UserName = request.Username;
+            request.User.Username = request.Username;
             request.User.Email = request.Email;
 
             var userPassword = new UserPassword
@@ -245,40 +273,40 @@ namespace TVProgViewer.Services.Users
                     userPassword.Password = _encryptionService.EncryptText(request.Password);
                     break;
                 case PasswordFormat.Hashed:
-                    var saltKey = _encryptionService.CreateSaltKey(TvProgUserServiceDefaults.PasswordSaltKeySize);
+                    var saltKey = _encryptionService.CreateSaltKey(TvProgUserServicesDefaults.PasswordSaltKeySize);
                     userPassword.PasswordSalt = saltKey;
                     userPassword.Password = _encryptionService.CreatePasswordHash(request.Password, saltKey, _userSettings.HashedPasswordFormat);
                     break;
             }
 
-            _userService.InsertUserPassword(userPassword);
+            await _userService.InsertUserPasswordAsync(userPassword);
 
             request.User.Active = request.IsApproved;
 
             //add to 'Registered' role
-            var registeredRole = _userService.GetUserRoleBySystemName(TvProgUserDefaults.RegisteredRoleName);
+            var registeredRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.RegisteredRoleName);
             if (registeredRole == null)
                 throw new TvProgException("'Registered' role could not be loaded");
-            
-            _userService.AddUserRoleMapping(new UserUserRoleMapping { UserId = request.User.Id, UserRoleId = registeredRole.Id });
+
+            await _userService.AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = request.User.Id, UserRoleId = registeredRole.Id });
 
             //remove from 'Guests' role            
-            if (_userService.IsGuest(request.User))
-            {                
-                var guestRole = _userService.GetUserRoleBySystemName(TvProgUserDefaults.GuestsRoleName);
-                _userService.RemoveUserRoleMapping(request.User, guestRole);
+            if (await _userService.IsGuestAsync(request.User))
+            {
+                var guestRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.GuestsRoleName);
+                await _userService.RemoveUserRoleMappingAsync(request.User, guestRole);
             }
 
-            //add reward points for User registration (if enabled)
+            //add reward points for user registration (if enabled)
             if (_rewardPointsSettings.Enabled && _rewardPointsSettings.PointsForRegistration > 0)
             {
                 var endDate = _rewardPointsSettings.RegistrationPointsValidity > 0
                     ? (DateTime?)DateTime.UtcNow.AddDays(_rewardPointsSettings.RegistrationPointsValidity.Value) : null;
-                _rewardPointService.AddRewardPointsHistoryEntry(request.User, _rewardPointsSettings.PointsForRegistration,
-                    request.StoreId, _localizationService.GetResource("RewardPoints.Message.EarnedForRegistration"), endDate: endDate);
+                await _rewardPointService.AddRewardPointsHistoryEntryAsync(request.User, _rewardPointsSettings.PointsForRegistration,
+                    request.StoreId, await _localizationService.GetResourceAsync("RewardPoints.Message.EarnedForRegistration"), endDate: endDate);
             }
 
-            _userService.UpdateUser(request.User);
+            await _userService.UpdateUserAsync(request.User);
 
             return result;
         }
@@ -288,7 +316,7 @@ namespace TVProgViewer.Services.Users
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Result</returns>
-        public virtual ChangePasswordResult ChangePassword(ChangePasswordRequest request)
+        public virtual async Task<ChangePasswordResult> ChangePasswordAsync(ChangePasswordRequest request)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -296,27 +324,27 @@ namespace TVProgViewer.Services.Users
             var result = new ChangePasswordResult();
             if (string.IsNullOrWhiteSpace(request.Email))
             {
-                result.AddError(_localizationService.GetResource("Account.ChangePassword.Errors.EmailIsNotProvided"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.ChangePassword.Errors.EmailIsNotProvided"));
                 return result;
             }
 
             if (string.IsNullOrWhiteSpace(request.NewPassword))
             {
-                result.AddError(_localizationService.GetResource("Account.ChangePassword.Errors.PasswordIsNotProvided"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.ChangePassword.Errors.PasswordIsNotProvided"));
                 return result;
             }
 
-            var User = _userService.GetUserByEmail(request.Email);
-            if (User == null)
+            var user = await _userService.GetUserByEmailAsync(request.Email);
+            if (user == null)
             {
-                result.AddError(_localizationService.GetResource("Account.ChangePassword.Errors.EmailNotFound"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.ChangePassword.Errors.EmailNotFound"));
                 return result;
             }
-          
+
             //request isn't valid
-            if (request.ValidateRequest && !PasswordsMatch(_userService.GetCurrentPassword(User.Id), request.OldPassword))
+            if (request.ValidateRequest && !PasswordsMatch(await _userService.GetCurrentPasswordAsync(user.Id), request.OldPassword))
             {
-                result.AddError(_localizationService.GetResource("Account.ChangePassword.Errors.OldPasswordDoesntMatch"));
+                result.AddError(await _localizationService.GetResourceAsync("Account.ChangePassword.Errors.OldPasswordDoesntMatch"));
                 return result;
             }
 
@@ -324,130 +352,164 @@ namespace TVProgViewer.Services.Users
             if (_userSettings.UnduplicatedPasswordsNumber > 0)
             {
                 //get some of previous passwords
-                var previousPasswords = _userService.GetUserPasswords(User.Id, passwordsToReturn: _userSettings.UnduplicatedPasswordsNumber);
+                var previousPasswords = await _userService.GetUserPasswordsAsync(user.Id, passwordsToReturn: _userSettings.UnduplicatedPasswordsNumber);
 
                 var newPasswordMatchesWithPrevious = previousPasswords.Any(password => PasswordsMatch(password, request.NewPassword));
                 if (newPasswordMatchesWithPrevious)
                 {
-                    result.AddError(_localizationService.GetResource("Account.ChangePassword.Errors.PasswordMatchesWithPrevious"));
+                    result.AddError(await _localizationService.GetResourceAsync("Account.ChangePassword.Errors.PasswordMatchesWithPrevious"));
                     return result;
                 }
             }
 
             //at this point request is valid
-            var UserPassword = new UserPassword
+            var userPassword = new UserPassword
             {
-                UserId = User.Id,
+                UserId = user.Id,
                 PasswordFormat = request.NewPasswordFormat,
                 CreatedOnUtc = DateTime.UtcNow
             };
             switch (request.NewPasswordFormat)
             {
                 case PasswordFormat.Clear:
-                    UserPassword.Password = request.NewPassword;
+                    userPassword.Password = request.NewPassword;
                     break;
                 case PasswordFormat.Encrypted:
-                    UserPassword.Password = _encryptionService.EncryptText(request.NewPassword);
+                    userPassword.Password = _encryptionService.EncryptText(request.NewPassword);
                     break;
                 case PasswordFormat.Hashed:
-                    var saltKey = _encryptionService.CreateSaltKey(TvProgUserServiceDefaults.PasswordSaltKeySize);
-                    UserPassword.PasswordSalt = saltKey;
-                    UserPassword.Password = _encryptionService.CreatePasswordHash(request.NewPassword, saltKey,
+                    var saltKey = _encryptionService.CreateSaltKey(TvProgUserServicesDefaults.PasswordSaltKeySize);
+                    userPassword.PasswordSalt = saltKey;
+                    userPassword.Password = _encryptionService.CreatePasswordHash(request.NewPassword, saltKey,
                         request.HashedPasswordFormat ?? _userSettings.HashedPasswordFormat);
                     break;
             }
 
-            _userService.InsertUserPassword(UserPassword);
+            await _userService.InsertUserPasswordAsync(userPassword);
 
             //publish event
-            _eventPublisher.Publish(new UserPasswordChangedEvent(UserPassword));
+            await _eventPublisher.PublishAsync(new UserPasswordChangedEvent(userPassword));
 
             return result;
         }
 
         /// <summary>
+        /// Login passed user
+        /// </summary>
+        /// <param name="user">User to login</param>
+        /// <param name="returnUrl">URL to which the user will return after authentication</param>
+        /// <param name="isPersist">Is remember me</param>
+        /// <returns>Result of an authentication</returns>
+        public virtual async Task<IActionResult> SignInUserAsync(User user, string returnUrl, bool isPersist = false)
+        {
+            if ((await _workContext.GetCurrentUserAsync())?.Id != user.Id)
+            {
+                //migrate shopping cart
+                await _shoppingCartService.MigrateShoppingCartAsync(await _workContext.GetCurrentUserAsync(), user, true);
+
+                await _workContext.SetCurrentUserAsync(user);
+            }
+
+            //sign in new user
+            await _authenticationService.SignInAsync(user, isPersist);
+
+            //raise event       
+            await _eventPublisher.PublishAsync(new UserLoggedinEvent(user));
+
+            //activity log
+            await _userActivityService.InsertActivityAsync(user, "PublicStore.Login",
+                await _localizationService.GetResourceAsync("ActivityLog.PublicStore.Login"), user);
+
+            //redirect to the return URL if it's specified
+            if (!string.IsNullOrEmpty(returnUrl))
+                return new RedirectResult(returnUrl);
+
+            return new RedirectToRouteResult("Homepage", null);
+        }
+
+        /// <summary>
         /// Sets a user email
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="newEmail">New email</param>
         /// <param name="requireValidation">Require validation of new email address</param>
-        public virtual void SetEmail(User User, string newEmail, bool requireValidation)
+        public virtual async Task SetEmailAsync(User user, string newEmail, bool requireValidation)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             if (newEmail == null)
                 throw new TvProgException("Email cannot be null");
 
             newEmail = newEmail.Trim();
-            var oldEmail = User.Email;
+            var oldEmail = user.Email;
 
             if (!CommonHelper.IsValidEmail(newEmail))
-                throw new TvProgException(_localizationService.GetResource("Account.EmailUsernameErrors.NewEmailIsNotValid"));
+                throw new TvProgException(await _localizationService.GetResourceAsync("Account.EmailUsernameErrors.NewEmailIsNotValid"));
 
             if (newEmail.Length > 100)
-                throw new TvProgException(_localizationService.GetResource("Account.EmailUsernameErrors.EmailTooLong"));
+                throw new TvProgException(await _localizationService.GetResourceAsync("Account.EmailUsernameErrors.EmailTooLong"));
 
-            var User2 = _userService.GetUserByEmail(newEmail);
-            if (User2 != null && User.Id != User2.Id)
-                throw new TvProgException(_localizationService.GetResource("Account.EmailUsernameErrors.EmailAlreadyExists"));
+            var user2 = await _userService.GetUserByEmailAsync(newEmail);
+            if (user2 != null && user.Id != user2.Id)
+                throw new TvProgException(await _localizationService.GetResourceAsync("Account.EmailUsernameErrors.EmailAlreadyExists"));
 
             if (requireValidation)
             {
                 //re-validate email
-                User.EmailToRevalidate = newEmail;
-                _userService.UpdateUser(User);
+                user.EmailToRevalidate = newEmail;
+                await _userService.UpdateUserAsync(user);
 
                 //email re-validation message
-                _genericAttributeService.SaveAttribute(User, TvProgUserDefaults.EmailRevalidationTokenAttribute, Guid.NewGuid().ToString());
-                _workflowMessageService.SendUserEmailRevalidationMessage(User, _workContext.WorkingLanguage.Id);
+                await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.EmailRevalidationTokenAttribute, Guid.NewGuid().ToString());
+                await _workflowMessageService.SendUserEmailRevalidationMessageAsync(user, (await _workContext.GetWorkingLanguageAsync()).Id);
             }
             else
             {
-                User.Email = newEmail;
-                _userService.UpdateUser(User);
-                
-                if (string.IsNullOrEmpty(oldEmail) || oldEmail.Equals(newEmail, StringComparison.InvariantCultureIgnoreCase)) 
+                user.Email = newEmail;
+                await _userService.UpdateUserAsync(user);
+
+                if (string.IsNullOrEmpty(oldEmail) || oldEmail.Equals(newEmail, StringComparison.InvariantCultureIgnoreCase))
                     return;
 
                 //update newsletter subscription (if required)
-                foreach (var store in _storeService.GetAllStores())
+                foreach (var store in await _storeService.GetAllStoresAsync())
                 {
-                    var subscriptionOld = _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreId(oldEmail, store.Id);
-                    
-                    if (subscriptionOld == null) 
+                    var subscriptionOld = await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(oldEmail, store.Id);
+
+                    if (subscriptionOld == null)
                         continue;
 
                     subscriptionOld.Email = newEmail;
-                    _newsLetterSubscriptionService.UpdateNewsLetterSubscription(subscriptionOld);
+                    await _newsLetterSubscriptionService.UpdateNewsLetterSubscriptionAsync(subscriptionOld);
                 }
             }
         }
 
         /// <summary>
-        /// Установка пользователю пользовательского имени
+        /// Sets a user username
         /// </summary>
-        /// <param name="user">Пользователь</param>
-        /// <param name="newUsername">Новый пользователь</param>
-        public virtual void SetUsername(User user, string newUsername)
+        /// <param name="user">User</param>
+        /// <param name="newUsername">New Username</param>
+        public virtual async Task SetUsernameAsync(User user, string newUsername)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             if (!_userSettings.UsernamesEnabled)
-                throw new TvProgException("Пользовательские имена отключены");
+                throw new TvProgException("Usernames are disabled");
 
             newUsername = newUsername.Trim();
 
-            if (newUsername.Length > TvProgUserServiceDefaults.UserUsernameLength)
-                throw new TvProgException(_localizationService.GetResource("Account.EmailUsernameErrors.UsernameTooLong"));
+            if (newUsername.Length > TvProgUserServicesDefaults.UserUsernameLength)
+                throw new TvProgException(await _localizationService.GetResourceAsync("Account.EmailUsernameErrors.UsernameTooLong"));
 
-            var user2 = _userService.GetUserByUsername(newUsername);
+            var user2 = await _userService.GetUserByUsernameAsync(newUsername);
             if (user2 != null && user.Id != user2.Id)
-                throw new TvProgException(_localizationService.GetResource("Account.EmailUsernameErrors.UsernameAlreadyExists"));
+                throw new TvProgException(await _localizationService.GetResourceAsync("Account.EmailUsernameErrors.UsernameAlreadyExists"));
 
-            user.UserName = newUsername;
-            _userService.UpdateUser(user);
+            user.Username = newUsername;
+            await _userService.UpdateUserAsync(user);
         }
 
         #endregion

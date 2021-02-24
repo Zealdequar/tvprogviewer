@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Catalog
 {
     public partial class ProductTagValidator : BaseTvProgValidator<ProductTagModel>
     {
-        public ProductTagValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public ProductTagValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Catalog.ProductTags.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Catalog.ProductTags.Fields.Name.Required"));
 
             SetDatabaseValidationRules<ProductTag>(dataProvider);
         }

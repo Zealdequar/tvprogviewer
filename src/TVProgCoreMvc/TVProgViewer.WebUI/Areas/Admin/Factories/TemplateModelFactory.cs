@@ -5,6 +5,7 @@ using TVProgViewer.Services.Topics;
 using TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper.Extensions;
 using TVProgViewer.WebUI.Areas.Admin.Models.Templates;
 using TVProgViewer.Web.Framework.Models.Extensions;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -37,33 +38,14 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
 
         #endregion
 
-        #region Methods
-
-        /// <summary>
-        /// Prepare templates model
-        /// </summary>
-        /// <param name="model">Templates model</param>
-        /// <returns>Templates model</returns>
-        public virtual TemplatesModel PrepareTemplatesModel(TemplatesModel model)
-        {
-            if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
-            //prepare nested search models
-            PrepareCategoryTemplateSearchModel(model.TemplatesCategory);
-            PrepareManufacturerTemplateSearchModel(model.TemplatesManufacturer);
-            PrepareProductTemplateSearchModel(model.TemplatesProduct);
-            PrepareTopicTemplateSearchModel(model.TemplatesTopic);
-
-            return model;
-        }
+        #region Utilities
 
         /// <summary>
         /// Prepare category template search model
         /// </summary>
         /// <param name="searchModel">Category template search model</param>
         /// <returns>Category template search model</returns>
-        public virtual CategoryTemplateSearchModel PrepareCategoryTemplateSearchModel(CategoryTemplateSearchModel searchModel)
+        protected virtual Task<CategoryTemplateSearchModel> PrepareCategoryTemplateSearchModelAsync(CategoryTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -71,7 +53,78 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             //prepare page parameters
             searchModel.SetGridPageSize();
 
-            return searchModel;
+            return Task.FromResult(searchModel);
+        }
+
+        /// <summary>
+        /// Prepare manufacturer template search model
+        /// </summary>
+        /// <param name="searchModel">Manufacturer template search model</param>
+        /// <returns>Manufacturer template search model</returns>
+        protected virtual Task<ManufacturerTemplateSearchModel> PrepareManufacturerTemplateSearchModelAsync(ManufacturerTemplateSearchModel searchModel)
+        {
+            if (searchModel == null)
+                throw new ArgumentNullException(nameof(searchModel));
+
+            //prepare page parameters
+            searchModel.SetGridPageSize();
+
+            return Task.FromResult(searchModel);
+        }
+
+        /// <summary>
+        /// Prepare product template search model
+        /// </summary>
+        /// <param name="searchModel">Product template search model</param>
+        /// <returns>Product template search model</returns>
+        protected virtual Task<ProductTemplateSearchModel> PrepareProductTemplateSearchModelAsync(ProductTemplateSearchModel searchModel)
+        {
+            if (searchModel == null)
+                throw new ArgumentNullException(nameof(searchModel));
+
+            //prepare page parameters
+            searchModel.SetGridPageSize();
+
+            return Task.FromResult(searchModel);
+        }
+
+        /// <summary>
+        /// Prepare topic template search model
+        /// </summary>
+        /// <param name="searchModel">Topic template search model</param>
+        /// <returns>Topic template search model</returns>
+        protected virtual Task<TopicTemplateSearchModel> PrepareTopicTemplateSearchModelAsync(TopicTemplateSearchModel searchModel)
+        {
+            if (searchModel == null)
+                throw new ArgumentNullException(nameof(searchModel));
+
+            //prepare page parameters
+            searchModel.SetGridPageSize();
+
+            return Task.FromResult(searchModel);
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Prepare templates model
+        /// </summary>
+        /// <param name="model">Templates model</param>
+        /// <returns>Templates model</returns>
+        public virtual async Task<TemplatesModel> PrepareTemplatesModelAsync(TemplatesModel model)
+        {
+            if (model == null)
+                throw new ArgumentNullException(nameof(model));
+
+            //prepare nested search models
+            await PrepareCategoryTemplateSearchModelAsync(model.TemplatesCategory);
+            await PrepareManufacturerTemplateSearchModelAsync(model.TemplatesManufacturer);
+            await PrepareProductTemplateSearchModelAsync(model.TemplatesProduct);
+            await PrepareTopicTemplateSearchModelAsync(model.TemplatesTopic);
+
+            return model;
         }
 
         /// <summary>
@@ -79,13 +132,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Category template search model</param>
         /// <returns>Category template list model</returns>
-        public virtual CategoryTemplateListModel PrepareCategoryTemplateListModel(CategoryTemplateSearchModel searchModel)
+        public virtual async Task<CategoryTemplateListModel> PrepareCategoryTemplateListModelAsync(CategoryTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get category templates
-            var categoryTemplates = _categoryTemplateService.GetAllCategoryTemplates().ToPagedList(searchModel);
+            var categoryTemplates = (await _categoryTemplateService.GetAllCategoryTemplatesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
             var model = new CategoryTemplateListModel().PrepareToGrid(searchModel, categoryTemplates,
@@ -95,55 +148,23 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare manufacturer template search model
-        /// </summary>
-        /// <param name="searchModel">Manufacturer template search model</param>
-        /// <returns>Manufacturer template search model</returns>
-        public virtual ManufacturerTemplateSearchModel PrepareManufacturerTemplateSearchModel(ManufacturerTemplateSearchModel searchModel)
-        {
-            if (searchModel == null)
-                throw new ArgumentNullException(nameof(searchModel));
-
-            //prepare page parameters
-            searchModel.SetGridPageSize();
-
-            return searchModel;
-        }
-
-        /// <summary>
         /// Prepare paged manufacturer template list model
         /// </summary>
         /// <param name="searchModel">Manufacturer template search model</param>
         /// <returns>Manufacturer template list model</returns>
-        public virtual ManufacturerTemplateListModel PrepareManufacturerTemplateListModel(ManufacturerTemplateSearchModel searchModel)
+        public virtual async Task<ManufacturerTemplateListModel> PrepareManufacturerTemplateListModelAsync(ManufacturerTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get manufacturer templates
-            var manufacturerTemplates = _manufacturerTemplateService.GetAllManufacturerTemplates().ToPagedList(searchModel);
+            var manufacturerTemplates = (await _manufacturerTemplateService.GetAllManufacturerTemplatesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
             var model = new ManufacturerTemplateListModel().PrepareToGrid(searchModel, manufacturerTemplates,
                 () => manufacturerTemplates.Select(template => template.ToModel<ManufacturerTemplateModel>()));
-            
+
             return model;
-        }
-
-        /// <summary>
-        /// Prepare product template search model
-        /// </summary>
-        /// <param name="searchModel">Product template search model</param>
-        /// <returns>Product template search model</returns>
-        public virtual ProductTemplateSearchModel PrepareProductTemplateSearchModel(ProductTemplateSearchModel searchModel)
-        {
-            if (searchModel == null)
-                throw new ArgumentNullException(nameof(searchModel));
-
-            //prepare page parameters
-            searchModel.SetGridPageSize();
-
-            return searchModel;
         }
 
         /// <summary>
@@ -151,13 +172,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Product template search model</param>
         /// <returns>Product template list model</returns>
-        public virtual ProductTemplateListModel PrepareProductTemplateListModel(ProductTemplateSearchModel searchModel)
+        public virtual async Task<ProductTemplateListModel> PrepareProductTemplateListModelAsync(ProductTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get product templates
-            var productTemplates = _productTemplateService.GetAllProductTemplates().ToPagedList(searchModel);
+            var productTemplates = (await _productTemplateService.GetAllProductTemplatesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
             var model = new ProductTemplateListModel().PrepareToGrid(searchModel, productTemplates,
@@ -167,33 +188,17 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare topic template search model
-        /// </summary>
-        /// <param name="searchModel">Topic template search model</param>
-        /// <returns>Topic template search model</returns>
-        public virtual TopicTemplateSearchModel PrepareTopicTemplateSearchModel(TopicTemplateSearchModel searchModel)
-        {
-            if (searchModel == null)
-                throw new ArgumentNullException(nameof(searchModel));
-
-            //prepare page parameters
-            searchModel.SetGridPageSize();
-
-            return searchModel;
-        }
-
-        /// <summary>
         /// Prepare paged topic template list model
         /// </summary>
         /// <param name="searchModel">Topic template search model</param>
         /// <returns>Topic template list model</returns>
-        public virtual TopicTemplateListModel PrepareTopicTemplateListModel(TopicTemplateSearchModel searchModel)
+        public virtual async Task<TopicTemplateListModel> PrepareTopicTemplateListModelAsync(TopicTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
             //get topic templates
-            var topicTemplates = _topicTemplateService.GetAllTopicTemplates().ToPagedList(searchModel);
+            var topicTemplates = (await _topicTemplateService.GetAllTopicTemplatesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
             var model = new TopicTemplateListModel().PrepareToGrid(searchModel, topicTemplates,

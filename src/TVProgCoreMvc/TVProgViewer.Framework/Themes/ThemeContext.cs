@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain;
 using TVProgViewer.Core.Domain.Users;
@@ -55,52 +56,56 @@ namespace TVProgViewer.Web.Framework.Themes
         /// <summary>
         /// Get or set current theme system name
         /// </summary>
-        public string WorkingThemeName
+        public virtual async Task<string> GetWorkingThemeNameAsync()
         {
-            get
+            if (!string.IsNullOrEmpty(_cachedThemeName))
+                return _cachedThemeName;
+
+            var themeName = string.Empty;
+
+            //whether users are allowed to select a theme
+            if (_storeInformationSettings.AllowUserToSelectTheme &&
+                await _workContext.GetCurrentUserAsync() != null)
             {
-                if (!string.IsNullOrEmpty(_cachedThemeName))
-                    return _cachedThemeName;
-
-                var themeName = string.Empty;
-
-                //whether Users are allowed to select a theme
-                if (_storeInformationSettings.AllowUserToSelectTheme && _workContext.CurrentUser != null)
-                {
-                    themeName = _genericAttributeService.GetAttribute<string>(_workContext.CurrentUser,
-                        TvProgUserDefaults.WorkingThemeNameAttribute, _storeContext.CurrentStore.Id);
-                }
-
-                //if not, try to get default store theme
-                if (string.IsNullOrEmpty(themeName))
-                    themeName = _storeInformationSettings.DefaultStoreTheme;
-
-                //ensure that this theme exists
-                if (!_themeProvider.ThemeExists(themeName))
-                {
-                    //if it does not exist, try to get the first one
-                    themeName = _themeProvider.GetThemes().FirstOrDefault()?.SystemName
-                        ?? throw new Exception("No theme could be loaded");
-                }
-
-                //cache theme system name
-                _cachedThemeName = themeName;
-
-                return themeName;
+                themeName = await _genericAttributeService.GetAttributeAsync<string>(await _workContext.GetCurrentUserAsync(),
+                    TvProgUserDefaults.WorkingThemeNameAttribute, (await _storeContext.GetCurrentStoreAsync()).Id);
             }
-            set
+
+            //if not, try to get default store theme
+            if (string.IsNullOrEmpty(themeName))
+                themeName = _storeInformationSettings.DefaultStoreTheme;
+
+            //ensure that this theme exists
+            if (!await _themeProvider.ThemeExistsAsync(themeName))
             {
-                //whether Users are allowed to select a theme
-                if (!_storeInformationSettings.AllowUserToSelectTheme || _workContext.CurrentUser == null)
-                    return;
-
-                //save selected by User theme system name
-                _genericAttributeService.SaveAttribute(_workContext.CurrentUser,
-                    TvProgUserDefaults.WorkingThemeNameAttribute, value, _storeContext.CurrentStore.Id);
-
-                //clear cache
-                _cachedThemeName = null;
+                //if it does not exist, try to get the first one
+                themeName = (await _themeProvider.GetThemesAsync()).FirstOrDefault()?.SystemName
+                            ?? throw new Exception("No theme could be loaded");
             }
+
+            //cache theme system name
+            _cachedThemeName = themeName;
+
+            return themeName;
+        }
+
+        /// <summary>
+        /// Set current theme system name
+        /// </summary>
+        public virtual async Task SetWorkingThemeNameAsync(string workingThemeName)
+        {
+            //whether users are allowed to select a theme
+            if (!_storeInformationSettings.AllowUserToSelectTheme ||
+                await _workContext.GetCurrentUserAsync() == null)
+                return;
+
+            //save selected by user theme system name
+            await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(),
+                TvProgUserDefaults.WorkingThemeNameAttribute, workingThemeName,
+                (await _storeContext.GetCurrentStoreAsync()).Id);
+
+            //clear cache
+            _cachedThemeName = null;
         }
 
         #endregion

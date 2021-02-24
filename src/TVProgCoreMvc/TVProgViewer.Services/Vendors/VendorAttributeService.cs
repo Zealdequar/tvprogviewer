@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Domain.Vendors;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Vendors
@@ -16,21 +16,21 @@ namespace TVProgViewer.Services.Vendors
     {
         #region Fields
 
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<VendorAttribute> _vendorAttributeRepository;
         private readonly IRepository<VendorAttributeValue> _vendorAttributeValueRepository;
+        private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
 
         #region Ctor
 
-        public VendorAttributeService(IEventPublisher eventPublisher,
-            IRepository<VendorAttribute> vendorAttributeRepository,
-            IRepository<VendorAttributeValue> vendorAttributeValueRepository)
+        public VendorAttributeService(IRepository<VendorAttribute> vendorAttributeRepository,
+            IRepository<VendorAttributeValue> vendorAttributeValueRepository,
+            IStaticCacheManager staticCacheManager)
         {
-            _eventPublisher = eventPublisher;
             _vendorAttributeRepository = vendorAttributeRepository;
             _vendorAttributeValueRepository = vendorAttributeValueRepository;
+            _staticCacheManager = staticCacheManager;
         }
 
         #endregion
@@ -43,11 +43,11 @@ namespace TVProgViewer.Services.Vendors
         /// Gets all vendor attributes
         /// </summary>
         /// <returns>Vendor attributes</returns>
-        public virtual IList<VendorAttribute> GetAllVendorAttributes()
+        public virtual async Task<IList<VendorAttribute>> GetAllVendorAttributesAsync()
         {
-            return _vendorAttributeRepository.Table
-                .OrderBy(vendorAttribute => vendorAttribute.DisplayOrder).ThenBy(vendorAttribute => vendorAttribute.Id)
-                .ToCachedList(TvProgVendorsCachingDefaults.VendorAttributesAllCacheKey);
+            return await _vendorAttributeRepository.GetAllAsync(
+                query => query.OrderBy(vendorAttribute => vendorAttribute.DisplayOrder).ThenBy(vendorAttribute => vendorAttribute.Id),
+                cache => default);
         }
 
         /// <summary>
@@ -55,57 +55,36 @@ namespace TVProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorAttributeId">Vendor attribute identifier</param>
         /// <returns>Vendor attribute</returns>
-        public virtual VendorAttribute GetVendorAttributeById(int vendorAttributeId)
+        public virtual async Task<VendorAttribute> GetVendorAttributeByIdAsync(int vendorAttributeId)
         {
-            if (vendorAttributeId == 0)
-                return null;
-
-            return _vendorAttributeRepository.ToCachedGetById(vendorAttributeId);
+            return await _vendorAttributeRepository.GetByIdAsync(vendorAttributeId, cache => default);
         }
 
         /// <summary>
         /// Inserts a vendor attribute
         /// </summary>
         /// <param name="vendorAttribute">Vendor attribute</param>
-        public virtual void InsertVendorAttribute(VendorAttribute vendorAttribute)
+        public virtual async Task InsertVendorAttributeAsync(VendorAttribute vendorAttribute)
         {
-            if (vendorAttribute == null)
-                throw new ArgumentNullException(nameof(vendorAttribute));
-
-            _vendorAttributeRepository.Insert(vendorAttribute);
-
-            //event notification
-            _eventPublisher.EntityInserted(vendorAttribute);
+            await _vendorAttributeRepository.InsertAsync(vendorAttribute);
         }
 
         /// <summary>
         /// Updates a vendor attribute
         /// </summary>
         /// <param name="vendorAttribute">Vendor attribute</param>
-        public virtual void UpdateVendorAttribute(VendorAttribute vendorAttribute)
+        public virtual async Task UpdateVendorAttributeAsync(VendorAttribute vendorAttribute)
         {
-            if (vendorAttribute == null)
-                throw new ArgumentNullException(nameof(vendorAttribute));
-
-            _vendorAttributeRepository.Update(vendorAttribute);
-
-            //event notification
-            _eventPublisher.EntityUpdated(vendorAttribute);
+            await _vendorAttributeRepository.UpdateAsync(vendorAttribute);
         }
 
         /// <summary>
         /// Deletes a vendor attribute
         /// </summary>
         /// <param name="vendorAttribute">Vendor attribute</param>
-        public virtual void DeleteVendorAttribute(VendorAttribute vendorAttribute)
+        public virtual async Task DeleteVendorAttributeAsync(VendorAttribute vendorAttribute)
         {
-            if (vendorAttribute == null)
-                throw new ArgumentNullException(nameof(vendorAttribute));
-
-            _vendorAttributeRepository.Delete(vendorAttribute);
-
-            //event notification
-            _eventPublisher.EntityDeleted(vendorAttribute);
+            await _vendorAttributeRepository.DeleteAsync(vendorAttribute);
         }
 
         #endregion
@@ -117,15 +96,16 @@ namespace TVProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorAttributeId">The vendor attribute identifier</param>
         /// <returns>Vendor attribute values</returns>
-        public virtual IList<VendorAttributeValue> GetVendorAttributeValues(int vendorAttributeId)
+        public virtual async Task<IList<VendorAttributeValue>> GetVendorAttributeValuesAsync(int vendorAttributeId)
         {
-            var key = TvProgVendorsCachingDefaults.VendorAttributeValuesAllCacheKey.FillCacheKey(vendorAttributeId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgVendorDefaults.VendorAttributeValuesByAttributeCacheKey, vendorAttributeId);
 
-            return _vendorAttributeValueRepository.Table
+            var query = _vendorAttributeValueRepository.Table
                 .Where(vendorAttributeValue => vendorAttributeValue.VendorAttributeId == vendorAttributeId)
                 .OrderBy(vendorAttributeValue => vendorAttributeValue.DisplayOrder)
-                .ThenBy(vendorAttributeValue => vendorAttributeValue.Id)
-                .ToCachedList(key);
+                .ThenBy(vendorAttributeValue => vendorAttributeValue.Id);
+
+            return await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
         }
 
         /// <summary>
@@ -133,57 +113,36 @@ namespace TVProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorAttributeValueId">Vendor attribute value identifier</param>
         /// <returns>Vendor attribute value</returns>
-        public virtual VendorAttributeValue GetVendorAttributeValueById(int vendorAttributeValueId)
+        public virtual async Task<VendorAttributeValue> GetVendorAttributeValueByIdAsync(int vendorAttributeValueId)
         {
-            if (vendorAttributeValueId == 0)
-                return null;
-
-            return _vendorAttributeValueRepository.ToCachedGetById(vendorAttributeValueId);
+            return await _vendorAttributeValueRepository.GetByIdAsync(vendorAttributeValueId, cache => default);
         }
 
         /// <summary>
         /// Inserts a vendor attribute value
         /// </summary>
         /// <param name="vendorAttributeValue">Vendor attribute value</param>
-        public virtual void InsertVendorAttributeValue(VendorAttributeValue vendorAttributeValue)
+        public virtual async Task InsertVendorAttributeValueAsync(VendorAttributeValue vendorAttributeValue)
         {
-            if (vendorAttributeValue == null)
-                throw new ArgumentNullException(nameof(vendorAttributeValue));
-
-            _vendorAttributeValueRepository.Insert(vendorAttributeValue);
-
-            //event notification
-            _eventPublisher.EntityInserted(vendorAttributeValue);
+            await _vendorAttributeValueRepository.InsertAsync(vendorAttributeValue);
         }
 
         /// <summary>
         /// Updates the vendor attribute value
         /// </summary>
         /// <param name="vendorAttributeValue">Vendor attribute value</param>
-        public virtual void UpdateVendorAttributeValue(VendorAttributeValue vendorAttributeValue)
+        public virtual async Task UpdateVendorAttributeValueAsync(VendorAttributeValue vendorAttributeValue)
         {
-            if (vendorAttributeValue == null)
-                throw new ArgumentNullException(nameof(vendorAttributeValue));
-
-            _vendorAttributeValueRepository.Update(vendorAttributeValue);
-
-            //event notification
-            _eventPublisher.EntityUpdated(vendorAttributeValue);
+            await _vendorAttributeValueRepository.UpdateAsync(vendorAttributeValue);
         }
 
         /// <summary>
         /// Deletes a vendor attribute value
         /// </summary>
         /// <param name="vendorAttributeValue">Vendor attribute value</param>
-        public virtual void DeleteVendorAttributeValue(VendorAttributeValue vendorAttributeValue)
+        public virtual async Task DeleteVendorAttributeValueAsync(VendorAttributeValue vendorAttributeValue)
         {
-            if (vendorAttributeValue == null)
-                throw new ArgumentNullException(nameof(vendorAttributeValue));
-
-            _vendorAttributeValueRepository.Delete(vendorAttributeValue);
-
-            //event notification
-            _eventPublisher.EntityDeleted(vendorAttributeValue);
+            await _vendorAttributeValueRepository.DeleteAsync(vendorAttributeValue);
         }
 
         #endregion

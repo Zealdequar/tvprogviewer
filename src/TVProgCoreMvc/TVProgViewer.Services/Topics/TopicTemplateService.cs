@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Topics;
+using TVProgViewer.Core.Events;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Topics
@@ -15,17 +16,14 @@ namespace TVProgViewer.Services.Topics
     {
         #region Fields
 
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<TopicTemplate> _topicTemplateRepository;
 
         #endregion
 
         #region Ctor
 
-        public TopicTemplateService(IEventPublisher eventPublisher,
-            IRepository<TopicTemplate> topicTemplateRepository)
+        public TopicTemplateService(IRepository<TopicTemplate> topicTemplateRepository)
         {
-            _eventPublisher = eventPublisher;
             _topicTemplateRepository = topicTemplateRepository;
         }
 
@@ -37,28 +35,24 @@ namespace TVProgViewer.Services.Topics
         /// Delete topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        public virtual void DeleteTopicTemplate(TopicTemplate topicTemplate)
+        public virtual async Task DeleteTopicTemplateAsync(TopicTemplate topicTemplate)
         {
-            if (topicTemplate == null)
-                throw new ArgumentNullException(nameof(topicTemplate));
-
-            _topicTemplateRepository.Delete(topicTemplate);
-
-            //event notification
-            _eventPublisher.EntityDeleted(topicTemplate);
+            await _topicTemplateRepository.DeleteAsync(topicTemplate);
         }
 
         /// <summary>
         /// Gets all topic templates
         /// </summary>
         /// <returns>Topic templates</returns>
-        public virtual IList<TopicTemplate> GetAllTopicTemplates()
+        public virtual async Task<IList<TopicTemplate>> GetAllTopicTemplatesAsync()
         {
-            var query = from pt in _topicTemplateRepository.Table
-                        orderby pt.DisplayOrder, pt.Id
-                        select pt;
+            var templates = await _topicTemplateRepository.GetAllAsync(query =>
+            {
+                return from pt in query
+                       orderby pt.DisplayOrder, pt.Id
+                       select pt;
+            }, cache => default);
 
-            var templates = query.ToList();
             return templates;
         }
 
@@ -67,42 +61,27 @@ namespace TVProgViewer.Services.Topics
         /// </summary>
         /// <param name="topicTemplateId">Topic template identifier</param>
         /// <returns>Topic template</returns>
-        public virtual TopicTemplate GetTopicTemplateById(int topicTemplateId)
+        public virtual async Task<TopicTemplate> GetTopicTemplateByIdAsync(int topicTemplateId)
         {
-            if (topicTemplateId == 0)
-                return null;
-
-            return _topicTemplateRepository.ToCachedGetById(topicTemplateId);
+            return await _topicTemplateRepository.GetByIdAsync(topicTemplateId, cache => default);
         }
 
         /// <summary>
         /// Inserts topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        public virtual void InsertTopicTemplate(TopicTemplate topicTemplate)
+        public virtual async Task InsertTopicTemplateAsync(TopicTemplate topicTemplate)
         {
-            if (topicTemplate == null)
-                throw new ArgumentNullException(nameof(topicTemplate));
-
-            _topicTemplateRepository.Insert(topicTemplate);
-
-            //event notification
-            _eventPublisher.EntityInserted(topicTemplate);
+            await _topicTemplateRepository.InsertAsync(topicTemplate);
         }
 
         /// <summary>
         /// Updates the topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        public virtual void UpdateTopicTemplate(TopicTemplate topicTemplate)
+        public virtual async Task UpdateTopicTemplateAsync(TopicTemplate topicTemplate)
         {
-            if (topicTemplate == null)
-                throw new ArgumentNullException(nameof(topicTemplate));
-
-            _topicTemplateRepository.Update(topicTemplate);
-
-            //event notification
-            _eventPublisher.EntityUpdated(topicTemplate);
+            await _topicTemplateRepository.UpdateAsync(topicTemplate);
         }
 
         #endregion

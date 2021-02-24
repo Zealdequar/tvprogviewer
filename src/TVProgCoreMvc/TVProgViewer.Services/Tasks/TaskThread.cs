@@ -26,15 +26,15 @@ namespace TVProgViewer.Services.Tasks
 
         private readonly Dictionary<string, string> _tasks;
         private Timer _timer;
-        private bool _disposed = false;
+        private bool _disposed;
 
         #endregion
 
-        #region Конструктор
+        #region Ctor
 
         static TaskThread()
         {
-            _scheduleTaskUrl = $"{EngineContext.Current.Resolve<IStoreContext>().CurrentStore.Url}{TvProgTaskDefaults.ScheduleTaskPath}";
+            _scheduleTaskUrl = $"{EngineContext.Current.Resolve<IStoreContext>().GetCurrentStoreAsync().Result.Url}{TvProgTaskDefaults.ScheduleTaskPath}";
             _timeout = EngineContext.Current.Resolve<CommonSettings>().ScheduleTaskRunTimeout;
         }
 
@@ -48,13 +48,14 @@ namespace TVProgViewer.Services.Tasks
 
         #region Utilities
 
-        private void Run()
+        private async System.Threading.Tasks.Task RunAsync()
         {
             if (Seconds <= 0)
                 return;
 
             StartedUtc = DateTime.UtcNow;
             IsRunning = true;
+            HttpClient client = null;
 
             foreach (var taskName in _tasks.Keys)
             {
@@ -62,30 +63,36 @@ namespace TVProgViewer.Services.Tasks
                 try
                 {
                     //create and configure client
-                    var client = EngineContext.Current.Resolve<IHttpClientFactory>().CreateClient(TvProgHttpDefaults.DefaultHttpClient);
+                    client = EngineContext.Current.Resolve<IHttpClientFactory>().CreateClient(TvProgHttpDefaults.DefaultHttpClient);
                     if (_timeout.HasValue)
                         client.Timeout = TimeSpan.FromMilliseconds(_timeout.Value);
 
                     //send post data
                     var data = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>(nameof(taskType), taskType) });
-                    client.PostAsync(_scheduleTaskUrl, data).Wait();
+                    await client.PostAsync(_scheduleTaskUrl, data);
                 }
                 catch (Exception ex)
                 {
-                    var _serviceScopeFactory = EngineContext.Current.Resolve<IServiceScopeFactory>();
-                    using (var scope = _serviceScopeFactory.CreateScope())
+                    var serviceScopeFactory = EngineContext.Current.Resolve<IServiceScopeFactory>();
+                    using var scope = serviceScopeFactory.CreateScope();
+                    // Resolve
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
+                    var localizationService = scope.ServiceProvider.GetRequiredService<ILocalizationService>();
+                    var storeContext = scope.ServiceProvider.GetRequiredService<IStoreContext>();
+
+                    var message = ex.InnerException?.GetType() == typeof(TaskCanceledException) ? await localizationService.GetResourceAsync("ScheduleTasks.TimeoutError") : ex.Message;
+
+                    message = string.Format(await localizationService.GetResourceAsync("ScheduleTasks.Error"), taskName,
+                        message, taskType, (await storeContext.GetCurrentStoreAsync()).Name, _scheduleTaskUrl);
+
+                    await logger.ErrorAsync(message, ex);
+                }
+                finally
+                {
+                    if (client != null)
                     {
-                        // Resolve
-                        var logger = scope.ServiceProvider.GetRequiredService<ILogger>();
-                        var localizationService = scope.ServiceProvider.GetRequiredService<ILocalizationService>();
-                        var storeContext = scope.ServiceProvider.GetRequiredService<IStoreContext>();
-
-                        var message = ex.InnerException?.GetType() == typeof(TaskCanceledException) ? localizationService.GetResource("ScheduleTasks.TimeoutError") : ex.Message;
-
-                        message = string.Format(localizationService.GetResource("ScheduleTasks.Error"), taskName,
-                            message, taskType, storeContext.CurrentStore.Name, _scheduleTaskUrl);
-
-                        logger.Error(message, ex);
+                        client.Dispose();
+                        client = null;
                     }
                 }
             }
@@ -98,16 +105,19 @@ namespace TVProgViewer.Services.Tasks
             try
             {
                 _timer.Change(-1, -1);
-                Run();
 
-                if (RunOnlyOnce)
-                    Dispose();
-                else
-                    _timer.Change(Interval, Interval);
+                RunAsync().Wait();
             }
             catch
             {
                 // ignore
+            }
+            finally
+            {
+                if (RunOnlyOnce)
+                    Dispose();
+                else
+                    _timer.Change(Interval, Interval);
             }
         }
 
@@ -121,7 +131,7 @@ namespace TVProgViewer.Services.Tasks
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);            
+            GC.SuppressFinalize(this);
         }
 
         // Protected implementation of Dispose pattern.
@@ -131,12 +141,8 @@ namespace TVProgViewer.Services.Tasks
                 return;
 
             if (disposing)
-            {
                 lock (this)
-                {
                     _timer?.Dispose();
-                }
-            }
 
             _disposed = true;
         }

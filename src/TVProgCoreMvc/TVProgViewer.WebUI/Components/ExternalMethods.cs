@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -23,9 +24,9 @@ namespace TVProgViewer.WebUI.Components
 
         #region Methods
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            var model = _externalAuthenticationModelFactory.PrepareExternalMethodsModel();
+            var model = await _externalAuthenticationModelFactory.PrepareExternalMethodsModelAsync();
 
             return View(model);
         }

@@ -127,6 +127,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Catalog
         [TvProgResourceDisplayName("Admin.Catalog.Products.Fields.ProductTags")]
         public string ProductTags { get; set; }
 
+        public string InitialProductTags { get; set; }
+
         [TvProgResourceDisplayName("Admin.Catalog.Products.Fields.Sku")]
         public string Sku { get; set; }
 
@@ -429,6 +431,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Catalog
 
         //product attributes
         public bool ProductAttributesExist { get; set; }
+        public bool CanCreateCombinations { get; set; }
 
         //multiple warehouses
         [TvProgResourceDisplayName("Admin.Catalog.Products.ProductWarehouseInventory")]

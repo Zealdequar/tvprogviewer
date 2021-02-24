@@ -1,4 +1,5 @@
 ﻿using TVProgViewer.Services.Plugins;
+using TVProgViewer.Services.Users;
 
 namespace TVProgViewer.Services.Discounts
 {
@@ -9,7 +10,7 @@ namespace TVProgViewer.Services.Discounts
     {
         #region Ctor
 
-        public DiscountPluginManager(IPluginService pluginService) : base(pluginService)
+        public DiscountPluginManager(IUserService userService, IPluginService pluginService) : base(userService, pluginService)
         {
         }
 

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TVProgViewer.Core;
+using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Data;
 using TVProgViewer.Services.Users;
 
@@ -21,41 +23,45 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         public SaveLastActivityAttribute() : base(typeof(SaveLastActivityFilter))
         {
         }
-        
+
         #endregion
 
         #region Nested filter
 
         /// <summary>
-        /// Represents a filter that saves last User activity date
+        /// Represents a filter that saves last user activity date
         /// </summary>
-        private class SaveLastActivityFilter : IActionFilter
+        private class SaveLastActivityFilter : IAsyncActionFilter
         {
             #region Fields
 
-            private readonly IUserService _UserService;
+            private readonly UserSettings _userSettings;
+            private readonly IRepository<User> _userRepository;
             private readonly IWorkContext _workContext;
 
             #endregion
 
             #region Ctor
 
-            public SaveLastActivityFilter(IUserService UserService,
+            public SaveLastActivityFilter(UserSettings userSettings,
+                IRepository<User> userRepository,
                 IWorkContext workContext)
             {
-                _UserService = UserService;
+                _userSettings = userSettings;
+                _userRepository = userRepository;
                 _workContext = workContext;
             }
 
             #endregion
 
-            #region Methods
+            #region Utilities
 
             /// <summary>
-            /// Called before the action executes, after model binding is complete
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuting(ActionExecutingContext context)
+            /// <returns>A task that on completion indicates the necessary filter actions have been executed</returns>
+            private async Task SaveLastActivityAsync(ActionExecutingContext context)
             {
                 if (context == null)
                     throw new ArgumentNullException(nameof(context));
@@ -67,24 +73,35 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
                 if (!context.HttpContext.Request.Method.Equals(WebRequestMethods.Http.Get, StringComparison.InvariantCultureIgnoreCase))
                     return;
 
-                if (!DataSettingsManager.IsDatabaseInstalled())
+                if (!await DataSettingsManager.IsDatabaseInstalledAsync())
                     return;
 
                 //update last activity date
-                if (_workContext.CurrentUser.LastActivityDateUtc.AddMinutes(1.0) < DateTime.UtcNow)
+                var user = await _workContext.GetCurrentUserAsync();
+                if (user.LastActivityDateUtc.AddMinutes(_userSettings.LastActivityMinutes) < DateTime.UtcNow)
                 {
-                    _workContext.CurrentUser.LastActivityDateUtc = DateTime.UtcNow;
-                    _UserService.UpdateUser(_workContext.CurrentUser);
+                    user.LastActivityDateUtc = DateTime.UtcNow;
+
+                    //update user without event notification
+                    await _userRepository.UpdateAsync(user, false);
                 }
             }
 
+            #endregion
+
+            #region Methods
+
             /// <summary>
-            /// Called after the action executes, before the action result
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuted(ActionExecutedContext context)
+            /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
+            /// <returns>A task that on completion indicates the filter has executed</returns>
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
-                //do nothing
+                await SaveLastActivityAsync(context);
+                if (context.Result == null)
+                    await next();
             }
 
             #endregion

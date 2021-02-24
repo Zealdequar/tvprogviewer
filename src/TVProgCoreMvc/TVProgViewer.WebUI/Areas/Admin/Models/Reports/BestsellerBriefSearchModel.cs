@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Web.Framework.Models;
+﻿using TVProgViewer.Services.Orders;
+using TVProgViewer.Web.Framework.Models;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Models.Reports
 {
@@ -9,9 +10,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Reports
     {
         #region Properties
 
-        //keep it synchronized to OrderReportService record, BestSellersReport() method, orderBy parameter
-        //TODO: move from int to enum
-        public int OrderBy { get; set; }
+        public OrderByEnum OrderBy { get; set; }
 
         #endregion
     }

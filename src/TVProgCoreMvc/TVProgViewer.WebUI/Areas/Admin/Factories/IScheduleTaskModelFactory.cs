@@ -1,4 +1,5 @@
-﻿using TVProgViewer.WebUI.Areas.Admin.Models.Tasks;
+﻿using System.Threading.Tasks;
+using TVProgViewer.WebUI.Areas.Admin.Models.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -12,13 +13,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Schedule task search model</param>
         /// <returns>Schedule task search model</returns>
-        ScheduleTaskSearchModel PrepareScheduleTaskSearchModel(ScheduleTaskSearchModel searchModel);
+        Task<ScheduleTaskSearchModel> PrepareScheduleTaskSearchModelAsync(ScheduleTaskSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged schedule task list model
         /// </summary>
         /// <param name="searchModel">Schedule task search model</param>
         /// <returns>Schedule task list model</returns>
-        ScheduleTaskListModel PrepareScheduleTaskListModel(ScheduleTaskSearchModel searchModel);
+        Task<ScheduleTaskListModel> PrepareScheduleTaskListModelAsync(ScheduleTaskSearchModel searchModel);
     }
 }

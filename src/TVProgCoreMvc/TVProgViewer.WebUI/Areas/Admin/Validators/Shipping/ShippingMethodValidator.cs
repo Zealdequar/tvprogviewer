@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Shipping
 {
     public partial class ShippingMethodValidator : BaseTvProgValidator<ShippingMethodModel>
     {
-        public ShippingMethodValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public ShippingMethodValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Shipping.Methods.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Shipping.Methods.Fields.Name.Required"));
 
             SetDatabaseValidationRules<ShippingMethod>(dataProvider);
         }

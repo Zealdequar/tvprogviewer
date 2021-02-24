@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using Microsoft.AspNetCore.Http;
 
 namespace TVProgViewer.Services.Plugins
@@ -22,8 +23,15 @@ namespace TVProgViewer.Services.Plugins
         void UploadIconsArchive(IFormFile archivefile);
 
         /// <summary>
-        /// Upload locale pattern for ccurrent culture
+        /// Upload single favicon
         /// </summary>
-        void UploadLocalePattern();
+        /// <param name="favicon">Favicon</param>
+        void UploadFavicon(IFormFile favicon);
+
+        /// <summary>
+        /// Upload locale pattern for current culture
+        /// </summary>
+        /// <param name="cultureInfo">CultureInfo</param>
+        void UploadLocalePattern(CultureInfo cultureInfo = null);
     }
 }

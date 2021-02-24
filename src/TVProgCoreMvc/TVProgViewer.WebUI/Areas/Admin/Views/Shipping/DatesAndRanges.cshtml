@@ -9,10 +9,10 @@
 
 @{
     const string hideDatesBlockAttributeName = "DatesAndRangesPage.HideDatesBlock";
-    var hideDatesBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideDatesBlockAttributeName);
+    var hideDatesBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideDatesBlockAttributeName);
 
     const string hideRangesBlockAttributeName = "DatesAndRangesPage.HideRangesBlock";
-    var hideRangesBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideRangesBlockAttributeName);
+    var hideRangesBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideRangesBlockAttributeName);
 }
 
 <div class="content-header clearfix">
@@ -25,15 +25,19 @@
     </div>
 </div>
 
-<div class="content">
-    <div class="form-horizontal">
-        <div class="panel-group">
-            <tvprog-panels id="datesandranges-panels">
-                <tvprog-panel asp-name="datesandranges-dates" asp-icon="fa fa-calendar" asp-title="@T("Admin.Configuration.Shipping.DeliveryDates")" asp-hide-block-attribute-name="@hideDatesBlockAttributeName" asp-hide="@hideDatesBlock" asp-advanced="false">@await Html.PartialAsync("_DatesAndRanges.Dates", Model)</tvprog-panel>
-                <tvprog-panel asp-name="datesandranges-ranges" asp-icon="fa fa-arrows-h" asp-title="@T("Admin.Configuration.Shipping.ProductAvailabilityRanges")" asp-hide-block-attribute-name="@hideRangesBlockAttributeName" asp-hide="@hideRangesBlock" asp-advanced="false">@await Html.PartialAsync("_DatesAndRanges.Ranges", Model)</tvprog-panel>
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="form-horizontal">
+                <div class="cards-group">
+                    <tvprog-cards id="datesandranges-cards">
+                        <tvprog-card asp-name="datesandranges-dates" asp-icon="fa fa-calendar" asp-title="@T("Admin.Configuration.Shipping.DeliveryDates")" asp-hide-block-attribute-name="@hideDatesBlockAttributeName" asp-hide="@hideDatesBlock" asp-advanced="false">@await Html.PartialAsync("_DatesAndRanges.Dates", Model)</tvprog-card>
+                        <tvprog-card asp-name="datesandranges-ranges" asp-icon="fa fa-arrows-h" asp-title="@T("Admin.Configuration.Shipping.ProductAvailabilityRanges")" asp-hide-block-attribute-name="@hideRangesBlockAttributeName" asp-hide="@hideRangesBlock" asp-advanced="false">@await Html.PartialAsync("_DatesAndRanges.Ranges", Model)</tvprog-card>
 
-                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.DatesAndRangesDetailsBlock, additionalData = Model })
-            </tvprog-panels>
+                        @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.DatesAndRangesDetailsBlock, additionalData = Model })
+                    </tvprog-cards>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>

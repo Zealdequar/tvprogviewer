@@ -16,6 +16,8 @@ using TVProgViewer.Services.Security;
 using TVProgViewer.WebUI.Areas.Admin.Factories;
 using TVProgViewer.WebUI.Areas.Admin.Models.Payments;
 using TVProgViewer.Web.Framework.Mvc;
+using TVProgViewer.Core.Events;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Controllers
 {
@@ -67,43 +69,43 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
             return RedirectToAction("Methods");
         }
 
-        public virtual IActionResult Methods()
+        public virtual async Task<IActionResult> Methods()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
                 return AccessDeniedView();
 
             //prepare model
-            var model = _paymentModelFactory.PreparePaymentMethodsModel(new PaymentMethodsModel());
+            var model = await _paymentModelFactory.PreparePaymentMethodsModelAsync(new PaymentMethodsModel());
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual IActionResult Methods(PaymentMethodSearchModel searchModel)
+        public virtual async Task<IActionResult> Methods(PaymentMethodSearchModel searchModel)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
-                return AccessDeniedDataTablesJson();
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
+                return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = _paymentModelFactory.PreparePaymentMethodListModel(searchModel);
+            var model = await _paymentModelFactory.PreparePaymentMethodListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
-        public virtual IActionResult MethodUpdate(PaymentMethodModel model)
+        public virtual async Task<IActionResult> MethodUpdate(PaymentMethodModel model)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
                 return AccessDeniedView();
 
-            var pm = _paymentPluginManager.LoadPluginBySystemName(model.SystemName);
+            var pm = await _paymentPluginManager.LoadPluginBySystemNameAsync(model.SystemName);
             if (_paymentPluginManager.IsPluginActive(pm))
             {
                 if (!model.IsActive)
                 {
                     //mark as disabled
                     _paymentSettings.ActivePaymentMethodSystemNames.Remove(pm.PluginDescriptor.SystemName);
-                    _settingService.SaveSetting(_paymentSettings);
+                    await _settingService.SaveSettingAsync(_paymentSettings);
                 }
             }
             else
@@ -112,7 +114,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
                 {
                     //mark as active
                     _paymentSettings.ActivePaymentMethodSystemNames.Add(pm.PluginDescriptor.SystemName);
-                    _settingService.SaveSetting(_paymentSettings);
+                    await _settingService.SaveSettingAsync(_paymentSettings);
                 }
             }
 
@@ -124,18 +126,18 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
             pluginDescriptor.Save();
 
             //raise event
-            _eventPublisher.Publish(new PluginUpdatedEvent(pluginDescriptor));
+            await _eventPublisher.PublishAsync(new PluginUpdatedEvent(pluginDescriptor));
 
             return new NullJsonResult();
         }
 
-        public virtual IActionResult MethodRestrictions()
+        public virtual async Task<IActionResult> MethodRestrictions()
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
                 return AccessDeniedView();
 
             //prepare model
-            var model = _paymentModelFactory.PreparePaymentMethodsModel(new PaymentMethodsModel());
+            var model = await _paymentModelFactory.PreparePaymentMethodsModelAsync(new PaymentMethodsModel());
 
             return View(model);
         }
@@ -145,13 +147,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
         //we use 2048 value because in some cases default value (1024) is too small for this action
         [RequestFormLimits(ValueCountLimit = 2048)]
         [HttpPost, ActionName("MethodRestrictions")]
-        public virtual IActionResult MethodRestrictionsSave(PaymentMethodsModel model, IFormCollection form)
+        public virtual async Task<IActionResult> MethodRestrictionsSave(PaymentMethodsModel model, IFormCollection form)
         {
-            if (!_permissionService.Authorize(StandardPermissionProvider.ManagePaymentMethods))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePaymentMethods))
                 return AccessDeniedView();
 
-            var paymentMethods = _paymentPluginManager.LoadAllPlugins();
-            var countries = _countryService.GetAllCountries(showHidden: true);
+            var paymentMethods = await _paymentPluginManager.LoadAllPluginsAsync();
+            var countries = await _countryService.GetAllCountriesAsync(showHidden: true);
 
             foreach (var pm in paymentMethods)
             {
@@ -170,11 +172,11 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
                     }
                 }
 
-                _paymentPluginManager.SaveRestrictedCountries(pm, newCountryIds);
+                await _paymentPluginManager.SaveRestrictedCountriesAsync(pm, newCountryIds);
             }
 
-            _notificationService.SuccessNotification(_localizationService.GetResource("Admin.Configuration.Payment.MethodRestrictions.Updated"));
-            
+            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Payment.MethodRestrictions.Updated"));
+
             return RedirectToAction("MethodRestrictions");
         }
 

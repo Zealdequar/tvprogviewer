@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Shipping
 {
     public partial class ProductAvailabilityRangeValidator : BaseTvProgValidator<ProductAvailabilityRangeModel>
     {
-        public ProductAvailabilityRangeValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public ProductAvailabilityRangeValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Configuration.Shipping.ProductAvailabilityRanges.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Configuration.Shipping.ProductAvailabilityRanges.Fields.Name.Required"));
 
             SetDatabaseValidationRules<ProductAvailabilityRange>(dataProvider);
         }

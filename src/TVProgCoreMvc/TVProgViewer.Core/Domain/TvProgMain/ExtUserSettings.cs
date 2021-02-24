@@ -18,6 +18,6 @@
         /// <summary>
         /// Неотмеченные телеканалы
         /// </summary>
-        public short? UncheckedChannels { get; set; }
+        public int? UncheckedChannels { get; set; }
     }
 }

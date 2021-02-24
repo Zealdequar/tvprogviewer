@@ -309,7 +309,7 @@ namespace TVProgViewer.DataAccess.Adapters
                     User user = new User()
                     {
                         Id = su.UserId,
-                        UserName = su.UserName,
+                        Username = su.UserName,
                         LastName = su.LastName,
                         FirstName = su.FirstName,
                         MiddleName = su.MiddleName,

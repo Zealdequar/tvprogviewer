@@ -56,5 +56,10 @@ namespace TVProgViewer.Core.Domain.Users
         /// Gets or sets the order for which points were redeemed as a payment (spent by a User when placing this order)
         /// </summary>
         public virtual int? OrderId { get; set; }
+
+        /// <summary>
+        /// Used with order
+        /// </summary>
+        public Guid? UsedWithOrder { get; set; }
     }
 }

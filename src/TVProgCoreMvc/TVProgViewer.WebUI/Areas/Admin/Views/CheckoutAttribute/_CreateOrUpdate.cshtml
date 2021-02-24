@@ -5,34 +5,36 @@
 @{
 
     const string hideInfoBlockAttributeName = "CheckoutAttributePage.HideInfoBlock";
-    var hideInfoBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideInfoBlockAttributeName);
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideInfoBlockAttributeName);
 
     const string hideValuesBlockAttributeName = "CheckoutAttributePage.HideValuesBlock";
-    var hideValuesBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideValuesBlockAttributeName, defaultValue: true);
+    var hideValuesBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideValuesBlockAttributeName, defaultValue: true);
 
     const string hideConditionBlockAttributeName = "CheckoutAttributePage.HideConditionBlock";
-    var hideConditionBlock = genericAttributeService.GetAttribute<bool>(workContext.CurrentUser, hideConditionBlockAttributeName, defaultValue: true);
+    var hideConditionBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideConditionBlockAttributeName, defaultValue: true);
 }
 
 <div asp-validation-summary="All"></div>
 <input asp-for="Id" type="hidden" />
 
-<div class="content">
-    <div class="form-horizontal">
-        <div class="row">
-            <div class="col-md-12 clearfix">
-                <div class="pull-left">
-                    @await Component.InvokeAsync("SettingMode", new { modeName = "checkoutattribute-advanced-mode" })
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-12 clearfix">
+                    <div class="pull-left">
+                        @await Component.InvokeAsync("SettingMode", new { modeName = "checkoutattribute-advanced-mode" })
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <tvprog-panels id="checkout-attributes-panels">
-            <tvprog-panel asp-name="checkout-attributes-info" asp-icon="fa fa-info" asp-title="@T("Admin.Catalog.Attributes.CheckoutAttributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-panel>
-            <tvprog-panel asp-name="checkout-attributes-values" asp-icon="fa fa-television" asp-title="@T("Admin.Catalog.Attributes.CheckoutAttributes.Values")" asp-hide-block-attribute-name="@hideValuesBlockAttributeName" asp-hide="@hideValuesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Values", Model)</tvprog-panel>
-            <tvprog-panel asp-name="checkout-attributes-conditions" asp-icon="fa fa-bookmark" asp-title="@T("Admin.Catalog.Attributes.CheckoutAttributes.Condition")" asp-hide-block-attribute-name="@hideConditionBlockAttributeName" asp-hide="@hideConditionBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Condition", Model)</tvprog-panel>
-            
-            @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.CheckoutAttributeDetailsBlock, additionalData = Model })
-        </tvprog-panels>
+            <tvprog-cards id="checkout-attributes-cards">
+                <tvprog-card asp-name="checkout-attributes-info" asp-icon="fa fa-info" asp-title="@T("Admin.Catalog.Attributes.CheckoutAttributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>
+                <tvprog-card asp-name="checkout-attributes-values" asp-icon="fa fa-television" asp-title="@T("Admin.Catalog.Attributes.CheckoutAttributes.Values")" asp-hide-block-attribute-name="@hideValuesBlockAttributeName" asp-hide="@hideValuesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Values", Model)</tvprog-card>
+                <tvprog-card asp-name="checkout-attributes-conditions" asp-icon="fa fa-bookmark" asp-title="@T("Admin.Catalog.Attributes.CheckoutAttributes.Condition")" asp-hide-block-attribute-name="@hideConditionBlockAttributeName" asp-hide="@hideConditionBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Condition", Model)</tvprog-card>
+
+                @await Component.InvokeAsync("AdminWidget", new { widgetZone = AdminWidgetZones.CheckoutAttributeDetailsBlock, additionalData = Model })
+            </tvprog-cards>
+        </div>
     </div>
-</div>
+</section>

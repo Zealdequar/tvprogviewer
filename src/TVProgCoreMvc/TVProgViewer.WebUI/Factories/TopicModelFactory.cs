@@ -10,6 +10,7 @@ using TVProgViewer.Services.Seo;
 using TVProgViewer.Services.Stores;
 using TVProgViewer.Services.Topics;
 using TVProgViewer.WebUI.Models.Topics;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Factories
 {
@@ -58,7 +59,7 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="topic">Topic</param>
         /// <returns>Topic model</returns>
-        protected virtual TopicModel PrepareTopicModel(Topic topic)
+        protected virtual async Task<TopicModel> PrepareTopicModelAsync(Topic topic)
         {
             if (topic == null)
                 throw new ArgumentNullException(nameof(topic));
@@ -69,12 +70,12 @@ namespace TVProgViewer.WebUI.Factories
                 SystemName = topic.SystemName,
                 IncludeInSitemap = topic.IncludeInSitemap,
                 IsPasswordProtected = topic.IsPasswordProtected,
-                Title = topic.IsPasswordProtected ? string.Empty : _localizationService.GetLocalized(topic, x => x.Title),
-                Body = topic.IsPasswordProtected ? string.Empty : _localizationService.GetLocalized(topic, x => x.Body),
-                MetaKeywords = _localizationService.GetLocalized(topic, x => x.MetaKeywords),
-                MetaDescription = _localizationService.GetLocalized(topic, x => x.MetaDescription),
-                MetaTitle = _localizationService.GetLocalized(topic, x => x.MetaTitle),
-                SeName = _urlRecordService.GetSeName(topic),
+                Title = topic.IsPasswordProtected ? string.Empty : await _localizationService.GetLocalizedAsync(topic, x => x.Title),
+                Body = topic.IsPasswordProtected ? string.Empty : await _localizationService.GetLocalizedAsync(topic, x => x.Body),
+                MetaKeywords = await _localizationService.GetLocalizedAsync(topic, x => x.MetaKeywords),
+                MetaDescription = await _localizationService.GetLocalizedAsync(topic, x => x.MetaDescription),
+                MetaTitle = await _localizationService.GetLocalizedAsync(topic, x => x.MetaTitle),
+                SeName = await _urlRecordService.GetSeNameAsync(topic),
                 TopicTemplateId = topic.TopicTemplateId
             };
 
@@ -91,25 +92,25 @@ namespace TVProgViewer.WebUI.Factories
         /// <param name="topicId">Topic identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>Topic model</returns>
-        public virtual TopicModel PrepareTopicModelById(int topicId, bool showHidden = false)
+        public virtual async Task<TopicModel> PrepareTopicModelByIdAsync(int topicId, bool showHidden = false)
         {
-            var topic = _topicService.GetTopicById(topicId);
+            var topic = await _topicService.GetTopicByIdAsync(topicId);
 
             if (topic == null)
                 return null;
 
             if (showHidden)
-                return PrepareTopicModel(topic);
+                return await PrepareTopicModelAsync(topic);
 
             if (!topic.Published ||
                 //ACL (access control list)
-                !_aclService.Authorize(topic) ||
+                !await _aclService.AuthorizeAsync(topic) ||
                 //store mapping
-                !_storeMappingService.Authorize(topic))
+                !await _storeMappingService.AuthorizeAsync(topic))
 
                 return null;
 
-            return PrepareTopicModel(topic);
+            return await PrepareTopicModelAsync(topic);
         }
 
         /// <summary>
@@ -117,14 +118,14 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="systemName">Topic system name</param>
         /// <returns>Topic model</returns>
-        public virtual TopicModel PrepareTopicModelBySystemName(string systemName)
+        public virtual async Task<TopicModel> PrepareTopicModelBySystemNameAsync(string systemName)
         {
             //load by store
-            var topic = _topicService.GetTopicBySystemName(systemName, _storeContext.CurrentStore.Id);
+            var topic = await _topicService.GetTopicBySystemNameAsync(systemName, (await _storeContext.GetCurrentStoreAsync()).Id);
             if (topic == null)
                 return null;
 
-            return PrepareTopicModel(topic);
+            return await PrepareTopicModelAsync(topic);
         }
 
         /// <summary>
@@ -132,10 +133,10 @@ namespace TVProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="topicTemplateId">Topic template identifier</param>
         /// <returns>View path</returns>
-        public virtual string PrepareTemplateViewPath(int topicTemplateId)
+        public virtual async Task<string> PrepareTemplateViewPathAsync(int topicTemplateId)
         {
-            var template = _topicTemplateService.GetTopicTemplateById(topicTemplateId) ??
-                           _topicTemplateService.GetAllTopicTemplates().FirstOrDefault();
+            var template = await _topicTemplateService.GetTopicTemplateByIdAsync(topicTemplateId) ??
+                           (await _topicTemplateService.GetAllTopicTemplatesAsync()).FirstOrDefault();
 
             if (template == null)
                 throw new Exception("No default template could be loaded");

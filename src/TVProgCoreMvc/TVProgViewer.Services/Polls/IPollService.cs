@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Polls;
 
 namespace TVProgViewer.Services.Polls
@@ -13,7 +14,7 @@ namespace TVProgViewer.Services.Polls
         /// </summary>
         /// <param name="pollId">The poll identifier</param>
         /// <returns>Poll</returns>
-        Poll GetPollById(int pollId);
+        Task<Poll> GetPollByIdAsync(int pollId);
 
         /// <summary>
         /// Gets polls
@@ -26,7 +27,7 @@ namespace TVProgViewer.Services.Polls
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Polls</returns>
-        IPagedList<Poll> GetPolls(int storeId, int languageId = 0, bool showHidden = false,
+        Task<IPagedList<Poll>> GetPollsAsync(int storeId, int languageId = 0, bool showHidden = false,
             bool loadShownOnHomepageOnly = false, string systemKeyword = null,
             int pageIndex = 0, int pageSize = int.MaxValue);
 
@@ -34,26 +35,26 @@ namespace TVProgViewer.Services.Polls
         /// Deletes a poll
         /// </summary>
         /// <param name="poll">The poll</param>
-        void DeletePoll(Poll poll);
+        Task DeletePollAsync(Poll poll);
 
         /// <summary>
         /// Inserts a poll
         /// </summary>
         /// <param name="poll">Poll</param>
-        void InsertPoll(Poll poll);
+        Task InsertPollAsync(Poll poll);
 
         /// <summary>
         /// Updates the poll
         /// </summary>
         /// <param name="poll">Poll</param>
-        void UpdatePoll(Poll poll);
+        Task UpdatePollAsync(Poll poll);
 
         /// <summary>
         /// Gets a poll answer
         /// </summary>
         /// <param name="pollAnswerId">Poll answer identifier</param>
         /// <returns>Poll answer</returns>
-        PollAnswer GetPollAnswerById(int pollAnswerId);
+        Task<PollAnswer> GetPollAnswerByIdAsync(int pollAnswerId);
 
         /// <summary>
         /// Gets a poll answers by parent poll
@@ -62,39 +63,39 @@ namespace TVProgViewer.Services.Polls
         /// <returns>Poll answer</returns>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
-        IPagedList<PollAnswer> GetPollAnswerByPoll(int pollId, int pageIndex = 0, int pageSize = int.MaxValue);
+        Task<IPagedList<PollAnswer>> GetPollAnswerByPollAsync(int pollId, int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
         /// Deletes a poll answer
         /// </summary>
         /// <param name="pollAnswer">Poll answer</param>
-        void DeletePollAnswer(PollAnswer pollAnswer);
+        Task DeletePollAnswerAsync(PollAnswer pollAnswer);
 
         /// <summary>
         /// Inserts a poll answer
         /// </summary>
         /// <param name="pollAnswer">Poll answer</param>
-        void InsertPollAnswer(PollAnswer pollAnswer);
+        Task InsertPollAnswerAsync(PollAnswer pollAnswer);
 
         /// <summary>
         /// Updates the poll answer
         /// </summary>
         /// <param name="pollAnswer">Poll answer</param>
-        void UpdatePollAnswer(PollAnswer pollAnswer);
+        Task UpdatePollAnswerAsync(PollAnswer pollAnswer);
 
         /// <summary>
-        /// Gets a value indicating whether User already voted for this poll
+        /// Gets a value indicating whether user already voted for this poll
         /// </summary>
         /// <param name="pollId">Poll identifier</param>
-        /// <param name="UserId">User identifier</param>
+        /// <param name="userId">User identifier</param>
         /// <returns>Result</returns>
-        bool AlreadyVoted(int pollId, int UserId);
+        Task<bool> AlreadyVotedAsync(int pollId, int userId);
 
         /// <summary>
         /// Inserts a poll voting record
         /// </summary>
         /// <param name="pollVotingRecord">Voting record</param>
-        void InsertPollVotingRecord(PollVotingRecord pollVotingRecord);
+        Task InsertPollVotingRecordAsync(PollVotingRecord pollVotingRecord);
 
         /// <summary>
         /// Gets a poll voting records by parent answer
@@ -103,6 +104,6 @@ namespace TVProgViewer.Services.Polls
         /// <returns>Poll answer</returns>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
-        IPagedList<PollVotingRecord> GetPollVotingRecordsByPollAnswer(int pollAnswerId, int pageIndex = 0, int pageSize = int.MaxValue);
+        Task<IPagedList<PollVotingRecord>> GetPollVotingRecordsByPollAnswerAsync(int pollAnswerId, int pageIndex = 0, int pageSize = int.MaxValue);
     }
 }

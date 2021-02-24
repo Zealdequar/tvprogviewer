@@ -36,9 +36,6 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.ShowOnHomepage")]
         public bool ShowOnHomepage { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.DisplayOrder")]
-        public bool DisplayOrder { get; set; }
-
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.AllowUserReviews")]
         public bool AllowUserReviews { get; set; }
 
@@ -81,8 +78,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.PAngV")]
         public bool PAngV { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.RequireOtherProductsAddedToTheCart")]
-        public bool RequireOtherProductsAddedToTheCart { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.RequireOtherProductsAddedToCart")]
+        public bool RequireOtherProductsAddedToCart { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.IsGiftCard")]
         public bool IsGiftCard { get; set; }
@@ -122,9 +119,6 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.DisplayStockAvailability")]
         public bool DisplayStockAvailability { get; set; }
-
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.DisplayStockQuantity")]
-        public bool DisplayStockQuantity { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.MinimumStockQuantity")]
         public bool MinimumStockQuantity { get; set; }
@@ -171,15 +165,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.MarkAsNew")]
         public bool MarkAsNew { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.MarkAsNewStartDate")]
-        public bool MarkAsNewStartDate { get; set; }
-
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.MarkAsNewEndDate")]
-        public bool MarkAsNewEndDate { get; set; }
-
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.Published")]
         public bool Published { get; set; }
-        
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.RelatedProducts")]
         public bool RelatedProducts { get; set; }
 
@@ -191,7 +179,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Settings
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.PurchasedWithOrders")]
         public bool PurchasedWithOrders { get; set; }
-       
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ProductEditor.ProductAttributes")]
         public bool ProductAttributes { get; set; }
 

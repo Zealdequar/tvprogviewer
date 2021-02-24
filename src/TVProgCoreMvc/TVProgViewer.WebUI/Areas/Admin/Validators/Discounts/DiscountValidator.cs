@@ -9,9 +9,9 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Discounts
 {
     public partial class DiscountValidator : BaseTvProgValidator<DiscountModel>
     {
-        public DiscountValidator(IDataProvider dataProvider, ILocalizationService localizationService)
+        public DiscountValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider)
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage(localizationService.GetResource("Admin.Promotions.Discounts.Fields.Name.Required"));
+            RuleFor(x => x.Name).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Promotions.Discounts.Fields.Name.Required"));
 
             SetDatabaseValidationRules<Discount>(dataProvider);
         }

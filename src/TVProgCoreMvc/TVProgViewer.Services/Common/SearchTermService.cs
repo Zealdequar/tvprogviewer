@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Common;
+using TVProgViewer.Core.Events;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Common
@@ -15,17 +16,14 @@ namespace TVProgViewer.Services.Common
     {
         #region Fields
 
-        private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<SearchTerm> _searchTermRepository;
 
         #endregion
 
         #region Ctor
 
-        public SearchTermService(IEventPublisher eventPublisher,
-            IRepository<SearchTerm> searchTermRepository)
+        public SearchTermService(IRepository<SearchTerm> searchTermRepository)
         {
-            _eventPublisher = eventPublisher;
             _searchTermRepository = searchTermRepository;
         }
 
@@ -34,40 +32,12 @@ namespace TVProgViewer.Services.Common
         #region Methods
 
         /// <summary>
-        /// Deletes a search term record
-        /// </summary>
-        /// <param name="searchTerm">Search term</param>
-        public virtual void DeleteSearchTerm(SearchTerm searchTerm)
-        {
-            if (searchTerm == null)
-                throw new ArgumentNullException(nameof(searchTerm));
-
-            _searchTermRepository.Delete(searchTerm);
-
-            //event notification
-            _eventPublisher.EntityDeleted(searchTerm);
-        }
-
-        /// <summary>
-        /// Gets a search term record by identifier
-        /// </summary>
-        /// <param name="searchTermId">Search term identifier</param>
-        /// <returns>Search term</returns>
-        public virtual SearchTerm GetSearchTermById(int searchTermId)
-        {
-            if (searchTermId == 0)
-                return null;
-
-            return _searchTermRepository.ToCachedGetById(searchTermId);
-        }
-
-        /// <summary>
         /// Gets a search term record by keyword
         /// </summary>
         /// <param name="keyword">Search term keyword</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>Search term</returns>
-        public virtual SearchTerm GetSearchTermByKeyword(string keyword, int storeId)
+        public virtual async Task<SearchTerm> GetSearchTermByKeywordAsync(string keyword, int storeId)
         {
             if (string.IsNullOrEmpty(keyword))
                 return null;
@@ -76,7 +46,8 @@ namespace TVProgViewer.Services.Common
                         where st.Keyword == keyword && st.StoreId == storeId
                         orderby st.Id
                         select st;
-            var searchTerm = query.FirstOrDefault();
+            var searchTerm = await query.FirstOrDefaultAsync();
+
             return searchTerm;
         }
 
@@ -86,7 +57,7 @@ namespace TVProgViewer.Services.Common
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>A list search term report lines</returns>
-        public virtual IPagedList<SearchTermReportLine> GetStats(int pageIndex = 0, int pageSize = int.MaxValue)
+        public virtual async Task<IPagedList<SearchTermReportLine>> GetStatsAsync(int pageIndex = 0, int pageSize = int.MaxValue)
         {
             var query = (from st in _searchTermRepository.Table
                          group st by st.Keyword into groupedResult
@@ -102,7 +73,8 @@ namespace TVProgViewer.Services.Common
                             Count = r.Count
                         });
 
-            var result = new PagedList<SearchTermReportLine>(query, pageIndex, pageSize);
+            var result = await query.ToPagedListAsync(pageIndex, pageSize);
+
             return result;
         }
 
@@ -110,30 +82,18 @@ namespace TVProgViewer.Services.Common
         /// Inserts a search term record
         /// </summary>
         /// <param name="searchTerm">Search term</param>
-        public virtual void InsertSearchTerm(SearchTerm searchTerm)
+        public virtual async Task InsertSearchTermAsync(SearchTerm searchTerm)
         {
-            if (searchTerm == null)
-                throw new ArgumentNullException(nameof(searchTerm));
-
-            _searchTermRepository.Insert(searchTerm);
-
-            //event notification
-            _eventPublisher.EntityInserted(searchTerm);
+            await _searchTermRepository.InsertAsync(searchTerm);
         }
 
         /// <summary>
         /// Updates the search term record
         /// </summary>
         /// <param name="searchTerm">Search term</param>
-        public virtual void UpdateSearchTerm(SearchTerm searchTerm)
+        public virtual async Task UpdateSearchTermAsync(SearchTerm searchTerm)
         {
-            if (searchTerm == null)
-                throw new ArgumentNullException(nameof(searchTerm));
-
-            _searchTermRepository.Update(searchTerm);
-
-            //event notification
-            _eventPublisher.EntityUpdated(searchTerm);
+            await _searchTermRepository.UpdateAsync(searchTerm);
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace TVProgViewer.WebUI.Infrastructure.Installation
 {
@@ -14,6 +13,12 @@ namespace TVProgViewer.WebUI.Infrastructure.Installation
         /// <param name="resourceName">Resource name</param>
         /// <returns>Resource value</returns>
         string GetResource(string resourceName);
+
+        /// <summary>
+        /// Get current browser culture
+        /// </summary>
+        /// <returns>Current culture</returns>
+        string GetBrowserCulture();
 
         /// <summary>
         /// Get current language for the installation page
@@ -36,7 +41,9 @@ namespace TVProgViewer.WebUI.Infrastructure.Installation
         /// <summary>
         /// Get a list of available data provider types
         /// </summary>
-        /// <returns>Available installation data provider types</returns>
-        IList<SelectListItem> GetAvailableProviderTypes();
+        /// <param name="valuesToExclude">Values to exclude</param>
+        /// <param name="useLocalization">Localize</param>
+        /// <returns>SelectList</returns>
+        Dictionary<int, string> GetAvailableProviderTypes(int[] valuesToExclude = null, bool useLocalization = true);
     }
 }

@@ -1,18 +1,19 @@
 ﻿using FluentMigrator;
 using TVProgViewer.Core.Domain.Localization;
-using TVProgViewer.Data.Extensions;
 
 namespace TVProgViewer.Data.Migrations.Indexes
 {
-    [TvProgMigration("2019/12/19 09:36:08:9037677")]
+    [TvProgMigration("2020/03/13 09:36:08:9037677")]
     public class AddLocaleStringResourceIX : AutoReversingMigration
     {
         #region Methods
 
         public override void Up()
         {
-            this.AddIndex("IX_LocaleStringResource", nameof(LocaleStringResource), i => i.Ascending(),
-                nameof(LocaleStringResource.ResourceName), nameof(LocaleStringResource.LanguageId));
+            Create.Index("IX_LocaleStringResource").OnTable(nameof(LocaleStringResource))
+                .OnColumn(nameof(LocaleStringResource.ResourceName)).Ascending()
+                .OnColumn(nameof(LocaleStringResource.LanguageId)).Ascending()
+                .WithOptions().NonClustered();
         }
 
         #endregion

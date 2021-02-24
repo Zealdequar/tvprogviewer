@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.Core.Domain.Users;
 
 namespace TVProgViewer.Services.Users
@@ -13,35 +15,44 @@ namespace TVProgViewer.Services.Users
         /// <param name="usernameOrEmail">Username or email</param>
         /// <param name="password">Password</param>
         /// <returns>Result</returns>
-        UserLoginResults ValidateUser(string usernameOrEmail, string password);
+        Task<UserLoginResults> ValidateUserAsync(string usernameOrEmail, string password);
 
         /// <summary>
         /// Register User
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Result</returns>
-        UserRegistrationResult RegisterUser(UserRegistrationRequest request);
+        Task<UserRegistrationResult> RegisterUserAsync(UserRegistrationRequest request);
 
         /// <summary>
         /// Change password
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>Result</returns>
-        ChangePasswordResult ChangePassword(ChangePasswordRequest request);
+        Task<ChangePasswordResult> ChangePasswordAsync(ChangePasswordRequest request);
+
+        /// <summary>
+        /// Login passed user
+        /// </summary>
+        /// <param name="user">User to login</param>
+        /// <param name="returnUrl">URL to which the user will return after authentication</param>
+        /// <param name="isPersist">Is remember me</param>
+        /// <returns>Result of an authentication</returns>
+        Task<IActionResult> SignInUserAsync(User user, string returnUrl, bool isPersist = false);
 
         /// <summary>
         /// Sets a user email
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="newEmail">New email</param>
         /// <param name="requireValidation">Require validation of new email address</param>
-        void SetEmail(User User, string newEmail, bool requireValidation);
+        Task SetEmailAsync(User user, string newEmail, bool requireValidation);
 
         /// <summary>
-        /// Sets a User username
+        /// Sets a user username
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="newUsername">New Username</param>
-        void SetUsername(User User, string newUsername);
+        Task SetUsernameAsync(User user, string newUsername);
     }
 }

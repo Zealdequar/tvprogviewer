@@ -10,14 +10,14 @@ namespace TVProgViewer.WebUI.Areas.Admin.Validators.Catalog
 {
     public partial class ProductReviewValidator : BaseTvProgValidator<ProductReviewModel>
     {
-        public ProductReviewValidator(IDataProvider dataProvider, ILocalizationService localizationService, IWorkContext workContext)
+        public ProductReviewValidator(ILocalizationService localizationService, ITvProgDataProvider dataProvider, IWorkContext workContext)
         {
-            var isLoggedInAsVendor = workContext.CurrentVendor != null;
+            var isLoggedInAsVendor = workContext.GetCurrentVendorAsync().Result != null;
             //vendor can edit "Reply text" only
             if (!isLoggedInAsVendor)
             {
-                RuleFor(x => x.Title).NotEmpty().WithMessage(localizationService.GetResource("Admin.Catalog.ProductReviews.Fields.Title.Required"));
-                RuleFor(x => x.ReviewText).NotEmpty().WithMessage(localizationService.GetResource("Admin.Catalog.ProductReviews.Fields.ReviewText.Required"));
+                RuleFor(x => x.Title).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Catalog.ProductReviews.Fields.Title.Required"));
+                RuleFor(x => x.ReviewText).NotEmpty().WithMessageAwait(localizationService.GetResourceAsync("Admin.Catalog.ProductReviews.Fields.ReviewText.Required"));
             }
 
             SetDatabaseValidationRules<ProductReview>(dataProvider);

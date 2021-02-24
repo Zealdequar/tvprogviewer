@@ -1,7 +1,7 @@
 @model CatalogSettingsModel
 
-<div class="panel-body">
-    <div class="form-group">
+<div class="card-body">
+    <div class="form-group row">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="ProductReviewsMustBeApproved_OverrideForStore" asp-input="ProductReviewsMustBeApproved" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="ProductReviewsMustBeApproved" />
@@ -11,7 +11,17 @@
             <span asp-validation-for="ProductReviewsMustBeApproved"></span>
         </div>
     </div>
-    <div class="form-group advanced-setting">
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="OneReviewPerProductFromUser_OverrideForStore" asp-input="OneReviewPerProductFromUser" asp-store-scope="@Model.ActiveStoreScopeConfiguration"/>
+            <tvprog-label asp-for="OneReviewPerProductFromUser"/>
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="OneReviewPerProductFromUser"/>
+            <span asp-validation-for="OneReviewPerProductFromUser"></span>
+        </div>
+    </div>
+    <div class="form-group row advanced-setting">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="AllowAnonymousUsersToReviewProduct_OverrideForStore" asp-input="AllowAnonymousUsersToReviewProduct" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="AllowAnonymousUsersToReviewProduct" />
@@ -21,7 +31,7 @@
             <span asp-validation-for="AllowAnonymousUsersToReviewProduct"></span>
         </div>
     </div>
-    <div class="form-group advanced-setting">
+    <div class="form-group row advanced-setting">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="ProductReviewPossibleOnlyAfterPurchasing_OverrideForStore" asp-input="ProductReviewPossibleOnlyAfterPurchasing" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="ProductReviewPossibleOnlyAfterPurchasing" />
@@ -31,7 +41,7 @@
             <span asp-validation-for="ProductReviewPossibleOnlyAfterPurchasing"></span>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="NotifyStoreOwnerAboutNewProductReviews_OverrideForStore" asp-input="NotifyStoreOwnerAboutNewProductReviews" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="NotifyStoreOwnerAboutNewProductReviews" />
@@ -41,7 +51,7 @@
             <span asp-validation-for="NotifyStoreOwnerAboutNewProductReviews"></span>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="NotifyUserAboutProductReviewReply_OverrideForStore" asp-input="NotifyUserAboutProductReviewReply" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="NotifyUserAboutProductReviewReply" />
@@ -51,7 +61,7 @@
             <span asp-validation-for="NotifyUserAboutProductReviewReply"></span>
         </div>
     </div>
-    <div class="form-group advanced-setting">
+    <div class="form-group row advanced-setting">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="ShowProductReviewsPerStore_OverrideForStore" asp-input="ShowProductReviewsPerStore" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="ShowProductReviewsPerStore" />
@@ -61,7 +71,7 @@
             <span asp-validation-for="ShowProductReviewsPerStore"></span>
         </div>
     </div>
-    <div class="form-group advanced-setting">
+    <div class="form-group row advanced-setting">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="ShowProductReviewsOnAccountPage_OverrideForStore" asp-input="ShowProductReviewsTabOnAccountPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="ShowProductReviewsTabOnAccountPage" />
@@ -72,7 +82,7 @@
         </div>
     </div>
     <tvprog-nested-setting asp-for="ShowProductReviewsTabOnAccountPage">
-        <div class="form-group advanced-setting" id="pnlProductReviewsPageSizeOnAccountPage">
+        <div class="form-group row advanced-setting" id="pnlProductReviewsPageSizeOnAccountPage">
             <div class="col-md-3">
                 <tvprog-override-store-checkbox asp-for="ProductReviewsPageSizeOnAccountPage_OverrideForStore" asp-input="ProductReviewsPageSizeOnAccountPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
                 <tvprog-label asp-for="ProductReviewsPageSizeOnAccountPage" />
@@ -83,7 +93,7 @@
             </div>
         </div>
     </tvprog-nested-setting>
-    <div class="form-group advanced-setting">
+    <div class="form-group row advanced-setting">
         <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="ProductReviewsSortByCreatedDateAscending_OverrideForStore" asp-input="ProductReviewsSortByCreatedDateAscending" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="ProductReviewsSortByCreatedDateAscending" />
@@ -103,7 +113,7 @@
 
     function toggleProductReviewsPageSizeOnAccountPage() {
         if ($('#@Html.IdFor(model => model.ShowProductReviewsTabOnAccountPage)').is(':checked')) {
-            $('#pnlProductReviewsPageSizeOnAccountPage').show();
+            $('#pnlProductReviewsPageSizeOnAccountPage').showField();
         } else {
             $('#pnlProductReviewsPageSizeOnAccountPage').hide();
         }

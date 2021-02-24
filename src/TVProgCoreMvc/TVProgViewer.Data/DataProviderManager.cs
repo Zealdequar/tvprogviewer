@@ -1,5 +1,6 @@
 ﻿using TVProgViewer.Core;
 using TVProgViewer.Core.Infrastructure;
+using TVProgViewer.Data.DataProviders;
 
 namespace TVProgViewer.Data
 {
@@ -8,22 +9,6 @@ namespace TVProgViewer.Data
     /// </summary>
     public partial class DataProviderManager : IDataProviderManager
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets data provider
-        /// </summary>
-        public IDataProvider DataProvider
-        {
-            get
-            {
-                var dataProviderType = Singleton<DataSettings>.Instance.DataProvider;
-                return GetDataProvider(dataProviderType);
-            }
-        }
-
-        #endregion
-
         #region Methods
 
         /// <summary>
@@ -31,14 +16,31 @@ namespace TVProgViewer.Data
         /// </summary>
         /// <param name="dataProviderType">Data provider type</param>
         /// <returns></returns>
-        public static IDataProvider GetDataProvider(DataProviderType dataProviderType)
+        public static ITvProgDataProvider GetDataProvider(DataProviderType dataProviderType)
         {
-            switch (dataProviderType)
+            return dataProviderType switch
             {
-                case DataProviderType.SqlServer:
-                    return new MsSqlDataProvider();
-                default:
-                    throw new TvProgException($"Not supported data provider name: '{dataProviderType}'");
+                DataProviderType.SqlServer => new MsSqlTvProgDataProvider(),
+                DataProviderType.MySql => new MySqlTvProgDataProvider(),
+                DataProviderType.PostgreSQL => new PostgreSqlDataProvider(),
+                _ => throw new TvProgException($"Not supported data provider name: '{dataProviderType}'")
+            };
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets data provider
+        /// </summary>
+        public ITvProgDataProvider DataProvider
+        {
+            get
+            {
+                var dataProviderType = Singleton<DataSettings>.Instance.DataProvider;
+
+                return GetDataProvider(dataProviderType);
             }
         }
 

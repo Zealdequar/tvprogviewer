@@ -1,4 +1,6 @@
-﻿using TVProgViewer.Core.Domain.Shipping;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.Shipping;
+using TVProgViewer.Core.Events;
 using TVProgViewer.Services.Events;
 
 namespace TVProgViewer.Services.Shipping
@@ -13,9 +15,9 @@ namespace TVProgViewer.Services.Shipping
         /// </summary>
         /// <param name="eventPublisher">The event publisher.</param>
         /// <param name="shipment">The shipment.</param>
-        public static void PublishShipmentSent(this IEventPublisher eventPublisher, Shipment shipment)
+        public static async Task PublishShipmentSentAsync(this IEventPublisher eventPublisher, Shipment shipment)
         {
-            eventPublisher.Publish(new ShipmentSentEvent(shipment));
+            await eventPublisher.PublishAsync(new ShipmentSentEvent(shipment));
         }
 
         /// <summary>
@@ -23,9 +25,9 @@ namespace TVProgViewer.Services.Shipping
         /// </summary>
         /// <param name="eventPublisher">The event publisher.</param>
         /// <param name="shipment">The shipment.</param>
-        public static void PublishShipmentDelivered(this IEventPublisher eventPublisher, Shipment shipment)
+        public static async Task PublishShipmentDeliveredAsync(this IEventPublisher eventPublisher, Shipment shipment)
         {
-            eventPublisher.Publish(new ShipmentDeliveredEvent(shipment));
+            await eventPublisher.PublishAsync(new ShipmentDeliveredEvent(shipment));
         }
     }
 }

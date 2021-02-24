@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TVProgViewer.Core.Domain.Discounts;
 using TVProgViewer.Web.Framework.Models;
 
@@ -15,7 +16,7 @@ namespace TVProgViewer.Web.Framework.Factories
         /// <typeparam name="TModel">Discount supported model type</typeparam>
         /// <param name="model">Model</param>
         /// <param name="availableDiscounts">List of all available discounts</param>
-        void PrepareModelDiscounts<TModel>(TModel model, IList<Discount> availableDiscounts) where TModel : IDiscountSupportedModel;
+        Task<TModel> PrepareModelDiscountsAsync<TModel>(TModel model, IList<Discount> availableDiscounts) where TModel : IDiscountSupportedModel;
 
         /// <summary>
         /// Prepare selected and all available discounts for the passed model by entity applied discounts
@@ -26,8 +27,8 @@ namespace TVProgViewer.Web.Framework.Factories
         /// <param name="entity">Entity</param>
         /// <param name="availableDiscounts">List of all available discounts</param>
         /// <param name="ignoreAppliedDiscounts">Whether to ignore existing applied discounts</param>
-        void PrepareModelDiscounts<TModel, TMapping>(TModel model, IDiscountSupported<TMapping> entity,
+        Task<TModel> PrepareModelDiscountsAsync<TModel, TMapping>(TModel model, IDiscountSupported<TMapping> entity,
             IList<Discount> availableDiscounts, bool ignoreAppliedDiscounts)
-            where TModel : IDiscountSupportedModel where TMapping : DiscountMapping; 
+            where TModel : IDiscountSupportedModel where TMapping : DiscountMapping;
     }
 }

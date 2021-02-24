@@ -4,9 +4,9 @@ using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Messages;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.Extensions;
+using TVProgViewer.Core.Events;
 using TVProgViewer.Services.Users;
-using TVProgViewer.Services.Events;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Messages
 {
@@ -18,7 +18,6 @@ namespace TVProgViewer.Services.Messages
         #region Fields
 
         private readonly IUserService _userService;
-        private readonly IDataProvider _dataProvider;
         private readonly IEventPublisher _eventPublisher;
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<UserUserRoleMapping> _userUserRoleMappingRepository;
@@ -28,18 +27,16 @@ namespace TVProgViewer.Services.Messages
 
         #region Ctor
 
-        public NewsLetterSubscriptionService(IUserService UserService,
-            IDataProvider dataProvider,
+        public NewsLetterSubscriptionService(IUserService userService,
             IEventPublisher eventPublisher,
-            IRepository<User> UserRepository,
-            IRepository<UserUserRoleMapping> UserUserRoleMappingRepository,
+            IRepository<User> userRepository,
+            IRepository<UserUserRoleMapping> userUserRoleMappingRepository,
             IRepository<NewsLetterSubscription> subscriptionRepository)
         {
-            _userService = UserService;
-            _dataProvider = dataProvider;
+            _userService = userService;
             _eventPublisher = eventPublisher;
-            _userRepository = UserRepository;
-            _userUserRoleMappingRepository = UserUserRoleMappingRepository;
+            _userRepository = userRepository;
+            _userUserRoleMappingRepository = userUserRoleMappingRepository;
             _subscriptionRepository = subscriptionRepository;
         }
 
@@ -53,18 +50,18 @@ namespace TVProgViewer.Services.Messages
         /// <param name="subscription">The newsletter subscription.</param>
         /// <param name="isSubscribe">if set to <c>true</c> [is subscribe].</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        private void PublishSubscriptionEvent(NewsLetterSubscription subscription, bool isSubscribe, bool publishSubscriptionEvents)
+        private async Task PublishSubscriptionEventAsync(NewsLetterSubscription subscription, bool isSubscribe, bool publishSubscriptionEvents)
         {
-            if (!publishSubscriptionEvents) 
+            if (!publishSubscriptionEvents)
                 return;
 
             if (isSubscribe)
             {
-                _eventPublisher.PublishNewsletterSubscribe(subscription);
+                await _eventPublisher.PublishNewsletterSubscribeAsync(subscription);
             }
             else
             {
-                _eventPublisher.PublishNewsletterUnsubscribe(subscription);
+                await _eventPublisher.PublishNewsletterUnsubscribeAsync(subscription);
             }
         }
 
@@ -77,7 +74,7 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscription">NewsLetter subscription</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        public virtual void InsertNewsLetterSubscription(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
+        public virtual async Task InsertNewsLetterSubscriptionAsync(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
         {
             if (newsLetterSubscription == null)
             {
@@ -88,16 +85,14 @@ namespace TVProgViewer.Services.Messages
             newsLetterSubscription.Email = CommonHelper.EnsureSubscriberEmailOrThrow(newsLetterSubscription.Email);
 
             //Persist
-            _subscriptionRepository.Insert(newsLetterSubscription);
+            await _subscriptionRepository.InsertAsync(newsLetterSubscription);
+
+            //Publish event
+            await _eventPublisher.EntityInsertedAsync(newsLetterSubscription);
 
             //Publish the subscription event 
             if (newsLetterSubscription.Active)
-            {
-                PublishSubscriptionEvent(newsLetterSubscription, true, publishSubscriptionEvents);
-            }
-
-            //Publish event
-            _eventPublisher.EntityInserted(newsLetterSubscription);
+                await PublishSubscriptionEventAsync(newsLetterSubscription, true, publishSubscriptionEvents);
         }
 
         /// <summary>
@@ -105,7 +100,7 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscription">NewsLetter subscription</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        public virtual void UpdateNewsLetterSubscription(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
+        public virtual async Task UpdateNewsLetterSubscriptionAsync(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
         {
             if (newsLetterSubscription == null)
             {
@@ -116,34 +111,32 @@ namespace TVProgViewer.Services.Messages
             newsLetterSubscription.Email = CommonHelper.EnsureSubscriberEmailOrThrow(newsLetterSubscription.Email);
 
             //Get original subscription record
-            var originalSubscription = _dataProvider.LoadOriginalCopy(newsLetterSubscription);
+            var originalSubscription = await _subscriptionRepository.LoadOriginalCopyAsync(newsLetterSubscription);
 
             //Persist
-            _subscriptionRepository.Update(newsLetterSubscription);
+            await _subscriptionRepository.UpdateAsync(newsLetterSubscription);
+
+            //Publish event
+            await _eventPublisher.EntityUpdatedAsync(newsLetterSubscription);
 
             //Publish the subscription event 
             if ((originalSubscription.Active == false && newsLetterSubscription.Active) ||
                 (newsLetterSubscription.Active && originalSubscription.Email != newsLetterSubscription.Email))
             {
                 //If the previous entry was false, but this one is true, publish a subscribe.
-                PublishSubscriptionEvent(newsLetterSubscription, true, publishSubscriptionEvents);
+                await PublishSubscriptionEventAsync(newsLetterSubscription, true, publishSubscriptionEvents);
             }
 
             if (originalSubscription.Active && newsLetterSubscription.Active &&
                 originalSubscription.Email != newsLetterSubscription.Email)
             {
                 //If the two emails are different publish an unsubscribe.
-                PublishSubscriptionEvent(originalSubscription, false, publishSubscriptionEvents);
+                await PublishSubscriptionEventAsync(originalSubscription, false, publishSubscriptionEvents);
             }
 
             if (originalSubscription.Active && !newsLetterSubscription.Active)
-            {
                 //If the previous entry was true, but this one is false
-                PublishSubscriptionEvent(originalSubscription, false, publishSubscriptionEvents);
-            }
-
-            //Publish event
-            _eventPublisher.EntityUpdated(newsLetterSubscription);
+                await PublishSubscriptionEventAsync(originalSubscription, false, publishSubscriptionEvents);
         }
 
         /// <summary>
@@ -151,17 +144,18 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscription">NewsLetter subscription</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        public virtual void DeleteNewsLetterSubscription(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
+        public virtual async Task DeleteNewsLetterSubscriptionAsync(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
         {
-            if (newsLetterSubscription == null) throw new ArgumentNullException(nameof(newsLetterSubscription));
+            if (newsLetterSubscription == null)
+                throw new ArgumentNullException(nameof(newsLetterSubscription));
 
-            _subscriptionRepository.Delete(newsLetterSubscription);
-
-            //Publish the unsubscribe event 
-            PublishSubscriptionEvent(newsLetterSubscription, false, publishSubscriptionEvents);
+            await _subscriptionRepository.DeleteAsync(newsLetterSubscription);
 
             //event notification
-            _eventPublisher.EntityDeleted(newsLetterSubscription);
+            await _eventPublisher.EntityDeletedAsync(newsLetterSubscription);
+
+            //Publish the unsubscribe event 
+            await PublishSubscriptionEventAsync(newsLetterSubscription, false, publishSubscriptionEvents);
         }
 
         /// <summary>
@@ -169,11 +163,9 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscriptionId">The newsletter subscription identifier</param>
         /// <returns>NewsLetter subscription</returns>
-        public virtual NewsLetterSubscription GetNewsLetterSubscriptionById(int newsLetterSubscriptionId)
+        public virtual async Task<NewsLetterSubscription> GetNewsLetterSubscriptionByIdAsync(int newsLetterSubscriptionId)
         {
-            if (newsLetterSubscriptionId == 0) return null;
-
-            return _subscriptionRepository.ToCachedGetById(newsLetterSubscriptionId);
+            return await _subscriptionRepository.GetByIdAsync(newsLetterSubscriptionId, cache => default);
         }
 
         /// <summary>
@@ -181,7 +173,7 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscriptionGuid">The newsletter subscription GUID</param>
         /// <returns>NewsLetter subscription</returns>
-        public virtual NewsLetterSubscription GetNewsLetterSubscriptionByGuid(Guid newsLetterSubscriptionGuid)
+        public virtual async Task<NewsLetterSubscription> GetNewsLetterSubscriptionByGuidAsync(Guid newsLetterSubscriptionGuid)
         {
             if (newsLetterSubscriptionGuid == Guid.Empty) return null;
 
@@ -190,7 +182,7 @@ namespace TVProgViewer.Services.Messages
                                           orderby nls.Id
                                           select nls;
 
-            return newsLetterSubscriptions.FirstOrDefault();
+            return await newsLetterSubscriptions.FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -199,7 +191,7 @@ namespace TVProgViewer.Services.Messages
         /// <param name="email">The newsletter subscription email</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>NewsLetter subscription</returns>
-        public virtual NewsLetterSubscription GetNewsLetterSubscriptionByEmailAndStoreId(string email, int storeId)
+        public virtual async Task<NewsLetterSubscription> GetNewsLetterSubscriptionByEmailAndStoreIdAsync(string email, int storeId)
         {
             if (!CommonHelper.IsValidEmail(email))
                 return null;
@@ -211,7 +203,7 @@ namespace TVProgViewer.Services.Messages
                                           orderby nls.Id
                                           select nls;
 
-            return newsLetterSubscriptions.FirstOrDefault();
+            return await newsLetterSubscriptions.FirstOrDefaultAsync();
         }
 
         /// <summary>
@@ -221,90 +213,95 @@ namespace TVProgViewer.Services.Messages
         /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
         /// <param name="storeId">Store identifier. 0 to load all records.</param>
-        /// <param name="UserRoleId">User role identifier. Used to filter subscribers by User role. 0 to load all records.</param>
+        /// <param name="userRoleId">User role identifier. Used to filter subscribers by user role. 0 to load all records.</param>
         /// <param name="isActive">Value indicating whether subscriber record should be active or not; null to load all records</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>NewsLetterSubscription entities</returns>
-        public virtual IPagedList<NewsLetterSubscription> GetAllNewsLetterSubscriptions(string email = null,
+        public virtual async Task<IPagedList<NewsLetterSubscription>> GetAllNewsLetterSubscriptionsAsync(string email = null,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
-            int storeId = 0, bool? isActive = null, int UserRoleId = 0,
+            int storeId = 0, bool? isActive = null, int userRoleId = 0,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            if (UserRoleId == 0)
+            if (userRoleId == 0)
             {
-                //do not filter by User role
-                var query = _subscriptionRepository.Table;
-                if (!string.IsNullOrEmpty(email))
-                    query = query.Where(nls => nls.Email.Contains(email));
-                if (createdFromUtc.HasValue)
-                    query = query.Where(nls => nls.CreatedOnUtc >= createdFromUtc.Value);
-                if (createdToUtc.HasValue)
-                    query = query.Where(nls => nls.CreatedOnUtc <= createdToUtc.Value);
-                if (storeId > 0)
-                    query = query.Where(nls => nls.StoreId == storeId);
-                if (isActive.HasValue)
-                    query = query.Where(nls => nls.Active == isActive.Value);
-                query = query.OrderBy(nls => nls.Email);
+                //do not filter by user role
+                var subscriptions = await _subscriptionRepository.GetAllPagedAsync(query =>
+                {
+                    if (!string.IsNullOrEmpty(email))
+                        query = query.Where(nls => nls.Email.Contains(email));
+                    if (createdFromUtc.HasValue)
+                        query = query.Where(nls => nls.CreatedOnUtc >= createdFromUtc.Value);
+                    if (createdToUtc.HasValue)
+                        query = query.Where(nls => nls.CreatedOnUtc <= createdToUtc.Value);
+                    if (storeId > 0)
+                        query = query.Where(nls => nls.StoreId == storeId);
+                    if (isActive.HasValue)
+                        query = query.Where(nls => nls.Active == isActive.Value);
+                    query = query.OrderBy(nls => nls.Email);
 
-                var subscriptions = new PagedList<NewsLetterSubscription>(query, pageIndex, pageSize);
+                    return query;
+                }, pageIndex, pageSize);
+
                 return subscriptions;
             }
 
-            //filter by User role
-            var guestRole = _userService.GetUserRoleBySystemName(TvProgUserDefaults.GuestsRoleName);
+            //filter by user role
+            var guestRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.GuestsRoleName);
             if (guestRole == null)
                 throw new TvProgException("'Guests' role could not be loaded");
 
-            if (guestRole.Id == UserRoleId)
+            if (guestRole.Id == userRoleId)
             {
                 //guests
-                var query = _subscriptionRepository.Table;
-                if (!string.IsNullOrEmpty(email))
-                    query = query.Where(nls => nls.Email.Contains(email));
-                if (createdFromUtc.HasValue)
-                    query = query.Where(nls => nls.CreatedOnUtc >= createdFromUtc.Value);
-                if (createdToUtc.HasValue)
-                    query = query.Where(nls => nls.CreatedOnUtc <= createdToUtc.Value);
-                if (storeId > 0)
-                    query = query.Where(nls => nls.StoreId == storeId);
-                if (isActive.HasValue)
-                    query = query.Where(nls => nls.Active == isActive.Value);
-                query = query.Where(nls => !_userRepository.Table.Any(c => c.Email == nls.Email));
-                query = query.OrderBy(nls => nls.Email);
+                var subscriptions = await _subscriptionRepository.GetAllPagedAsync(query =>
+                {
+                    if (!string.IsNullOrEmpty(email))
+                        query = query.Where(nls => nls.Email.Contains(email));
+                    if (createdFromUtc.HasValue)
+                        query = query.Where(nls => nls.CreatedOnUtc >= createdFromUtc.Value);
+                    if (createdToUtc.HasValue)
+                        query = query.Where(nls => nls.CreatedOnUtc <= createdToUtc.Value);
+                    if (storeId > 0)
+                        query = query.Where(nls => nls.StoreId == storeId);
+                    if (isActive.HasValue)
+                        query = query.Where(nls => nls.Active == isActive.Value);
+                    query = query.Where(nls => !_userRepository.Table.Any(c => c.Email == nls.Email));
+                    query = query.OrderBy(nls => nls.Email);
 
-                var subscriptions = new PagedList<NewsLetterSubscription>(query, pageIndex, pageSize);
+                    return query;
+                }, pageIndex, pageSize);
 
                 return subscriptions;
             }
             else
             {
-                //other User roles (not guests)
-                var query = _subscriptionRepository.Table.Join(_userRepository.Table,
-                    nls => nls.Email,
-                    c => c.Email,
-                    (nls, c) => new
-                    {
-                        NewsletterSubscribers = nls,
-                        User = c
-                    });
+                var subscriptions = await _subscriptionRepository.GetAllPagedAsync(query =>
+                {
+                    //other user roles (not guests)
+                    var joindQuery = query.Join(_userRepository.Table,
+                        nls => nls.Email,
+                        c => c.Email,
+                        (nls, c) => new { NewsletterSubscribers = nls, User = c });
 
-                query = query.Where(x => _userUserRoleMappingRepository.Table.Any(ccrm => ccrm.UserId == x.User.Id && ccrm.UserRoleId == UserRoleId));
+                    joindQuery = joindQuery.Where(x => _userUserRoleMappingRepository.Table.Any(ccrm =>
+                        ccrm.UserId == x.User.Id && ccrm.UserRoleId == userRoleId));
 
-                if (!string.IsNullOrEmpty(email))
-                    query = query.Where(x => x.NewsletterSubscribers.Email.Contains(email));
-                if (createdFromUtc.HasValue)
-                    query = query.Where(x => x.NewsletterSubscribers.CreatedOnUtc >= createdFromUtc.Value);
-                if (createdToUtc.HasValue)
-                    query = query.Where(x => x.NewsletterSubscribers.CreatedOnUtc <= createdToUtc.Value);
-                if (storeId > 0)
-                    query = query.Where(x => x.NewsletterSubscribers.StoreId == storeId);
-                if (isActive.HasValue)
-                    query = query.Where(x => x.NewsletterSubscribers.Active == isActive.Value);
+                    if (!string.IsNullOrEmpty(email))
+                        joindQuery = joindQuery.Where(x => x.NewsletterSubscribers.Email.Contains(email));
+                    if (createdFromUtc.HasValue)
+                        joindQuery = joindQuery.Where(x => x.NewsletterSubscribers.CreatedOnUtc >= createdFromUtc.Value);
+                    if (createdToUtc.HasValue)
+                        joindQuery = joindQuery.Where(x => x.NewsletterSubscribers.CreatedOnUtc <= createdToUtc.Value);
+                    if (storeId > 0)
+                        joindQuery = joindQuery.Where(x => x.NewsletterSubscribers.StoreId == storeId);
+                    if (isActive.HasValue)
+                        joindQuery = joindQuery.Where(x => x.NewsletterSubscribers.Active == isActive.Value);
 
-                query = query.OrderBy(x => x.NewsletterSubscribers.Email);
+                    joindQuery = joindQuery.OrderBy(x => x.NewsletterSubscribers.Email);
 
-                var subscriptions = new PagedList<NewsLetterSubscription>(query.Select(x => x.NewsletterSubscribers), pageIndex, pageSize);
+                    return joindQuery.Select(x => x.NewsletterSubscribers);
+                }, pageIndex, pageSize);
 
                 return subscriptions;
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Orders;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Orders
 {
@@ -15,14 +16,14 @@ namespace TVProgViewer.Services.Orders
         /// Deletes a gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        void DeleteGiftCard(GiftCard giftCard);
+        Task DeleteGiftCardAsync(GiftCard giftCard);
 
         /// <summary>
         /// Gets a gift card
         /// </summary>
         /// <param name="giftCardId">Gift card identifier</param>
         /// <returns>Gift card entry</returns>
-        GiftCard GetGiftCardById(int giftCardId);
+        Task<GiftCard> GetGiftCardByIdAsync(int giftCardId);
 
         /// <summary>
         /// Gets all gift cards
@@ -37,7 +38,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>Gift cards</returns>
-        IPagedList<GiftCard> GetAllGiftCards(int? purchasedWithOrderId = null, int? usedWithOrderId = null,
+        Task<IPagedList<GiftCard>> GetAllGiftCardsAsync(int? purchasedWithOrderId = null, int? usedWithOrderId = null,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             bool? isGiftCardActivated = null, string giftCardCouponCode = null,
             string recipientName = null,
@@ -47,28 +48,29 @@ namespace TVProgViewer.Services.Orders
         /// Inserts a gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        void InsertGiftCard(GiftCard giftCard);
+        Task InsertGiftCardAsync(GiftCard giftCard);
 
         /// <summary>
         /// Updates the gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        void UpdateGiftCard(GiftCard giftCard);
+        Task UpdateGiftCardAsync(GiftCard giftCard);
 
         /// <summary>
         /// Gets gift cards by 'PurchasedWithOrderItemId'
         /// </summary>
         /// <param name="purchasedWithOrderItemId">Purchased with order item identifier</param>
         /// <returns>Gift card entries</returns>
-        IList<GiftCard> GetGiftCardsByPurchasedWithOrderItemId(int purchasedWithOrderItemId);
+        Task<IList<GiftCard>> GetGiftCardsByPurchasedWithOrderItemIdAsync(int purchasedWithOrderItemId);
 
         /// <summary>
-        /// Get active gift cards that are applied by a User
+        /// Get active gift cards that are applied by a user
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Active gift cards</returns>
-        IList<GiftCard> GetActiveGiftCardsAppliedByUser(User User);
+        Task<IList<GiftCard>> GetActiveGiftCardsAppliedByUserAsync(User user);
 
+        //TODO: migrate to an extension method
         /// <summary>
         /// Generate new gift card code
         /// </summary>
@@ -79,40 +81,40 @@ namespace TVProgViewer.Services.Orders
         /// Delete gift card usage history
         /// </summary>
         /// <param name="order">Order</param>
-        void DeleteGiftCardUsageHistory(Order order);
+        Task DeleteGiftCardUsageHistoryAsync(Order order);
 
         /// <summary>
         /// Gets a gift card remaining amount
         /// </summary>
         /// <param name="giftCard">Gift card</param>
         /// <returns>Gift card remaining amount</returns>
-        decimal GetGiftCardRemainingAmount(GiftCard giftCard);
+        Task<decimal> GetGiftCardRemainingAmountAsync(GiftCard giftCard);
 
         /// <summary>
         /// Gets a gift card usage history entries
         /// </summary>
         /// <param name="giftCard">Gift card</param>
         /// <returns>Result</returns>
-        IList<GiftCardUsageHistory> GetGiftCardUsageHistory(GiftCard giftCard);
+        Task<IList<GiftCardUsageHistory>> GetGiftCardUsageHistoryAsync(GiftCard giftCard);
 
         /// <summary>
         /// Gets a gift card usage history entries
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>Result</returns>
-        IList<GiftCardUsageHistory> GetGiftCardUsageHistory(Order order);
+        Task<IList<GiftCardUsageHistory>> GetGiftCardUsageHistoryAsync(Order order);
 
         /// <summary>
         /// Inserts a gift card usage history entry
         /// </summary>
         /// <param name="giftCardUsageHistory">Gift card usage history entry</param>
-        void InsertGiftCardUsageHistory(GiftCardUsageHistory giftCardUsageHistory);
+        Task InsertGiftCardUsageHistoryAsync(GiftCardUsageHistory giftCardUsageHistory);
 
         /// <summary>
         /// Is gift card valid
         /// </summary>
         /// <param name="giftCard">Gift card</param>
         /// <returns>Result</returns>
-        bool IsGiftCardValid(GiftCard giftCard);
+        Task<bool> IsGiftCardValidAsync(GiftCard giftCard);
     }
 }

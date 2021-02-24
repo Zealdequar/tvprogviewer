@@ -17,7 +17,7 @@ namespace TVProgViewer.WebUI.Infrastructure
                 if (localizationSettings.SeoFriendlyUrlsForLanguagesEnabled)
                 {
                     var langservice = endpointRouteBuilder.ServiceProvider.GetRequiredService<ILanguageService>();
-                    var languages = langservice.GetAllLanguages();
+                    var languages = langservice.GetAllLanguagesAsync().Result;
                     return "{language:lang=" + languages.FirstOrDefault().UniqueSeoCode + $"}}/{seoCode}";
                 }
             }

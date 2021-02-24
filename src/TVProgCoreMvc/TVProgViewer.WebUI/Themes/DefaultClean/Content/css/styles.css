@@ -330,6 +330,9 @@ script {
     display: none !important;
 }
 
+.progress-bar{
+	background-color: lightgreen !important; 
+}
 
 /*********** GLOBAL STYLES **********/
 

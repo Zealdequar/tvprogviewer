@@ -1,4 +1,5 @@
-﻿using TVProgViewer.WebUI.Areas.Admin.Models.Messages;
+﻿using System.Threading.Tasks;
+using TVProgViewer.WebUI.Areas.Admin.Models.Messages;
 
 namespace TVProgViewer.WebUI.Areas.Admin.Factories
 {
@@ -12,13 +13,13 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Newsletter subscription search model</param>
         /// <returns>Newsletter subscription search model</returns>
-        NewsletterSubscriptionSearchModel PrepareNewsletterSubscriptionSearchModel(NewsletterSubscriptionSearchModel searchModel);
+        Task<NewsletterSubscriptionSearchModel> PrepareNewsletterSubscriptionSearchModelAsync(NewsletterSubscriptionSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged newsletter subscription list model
         /// </summary>
         /// <param name="searchModel">Newsletter subscription search model</param>
         /// <returns>Newsletter subscription list model</returns>
-        NewsletterSubscriptionListModel PrepareNewsletterSubscriptionListModel(NewsletterSubscriptionSearchModel searchModel);
+        Task<NewsletterSubscriptionListModel> PrepareNewsletterSubscriptionListModelAsync(NewsletterSubscriptionSearchModel searchModel);
     }
 }

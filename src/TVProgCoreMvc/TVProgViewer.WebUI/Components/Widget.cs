@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -14,9 +15,9 @@ namespace TVProgViewer.WebUI.Components
             _widgetModelFactory = widgetModelFactory;
         }
 
-        public IViewComponentResult Invoke(string widgetZone, object additionalData = null)
+        public async Task<IViewComponentResult> InvokeAsync(string widgetZone, object additionalData = null)
         {
-            var model = _widgetModelFactory.PrepareRenderWidgetModel(widgetZone, additionalData);
+            var model = await _widgetModelFactory.PrepareRenderWidgetModelAsync(widgetZone, additionalData);
 
             //no data?
             if (!model.Any())

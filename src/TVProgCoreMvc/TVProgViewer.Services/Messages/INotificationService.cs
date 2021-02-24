@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Messages
 {
@@ -41,6 +42,6 @@ namespace TVProgViewer.Services.Messages
         /// </summary>
         /// <param name="exception">Exception</param>
         /// <param name="logException">A value indicating whether exception should be logged</param>
-        void ErrorNotification(Exception exception, bool logException = true);
+        Task ErrorNotificationAsync(Exception exception, bool logException = true);
     }
 }

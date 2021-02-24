@@ -7,7 +7,7 @@
 @inject IUserService userService
 
 @{
-    var isRegisterUser = userService.IsRegistered(workContext.CurrentUser);
+    var isRegisterUser = await userService.IsRegisteredAsync(await workContext.GetCurrentUserAsync());
     Layout = isRegisterUser ? "_ColumnsTwo" : "_ColumnsOne";
 
     //title
@@ -59,23 +59,21 @@
                         <tvprog-required />
                         <span asp-validation-for="GiftCardCode"></span>
                     </div>
-                    <div class="captcha-box">
-                        <tvprog-captcha />
-                    </div>
+                    <tvprog-captcha />
                 </div>
-                <div class="buttons">
-                    <input type="submit" name="checkbalancegiftcard" id="checkbalancegiftcard" class="button-1 check-gift-card-balance-button" value="@T("CheckGiftCard.GiftCardCouponCode.Button")" />
-                    <script asp-location="Footer">
-                        $(document).ready(function () {
-                            $('#giftcardcouponcode').keydown(function (event) {
-                                if (event.keyCode == 13) {
-                                    $('#checkbalancegiftcard').click();
-                                    return false;
-                                }
-                            });
+            </div>
+            <div class="buttons">
+                <input type="submit" name="checkbalancegiftcard" id="checkbalancegiftcard" class="button-1 check-gift-card-balance-button" value="@T("CheckGiftCard.GiftCardCouponCode.Button")" />
+                <script asp-location="Footer">
+                    $(document).ready(function () {
+                        $('#giftcardcouponcode').keydown(function (event) {
+                            if (event.keyCode == 13) {
+                                $('#checkbalancegiftcard').click();
+                                return false;
+                            }
                         });
-                    </script>
-                </div>
+                    });
+                </script>
             </div>
         </form>
     </div>

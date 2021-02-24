@@ -12,13 +12,10 @@ using TVProgViewer.Core.Domain.Users;
 using TVProgViewer.Core.Domain.Discounts;
 using TVProgViewer.Core.Domain.Orders;
 using TVProgViewer.Data;
-using TVProgViewer.Services.Caching.CachingDefaults;
-using TVProgViewer.Services.Caching.Extensions;
 using TVProgViewer.Services.Catalog;
 using TVProgViewer.Services.Common;
 using TVProgViewer.Services.Users;
 using TVProgViewer.Services.Directory;
-using TVProgViewer.Services.Events;
 using TVProgViewer.Services.Helpers;
 using TVProgViewer.Services.Localization;
 using TVProgViewer.Services.Security;
@@ -26,6 +23,7 @@ using TVProgViewer.Services.Seo;
 using TVProgViewer.Services.Shipping;
 using TVProgViewer.Services.Shipping.Date;
 using TVProgViewer.Services.Stores;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.Orders
 {
@@ -39,14 +37,12 @@ namespace TVProgViewer.Services.Orders
         private readonly CatalogSettings _catalogSettings;
         private readonly IAclService _aclService;
         private readonly IActionContextAccessor _actionContextAccessor;
-        private readonly ICacheManager _cacheManager; 
         private readonly ICheckoutAttributeParser _checkoutAttributeParser;
         private readonly ICheckoutAttributeService _checkoutAttributeService;
         private readonly ICurrencyService _currencyService;
         private readonly IUserService _userService;
         private readonly IDateRangeService _dateRangeService;
         private readonly IDateTimeHelper _dateTimeHelper;
-        private readonly IEventPublisher _eventPublisher;
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ILocalizationService _localizationService;
         private readonly IPermissionService _permissionService;
@@ -57,6 +53,7 @@ namespace TVProgViewer.Services.Orders
         private readonly IProductService _productService;
         private readonly IRepository<ShoppingCartItem> _sciRepository;
         private readonly IShippingService _shippingService;
+        private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IUrlHelperFactory _urlHelperFactory;
@@ -72,14 +69,12 @@ namespace TVProgViewer.Services.Orders
         public ShoppingCartService(CatalogSettings catalogSettings,
             IAclService aclService,
             IActionContextAccessor actionContextAccessor,
-            ICacheManager cacheManager,
             ICheckoutAttributeParser checkoutAttributeParser,
             ICheckoutAttributeService checkoutAttributeService,
             ICurrencyService currencyService,
-            IUserService UserService,
+            IUserService userService,
             IDateRangeService dateRangeService,
             IDateTimeHelper dateTimeHelper,
-            IEventPublisher eventPublisher,
             IGenericAttributeService genericAttributeService,
             ILocalizationService localizationService,
             IPermissionService permissionService,
@@ -90,6 +85,7 @@ namespace TVProgViewer.Services.Orders
             IProductService productService,
             IRepository<ShoppingCartItem> sciRepository,
             IShippingService shippingService,
+            IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IUrlHelperFactory urlHelperFactory,
@@ -101,14 +97,12 @@ namespace TVProgViewer.Services.Orders
             _catalogSettings = catalogSettings;
             _aclService = aclService;
             _actionContextAccessor = actionContextAccessor;
-            _cacheManager = cacheManager;
             _checkoutAttributeParser = checkoutAttributeParser;
             _checkoutAttributeService = checkoutAttributeService;
             _currencyService = currencyService;
-            _userService = UserService;
+            _userService = userService;
             _dateRangeService = dateRangeService;
             _dateTimeHelper = dateTimeHelper;
-            _eventPublisher = eventPublisher;
             _genericAttributeService = genericAttributeService;
             _localizationService = localizationService;
             _permissionService = permissionService;
@@ -119,6 +113,7 @@ namespace TVProgViewer.Services.Orders
             _productService = productService;
             _sciRepository = sciRepository;
             _shippingService = shippingService;
+            _staticCacheManager = staticCacheManager;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
             _urlHelperFactory = urlHelperFactory;
@@ -138,14 +133,14 @@ namespace TVProgViewer.Services.Orders
         /// <param name="shoppingCartItem">Shopping cart item</param>
         /// <param name="product">Product</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserEnteredPrice">Price entered by a User</param>
+        /// <param name="userEnteredPrice">Price entered by a user</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>Shopping cart item is equal</returns>
-        protected virtual bool ShoppingCartItemIsEqual(ShoppingCartItem shoppingCartItem,
+        protected virtual async Task<bool> ShoppingCartItemIsEqualAsync(ShoppingCartItem shoppingCartItem,
             Product product,
             string attributesXml,
-            decimal UserEnteredPrice,
+            decimal userEnteredPrice,
             DateTime? rentalStartDate,
             DateTime? rentalEndDate)
         {
@@ -153,7 +148,7 @@ namespace TVProgViewer.Services.Orders
                 return false;
 
             //attributes
-            var attributesEqual = _productAttributeParser.AreProductAttributesEqual(shoppingCartItem.AttributesXml, attributesXml, false, false);
+            var attributesEqual = await _productAttributeParser.AreProductAttributesEqualAsync(shoppingCartItem.AttributesXml, attributesXml, false, false);
             if (!attributesEqual)
                 return false;
 
@@ -170,170 +165,38 @@ namespace TVProgViewer.Services.Orders
                     return false;
             }
 
-            //price is the same (for products which require Users to enter a price)
+            //price is the same (for products which require users to enter a price)
             if (product.UserEntersPrice)
             {
-                //TODO should we use PriceCalculationService.RoundPrice here?
-                var UserEnteredPricesEqual = Math.Round(shoppingCartItem.UserEnteredPrice, 2) == Math.Round(UserEnteredPrice, 2);
-                if (!UserEnteredPricesEqual)
+                //we use rounding to eliminate errors associated with storing real numbers in memory when comparing
+                var userEnteredPricesEqual = Math.Round(shoppingCartItem.UserEnteredPrice, 2) == Math.Round(userEnteredPrice, 2);
+                if (!userEnteredPricesEqual)
                     return false;
             }
-            
-            if (!product.IsRental) 
+
+            if (!product.IsRental)
                 return true;
 
             //rental products
             var rentalInfoEqual = shoppingCartItem.RentalStartDateUtc == rentalStartDate && shoppingCartItem.RentalEndDateUtc == rentalEndDate;
-            
+
             return rentalInfoEqual;
         }
 
         /// <summary>
-        /// Gets a value indicating whether User shopping cart is empty
+        /// Gets a value indicating whether user shopping cart is empty
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <returns>Result</returns>
-        protected virtual bool IsUserShoppingCartEmpty(User User)
+        protected virtual bool IsUserShoppingCartEmpty(User user)
         {
-            return !_sciRepository.Table.Any(sci => sci.UserId == User.Id);
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// Delete shopping cart item
-        /// </summary>
-        /// <param name="shoppingCartItem">Shopping cart item</param>
-        /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
-        /// <param name="ensureOnlyActiveCheckoutAttributes">A value indicating whether to ensure that only active checkout attributes are attached to the current User</param>
-        public virtual void DeleteShoppingCartItem(ShoppingCartItem shoppingCartItem, bool resetCheckoutData = true,
-            bool ensureOnlyActiveCheckoutAttributes = false)
-        {
-            if (shoppingCartItem == null)
-                throw new ArgumentNullException(nameof(shoppingCartItem));
-
-            var user = _userService.GetUserById(shoppingCartItem.UserId);
-            var storeId = shoppingCartItem.StoreId;
-
-            //reset checkout data
-            if (resetCheckoutData)
-            {
-                _userService.ResetCheckoutData(user, shoppingCartItem.StoreId);
-            }
-
-            //delete item
-            _sciRepository.Delete(shoppingCartItem);
-
-           
-            _userService.UpdateUser(user);
-
-            //validate checkout attributes
-            if (ensureOnlyActiveCheckoutAttributes &&
-                //only for shopping cart items (ignore wishlist)
-                shoppingCartItem.ShoppingCartType == ShoppingCartType.ShoppingCart)
-            {
-                var cart = GetShoppingCart(user, ShoppingCartType.ShoppingCart, storeId);
-
-                var checkoutAttributesXml =
-                   _genericAttributeService.GetAttribute<string>(user, TvProgUserDefaults.CheckoutAttributes,
-                       storeId);
-                checkoutAttributesXml =
-                    _checkoutAttributeParser.EnsureOnlyActiveAttributes(checkoutAttributesXml, cart);
-                _genericAttributeService.SaveAttribute(user, TvProgUserDefaults.CheckoutAttributes,
-                    checkoutAttributesXml, storeId);
-            }
-
-            //event notification
-            _eventPublisher.EntityDeleted(shoppingCartItem);
-
-            if (!_catalogSettings.RemoveRequiredProducts)
-                return;
-
-            var product = _productService.GetProductById(shoppingCartItem.ProductId);
-            if (!product?.RequireOtherProducts ?? true)
-                return;
-
-            var requiredProductIds = _productService.ParseRequiredProductIds(product);
-            var requiredShoppingCartItems = GetShoppingCart(user, shoppingCartType: shoppingCartItem.ShoppingCartType)
-                .Where(item => requiredProductIds.Any(id => id == item.ProductId))
-                .ToList();
-
-            //update quantity of required products in the cart if the main one is removed
-            foreach (var cartItem in requiredShoppingCartItems)
-            {
-                //at now we ignore quantities of required products and use 1
-                var requiredProductQuantity = 1;
-
-                UpdateShoppingCartItem(user, cartItem.Id, cartItem.AttributesXml, cartItem.UserEnteredPrice,
-                    quantity: cartItem.Quantity - shoppingCartItem.Quantity * requiredProductQuantity, resetCheckoutData: false);
-            }
-        }
-
-        /// <summary>
-        /// Delete shopping cart item
-        /// </summary>
-        /// <param name="shoppingCartItemId">Shopping cart item ID</param>
-        /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
-        /// <param name="ensureOnlyActiveCheckoutAttributes">A value indicating whether to ensure that only active checkout attributes are attached to the current User</param>
-        public virtual void DeleteShoppingCartItem(int shoppingCartItemId, bool resetCheckoutData = true,
-            bool ensureOnlyActiveCheckoutAttributes = false)
-        {
-            var shoppingCartItem = _sciRepository.Table.FirstOrDefault(sci => sci.Id == shoppingCartItemId);
-            if (shoppingCartItem != null)
-                DeleteShoppingCartItem(shoppingCartItem, resetCheckoutData, ensureOnlyActiveCheckoutAttributes);
-        }
-
-        /// <summary>
-        /// Deletes expired shopping cart items
-        /// </summary>
-        /// <param name="olderThanUtc">Older than date and time</param>
-        /// <returns>Number of deleted items</returns>
-        public virtual int DeleteExpiredShoppingCartItems(DateTime olderThanUtc)
-        {
-            var query = from sci in _sciRepository.Table
-                        where sci.UpdatedOnUtc < olderThanUtc
-                        select sci;
-
-            var cartItems = query.ToList();
-            foreach (var cartItem in cartItems)
-                DeleteShoppingCartItem(cartItem);
-            return cartItems.Count;
-        }
-
-        /// <summary>
-        /// Get products from shopping cart whether requiring specific product
-        /// </summary>
-        /// <param name="cart">Shopping cart </param>
-        /// <param name="product">Product</param>
-        /// <returns>Result</returns>
-        public virtual IEnumerable<Product> GetProductsRequiringProduct(IList<ShoppingCartItem> cart, Product product)
-        {
-            if (cart is null)
-                throw new ArgumentNullException(nameof(cart));
-
-            if (product is null)
-                throw new ArgumentNullException(nameof(product));
-
-            if (cart.Count == 0)
-                yield break;
-
-            var productIds = cart.Select(ci => ci.ProductId).ToArray();
-
-            var cartProducts = _productService.GetProductsByIds(productIds);
-
-            foreach (var cartProduct in cartProducts)
-            {
-                if (!cartProduct.RequireOtherProducts && _productService.ParseRequiredProductIds(cartProduct).Contains(product.Id))
-                    yield return cartProduct;
-            }
+            return !_sciRepository.Table.Any(sci => sci.UserId == user.Id);
         }
 
         /// <summary>
         /// Validates required products (products which require some other products to be added to the cart)
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="product">Product</param>
         /// <param name="storeId">Store identifier</param>
@@ -341,11 +204,11 @@ namespace TVProgViewer.Services.Orders
         /// <param name="addRequiredProducts">Whether to add required products</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetRequiredProductWarnings(User User, ShoppingCartType shoppingCartType, Product product,
+        protected virtual async Task<IList<string>> GetRequiredProductWarningsAsync(User user, ShoppingCartType shoppingCartType, Product product,
             int storeId, int quantity, bool addRequiredProducts, int shoppingCartItemId)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
@@ -355,37 +218,36 @@ namespace TVProgViewer.Services.Orders
             //at now we ignore quantities of required products and use 1
             var requiredProductQuantity = 1;
 
-            //get User shopping cart
-            var cart = GetShoppingCart(User, shoppingCartType, storeId);
+            //get user shopping cart
+            var cart = await GetShoppingCartAsync(user, shoppingCartType, storeId);
 
-            var productsRequiringProduct = GetProductsRequiringProduct(cart, product);
+            var productsRequiringProduct = await GetProductsRequiringProductAsync(cart, product);
 
             //whether other cart items require the passed product
             var passedProductRequiredQuantity = cart.Where(ci => productsRequiringProduct.Any(p => p.Id == ci.ProductId))
                 .Sum(item => item.Quantity * requiredProductQuantity);
 
             if (passedProductRequiredQuantity > quantity)
-                warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.RequiredProductUpdateWarning"), passedProductRequiredQuantity));
+                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.RequiredProductUpdateWarning"), passedProductRequiredQuantity));
 
             //whether the passed product requires other products
             if (!product.RequireOtherProducts)
                 return warnings;
 
             //get these required products
-            var requiredProducts = _productService.GetProductsByIds(_productService.ParseRequiredProductIds(product));
+            var requiredProducts = await _productService.GetProductsByIdsAsync(_productService.ParseRequiredProductIds(product));
             if (!requiredProducts.Any())
                 return warnings;
 
             //get warnings
             var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
-            var warningLocale = _localizationService.GetResource("ShoppingCart.RequiredProductWarning");
+            var warningLocale = await _localizationService.GetResourceAsync("ShoppingCart.RequiredProductWarning");
             foreach (var requiredProduct in requiredProducts)
             {
-                var productsRequiringRequiredProduct = GetProductsRequiringProduct(cart, requiredProduct);
-                
+                var productsRequiringRequiredProduct = await GetProductsRequiringProductAsync(cart, requiredProduct);
+
                 //get the required quantity of the required product
                 var requiredProductRequiredQuantity = quantity * requiredProductQuantity +
-
                     cart.Where(ci => productsRequiringRequiredProduct.Any(p => p.Id == ci.ProductId))
                         .Where(item => item.Id != shoppingCartItemId)
                         .Sum(item => item.Quantity * requiredProductQuantity);
@@ -396,16 +258,16 @@ namespace TVProgViewer.Services.Orders
                     continue;
 
                 //prepare warning message
-                var requiredProductName = WebUtility.HtmlEncode(_localizationService.GetLocalized(requiredProduct, x => x.Name));
+                var requiredProductName = WebUtility.HtmlEncode(await _localizationService.GetLocalizedAsync(requiredProduct, x => x.Name));
                 var requiredProductWarning = _catalogSettings.UseLinksInRequiredProductWarnings
-                    ? string.Format(warningLocale, $"<a href=\"{urlHelper.RouteUrl(nameof(Product), new { SeName = _urlRecordService.GetSeName(requiredProduct) })}\">{requiredProductName}</a>", requiredProductRequiredQuantity)
+                    ? string.Format(warningLocale, $"<a href=\"{urlHelper.RouteUrl(nameof(Product), new { SeName = await _urlRecordService.GetSeNameAsync(requiredProduct) })}\">{requiredProductName}</a>", requiredProductRequiredQuantity)
                     : string.Format(warningLocale, requiredProductName, requiredProductRequiredQuantity);
 
                 //add to cart (if possible)
                 if (addRequiredProducts && product.AutomaticallyAddRequiredProducts)
                 {
                     //do not add required products to prevent circular references
-                    var addToCartWarnings = AddToCart(User, requiredProduct, shoppingCartType, storeId,
+                    var addToCartWarnings = await AddToCartAsync(user, requiredProduct, shoppingCartType, storeId,
                         quantity: quantityToAdd, addRequiredProducts: false);
 
                     //don't display all specific errors only the generic one
@@ -422,19 +284,20 @@ namespace TVProgViewer.Services.Orders
         /// <summary>
         /// Validates a product for standard properties
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="product">Product</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserEnteredPrice">User entered price</param>
+        /// <param name="userEnteredPrice">User entered price</param>
         /// <param name="quantity">Quantity</param>
+        /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
+        /// <param name="storeId">Store identifier</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetStandardWarnings(User User, ShoppingCartType shoppingCartType,
-            Product product, string attributesXml, decimal UserEnteredPrice,
-            int quantity)
+        protected virtual async Task<IList<string>> GetStandardWarningsAsync(User user, ShoppingCartType shoppingCartType, Product product,
+            string attributesXml, decimal userEnteredPrice, int quantity, int shoppingCartItemId, int storeId)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
@@ -444,14 +307,14 @@ namespace TVProgViewer.Services.Orders
             //deleted
             if (product.Deleted)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.ProductDeleted"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.ProductDeleted"));
                 return warnings;
             }
 
             //published
             if (!product.Published)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.ProductUnpublished"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.ProductUnpublished"));
             }
 
             //we can add only simple products
@@ -461,27 +324,27 @@ namespace TVProgViewer.Services.Orders
             }
 
             //ACL
-            if (!_aclService.Authorize(product, User))
+            if (!await _aclService.AuthorizeAsync(product, user))
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.ProductUnpublished"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.ProductUnpublished"));
             }
 
             //Store mapping
-            if (!_storeMappingService.Authorize(product, _storeContext.CurrentStore.Id))
+            if (!await _storeMappingService.AuthorizeAsync(product, (await _storeContext.GetCurrentStoreAsync()).Id))
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.ProductUnpublished"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.ProductUnpublished"));
             }
 
             //disabled "add to cart" button
             if (shoppingCartType == ShoppingCartType.ShoppingCart && product.DisableBuyButton)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.BuyingDisabled"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.BuyingDisabled"));
             }
 
             //disabled "add to wishlist" button
             if (shoppingCartType == ShoppingCartType.Wishlist && product.DisableWishlistButton)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.WishlistDisabled"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.WishlistDisabled"));
             }
 
             //call for price
@@ -489,20 +352,20 @@ namespace TVProgViewer.Services.Orders
                 //also check whether the current user is impersonated
                 (!_orderSettings.AllowAdminsToBuyCallForPriceProducts || _workContext.OriginalUserIfImpersonated == null))
             {
-                warnings.Add(_localizationService.GetResource("Products.CallForPrice"));
+                warnings.Add(await _localizationService.GetResourceAsync("Products.CallForPrice"));
             }
 
-            //User entered price
+            //user entered price
             if (product.UserEntersPrice)
             {
-                if (UserEnteredPrice < product.MinimumUserEnteredPrice ||
-                    UserEnteredPrice > product.MaximumUserEnteredPrice)
+                if (userEnteredPrice < product.MinimumUserEnteredPrice ||
+                    userEnteredPrice > product.MaximumUserEnteredPrice)
                 {
-                    var minimumUserEnteredPrice = _currencyService.ConvertFromPrimaryStoreCurrency(product.MinimumUserEnteredPrice, new Core.Domain.Directory.Currency());
-                    var maximumUserEnteredPrice = _currencyService.ConvertFromPrimaryStoreCurrency(product.MaximumUserEnteredPrice, new Core.Domain.Directory.Currency());
-                    warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.UserEnteredPrice.RangeError"),
-                        _priceFormatter.FormatPrice(minimumUserEnteredPrice, false, false),
-                        _priceFormatter.FormatPrice(maximumUserEnteredPrice, false, false)));
+                    var minimumUserEnteredPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(product.MinimumUserEnteredPrice, await _workContext.GetWorkingCurrencyAsync());
+                    var maximumUserEnteredPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(product.MaximumUserEnteredPrice, await _workContext.GetWorkingCurrencyAsync());
+                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.UserEnteredPrice.RangeError"),
+                        await _priceFormatter.FormatPriceAsync(minimumUserEnteredPrice, false, false),
+                        await _priceFormatter.FormatPriceAsync(maximumUserEnteredPrice, false, false)));
                 }
             }
 
@@ -510,20 +373,20 @@ namespace TVProgViewer.Services.Orders
             var hasQtyWarnings = false;
             if (quantity < product.OrderMinimumQuantity)
             {
-                warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.MinimumQuantity"), product.OrderMinimumQuantity));
+                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MinimumQuantity"), product.OrderMinimumQuantity));
                 hasQtyWarnings = true;
             }
 
             if (quantity > product.OrderMaximumQuantity)
             {
-                warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.MaximumQuantity"), product.OrderMaximumQuantity));
+                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MaximumQuantity"), product.OrderMaximumQuantity));
                 hasQtyWarnings = true;
             }
 
             var allowedQuantities = _productService.ParseAllowedQuantities(product);
             if (allowedQuantities.Length > 0 && !allowedQuantities.Contains(quantity))
             {
-                warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.AllowedQuantities"), string.Join(", ", allowedQuantities)));
+                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AllowedQuantities"), string.Join(", ", allowedQuantities)));
             }
 
             var validateOutOfStock = shoppingCartType == ShoppingCartType.ShoppingCart || !_shoppingCartSettings.AllowOutOfStockItemsToBeAddedToWishlist;
@@ -537,25 +400,69 @@ namespace TVProgViewer.Services.Orders
                     case ManageInventoryMethod.ManageStock:
                         if (product.BackorderMode == BackorderMode.NoBackorders)
                         {
-                            var maximumQuantityCanBeAdded = _productService.GetTotalStockQuantity(product);
+                            var maximumQuantityCanBeAdded = await _productService.GetTotalStockQuantityAsync(product);
                             if (maximumQuantityCanBeAdded < quantity)
                             {
                                 if (maximumQuantityCanBeAdded <= 0)
                                 {
-                                    var productAvailabilityRange = _dateRangeService.GetProductAvailabilityRangeById(product.ProductAvailabilityRangeId);
-                                    var warning = productAvailabilityRange == null ? _localizationService.GetResource("ShoppingCart.OutOfStock")
-                                        : string.Format(_localizationService.GetResource("ShoppingCart.AvailabilityRange"),
-                                            _localizationService.GetLocalized(productAvailabilityRange, range => range.Name));
+                                    var productAvailabilityRange = await _dateRangeService.GetProductAvailabilityRangeByIdAsync(product.ProductAvailabilityRangeId);
+                                    var warning = productAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
+                                        : string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AvailabilityRange"),
+                                            await _localizationService.GetLocalizedAsync(productAvailabilityRange, range => range.Name));
                                     warnings.Add(warning);
                                 }
                                 else
-                                    warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.QuantityExceedsStock"), maximumQuantityCanBeAdded));
+                                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.QuantityExceedsStock"), maximumQuantityCanBeAdded));
+                            }
+
+                            if (warnings.Any())
+                                return warnings;
+
+                            //validate product quantity with non combinable product attributes
+                            var productAttributeMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+                            if (productAttributeMappings?.Any() == true)
+                            {
+                                var onlyCombinableAttributes = productAttributeMappings.All(mapping => !mapping.IsNonCombinable());
+                                if (!onlyCombinableAttributes)
+                                {
+                                    var cart = await GetShoppingCartAsync(user, shoppingCartType, storeId);
+                                    var totalAddedQuantity = cart
+                                        .Where(item => item.ProductId == product.Id)
+                                        .Sum(product => product.Quantity);
+
+                                    var alreadyExistedItem = cart.FirstOrDefault(item => item.Id == shoppingCartItemId);
+                                    if (alreadyExistedItem == null)
+                                    {
+                                        //it's new item
+                                        totalAddedQuantity += quantity;
+                                    }
+                                    else
+                                    {
+                                        //it's existing item, then add to total the added quantity only
+                                        if (quantity > alreadyExistedItem.Quantity)
+                                            totalAddedQuantity += quantity - alreadyExistedItem.Quantity;
+                                    }
+
+                                    if (maximumQuantityCanBeAdded < totalAddedQuantity)
+                                    {
+                                        if (maximumQuantityCanBeAdded <= 0)
+                                        {
+                                            var productAvailabilityRange = await _dateRangeService.GetProductAvailabilityRangeByIdAsync(product.ProductAvailabilityRangeId);
+                                            var warning = productAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
+                                                : string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AvailabilityRange"),
+                                                    await _localizationService.GetLocalizedAsync(productAvailabilityRange, range => range.Name));
+                                            warnings.Add(warning);
+                                        }
+                                        else
+                                            warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.QuantityExceedsStock"), maximumQuantityCanBeAdded));
+                                    }
+                                }
                             }
                         }
 
                         break;
                     case ManageInventoryMethod.ManageStockByAttributes:
-                        var combination = _productAttributeParser.FindProductAttributeCombination(product, attributesXml);
+                        var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
                         if (combination != null)
                         {
                             //combination exists
@@ -565,15 +472,15 @@ namespace TVProgViewer.Services.Orders
                                 var maximumQuantityCanBeAdded = combination.StockQuantity;
                                 if (maximumQuantityCanBeAdded <= 0)
                                 {
-                                    var productAvailabilityRange = _dateRangeService.GetProductAvailabilityRangeById(product.ProductAvailabilityRangeId);
-                                    var warning = productAvailabilityRange == null ? _localizationService.GetResource("ShoppingCart.OutOfStock")
-                                        : string.Format(_localizationService.GetResource("ShoppingCart.AvailabilityRange"),
-                                            _localizationService.GetLocalized(productAvailabilityRange, range => range.Name));
+                                    var productAvailabilityRange = await _dateRangeService.GetProductAvailabilityRangeByIdAsync(product.ProductAvailabilityRangeId);
+                                    var warning = productAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
+                                        : string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AvailabilityRange"),
+                                            await _localizationService.GetLocalizedAsync(productAvailabilityRange, range => range.Name));
                                     warnings.Add(warning);
                                 }
                                 else
                                 {
-                                    warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.QuantityExceedsStock"), maximumQuantityCanBeAdded));
+                                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.QuantityExceedsStock"), maximumQuantityCanBeAdded));
                                 }
                             }
                         }
@@ -583,10 +490,10 @@ namespace TVProgViewer.Services.Orders
                             if (product.AllowAddingOnlyExistingAttributeCombinations)
                             {
                                 //maybe, is it better  to display something like "No such product/combination" message?
-                                var productAvailabilityRange = _dateRangeService.GetProductAvailabilityRangeById(product.ProductAvailabilityRangeId);
-                                var warning = productAvailabilityRange == null ? _localizationService.GetResource("ShoppingCart.OutOfStock")
-                                    : string.Format(_localizationService.GetResource("ShoppingCart.AvailabilityRange"),
-                                        _localizationService.GetLocalized(productAvailabilityRange, range => range.Name));
+                                var productAvailabilityRange = await _dateRangeService.GetProductAvailabilityRangeByIdAsync(product.ProductAvailabilityRangeId);
+                                var warning = productAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
+                                    : string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AvailabilityRange"),
+                                        await _localizationService.GetLocalizedAsync(productAvailabilityRange, range => range.Name));
                                 warnings.Add(warning);
                             }
                         }
@@ -604,7 +511,7 @@ namespace TVProgViewer.Services.Orders
                 var availableStartDateTime = DateTime.SpecifyKind(product.AvailableStartDateTimeUtc.Value, DateTimeKind.Utc);
                 if (availableStartDateTime.CompareTo(DateTime.UtcNow) > 0)
                 {
-                    warnings.Add(_localizationService.GetResource("ShoppingCart.NotAvailable"));
+                    warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.NotAvailable"));
                     availableStartDateError = true;
                 }
             }
@@ -615,23 +522,153 @@ namespace TVProgViewer.Services.Orders
             var availableEndDateTime = DateTime.SpecifyKind(product.AvailableEndDateTimeUtc.Value, DateTimeKind.Utc);
             if (availableEndDateTime.CompareTo(DateTime.UtcNow) < 0)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.NotAvailable"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.NotAvailable"));
             }
 
             return warnings;
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Delete shopping cart item
+        /// </summary>
+        /// <param name="shoppingCartItem">Shopping cart item</param>
+        /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
+        /// <param name="ensureOnlyActiveCheckoutAttributes">A value indicating whether to ensure that only active checkout attributes are attached to the current user</param>
+        public virtual async Task DeleteShoppingCartItemAsync(ShoppingCartItem shoppingCartItem, bool resetCheckoutData = true,
+            bool ensureOnlyActiveCheckoutAttributes = false)
+        {
+            if (shoppingCartItem == null)
+                throw new ArgumentNullException(nameof(shoppingCartItem));
+
+            var user = await _userService.GetUserByIdAsync(shoppingCartItem.UserId);
+            var storeId = shoppingCartItem.StoreId;
+
+            //reset checkout data
+            if (resetCheckoutData)
+                await _userService.ResetCheckoutDataAsync(user, shoppingCartItem.StoreId);
+
+            //delete item
+            await _sciRepository.DeleteAsync(shoppingCartItem);
+
+            //reset "HasShoppingCartItems" property used for performance optimization
+            user.HasShoppingCartItems = !IsUserShoppingCartEmpty(user);
+            await _userService.UpdateUserAsync(user);
+
+            //validate checkout attributes
+            if (ensureOnlyActiveCheckoutAttributes &&
+                //only for shopping cart items (ignore wishlist)
+                shoppingCartItem.ShoppingCartType == ShoppingCartType.ShoppingCart)
+            {
+                var cart = await GetShoppingCartAsync(user, ShoppingCartType.ShoppingCart, storeId);
+
+                var checkoutAttributesXml =
+                    await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.CheckoutAttributes,
+                        storeId);
+                checkoutAttributesXml =
+                    await _checkoutAttributeParser.EnsureOnlyActiveAttributesAsync(checkoutAttributesXml, cart);
+                await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.CheckoutAttributes,
+                    checkoutAttributesXml, storeId);
+            }
+
+            if (!_catalogSettings.RemoveRequiredProducts)
+                return;
+
+            var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
+            if (!product?.RequireOtherProducts ?? true)
+                return;
+
+            var requiredProductIds = _productService.ParseRequiredProductIds(product);
+            var requiredShoppingCartItems =
+                (await GetShoppingCartAsync(user, shoppingCartType: shoppingCartItem.ShoppingCartType))
+                    .Where(item => requiredProductIds.Any(id => id == item.ProductId))
+                    .ToList();
+
+            //update quantity of required products in the cart if the main one is removed
+            foreach (var cartItem in requiredShoppingCartItems)
+            {
+                //at now we ignore quantities of required products and use 1
+                var requiredProductQuantity = 1;
+
+                await UpdateShoppingCartItemAsync(user, cartItem.Id, cartItem.AttributesXml, cartItem.UserEnteredPrice,
+                    quantity: cartItem.Quantity - shoppingCartItem.Quantity * requiredProductQuantity,
+                    resetCheckoutData: false);
+            }
+        }
+
+        /// <summary>
+        /// Delete shopping cart item
+        /// </summary>
+        /// <param name="shoppingCartItemId">Shopping cart item ID</param>
+        /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
+        /// <param name="ensureOnlyActiveCheckoutAttributes">A value indicating whether to ensure that only active checkout attributes are attached to the current user</param>
+        public virtual async Task DeleteShoppingCartItemAsync(int shoppingCartItemId, bool resetCheckoutData = true,
+            bool ensureOnlyActiveCheckoutAttributes = false)
+        {
+            var shoppingCartItem = await _sciRepository.Table.FirstOrDefaultAsync(sci => sci.Id == shoppingCartItemId);
+            if (shoppingCartItem != null)
+                await DeleteShoppingCartItemAsync(shoppingCartItem, resetCheckoutData, ensureOnlyActiveCheckoutAttributes);
+        }
+
+        /// <summary>
+        /// Deletes expired shopping cart items
+        /// </summary>
+        /// <param name="olderThanUtc">Older than date and time</param>
+        /// <returns>Number of deleted items</returns>
+        public virtual async Task<int> DeleteExpiredShoppingCartItemsAsync(DateTime olderThanUtc)
+        {
+            var query = from sci in _sciRepository.Table
+                        where sci.UpdatedOnUtc < olderThanUtc
+                        select sci;
+
+            var cartItems = await query.ToListAsync();
+
+            foreach (var cartItem in cartItems)
+                await DeleteShoppingCartItemAsync(cartItem);
+
+            return cartItems.Count;
+        }
+
+        /// <summary>
+        /// Get products from shopping cart whether requiring specific product
+        /// </summary>
+        /// <param name="cart">Shopping cart </param>
+        /// <param name="product">Product</param>
+        /// <returns>Result</returns>
+        public virtual async Task<IList<Product>> GetProductsRequiringProductAsync(IList<ShoppingCartItem> cart, Product product)
+        {
+            if (cart is null)
+                throw new ArgumentNullException(nameof(cart));
+
+            if (product is null)
+                throw new ArgumentNullException(nameof(product));
+
+            if (cart.Count == 0)
+                return new List<Product>();
+
+            var productIds = cart.Select(ci => ci.ProductId).ToArray();
+
+            var cartProducts = await _productService.GetProductsByIdsAsync(productIds);
+
+            return cartProducts.Where(cartProduct =>
+                !cartProduct.RequireOtherProducts &&
+                _productService.ParseRequiredProductIds(cartProduct).Contains(product.Id)).ToList();
+        }
+
         /// <summary>
         /// Gets shopping cart
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type; pass null to load all records</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
         /// <param name="productId">Product identifier; pass null to load all records</param>
         /// <param name="createdFromUtc">Created date from (UTC); pass null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); pass null to load all records</param>
         /// <returns>Shopping Cart</returns>
-        public virtual IList<ShoppingCartItem> GetShoppingCart(User user, ShoppingCartType? shoppingCartType = null,
+        public virtual async Task<IList<ShoppingCartItem>> GetShoppingCartAsync(User user, ShoppingCartType? shoppingCartType = null,
             int storeId = 0, int? productId = null, DateTime? createdFromUtc = null, DateTime? createdToUtc = null)
         {
             if (user == null)
@@ -657,15 +694,15 @@ namespace TVProgViewer.Services.Orders
             if (createdToUtc.HasValue)
                 items = items.Where(item => createdToUtc.Value >= item.CreatedOnUtc);
 
-            var key = TvProgOrderCachingDefaults.ShoppingCartCacheKey.FillCacheKey(user, shoppingCartType, storeId, productId, createdFromUtc, createdToUtc);
+            var key = _staticCacheManager.PrepareKeyForShortTermCache(TvProgOrderDefaults.ShoppingCartItemsAllCacheKey, user, shoppingCartType, storeId, productId, createdFromUtc, createdToUtc);
 
-            return _cacheManager.Get(key, () => items.ToList());
+            return await _staticCacheManager.GetAsync(key, async () => await items.ToListAsync());
         }
 
         /// <summary>
         /// Validates shopping cart item attributes
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="product">Product</param>
         /// <param name="quantity">Quantity</param>
@@ -673,7 +710,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <param name="ignoreConditionMet">A value indicating whether we should ignore filtering by "is condition met" property</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetShoppingCartItemAttributeWarnings(User user,
+        public virtual async Task<IList<string>> GetShoppingCartItemAttributeWarningsAsync(User user,
             ShoppingCartType shoppingCartType,
             Product product,
             int quantity = 1,
@@ -687,7 +724,7 @@ namespace TVProgViewer.Services.Orders
             var warnings = new List<string>();
 
             //ensure it's our attributes
-            var attributes1 = _productAttributeParser.ParseProductAttributeMappings(attributesXml);
+            var attributes1 = await _productAttributeParser.ParseProductAttributeMappingsAsync(attributesXml);
             if (ignoreNonCombinableAttributes)
             {
                 attributes1 = attributes1.Where(x => !x.IsNonCombinable()).ToList();
@@ -708,7 +745,7 @@ namespace TVProgViewer.Services.Orders
             }
 
             //validate required product attributes (whether they're chosen/selected/entered)
-            var attributes2 = _productAttributeService.GetProductAttributeMappingsByProductId(product.Id);
+            var attributes2 = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
             if (ignoreNonCombinableAttributes)
             {
                 attributes2 = attributes2.Where(x => !x.IsNonCombinable()).ToList();
@@ -717,11 +754,11 @@ namespace TVProgViewer.Services.Orders
             //validate conditional attributes only (if specified)
             if (!ignoreConditionMet)
             {
-                attributes2 = attributes2.Where(x =>
+                attributes2 = await attributes2.WhereAwait(async x =>
                 {
-                    var conditionMet = _productAttributeParser.IsConditionMet(x, attributesXml);
+                    var conditionMet = await _productAttributeParser.IsConditionMetAsync(x, attributesXml);
                     return !conditionMet.HasValue || conditionMet.Value;
-                }).ToList();
+                }).ToListAsync();
             }
 
             foreach (var a2 in attributes2)
@@ -750,12 +787,12 @@ namespace TVProgViewer.Services.Orders
                     //if not found
                     if (!found)
                     {
-                        var productAttribute = _productAttributeService.GetProductAttributeById(a2.ProductAttributeId);
+                        var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(a2.ProductAttributeId);
 
-                        var textPrompt = _localizationService.GetLocalized(a2, x => x.TextPrompt);
+                        var textPrompt = await _localizationService.GetLocalizedAsync(a2, x => x.TextPrompt);
                         var notFoundWarning = !string.IsNullOrEmpty(textPrompt) ?
                             textPrompt :
-                            string.Format(_localizationService.GetResource("ShoppingCart.SelectAttribute"), _localizationService.GetLocalized(productAttribute, a => a.Name));
+                            string.Format(await _localizationService.GetResourceAsync("ShoppingCart.SelectAttribute"), await _localizationService.GetLocalizedAsync(productAttribute, a => a.Name));
 
                         warnings.Add(notFoundWarning);
                     }
@@ -764,13 +801,13 @@ namespace TVProgViewer.Services.Orders
                 if (a2.AttributeControlType != AttributeControlType.ReadonlyCheckboxes)
                     continue;
 
-                //Users cannot edit read-only attributes
-                var allowedReadOnlyValueIds = _productAttributeService.GetProductAttributeValues(a2.Id)
+                //users cannot edit read-only attributes
+                var allowedReadOnlyValueIds = (await _productAttributeService.GetProductAttributeValuesAsync(a2.Id))
                     .Where(x => x.IsPreSelected)
                     .Select(x => x.Id)
                     .ToArray();
 
-                var selectedReadOnlyValueIds = _productAttributeParser.ParseProductAttributeValues(attributesXml)
+                var selectedReadOnlyValueIds = (await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml))
                     .Where(x => x.ProductAttributeMappingId == a2.Id)
                     .Select(x => x.Id)
                     .ToArray();
@@ -790,7 +827,7 @@ namespace TVProgViewer.Services.Orders
                 string enteredText;
                 int enteredTextLength;
 
-                var productAttribute = _productAttributeService.GetProductAttributeById(pam.ProductAttributeId);
+                var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(pam.ProductAttributeId);
 
                 //minimum length
                 if (pam.ValidationMinLength.HasValue)
@@ -803,7 +840,7 @@ namespace TVProgViewer.Services.Orders
 
                         if (pam.ValidationMinLength.Value > enteredTextLength)
                         {
-                            warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.TextboxMinimumLength"), _localizationService.GetLocalized(productAttribute, a => a.Name), pam.ValidationMinLength.Value));
+                            warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMinimumLength"), await _localizationService.GetLocalizedAsync(productAttribute, a => a.Name), pam.ValidationMinLength.Value));
                         }
                     }
                 }
@@ -820,7 +857,7 @@ namespace TVProgViewer.Services.Orders
 
                 if (pam.ValidationMaxLength.Value < enteredTextLength)
                 {
-                    warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.TextboxMaximumLength"), _localizationService.GetLocalized(productAttribute, a => a.Name), pam.ValidationMaxLength.Value));
+                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMaximumLength"), await _localizationService.GetLocalizedAsync(productAttribute, a => a.Name), pam.ValidationMaxLength.Value));
                 }
             }
 
@@ -828,34 +865,34 @@ namespace TVProgViewer.Services.Orders
                 return warnings;
 
             //validate bundled products
-            var attributeValues = _productAttributeParser.ParseProductAttributeValues(attributesXml);
+            var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml);
             foreach (var attributeValue in attributeValues)
             {
                 if (attributeValue.AttributeValueType != AttributeValueType.AssociatedToProduct)
                     continue;
 
-                var productAttributeMapping = _productAttributeService.GetProductAttributeMappingById(attributeValue.ProductAttributeMappingId);
+                var productAttributeMapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(attributeValue.ProductAttributeMappingId);
 
                 if (ignoreNonCombinableAttributes && productAttributeMapping != null && productAttributeMapping.IsNonCombinable())
                     continue;
 
                 //associated product (bundle)
-                var associatedProduct = _productService.GetProductById(attributeValue.AssociatedProductId);
+                var associatedProduct = await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId);
                 if (associatedProduct != null)
                 {
                     var totalQty = quantity * attributeValue.Quantity;
-                    var associatedProductWarnings = GetShoppingCartItemWarnings(user,
-                        shoppingCartType, associatedProduct, _storeContext.CurrentStore.Id,
+                    var associatedProductWarnings = await GetShoppingCartItemWarningsAsync(user,
+                        shoppingCartType, associatedProduct, (await _storeContext.GetCurrentStoreAsync()).Id,
                         string.Empty, decimal.Zero, null, null, totalQty, false);
 
-                    var productAttribute = _productAttributeService.GetProductAttributeById(productAttributeMapping.ProductAttributeId);
+                    var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(productAttributeMapping.ProductAttributeId);
 
                     foreach (var associatedProductWarning in associatedProductWarnings)
                     {
-                        var attributeName = _localizationService.GetLocalized(productAttribute, a => a.Name);
-                        var attributeValueName = _localizationService.GetLocalized(attributeValue, a => a.Name);
+                        var attributeName = await _localizationService.GetLocalizedAsync(productAttribute, a => a.Name);
+                        var attributeValueName = await _localizationService.GetLocalizedAsync(attributeValue, a => a.Name);
                         warnings.Add(string.Format(
-                            _localizationService.GetResource("ShoppingCart.AssociatedAttributeWarning"),
+                            await _localizationService.GetResourceAsync("ShoppingCart.AssociatedAttributeWarning"),
                             attributeName, attributeValueName, associatedProductWarning));
                     }
                 }
@@ -875,7 +912,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="product">Product</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetShoppingCartItemGiftCardWarnings(ShoppingCartType shoppingCartType,
+        public virtual async Task<IList<string>> GetShoppingCartItemGiftCardWarningsAsync(ShoppingCartType shoppingCartType,
             Product product, string attributesXml)
         {
             if (product == null)
@@ -890,24 +927,24 @@ namespace TVProgViewer.Services.Orders
             _productAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName, out var giftCardRecipientEmail, out var giftCardSenderName, out var giftCardSenderEmail, out var _);
 
             if (string.IsNullOrEmpty(giftCardRecipientName))
-                warnings.Add(_localizationService.GetResource("ShoppingCart.RecipientNameError"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.RecipientNameError"));
 
             if (product.GiftCardType == GiftCardType.Virtual)
             {
                 //validate for virtual gift cards only
                 if (string.IsNullOrEmpty(giftCardRecipientEmail) || !CommonHelper.IsValidEmail(giftCardRecipientEmail))
-                    warnings.Add(_localizationService.GetResource("ShoppingCart.RecipientEmailError"));
+                    warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.RecipientEmailError"));
             }
 
             if (string.IsNullOrEmpty(giftCardSenderName))
-                warnings.Add(_localizationService.GetResource("ShoppingCart.SenderNameError"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.SenderNameError"));
 
             if (product.GiftCardType != GiftCardType.Virtual)
                 return warnings;
 
             //validate for virtual gift cards only
             if (string.IsNullOrEmpty(giftCardSenderEmail) || !CommonHelper.IsValidEmail(giftCardSenderEmail))
-                warnings.Add(_localizationService.GetResource("ShoppingCart.SenderEmailError"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.SenderEmailError"));
 
             return warnings;
         }
@@ -919,7 +956,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetRentalProductWarnings(Product product,
+        public virtual async Task<IList<string>> GetRentalProductWarningsAsync(Product product,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null)
         {
             if (product == null)
@@ -932,19 +969,19 @@ namespace TVProgViewer.Services.Orders
 
             if (!rentalStartDate.HasValue)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.Rental.EnterStartDate"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.Rental.EnterStartDate"));
                 return warnings;
             }
 
             if (!rentalEndDate.HasValue)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.Rental.EnterEndDate"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.Rental.EnterEndDate"));
                 return warnings;
             }
 
             if (rentalStartDate.Value.CompareTo(rentalEndDate.Value) > 0)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.Rental.StartDateLessEndDate"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.Rental.StartDateLessEndDate"));
                 return warnings;
             }
 
@@ -958,24 +995,24 @@ namespace TVProgViewer.Services.Orders
             var todayDtUtc = _dateTimeHelper.ConvertToUtcTime(todayDt, _dateTimeHelper.DefaultStoreTimeZone);
             //dates are entered in store timezone (e.g. like in hotels)
             var startDateUtc = _dateTimeHelper.ConvertToUtcTime(rentalStartDate.Value, _dateTimeHelper.DefaultStoreTimeZone);
-            //but we what if dates should be entered in a User timezone?
+            //but we what if dates should be entered in a user timezone?
             //DateTime startDateUtc = _dateTimeHelper.ConvertToUtcTime(rentalStartDate.Value, _dateTimeHelper.CurrentTimeZone);
             if (todayDtUtc.CompareTo(startDateUtc) <= 0)
                 return warnings;
 
-            warnings.Add(_localizationService.GetResource("ShoppingCart.Rental.StartDateShouldBeFuture"));
+            warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.Rental.StartDateShouldBeFuture"));
             return warnings;
         }
 
         /// <summary>
         /// Validates shopping cart item
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="product">Product</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserEnteredPrice">User entered price</param>
+        /// <param name="userEnteredPrice">User entered price</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <param name="quantity">Quantity</param>
@@ -987,9 +1024,9 @@ namespace TVProgViewer.Services.Orders
         /// <param name="getRequiredProductWarnings">A value indicating whether we should validate required products (products which require other products to be added to the cart)</param>
         /// <param name="getRentalWarnings">A value indicating whether we should validate rental properties</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetShoppingCartItemWarnings(User User, ShoppingCartType shoppingCartType,
+        public virtual async Task<IList<string>> GetShoppingCartItemWarningsAsync(User user, ShoppingCartType shoppingCartType,
             Product product, int storeId,
-            string attributesXml, decimal UserEnteredPrice,
+            string attributesXml, decimal userEnteredPrice,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
             int quantity = 1, bool addRequiredProducts = true, int shoppingCartItemId = 0,
             bool getStandardWarnings = true, bool getAttributesWarnings = true,
@@ -1003,23 +1040,23 @@ namespace TVProgViewer.Services.Orders
 
             //standard properties
             if (getStandardWarnings)
-                warnings.AddRange(GetStandardWarnings(User, shoppingCartType, product, attributesXml, UserEnteredPrice, quantity));
+                warnings.AddRange(await GetStandardWarningsAsync(user, shoppingCartType, product, attributesXml, userEnteredPrice, quantity, shoppingCartItemId, storeId));
 
             //selected attributes
             if (getAttributesWarnings)
-                warnings.AddRange(GetShoppingCartItemAttributeWarnings(User, shoppingCartType, product, quantity, attributesXml));
+                warnings.AddRange(await GetShoppingCartItemAttributeWarningsAsync(user, shoppingCartType, product, quantity, attributesXml));
 
             //gift cards
             if (getGiftCardWarnings)
-                warnings.AddRange(GetShoppingCartItemGiftCardWarnings(shoppingCartType, product, attributesXml));
+                warnings.AddRange(await GetShoppingCartItemGiftCardWarningsAsync(shoppingCartType, product, attributesXml));
 
             //required products
             if (getRequiredProductWarnings)
-                warnings.AddRange(GetRequiredProductWarnings(User, shoppingCartType, product, storeId, quantity, addRequiredProducts, shoppingCartItemId));
+                warnings.AddRange(await GetRequiredProductWarningsAsync(user, shoppingCartType, product, storeId, quantity, addRequiredProducts, shoppingCartItemId));
 
             //rental products
             if (getRentalWarnings)
-                warnings.AddRange(GetRentalProductWarnings(product, rentalStartDate, rentalEndDate));
+                warnings.AddRange(await GetRentalProductWarningsAsync(product, rentalStartDate, rentalEndDate));
 
             return warnings;
         }
@@ -1031,7 +1068,7 @@ namespace TVProgViewer.Services.Orders
         /// <param name="checkoutAttributesXml">Checkout attributes in XML format</param>
         /// <param name="validateCheckoutAttributes">A value indicating whether to validate checkout attributes</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> GetShoppingCartWarnings(IList<ShoppingCartItem> shoppingCart,
+        public virtual async Task<IList<string>> GetShoppingCartWarningsAsync(IList<ShoppingCartItem> shoppingCart,
             string checkoutAttributesXml, bool validateCheckoutAttributes)
         {
             var warnings = new List<string>();
@@ -1041,10 +1078,10 @@ namespace TVProgViewer.Services.Orders
 
             foreach (var sci in shoppingCart)
             {
-                var product = _productService.GetProductById(sci.ProductId);
+                var product = await _productService.GetProductByIdAsync(sci.ProductId);
                 if (product == null)
                 {
-                    warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.CannotLoadProduct"), sci.ProductId));
+                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.CannotLoadProduct"), sci.ProductId));
                     return warnings;
                 }
 
@@ -1056,12 +1093,12 @@ namespace TVProgViewer.Services.Orders
 
             //don't mix standard and recurring products
             if (hasStandartProducts && hasRecurringProducts)
-                warnings.Add(_localizationService.GetResource("ShoppingCart.CannotMixStandardAndAutoshipProducts"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.CannotMixStandardAndAutoshipProducts"));
 
             //recurring cart validation
             if (hasRecurringProducts)
             {
-                var cyclesError = GetRecurringCycleInfo(shoppingCart, out var _, out var _, out var _);
+                var cyclesError = (await GetRecurringCycleInfoAsync(shoppingCart)).error;
                 if (!string.IsNullOrEmpty(cyclesError))
                 {
                     warnings.Add(cyclesError);
@@ -1074,18 +1111,18 @@ namespace TVProgViewer.Services.Orders
                 return warnings;
 
             //selected attributes
-            var attributes1 = _checkoutAttributeParser.ParseCheckoutAttributes(checkoutAttributesXml);
+            var attributes1 = await _checkoutAttributeParser.ParseCheckoutAttributesAsync(checkoutAttributesXml);
 
             //existing checkout attributes
-            var excludeShippableAttributes = !ShoppingCartRequiresShipping(shoppingCart);
-            var attributes2 = _checkoutAttributeService.GetAllCheckoutAttributes(_storeContext.CurrentStore.Id, excludeShippableAttributes);
+            var excludeShippableAttributes = !await ShoppingCartRequiresShippingAsync(shoppingCart);
+            var attributes2 = await _checkoutAttributeService.GetAllCheckoutAttributesAsync((await _storeContext.GetCurrentStoreAsync()).Id, excludeShippableAttributes);
 
             //validate conditional attributes only (if specified)
-            attributes2 = attributes2.Where(x =>
+            attributes2 = await attributes2.WhereAwait(async x =>
             {
-                var conditionMet = _checkoutAttributeParser.IsConditionMet(x, checkoutAttributesXml);
+                var conditionMet = await _checkoutAttributeParser.IsConditionMetAsync(x, checkoutAttributesXml);
                 return !conditionMet.HasValue || conditionMet.Value;
-            }).ToList();
+            }).ToListAsync();
 
             foreach (var a2 in attributes2)
             {
@@ -1112,10 +1149,10 @@ namespace TVProgViewer.Services.Orders
                     continue;
 
                 //if not found
-                warnings.Add(!string.IsNullOrEmpty(_localizationService.GetLocalized(a2, a => a.TextPrompt))
-                    ? _localizationService.GetLocalized(a2, a => a.TextPrompt)
-                    : string.Format(_localizationService.GetResource("ShoppingCart.SelectAttribute"),
-                        _localizationService.GetLocalized(a2, a => a.Name)));
+                warnings.Add(!string.IsNullOrEmpty(await _localizationService.GetLocalizedAsync(a2, a => a.TextPrompt))
+                    ? await _localizationService.GetLocalizedAsync(a2, a => a.TextPrompt)
+                    : string.Format(await _localizationService.GetResourceAsync("ShoppingCart.SelectAttribute"),
+                        await _localizationService.GetLocalizedAsync(a2, a => a.Name)));
             }
 
             //now validation rules
@@ -1136,7 +1173,7 @@ namespace TVProgViewer.Services.Orders
 
                         if (ca.ValidationMinLength.Value > enteredTextLength)
                         {
-                            warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.TextboxMinimumLength"), _localizationService.GetLocalized(ca, a => a.Name), ca.ValidationMinLength.Value));
+                            warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMinimumLength"), await _localizationService.GetLocalizedAsync(ca, a => a.Name), ca.ValidationMinLength.Value));
                         }
                     }
                 }
@@ -1153,7 +1190,7 @@ namespace TVProgViewer.Services.Orders
 
                 if (ca.ValidationMaxLength.Value < enteredTextLength)
                 {
-                    warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.TextboxMaximumLength"), _localizationService.GetLocalized(ca, a => a.Name), ca.ValidationMaxLength.Value));
+                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMaximumLength"), await _localizationService.GetLocalizedAsync(ca, a => a.Name), ca.ValidationMaxLength.Value));
                 }
             }
 
@@ -1165,37 +1202,18 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCartItem">The shopping cart item</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
-        /// <returns>Shopping cart item sub total</returns>
-        public virtual decimal GetSubTotal(ShoppingCartItem shoppingCartItem,
-            bool includeDiscounts = true)
-        {
-            return GetSubTotal(shoppingCartItem, includeDiscounts, out var _, out var _, out var _);
-        }
-
-        /// <summary>
-        /// Gets the shopping cart item sub total
-        /// </summary>
-        /// <param name="shoppingCartItem">The shopping cart item</param>
-        /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
-        /// <param name="discountAmount">Applied discount amount</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <param name="maximumDiscountQty">Maximum discounted qty. Return not nullable value if discount cannot be applied to ALL items</param>
-        /// <returns>Shopping cart item sub total</returns>
-        public virtual decimal GetSubTotal(ShoppingCartItem shoppingCartItem,
-            bool includeDiscounts,
-            out decimal discountAmount,
-            out List<Discount> appliedDiscounts,
-            out int? maximumDiscountQty)
+        /// <returns>Shopping cart item sub total. Applied discount amount. Applied discounts. Maximum discounted qty. Return not nullable value if discount cannot be applied to ALL items</returns>
+        public virtual async Task<(decimal subTotal, decimal discountAmount, List<Discount> appliedDiscounts, int? maximumDiscountQty)> GetSubTotalAsync(ShoppingCartItem shoppingCartItem,
+            bool includeDiscounts)
         {
             if (shoppingCartItem == null)
                 throw new ArgumentNullException(nameof(shoppingCartItem));
 
             decimal subTotal;
-            maximumDiscountQty = null;
+            int? maximumDiscountQty = null;
 
             //unit price
-            var unitPrice = GetUnitPrice(shoppingCartItem, includeDiscounts,
-                out discountAmount, out appliedDiscounts);
+            var (unitPrice, discountAmount, appliedDiscounts) = await GetUnitPriceAsync(shoppingCartItem, includeDiscounts);
 
             //discount
             if (appliedDiscounts.Any())
@@ -1215,7 +1233,7 @@ namespace TVProgViewer.Services.Orders
                     discountAmount *= discountedQuantity;
 
                     var notDiscountedQuantity = shoppingCartItem.Quantity - discountedQuantity;
-                    var notDiscountedUnitPrice = GetUnitPrice(shoppingCartItem, false);
+                    var notDiscountedUnitPrice = (await GetUnitPriceAsync(shoppingCartItem, false)).unitPrice;
                     var notDiscountedSubTotal = notDiscountedUnitPrice * notDiscountedQuantity;
 
                     subTotal = discountedSubTotal + notDiscountedSubTotal;
@@ -1234,7 +1252,7 @@ namespace TVProgViewer.Services.Orders
                 subTotal = unitPrice * shoppingCartItem.Quantity;
             }
 
-            return subTotal;
+            return (subTotal, discountAmount, appliedDiscounts, maximumDiscountQty);
         }
 
         /// <summary>
@@ -1242,112 +1260,89 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCartItem">The shopping cart item</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
-        /// <returns>Shopping cart unit price (one item)</returns>
-        public virtual decimal GetUnitPrice(ShoppingCartItem shoppingCartItem,
-            bool includeDiscounts = true)
-        {
-            return GetUnitPrice(shoppingCartItem, includeDiscounts, out _, out _);
-        }
-
-        /// <summary>
-        /// Gets the shopping cart unit price (one item)
-        /// </summary>
-        /// <param name="shoppingCartItem">The shopping cart item</param>
-        /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
-        /// <param name="discountAmount">Applied discount amount</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <returns>Shopping cart unit price (one item)</returns>
-        public virtual decimal GetUnitPrice(ShoppingCartItem shoppingCartItem,
-            bool includeDiscounts,
-            out decimal discountAmount,
-            out List<Discount> appliedDiscounts)
+        /// <returns>Shopping cart unit price (one item). Applied discount amount. Applied discounts</returns>
+        public virtual async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(ShoppingCartItem shoppingCartItem,
+            bool includeDiscounts)
         {
             if (shoppingCartItem == null)
                 throw new ArgumentNullException(nameof(shoppingCartItem));
 
-            var User = _userService.GetUserById(shoppingCartItem.UserId);
-            var product = _productService.GetProductById(shoppingCartItem.ProductId);
+            var user = await _userService.GetUserByIdAsync(shoppingCartItem.UserId);
+            var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
-            return GetUnitPrice(product,
-                User,
+            return await GetUnitPriceAsync(product,
+                user,
                 shoppingCartItem.ShoppingCartType,
                 shoppingCartItem.Quantity,
                 shoppingCartItem.AttributesXml,
                 shoppingCartItem.UserEnteredPrice,
                 shoppingCartItem.RentalStartDateUtc,
                 shoppingCartItem.RentalEndDateUtc,
-                includeDiscounts,
-                out discountAmount,
-                out appliedDiscounts);
+                includeDiscounts);
         }
 
         /// <summary>
         /// Gets the shopping cart unit price (one item)
         /// </summary>
         /// <param name="product">Product</param>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="quantity">Quantity</param>
         /// <param name="attributesXml">Product attributes (XML format)</param>
-        /// <param name="UserEnteredPrice">User entered price (if specified)</param>
+        /// <param name="userEnteredPrice">User entered price (if specified)</param>
         /// <param name="rentalStartDate">Rental start date (null for not rental products)</param>
         /// <param name="rentalEndDate">Rental end date (null for not rental products)</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
-        /// <param name="discountAmount">Applied discount amount</param>
-        /// <param name="appliedDiscounts">Applied discounts</param>
-        /// <returns>Shopping cart unit price (one item)</returns>
-        public virtual decimal GetUnitPrice(Product product,
-            User User,
+        /// <returns>Shopping cart unit price (one item). Applied discount amount. Applied discounts</returns>
+        public virtual async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(Product product,
+            User user,
             ShoppingCartType shoppingCartType,
             int quantity,
             string attributesXml,
-            decimal UserEnteredPrice,
+            decimal userEnteredPrice,
             DateTime? rentalStartDate, DateTime? rentalEndDate,
-            bool includeDiscounts,
-            out decimal discountAmount,
-            out List<Discount> appliedDiscounts)
+            bool includeDiscounts)
         {
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
-            discountAmount = decimal.Zero;
-            appliedDiscounts = new List<Discount>();
+            var discountAmount = decimal.Zero;
+            var appliedDiscounts = new List<Discount>();
 
             decimal finalPrice;
 
-            var combination = _productAttributeParser.FindProductAttributeCombination(product, attributesXml);
+            var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
             if (combination?.OverriddenPrice.HasValue ?? false)
             {
-                finalPrice = _priceCalculationService.GetFinalPrice(product,
-                        User,
+                (finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(product,
+                        user,
                         combination.OverriddenPrice.Value,
                         decimal.Zero,
                         includeDiscounts,
                         quantity,
                         product.IsRental ? rentalStartDate : null,
-                        product.IsRental ? rentalEndDate : null,
-                        out discountAmount, out appliedDiscounts);
+                        product.IsRental ? rentalEndDate : null);
             }
             else
             {
                 //summarize price of all attributes
                 var attributesTotalPrice = decimal.Zero;
-                var attributeValues = _productAttributeParser.ParseProductAttributeValues(attributesXml);
+                var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml);
                 if (attributeValues != null)
                 {
                     foreach (var attributeValue in attributeValues)
                     {
-                        attributesTotalPrice += _priceCalculationService.GetProductAttributeValuePriceAdjustment(product, attributeValue, User, product.UserEntersPrice ? (decimal?)UserEnteredPrice : null);
+                        attributesTotalPrice += await _priceCalculationService.GetProductAttributeValuePriceAdjustmentAsync(product, attributeValue, user, product.UserEntersPrice ? (decimal?)userEnteredPrice : null);
                     }
                 }
 
                 //get price of a product (with previously calculated price of all attributes)
                 if (product.UserEntersPrice)
                 {
-                    finalPrice = UserEnteredPrice;
+                    finalPrice = userEnteredPrice;
                 }
                 else
                 {
@@ -1356,7 +1351,7 @@ namespace TVProgViewer.Services.Orders
                     {
                         //the same products with distinct product attributes could be stored as distinct "ShoppingCartItem" records
                         //so let's find how many of the current products are in the cart                        
-                        qty = GetShoppingCart(User, shoppingCartType: shoppingCartType, productId: product.Id)
+                        qty = (await GetShoppingCartAsync(user, shoppingCartType: shoppingCartType, productId: product.Id))
                             .Sum(x => x.Quantity);
 
                         if (qty == 0)
@@ -1369,22 +1364,21 @@ namespace TVProgViewer.Services.Orders
                         qty = quantity;
                     }
 
-                    finalPrice = _priceCalculationService.GetFinalPrice(product,
-                        User,
+                    (finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(product,
+                        user,
                         attributesTotalPrice,
                         includeDiscounts,
                         qty,
                         product.IsRental ? rentalStartDate : null,
-                        product.IsRental ? rentalEndDate : null,
-                        out discountAmount, out appliedDiscounts);
+                        product.IsRental ? rentalEndDate : null);
                 }
             }
 
             //rounding
             if (_shoppingCartSettings.RoundPricesDuringCalculation)
-                finalPrice = _priceCalculationService.RoundPrice(finalPrice);
+                finalPrice = await _priceCalculationService.RoundPriceAsync(finalPrice);
 
-            return finalPrice;
+            return (finalPrice, discountAmount, appliedDiscounts);
         }
 
         /// <summary>
@@ -1394,15 +1388,15 @@ namespace TVProgViewer.Services.Orders
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="product">Product</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserEnteredPrice">Price entered by a User</param>
+        /// <param name="userEnteredPrice">Price entered by a user</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>Found shopping cart item</returns>
-        public virtual ShoppingCartItem FindShoppingCartItemInTheCart(IList<ShoppingCartItem> shoppingCart,
+        public virtual async Task<ShoppingCartItem> FindShoppingCartItemInTheCartAsync(IList<ShoppingCartItem> shoppingCart,
             ShoppingCartType shoppingCartType,
             Product product,
             string attributesXml = "",
-            decimal UserEnteredPrice = decimal.Zero,
+            decimal userEnteredPrice = decimal.Zero,
             DateTime? rentalStartDate = null,
             DateTime? rentalEndDate = null)
         {
@@ -1412,50 +1406,50 @@ namespace TVProgViewer.Services.Orders
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
-            return shoppingCart.Where(sci => sci.ShoppingCartType == shoppingCartType)
-                .FirstOrDefault(sci => ShoppingCartItemIsEqual(sci, product, attributesXml, UserEnteredPrice, rentalStartDate, rentalEndDate));
+            return await shoppingCart.Where(sci => sci.ShoppingCartType == shoppingCartType)
+                .FirstOrDefaultAwaitAsync(async sci => await ShoppingCartItemIsEqualAsync(sci, product, attributesXml, userEnteredPrice, rentalStartDate, rentalEndDate));
         }
 
         /// <summary>
         /// Add a product to shopping cart
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="product">Product</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserEnteredPrice">The price enter by a User</param>
+        /// <param name="userEnteredPrice">The price enter by a user</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <param name="quantity">Quantity</param>
         /// <param name="addRequiredProducts">Whether to add required products</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> AddToCart(User User, Product product,
+        public virtual async Task<IList<string>> AddToCartAsync(User user, Product product,
             ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
-            decimal UserEnteredPrice = decimal.Zero,
+            decimal userEnteredPrice = decimal.Zero,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
             int quantity = 1, bool addRequiredProducts = true)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             if (product == null)
                 throw new ArgumentNullException(nameof(product));
 
             var warnings = new List<string>();
-            if (shoppingCartType == ShoppingCartType.ShoppingCart && !_permissionService.Authorize(StandardPermissionProvider.EnableShoppingCart, User))
+            if (shoppingCartType == ShoppingCartType.ShoppingCart && !await _permissionService.AuthorizeAsync(StandardPermissionProvider.EnableShoppingCart, user))
             {
                 warnings.Add("Shopping cart is disabled");
                 return warnings;
             }
 
-            if (shoppingCartType == ShoppingCartType.Wishlist && !_permissionService.Authorize(StandardPermissionProvider.EnableWishlist, User))
+            if (shoppingCartType == ShoppingCartType.Wishlist && !await _permissionService.AuthorizeAsync(StandardPermissionProvider.EnableWishlist, user))
             {
                 warnings.Add("Wishlist is disabled");
                 return warnings;
             }
 
-            if (User.IsSearchEngineAccount())
+            if (user.IsSearchEngineAccount())
             {
                 warnings.Add("Search engine can't add to cart");
                 return warnings;
@@ -1463,26 +1457,26 @@ namespace TVProgViewer.Services.Orders
 
             if (quantity <= 0)
             {
-                warnings.Add(_localizationService.GetResource("ShoppingCart.QuantityShouldPositive"));
+                warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.QuantityShouldPositive"));
                 return warnings;
             }
 
             //reset checkout info
-            _userService.ResetCheckoutData(User, storeId);
+            await _userService.ResetCheckoutDataAsync(user, storeId);
 
-            var cart = GetShoppingCart(User, shoppingCartType, storeId);
+            var cart = await GetShoppingCartAsync(user, shoppingCartType, storeId);
 
-            var shoppingCartItem = FindShoppingCartItemInTheCart(cart,
-                shoppingCartType, product, attributesXml, UserEnteredPrice,
+            var shoppingCartItem = await FindShoppingCartItemInTheCartAsync(cart,
+                shoppingCartType, product, attributesXml, userEnteredPrice,
                 rentalStartDate, rentalEndDate);
 
             if (shoppingCartItem != null)
             {
                 //update existing shopping cart item
                 var newQuantity = shoppingCartItem.Quantity + quantity;
-                warnings.AddRange(GetShoppingCartItemWarnings(User, shoppingCartType, product,
+                warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartType, product,
                     storeId, attributesXml,
-                    UserEnteredPrice, rentalStartDate, rentalEndDate,
+                    userEnteredPrice, rentalStartDate, rentalEndDate,
                     newQuantity, addRequiredProducts, shoppingCartItem.Id));
 
                 if (warnings.Any())
@@ -1492,16 +1486,13 @@ namespace TVProgViewer.Services.Orders
                 shoppingCartItem.Quantity = newQuantity;
                 shoppingCartItem.UpdatedOnUtc = DateTime.UtcNow;
 
-                _sciRepository.Update(shoppingCartItem);
-                
-                //event notification
-                _eventPublisher.EntityUpdated(shoppingCartItem);
+                await _sciRepository.UpdateAsync(shoppingCartItem);
             }
             else
             {
                 //new shopping cart item
-                warnings.AddRange(GetShoppingCartItemWarnings(User, shoppingCartType, product,
-                    storeId, attributesXml, UserEnteredPrice,
+                warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartType, product,
+                    storeId, attributesXml, userEnteredPrice,
                     rentalStartDate, rentalEndDate,
                     quantity, addRequiredProducts));
 
@@ -1514,7 +1505,7 @@ namespace TVProgViewer.Services.Orders
                     case ShoppingCartType.ShoppingCart:
                         if (cart.Count >= _shoppingCartSettings.MaximumShoppingCartItems)
                         {
-                            warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.MaximumShoppingCartItems"), _shoppingCartSettings.MaximumShoppingCartItems));
+                            warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MaximumShoppingCartItems"), _shoppingCartSettings.MaximumShoppingCartItems));
                             return warnings;
                         }
 
@@ -1522,7 +1513,7 @@ namespace TVProgViewer.Services.Orders
                     case ShoppingCartType.Wishlist:
                         if (cart.Count >= _shoppingCartSettings.MaximumWishlistItems)
                         {
-                            warnings.Add(string.Format(_localizationService.GetResource("ShoppingCart.MaximumWishlistItems"), _shoppingCartSettings.MaximumWishlistItems));
+                            warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MaximumWishlistItems"), _shoppingCartSettings.MaximumWishlistItems));
                             return warnings;
                         }
 
@@ -1538,22 +1529,21 @@ namespace TVProgViewer.Services.Orders
                     StoreId = storeId,
                     ProductId = product.Id,
                     AttributesXml = attributesXml,
-                    UserEnteredPrice = UserEnteredPrice,
+                    UserEnteredPrice = userEnteredPrice,
                     Quantity = quantity,
                     RentalStartDateUtc = rentalStartDate,
                     RentalEndDateUtc = rentalEndDate,
                     CreatedOnUtc = now,
                     UpdatedOnUtc = now,
-                    UserId = User.Id
+                    UserId = user.Id
                 };
 
-                _sciRepository.Insert(shoppingCartItem);
+                await _sciRepository.InsertAsync(shoppingCartItem);
 
-                
-                _userService.UpdateUser(User);
+                //updated "HasShoppingCartItems" property used for performance optimization
+                user.HasShoppingCartItems = !IsUserShoppingCartEmpty(user);
 
-                //event notification
-                _eventPublisher.EntityInserted(shoppingCartItem);
+                await _userService.UpdateUserAsync(user);
             }
 
             return warnings;
@@ -1562,45 +1552,45 @@ namespace TVProgViewer.Services.Orders
         /// <summary>
         /// Updates the shopping cart item
         /// </summary>
-        /// <param name="User">User</param>
+        /// <param name="user">User</param>
         /// <param name="shoppingCartItemId">Shopping cart item identifier</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="UserEnteredPrice">New User entered price</param>
+        /// <param name="userEnteredPrice">New user entered price</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <param name="quantity">New shopping cart item quantity</param>
         /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
         /// <returns>Warnings</returns>
-        public virtual IList<string> UpdateShoppingCartItem(User User,
+        public virtual async Task<IList<string>> UpdateShoppingCartItemAsync(User user,
             int shoppingCartItemId, string attributesXml,
-            decimal UserEnteredPrice,
+            decimal userEnteredPrice,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
             int quantity = 1, bool resetCheckoutData = true)
         {
-            if (User == null)
-                throw new ArgumentNullException(nameof(User));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
             var warnings = new List<string>();
 
-            var shoppingCartItem = _sciRepository.ToCachedGetById(shoppingCartItemId);
+            var shoppingCartItem = await _sciRepository.GetByIdAsync(shoppingCartItemId, cache => default);
 
-            if (shoppingCartItem == null || shoppingCartItem.UserId != User.Id)
+            if (shoppingCartItem == null || shoppingCartItem.UserId != user.Id)
                 return warnings;
 
             if (resetCheckoutData)
             {
                 //reset checkout data
-                _userService.ResetCheckoutData(User, shoppingCartItem.StoreId);
+                await _userService.ResetCheckoutDataAsync(user, shoppingCartItem.StoreId);
             }
 
-            var product = _productService.GetProductById(shoppingCartItem.ProductId);
+            var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
 
             if (quantity > 0)
             {
                 //check warnings
-                warnings.AddRange(GetShoppingCartItemWarnings(User, shoppingCartItem.ShoppingCartType,
+                warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartItem.ShoppingCartType,
                     product, shoppingCartItem.StoreId,
-                    attributesXml, UserEnteredPrice,
+                    attributesXml, userEnteredPrice,
                     rentalStartDate, rentalEndDate, quantity, false, shoppingCartItemId));
                 if (warnings.Any())
                     return warnings;
@@ -1608,27 +1598,24 @@ namespace TVProgViewer.Services.Orders
                 //if everything is OK, then update a shopping cart item
                 shoppingCartItem.Quantity = quantity;
                 shoppingCartItem.AttributesXml = attributesXml;
-                shoppingCartItem.UserEnteredPrice = UserEnteredPrice;
+                shoppingCartItem.UserEnteredPrice = userEnteredPrice;
                 shoppingCartItem.RentalStartDateUtc = rentalStartDate;
                 shoppingCartItem.RentalEndDateUtc = rentalEndDate;
                 shoppingCartItem.UpdatedOnUtc = DateTime.UtcNow;
 
-                _sciRepository.Update(shoppingCartItem);
-                _userService.UpdateUser(User);
-
-                //event notification
-                _eventPublisher.EntityUpdated(shoppingCartItem);
+                await _sciRepository.UpdateAsync(shoppingCartItem);
+                await _userService.UpdateUserAsync(user);
             }
             else
             {
                 //check warnings for required products
-                warnings.AddRange(GetRequiredProductWarnings(User, shoppingCartItem.ShoppingCartType,
+                warnings.AddRange(await GetRequiredProductWarningsAsync(user, shoppingCartItem.ShoppingCartType,
                     product, shoppingCartItem.StoreId, quantity, false, shoppingCartItemId));
                 if (warnings.Any())
                     return warnings;
 
                 //delete a shopping cart item
-                DeleteShoppingCartItem(shoppingCartItem, resetCheckoutData, true);
+                await DeleteShoppingCartItemAsync(shoppingCartItem, resetCheckoutData, true);
             }
 
             return warnings;
@@ -1637,10 +1624,10 @@ namespace TVProgViewer.Services.Orders
         /// <summary>
         /// Migrate shopping cart
         /// </summary>
-        /// <param name="fromUser">From User</param>
-        /// <param name="toUser">To User</param>
+        /// <param name="fromUser">From user</param>
+        /// <param name="toUser">To user</param>
         /// <param name="includeCouponCodes">A value indicating whether to coupon codes (discount and gift card) should be also re-applied</param>
-        public virtual void MigrateShoppingCart(User fromUser, User toUser, bool includeCouponCodes)
+        public virtual async Task MigrateShoppingCartAsync(User fromUser, User toUser, bool includeCouponCodes)
         {
             if (fromUser == null)
                 throw new ArgumentNullException(nameof(fromUser));
@@ -1648,17 +1635,17 @@ namespace TVProgViewer.Services.Orders
                 throw new ArgumentNullException(nameof(toUser));
 
             if (fromUser.Id == toUser.Id)
-                return; //the same User
+                return; //the same user
 
             //shopping cart items
-            var fromCart = GetShoppingCart(fromUser);
+            var fromCart = await GetShoppingCartAsync(fromUser);
 
             for (var i = 0; i < fromCart.Count; i++)
             {
                 var sci = fromCart[i];
-                var product = _productService.GetProductById(sci.ProductId);
+                var product = await _productService.GetProductByIdAsync(sci.ProductId);
 
-                AddToCart(toUser, product, sci.ShoppingCartType, sci.StoreId,
+                await AddToCartAsync(toUser, product, sci.ShoppingCartType, sci.StoreId,
                     sci.AttributesXml, sci.UserEnteredPrice,
                     sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, false);
             }
@@ -1666,27 +1653,27 @@ namespace TVProgViewer.Services.Orders
             for (var i = 0; i < fromCart.Count; i++)
             {
                 var sci = fromCart[i];
-                DeleteShoppingCartItem(sci);
+                await DeleteShoppingCartItemAsync(sci);
             }
 
             //copy discount and gift card coupon codes
             if (includeCouponCodes)
             {
                 //discount
-                foreach (var code in _userService.ParseAppliedDiscountCouponCodes(fromUser))
-                    _userService.ApplyDiscountCouponCode(toUser, code);
+                foreach (var code in await _userService.ParseAppliedDiscountCouponCodesAsync(fromUser))
+                    await _userService.ApplyDiscountCouponCodeAsync(toUser, code);
 
                 //gift card
-                foreach (var code in _userService.ParseAppliedGiftCardCouponCodes(fromUser))
-                    _userService.ApplyGiftCardCouponCode(toUser, code);
+                foreach (var code in await _userService.ParseAppliedGiftCardCouponCodesAsync(fromUser))
+                    await _userService.ApplyGiftCardCouponCodeAsync(toUser, code);
 
-                //save User
-                _userService.UpdateUser(toUser);
+                //save user
+                await _userService.UpdateUserAsync(toUser);
             }
 
             //move selected checkout attributes
-            var checkoutAttributesXml = _genericAttributeService.GetAttribute<string>(fromUser, TvProgUserDefaults.CheckoutAttributes, _storeContext.CurrentStore.Id);
-            _genericAttributeService.SaveAttribute(toUser, TvProgUserDefaults.CheckoutAttributes, checkoutAttributesXml, _storeContext.CurrentStore.Id);
+            var checkoutAttributesXml = await _genericAttributeService.GetAttributeAsync<string>(fromUser, TvProgUserDefaults.CheckoutAttributes, (await _storeContext.GetCurrentStoreAsync()).Id);
+            await _genericAttributeService.SaveAttributeAsync(toUser, TvProgUserDefaults.CheckoutAttributes, checkoutAttributesXml, (await _storeContext.GetCurrentStoreAsync()).Id);
         }
 
         /// <summary>
@@ -1694,9 +1681,9 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <returns>True if the shopping cart requires shipping; otherwise, false.</returns>
-        public virtual bool ShoppingCartRequiresShipping(IList<ShoppingCartItem> shoppingCart)
+        public virtual async Task<bool> ShoppingCartRequiresShippingAsync(IList<ShoppingCartItem> shoppingCart)
         {
-            return shoppingCart.Any(shoppingCartItem => _shippingService.IsShipEnabled(shoppingCartItem));
+            return await shoppingCart.AnyAwaitAsync(async shoppingCartItem => await _shippingService.IsShipEnabledAsync(shoppingCartItem));
         }
 
         /// <summary>
@@ -1704,7 +1691,7 @@ namespace TVProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <returns>Result</returns>
-        public virtual bool ShoppingCartIsRecurring(IList<ShoppingCartItem> shoppingCart)
+        public virtual async Task<bool> ShoppingCartIsRecurringAsync(IList<ShoppingCartItem> shoppingCart)
         {
             if (shoppingCart is null)
                 throw new ArgumentNullException(nameof(shoppingCart));
@@ -1712,31 +1699,27 @@ namespace TVProgViewer.Services.Orders
             if (!shoppingCart.Any())
                 return false;
 
-            return _productService.HasAnyRecurringProduct(shoppingCart.Select(sci => sci.ProductId).ToArray());
+            return await _productService.HasAnyRecurringProductAsync(shoppingCart.Select(sci => sci.ProductId).ToArray());
         }
 
         /// <summary>
         /// Get a recurring cycle information
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
-        /// <param name="cycleLength">Cycle length</param>
-        /// <param name="cyclePeriod">Cycle period</param>
-        /// <param name="totalCycles">Total cycles</param>
-        /// <returns>Error (if exists); otherwise, empty string</returns>
-        public virtual string GetRecurringCycleInfo(IList<ShoppingCartItem> shoppingCart,
-            out int cycleLength, out RecurringProductCyclePeriod cyclePeriod, out int totalCycles)
+        /// <returns>Error (if exists); otherwise, empty string. Cycle length. Cycle period. Total cycles</returns>
+        public virtual async Task<(string error, int cycleLength, RecurringProductCyclePeriod cyclePeriod, int totalCycles)> GetRecurringCycleInfoAsync(IList<ShoppingCartItem> shoppingCart)
         {
-            cycleLength = 0;
-            cyclePeriod = 0;
-            totalCycles = 0;
+            var rezCycleLength = 0;
+            RecurringProductCyclePeriod rezCyclePeriod = 0;
+            var rezTotalCycles = 0;
 
-            int? _cycleLength = null;
-            RecurringProductCyclePeriod? _cyclePeriod = null;
-            int? _totalCycles = null;
+            int? cycleLength = null;
+            RecurringProductCyclePeriod? cyclePeriod = null;
+            int? totalCycles = null;
 
             foreach (var sci in shoppingCart)
             {
-                var product = _productService.GetProductById(sci.ProductId);
+                var product = await _productService.GetProductByIdAsync(sci.ProductId);
                 if (product == null)
                 {
                     throw new TvProgException($"Product (Id={sci.ProductId}) cannot be loaded");
@@ -1745,32 +1728,32 @@ namespace TVProgViewer.Services.Orders
                 if (!product.IsRecurring)
                     continue;
 
-                var conflictError = _localizationService.GetResource("ShoppingCart.ConflictingShipmentSchedules");
+                var conflictError = await _localizationService.GetResourceAsync("ShoppingCart.ConflictingShipmentSchedules");
 
                 //cycle length
-                if (_cycleLength.HasValue && _cycleLength.Value != product.RecurringCycleLength)
-                    return conflictError;
-                _cycleLength = product.RecurringCycleLength;
+                if (cycleLength.HasValue && cycleLength.Value != product.RecurringCycleLength)
+                    return (conflictError, rezCycleLength, rezCyclePeriod, rezTotalCycles);
+                cycleLength = product.RecurringCycleLength;
 
                 //cycle period
-                if (_cyclePeriod.HasValue && _cyclePeriod.Value != product.RecurringCyclePeriod)
-                    return conflictError;
-                _cyclePeriod = product.RecurringCyclePeriod;
+                if (cyclePeriod.HasValue && cyclePeriod.Value != product.RecurringCyclePeriod)
+                    return (conflictError, rezCycleLength, rezCyclePeriod, rezTotalCycles);
+                cyclePeriod = product.RecurringCyclePeriod;
 
                 //total cycles
-                if (_totalCycles.HasValue && _totalCycles.Value != product.RecurringTotalCycles)
-                    return conflictError;
-                _totalCycles = product.RecurringTotalCycles;
+                if (totalCycles.HasValue && totalCycles.Value != product.RecurringTotalCycles)
+                    return (conflictError, rezCycleLength, rezCyclePeriod, rezTotalCycles);
+                totalCycles = product.RecurringTotalCycles;
             }
 
-            if (!_cycleLength.HasValue)
-                return string.Empty;
+            if (!cycleLength.HasValue)
+                return (string.Empty, rezCycleLength, rezCyclePeriod, rezTotalCycles);
 
-            cycleLength = _cycleLength.Value;
-            cyclePeriod = _cyclePeriod.Value;
-            totalCycles = _totalCycles.Value;
+            rezCycleLength = cycleLength.Value;
+            rezCyclePeriod = cyclePeriod.Value;
+            rezTotalCycles = totalCycles.Value;
 
-            return string.Empty;
+            return (string.Empty, rezCycleLength, rezCyclePeriod, rezTotalCycles);
         }
 
         #endregion

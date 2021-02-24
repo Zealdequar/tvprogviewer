@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TVProgViewer.Core.Domain.Localization;
 using TVProgViewer.Core.Infrastructure;
@@ -18,13 +19,11 @@ namespace TVProgViewer.Services.Localization
         /// <param name="url">URL</param>
         /// <param name="pathBase">Application path base</param>
         /// <param name="isRawPath">A value indicating whether passed URL is raw URL</param>
-        /// <param name="language">Language whose SEO code is in the URL if URL is localized</param>
-        /// <returns>True if passed URL contains SEO code; otherwise false</returns>
-        public static bool IsLocalizedUrl(this string url, PathString pathBase, bool isRawPath, out Language language)
+        /// <returns>True if passed URL contains SEO code; otherwise false. Language whose SEO code is in the URL if URL is localized</returns>
+        public static async Task<(bool IsLocalized, Language Language)> IsLocalizedUrlAsync(this string url, PathString pathBase, bool isRawPath)
         {
-            language = null;
             if (string.IsNullOrEmpty(url))
-                return false;
+                return (false, null);
 
             //remove application path from raw URL
             if (isRawPath)
@@ -33,15 +32,15 @@ namespace TVProgViewer.Services.Localization
             //get first segment of passed URL
             var firstSegment = url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? string.Empty;
             if (string.IsNullOrEmpty(firstSegment))
-                return false;
+                return (false, null);
 
             //suppose that the first segment is the language code and try to get language
             var languageService = EngineContext.Current.Resolve<ILanguageService>();
-            language = languageService.GetAllLanguages()
+            var language = (await languageService.GetAllLanguagesAsync())
                 .FirstOrDefault(urlLanguage => urlLanguage.UniqueSeoCode.Equals(firstSegment, StringComparison.InvariantCultureIgnoreCase));
 
             //if language exists and published passed URL is localized
-            return language?.Published ?? false;
+            return (language?.Published ?? false, language);
         }
 
         /// <summary>
@@ -52,7 +51,7 @@ namespace TVProgViewer.Services.Localization
         /// <returns>Result</returns>
         public static string RemoveApplicationPathFromRawUrl(this string rawUrl, PathString pathBase)
         {
-            new PathString(rawUrl).StartsWithSegments(pathBase, out PathString result);
+            new PathString(rawUrl).StartsWithSegments(pathBase, out var result);
             return WebUtility.UrlDecode(result);
         }
 
@@ -74,7 +73,7 @@ namespace TVProgViewer.Services.Localization
 
             //get result URL
             url = url.TrimStart('/');
-            var result = url.Contains('/') ? url.Substring(url.IndexOf('/')) : string.Empty;
+            var result = url.Contains('/') ? url[(url.IndexOf('/'))..] : string.Empty;
 
             //and add back application path to raw URL
             if (isRawPath)

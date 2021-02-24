@@ -8,7 +8,7 @@ using TVProgViewer.Web.Framework.Mvc.Routing;
 namespace TVProgViewer.WebUI.Infrastructure
 {
     /// <summary>
-    /// Represents provider that provided routes used for backward compatibility with 1.x versions of nopCommerce
+    /// Represents provider that provided routes used for backward compatibility with 1.x versions of TVProgViewer
     /// </summary>
     public partial class BackwardCompatibility1XRouteProvider : IRouteProvider
     {

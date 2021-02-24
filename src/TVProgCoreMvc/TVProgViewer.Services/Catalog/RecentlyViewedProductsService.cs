@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using TVProgViewer.Core;
 using TVProgViewer.Core.Domain.Catalog;
 using TVProgViewer.Core.Http;
+using TVProgViewer.Core.Security;
 
 namespace TVProgViewer.Services.Catalog
 {
@@ -16,6 +18,7 @@ namespace TVProgViewer.Services.Catalog
         #region Fields
 
         private readonly CatalogSettings _catalogSettings;
+        private readonly CookieSettings _cookieSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IProductService _productService;
         private readonly IWebHelper _webHelper;
@@ -25,11 +28,13 @@ namespace TVProgViewer.Services.Catalog
         #region Ctor
 
         public RecentlyViewedProductsService(CatalogSettings catalogSettings,
+            CookieSettings cookieSettings,
             IHttpContextAccessor httpContextAccessor,
             IProductService productService,
             IWebHelper webHelper)
         {
             _catalogSettings = catalogSettings;
+            _cookieSettings = cookieSettings;
             _httpContextAccessor = httpContextAccessor;
             _productService = productService;
             _webHelper = webHelper;
@@ -75,7 +80,7 @@ namespace TVProgViewer.Services.Catalog
         /// Add cookie value for the recently viewed products
         /// </summary>
         /// <param name="recentlyViewedProductIds">Collection of the recently viewed products identifiers</param>
-        protected virtual void AddRecentlyViewedProductsCookie(IEnumerable<int> recentlyViewedProductIds)
+        protected virtual Task AddRecentlyViewedProductsCookieAsync(IEnumerable<int> recentlyViewedProductIds)
         {
             //delete current cookie if exists
             var cookieName = $"{TvProgCookieDefaults.Prefix}{TvProgCookieDefaults.RecentlyViewedProductsCookie}";
@@ -85,7 +90,7 @@ namespace TVProgViewer.Services.Catalog
             var productIdsCookie = string.Join(",", recentlyViewedProductIds);
 
             //create cookie options 
-            var cookieExpires = 24 * 10; //TODO make configurable
+            var cookieExpires = _cookieSettings.RecentlyViewedProductsCookieExpires;
             var cookieOptions = new CookieOptions
             {
                 Expires = DateTime.Now.AddHours(cookieExpires),
@@ -95,6 +100,8 @@ namespace TVProgViewer.Services.Catalog
 
             //add cookie
             _httpContextAccessor.HttpContext.Response.Cookies.Append(cookieName, productIdsCookie, cookieOptions);
+
+            return Task.CompletedTask;
         }
 
         #endregion
@@ -106,13 +113,13 @@ namespace TVProgViewer.Services.Catalog
         /// </summary>
         /// <param name="number">Number of products to load</param>
         /// <returns>"recently viewed products" list</returns>
-        public virtual IList<Product> GetRecentlyViewedProducts(int number)
+        public virtual async Task<IList<Product>> GetRecentlyViewedProductsAsync(int number)
         {
             //get list of recently viewed product identifiers
             var productIds = GetRecentlyViewedProductsIds(number);
 
             //return list of product
-            return _productService.GetProductsByIds(productIds.ToArray())
+            return (await _productService.GetProductsByIdsAsync(productIds.ToArray()))
                 .Where(product => product.Published && !product.Deleted).ToList();
         }
 
@@ -120,7 +127,7 @@ namespace TVProgViewer.Services.Catalog
         /// Adds a product to a recently viewed products list
         /// </summary>
         /// <param name="productId">Product identifier</param>
-        public virtual void AddProductToRecentlyViewedList(int productId)
+        public virtual async Task AddProductToRecentlyViewedListAsync(int productId)
         {
             if (_httpContextAccessor.HttpContext?.Response == null)
                 return;
@@ -140,7 +147,7 @@ namespace TVProgViewer.Services.Catalog
             productIds = productIds.Take(_catalogSettings.RecentlyViewedProductsNumber).ToList();
 
             //set cookie
-            AddRecentlyViewedProductsCookie(productIds);
+            await AddRecentlyViewedProductsCookieAsync(productIds);
         }
 
         #endregion

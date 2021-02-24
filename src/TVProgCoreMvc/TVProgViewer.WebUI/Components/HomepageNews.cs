@@ -2,6 +2,7 @@
 using TVProgViewer.Core.Domain.News;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -16,12 +17,12 @@ namespace TVProgViewer.WebUI.Components
             _newsSettings = newsSettings;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             if (!_newsSettings.Enabled || !_newsSettings.ShowNewsOnMainPage)
                 return Content("");
 
-            var model = _newsModelFactory.PrepareHomepageNewsItemsModel();
+            var model = await _newsModelFactory.PrepareHomepageNewsItemsModelAsync();
             return View(model);
         }
     }

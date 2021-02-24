@@ -4,6 +4,7 @@ using TVProgViewer.Data.TvProgMain.ProgObjs;
 using TVProgViewer.Data;
 using TVProgViewer.Core.Domain.TvProgMain;
 using LinqToDB;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.Services.TvProgMain
 {
@@ -38,10 +39,10 @@ namespace TVProgViewer.Services.TvProgMain
         /// </summary>
         /// <param name="uid">Идентификатор пользователя; null — для всех пользователей</param>
         /// <param name="all">Все жанры</param>
-        public virtual List<Genre> GetGenres(int? uid, bool all)
+        public virtual async Task<List<Genre>> GetGenresAsync(int? uid, bool all)
         {
            
-            List<Genre> genres = (from g in _genreRepository.Table
+            List<Genre> genres = await (from g in _genreRepository.Table
                                   join mp in _mediaPicRepository.Table on g.IconId equals mp.Id into gmp
                                   from mp in gmp.DefaultIfEmpty()
                                   where g.UserId == uid && g.DeleteDate == null
@@ -55,7 +56,7 @@ namespace TVProgViewer.Services.TvProgMain
                                       GenreName = g.GenreName,
                                       Visible = g.Visible,
                                       DeleteDate = g.DeleteDate
-                                  }).ToList();
+                                  }).ToListAsync();
                 if (!all)
                     genres = genres.Where(g => g.Visible).ToList();
             return genres;

@@ -1,4 +1,5 @@
-﻿using TVProgViewer.Core.Domain.News;
+﻿using System.Threading.Tasks;
+using TVProgViewer.Core.Domain.News;
 using TVProgViewer.WebUI.Models.News;
 
 namespace TVProgViewer.WebUI.Factories
@@ -9,32 +10,25 @@ namespace TVProgViewer.WebUI.Factories
     public partial interface INewsModelFactory
     {
         /// <summary>
-        /// Prepare the news comment model
-        /// </summary>
-        /// <param name="newsComment">News comment</param>
-        /// <returns>News comment model</returns>
-        NewsCommentModel PrepareNewsCommentModel(NewsComment newsComment);
-
-        /// <summary>
         /// Prepare the news item model
         /// </summary>
         /// <param name="model">News item model</param>
         /// <param name="newsItem">News item</param>
         /// <param name="prepareComments">Whether to prepare news comment models</param>
         /// <returns>News item model</returns>
-        NewsItemModel PrepareNewsItemModel(NewsItemModel model, NewsItem newsItem, bool prepareComments);
+        Task<NewsItemModel> PrepareNewsItemModelAsync(NewsItemModel model, NewsItem newsItem, bool prepareComments);
 
         /// <summary>
         /// Prepare the home page news items model
         /// </summary>
         /// <returns>Home page news items model</returns>
-        HomepageNewsItemsModel PrepareHomepageNewsItemsModel();
+        Task<HomepageNewsItemsModel> PrepareHomepageNewsItemsModelAsync();
 
         /// <summary>
         /// Prepare the news item list model
         /// </summary>
         /// <param name="command">News paging filtering model</param>
         /// <returns>News item list model</returns>
-        NewsItemListModel PrepareNewsItemListModel(NewsPagingFilteringModel command);
+        Task<NewsItemListModel> PrepareNewsItemListModelAsync(NewsPagingFilteringModel command);
     }
 }

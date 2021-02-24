@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TVProgViewer.Core;
@@ -30,9 +31,9 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         #region Nested filter
 
         /// <summary>
-        /// Represents a filter that checks and updates affiliate of User
+        /// Represents a filter that checks and updates affiliate of user
         /// </summary>
-        private class CheckAffiliateFilter : IActionFilter
+        private class CheckAffiliateFilter : IAsyncActionFilter
         {
             #region Constants
 
@@ -44,19 +45,19 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
             #region Fields
 
             private readonly IAffiliateService _affiliateService;
-            private readonly IUserService _UserService;
+            private readonly IUserService _userService;
             private readonly IWorkContext _workContext;
 
             #endregion
 
             #region Ctor
 
-            public CheckAffiliateFilter(IAffiliateService affiliateService, 
-                IUserService UserService,
+            public CheckAffiliateFilter(IAffiliateService affiliateService,
+                IUserService userService,
                 IWorkContext workContext)
             {
                 _affiliateService = affiliateService;
-                _UserService = UserService;
+                _userService = userService;
                 _workContext = workContext;
             }
 
@@ -65,32 +66,33 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
             #region Utilities
 
             /// <summary>
-            /// Set the affiliate identifier of current User
+            /// Set the affiliate identifier of current user
             /// </summary>
             /// <param name="affiliate">Affiliate</param>
-            protected void SetUserAffiliateId(Affiliate affiliate)
+            /// <param name="user">User</param>
+            private async Task SetUserAffiliateIdAsync(Affiliate affiliate, User user)
             {
                 if (affiliate == null || affiliate.Deleted || !affiliate.Active)
                     return;
 
-               
-
-                //ignore search engines
-                if (_workContext.CurrentUser.IsSearchEngineAccount())
+                if (affiliate.Id == user.AffiliateId)
                     return;
 
-               _UserService.UpdateUser(_workContext.CurrentUser);
+                //ignore search engines
+                if (user.IsSearchEngineAccount())
+                    return;
+
+                //update affiliate identifier
+                user.AffiliateId = affiliate.Id;
+                await _userService.UpdateUserAsync(user);
             }
 
-            #endregion
-
-            #region Methods
-
             /// <summary>
-            /// Called before the action executes, after model binding is complete
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuting(ActionExecutingContext context)
+            /// <returns>A task that on completion indicates the necessary filter actions have been executed</returns>
+            private async Task CheckAffiliateAsync(ActionExecutingContext context)
             {
                 if (context == null)
                     throw new ArgumentNullException(nameof(context));
@@ -100,35 +102,45 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
                 if (request?.Query == null || !request.Query.Any())
                     return;
 
-                if (!DataSettingsManager.IsDatabaseInstalled())
+                if (!await DataSettingsManager.IsDatabaseInstalledAsync())
                     return;
 
                 //try to find by ID
+                var user = await _workContext.GetCurrentUserAsync();
                 var affiliateIds = request.Query[AFFILIATE_ID_QUERY_PARAMETER_NAME];
-                if (affiliateIds.Any() && int.TryParse(affiliateIds.FirstOrDefault(), out int affiliateId)
-                    && affiliateId > 0 )
+
+                if (int.TryParse(affiliateIds.FirstOrDefault(), out var affiliateId) && affiliateId > 0 && affiliateId != user.AffiliateId)
                 {
-                    SetUserAffiliateId(_affiliateService.GetAffiliateById(affiliateId));
+                    var affiliate = await _affiliateService.GetAffiliateByIdAsync(affiliateId);
+                    await SetUserAffiliateIdAsync(affiliate, user);
                     return;
                 }
 
                 //try to find by friendly name
                 var affiliateNames = request.Query[AFFILIATE_FRIENDLYURLNAME_QUERY_PARAMETER_NAME];
-                if (affiliateNames.Any())
+                var affiliateName = affiliateNames.FirstOrDefault();
+                if (!string.IsNullOrEmpty(affiliateName))
                 {
-                    var affiliateName = affiliateNames.FirstOrDefault();
-                    if (!string.IsNullOrEmpty(affiliateName))
-                        SetUserAffiliateId(_affiliateService.GetAffiliateByFriendlyUrlName(affiliateName));
+                    var affiliate = await _affiliateService.GetAffiliateByFriendlyUrlNameAsync(affiliateName);
+                    await SetUserAffiliateIdAsync(affiliate, user);
                 }
             }
 
+            #endregion
+
+            #region Methods
+
             /// <summary>
-            /// Called after the action executes, before the action result
+            /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            public void OnActionExecuted(ActionExecutedContext context)
+            /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
+            /// <returns>A task that on completion indicates the filter has executed</returns>
+            public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
-                //do nothing
+                await CheckAffiliateAsync(context);
+                if (context.Result == null)
+                    await next();
             }
 
             #endregion
@@ -137,3 +149,4 @@ namespace TVProgViewer.Web.Framework.Mvc.Filters
         #endregion
     }
 }
+

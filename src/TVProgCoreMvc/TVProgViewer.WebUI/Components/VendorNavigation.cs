@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TVProgViewer.Core.Domain.Vendors;
 using TVProgViewer.WebUI.Factories;
 using TVProgViewer.Web.Framework.Components;
+using System.Threading.Tasks;
 
 namespace TVProgViewer.WebUI.Components
 {
@@ -18,12 +19,12 @@ namespace TVProgViewer.WebUI.Components
             _vendorSettings = vendorSettings;
         }
 
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
             if (_vendorSettings.VendorsBlockItemsToDisplay == 0)
                 return Content("");
 
-            var model = _catalogModelFactory.PrepareVendorNavigationModel();
+            var model = await _catalogModelFactory.PrepareVendorNavigationModelAsync();
             if (!model.Vendors.Any())
                 return Content("");
 
