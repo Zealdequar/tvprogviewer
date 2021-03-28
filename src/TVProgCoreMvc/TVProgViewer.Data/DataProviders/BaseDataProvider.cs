@@ -324,6 +324,21 @@ namespace TVProgViewer.Data.DataProviders
         }
 
         /// <summary>
+        /// Выполняет хранимую процедуру
+        /// </summary>
+        /// <param name="procedureName">Название процедуры</param>
+        /// <param name="parameters">Параметры команды</param>
+        /// <returns>Возвращает результат выполнения хранимой процедуры</returns>
+        public virtual async Task<int> ExecuteProcAsync(string procedureName, params DataParameter[] parameters)
+        {
+            using var dataContext = await CreateDataConnectionAsync();
+            var command = new CommandInfo(dataContext, procedureName, parameters);
+            command.CommandType = CommandType.StoredProcedure;
+            var rez = await command.ExecuteAsync();
+            return rez;
+        }
+
+        /// <summary>
         /// Executes SQL command and returns results as collection of values of specified type
         /// </summary>
         /// <typeparam name="T">Type of result items</typeparam>

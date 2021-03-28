@@ -10,8 +10,6 @@ using TVProgViewer.Core;
 using TVProgViewer.Core.Caching;
 using TVProgViewer.Core.Configuration;
 using TVProgViewer.Core.Domain.Stores;
-using TVProgViewer.Core.Infrastructure;
-using TVProgViewer.Core.Infrastructure.DependencyManagement;
 using TVProgViewer.Core.Redis;
 using TVProgViewer.Data;
 using TVProgViewer.Services.Affiliates;
@@ -53,16 +51,14 @@ using TVProgViewer.Services.Tax;
 using TVProgViewer.Services.Themes;
 using TVProgViewer.Services.Topics;
 using TVProgViewer.Services.Vendors;
-using TVProgViewer.Web.Framework.Mvc.Routing;
-using TVProgViewer.Web.Framework.Themes;
-using TVProgViewer.Web.Framework.UI;
 using TVProgViewer.Services.TvProgMain;
+using TVProgViewer.Core.Events;
+using TVProgViewer.Services.Authentication.MultiFactor;
+using TVProgViewer.Core.Infrastructure.DependencyManagement;
+using TVProgViewer.Core.Infrastructure;
 
-namespace TVProgViewer.Web.Framework.Infrastructure
+namespace TVProgViewer.TVProgUpdaterV2.Infrastructure
 {
-    /// <summary>
-    /// Dependency registrar
-    /// </summary>
     public class DependencyRegistrar : IDependencyRegistrar
     {
         /// <summary>
@@ -71,7 +67,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
         /// <param name="builder">Container builder</param>
         /// <param name="typeFinder">Type finder</param>
         /// <param name="config">Config</param>
-        public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, TvProgConfig config)
+        public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, AppSettings appSettings)
         {
             //file provider
             builder.RegisterType<TvProgFileProvider>().As<ITvProgFileProvider>().InstancePerLifetimeScope();
@@ -84,7 +80,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
 
             //data layer
             builder.RegisterType<DataProviderManager>().As<IDataProviderManager>().InstancePerDependency();
-            builder.Register(context => context.Resolve<IDataProviderManager>().DataProvider).As<IDataProvider>().InstancePerDependency();
+            builder.Register(context => context.Resolve<IDataProviderManager>().DataProvider).As<ITvProgDataProvider>().InstancePerDependency();
 
             //repositories
             builder.RegisterGeneric(typeof(EntityRepository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
@@ -93,11 +89,8 @@ namespace TVProgViewer.Web.Framework.Infrastructure
             builder.RegisterType<PluginService>().As<IPluginService>().InstancePerLifetimeScope();
             builder.RegisterType<OfficialFeedManager>().AsSelf().InstancePerLifetimeScope();
 
-            //cache manager
-            builder.RegisterType<PerRequestCacheManager>().As<ICacheManager>().InstancePerLifetimeScope();
-
             //redis connection wrapper
-            if (config.RedisEnabled)
+            if (appSettings.RedisConfig.Enabled)
             {
                 builder.RegisterType<RedisConnectionWrapper>()
                     .As<ILocker>()
@@ -106,7 +99,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
             }
 
             //static cache manager
-            if (config.RedisEnabled && config.UseRedisForCaching)
+            if (appSettings.RedisConfig.Enabled && appSettings.RedisConfig.UseCaching)
             {
                 builder.RegisterType<RedisCacheManager>().As<IStaticCacheManager>().InstancePerLifetimeScope();
             }
@@ -153,7 +146,6 @@ namespace TVProgViewer.Web.Framework.Infrastructure
             builder.RegisterType<VendorAttributeService>().As<IVendorAttributeService>().InstancePerLifetimeScope();
             builder.RegisterType<SearchTermService>().As<ISearchTermService>().InstancePerLifetimeScope();
             builder.RegisterType<GenericAttributeService>().As<IGenericAttributeService>().InstancePerLifetimeScope();
-            builder.RegisterType<FulltextService>().As<IFulltextService>().InstancePerLifetimeScope();
             builder.RegisterType<MaintenanceService>().As<IMaintenanceService>().InstancePerLifetimeScope();
             builder.RegisterType<UserAttributeFormatter>().As<IUserAttributeFormatter>().InstancePerLifetimeScope();
             builder.RegisterType<UserAttributeParser>().As<IUserAttributeParser>().InstancePerLifetimeScope();
@@ -218,20 +210,21 @@ namespace TVProgViewer.Web.Framework.Infrastructure
             builder.RegisterType<NewsService>().As<INewsService>().InstancePerLifetimeScope();
             builder.RegisterType<DateTimeHelper>().As<IDateTimeHelper>().InstancePerLifetimeScope();
             builder.RegisterType<SitemapGenerator>().As<ISitemapGenerator>().InstancePerLifetimeScope();
-            builder.RegisterType<PageHeadBuilder>().As<IPageHeadBuilder>().InstancePerLifetimeScope();
+            //builder.RegisterType<PageHeadBuilder>().As<IPageHeadBuilder>().InstancePerLifetimeScope();
             builder.RegisterType<ScheduleTaskService>().As<IScheduleTaskService>().InstancePerLifetimeScope();
             builder.RegisterType<ExportManager>().As<IExportManager>().InstancePerLifetimeScope();
             builder.RegisterType<ImportManager>().As<IImportManager>().InstancePerLifetimeScope();
             builder.RegisterType<PdfService>().As<IPdfService>().InstancePerLifetimeScope();
             builder.RegisterType<UploadService>().As<IUploadService>().InstancePerLifetimeScope();
             builder.RegisterType<ThemeProvider>().As<IThemeProvider>().InstancePerLifetimeScope();
-            builder.RegisterType<ThemeContext>().As<IThemeContext>().InstancePerLifetimeScope();
+            //builder.RegisterType<ThemeContext>().As<IThemeContext>().InstancePerLifetimeScope();
             builder.RegisterType<ExternalAuthenticationService>().As<IExternalAuthenticationService>().InstancePerLifetimeScope();
-            builder.RegisterType<RoutePublisher>().As<IRoutePublisher>().SingleInstance();
+            //builder.RegisterType<RoutePublisher>().As<IRoutePublisher>().SingleInstance();
+            //tvprogviewer
             builder.RegisterType<ProgrammeService>().As<IProgrammeService>().InstancePerLifetimeScope();
             builder.RegisterType<GenreService>().As<IGenreService>().InstancePerLifetimeScope();
+            builder.RegisterType<UpdaterService>().As<IUpdaterService>().InstancePerLifetimeScope();
             //slug route transformer
-            builder.RegisterType<SlugRouteTransformer>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ReviewTypeService>().As<IReviewTypeService>().SingleInstance();
             builder.RegisterType<EventPublisher>().As<IEventPublisher>().SingleInstance();
             builder.RegisterType<SettingService>().As<ISettingService>().InstancePerLifetimeScope();
@@ -239,6 +232,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
             //plugin managers
             builder.RegisterGeneric(typeof(PluginManager<>)).As(typeof(IPluginManager<>)).InstancePerLifetimeScope();
             builder.RegisterType<AuthenticationPluginManager>().As<IAuthenticationPluginManager>().InstancePerLifetimeScope();
+            builder.RegisterType<MultiFactorAuthenticationPluginManager>().As<IMultiFactorAuthenticationPluginManager>().InstancePerLifetimeScope();
             builder.RegisterType<WidgetPluginManager>().As<IWidgetPluginManager>().InstancePerLifetimeScope();
             builder.RegisterType<ExchangeRatePluginManager>().As<IExchangeRatePluginManager>().InstancePerLifetimeScope();
             builder.RegisterType<DiscountPluginManager>().As<IDiscountPluginManager>().InstancePerLifetimeScope();
@@ -260,7 +254,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
             {
                 var pictureService = context.Resolve<IPictureService>();
 
-                return EngineContext.Current.ResolveUnregistered(pictureService.StoreInDb
+                return EngineContext.Current.ResolveUnregistered(pictureService.IsStoreInDbAsync().Result
                     ? typeof(DatabaseRoxyFilemanService)
                     : typeof(FileRoxyFilemanService));
 
@@ -268,9 +262,11 @@ namespace TVProgViewer.Web.Framework.Infrastructure
 
             //installation service
             if (!DataSettingsManager.IsDatabaseInstalled())
-            {
-               builder.RegisterType<CodeFirstInstallationService>().As<IInstallationService>().InstancePerLifetimeScope();
-            }
+                builder.RegisterType<CodeFirstInstallationService>().As<IInstallationService>().InstancePerLifetimeScope();
+
+            //slug route transformer
+            /*if (DataSettingsManager.IsDatabaseInstalled())
+                builder.RegisterType<SlugRouteTransformer>().AsSelf().InstancePerLifetimeScope();*/
 
             //event consumers
             var consumers = typeFinder.FindClassesOfType(typeof(IConsumer<>)).ToList();
@@ -308,7 +304,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
         /// <param name="registrations">Registrations</param>
         /// <returns>Registrations</returns>
         public IEnumerable<IComponentRegistration> RegistrationsFor(Service service,
-            Func<Service, IEnumerable<IComponentRegistration>> registrations)
+            Func<Service, IEnumerable<ServiceRegistration>> registrations)
         {
             var ts = service as TypedService;
             if (ts != null && typeof(ISettings).IsAssignableFrom(ts.ServiceType))
@@ -324,10 +320,9 @@ namespace TVProgViewer.Web.Framework.Infrastructure
                 .ForDelegate((c, p) =>
                 {
                     Store store;
-
                     try
                     {
-                        store = c.Resolve<IStoreContext>().CurrentStore;
+                        store = c.Resolve<IStoreContext>().GetCurrentStoreAsync().Result;
                     }
                     catch (Exception ex)
                     {
@@ -347,7 +342,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
                     //DELETE FROM [Setting] WHERE [StoreId] > 0
                     try
                     {
-                        return c.Resolve<ISettingService>().LoadSetting<TSettings>(currentStoreId);
+                        return c.Resolve<ISettingService>().LoadSettingAsync<TSettings>(currentStoreId).Result;
                     }
                     catch (Exception ex)
                     {
@@ -365,6 +360,6 @@ namespace TVProgViewer.Web.Framework.Infrastructure
         /// Is adapter for individual components
         /// </summary>
         public bool IsAdapterForIndividualComponents => false;
+        
     }
-
 }

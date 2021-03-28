@@ -202,6 +202,13 @@ namespace TVProgViewer.Data
         /// <returns>Returns collection of query result records</returns>
         Task<IList<T>> QueryAsync<T>(string sql, params DataParameter[] parameters);
 
+        /// <summary>
+        /// Выполняет хранимую процедуру
+        /// </summary>
+        /// <param name="procedureName">Название процедуры</param>
+        /// <param name="parameters">Параметры команды</param>
+        /// <returns>Возвращает результат выполнения хранимой процедуры</returns>
+        Task<int> ExecuteProcAsync(string procedureName, params DataParameter[] parameters);
         #endregion
 
         #region Properties

@@ -2738,7 +2738,7 @@ namespace TVProgViewer.Services.Installation
                     IncludeInFooterColumn1 = true,
                     DisplayOrder = 10,
                     Published = true,
-                    Title = "Политика конфиденциальнрсти",
+                    Title = "Политика конфиденциальности",
                     Body = "<p>Разместите Вашу политику конфиденциальности. Вы можете редактировать её в админке.</p>",
                     TopicTemplateId = defaultTopicTemplate.Id
                 },

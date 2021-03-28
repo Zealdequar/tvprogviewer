@@ -218,3 +218,11 @@ GO
 INSERT INTO LocaleStringResource (ResourceName, ResourceValue, LanguageId)
 VALUES ('account.login.newuser', 'Новый пользователь', 2)
 GO
+
+INSERT INTO LocaleStringResource (ResourceName, ResourceValue, LanguageId)
+VALUES ('account.login.returninguser', 'Вход', 2)
+GO
+
+INSERT INTO LocaleStringResource (ResourceName, ResourceValue, LanguageId)
+VALUES ('account.login.newusertext', 'Если Вы хотите использовать всю мощь TVProgViewer, тогда необходимо зарегистрироваться. Регистрация бесплатная.', 2)
+GO

@@ -26,6 +26,7 @@ using TVProgViewer.Services.Localization;
 using TVProgViewer.Services.Logging;
 using TVProgViewer.Services.Media.RoxyFileman;
 using TVProgViewer.Services.Plugins;
+using TVProgViewer.Services.TvProgMain;
 using TVProgViewer.Web.Framework.Globalization;
 using TVProgViewer.Web.Framework.Mvc.Routing;
 using WebMarkupMin.AspNetCore3;
@@ -68,7 +69,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure.Extensions
                 //update plugins
                 pluginService.UpdatePluginsAsync().Wait();
                  */
-
+                
                 //update TVProgViewer core
                 var migrationManager = engine.Resolve<IMigrationManager>();
                 var assembly = Assembly.GetAssembly(typeof(ApplicationBuilderExtensions));

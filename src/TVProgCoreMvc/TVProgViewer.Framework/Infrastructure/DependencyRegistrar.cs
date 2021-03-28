@@ -229,6 +229,7 @@ namespace TVProgViewer.Web.Framework.Infrastructure
             //tvprogviewer
             builder.RegisterType<ProgrammeService>().As<IProgrammeService>().InstancePerLifetimeScope();
             builder.RegisterType<GenreService>().As<IGenreService>().InstancePerLifetimeScope();
+            builder.RegisterType<UpdaterService>().As<IUpdaterService>().InstancePerLifetimeScope();
             //slug route transformer
             builder.RegisterType<ReviewTypeService>().As<IReviewTypeService>().SingleInstance();
             builder.RegisterType<EventPublisher>().As<IEventPublisher>().SingleInstance();
