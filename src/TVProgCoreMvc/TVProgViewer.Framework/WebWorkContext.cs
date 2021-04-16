@@ -598,7 +598,7 @@ namespace TVProgViewer.Web.Framework
             //save passed currency identifier
             var user = await GetCurrentUserAsync();
             var store = await _storeContext.GetCurrentStoreAsync();
-            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.ProviderIdAttribute, typeProg?.Id ?? 0, store.Id);
+            await _genericAttributeService.SaveAttributeAsync(user, TvProgUserDefaults.TypeProgIdAttribute, typeProg?.Id ?? 0, store.Id);
 
             // Тогда сбросим закэшированное значение
             _cachedTypeProg = null;

@@ -27,18 +27,18 @@ namespace TVProgViewer.TVProgUpdaterV2
             Stopwatch sw = Stopwatch.StartNew(); 
             Dictionary<string, string> dictMonths = new Dictionary<string, string>() // - словарь подстановок для месяцев
                                                         {
-                                                            {"Январь", "01"},
-                                                            {"Февраль", "02"},
-                                                            {"Март", "03"},
-                                                            {"Апрель", "04"},
-                                                            {"Май", "05"},
-                                                            {"Июнь", "06"},
-                                                            {"Июль", "07"},
-                                                            {"Август", "08"},
-                                                            {"Сентябрь", "09"},
-                                                            {"Октябрь", "10"},
-                                                            {"Ноябрь", "11"},
-                                                            {"Декабрь", "12"}
+                                                            {"января", "01"},
+                                                            {"февраля", "02"},
+                                                            {"марта", "03"},
+                                                            {"апреля", "04"},
+                                                            {"мая", "05"},
+                                                            {"июня", "06"},
+                                                            {"июля", "07"},
+                                                            {"августа", "08"},
+                                                            {"сентября", "09"},
+                                                            {"октября", "10"},
+                                                            {"ноября", "11"},
+                                                            {"декабря", "12"}
                                                         };
             int j = 0;
             try
@@ -47,7 +47,7 @@ namespace TVProgViewer.TVProgUpdaterV2
 
                 _logger.Trace("Открываем файл с телепрограммой в формате Интер-ТВ: '{0}'", interFile);
                 FileStream fs = new FileStream(interFile, FileMode.Open, FileAccess.Read, FileShare.None);
-                StreamReader sr = new StreamReader(fs, Encoding.Default); // - поток чтения
+                StreamReader sr = new StreamReader(fs, Encoding.GetEncoding("Windows-1251"), true); // - поток чтения
                 int i = 0; // - для определения идентификаторов
                 XDocument xdoc = new XDocument();  // - создать xml-файл для выгрузки конвертации в XML TV
                 XElement xtv = new XElement("tv");
@@ -59,7 +59,7 @@ namespace TVProgViewer.TVProgUpdaterV2
                     string strLine = sr.ReadLine();
                     if (!String.IsNullOrEmpty(strLine))
                     {
-                        if (Regex.IsMatch(strLine, "ПОНЕДЕЛЬНИК")) // Формат: ПОНЕДЕЛЬНИК. Дата: День Месяц. Имя канала. Продолжение имени канала
+                        if (Regex.IsMatch(strLine, "понедельник")) // Формат: ПОНЕДЕЛЬНИК. Дата: День Месяц. Имя канала. Продолжение имени канала
                         {
                             string[] title = strLine.Split('.'); // - парсить для извлечения имени канала
                             if (title.Length == 3)
@@ -125,7 +125,7 @@ namespace TVProgViewer.TVProgUpdaterV2
                     }
                     if (!String.IsNullOrEmpty(strArr[0]))
                     {
-                        if (Regex.IsMatch(strArr[0], "ПОНЕДЕЛЬНИК|ВТОРНИК|СРЕДА|ЧЕТВЕРГ|ПЯТНИЦА|СУББОТА|ВОСКРЕСЕНЬЕ", RegexOptions.Compiled))
+                        if (Regex.IsMatch(strArr[0], "понедельник|вторник|среда|четверг|пятница|суббота|воскресенье", RegexOptions.Compiled))
                         {
 
                             string[] title = strArr[0].Split('.'); // - парсить строку-заголовок
@@ -175,15 +175,15 @@ namespace TVProgViewer.TVProgUpdaterV2
                             xtv.Add(xProgramme);
                             if (ticks == 0)
                             {
-                                ticks = (new TimeSpan(0, int.Parse(titleEnd.Split(' ')[0].Split(':')[0]),
-                                                      int.Parse(titleEnd.Split(' ')[0].Split(':')[1]), 0).Ticks);
+                                ticks = (new TimeSpan(0, int.Parse(titleEnd.Trim().Split(' ')[0].Split(':')[0]),
+                                                      int.Parse(titleEnd.Trim().Split(' ')[0].Split(':')[1]), 0).Ticks);
                                 curDateTime = datetime.AddTicks(ticks);
                                 string strStartDate = curDateTime.ToString("yyyyMMddHHmmss") + " +0300";
                                 xProgramme.Add(new XAttribute("start", strStartDate));
-                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Split(' ')[0].Split(':')[0]),
-                                                              int.Parse(strArr[1].Split(' ')[0].Split(':')[1]), 0);
-                                TimeSpan tsstart = new TimeSpan(0, int.Parse(titleEnd.Split(' ')[0].Split(':')[0]),
-                                                                int.Parse(titleEnd.Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[0]),
+                                                              int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsstart = new TimeSpan(0, int.Parse(titleEnd.Trim().Split(' ')[0].Split(':')[0]),
+                                                                int.Parse(titleEnd.Trim().Split(' ')[0].Split(':')[1]), 0);
                                 if (tsend < tsstart)
                                 {
                                     tsend += (new TimeSpan(1, 0, 0, 0));
@@ -198,10 +198,10 @@ namespace TVProgViewer.TVProgUpdaterV2
                             {
                                 string strStartDate = curDateTime.ToString("yyyyMMddHHmmss") + " +0300";
                                 xProgramme.Add(new XAttribute("start", strStartDate));
-                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Split(' ')[0].Split(':')[0]),
-                                                              int.Parse(strArr[1].Split(' ')[0].Split(':')[1]), 0);
-                                TimeSpan tsstart = new TimeSpan(0, int.Parse(titleEnd.Split(' ')[0].Split(':')[0]),
-                                                                int.Parse(titleEnd.Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[0]),
+                                                              int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsstart = new TimeSpan(0, int.Parse(titleEnd.Trim().Split(' ')[0].Split(':')[0]),
+                                                                int.Parse(titleEnd.Trim().Split(' ')[0].Split(':')[1]), 0);
                                 if (tsend < tsstart)
                                 {
                                     tsend += (new TimeSpan(1, 0, 0, 0));
@@ -240,15 +240,15 @@ namespace TVProgViewer.TVProgUpdaterV2
                             xtv.Add(xProgramme);
                             if (ticks == 0)
                             {
-                                ticks = (new TimeSpan(0, int.Parse(strArr[0].Split(' ')[0].Split(':')[0]),
-                                                          int.Parse(strArr[0].Split(' ')[0].Split(':')[1]), 0).Ticks);
+                                ticks = (new TimeSpan(0, int.Parse(strArr[0].Trim().Split(' ')[0].Split(':')[0]),
+                                                          int.Parse(strArr[0].Trim().Split(' ')[0].Split(':')[1]), 0).Ticks);
                                 curDateTime = datetime.AddTicks(ticks);
                                 string strStartDate = curDateTime.ToString("yyyyMMddHHmmss") + " +0300";
                                 xProgramme.Add(new XAttribute("start", strStartDate));
-                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Split(' ')[0].Split(':')[0]),
-                                                              int.Parse(strArr[1].Split(' ')[0].Split(':')[1]), 0);
-                                TimeSpan tsstart = new TimeSpan(0, int.Parse(strArr[0].Split(' ')[0].Split(':')[0]),
-                                                                int.Parse(strArr[0].Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[0]),
+                                                              int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsstart = new TimeSpan(0, int.Parse(strArr[0].Trim().Split(' ')[0].Split(':')[0]),
+                                                                int.Parse(strArr[0].Trim().Split(' ')[0].Split(':')[1]), 0);
                                 if (tsend < tsstart)
                                 {
                                     tsend += (new TimeSpan(1, 0, 0, 0));
@@ -263,10 +263,10 @@ namespace TVProgViewer.TVProgUpdaterV2
                             {
                                 string strStartDate = curDateTime.ToString("yyyyMMddHHmmss") + " +0300";
                                 xProgramme.Add(new XAttribute("start", strStartDate));
-                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Split(' ')[0].Split(':')[0]),
-                                                                 int.Parse(strArr[1].Split(' ')[0].Split(':')[1]), 0);
-                                TimeSpan tsstart = new TimeSpan(0, int.Parse(strArr[0].Split(' ')[0].Split(':')[0]),
-                                                                   int.Parse(strArr[0].Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsend = new TimeSpan(0, int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[0]),
+                                                                 int.Parse(strArr[1].Trim().Split(' ')[0].Split(':')[1]), 0);
+                                TimeSpan tsstart = new TimeSpan(0, int.Parse(strArr[0].Trim().Split(' ')[0].Split(':')[0]),
+                                                                   int.Parse(strArr[0].Trim().Split(' ')[0].Split(':')[1]), 0);
                                 if (tsend < tsstart) // зашло за полуночь
                                 {
                                     tsend += (new TimeSpan(1, 0, 0, 0));   // - приращение дня

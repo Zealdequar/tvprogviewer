@@ -6,7 +6,7 @@ using TVProgViewer.WebUI.Models.Common;
 
 namespace TVProgViewer.WebUI.Components
 {
-    public partial class TvTypeProgSelectorViewComponent: TvProgViewComponent
+    public class TvTypeProgSelectorViewComponent: TvProgViewComponent
     {
         private readonly ICommonModelFactory _commonModelFactory;
 

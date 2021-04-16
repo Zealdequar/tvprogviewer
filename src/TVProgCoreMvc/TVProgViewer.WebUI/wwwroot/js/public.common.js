@@ -17,6 +17,10 @@ function setLocation(url) {
     window.location.href = url;
 }
 
+function setLocationWithPart(urlWithPart) {
+    window.location.href = urlWithPart.split(';')[0];
+}
+
 function displayAjaxLoading(display) {
     if (display) {
         $('.ajax-loading-block-window').show();

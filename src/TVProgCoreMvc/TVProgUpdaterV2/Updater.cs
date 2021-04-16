@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,6 +48,26 @@ namespace TVProgViewer.TVProgUpdaterV2
                         .TypeName == "Формат XMLTV" ? Enums.TypeProg.XMLTV : Enums.TypeProg.InterTV;
                     if (sourceType == Enums.TypeProg.XMLTV)
                     {
+                        if (webResource.Id == 6)
+                        {
+                            string tempFile = Path.GetTempFileName();
+
+                            using (var streamReader = new StreamReader(webResource.FileName))
+                            using (var streamWriter = new StreamWriter(tempFile))
+                            {
+                                string line;
+
+                                while ((line = streamReader.ReadLine()) != null)
+                                {
+                                    if (!line.Contains("}{отт@бь)ч"))
+                                        streamWriter.WriteLine(line);
+                                }
+                            }
+
+                            File.Delete(webResource.FileName);
+                            File.Move(tempFile, webResource.FileName); 
+                        }
+
                         xDoc = XDocument.Load(webResource.FileName, LoadOptions.SetLineInfo);
                         xDoc = WebPart.ReformatXDoc(xDoc);
                         if (webResource.Id == 1)
