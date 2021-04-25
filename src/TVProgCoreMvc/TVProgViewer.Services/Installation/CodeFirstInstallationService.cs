@@ -3157,7 +3157,7 @@ namespace TVProgViewer.Services.Installation
                 AllowUserToSelectTheme = false,
                 DisplayMiniProfilerInPublicStore = false,
                 DisplayMiniProfilerForAdminOnly = false,
-                DisplayEuCookieLawWarning = false,
+                DisplayEuCookieLawWarning = true,
                 FacebookLink = "https://www.facebook.com/TvProg",
                 TwitterLink = "https://twitter.com/TvProg",
                 YoutubeLink = "https://www.youtube.com/user/TvProg",

@@ -15640,10 +15640,10 @@
     <Value>On 26 May 2011, the rules about cookies on websites changed. This site uses cookies. One or more of the cookies we use is essential for parts of this website to operate and has already been set. You may delete and block all cookies from this site, but parts of the site will not work. To find out more about cookies used on this website and how to delete cookies, see our privacy policy</Value>
   </LocaleResource>
   <LocaleResource Name="EUCookieLaw.Description2">
-    <Value>Cookies help us deliver our services. By using our services, you agree to our use of cookies.</Value>
+    <Value>Файлы cookie помогают нам предоставлять наши сервисы. Используя наши сервисы, вы соглашаетесь на использование файлов cookie.</Value>
   </LocaleResource>
   <LocaleResource Name="EUCookieLaw.LearnMore">
-    <Value>Learn more</Value>
+    <Value>Больше информации</Value>
   </LocaleResource>
   <LocaleResource Name="EUCookieLaw.Title">
     <Value>Your cookie settings</Value>
