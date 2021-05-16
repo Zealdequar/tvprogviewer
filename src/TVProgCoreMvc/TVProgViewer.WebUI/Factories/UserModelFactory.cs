@@ -458,6 +458,8 @@ namespace TVProgViewer.WebUI.Factories
                 }
             }
 
+            model.PersonalDataAgreementEnabled = _userSettings.AcceptPersonalDataAgreementEnabled;
+            model.PersonalDataAgreementRequired = _userSettings.AcceptPersonalDataAgreementRequired;
             return model;
         }
 
@@ -579,6 +581,8 @@ namespace TVProgViewer.WebUI.Factories
                 }
             }
 
+            model.PersonalDataAgreementEnabled = _userSettings.AcceptPersonalDataAgreementEnabled;
+            model.PersonalDataAgreementRequired = _userSettings.AcceptPersonalDataAgreementRequired;
             return model;
         }
 

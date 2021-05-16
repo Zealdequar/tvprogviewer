@@ -233,7 +233,11 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Users
 
         //GDPR enabled
         public bool GdprEnabled { get; set; }
-        
+
+        [TvProgResourceDisplayName("Admin.Users.Users.Fields.AcceptPersonalDataAgreement")]
+        public bool AcceptPersonalDataAgreement { get; set; }
+        public bool AcceptPersonalDataAgreementEnabled { get; set; }
+
         public string AvatarUrl { get; internal set; }
 
         public UserAddressSearchModel UserAddressSearchModel { get; set; }

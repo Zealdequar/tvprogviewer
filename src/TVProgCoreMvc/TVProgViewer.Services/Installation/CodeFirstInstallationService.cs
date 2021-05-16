@@ -3105,7 +3105,9 @@ namespace TVProgViewer.Services.Installation
                 DeleteGuestTaskOlderThanMinutes = 1440,
                 PhoneNumberValidationEnabled = true,
                 PhoneNumberValidationUseRegex = true,
-                PhoneNumberValidationRule = "^[0-9]{1,14}?$"
+                PhoneNumberValidationRule = "^[0-9]{1,14}?$",
+                AcceptPersonalDataAgreementEnabled = true,
+                AcceptPersonalDataAgreementRequired = true
             });
 
             await settingService.SaveSettingAsync(new AddressSettings

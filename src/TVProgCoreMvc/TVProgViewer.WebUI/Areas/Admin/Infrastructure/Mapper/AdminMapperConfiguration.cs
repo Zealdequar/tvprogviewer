@@ -835,7 +835,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.UserOrderSearchModel, options => options.Ignore())
                 .ForMember(model => model.UserShoppingCartSearchModel, options => options.Ignore())
                 .ForMember(model => model.UserActivityLogSearchModel, options => options.Ignore())
-                .ForMember(model => model.UserBackInStockSubscriptionSearchModel, options => options.Ignore());
+                .ForMember(model => model.UserBackInStockSubscriptionSearchModel, options => options.Ignore())
+                .ForMember(model => model.AcceptPersonalDataAgreement, options => options.Ignore());
 
             CreateMap<UserModel, User>()
                 .ForMember(entity => entity.UserGuid, options => options.Ignore())

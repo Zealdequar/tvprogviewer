@@ -72,7 +72,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> NopCommerceNewsHideAdv()
+        public virtual async Task<IActionResult> TvProgNewsHideAdv()
         {
             _adminAreaSettings.HideAdvertisementsOnAdminArea = !_adminAreaSettings.HideAdvertisementsOnAdminArea;
             await _settingService.SaveSettingAsync(_adminAreaSettings);

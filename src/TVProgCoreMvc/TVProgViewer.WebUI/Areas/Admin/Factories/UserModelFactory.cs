@@ -778,6 +778,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Factories
             }
 
             model.UsernamesEnabled = _userSettings.UsernamesEnabled;
+            model.AcceptPersonalDataAgreementEnabled = _userSettings.AcceptPersonalDataAgreementEnabled;
             model.AllowUsersToSetTimeZone = _dateTimeSettings.AllowUsersToSetTimeZone;
             model.FirstNameEnabled = _userSettings.FirstNameEnabled;
             model.LastNameEnabled = _userSettings.LastNameEnabled;

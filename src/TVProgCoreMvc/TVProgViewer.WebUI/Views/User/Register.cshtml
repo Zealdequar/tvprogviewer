@@ -345,13 +345,36 @@
                 </div>
             </div>
 
-            @if (Model.AcceptPrivacyPolicyEnabled || Model.GdprConsents.Count > 0)
+            @if (Model.AcceptPrivacyPolicyEnabled || Model.GdprConsents.Count > 0 || Model.PersonalDataAgreementEnabled)
             {
                 <div class="fieldset">
                     <div class="title">
                         <strong>@T("Account.UserAgreement")</strong>
                     </div>
                     <div class="form-fields">
+                        @if (Model.PersonalDataAgreementEnabled)
+                        {
+                            <script asp-location="Footer">
+                                $(document).ready(function() {
+                                    $('#register-button').on('click', function() {
+                                        if ($('#personal-data-agreement').is(':checked')) {
+                                            //do some stuff
+                                            return true;
+                                        } else {
+                                            //just show validation errors, don't post
+                                            alert('@Html.Raw(JavaScriptEncoder.Default.Encode(T("Account.Fields.AcceptPersonalDataAgreement.Required").Text))');
+                                            return false;
+                                        }
+                                    });
+                                });
+                            </script>
+                            <div class="inputs accept-consent">
+                                <input id="personal-data-agreement" type="checkbox" name="personal-data-agreement" />
+                                <label for="personal-data-agreement">@T("Account.Fields.AcceptPersonalDataAgreement")</label>
+                            </div>
+                            <strong>@T("Account.Field.AcceptPersonalDataAgreementDescription")</strong>
+                        }
+
                         @if (Model.AcceptPrivacyPolicyEnabled)
                         {
                             <script asp-location="Footer">
@@ -423,7 +446,6 @@
                     </div>
                 </div>
             }
-
             <div class="buttons">
                 <input type="submit" id="register-button" class="button-1 register-next-step-button" value="@T("Account.Register.Button")" name="register-button" />
             </div>

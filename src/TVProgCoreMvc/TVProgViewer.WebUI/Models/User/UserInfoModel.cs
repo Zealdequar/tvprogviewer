@@ -137,6 +137,11 @@ namespace TVProgViewer.WebUI.Models.User
         public bool AllowUsersToSetTimeZone { get; set; }
         public IList<SelectListItem> AvailableTimeZones { get; set; }
 
+        public bool PersonalDataAgreementEnabled { get; set; }
+        public bool PersonalDataAgreementRequired { get; set; }
+        [TvProgResourceDisplayName("Account.Fields.AcceptPersonalDataAgreement")]
+        public bool PersonalDataAgreement { get; set; }
+       
         //EU VAT
         [TvProgResourceDisplayName("Account.Fields.VatNumber")]
         public string VatNumber { get; set; }
@@ -152,6 +157,8 @@ namespace TVProgViewer.WebUI.Models.User
         public IList<UserAttributeModel> UserAttributes { get; set; }
 
         public IList<GdprConsentModel> GdprConsents { get; set; }
+
+
 
         #region Nested recordes
 

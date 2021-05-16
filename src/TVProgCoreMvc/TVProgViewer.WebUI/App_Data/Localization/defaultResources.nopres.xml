@@ -273,6 +273,15 @@
   <LocaleResource Name="Account.Fields.AcceptPrivacyPolicy.Required">
     <Value>Please accept privacy policy</Value>
   </LocaleResource>
+  <LocaleResource Name="Account.Fields.AcceptPersonalDataAgreement.Required">
+    <Value>Для регистрации необходимо согласиться с условиями обработки персональных данных</Value>
+  </LocaleResource>
+  <LocaleResource Name="Account.Fields.AcceptPersonalDataAgreement">
+    <Value>Я согласен(согласна) на обработку моих персональных данных</Value>
+  </LocaleResource>
+  <LocaleResource Name="Account.Field.AcceptPersonalDataAgreementDescription">
+    <Value>В соответствии со статьей 9 ФЗ-152 от 27 июля 2006 года «О персональных данных», даю согласие на обработку в документальной и/или электронной форме моих персональных данных сайту TVProgViewer.Ru</Value>
+  </LocaleResource>
   <LocaleResource Name="Account.Fields.City">
     <Value>City</Value>
   </LocaleResource>

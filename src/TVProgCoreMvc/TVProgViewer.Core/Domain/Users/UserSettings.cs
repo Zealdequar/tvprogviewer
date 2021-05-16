@@ -383,7 +383,17 @@ namespace TVProgViewer.Core.Domain.Users
         /// Gets or sets a value indicating whether privacy policy should accepted during registration
         /// </summary>
         public bool AcceptPrivacyPolicyEnabled { get; set; }
-        
+
+        /// <summary>
+        /// Получение или установка значения, обозначающего включено ли условие предоставления Персональных данных
+        /// </summary>
+        public bool AcceptPersonalDataAgreementEnabled { get; set; }
+
+        /// <summary>
+        /// Получение или установка значения, обозначающего требуется ли условие предоставления Персональных данных
+        /// </summary>
+        public bool AcceptPersonalDataAgreementRequired { get; set; }
+
         #endregion
     }
 }

@@ -149,6 +149,11 @@ namespace TVProgViewer.WebUI.Models.User
         public string VatNumber { get; set; }
         public bool DisplayVatNumber { get; set; }
 
+        public bool PersonalDataAgreementEnabled { get; set; }
+        public bool PersonalDataAgreementRequired { get; set; }
+        [TvProgResourceDisplayName("Account.Fields.AcceptPersonalDataAgreement")]
+        public bool PersonalDataAgreement { get; set; }
+
         public bool HoneypotEnabled { get; set; }
         public bool DisplayCaptcha { get; set; }
 
