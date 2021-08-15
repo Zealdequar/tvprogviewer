@@ -26,7 +26,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Catalog
             AvailableDiscounts = new List<SelectListItem>();
             SelectedDiscountIds = new List<int>();
 
-            SelecteduserRoleIds = new List<int>();
+            SelectedUserRoleIds = new List<int>();
             AvailableUserRoles = new List<SelectListItem>();
 
             SelectedStoreIds = new List<int>();
@@ -91,8 +91,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Catalog
 
         //ACL (user roles)
         [TvProgResourceDisplayName("Admin.Catalog.Manufacturers.Fields.AclUserRoles")]
-        public IList<int> SelecteduserRoleIds { get; set; }
-        public IList<int> SelectedUserRoleIds { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public IList<int> SelectedUserRoleIds { get; set; }
         public IList<SelectListItem> AvailableUserRoles { get; set; }
         
         //store mapping

@@ -217,7 +217,7 @@ function setGrids() {
                 },
                 {
                     key: false, name: 'Remain', index: 'Remain', sortable: true, width: "5%", formatter: function (cellVal) {
-                        return "<div style='position: relative'><div style='text-align: center; position: absolute; top: 1px; left: 42%; right: 42%; z-index: 1000'>" + cellVal + "%</div><div class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='100' aria-valuemax='1' style='width: " + cellVal + "%; position: relative; height: 23px;'></div></div>";
+                        return "<div style='position: relative'><div class='remain-progress'>" + cellVal + "%</div><div class='progress-bar progress-bar-striped' role='progressbar' aria-valuemin='100' aria-valuemax='1' style='width: " + cellVal + "%; position: relative; height: 23px; float: right;'></div></div>";
                     }
                 },
                 {

@@ -374,6 +374,14 @@ span.ui-jqgrid-cell-wrapper {
 .ui-state-highlight {
     background: rgb(255, 250, 144) !important;
 }
+.remain-progress {
+    text-align: center;
+    position: absolute;
+    top: 4px;
+    left: 42%;
+    right: 42%;    
+    z-index: 1000;
+}
 /* footer */
 .ui-jqgrid .ui-jqgrid-sdiv {
     position: relative;

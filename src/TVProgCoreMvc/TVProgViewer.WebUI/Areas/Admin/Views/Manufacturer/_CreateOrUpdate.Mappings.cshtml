@@ -33,15 +33,15 @@
 
     <div class="form-group row advanced-setting">
         <div class="col-md-3">
-            <tvprog-label asp-for="SelecteduserRoleIds" />
+            <tvprog-label asp-for="SelectedUserRoleIds" />
         </div>
         <div class="col-md-9">
             <div class="row">
                 <div class="col-md-4">
-                    <tvprog-select asp-for="SelecteduserRoleIds" asp-items="Model.AvailableUserRoles" asp-multiple="true" />
+                    <tvprog-select asp-for="SelectedUserRoleIds" asp-items="Model.AvailableUserRoles" asp-multiple="true" />
                     <script>
                      $(document).ready(function() {
-                         var rolesIdsInput = $('#@Html.IdFor(model => model.SelecteduserRoleIds)').data("kendoMultiSelect");
+                         var rolesIdsInput = $('#@Html.IdFor(model => model.SelectedUserRoleIds)').data("kendoMultiSelect");
 			                rolesIdsInput.setOptions({
 			                    autoClose: false,
 			                    filter: "contains"

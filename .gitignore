@@ -159,7 +159,7 @@ UpgradeLog*.htm
 **/App_Data/*.ldf
 **/App_Data/*.sdf
 
-#MyIgnores
+# MyIgnores
 dataSettings.json
 
 #LightSwitch generated files

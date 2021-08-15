@@ -14,7 +14,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Users
 
         public UserSearchModel()
         {
-            SelecteduserRoleIds = new List<int>();
+            SelectedUserRoleIds = new List<int>();
             AvailableUserRoles = new List<SelectListItem>();
         }
 
@@ -23,8 +23,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Users
         #region Properties
 
         [TvProgResourceDisplayName("Admin.Users.Users.List.UserRoles")]
-        public IList<int> SelecteduserRoleIds { get; set; }
-        public IList<int> SelectedUserRoleIds { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public IList<int> SelectedUserRoleIds { get; set; }
         public IList<SelectListItem> AvailableUserRoles { get; set; }
 
         [TvProgResourceDisplayName("Admin.Users.Users.List.SearchEmail")]

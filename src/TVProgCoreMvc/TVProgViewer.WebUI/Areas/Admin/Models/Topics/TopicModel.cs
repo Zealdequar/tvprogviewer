@@ -17,7 +17,7 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Topics
             AvailableTopicTemplates = new List<SelectListItem>();
             Locales = new List<TopicLocalizedModel>();
 
-            SelecteduserRoleIds = new List<int>();
+            SelectedUserRoleIds = new List<int>();
             AvailableUserRoles = new List<SelectListItem>();
 
             SelectedStoreIds = new List<int>();
@@ -97,8 +97,8 @@ namespace TVProgViewer.WebUI.Areas.Admin.Models.Topics
 
         //ACL (user roles)
         [TvProgResourceDisplayName("Admin.ContentManagement.Topics.Fields.AclUserRoles")]
-        public IList<int> SelecteduserRoleIds { get; set; }
-        public IList<int> SelectedUserRoleIds { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public IList<int> SelectedUserRoleIds { get; set; }
+        
         public IList<SelectListItem> AvailableUserRoles { get; set; }
 
         public string TopicName { get; set; }
