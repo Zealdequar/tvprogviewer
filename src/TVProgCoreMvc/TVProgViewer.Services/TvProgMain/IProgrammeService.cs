@@ -60,7 +60,7 @@ namespace TVProgViewer.Services.TvProgMain
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="mode">режимы выборки: 1 - сейчас; 2 - следом</param>
         public Task<KeyValuePair<int, List<SystemProgramme>>> GetSystemProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
-                                                         string sidx, string sord, int page, int rows, string genres);
+                                                         string sidx, string sord, int page, int rows, string genres, string channels);
 
         /// <summary>
         /// Поиск телепередачи
@@ -68,6 +68,6 @@ namespace TVProgViewer.Services.TvProgMain
         /// <param name="TypeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         public Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string dates);
+                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels);
     }
 }

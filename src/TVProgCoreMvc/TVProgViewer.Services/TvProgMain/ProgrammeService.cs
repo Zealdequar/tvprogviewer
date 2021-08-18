@@ -238,7 +238,31 @@ namespace TVProgViewer.Services.TvProgMain
             if (string.IsNullOrWhiteSpace(genres))
                 return systemProgramme;
             long Gid;
-            return await systemProgramme.Where(x => genres.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Any(g => long.TryParse(g, out Gid) && long.Parse(g) == x.GenreId)).ToListAsync();
+            return await systemProgramme.Where(x => genres.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                                .Any(g => long.TryParse(g, out Gid) && long.Parse(g) == x.GenreId)).ToListAsync();
+        }
+
+        /// <summary>
+        /// Фильтрация по каналам
+        /// </summary>
+        /// <param name="systemProgramme">Системная программа</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        private async Task<List<SystemProgramme>> FilterChannelsAsync(List<SystemProgramme> systemProgramme, string channels)
+        {
+            if (string.IsNullOrWhiteSpace(channels))
+                return systemProgramme;
+            long Cid;
+            return await systemProgramme.Where(x => channels.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                                    .Any(c => long.TryParse(c, out Cid) && long.Parse(c) == x.Cid)).ToListAsync();
+        }
+
+
+        private async Task<List<SystemProgramme>> FilterExcludeDates (List<SystemProgramme> systemProgramme, List<DateTime> rawDates)
+        {
+            DateTime minDateTime = rawDates.Min();
+            DateTime maxDateTime = rawDates.Max().AddDays(1);
+            rawDates.Add(maxDateTime);
+            return await systemProgramme.Where(x => rawDates.Contains(x.TsStartMo.Date)).ToListAsync(); 
         }
 
         /// <summary>
@@ -263,7 +287,7 @@ namespace TVProgViewer.Services.TvProgMain
         /// <param name="dateTimeOffset">Время</param>
         /// <param name="mode">режимы выборки: 1 - сейчас; 2 - следом</param>
         public virtual async Task<KeyValuePair<int, List<SystemProgramme>>> GetSystemProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category, 
-                                                         string sidx, string sord, int page, int rows, string genres)
+                                                         string sidx, string sord, int page, int rows, string genres, string channels)
         {
             List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
             DateTime minDate = new DateTime(1800, 1, 1);
@@ -305,6 +329,7 @@ namespace TVProgViewer.Services.TvProgMain
                               }).ToListAsync();
                     SetGenres(sp, null);
                     sp = await FilterGenresAsync(sp, genres);
+                    sp = await FilterChannelsAsync(sp, channels);
                     count = sp.Count();
                     systemProgramme = await sp.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanId", sord)
                                         .Skip((page - 1) * rows).Take(rows)
@@ -375,6 +400,7 @@ namespace TVProgViewer.Services.TvProgMain
                                    }).ToListAsync();
                         SetGenres(sp3, null);
                         sp3 = await FilterGenresAsync(sp3, genres);
+                        sp3 = await FilterChannelsAsync(sp3, channels);
                         count = sp3.Count();
 
                         systemProgramme = await sp3.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanId", sord)
@@ -414,6 +440,7 @@ namespace TVProgViewer.Services.TvProgMain
                                    }).ToListAsync();
                         SetGenres(sp4, null);
                         sp4 = await FilterGenresAsync(sp4, genres);
+                        sp4 = await FilterChannelsAsync(sp4, channels);
                         count = sp4.Count();
 
                         systemProgramme = await sp4.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanId", sord)
@@ -431,7 +458,7 @@ namespace TVProgViewer.Services.TvProgMain
         /// <param name="TypeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         public virtual async Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category
-                                                                                               , string sidx, string sord, int page, int rows, string genres, string dates)
+                                                               , string sidx, string sord, int page, int rows, string genres, string dates, string channels)
                                                          
         {
             //List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
@@ -482,6 +509,8 @@ namespace TVProgViewer.Services.TvProgMain
             });
             SetGenres(systemProgramme, null);
             systemProgramme = await FilterGenresAsync(systemProgramme, genres);
+            systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
+            systemProgramme = await FilterExcludeDates(systemProgramme, rawDates);
             count = systemProgramme.Count();
 
             systemProgramme = await systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMo", sord)

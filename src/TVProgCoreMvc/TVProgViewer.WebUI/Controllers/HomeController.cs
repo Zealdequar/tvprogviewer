@@ -16,6 +16,7 @@ namespace TVProgViewer.WebUI.Controllers
         #region Поля
 
         private readonly IProgrammeService _programmeService;
+        private readonly IChannelService _channelService;
         private readonly IGenreService _genreService;
 
         #endregion
@@ -23,9 +24,11 @@ namespace TVProgViewer.WebUI.Controllers
         #region Конструктор
 
         public HomeController(IProgrammeService programmeService,
+            IChannelService channelService,
             IGenreService genreService)
         {
             _programmeService = programmeService;
+            _channelService = channelService;
             _genreService = genreService;
         }
 
@@ -70,7 +73,7 @@ namespace TVProgViewer.WebUI.Controllers
         /// <returns></returns>
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> GetSystemProgrammeAtNow(int progType, string category, string sidx, string sord, int page, int rows, string genres)
+        public async Task<JsonResult> GetSystemProgrammeAtNow(int progType, string category, string sidx, string sord, int page, int rows, string genres, string channels)
         {
             object jsonData;
             KeyValuePair<int, List<SystemProgramme>> result;
@@ -82,7 +85,7 @@ namespace TVProgViewer.WebUI.Controllers
                 return Json(jsonData, JsonRequestBehavior.AllowGet);*/
             }
             result = await _programmeService.GetSystemProgrammesAsync(progType, DateTimeOffset.Now, 1, (category != "Все категории") ? category : null,
-                sidx, sord, page, rows, genres);
+                sidx, sord, page, rows, genres, channels);
 
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
@@ -90,7 +93,7 @@ namespace TVProgViewer.WebUI.Controllers
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> GetSystemProgrammeAtNext(int progType, string category, string sidx, string sord, int page, int rows, string genres)
+        public async Task<JsonResult> GetSystemProgrammeAtNext(int progType, string category, string sidx, string sord, int page, int rows, string genres, string channels)
         {
             object jsonData;
             KeyValuePair<int, List<SystemProgramme>> result;
@@ -103,7 +106,18 @@ namespace TVProgViewer.WebUI.Controllers
             }
 
             result = await _programmeService.GetSystemProgrammesAsync(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), 2, (category != "Все категории") ? category : null,
-                sidx, sord, page, rows, genres);
+                sidx, sord, page, rows, genres, channels);
+            jsonData = GetJsonPagingInfo(page, rows, result);
+            return Json(jsonData);
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GetSystemChannels (int tvProgProvider, string sidx, string sord, int page, int rows)
+        {
+            object jsonData;
+            KeyValuePair<int, List<SystemChannel>> result;
+            result = await _channelService.GetSystemChannelsAsync(tvProgProvider, sidx, sord, page, rows);
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
         }
@@ -111,7 +125,7 @@ namespace TVProgViewer.WebUI.Controllers
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
         public async Task<JsonResult> SearchProgramme(int progType, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string dates)
+                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels)
         {
             object jsonData;
             KeyValuePair<int, List<SystemProgramme>> result;
@@ -123,7 +137,7 @@ namespace TVProgViewer.WebUI.Controllers
                 jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
                 return Json(jsonData, JsonRequestBehavior.AllowGet);*/
             }
-            result = await _programmeService.SearchProgrammeAsync(progType, findTitle, (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, dates);
+            result = await _programmeService.SearchProgrammeAsync(progType, findTitle, (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, dates, channels);
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
         }

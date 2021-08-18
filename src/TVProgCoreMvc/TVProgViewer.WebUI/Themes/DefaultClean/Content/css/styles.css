@@ -861,7 +861,6 @@ label, label + * {
 	font: normal 14px Arial, Helvetica, sans-serif;
 }
 .ui-dialog:before {
-	content: "";
 	position: fixed;
 	top: 0;
 	left: 0;

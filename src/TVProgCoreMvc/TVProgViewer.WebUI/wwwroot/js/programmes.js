@@ -1,12 +1,12 @@
 ﻿var idx;
 var pairKeys;
 var incSearch = 1;
-
+let chansArr = [];
 $(function () {
     $.jgrid.no_legacy_api = true;
     $.jgrid.useJSON = true;
     
-       
+    chansArr = getStorageChannels();
 //  setTree(getSelectedTabIndex());
     fillFooter();
     fillGenresToolNow();
@@ -171,16 +171,25 @@ function imgChannel(s) {
     return "<img src='/images/i/satellite_25.png' alt='Эмблема канала' />";
 }
 
+// Получение списка натроенных пользователем каналов
+function getStorageChannels() {
+    let storageChannels = window.localStorage.getItem("optChans");
+    let result = JSON.parse(storageChannels);
+    return result;
+}
+
 // Установка табличек
 function setGrids() {
+    
     // Табличка сейчас в эфире
     $('#TVProgrammeNowGrid').jqGrid(
         {
-            url: "Home/GetSystemProgrammeAtNow?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-now.active"),
+            url: "Home/GetSystemProgrammeAtNow?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+                "&genres=" + GetGenres(".btn-genre-now.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
             datatype: 'json',
             type: 'GET',
             success: function () { },
-            error: function () { alert("ERROR"); },
+            error: function () { console.log("ERROR"); },
             colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жранра", "Анонс", "Эмблема канала", "Название канала", "Передача", "Начало", "Окончание", "Осталось, %", ""],
             colModel: [
                 {
@@ -278,7 +287,8 @@ function setGrids() {
     // Табличка затем в эфире
     $('#TVProgrammeNextGrid').jqGrid(
      {
-            url: "Home/GetSystemProgrammeAtNext?progType=" + + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-next.active"),
+            url: "Home/GetSystemProgrammeAtNext?progType=" + + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+                "&genres=" + GetGenres(".btn-genre-next.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
             datatype: 'json',
             type: 'GET',
             colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "Передача", "Начало", "Окончание", "Осталось", ""],
@@ -385,12 +395,16 @@ function setGrids() {
 
 // Поиск по всей программе передач
 function searchProgramme(typeProgID, findTitle) {
+    if (findTitle.length == 0 || findTitle == "" || findTitle == null)
+      return;
+
     if (incSearch == 1)
     {
         $('#SearchedTVProgramme').jqGrid(
             {
                 url: "Home/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
-                    "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked"),
+                    "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked") +
+                    "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
                 datatype: 'json',
                 type: 'GET',
                 colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "День", "От", "До", "Передачи", ""],
@@ -496,7 +510,8 @@ function searchProgramme(typeProgID, findTitle) {
     {
         $("#SearchedTVProgramme").setGridParam({
             url: "Home/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
-                "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked")
+                "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked") +
+                "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : "")
         });
         $("#SearchedTVProgramme").trigger("reloadGrid");
     }
@@ -788,7 +803,11 @@ function fillGenresToolNow() {
             $('.btn-group-genres-now').on('click', '.btn', function (e) {
                 e.preventDefault();
                 $(this).toggleClass("active");
-                $("#TVProgrammeNowGrid").setGridParam({ url: "Home/GetSystemProgrammeAtNow?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-now.active") });
+                $("#TVProgrammeNowGrid").setGridParam({
+                    url: "Home/GetSystemProgrammeAtNow?progType=" + $('#userTypeProg option:selected').val().split(';')[1] +
+                        "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-now.active") +
+                        "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : "")
+                });
                 $("#TVProgrammeNowGrid").trigger("reloadGrid");
             });
             window.setTimeout(function () { $('#genresToolNow').show(); }, 500);
@@ -835,7 +854,11 @@ function fillGenresToolNext() {
             $('.btn-group-genres-next').on('click', '.btn', function (e) {
                 e.preventDefault();
                 $(this).toggleClass("active");
-                $("#TVProgrammeNextGrid").setGridParam({ url: "Home/GetSystemProgrammeAtNext?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-next.active") });
+                $("#TVProgrammeNextGrid").setGridParam({
+                    url: "Home/GetSystemProgrammeAtNext?progType=" + $('#userTypeProg option:selected').val().split(';')[1] +
+                        "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-next.active") +
+                        "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
+                });
                 $("#TVProgrammeNextGrid").trigger("reloadGrid");
             });
             window.setTimeout(function () { $('#genresToolNext').show(); }, 3000);
@@ -884,8 +907,10 @@ function fillGenresToolSearch() {
                     e.preventDefault();
                     $(this).toggleClass("active");
                     $("#SearchedTVProgramme").setGridParam({
-                        url: "Home/SearchProgramme?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&findTitle=" + $('#tbContains').val() + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
-                            "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked") });
+                        url: "Home/SearchProgramme?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&findTitle=" + $('#tbContains').val() +
+                            "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+                            "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked") + 
+                            "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),});
                     $("#SearchedTVProgramme").trigger("reloadGrid");
                 });
                 window.setTimeout(function () { $('#genresToolSearch').show(); }, 3000);

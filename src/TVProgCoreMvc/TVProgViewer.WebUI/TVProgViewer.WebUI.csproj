@@ -6,6 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Themes\DefaultClean\Content\css\print.css" />
+    <None Remove="Themes\DefaultClean\Content\css\styles.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Themes\DefaultClean\Content\css\print.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Themes\DefaultClean\Content\css\styles.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\js\jqGrid\" />
   </ItemGroup>
 

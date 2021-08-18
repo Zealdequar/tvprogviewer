@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Runtime.Serialization;
+using TVProgViewer.Data.TvProgMain.ProgInterfaces;
 
 namespace TVProgViewer.Data.TvProgMain.ProgObjs
 {
@@ -7,21 +8,10 @@ namespace TVProgViewer.Data.TvProgMain.ProgObjs
     /// Контракт (DTO) для телеканала
     /// </summary>
     [DataContract]
-    public class Channel
+    public class Channel: IChannel
     {
 
-        #region Конструктор
-        /*  public Channel(bool visible, string name, uint number, string userSyn, Image emblem, string diff)
-          {
-              Visible = visible;
-              Name = name;
-              Number = number;
-              UserSyn = userSyn;
-              Emblem = emblem;
-              Diff = diff;
-          }*/
-        #endregion
-
+        
         #region Автосвойства
 
         /// <summary>
@@ -59,6 +49,70 @@ namespace TVProgViewer.Data.TvProgMain.ProgObjs
         /// </summary>
         [DataMember]
         public string Diff { get; set; }
+
+        /// <summary>
+        /// Пиктограмма канала
+        /// </summary>
+        [DataMember]
+        public long IconId { get; set; }
+
+        /// <summary>
+        /// Намиенование канала
+        /// </summary>
+        [DataMember]
+        public string TitleChannel { get; set; }
+
+        #region IChannel Members
+
+        /// <summary>
+        /// Идентификатор канала
+        /// </summary>
+        [DataMember]
+        public int ChannelId { get; }
+
+        /// <summary>
+        /// Системное название
+        /// </summary>
+        [DataMember]
+        public string SystemTitle { get; }
+
+        /// <summary>
+        /// Миграционный идентификатор
+        /// </summary>
+        [DataMember]
+        public int? InternalId { get; }
+
+        /// <summary>
+        /// Порядковый номер
+        /// </summary>
+        [DataMember]
+        public int OrderCol { get; }
+
+        /// <summary>
+        /// Пользовательское название
+        /// </summary>
+        [DataMember]
+        public string UserTitle { get; }
+
+        /// <summary>
+        /// Название файла для крупного логотипа
+        /// </summary>
+        [DataMember]
+        public string FileNameOrig { get; }
+
+        /// <summary>
+        /// Название файла для маленького логотипа
+        /// </summary>
+        [DataMember]
+        public string FileName25 { get; }
+
+        /// <summary>
+        /// Частота вещания (устаревшее, необходимо для аналогового тв-тюнера)
+        /// </summary>
+        [DataMember]
+        public int Freq { get; }
+
+        #endregion
 
         #endregion
 

@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using TVProgViewer.Data.TvProgMain.ProgInterfaces;
 
 namespace TVProgViewer.Data.TvProgMain.ProgObjs

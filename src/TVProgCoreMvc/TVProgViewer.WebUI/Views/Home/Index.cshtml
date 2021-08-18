@@ -6,6 +6,7 @@
     Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqgrid/i18n/grid.locale-ru.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqgrid/jquery.jqgrid.min.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/programmes.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/js/user-channels.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/sticky-element.js");
 
 }
@@ -21,6 +22,7 @@
             <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab"><a class="ui-tabs-anchor" href="#tabByChannels">По каналам</a></li>
         }
         <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab"><a class="ui-tabs-anchor" href="#tabSearch">Поиск по телепрограмме</a></li>
+        <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab"><a class="ui-tabs-anchor" href="#tabChannels">Телеканалы</a></li>
     </ul>
     <div id="tabNow">
         <div id="mainToolNow" style="height:34px; display:none">
@@ -134,6 +136,17 @@
             </div>
             <div style="clear:both"></div>
         </div>
+    </div>
+    <div id="tabChannels">
+        <div id="mw4" class="mainwindow">
+            <div id="mainToolChannel" style="height:34px; display:none">
+                <button id="ChannelTool" style="display:none;">Сбросить все выделенные телеканалы</button>
+            </div>
+            <table id="tblSystemChannelsGrid"></table>
+            <table id="systemChannelsPager"></table>
+            <input id="hiddenChannels" type="hidden" />
+        </div>
+        <div style="clear:both"></div>
     </div>
 </div>
 <div style="clear:both"></div>
