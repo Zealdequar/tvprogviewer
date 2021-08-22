@@ -518,6 +518,50 @@ namespace TVProgViewer.Services.TvProgMain
                                          .ToListAsync<SystemProgramme>();
             return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme);
         }
+
+        /// <summary>
+        /// Получение пользовательских телепередач за день
+        /// </summary>
+        /// <param name="uid">Идентификатор пользователя</param>
+        /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
+        /// <param name="channelId">Код канала</param>
+        /// <param name="tsStart">Время начала выборки</param>
+        /// <param name="tsEnd">Время завершения выборки</param>
+        /// <param name="category">Категория</param>
+        public virtual async Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(long? uid, int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category)
+        {
+            List<SystemProgramme> systemProgrammes = new List<SystemProgramme>();
+            systemProgrammes = await (from pr in _programmesRepository.Table
+                                      join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
+                                      join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                                      from mp in chmp.DefaultIfEmpty()
+                                      where pr.TypeProgId == typeProgId &&
+                                      ch.Id == channelId &&
+                                      pr.TsStartMo >= tsStart &&
+                                      pr.TsStopMo <= tsEnd &&
+                                      pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
+                                      && ch.Deleted == null
+                                      select new SystemProgramme
+                                      {
+                                          ProgrammesId = pr.Id,
+                                          Cid = pr.ChannelId,
+                                          ChannelName = ch.TitleChannel,
+                                          InternalChanId = pr.InternalChanId,
+                                          Start = pr.TsStart,
+                                          Stop = pr.TsStop,
+                                          TsStartMo = pr.TsStartMo,
+                                          TsStopMo = pr.TsStopMo,
+                                          TelecastTitle = pr.Title,
+                                          TelecastDescr = pr.Descr,
+                                          AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
+                                          _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                          _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
+                                                     null),
+                                          Category = pr.Category,
+                                      }).ToListAsync<SystemProgramme>();
+            return systemProgrammes;
+        }
+
         #endregion
     }
 }

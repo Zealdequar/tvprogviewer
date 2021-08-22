@@ -1,13 +1,19 @@
 ﻿var idx;
 var pairKeys;
 var incSearch = 1;
+var incChannelByDay = 1;
+var incDayByChannel = 1;
 let chansArr = [];
 $(function () {
     $.jgrid.no_legacy_api = true;
     $.jgrid.useJSON = true;
     
     chansArr = getStorageChannels();
-//  setTree(getSelectedTabIndex());
+    if (chansArr.length > 0) {
+        $(".byDays").show();
+        $(".byChannels").show();
+    }
+    setTree(getSelectedTabIndex()); 
     fillFooter();
     fillGenresToolNow();
     fillGenresToolNext();
@@ -17,25 +23,26 @@ $(function () {
     
     setGrids();
     $('#tabs').tabs({
-    show: function (event, ui) {
-        if (grid = $('.ui-jqgrid-btable:visible')) {
-            grid.each(function (index) {
-                gridId = $(this).attr('id');
-                gridParentWidth = $('#gbox_' + gridId).parent().width();
-                $('#' + gridId).setGridWidth(gridParentWidth);
-            });
-        }
-        }
-    /*activate: function (event, ui) {
-        idx = ui.newTab.index();
+        show: function (event, ui) {
+            if (grid = $('.ui-jqgrid-btable:visible')) {
+                grid.each(function (index) {
+                    gridId = $(this).attr('id');
+                    gridParentWidth = $('#gbox_' + gridId).parent().width();
+                    $('#' + gridId).setGridWidth(gridParentWidth);
+                });
+            }
+        },
+        activate: function (event, ui) {
+            idx = ui.newTab.index();
 
-        if (idx === 2 || idx === 3) {
-           // setTree(idx);
-            $('.sticky').removeClass('sticky');
-            $('.sticky2').removeClass('sticky2');
+            if (idx === 2 || idx === 3) {
+                setTree(idx);
+                $('.sticky').removeClass('sticky');
+                $('.sticky2').removeClass('sticky2');
+            }
         }
-    }*/
     });
+
     $("#anonsTool").click(function () {
         $('#anonsDescr').toggle(100);
     });
@@ -60,7 +67,7 @@ $("#btnSearch").click(function () {
 $("#containerByDays")
     .on('open_node.jstree', function (evt, data) {
         if (data.node.parents.length === 3)
-            data.instance.set_icon(data.node, (data.node.icon.indexOf('_exp') === -1) ? [data.node.icon.slice(0, 11), '_exp', data.node.icon.slice(11)].join('') : data.node.icon);
+            data.instance.set_icon(data.node, (data.node.icon.indexOf('_exp') === -1) ? [data.node.icon.slice(0, 13), '_exp', data.node.icon.slice(13)].join('') : data.node.icon);
     })
     .on('close_node.jstree', function (evt, data) {
         if (data.node.parents.length === 3)
@@ -91,6 +98,7 @@ $('#containerByDays').on('select_node.jstree', function (e, data) {
             var selectedNodeId = data.node.id;
             pairKeys = selectedNodeId.split('_');
             fillUserByChannels(pairKeys[0], pairKeys[1]);
+
         }
     });
     $("#dragToolGenreNow").draggable();
@@ -287,7 +295,7 @@ function setGrids() {
     // Табличка затем в эфире
     $('#TVProgrammeNextGrid').jqGrid(
      {
-            url: "Home/GetSystemProgrammeAtNext?progType=" + + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+            url: "Home/GetSystemProgrammeAtNext?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
                 "&genres=" + GetGenres(".btn-genre-next.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
             datatype: 'json',
             type: 'GET',
@@ -520,7 +528,8 @@ function searchProgramme(typeProgID, findTitle) {
 
 // Установка деревьев
 function setTree(index) {
-    var url = '/Tree/GetTreeData?providerId=' + $('#TVProgProvider option:selected').val() + '&typeProg=' + $('#TVProgType option:selected').val() + '&mode=' + (index - 1);
+    var url = 'Home/GetTreeData?providerId=' + $('#userProvider option:selected').val().split(';')[1] + "&typeProg=" + $('#userTypeProg option:selected').val().split(';')[1] +
+       "&jsonChannels=" + window.localStorage.getItem("optChans") + '&mode=' + (index - 1);
     if (index === 2) {
         
         $('#containerByDays').jstree({
@@ -557,105 +566,116 @@ function getSelectedTabIndex() {
 
 // Установка таблички под дням
 function fillUserByDay(date, channelId) {
-    $('#TVProgrammeByDaysGrid').jqGrid('GridUnload');
-    $('#TVProgrammeByDaysGrid').jqGrid(
-        {
-            url: "/Programme/GetUserProgrammeOfDay?progTypeID=" + $('#TVProgType option:selected').val() + '&cid=' + channelId + '&tsDate=' +
-                                                                  date + "&category=" + $('#TVProgCategories option:selected').val(),
-            datatype: 'json',
-            mtype: 'Get',
-            colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "От", "До", "Передача", ""],
-            colModel: [
-                {
-                    key: false, name: 'RatingContent', index: 'RatingContent', sortable: true, width: 40, align: "center", formatter: imgRating,
-                    cellattr: function (rowId, val, rawObject, cm, rdata) {
-                        return 'title="' + rawObject.RatingName + '"';
+    if (incChannelByDay == 1) {
+        $("#TVProgrammeByDaysGrid").jqGrid(
+            {
+                url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+                    date + "&category=" + $('#userCategory option:selected').val().split(';')[1],
+                datatype: 'json',
+                type: 'GET',
+                colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "От", "До", "Передача", ""],
+                colModel: [
+                    {
+                        key: false, name: 'RatingContent', index: 'RatingContent', sortable: true, width: 40, align: "center", formatter: imgRating,
+                        cellattr: function (rowId, val, rawObject, cm, rdata) {
+                            return 'title="' + rawObject.RatingName + '"';
+                        }
+                    },
+                    {
+                        key: false, name: 'RatingName', index: 'RatingName', sortable: true, widht: "0", align: "center"
+                    },
+                    {
+                        key: false, name: 'GenreContent', index: 'GenreContent', sortable: true, width: 40, align: "center", formatter: imgGenre,
+                        cellattr: function (rowId, val, rawObject, cm, rdata) {
+                            return 'title="' + rawObject.GenreName + '"';
+                        }
+                    },
+                    {
+                        key: false, name: 'GenreName', index: 'GenreName', sortable: true, width: "0", align: "center"
+                    },
+                    {
+                        key: false, name: 'AnonsContent', index: 'AnonsContent', sortable: true, width: 40, align: "center", formatter: imgAnons
+                    },
+                    {
+                        key: false, name: 'Start', index: 'Start', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
+                    },
+                    {
+                        key: false, name: 'Stop', index: 'Stop', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
+                    },
+                    { key: false, name: 'TelecastTitle', index: 'TelecastTitle', width: 850, sortable: true },
+                    {
+                        key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
                     }
+                ],
+                rowNum: 20,
+                beforeSelectRow: function (rowid, e) {
+                    $('#TVProgrammeByDaysGrid').jqGrid('resetSelection');
+                    return (true);
                 },
-                {
-                    key: false, name: 'RatingName', index: 'RatingName', sortable: true, widht: "0", align: "center"
-                },
-                {
-                    key: false, name: 'GenreContent', index: 'GenreContent', sortable: true, width: 40, align: "center", formatter: imgGenre,
-                    cellattr: function (rowId, val, rawObject, cm, rdata) {
-                        return 'title="' + rawObject.GenreName + '"';
-                    }
-                },
-                {
-                    key: false, name: 'GenreName', index: 'GenreName', sortable: true, width: "0", align: "center"
-                },
-                {
-                    key: false, name: 'AnonsContent', index: 'AnonsContent', sortable: true, width: 40, align: "center", formatter: imgAnons
-                },
-                {
-                    key: false, name: 'Start', index: 'Start', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
-                },
-                {
-                    key: false, name: 'Stop', index: 'Stop', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
-                },
-                {   key: false, name: 'TelecastTitle', index: 'TelecastTitle', width: 850, sortable: true },
-                {
-                    key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
-                }
-            ],
-            rowNum: 20,
-            beforeSelectRow: function (rowid, e) {
-                $('#TVProgrammeByDaysGrid').jqGrid('resetSelection');
-                return (true);
-            },
-            loadComplete: function () {
-                $("tr.jqgrow:odd").css("background", "#EFFFEF");
+                loadComplete: function () {
+                    $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
 
-                $("tr.jqgrow td input", "#TVProgrammeByDaysGrid").click(function () {
-                    if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
-                        $("#anonsToolByDays").show(50);
-                        $("#anonsDescrByDays").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
+                    $("tr.jqgrow td input", "#TVProgrammeByDaysGrid").click(function () {
+                        if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
+                            $("#anonsToolByDays").show(50);
+                            $("#anonsDescrByDays").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
+                        }
+                        else {
+                            $("#anonsToolByDays").hide(50);
+                            $("#anonsDescrByDays").hide(150);
+                        }
+                    });
+                },
+                rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
+                height: 'auto',
+                width: null,
+                autowidth: true,
+                shrinkToFit: true,
+                viewrecords: true,
+                caption: 'Программа передач',
+                shrinkToFit: true,
+                emptyrecords: 'Программа передач не обнаружена',
+                pager: '#TVProgrammeByDaysPager',
+                loadonce: false,
+                multiselect: true,
+                gridview: true,
+                rowattr: function (rd) {
+                    var dateFrom = new Date(Date.parse(rd.Start));
+                    var dateTo = new Date(Date.parse(rd.Stop));
+                    var today = new Date();
+                    if (dateTo < today) {
+                        return { "class": "grayColor" };
                     }
-                    else {
-                        $("#anonsToolByDays").hide(50);
-                        $("#anonsDescrByDays").hide(150);
+                    if (dateFrom <= today && dateTo > today) {
+                        return { "class": "blackColor" };
                     }
+                    if (dateFrom > today) {
+                        return { "class": "greenColor" };
+                    }
+                }
+            }).navGrid('#TVProgrammeByDaysPager',
+                {
+                    edit: false, add: false, del: false, search: true,
+                    searchtext: "Поиск передачи", refresh: true
+                },
+                {
+                    zIndex: 100,
+                    caption: "Поиск передачи",
+                    sopt: ['cn']
                 });
-            },
-            rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
-            height: 'auto',
-            width: null,
-            autowidth: true,
-            shrinkToFit: true,
-            viewrecords: true,
-            caption: 'Программа передач',
-            shrinkToFit: true,
-            emptyrecords: 'Программа передач не обнаружена',
-            pager: '#TVProgrammeByDaysPager',
-            loadonce: true,
-            multiselect: true,
-            gridview: true,
-            rowattr: function (rd) {
-                var dateFrom = new Date(Date.parse(rd.Start));
-                var dateTo = new Date(Date.parse(rd.Stop));
-                var today = new Date();
-                if (dateTo < today) {
-                    return { "class": "grayColor" };
-                }
-                if (dateFrom <= today && dateTo > today) {
-                    return { "class": "blackColor" };
-                }
-                if (dateFrom > today) {
-                    return { "class": "greenColor" };
-                }   
-            }
-        }).navGrid('#TVProgrammeByDaysPager',
-        {
-            edit: false, add: false, del: false, search: true,
-            searchtext: "Поиск передачи", refresh: true
-        },
-        {
-            zIndex: 100,
-            caption: "Поиск передачи",
-            sopt: ['cn']
+        $("#TVProgrammeByDaysGrid").jqGrid('hideCol', "GenreName");
+        $("#TVProgrammeByDaysGrid").jqGrid('hideCol', "RatingName");
+        jQuery('#TVProgrammeByDaysGrid').jqGrid('setGridWidth', $("#mw5").width());
+        jQuery("#TVProgrammeByDaysGrid").jqGrid("setGridHeight", 548);
+    } else {
+        $("#TVProgrammeByDaysGrid").setGridParam({
+            url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+                date + "&category=" + $('#userCategory option:selected').val().split(';')[1]
         });
-    jQuery('#TVProgrammeByDaysGrid').jqGrid('hideCol', "GenreName");
-    jQuery('#TVProgrammeByDaysGrid').jqGrid('hideCol', "RatingName");
+        $("#TVProgrammeByDaysGrid").trigger("reloadGrid");
+    }
+    incChannelByDay++;
+        
     /*if (uv == 0) {
         jQuery("#TVProgrammeByDaysGrid").jqGrid('hideCol', "RatingContent");
     }*/
@@ -663,104 +683,112 @@ function fillUserByDay(date, channelId) {
 
 // Установка таблички по каналам
 function fillUserByChannels(date, channelId) {
-    $('#TVProgrammeByChannelsGrid').jqGrid('GridUnload');
-    $('#TVProgrammeByChannelsGrid').jqGrid(
-        {
-            url: "/Programme/GetUserProgrammeOfDay?progTypeID=" + $('#TVProgType option:selected').val() + '&cid=' + channelId + '&tsDate=' +
-            date + "&category=" + $('#TVProgCategories option:selected').val(),
-            datatype: 'json',
-            mtype: 'Get',
-            colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "От", "До", "Передача", ""],
-            colModel: [
-                {
-                    key: false, name: 'RatingContent', index: 'RatingContent', sortable: true, width: 40, align: "center", formatter: imgRating,
-                    cellattr: function (rowId, val, rawObject, cm, rdata) {
-                        return 'title="' + rawObject.RatingName + '"';
+    if (incDayByChannel == 1) {
+        $('#TVProgrammeByChannelsGrid').jqGrid(
+            {
+                url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+                    date + "&category=" + $('#userCategory option:selected').val().split(';')[1],
+                datatype: 'json',
+                type: 'GET',
+                colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "От", "До", "Передача", ""],
+                colModel: [
+                    {
+                        key: false, name: 'RatingContent', index: 'RatingContent', sortable: true, width: 40, align: "center", formatter: imgRating,
+                        cellattr: function (rowId, val, rawObject, cm, rdata) {
+                            return 'title="' + rawObject.RatingName + '"';
+                        }
+                    },
+                    {
+                        key: false, name: 'RatingName', index: 'RatingName', sortable: true, widht: "0", align: "center"
+                    },
+                    {
+                        key: false, name: 'GenreContent', index: 'GenreContent', sortable: true, width: 40, align: "center", formatter: imgGenre,
+                        cellattr: function (rowId, val, rawObject, cm, rdata) {
+                            return 'title="' + rawObject.GenreName + '"';
+                        }
+                    },
+                    {
+                        key: false, name: 'GenreName', index: 'GenreName', sortable: true, width: "0", align: "center"
+                    },
+                    {
+                        key: false, name: 'AnonsContent', index: 'AnonsContent', sortable: true, width: 40, align: "center", formatter: imgAnons
+                    },
+                    {
+                        key: false, name: 'Start', index: 'Start', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
+                    },
+                    {
+                        key: false, name: 'Stop', index: 'Stop', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
+                    },
+                    { key: false, name: 'TelecastTitle', index: 'TelecastTitle', width: 850, sortable: true },
+                    {
+                        key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
                     }
+                ],
+                rowNum: 20,
+                beforeSelectRow: function (rowid, e) {
+                    $('#TVProgrammeByChannelsGrid').jqGrid('resetSelection');
+                    return (true);
                 },
-                {
-                    key: false, name: 'RatingName', index: 'RatingName', sortable: true, widht: "0", align: "center"
-                },
-                {
-                    key: false, name: 'GenreContent', index: 'GenreContent', sortable: true, width: 40, align: "center", formatter: imgGenre,
-                    cellattr: function (rowId, val, rawObject, cm, rdata) {
-                        return 'title="' + rawObject.GenreName + '"';
-                    }
-                },
-                {
-                    key: false, name: 'GenreName', index: 'GenreName', sortable: true, width: "0", align: "center"
-                },
-                {
-                    key: false, name: 'AnonsContent', index: 'AnonsContent', sortable: true, width: 40, align: "center", formatter: imgAnons
-                },
-                {
-                    key: false, name: 'Start', index: 'Start', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
-                },
-                {
-                    key: false, name: 'Stop', index: 'Stop', sortable: true, align: "center", width: 80, sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
-                },
-                { key: false, name: 'TelecastTitle', index: 'TelecastTitle', width: 850, sortable: true },
-                {
-                    key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
-                }
-            ],
-            rowNum: 20,
-            beforeSelectRow: function (rowid, e) {
-                $('#TVProgrammeByChannelsGrid').jqGrid('resetSelection');
-                return (true);
-            },
-            loadComplete: function () {
-                $("tr.jqgrow:odd").css("background", "#EFFFEF");
+                loadComplete: function () {
+                    $("tr.jqgrow:odd").css("background", "#EFFFEF");
 
-                $("tr.jqgrow td input", "#TVProgrammeByChannelsGrid").click(function () {
-                    if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
-                        $("#anonsToolByChannels").show(50);
-                        $("#anonsDescrByChannels").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
+                    $("tr.jqgrow td input", "#TVProgrammeByChannelsGrid").click(function () {
+                        if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
+                            $("#anonsToolByChannels").show(50);
+                            $("#anonsDescrByChannels").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
+                        }
+                        else {
+                            $("#anonsToolByChannels").hide(50);
+                            $("#anonsDescrByChannels").hide(150);
+                        }
+                    });
+                },
+                rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
+                height: 'auto',
+                width: null,
+                autowidth: true,
+                shrinkToFit: true,
+                viewrecords: true,
+                caption: 'Программа передач',
+                emptyrecords: 'Программа передач не обнаружена',
+                pager: '#TVProgrammeByChannelsPager',
+                loadonce: false,
+                multiselect: true,
+                gridview: true,
+                rowattr: function (rd) {
+                    var dateFrom = new Date(Date.parse(rd.Start));
+                    var dateTo = new Date(Date.parse(rd.Stop));
+                    var today = new Date();
+                    if (dateTo < today) {
+                        return { "class": "grayColor" };
                     }
-                    else {
-                        $("#anonsToolByChannels").hide(50);
-                        $("#anonsDescrByChannels").hide(150);
+                    if (dateFrom <= today && dateTo > today) {
+                        return { "class": "blackColor" };
                     }
+                    if (dateFrom > today) {
+                        return { "class": "greenColor" };
+                    }
+                }
+            }).navGrid('#TVProgrammeByChannelsPager',
+                {
+                    edit: false, add: false, del: false, search: true,
+                    searchtext: "Поиск передачи", refresh: true
+                },
+                {
+                    zIndex: 100,
+                    caption: "Поиск передачи",
+                    sopt: ['cn']
                 });
-            },
-            rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
-            height: 'auto',
-            width: null,
-            autowidth: true,
-            shrinkToFit: true,
-            viewrecords: true,
-            caption: 'Программа передач',
-            emptyrecords: 'Программа передач не обнаружена',
-            pager: '#TVProgrammeByChannelsPager',
-            loadonce: true,
-            multiselect: true,
-            gridview: true,
-            rowattr: function (rd) {
-                var dateFrom = new Date(Date.parse(rd.Start));
-                var dateTo = new Date(Date.parse(rd.Stop));
-                var today = new Date();
-                if (dateTo < today) {
-                    return { "class": "grayColor" };
-                }
-                if (dateFrom <= today && dateTo > today) {
-                    return { "class": "blackColor" };
-                }
-                if (dateFrom > today) {
-                    return { "class": "greenColor" };
-                }
-            }
-        }).navGrid('#TVProgrammeByChannelsPager',
-        {
-            edit: false, add: false, del: false, search: true,
-            searchtext: "Поиск передачи", refresh: true
-        },
-        {
-            zIndex: 100,
-            caption: "Поиск передачи",
-            sopt: ['cn']
+        jQuery('#TVProgrammeByChannelsGrid').jqGrid('hideCol', "GenreName");
+        jQuery('#TVProgrammeByChannelsGrid').jqGrid('hideCol', "RatingName");
+    } else {
+        $('#TVProgrammeByChannelsGrid').setGridParam({
+            url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+                date + "&category=" + $('#userCategory option:selected').val().split(';')[1]
         });
-    jQuery('#TVProgrammeByChannelsGrid').jqGrid('hideCol', "GenreName");
-    jQuery('#TVProgrammeByChannelsGrid').jqGrid('hideCol', "RatingName");
+        $('#TVProgrammeByChannelsGrid').trigger("reloadGrid");
+    }
+    incDayByChannel++;
     /*if (uv == 0) {
         jQuery("#TVProgrammeByChannelsGrid").jqGrid('hideCol', "RatingContent");
     }*/

@@ -8,6 +8,7 @@
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/programmes.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/user-channels.js");
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/sticky-element.js");
+    Html.AppendScriptParts(ResourceLocation.Footer, "~/js/jsTree3/jstree.js");
 
 }
 <!--div class="page home-page">
@@ -16,11 +17,10 @@
     <ul class="ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header">
         <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab ui-tabs-active ui-state-active"><a href="#tabNow">Сейчас в телеэфире</a></li>
         <li class="ui-tabs"><a class="ui-tabs-anchor" href="#tabNext">Затем в телеэфире</a></li>
-        @if (User.Identity.IsAuthenticated)
-        {
-            <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab"><a class="ui-tabs-anchor" href="#tabByDays">По дням</a></li>
-            <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab"><a class="ui-tabs-anchor" href="#tabByChannels">По каналам</a></li>
-        }
+        
+        <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab byDays" style="display:none"><a class="ui-tabs-anchor byDays" style="display: none" href="#tabByDays">По дням</a></li>
+        <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab byChannels" style="display:none"><a class="ui-tabs-anchor byChannels" style="display: none" href="#tabByChannels">По каналам</a></li>
+        
         <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab"><a class="ui-tabs-anchor" href="#tabSearch">Поиск по телепрограмме</a></li>
         <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab"><a class="ui-tabs-anchor" href="#tabChannels">Телеканалы</a></li>
     </ul>
@@ -56,9 +56,8 @@
         <div id="anonsDescrNext" class="description" style="display:none"></div>
         <div style="clear:both"></div>
     </div>
-    @if (User.Identity.IsAuthenticated)
-    {
-        <div id="tabByDays">
+    
+        <div id="tabByDays" class="byDays" style="display: none;">
             <div style="height:34px">
                 <button id="anonsToolByDays" style="margin: 3px; display:none;"><img src="~/images/i/GreenAnons.png" /></button>
             </div>
@@ -69,7 +68,7 @@
                 <div class="col-sm-1">
                 </div>
                 <div class="col-xs-9">
-                    <div class="mainwindow">
+                    <div id="mw5" class="mainwindow">
                         <div style="position: relative; height: 55px;">
                             <div id="ct" style="position: absolute; left: 0; padding: 8px 7px">
                                 <img id="pic" style="display: none" />
@@ -87,7 +86,7 @@
                 </div>
             </div>
         </div>
-        <div id="tabByChannels">
+        <div id="tabByChannels" class="byChannels" style="display: none;">
             <div style="height:34px">
                 <button id="anonsToolByChannels" style="margin: 3px; display:none;"><img src="~/images/i/GreenAnons.png" /></button>
             </div>
@@ -109,7 +108,7 @@
                 </div>
             </div>
         </div>
-    }
+    
     <div id="tabSearch">
         <div id="mw3" class="mainwindow">
             <div id="searchPanel" style="display: none">

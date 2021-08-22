@@ -10,6 +10,7 @@ using System.Globalization;
 using LinqToDB;
 using TVProgViewer.Data.TvProgMain;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace TVProgViewer.Services.TvProgMain
 {
@@ -37,7 +38,10 @@ namespace TVProgViewer.Services.TvProgMain
         #endregion
 
         #region Методы
-
+        /// <summary>
+        /// Получение системных телеканалов
+        /// </summary>
+        /// <param name="tvProgProviderId">Идентификатор провайдера телеканалов</param>
         public virtual async Task<KeyValuePair<int, List<SystemChannel>>> GetSystemChannelsAsync(int tvProgProviderId, string sidx, string sord, int page, int rows)
         {
             KeyValuePair<int, List<SystemChannel>> listSystemChannels = new KeyValuePair<int, List<SystemChannel>>();
@@ -67,6 +71,33 @@ namespace TVProgViewer.Services.TvProgMain
             return new KeyValuePair<int, List<SystemChannel>>(count, systemChannel);
         }
 
+        /// <summary>
+        /// Получение пользовательских телеканалов
+        /// </summary>
+        /// <param name="tvProgProvder">Идентификатор провайдера телеканалов</param>
+        /// <param name="jsonChannels">Данные из localStorage</param>
+        public virtual async Task<List<UserChannel>> GetUserChannelsByLocalStorageAsync(int tvProgProvder, string jsonChannels)
+        {
+            List<LocalStorageOptChans> optChans = JsonConvert.DeserializeObject<List<LocalStorageOptChans>>(jsonChannels);
+            List<UserChannel> uch = await (from ch in _channelsRepository.Table
+                                           join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                                           from mp in chmp.DefaultIfEmpty()
+                                           where ch.TvProgProviderId == tvProgProvder && ch.Deleted == null
+                                           select new UserChannel
+                                           {
+                                               ChannelId = ch.Id,
+                                               TVProgViewerId = ch.TvProgProviderId,
+                                               InternalId = ch.InternalId,
+                                               IconId = ch.IconId,
+                                               FileNameOrig = mp.PathOrig + mp.FileName,
+                                               FileName25 = mp.Path25 + mp.FileName,
+                                               Title = ch.TitleChannel,
+                                               ImageWebSrc = ch.IconWebSrc,
+                                               OrderCol = 0
+                                           }).OrderBy(o => o.InternalId)
+                                             .ToListAsync();
+            return await uch.Where(x => optChans.Any(y => y.ChannelId == x.ChannelId)).ToListAsync();
+        }
         #endregion
     }
 }

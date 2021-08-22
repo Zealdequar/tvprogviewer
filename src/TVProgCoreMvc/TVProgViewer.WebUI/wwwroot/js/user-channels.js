@@ -84,9 +84,8 @@ function setGrid()
         url: "Home/GetSystemChannels?tvProgProvider=" + $('#userProvider option:selected').val().split(';')[1] + "&progType=" + $('#userTypeProg option:selected').val().split(';')[1],
         datatype: "json",
         mtype: "GET",
-        success: function () { console.log("OK"); },
+        success: function () { },
         error: function (e) {
-            console.dir(e);
         },
         colNames: ["", "", "Логотип", "Канал", "Номер канала"],
         colModel: [
@@ -232,6 +231,7 @@ function setGrid()
             closeAfterEdit: true
            // afterSubmit: UploadImage
         });
+   // jQuery("#tblSystemChannelsGrid").jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
     jQuery('#tblSystemChannelsGrid').jqGrid('setGridWidth', $("#mw4").width());
     jQuery("#tblSystemChannelsGrid").jqGrid("setGridHeight", 548);
 }

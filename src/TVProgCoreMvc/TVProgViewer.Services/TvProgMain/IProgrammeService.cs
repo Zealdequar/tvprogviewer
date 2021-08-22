@@ -69,5 +69,16 @@ namespace TVProgViewer.Services.TvProgMain
         /// <param name="findTitle">Поисковая подстрока</param>
         public Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string dates, string channels);
+
+        /// <summary>
+        /// Получение пользовательских телепередач за день
+        /// </summary>
+        /// <param name="uid">Идентификатор пользователя</param>
+        /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
+        /// <param name="channelId">Код канала</param>
+        /// <param name="tsStart">Время начала выборки</param>
+        /// <param name="tsEnd">Время завершения выборки</param>
+        /// <param name="category">Категория</param>
+        public Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(long? uid, int typeProgId, int channeldId, DateTime tsStart, DateTime tsEnd, string category);
     }
 }

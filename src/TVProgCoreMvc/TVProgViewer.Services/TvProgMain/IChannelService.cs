@@ -15,7 +15,14 @@ namespace TVProgViewer.Services.TvProgMain
         /// <summary>
         /// Получение системных телеканалов
         /// </summary>
-        /// <param name="tvProgProviderId">Идентификатор провайдера телканалов</param>
+        /// <param name="tvProgProviderId">Идентификатор провайдера телеканалов</param>
         public Task<KeyValuePair<int, List<SystemChannel>>> GetSystemChannelsAsync(int tvProgProvider, string sidx, string sord, int page, int rows);
+
+        /// <summary>
+        /// Получение пользовательских телеканалов
+        /// </summary>
+        /// <param name="tvProgProvder">Идентификатор провайдера телеканалов</param>
+        /// <param name="jsonChannels">Данные из localStorage</param>
+        public Task<List<UserChannel>> GetUserChannelsByLocalStorageAsync(int tvProgProvder, string jsonChannels);
     }
 }
