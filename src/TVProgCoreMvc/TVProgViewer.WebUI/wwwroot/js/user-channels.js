@@ -2,6 +2,21 @@
 var pageNum = 1;
 $(function () {
     setGrid();
+    let jsonData = window.localStorage.getItem("optChans");
+    if (jsonData && jsonData.length != 0) {
+        try {
+            checkedArray = JSON.parse(jsonData);
+        }
+        catch {
+            checkedArray = [];
+            window.localStorage.setItem("optChans", "[]");
+        }
+    }
+    if (!jsonData || !checkedArray || checkedArray.length == 0) {
+        $("#infoPanel").show(300);
+    } else {
+        $("#infoPanel").hide(100);
+    }
     $("#choicePnl").show();
 });
 $("#ChannelTool").click(function () {
@@ -18,6 +33,9 @@ $("#ChannelTool").click(function () {
         }
     }
     window.localStorage.setItem("optChans", "[]");
+});
+$("#ApplyTool").click(function () {
+    document.location.href = "/";
 });
 // Заполнение раскрывающихся списков
 /*
@@ -125,6 +143,7 @@ function setGrid()
                // if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
                     $("#mainToolChannel").show(50);
                     $("#ChannelTool").show(50);
+                    $("#ApplyTool").show(50);
                 /*}
                 else {
                     $("#ChannelTool").hide(50);
@@ -164,6 +183,9 @@ function setGrid()
                 $("#hiddenChannels").val(checkedArray.map(ch => ch.ChannelId).join(";"));
                 window.localStorage.setItem("optChans", JSON.stringify(checkedArray));
             }
+            $("#mainToolChannel").show(50);
+            $("#ChannelTool").show(50);
+            $("#ApplyTool").show(50);
         },
         onSelectAll: function (rowIds, status) {  // Возникает когда всё выбрано на страничке пейджинга
             // Удалить все страницы в массиве checkedArray

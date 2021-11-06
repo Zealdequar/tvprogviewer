@@ -138,6 +138,9 @@ namespace TVProgViewer.WebUI.Models.User
         public bool AcceptPrivacyPolicyEnabled { get; set; }
         public bool AcceptPrivacyPolicyPopup { get; set; }
 
+        public bool TermsOfServiceEnabled { get; set; }
+        public bool TermsOfServicePopup { get; set; }
+
         //time zone
         [TvProgResourceDisplayName("Account.Fields.TimeZone")]
         public string TimeZoneId { get; set; }

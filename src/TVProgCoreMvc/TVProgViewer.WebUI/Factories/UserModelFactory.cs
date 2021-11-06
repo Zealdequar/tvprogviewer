@@ -513,6 +513,8 @@ namespace TVProgViewer.WebUI.Factories
             model.NewsletterEnabled = _userSettings.NewsletterEnabled;
             model.AcceptPrivacyPolicyEnabled = _userSettings.AcceptPrivacyPolicyEnabled;
             model.AcceptPrivacyPolicyPopup = _commonSettings.PopupForTermsOfServiceLinks;
+            model.TermsOfServiceEnabled = _orderSettings.TermsOfServiceOnOrderConfirmPage;
+            model.TermsOfServicePopup = _commonSettings.PopupForTermsOfServiceLinks;
             model.UsernamesEnabled = _userSettings.UsernamesEnabled;
             model.CheckUsernameAvailabilityEnabled = _userSettings.CheckUsernameAvailabilityEnabled;
             model.HoneypotEnabled = _securitySettings.HoneypotEnabled;

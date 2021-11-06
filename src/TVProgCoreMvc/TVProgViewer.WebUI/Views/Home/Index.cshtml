@@ -11,8 +11,17 @@
     Html.AppendScriptParts(ResourceLocation.Footer, "~/js/jsTree3/jstree.js");
 
 }
-<!--div class="page home-page">
-    <div class="page-body"-->
+<div id="infoPanel" class="panel panel-info" style="display: none"> 
+    <div class="panel-heading">
+       <h5 class="panel-title">Укажите необходимые телеканалы</h5>
+    </div>
+    <div class="panel-body">
+        <p>Переход в полнофункциональный режим для возможности просмотра и управления программой передач осуществляется с помощью флажков («галочек») из таблицы ниже. 
+        Укажите нужные телеканалы и нажимте кнопку «Применить», которая появится после изменения выбора. Или просто обновите страницу (F5).</p>
+        <p>В дальнейшем, TVProgViewer запомнит Ваш выбор. Также, Вы сможете его изменить и настроить под свои вкусы когда захотите.</p>
+        <p>Сбросить выбранные телеканалы всегда можно соответствующей кнопкой.</p>
+    </div>
+</div>
 <div id="tabs" style="margin-top: 8px">
     <ul class="ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header">
         <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab ui-tabs-active ui-state-active"><a href="#tabNow">Сейчас в телеэфире</a></li>
@@ -138,8 +147,9 @@
     </div>
     <div id="tabChannels">
         <div id="mw4" class="mainwindow">
-            <div id="mainToolChannel" style="height:34px; display:none">
+            <div id="mainToolChannel" class="btn-group btn-group-sm" style="height:34px; display:none">
                 <button id="ChannelTool" style="display:none;">Сбросить все выделенные телеканалы</button>
+                <button id="ApplyTool" style="display:none;">Применить</button>
             </div>
             <table id="tblSystemChannelsGrid"></table>
             <table id="systemChannelsPager"></table>

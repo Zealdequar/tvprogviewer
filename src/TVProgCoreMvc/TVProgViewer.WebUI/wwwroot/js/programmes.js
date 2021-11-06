@@ -9,10 +9,23 @@ $(function () {
     $.jgrid.useJSON = true;
     
     chansArr = getStorageChannels();
-    if (chansArr.length > 0) {
+    if (chansArr && chansArr.length > 0) {
+        $("tabNow").addClass("active");
+        $("tabNow").removeClass("disable");
+        $("tabNext").removeClass("disable");
+        $("tabSearch").removeClass("disable");
+        $("tabChannels").removeClass("active");
         $(".byDays").show();
         $(".byChannels").show();
+    } else {
+        $("tabNow").addClass("disable");
+        $("tabNext").addClass("disable");
+        $("tabSearch").addClass("disable");
+        $("tabChannels").addClass("active");
+        return;
     }
+        
+    
     setTree(getSelectedTabIndex()); 
     fillFooter();
     fillGenresToolNow();
@@ -182,7 +195,10 @@ function imgChannel(s) {
 // Получение списка натроенных пользователем каналов
 function getStorageChannels() {
     let storageChannels = window.localStorage.getItem("optChans");
-    let result = JSON.parse(storageChannels);
+    let result;
+    if (storageChannels && storageChannels.length > 0) {
+        result = JSON.parse(storageChannels);
+    }
     return result;
 }
 

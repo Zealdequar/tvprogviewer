@@ -5239,7 +5239,6 @@ label, label + * {
 	line-height: normal;
 	font-weight: normal;
 	color: #444;
-	height: 35px;
 }
 .ui-tabs-nav li {
 	margin: 0 0 -1px;

@@ -377,7 +377,7 @@
 
                         @if (Model.AcceptPrivacyPolicyEnabled)
                         {
-                            <script asp-location="Footer">
+                    <script asp-location="Footer">
                                 $(document).ready(function() {
                                     $('#register-button').on('click', function() {
                                         if ($('#accept-consent').is(':checked')) {
@@ -390,7 +390,19 @@
                                         }
                                     });
                                 });
-                            </script>
+                                $(document).ready(function() {
+                                    $('#register-button').on('click', function() {
+                                        if ($('#termsofservice').is(':checked')) {
+                                            //do some stuff
+                                            return true;
+                                        } else {
+                                            //just show validation errors, don't post
+                                            alert('@Html.Raw(JavaScriptEncoder.Default.Encode(T("Vendors.ApplyAccount.AcceptTermsOfService.Required").Text))');
+                                            return false;
+                                        }
+                                    });
+                                });
+                    </script>
                             <div class="inputs accept-consent">
                                 <input id="accept-consent" type="checkbox" name="accept-consent" />
                                 <label for="accept-consent">@T("Account.Fields.AcceptPrivacyPolicy")</label>
@@ -412,6 +424,27 @@
                                 {
                                     <a class="read" id="read-privacyinfo" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("privacyinfo") })">@T("Account.Fields.AcceptPrivacyPolicy.Read")</a>
                                 }
+                            </div>
+                            <div class="inputs accept-consent">
+                                <input id="termsofservice" type="checkbox" name="termsofservice" />
+                                <label for="termsofservice">@T("Checkout.TermsOfService.IAccept")</label>
+                                 @if (Model.TermsOfServicePopup)
+                                {
+                                    <a class="read" id="read-terms">@T("Checkout.TermsOfService.Read")</a>
+                                    <script asp-location="Footer">
+                                        $(document).ready(function() {
+                                            $('#read-terms').on('click',
+                                                function(e) {
+                                                   e.preventDefault();
+                                                  displayPopupContentFromUrl('@Url.RouteUrl("TopicPopup", new {SystemName = "conditionsofuse"})', '@T("Checkout.TermsOfService")');
+                                            });
+                                        });
+                                    </script>
+                            }
+                            else
+                            {
+                                <a class="read" id="read-terms" href="@Url.RouteUrl("Topic", new { SeName = await Html.GetTopicSeNameAsync("conditionsofuse") })">@T("Checkout.TermsOfService.Read")</a>
+                            }
                             </div>
                         }
 
