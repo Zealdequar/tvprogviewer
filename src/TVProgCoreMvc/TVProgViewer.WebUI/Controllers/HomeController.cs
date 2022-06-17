@@ -9,6 +9,8 @@ using TVProgViewer.Web.Framework.Mvc.Filters;
 using TVProgViewer.Web.Framework.Security;
 using System.Threading.Tasks;
 using TVProgViewer.WebUI.Models.Tree;
+using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace TVProgViewer.WebUI.Controllers
 {
@@ -34,8 +36,26 @@ namespace TVProgViewer.WebUI.Controllers
                                                        };
 
         #endregion
+        [DataContract]
+        internal class Rules
+        {
+            [DataMember]
+            public string field { get; set; }
+            [DataMember]
+            public string op { get; set; }
+            [DataMember]
+            public string data { get; set; }
+        }
 
-
+        [DataContract]
+        internal class Filt
+        {
+            [DataMember]   
+            public string groupOp { get; set; }
+            [DataMember]
+            public List<Rules> rules { get; set; }
+                
+        }
 
             #region Конструктор
 
@@ -129,11 +149,20 @@ namespace TVProgViewer.WebUI.Controllers
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> GetSystemChannels (int tvProgProvider, string sidx, string sord, int page, int rows)
+        public async Task<JsonResult> GetSystemChannels (int tvProgProvider, string filters, string sidx, string sord, int page, int rows)
         {
             object jsonData;
             KeyValuePair<int, List<SystemChannel>> result;
-            result = await _channelService.GetSystemChannelsAsync(tvProgProvider, sidx, sord, page, rows);
+            string filtData = null;
+            if (filters != null)
+            {
+                var item = JsonConvert.DeserializeObject<Filt>(filters);
+                if (item?.rules.Count > 0)
+                {
+                    filtData = item?.rules[0]?.data;
+                }
+            }
+            result = await _channelService.GetSystemChannelsAsync(tvProgProvider, filtData, sidx, sord, page, rows);
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
         }

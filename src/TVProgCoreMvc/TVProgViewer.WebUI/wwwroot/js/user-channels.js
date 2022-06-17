@@ -253,7 +253,7 @@ function setGrid()
             closeAfterEdit: true
            // afterSubmit: UploadImage
         });
-   // jQuery("#tblSystemChannelsGrid").jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
+    jQuery("#tblSystemChannelsGrid").jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
     jQuery('#tblSystemChannelsGrid').jqGrid('setGridWidth', $("#mw4").width());
     jQuery("#tblSystemChannelsGrid").jqGrid("setGridHeight", 548);
 }

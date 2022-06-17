@@ -16,7 +16,8 @@ namespace TVProgViewer.Services.TvProgMain
         /// Получение системных телеканалов
         /// </summary>
         /// <param name="tvProgProviderId">Идентификатор провайдера телеканалов</param>
-        public Task<KeyValuePair<int, List<SystemChannel>>> GetSystemChannelsAsync(int tvProgProvider, string sidx, string sord, int page, int rows);
+        public Task<KeyValuePair<int, List<SystemChannel>>> GetSystemChannelsAsync(int tvProgProvider, string filtData, string sidx, string sord, int page, int rows);
+
 
         /// <summary>
         /// Получение пользовательских телеканалов

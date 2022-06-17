@@ -42,7 +42,7 @@ namespace TVProgViewer.Services.TvProgMain
         /// Получение системных телеканалов
         /// </summary>
         /// <param name="tvProgProviderId">Идентификатор провайдера телеканалов</param>
-        public virtual async Task<KeyValuePair<int, List<SystemChannel>>> GetSystemChannelsAsync(int tvProgProviderId, string sidx, string sord, int page, int rows)
+        public virtual async Task<KeyValuePair<int, List<SystemChannel>>> GetSystemChannelsAsync(int tvProgProviderId, string filtData, string sidx, string sord, int page, int rows)
         {
             KeyValuePair<int, List<SystemChannel>> listSystemChannels = new KeyValuePair<int, List<SystemChannel>>();
 
@@ -50,7 +50,7 @@ namespace TVProgViewer.Services.TvProgMain
             var sc = await (from ch in _channelsRepository.Table
                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
                             from mp in chmp.DefaultIfEmpty()
-                            where ch.TvProgProviderId == tvProgProviderId && ch.Deleted == null
+                            where ch.TvProgProviderId == tvProgProviderId && ch.Deleted == null && (filtData == null || ch.TitleChannel.Contains(filtData))
                             select new SystemChannel
                             {
                                 ChannelId = ch.Id,
