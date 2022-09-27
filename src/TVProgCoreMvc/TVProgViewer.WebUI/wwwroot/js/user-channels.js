@@ -19,6 +19,7 @@ $(function () {
     }
     $("#choicePnl").show();
 });
+
 $("#ChannelTool").click(function () {
     let jsonData = window.localStorage.getItem("optChans");
     if (jsonData) {
@@ -241,7 +242,7 @@ function setGrid()
         }
     }).navGrid('#systemChannelsPager',
         {
-            edit: false, add: false, del: false, search: true,
+            edit: false, add: false, del: false, search: false,
             searchtext: "Поиск телеканала", refresh: true
         },
         {

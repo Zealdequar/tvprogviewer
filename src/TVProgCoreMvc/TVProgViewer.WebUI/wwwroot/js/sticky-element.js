@@ -19,12 +19,16 @@
             for (var i = 1; i < l; i++) {
                 b.appendChild(a.childNodes[1]);
             }
+            if (!b)
+                return;
             a.style.height = b.getBoundingClientRect().height + 'px';
             a.style.padding = '0';
             a.style.border = '0';
         }
+        if (!b)
+            return;
         var Ra = a.getBoundingClientRect(),
-            R = Math.round(Ra.top + b.getBoundingClientRect().height - document.querySelector('footer').getBoundingClientRect().top + 0);  // селектор блока, при достижении верхнего края которого нужно открепить прилипающий элемент;  Math.round() только для IE; если ноль заменить на число, то блок будет прилипать до того, как нижний край элемента дойдёт до футера
+            R = Math.round(Ra.top + b.getBoundingClientRect().height - document.querySelector('.footer').getBoundingClientRect().top + 0);  // селектор блока, при достижении верхнего края которого нужно открепить прилипающий элемент;  Math.round() только для IE; если ноль заменить на число, то блок будет прилипать до того, как нижний край элемента дойдёт до футера
         if ((Ra.top - P) <= 0) {
             if ((Ra.top - P) <= R) {
                 b.className = 'stop';
@@ -61,12 +65,16 @@
             for (var i = 1; i < l; i++) {
                 b2.appendChild(a2.childNodes[1]);
             }
+            if (!b2)
+                return;
             a2.style.height = b2.getBoundingClientRect().height + 'px';
             a2.style.padding = '0';
             a2.style.border = '0';
         }
+        if (!b2 )
+            return;
         var Ra2 = a2.getBoundingClientRect(),
-            R2 = Math.round(Ra2.top + b2.getBoundingClientRect().height - document.querySelector('footer').getBoundingClientRect().top + 0);  // селектор блока, при достижении верхнего края которого нужно открепить прилипающий элемент;  Math.round() только для IE; если ноль заменить на число, то блок будет прилипать до того, как нижний край элемента дойдёт до футера
+            R2 = Math.round(Ra2.top + b2.getBoundingClientRect().height - document.querySelector('.footer').getBoundingClientRect().top + 0);  // селектор блока, при достижении верхнего края которого нужно открепить прилипающий элемент;  Math.round() только для IE; если ноль заменить на число, то блок будет прилипать до того, как нижний край элемента дойдёт до футера
         if ((Ra2.top - P2) <= 0) {
             if ((Ra2.top - P2) <= R2) {
                 b2.className = 'stop2';

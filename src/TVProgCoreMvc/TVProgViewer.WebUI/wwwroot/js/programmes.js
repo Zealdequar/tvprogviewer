@@ -797,6 +797,8 @@ function fillUserByChannels(date, channelId) {
                 });
         jQuery('#TVProgrammeByChannelsGrid').jqGrid('hideCol', "GenreName");
         jQuery('#TVProgrammeByChannelsGrid').jqGrid('hideCol', "RatingName");
+        jQuery('#TVProgrammeByChannelsGrid').jqGrid('setGridWidth', $("#mw6").width());
+        jQuery("#TVProgrammeByChannelsGrid").jqGrid("setGridHeight", 548);
     } else {
         $('#TVProgrammeByChannelsGrid').setGridParam({
             url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
