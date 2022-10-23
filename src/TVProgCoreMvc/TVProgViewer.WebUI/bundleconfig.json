@@ -1,0 +1,14 @@
+[
+  {
+    "outputFileName": "wwwroot/js/sticky-element.min.js",
+    "inputFiles": [
+      "wwwroot/js/sticky-element.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/programmes.min.js",
+    "inputFiles": [
+      "wwwroot/js/programmes.js"
+    ]
+  }
+]

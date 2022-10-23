@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="bundleconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Themes\DefaultClean\Content\css\print.css" />
     <None Remove="Themes\DefaultClean\Content\css\styles.css" />
   </ItemGroup>
@@ -21,6 +25,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\js\jqGrid\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bundleconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
