@@ -257,6 +257,9 @@ function setGrid()
     jQuery("#tblSystemChannelsGrid").jqGrid('filterToolbar', { stringResult: true, searchOnEnter: false, defaultSearch: "cn" });
     jQuery('#tblSystemChannelsGrid').jqGrid('setGridWidth', $("#mw4").width());
     jQuery("#tblSystemChannelsGrid").jqGrid("setGridHeight", 548);
+    $("input#gs_SystemTitle").attr("placeholder", "Начните вводить телеканал...");
+    $("input#gs_SystemTitle").height(25);
+    $("input#gs_SystemTitle").focus();
 }
 
 // Перезагрузка после подтверждения

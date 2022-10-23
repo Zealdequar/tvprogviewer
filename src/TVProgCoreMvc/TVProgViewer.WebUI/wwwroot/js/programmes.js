@@ -17,7 +17,11 @@ $(function () {
         $("tabChannels").removeClass("active");
         $(".byDays").show();
         $(".byChannels").show();
+        $(".header-selectors-wrapper").show();
+        $(".header-upper").show();
     } else {
+        $(".header-selectors-wrapper").hide(); 
+        $(".header-upper").hide();
         $("tabNow").addClass("disable");
         $("tabNext").addClass("disable");
         $("tabSearch").addClass("disable");
