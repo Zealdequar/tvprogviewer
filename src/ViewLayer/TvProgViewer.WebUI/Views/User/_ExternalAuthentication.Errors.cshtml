@@ -1,0 +1,24 @@
+﻿@using TvProgViewer.Core.Http.Extensions
+@using TvProgViewer.Services.Authentication
+
+@{
+
+    var session = Context.Session;
+
+    var errors = session.Get<IList<string>>(TvProgAuthenticationDefaults.ExternalAuthenticationErrorsSessionKey);
+
+    if (errors != null)
+        session.Remove(TvProgAuthenticationDefaults.ExternalAuthenticationErrorsSessionKey);
+}
+
+@if (errors != null && errors.Count > 0)
+{
+    <div class="external-auth-errors">
+        <ul>
+            @foreach (var error in errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}

@@ -1,0 +1,68 @@
+﻿@inherits TvProgViewer.Web.Framework.Mvc.Razor.TvProgRazorPage<TModel>
+
+@inject IGenericAttributeService genericAttributeService
+@inject ITvProgHtmlHelper TvProgHtml
+@inject IWorkContext workContext
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, TvProgViewer.Web.Framework
+
+@using System.Globalization;
+@using System.Net;
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using Microsoft.AspNetCore.Routing
+@using Microsoft.Extensions.Primitives
+@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Common
+@using TvProgViewer.Core.Events
+@using TvProgViewer.Core.Infrastructure
+@using TvProgViewer.Services.Common
+@using static TvProgViewer.Services.Common.TvProgLinksDefaults
+@using TvProgViewer.WebUI.Areas.Admin.Components
+@using TvProgViewer.WebUI.Areas.Admin.Models.Affiliates
+@using TvProgViewer.WebUI.Areas.Admin.Models.Blogs
+@using TvProgViewer.WebUI.Areas.Admin.Models.Catalog
+@using TvProgViewer.WebUI.Areas.Admin.Models.Cms
+@using TvProgViewer.WebUI.Areas.Admin.Models.Common
+@using TvProgViewer.WebUI.Areas.Admin.Models.Users
+@using TvProgViewer.WebUI.Areas.Admin.Models.Directory
+@using TvProgViewer.WebUI.Areas.Admin.Models.Discounts
+@using TvProgViewer.WebUI.Areas.Admin.Models.ExternalAuthentication
+@using TvProgViewer.WebUI.Areas.Admin.Models.Forums
+@using TvProgViewer.WebUI.Areas.Admin.Models.Home
+@using TvProgViewer.WebUI.Areas.Admin.Models.Localization
+@using TvProgViewer.WebUI.Areas.Admin.Models.Logging
+@using TvProgViewer.WebUI.Areas.Admin.Models.Messages
+@using TvProgViewer.WebUI.Areas.Admin.Models.MultiFactorAuthentication
+@using TvProgViewer.WebUI.Areas.Admin.Models.News
+@using TvProgViewer.WebUI.Areas.Admin.Models.Orders
+@using TvProgViewer.WebUI.Areas.Admin.Models.Payments
+@using TvProgViewer.WebUI.Areas.Admin.Models.Plugins
+@using TvProgViewer.WebUI.Areas.Admin.Models.Plugins.Marketplace
+@using TvProgViewer.WebUI.Areas.Admin.Models.Polls
+@using TvProgViewer.WebUI.Areas.Admin.Models.Reports
+@using TvProgViewer.WebUI.Areas.Admin.Models.Security
+@using TvProgViewer.WebUI.Areas.Admin.Models.Settings
+@using TvProgViewer.WebUI.Areas.Admin.Models.Shipping
+@using TvProgViewer.WebUI.Areas.Admin.Models.ShoppingCart
+@using TvProgViewer.WebUI.Areas.Admin.Models.Stores
+@using TvProgViewer.WebUI.Areas.Admin.Models.Tasks
+@using TvProgViewer.WebUI.Areas.Admin.Models.Tax
+@using TvProgViewer.WebUI.Areas.Admin.Models.Templates
+@using TvProgViewer.WebUI.Areas.Admin.Models.Topics
+@using TvProgViewer.WebUI.Areas.Admin.Models.Vendors
+@using TvProgViewer.WebUI.Components
+@using TvProgViewer.WebUI.Extensions
+@using TvProgViewer.Web.Framework
+@using TvProgViewer.Web.Framework.Events
+@using TvProgViewer.Web.Framework.Extensions
+@using TvProgViewer.Web.Framework.Infrastructure
+@using TvProgViewer.Web.Framework.Menu
+@using TvProgViewer.Web.Framework.Models
+@using TvProgViewer.Web.Framework.Models.DataTables
+@using TvProgViewer.Web.Framework.Mvc.Routing
+@using TvProgViewer.Web.Framework.Security.Captcha
+@using TvProgViewer.Web.Framework.Security.Honeypot
+@using TvProgViewer.Web.Framework.Themes
+@using TvProgViewer.Web.Framework.UI

@@ -1,0 +1,19 @@
+﻿@model TvCategorySelectorModel
+
+@inject TvProgViewer.Core.IWebHelper webHelper
+
+@if (Model.AvaliableCategories.Count > 0)
+{
+    <div class="category-selector">
+        @{ 
+            var returnUrl = webHelper.GetRawUrl(Context.Request);
+            var categories = await Model.AvaliableCategories.SelectAwait(async x => new SelectListItem
+            {
+                Text = x.Name,
+                Value = Url.RouteUrl("ChangeCategory", new { usercategory = x.Name, returnUrl }, webHelper.GetCurrentRequestProtocol()) + ";" + x.Name,
+                Selected = x.Name.Equals(Model.CurrentCategoryName)
+            }).ToListAsync();
+            <select id="userCategory" name="userCategory" asp-items="@categories" onchange="setLocationWithPart(this.value);" aria-label="@T("Category.Selector.Label")"></select>
+        }
+    </div>
+}

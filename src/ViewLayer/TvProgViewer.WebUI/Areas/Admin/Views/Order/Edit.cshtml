@@ -1,0 +1,81 @@
+@model OrderModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Orders.EditOrderDetails").Text;
+    //active menu item (system name)
+    TvProgHtml.SetActiveMenuItemSystemName("Orders");
+}
+
+@{
+    const string hideInfoBlockAttributeName = "OrderPage.HideInfoBlock";
+    var user = await workContext.GetCurrentUserAsync();
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideInfoBlockAttributeName);
+
+    const string hideBillingAndShippingBlockAttributeName = "OrderPage.HideBillingAndShippingBlock";
+    var hideBillingAndShippingBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideBillingAndShippingBlockAttributeName);
+
+    const string hideProductsBlockAttributeName = "OrderPage.HideProductsBlock";
+    var hideProductsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideProductsBlockAttributeName);
+
+    const string hideNotesBlockAttributeName = "OrderPage.HideNotesBlock";
+    var hideNotesBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideNotesBlockAttributeName);
+}
+
+    <form asp-controller="Order" asp-action="Edit" method="post" id="order-form">
+        <div class="content-header clearfix">
+            <h1 class="float-left">
+                @T("Admin.Orders.EditOrderDetails") - @Model.CustomOrderNumber
+                <small>
+                    <i class="fas fa-arrow-circle-left"></i>
+                    <a asp-action="List">@T("Admin.Orders.BackToList")</a>
+                </small>
+            </h1>
+            <div class="float-right">
+                <a asp-action="PdfInvoice" asp-route-orderId="@Model.Id" class="btn btn-info">
+                    <i class="far fa-file-pdf"></i>
+                    @T("Admin.Orders.PdfInvoice")
+                </a>
+                @if (!Model.IsLoggedInAsVendor)
+                {
+                    <span id="order-delete" class="btn btn-danger">
+                        <i class="far fa-trash-alt"></i>
+                        @T("Admin.Common.Delete")
+                    </span>
+                }
+                <button type="submit" id="btnRefreshPage" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshPage').click(function () {
+                            //refresh pageed
+                            location.reload();
+                        });
+                    });
+                </script>
+                @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.OrderDetailsButtons, additionalData = Model })
+            </div>
+        </div>
+
+        <div asp-validation-summary="All"></div>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="form-horizontal">
+
+                    <tvprog-cards id="order-cards">
+                        <tvprog-card asp-name="order-info" asp-icon="fas fa-info" asp-title="@T("Admin.Orders.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_OrderDetails.Info", Model)</tvprog-card>
+                        <tvprog-card asp-name="order-billing-shipping" asp-icon="fas fa-truck" asp-title="@T("Admin.Orders.BillingShippingInfo")" asp-hide-block-attribute-name="@hideBillingAndShippingBlockAttributeName" asp-hide="@hideBillingAndShippingBlock" asp-advanced="false">@await Html.PartialAsync("_OrderDetails.BillingShipping", Model)</tvprog-card>
+                        <tvprog-card asp-name="order-products" asp-icon="fas fa-th-list" asp-title="@T("Admin.Orders.Products")" asp-hide-block-attribute-name="@hideProductsBlockAttributeName" asp-hide="@hideProductsBlock" asp-advanced="true">@await Html.PartialAsync("_OrderDetails.Products", Model)</tvprog-card>
+
+                        @if (!Model.IsLoggedInAsVendor)
+                        {
+                            <tvprog-card asp-name="order-notes" asp-icon="far fa-sticky-note" asp-title="@T("Admin.Orders.OrderNotes")" asp-hide-block-attribute-name="@hideNotesBlockAttributeName" asp-hide="@hideNotesBlock" asp-advanced="true">@await Html.PartialAsync("_OrderDetails.Notes", Model)</tvprog-card>
+                        }
+
+                        @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.OrderDetailsBlock, additionalData = Model })
+                    </tvprog-cards>
+                </div>
+            </div>
+        </section>
+    </form>
+<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="order-delete" />

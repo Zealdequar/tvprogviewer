@@ -1,0 +1,31 @@
+﻿@model UserTokenEditModel
+
+@{
+    Layout = "_ColumnsTwo";
+    TvProgHtml.AddTitleParts(T("Plugins.Payments.CyberSource.PaymentTokens").Text);
+    TvProgHtml.AppendPageCssClassParts("html-account-page");
+}
+
+@section left
+{
+    @(await Component.InvokeAsync(typeof(UserNavigationViewComponent), new { selectedTabId = CyberSourceDefaults.UserTokensMenuTab }))
+}
+
+<form asp-route="@CyberSourceDefaults.UserTokenEditRouteName" method="post">
+    <div class="page account-page address-edit-page">
+        <div class="page-title">
+            <h1>@T("Account.MyAccount") - @T("Plugins.Payments.CyberSource.PaymentTokens.Edit")</h1>
+        </div>
+        <div class="page-body">
+            <div asp-validation-summary="ModelOnly" class="message-error"></div>
+            @{
+                var dataDictAddress = new ViewDataDictionary(ViewData);
+                dataDictAddress.TemplateInfo.HtmlFieldPrefix = "UserToken";
+                @await Html.PartialAsync("~/Plugins/Payments.CyberSource/Views/UserToken/_CreateOrUpdateToken.cshtml", Model.UserToken, dataDictAddress)
+            }
+            <div class="buttons">
+                <button type="submit" class="button-1 save-address-button">@T("Common.Save")</button>
+            </div>
+        </div>
+    </div>
+</form>

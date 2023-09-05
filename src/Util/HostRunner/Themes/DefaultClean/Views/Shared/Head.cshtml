@@ -1,0 +1,14 @@
+﻿@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Services.Helpers
+@using TvProgViewer.TvProgUpdaterV3
+
+@inject CatalogSettings catalogSettings
+@inject IThemeContext themeContext
+@inject IUserAgentHelper userAgentHelper
+
+@{
+    Layout ="";
+    var themeName = await themeContext.GetWorkingThemeNameAsync();
+   
+}

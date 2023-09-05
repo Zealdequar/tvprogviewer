@@ -1,0 +1,137 @@
+﻿@using TvProgViewer.Core.Configuration
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Core.Domain.Common
+@using TvProgViewer.Core.Domain.Seo
+@using TvProgViewer.Services.Security
+@using TvProgViewer.Core.Events
+
+@inject CatalogSettings catalogSettings
+@inject CommonSettings commonSettings
+@inject IEventPublisher eventPublisher
+@inject IPermissionService permissionService
+@inject SeoSettings seoSettings
+@inject AppSettings appSettings
+
+@{
+    if (catalogSettings.DisplayAllPicturesOnCatalogPages)
+    {
+        TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/swiper/swiper-bundle.min.js");
+    }
+    TvProgHtml.AppendCssFileParts("~/css/styles.css");
+    TvProgHtml.AppendCssFileParts("~/lib_npm/bootstrap/css/bootstrap.min.css");
+    TvProgHtml.AppendCssFileParts("~/css/jsTree/themes/default/style.css");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery/jquery.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.countryselect.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.ajaxcart.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");
+    //when jQuery migrate script logging is active you will see the log in the browser console
+    if (commonSettings.JqueryMigrateScriptLoggingActive)
+    {
+        TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.js");
+    }
+    else
+    {
+        TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-migrate/jquery-migrate.min.js");
+    }
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-ui-dist/jquery-ui.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation/jquery.validate.min.js");
+        TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/bootstrap/js/bootstrap.min.js");
+
+    //custom tag(s);
+    if (!string.IsNullOrEmpty(seoSettings.CustomHeadTags))
+    {
+        TvProgHtml.AppendHeadCustomParts(seoSettings.CustomHeadTags);
+    }
+
+    var displayMiniProfiler = appSettings.Get<CommonConfig>().MiniProfilerEnabled && await permissionService.AuthorizeAsync(StandardPermissionProvider.AccessProfiling);
+
+    //event
+    await eventPublisher.PublishAsync(new PageRenderingEvent(TvProgHtml));
+
+    var title = await TvProgHtml.GenerateTitleAsync();
+    var description = await @TvProgHtml.GenerateMetaDescriptionAsync();
+    var keywords = await TvProgHtml.GenerateMetaKeywordsAsync();
+}
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName" dir="@Html.GetUIDirection(!await Html.ShouldUseRtlThemeAsync())" class="@TvProgHtml.GeneratePageCssClasses()">
+<head>
+    <title>@title</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="description" content="@description" />
+    <meta name="keywords" content="@keywords" />
+    <meta name="generator" content="TvProgViewer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+    <meta name="yandex-verification" content="44a70f2cf486e2a5" />
+    <!-- Open Graph Snippets -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Программа передач по всем каналам сейчас, следом, поиск телепередач — TVProgViewer">
+    <meta property="og:description" content="TVProgViewer — это портал для удобного просмотра и тонкой настройки программы телепередач с анонсами. 🖥 На портале есть возможность поиска передач в эфирной сетке по дням, каналам и жанрам. 🖥 Обзор программы на сейчас, затем в эфире, по дням и каналам. 🖥 Программа передач регулярно обновляется и всегда остаётся в актуальном состоянии на неделю.">
+    <meta property="og:url" content="https://tvprogviewer.ru">
+    <meta property="og:image" content="https://tvprogviewer.ru/images/i/TVProgViewer_original.png">
+    <meta property="og:site_name" content="TVProgViewer">
+    <meta property="og:locale" content="ru_RU">
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+            m[i].l = 1 * new Date(); k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+        })
+            (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(54311379, "init", {
+            clickmap: true,
+            trackLinks: true,
+            accurateTrackBounce: true,
+            webvisor: true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/54311379" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- Yandex.Metrika counter -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-142558739-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-142558739-2');
+    </script>
+    @TvProgHtml.GenerateHeadCustom()
+    @*This is used so that themes can inject content into the header*@
+    @await Html.PartialAsync("Head")
+
+    @TvProgHtml.GenerateCssFiles()
+
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeadHtmlTag })
+    @TvProgHtml.GenerateCanonicalUrls()
+    @await Component.InvokeAsync(typeof(NewsRssHeaderLinkViewComponent))
+    @await Component.InvokeAsync(typeof(BlogRssHeaderLinkViewComponent))
+    @*Insert favicon and app icons head code*@
+    @await Component.InvokeAsync(typeof(FaviconViewComponent))
+    @if (displayMiniProfiler)
+    {
+        <mini-profiler />
+    }
+    @TvProgHtml.GenerateScripts(ResourceLocation.Head)
+    @TvProgHtml.GenerateInlineScripts(ResourceLocation.Head)
+    <!--Powered by TvProgViewer - https://tvProgViewer.ru-->
+    
+    @Html.Raw(commonSettings.HeaderCustomHtml)
+</head>
+<body>
+    <tvprog-antiforgery-token />
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" role="navigation">
+        <div class="container">
+            @await Component.InvokeAsync("Logo")
+            @await Component.InvokeAsync("HeaderLinks")
+        </div>
+    </nav>
+    @RenderBody()
+
+    @TvProgHtml.GenerateScripts(ResourceLocation.Footer)
+    @TvProgHtml.GenerateInlineScripts(ResourceLocation.Footer)
+    
+    @Html.Raw(commonSettings.FooterCustomHtml)
+</body>
+</html>

@@ -1,0 +1,1 @@
+﻿This folder contains tests for TvProgViewer.Admin project (admin area)

@@ -1,0 +1,25 @@
+﻿@inherits TvProgViewer.Web.Framework.Mvc.Razor.TvProgRazorPage<TModel>
+@inject TvProgViewer.Services.Common.IGenericAttributeService genericAttributeService
+@inject TvProgViewer.Services.Stores.IStoreService storeService
+@inject IWorkContext workContext
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, TvProgViewer.Web.Framework
+
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using Microsoft.AspNetCore.Routing
+@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Common
+@using TvProgViewer.Core.Infrastructure
+@using TvProgViewer.Plugin.Widgets.FacebookPixel
+@using TvProgViewer.Plugin.Widgets.FacebookPixel.Models
+@using TvProgViewer.Services.Events
+@using TvProgViewer.Web.Framework
+@using TvProgViewer.Web.Framework.Models
+@using TvProgViewer.Web.Framework.Events
+@using TvProgViewer.Web.Framework.Extensions
+@using TvProgViewer.Web.Framework.Infrastructure
+@using TvProgViewer.Web.Framework.Models.DataTables
+@using TvProgViewer.Web.Framework.Security.Captcha
+@using TvProgViewer.Web.Framework.Security.Honeypot
+@using TvProgViewer.Web.Framework.Themes
+@using TvProgViewer.Web.Framework.UI

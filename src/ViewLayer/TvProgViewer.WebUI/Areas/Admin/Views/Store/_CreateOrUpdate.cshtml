@@ -1,0 +1,34 @@
+﻿@model StoreModel
+
+@{
+    const string hideInfoBlockAttributeName = "StoreDetails.HideInfoBlock";
+    var user = await workContext.GetCurrentUserAsync();
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideInfoBlockAttributeName);
+
+    const string hideSeoBlockAttributeName = "StoreDetails.HideSeoBlock";
+    var hideSeoBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideSeoBlockAttributeName, defaultValue: true);
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-12 clearfix">
+                    <div class="float-left">
+                        @await Component.InvokeAsync(typeof(SettingModeViewComponent), new { modeName = "store-advanced-mode" })
+                    </div>
+                </div>
+            </div>
+            
+            <tvprog-cards id="store-item-cards">
+                @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.StoreDetailsTop, additionalData = Model })
+                <tvprog-card asp-name="store-item-info" asp-icon="fas fa-info" asp-title="@T("Admin.Configuration.Stores.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>
+                <tvprog-card asp-name="store-item-seo" asp-icon="fas fa-search-plus" asp-title="@T("Admin.Common.SEO")" asp-hide-block-attribute-name="@hideSeoBlockAttributeName" asp-advanced="true" asp-hide="@hideSeoBlock">@await Html.PartialAsync("_CreateOrUpdate.Seo", Model)</tvprog-card>
+                @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.StoreDetailsBottom, additionalData = Model })
+            </tvprog-cards>
+        </div>
+    </div>
+</section>

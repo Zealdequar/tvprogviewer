@@ -1,0 +1,70 @@
+﻿@model OnlineUserSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Users.OnlineUsers").Text;
+    //active menu item (system name)
+    TvProgHtml.SetActiveMenuItemSystemName("Online customers");
+}
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Users.OnlineUsers")
+    </h1>
+    <div class="float-right">
+        &nbsp;
+        @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.OnlineUserListButtons, additionalData = Model })
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+    <div class="form-horizontal">
+        <div class="cards-group">
+            <div class="card card-default">
+                <div class="card-body">
+                    <tvprog-doc-reference asp-string-resource="@T("Admin.Documentation.Reference.OnlineUsers", Docs.OnlineUsers + Utm.OnAdmin)" />
+
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "onlinecustomers-grid",
+                        UrlRead = new DataUrl("List", "OnlineUser", null),
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(OnlineUserModel.UserInfo))
+                            {
+                                Title = T("Admin.Users.OnlineUsers.Fields.UserInfo").Text,
+                                Width = "100",
+                                Render = new RenderLink(new DataUrl("~/Admin/User/Edit", nameof(UserModel.Id)))
+                            },
+                            new ColumnProperty(nameof(OnlineUserModel.LastIpAddress))
+                            {
+                                Title = T("Admin.Users.OnlineUsers.Fields.IPAddress").Text,
+                                Width = "100"
+                            },
+                            new ColumnProperty(nameof(OnlineUserModel.Location))
+                            {
+                                Title = T("Admin.Users.OnlineUsers.Fields.Location").Text,
+                                Width = "100"
+                            },
+                            new ColumnProperty(nameof(OnlineUserModel.LastActivityDate))
+                            {
+                                Title = T("Admin.Users.OnlineUsers.Fields.LastActivityDate").Text,
+                                Width = "200",
+                                Render = new RenderDate()
+                            },
+                            new ColumnProperty(nameof(OnlineUserModel.LastVisitedPage))
+                            {
+                                Title = T("Admin.Users.OnlineUsers.Fields.LastVisitedPage").Text,
+                                Width = "100"
+                            }
+                        }
+                    })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>

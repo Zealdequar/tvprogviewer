@@ -1,0 +1,42 @@
+﻿@model MultiFactorAuthenticationProviderModel
+
+@using TvProgViewer.Core
+@using TvProgViewer.Services.Users
+@inject IWorkContext workContext
+@inject IUserService customerService
+
+@{
+    var isRegisterUser = await customerService.IsRegisteredAsync(await workContext.GetCurrentUserAsync());
+    Layout = isRegisterUser ? "_ColumnsTwo" : "_ColumnsOne";
+
+    //title
+    TvProgHtml.AddTitleParts(T("PageTitle.MultiFactorAuthentication").Text);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-account-page");
+}
+
+@if (isRegisterUser)
+{
+    @section left
+    {
+        @await Component.InvokeAsync(typeof(UserNavigationViewComponent), new { selectedTabId = UserNavigationEnum.MultiFactorAuthentication })
+    }
+}
+
+<div class="page account-page multi-factor-authentication-config-page">
+    <div class="page-title">
+        @if (isRegisterUser)
+        {
+            <h1>@T("PageTitle.MultiFactorAuthentication") - @Model.Name</h1>
+        }
+        else
+        {
+            <h1>@T("PageTitle.MultiFactorAuthentication")</h1>
+        }
+    </div>
+    <div class="page-body">
+        <div class="configure-provider">
+            @(await Component.InvokeAsync(Model.ViewComponent)) 
+        </div>
+    </div>
+</div>

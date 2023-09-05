@@ -1,0 +1,20 @@
+﻿@inherits TvProgViewer.TvProgUpdaterV3.Mvc.Razor.TvProgRazorPage<TModel>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@*we remove the default InputTagHelper to prevent the checkbox duplicating: https://stackoverflow.com/questions/42544961/asp-net-core-custom-input-tag-helper-rendering-duplicate-checkboxes*@
+@removeTagHelper Microsoft.AspNetCore.Mvc.TagHelpers.InputTagHelper, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, TvProgViewer.Web.Framework
+@addTagHelper *, MiniProfiler.AspNetCore.Mvc
+
+@inject ITvProgHtmlHelper TvProgHtml
+
+@using System.Globalization;
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using Microsoft.Extensions.Primitives
+@using TvProgViewer.TvProgUpdaterV3
+@using TvProgViewer.TvProgUpdaterV3.Extensions
+@using TvProgViewer.TvProgUpdaterV3.Infrastructure
+@using TvProgViewer.TvProgUpdaterV3.Models
+@using TvProgViewer.TvProgUpdaterV3.Security.Captcha
+@using TvProgViewer.TvProgUpdaterV3.Security.Honeypot
+@using TvProgViewer.TvProgUpdaterV3.Themes
+@using TvProgViewer.TvProgUpdaterV3.UI

@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Copyright>Copyright © TvProgViewer</Copyright>
+    <Company>TvProgViewer</Company>
+    <Authors>TvProgViewer</Authors>
+    <Version>4.5.0.0</Version>
+    <Description>The TvProgViewer.Data project contains a set of classes and functions for reading from and writing to a database or other data store. It helps separate data-access logic from your business objects.</Description>
+    <PackageLicenseUrl>https://tvprogviewer.ru/license</PackageLicenseUrl>
+    <PackageProjectUrl>https://tvprogviewer.ru/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Zealdequar/tvprogviewer</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <SatelliteResourceLanguages>ru</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentMigrator" Version="3.3.2" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
+    <PackageReference Include="linq2db" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
+    <PackageReference Include="MySqlConnector" Version="2.2.7" />
+    <PackageReference Include="Npgsql" Version="7.0.4" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TvProgViewer.Core\TvProgViewer.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TvProgMain\Users\" />
+  </ItemGroup>
+
+</Project>

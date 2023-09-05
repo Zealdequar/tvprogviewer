@@ -1,0 +1,33 @@
+﻿@model AffiliateModel
+
+@{
+    const string hideInfoBlockAttributeName = "AffiliatePage.HideInfoBlock";
+    var user = await workContext.GetCurrentUserAsync();
+    var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideInfoBlockAttributeName);
+
+    const string hideUsersBlockAttributeName = "AffiliatePage.HideUsersBlock";
+    var hideUsersBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideUsersBlockAttributeName, defaultValue: true);
+
+    const string hideOrdersBlockAttributeName = "AffiliatePage.HideOrdersBlock";
+    var hideOrdersBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideOrdersBlockAttributeName, defaultValue: true);
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <tvprog-cards id="affiliate-cards">
+                <tvprog-card asp-name="affiliate-info" asp-icon="fas fa-info" asp-title="@T("Admin.Affiliates.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>
+                @if (Model.Id > 0)
+                {
+                    <tvprog-card asp-name="affiliate-users" asp-icon="fas fa-user" asp-title="@T("Admin.Affiliates.Users")" asp-hide-block-attribute-name="@hideUsersBlockAttributeName" asp-hide="@hideUsersBlock">@await Html.PartialAsync("_CreateOrUpdate.Users", Model)</tvprog-card>
+                    <tvprog-card asp-name="affiliate-orders" asp-icon="fas fa-cart-plus" asp-title="@T("Admin.Affiliates.Orders")" asp-hide-block-attribute-name="@hideOrdersBlockAttributeName" asp-hide="@hideOrdersBlock">@await Html.PartialAsync("_CreateOrUpdate.Orders", Model)</tvprog-card>
+                }
+
+                @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.AffiliateDetailsBlock, additionalData = Model })
+            </tvprog-cards>
+        </div>
+    </div>
+</section>

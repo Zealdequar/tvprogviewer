@@ -1,0 +1,45 @@
+﻿@inherits TvProgViewer.Web.Framework.Mvc.Razor.TvProgRazorPage<TModel>
+
+@inject ITvProgHtmlHelper TvProgHtml
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@*we remove the default InputTagHelper to prevent the checkbox duplicating: https://stackoverflow.com/questions/42544961/asp-net-core-custom-input-tag-helper-rendering-duplicate-checkboxes*@
+@removeTagHelper Microsoft.AspNetCore.Mvc.TagHelpers.InputTagHelper, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, TvProgViewer.Web.Framework
+@addTagHelper *, MiniProfiler.AspNetCore.Mvc
+
+@using System.Globalization;
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Mvc.ViewFeatures
+@using Microsoft.Extensions.Primitives
+@using static TvProgViewer.Services.Common.TvProgLinksDefaults
+@using TvProgViewer.WebUI.Components
+@using TvProgViewer.WebUI.Extensions
+@using TvProgViewer.Web.Framework
+@using TvProgViewer.Web.Framework.Events
+@using TvProgViewer.Web.Framework.Extensions
+@using TvProgViewer.Web.Framework.Infrastructure
+@using TvProgViewer.Web.Framework.Models
+@using TvProgViewer.Web.Framework.Mvc.Routing
+@using TvProgViewer.Web.Framework.Security.Captcha
+@using TvProgViewer.Web.Framework.Security.Honeypot
+@using TvProgViewer.Web.Framework.Themes
+@using TvProgViewer.Web.Framework.UI
+@using TvProgViewer.WebUI.Models.Blogs
+@using TvProgViewer.WebUI.Models.Boards
+@using TvProgViewer.WebUI.Models.Catalog
+@using TvProgViewer.WebUI.Models.Checkout
+@using TvProgViewer.WebUI.Models.Cms
+@using TvProgViewer.WebUI.Models.Common
+@using TvProgViewer.WebUI.Models.User
+@using TvProgViewer.WebUI.Models.Media
+@using TvProgViewer.WebUI.Models.News
+@using TvProgViewer.WebUI.Models.Newsletter
+@using TvProgViewer.WebUI.Models.Order
+@using TvProgViewer.WebUI.Models.Polls
+@using TvProgViewer.WebUI.Models.PrivateMessages
+@using TvProgViewer.WebUI.Models.Profile
+@using TvProgViewer.WebUI.Models.ShoppingCart
+@using TvProgViewer.WebUI.Models.Sitemap
+@using TvProgViewer.WebUI.Models.Topics
+@using TvProgViewer.WebUI.Models.Vendors

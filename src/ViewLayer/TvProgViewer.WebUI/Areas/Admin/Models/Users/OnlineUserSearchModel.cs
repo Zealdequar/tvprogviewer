@@ -1,0 +1,11 @@
+﻿using TvProgViewer.Web.Framework.Models;
+
+namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
+{
+    /// <summary>
+    /// Represents an online user search model
+    /// </summary>
+    public partial record OnlineUserSearchModel : BaseSearchModel
+    {
+    }
+}
