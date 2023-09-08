@@ -14,19 +14,21 @@
         };
         AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
     </script>
-    <div class="master-wrapper-content">
-        <div class="header-upper">
-            <div class="header-selectors-wrapper">
-               <label for="userProvider">Провайдер ТВ-программы&nbsp;</label>
-                    @await Component.InvokeAsync("TvProgProviderSelector")
-               <label for="userTypeProg">Тип ТВ-программы&nbsp;</label>
-                    @await Component.InvokeAsync("TvTypeProgSelector")
-               <label for="userCategory">Категория&nbsp;</label>
-                    @await Component.InvokeAsync("TvCategorySelector")
-                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderSelectors })
+    
+        <div class="master-wrapper-content">
+            <div class="header-upper">
+                <div class="form-group row">
+                     <label for="userProvider" class="col-xs-2 col-form-label header-label">Провайдер ТВ-программы</label>
+                     @await Component.InvokeAsync("TvProgProviderSelector")
+                     <label for="userTypeProg" class="col-xs-2 col-form-label header-label">Тип ТВ-программы</label>
+                     @await Component.InvokeAsync("TvTypeProgSelector")
+                     <label for="userCategory" class="col-xs-2 col-form-label header-label">Категория</label>
+                     @await Component.InvokeAsync("TvCategorySelector")
+                </div>
             </div>
-         </div>
-         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentBefore })
+        
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderSelectors })
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ContentBefore })
 
             @if (IsSectionDefined("Breadcrumb"))
             {

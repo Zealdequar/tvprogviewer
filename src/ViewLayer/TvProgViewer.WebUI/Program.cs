@@ -1,6 +1,7 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TvProgViewer.Core.Configuration;
 using TvProgViewer.Core.Infrastructure;
@@ -16,6 +17,9 @@ if (!string.IsNullOrEmpty(builder.Environment?.EnvironmentName))
     builder.Configuration.AddJsonFile(path, true, true);
 }
 builder.Configuration.AddEnvironmentVariables();
+
+// Добавить кэширование ответов:
+builder.Services.AddResponseCaching();
 
 //load application settings
 builder.Services.ConfigureApplicationSettings(builder);
@@ -39,6 +43,8 @@ builder.Services.ConfigureApplicationServices(builder);
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+app.UseResponseCaching();
 //configure the application HTTP request pipeline
 app.ConfigureRequestPipeline();
 app.StartEngine();

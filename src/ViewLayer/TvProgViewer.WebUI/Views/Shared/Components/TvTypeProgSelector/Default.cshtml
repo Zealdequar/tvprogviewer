@@ -13,7 +13,7 @@
                 Value = @Url.RouteUrl("ChangeTypeProg", new { usertypeprog = x.Id, returnUrl }, webHelper.GetCurrentRequestProtocol()) + ";" + x.Id,
                 Selected = x.Id.Equals(Model.CurrentTypeProgId)
             }).ToListAsync();
-            <select id="userTypeProg" name="userTypeProg" asp-items="@typeProgs" onchange="setLocationWithPart(this.value);" aria-label="@T("TypeProg.Selector.Label")"></select>
+            <select id="userTypeProg" class="form-control header-select" name="userTypeProg" asp-items="@typeProgs" onchange="setLocationWithPart(this.value);" aria-label="@T("TypeProg.Selector.Label")"></select>
         }
     </div>
 }

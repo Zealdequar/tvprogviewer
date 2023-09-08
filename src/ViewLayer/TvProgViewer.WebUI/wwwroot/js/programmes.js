@@ -631,10 +631,12 @@ function fillUserByDay(date, channelId) {
 
                     $("tr.jqgrow td input", "#TVProgrammeByDaysGrid").click(function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
+                            $("#mainToolByDays").show(50); 
                             $("#anonsToolByDays").show(50);
                             $("#anonsDescrByDays").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
                         }
                         else {
+                            $("#mainToolByDays").hide(50); 
                             $("#anonsToolByDays").hide(50);
                             $("#anonsDescrByDays").hide(150);
                         }
@@ -749,10 +751,12 @@ function fillUserByChannels(date, channelId) {
 
                     $("tr.jqgrow td input", "#TVProgrammeByChannelsGrid").click(function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
+                            $("#mainToolByChannels").show(50);
                             $("#anonsToolByChannels").show(50);
                             $("#anonsDescrByChannels").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
                         }
                         else {
+                            $("#mainToolByChannels").hide(50);
                             $("#anonsToolByChannels").hide(50);
                             $("#anonsDescrByChannels").hide(150);
                         }

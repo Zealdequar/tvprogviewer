@@ -4,5 +4,11 @@
     "inputFiles": [
       "wwwroot/js/programmes.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/user-channels.min.js",
+    "inputFiles": [
+      "wwwroot/js/user-channels.js"
+    ]
   }
 ]

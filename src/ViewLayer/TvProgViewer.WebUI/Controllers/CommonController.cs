@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TvProgViewer.Core;
@@ -23,13 +24,14 @@ using TvProgViewer.Web.Framework.Mvc.Filters;
 using TvProgViewer.Web.Framework.Themes;
 using TvProgViewer.WebUI.Models.Common;
 using TvProgViewer.WebUI.Models.Sitemap;
+using TvProgViewer.Services.TvProgMain;
 
 namespace TvProgViewer.WebUI.Controllers
 {
     [AutoValidateAntiforgeryToken]
     public partial class CommonController : BasePublicController
     {
-        #region Fields
+        #region Поля
 
         private readonly CaptchaSettings _captchaSettings;
         private readonly CommonSettings _commonSettings;
@@ -51,10 +53,11 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly SitemapXmlSettings _sitemapXmlSettings;
         private readonly StoreInformationSettings _storeInformationSettings;
         private readonly VendorSettings _vendorSettings;
+        private readonly IProgrammeService _programmeService;
 
         #endregion
 
-        #region Ctor
+        #region Конструктор
 
         public CommonController(CaptchaSettings captchaSettings,
             CommonSettings commonSettings,
@@ -75,7 +78,8 @@ namespace TvProgViewer.WebUI.Controllers
             SitemapSettings sitemapSettings,
             SitemapXmlSettings sitemapXmlSettings,
             StoreInformationSettings storeInformationSettings,
-            VendorSettings vendorSettings)
+            VendorSettings vendorSettings,
+            IProgrammeService programmeService)
         {
             _captchaSettings = captchaSettings;
             _commonSettings = commonSettings;
@@ -97,19 +101,76 @@ namespace TvProgViewer.WebUI.Controllers
             _sitemapXmlSettings = sitemapXmlSettings;
             _storeInformationSettings = storeInformationSettings;
             _vendorSettings = vendorSettings;
+            _programmeService = programmeService;
         }
 
         #endregion
 
-        #region Methods
+        #region Методы
 
-        //page not found
+        // Страницы не существует:
         public virtual IActionResult PageNotFound()
         {
             Response.StatusCode = 404;
             Response.ContentType = "text/html";
 
             return View();
+        }
+
+        // Установка ТВ-провайдера       
+        [CheckAccessClosedStore(true)]
+        [CheckAccessPublicStore(true)]
+        public virtual async Task<IActionResult> SetProvider(int userProvider, string returnUrl = "")
+        {
+            var provider = await _programmeService.GetProviderByIdAsync(userProvider);
+            if (provider != null)
+                await _workContext.SetWorkingProviderAsync(provider);
+
+            if (string.IsNullOrEmpty(returnUrl))
+                returnUrl = Url.RouteUrl("Homepage");
+
+            if (!Url.IsLocalUrl(returnUrl))
+                returnUrl = Url.RouteUrl("Homepage");
+
+            return Redirect(returnUrl);
+        }
+
+        // Установка типа ТВ-программы
+        [CheckAccessClosedStore(true)]
+        [CheckAccessPublicStore(true)]
+        public virtual async Task<IActionResult> SetTypeProg(int userTypeProg, string returnUrl = "")
+        {
+            var typeProg = await _programmeService.GetTypeProgByIdAsync(userTypeProg);
+            if (typeProg != null)
+                await _workContext.SetWorkingTypeProgAsync(typeProg);
+
+            if (string.IsNullOrEmpty(returnUrl))
+                returnUrl = Url.RouteUrl("Homepage");
+
+            if (!Url.IsLocalUrl(returnUrl))
+                returnUrl = Url.RouteUrl("Homepage");
+
+            return Redirect(returnUrl);
+        }
+
+        // Установка категории ТВ-программы
+        [CheckAccessClosedStore(true)]
+        [CheckAccessPublicStore(true)]
+        public virtual async Task<IActionResult> SetCategory(string userCategory, string returnUrl = "")
+        {
+            var categories = await _programmeService.GetCategoriesAsync();
+            categories.Insert(0, "Все категории");
+            var category = categories.SingleOrDefault(x => x == userCategory);
+            if (category != null)
+                await _workContext.SetWorkingCategoryAsync(category);
+
+            if (string.IsNullOrEmpty(returnUrl))
+                returnUrl = Url.RouteUrl("Homepage");
+
+            if (!Url.IsLocalUrl(returnUrl))
+                returnUrl = Url.RouteUrl("Homepage");
+
+            return Redirect(returnUrl);
         }
 
         //available even when a store is closed

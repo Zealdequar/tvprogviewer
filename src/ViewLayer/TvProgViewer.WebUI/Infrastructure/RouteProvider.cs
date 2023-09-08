@@ -489,6 +489,22 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"catalog/getcatalogsubcategories",
                 defaults: new { controller = "Catalog", action = "GetCatalogSubCategories" });
 
+            // Изменение ТВ-провайдера (AJAX ссылка):
+            endpointRouteBuilder.MapControllerRoute("ChangeProvider", $"changeprovider/{{userprovider:min(0)}}",
+                new { controller = "Common", action = "SetProvider" });
+
+            // Изменение типа ТВ-программы (AJAX ссылка):
+            endpointRouteBuilder.MapControllerRoute("ChangeTypeProg", $"changetypeprog/{{usertypeprog:min(0)}}",
+                new { controller = "Common", action = "SetTypeProg" });
+
+            // Изменение категории ТВ-программы (AJAX ссылка):
+            endpointRouteBuilder.MapControllerRoute("ChangeCategory", $"changecategory/{{usercategory:minlength(0)}}",
+                new { controller = "Common", action = "SetCategory" });
+
+            //change language (AJAX link)
+            endpointRouteBuilder.MapControllerRoute("ChangeLanguage", $"changelanguage/{{langid:min(0)}}",
+                new { controller = "Common", action = "SetLanguage" });
+
             //Catalog products (AJAX)
             endpointRouteBuilder.MapControllerRoute(name: "GetCategoryProducts",
                 pattern: $"category/products/",

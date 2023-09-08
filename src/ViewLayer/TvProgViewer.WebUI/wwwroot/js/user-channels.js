@@ -20,7 +20,7 @@ $(function () {
     $("#choicePnl").show();
 });
 
-$("#ChannelTool").click(function () {
+function chAction() {
     let jsonData = window.localStorage.getItem("optChans");
     if (jsonData) {
         for (let i in jsonData) {
@@ -34,8 +34,14 @@ $("#ChannelTool").click(function () {
         }
     }
     window.localStorage.setItem("optChans", "[]");
-});
+}
+
+$("#ChannelTool").click(chAction);
+$("#ChannelToolBottom").click(chAction);
 $("#ApplyTool").click(function () {
+    document.location.href = "/";
+});
+$("#ApplyToolBottom").click(function () {
     document.location.href = "/";
 });
 // Заполнение раскрывающихся списков
@@ -142,9 +148,12 @@ function setGrid()
             $(window).triggerHandler('resize.jqGrid');
             $("tr.jqgrow td input", "#tblSystemChannelsGrid").click(function () {
                // if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
-                    $("#mainToolChannel").show(50);
-                    $("#ChannelTool").show(50);
-                    $("#ApplyTool").show(50);
+                $("#mainToolChannel").show(50);
+                $("#ChannelTool").show(100);
+                $("#ApplyTool").show(100);
+                $("#mainToolChannelBottom").show(50);
+                $("#ChannelToolBottom").show(100);
+                $("#ApplyToolBottom").show(100);
                 /*}
                 else {
                     $("#ChannelTool").hide(50);
@@ -185,8 +194,11 @@ function setGrid()
                 window.localStorage.setItem("optChans", JSON.stringify(checkedArray));
             }
             $("#mainToolChannel").show(50);
-            $("#ChannelTool").show(50);
-            $("#ApplyTool").show(50);
+            $("#ChannelTool").show(100);
+            $("#ApplyTool").show(100);
+            $("#mainToolChannelBottom").show(50);
+            $("#ChannelToolBottom").show(100);
+            $("#ApplyToolBottom").show(100);
         },
         onSelectAll: function (rowIds, status) {  // Возникает когда всё выбрано на страничке пейджинга
             // Удалить все страницы в массиве checkedArray

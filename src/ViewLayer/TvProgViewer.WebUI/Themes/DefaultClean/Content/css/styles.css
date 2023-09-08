@@ -41,7 +41,7 @@
 }
  .tvprog-brand {
      position: absolute;
-     top: -47px;
+     top: -37px;
      left: 14px;
 }
  .center {
@@ -106,6 +106,43 @@
      position: sticky;
      top: 0;
      z-index: 101;
+}
+
+ .tv-chan-panel {
+    position: relative;
+    height: 55px;
+}
+
+ .chan-header {
+    position: absolute;
+    left: 0;
+    padding: 8px 7px;
+}
+
+ .channel-text {
+    position: absolute;
+    font-size: 22pt;
+    color: olive;
+    height: 52px;
+    left: 60px;
+    top: 10px;
+}
+
+ .date-of-prog {
+    position: absolute;
+    height: 52px;
+    right: 100px;
+    font-size: 16pt;
+    color: olive;
+    top: 18px;
+}
+ .tv-search-container {
+    height: 39px;
+    padding-left: 12px;
+}
+ 
+ .dates-search-container {
+    margin-top: 10px;
 }
  
  .panelUpDown {
@@ -336,6 +373,28 @@
  .progress-bar{
      background-color: lightgreen !important;
 }
+ .height-panel {
+    height: 34px;
+}
+.divider-3t {
+    margin-top: 3px;
+}
+ .divider-3b {
+    margin-bottom: 3px;
+}
+ .btn-chan-reset {
+    width: 333px;
+    padding: 2px 2px;
+}
+.btn-chan-accept {
+    width: 120px;
+    padding: 2px 2px;
+}
+.btn-anons{
+    padding: 2px 2px;
+    height: 30px;
+    width: 30px;
+}
 /*********** GLOBAL STYLES **********/
  body {
      max-width: 100%;
@@ -380,6 +439,11 @@
     /*safari padding fix*/
      padding: 6px;
 }
+ .header-select {
+     font-size: 10pt;
+     height: 28px;
+     padding: 4px;
+ }
  input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
      border-color: #ccc;
      color: #444;
@@ -399,6 +463,12 @@
      font-weight: bold;
      font-size: 12px;
 }
+
+ .header-label{
+     font-size: 10pt !important;
+     margin-left: 15px;
+     margin-right: 10px;
+ }
  .master-wrapper-content {
      position: relative;
      z-index: 0;
@@ -6916,6 +6986,4 @@
 button, input, optgroup, select, textarea {
     font-size: 12pt !important;	
 }
-.height-panel {
-    height: 34px;
-}
+
