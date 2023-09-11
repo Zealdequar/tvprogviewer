@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using TvProgViewer.WebUI.Models.Tree;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
+using System.Linq;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -280,7 +281,7 @@ namespace TvProgViewer.WebUI.Controllers
                         children = new List<TreeNode>()
                     };
                     oneHalfRoot.children.Add(dayNode);
-                    foreach (UserChannel channel in chanList)
+                    foreach (UserChannel channel in chanList.OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId))
                     {
                         TreeNode channelNode = new TreeNode()
                         {
@@ -305,7 +306,7 @@ namespace TvProgViewer.WebUI.Controllers
                         children = new List<TreeNode>()
                     };
                     twoHalfRoot.children.Add(dayNode);
-                    foreach (UserChannel channel in chanList)
+                    foreach (UserChannel channel in chanList.OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId))
                     {
                         TreeNode channelNode = new TreeNode()
                         {
@@ -322,7 +323,7 @@ namespace TvProgViewer.WebUI.Controllers
             {
                 if (mode == 2)
                 {
-                    foreach (UserChannel channel in chanList)
+                    foreach (UserChannel channel in chanList.OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId))
                     {
                         TreeNode channelNode = new TreeNode()
                         {
@@ -346,7 +347,7 @@ namespace TvProgViewer.WebUI.Controllers
                             channelNode.children.Add(dayNode);
                         }
                     }
-                    foreach (UserChannel channel in chanList)
+                    foreach (UserChannel channel in chanList.OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId))
                     {
                         TreeNode channelNode = new TreeNode()
                         {

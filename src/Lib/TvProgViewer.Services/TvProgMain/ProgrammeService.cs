@@ -354,13 +354,14 @@ namespace TvProgViewer.Services.TvProgMain
                                            null),
                                         Category = pr.Category,
                                         Remain = (int?)(Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, dateTime) * 1.0 / (Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, pr.TsStartMo) * 1.0) * 100.0),
-                                    }).ToListAsync();
+                                        OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
+                                    }).OrderBy(o => o.OrderCol).ThenBy(o => o.InternalChanId).ToListAsync();
                     SetGenres(sp, null);
                     sp = await ChannelIconJoinAsync(sp, TypeProgId, intListChannels);
                     sp = await FilterGenresAsync(sp, genres);
                     sp = await FilterChannelsAsync(sp, channels);
                     count = sp.Count();
-                    systemProgramme = await sp.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanId", sord)
+                    systemProgramme = await sp.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
                                         .Skip((page - 1) * rows).Take(rows)
                                         .ToListAsync<SystemProgramme>();
                     break;
@@ -400,7 +401,8 @@ namespace TvProgViewer.Services.TvProgMain
                                                 _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
                                             null),
                                              Category = pr3.Category,
-                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr3.TsStartMo)
+                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr3.TsStartMo),
+                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr3.ChannelId).SysOrderCol
                                          }).ToListAsync();
 
                         sp2 = await ChannelIconJoinAsync(sp2, TypeProgId, intListChannels);
@@ -423,14 +425,15 @@ namespace TvProgViewer.Services.TvProgMain
                                              TelecastDescr = pr.TelecastDescr,
                                              AnonsContent = pr.AnonsContent,
                                              Category = pr.Category,
-                                             Remain = pr.Remain
-                                         }).ToListAsync();
+                                             Remain = pr.Remain,
+                                             OrderCol = pr.OrderCol
+                                         }).OrderBy(o => o.OrderCol).ThenBy(o => o.OrderCol).ToListAsync();
                         SetGenres(sp3, null);
                         sp3 = await FilterGenresAsync(sp3, genres);
                         sp3 = await FilterChannelsAsync(sp3, channels);
                         count = sp3.Count();
 
-                        systemProgramme = await sp3.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanId", sord)
+                        systemProgramme = await sp3.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
                                         .Skip((page - 1) * rows).Take(rows)
                                         .ToListAsync();
                     }
@@ -453,12 +456,13 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = pr.TsStopMo,
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
                                                 _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
                                                 _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
-                                             null),
+                                             null,
                                              Category = pr.Category,
-                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo)
+                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo),
+                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                          }).ToListAsync();
                         sp4 = await ChannelIconJoinAsync(sp4, TypeProgId, intListChannels);
                         SetGenres(sp4, null);
@@ -466,7 +470,7 @@ namespace TvProgViewer.Services.TvProgMain
                         sp4 = await FilterChannelsAsync(sp4, channels);
                         count = sp4.Count();
 
-                        systemProgramme = await sp4.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalChanId", sord)
+                        systemProgramme = await sp4.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
                                         .Skip((page - 1) * rows).Take(rows)
                                         .ToListAsync<SystemProgramme>();
                     }

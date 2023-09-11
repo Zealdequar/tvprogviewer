@@ -94,7 +94,7 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         /// Порядковый номер телеканала
         /// </summary>
         [DataMember]
-        public int OrderCol { get; set; }
+        public int SysOrderCol { get; set; }
 
         /// <summary>
         /// Пользовательское название телеканала

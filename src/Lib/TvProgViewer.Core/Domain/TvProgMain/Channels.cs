@@ -5,7 +5,7 @@ namespace TvProgViewer.Core.Domain.TvProgMain
     /// <summary>
     /// Телеканалы
     /// </summary>
-    public partial class Channels: BaseEntity
+    public partial class Channels : BaseEntity
     {
         /// <summary>
         /// Идентификатор провайдера
@@ -21,7 +21,7 @@ namespace TvProgViewer.Core.Domain.TvProgMain
         /// Идентификатор изображения
         /// </summary>
         public int? IconId { get; set; }
-        
+
         /// <summary>
         /// Дата создания
         /// </summary>
@@ -41,5 +41,10 @@ namespace TvProgViewer.Core.Domain.TvProgMain
         /// Дата удаления
         /// </summary>
         public DateTime? Deleted { get; set; }
+
+        /// <summary>
+        /// Порядок сортировки
+        /// </summary>
+        public int SysOrderCol { get; set; }
     }
 }

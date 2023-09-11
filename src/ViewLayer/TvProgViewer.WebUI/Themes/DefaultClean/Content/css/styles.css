@@ -544,10 +544,13 @@
  .flyout-cart {
      display: none;
 }
+ .ui-pg-selbox{
+     font-size: 10pt !important;
+ }
 /*********** GLOBAL FORMS ***********/
- .fieldset, .section {
-     position: relative;
-     margin: 0 0 40px;
+.fieldset, .section {
+    position: relative;
+    margin: 0 0 40px;
 }
  .fieldset .title, .section .title {
      margin: 0 0 15px;

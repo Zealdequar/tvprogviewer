@@ -23,16 +23,19 @@ namespace TvProgViewer.Services.TvProgMain
 
         private readonly IRepository<Channels> _channelsRepository;
         private readonly IRepository<MediaPic> _mediaPicRepository;
+        private readonly IRepository<Programmes> _programmesRepository;
 
         #endregion
 
         #region Конструктор
 
         public ChannelService(IRepository<Channels> channelsRepositry,
-                              IRepository<MediaPic> mediaPicRepository)
+                              IRepository<MediaPic> mediaPicRepository,
+                              IRepository<Programmes> programmesRepository)
         {
             _channelsRepository = channelsRepositry;
             _mediaPicRepository = mediaPicRepository;
+            _programmesRepository = programmesRepository;
         }
 
         #endregion
@@ -50,7 +53,8 @@ namespace TvProgViewer.Services.TvProgMain
             var sc = await (from ch in _channelsRepository.Table
                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
                             from mp in chmp.DefaultIfEmpty()
-                            where ch.TvProgProviderId == tvProgProviderId && ch.Deleted == null && (filtData == null || ch.TitleChannel.Contains(filtData))
+                            where ch.TvProgProviderId == tvProgProviderId && ch.Deleted == null && 
+                                        (filtData == null || ch.TitleChannel.Contains(filtData)) 
                             select new SystemChannel
                             {
                                 ChannelId = ch.Id,
@@ -61,11 +65,12 @@ namespace TvProgViewer.Services.TvProgMain
                                 FileName25 = mp.Path25 + mp.FileName,
                                 Title = ch.TitleChannel,
                                 ImageWebSrc = ch.IconWebSrc,
-                                OrderCol = 0
-                            }).OrderBy(o => o.InternalId)
+                                SysOrderCol = ch.SysOrderCol
+                            }).Where(ch => (from pr in _programmesRepository.Table select pr.ChannelId).Contains(ch.ChannelId))
+                              .OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId)
                               .ToListAsync();
             int count = sc.Count();
-            systemChannel = await sc.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "InternalId", sord)
+            systemChannel = await sc.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "SysOrderCol", sord)
                                         .Skip((page - 1) * rows).Take(rows)
                                         .ToListAsync<SystemChannel>();
             return new KeyValuePair<int, List<SystemChannel>>(count, systemChannel);
@@ -93,10 +98,12 @@ namespace TvProgViewer.Services.TvProgMain
                                                FileName25 = mp.Path25 + mp.FileName,
                                                Title = ch.TitleChannel,
                                                ImageWebSrc = ch.IconWebSrc,
-                                               OrderCol = 0
-                                           }).OrderBy(o => o.InternalId)
-                                             .ToListAsync();
-            return await uch.Where(x => optChans.Any(y => y.ChannelId == x.ChannelId)).ToListAsync();
+                                               SysOrderCol = ch.SysOrderCol
+                                           }).ToListAsync();
+            return await uch.Where(x => optChans.Any(y => y.ChannelId == x.ChannelId))
+                                        .OrderBy(o => o.SysOrderCol)
+                                        .ThenBy(o => o.InternalId)
+                                        .ToListAsync();
         }
         #endregion
     }

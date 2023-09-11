@@ -22,7 +22,7 @@ namespace TvProgViewer.DataAccess.Models
         public string TitleChannel { get; set; }
         public string IconWebSrc { get; set; }
         public DateTime? Deleted { get; set; }
-
+        public int? SysOrderCol { get; set; }
         public virtual MediaPic Icon { get; set; }
         public virtual TvprogProviders TvprogProvider { get; set; }
         public virtual ICollection<Programmes> Programmes { get; set; }

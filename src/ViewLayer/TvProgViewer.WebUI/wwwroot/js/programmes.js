@@ -212,7 +212,7 @@ function setGrids() {
             type: 'GET',
             success: function () { },
             error: function () { console.log("ERROR"); },
-            colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жранра", "Анонс", "Эмблема канала", "Название канала", "Передача", "Начало", "Окончание", "Осталось, %", ""],
+            colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жранра", "Анонс", "Эмблема канала", "Название канала", "Передача", "Начало", "Окончание", "Осталось, %", "", ""],
             colModel: [
                 {
                     key: false, name: 'RatingContent', index: 'RatingContent', sortable: true, width: "2%", align: "center", formatter: imgRating,
@@ -253,6 +253,9 @@ function setGrids() {
                 },
                 {
                     key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
+                },
+                {
+                    key: false, name: 'OrderCol', index: 'OrderCol', hidden: true
                 }
             ],
             rowNum: 20,
@@ -313,7 +316,7 @@ function setGrids() {
                 "&genres=" + GetGenres(".btn-genre-next.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
             datatype: 'json',
             type: 'GET',
-            colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "Передача", "Начало", "Окончание", "Осталось", ""],
+            colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "Передача", "Начало", "Окончание", "Осталось", "", ""],
             colModel: [
                 {
                     key: false, name: 'RatingContent', index: 'RatingContent', sortable: true, width: "2%", align: "center", formatter: imgRating,
@@ -361,6 +364,9 @@ function setGrids() {
                 },
                 {
                     key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
+                },
+                {
+                    key: false, name: 'OrderCol', index: 'OrderCol', hidden: true
                 }
             ],
             rowNum: 20,

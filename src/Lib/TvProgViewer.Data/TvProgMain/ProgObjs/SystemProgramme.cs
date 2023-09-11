@@ -132,6 +132,7 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         [DataMember]
         public string DayMonth { get; set; }
 
+        
         #region IProgramme Members
 
         /// <summary>
@@ -180,7 +181,7 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         /// Порядковый номер канала
         /// </summary>
         [DataMember]
-        public int? OrderCol { get; set; }
+        public int OrderCol { get; set; }
 
         #endregion
     }

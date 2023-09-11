@@ -128,7 +128,7 @@ function setGrid()
                 key: false, name: "SystemTitle", index: "SystemTitle", sortable: true, width: "40%", editable: false
             },
             {
-                key: false, name: "OrderCol", index: "OrderCol", sortable: true, width: "10%", align: "center", editable: true, hidden: true
+                key: false, name: "SysOrderCol", index: "SysOrderCol", sortable: true, width: "10%", align: "center", editable: true, hidden: true
             }
         ],
         rowNum: 20,

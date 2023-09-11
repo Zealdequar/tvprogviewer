@@ -35,7 +35,7 @@ namespace TvProgViewer.Data.TvProgMain.ProgInterfaces
         /// <summary>
         /// Порядковый номер
         /// </summary>
-        int OrderCol { get; }
+        int SysOrderCol { get; }
 
         /// <summary>
         /// Пользовательское название

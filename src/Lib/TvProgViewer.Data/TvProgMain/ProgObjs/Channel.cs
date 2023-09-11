@@ -86,7 +86,7 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         /// Порядковый номер
         /// </summary>
         [DataMember]
-        public int OrderCol { get; }
+        public int SysOrderCol { get; }
 
         /// <summary>
         /// Пользовательское название
