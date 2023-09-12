@@ -32,6 +32,9 @@
   margin-bottom: 12px !important;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#3c3c3c), to(#222));
 }
+.nav-link {
+    text-align: right;
+}
  .navbar-header {
     float: right !important;
 }
@@ -435,14 +438,13 @@
 }
  select {
      min-width: 50px;
-     height: 32px;
+     height: 30px;
     /*safari padding fix*/
      padding: 6px;
 }
  .header-select {
      font-size: 10pt;
-     height: 28px;
-     padding: 4px;
+     padding: 0 2px 2px 4px !important;
  }
  input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
      border-color: #ccc;
@@ -456,19 +458,19 @@
  input[type="button"], input[type="submit"], button, .button-1, .button-2 {
      cursor: pointer;
 }
- label, label + * {
-     vertical-align: middle;
-     margin-top: 0.5rem!important;
-     margin-bottom: 0.5rem!important;
-     font-weight: bold;
-     font-size: 12px;
+
+label, label + * {
+    vertical-align: middle;
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: bold;
+    font-size: 12px;
 }
 
- .header-label{
-     font-size: 10pt !important;
-     margin-left: 15px;
-     margin-right: 10px;
- }
+.header-label {
+    font-size: 10pt !important;
+    margin: 10px 5px 0 15px !important;
+}
  .master-wrapper-content {
      position: relative;
      z-index: 0;
@@ -567,6 +569,9 @@
      background-color: #f9f9f9;
      padding: 30px 15px;
 }
+ .form-row {
+     height: 49px;
+ }
  .inputs {
      position: relative;
      margin: 0 0 15px;
