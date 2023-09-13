@@ -67,10 +67,10 @@
     <Value>Изберете добавувач за базата на податоци</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Ако ви требаат информации за тоа како да користите nopCommerce, посетете</Value>
+    <Value>Ако ви требаат информации за тоа како да користите tvprogviewer, посетете</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>секција за документација на nopCommerce.com</Value>
+    <Value>секција за документација на tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Пример</Value>
@@ -79,7 +79,7 @@
     <Value>Инсталирај</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>nopCommerce се инсталира...</Value>
+    <Value>tvprogviewer се инсталира...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Користете интегрирана автентикација на Windows</Value>
@@ -133,7 +133,7 @@
     <Value>Информации за продавницата</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce инсталација</Value>
+    <Value>tvprogviewer инсталација</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>За да завршите, мора да знаете некои информации во врска со вашиот сервер за база на податоци ("низа за поврзување"). Ве молиме, контактирајте го вашиот интернет снабдувач доколку е потребно. Ако инсталирате на локална машина или сервер, можеби ќе ви требаат информации од вашиот системски администратор.</Value>

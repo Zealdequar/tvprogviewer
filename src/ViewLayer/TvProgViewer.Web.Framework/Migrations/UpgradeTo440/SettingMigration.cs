@@ -52,7 +52,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
             settingRepository
                 .Delete(setting => setting.Name == "commonsettings.scheduletaskruntimeout" ||
                     setting.Name == "commonsettings.staticfilescachecontrol" ||
-                    setting.Name == "commonsettings.supportpreviousnopcommerceversions" ||
+                    setting.Name == "commonsettings.supportprevioustvprogviewerversions" ||
                     setting.Name == "securitysettings.pluginstaticfileextensionsBlacklist");
 
             //#5384

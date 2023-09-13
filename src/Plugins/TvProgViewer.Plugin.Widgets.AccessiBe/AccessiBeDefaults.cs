@@ -15,7 +15,7 @@ namespace TvProgViewer.Plugin.Widgets.AccessiBe
         /// <summary>
         /// Gets the user agent used to request third-party services
         /// </summary>
-        public static string UserAgent => $"nopcommerce-{TvProgVersion.CURRENT_VERSION}";
+        public static string UserAgent => $"tvprogviewer-{TvProgVersion.CURRENT_VERSION}";
 
         /// <summary>
         /// Gets the configuration route name

@@ -67,10 +67,10 @@
     <Value>ডেটা সরবরাহকারী নির্বাচন করুন</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>nopCommerce কিভাবে ব্যাবহার করতে হয় তা জানতে ভিজিট করুন</Value>
+    <Value>tvprogviewer কিভাবে ব্যাবহার করতে হয় তা জানতে ভিজিট করুন</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>nopCommerce.com ডকুমেন্টেশন বিভাগ</Value>
+    <Value>tvprogviewer.ru ডকুমেন্টেশন বিভাগ</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>উদাহরণ</Value>
@@ -79,7 +79,7 @@
     <Value>ইনস্টল করুন</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>nopCommerce ইনস্টল হচ্ছে...</Value>
+    <Value>tvprogviewer ইনস্টল হচ্ছে...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>ইন্টিগ্রেটেড উইন্ডোজ অথেন্টিকেশন ব্যবহার করুন</Value>
@@ -133,7 +133,7 @@
     <Value>স্টোরের তথ্য</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce ইনস্টলেশন</Value>
+    <Value>tvprogviewer ইনস্টলেশন</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>এই উইজার্ডটি সম্পূর্ণ করতে আপনাকে আপনার ডাটাবেস সার্ভার সংক্রান্ত কিছু তথ্য ("কানেকশন স্ট্রিং") জানতে হবে। প্রয়োজন হলে আপনার ISP-র সাথে যোগাযোগ করুন। যদি আপনি এটি লোকাল মেশিনে অথবা সার্ভারে ইন্সটল করে থাকেন তাহলে আপনার সিস্টেম অ্যাডমিন থেকে কিছু তথ্য প্রয়োজন হতে পারে।</Value>

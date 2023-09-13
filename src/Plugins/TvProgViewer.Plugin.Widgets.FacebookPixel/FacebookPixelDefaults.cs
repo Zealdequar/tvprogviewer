@@ -15,7 +15,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel
         /// <summary>
         /// Gets the tvProgViewer agent ID
         /// </summary>
-        public static string AgentId => "plnopcommerce";
+        public static string AgentId => "pltvprogviewer";
 
         /// <summary>
         /// Gets the configuration route name

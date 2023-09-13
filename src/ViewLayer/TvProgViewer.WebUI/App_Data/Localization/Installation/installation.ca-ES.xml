@@ -67,10 +67,10 @@
     <Value>Seleccioneu el proveïdor de dades:</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Si necessites informació de com utilitzar nopCommerce, visita</Value>
+    <Value>Si necessites informació de com utilitzar tvprogviewer, visita</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>la secció de documentació a nopCommerce.com</Value>
+    <Value>la secció de documentació a tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Exemple</Value>
@@ -79,7 +79,7 @@
     <Value>Instal·lar</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Instal·lant nopCommerce...</Value>
+    <Value>Instal·lant tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Utilitzeu l’autenticació integrada de Windows</Value>
@@ -133,7 +133,7 @@
     <Value>Informació de la botiga</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>Instal·lació de nopCommerce</Value>
+    <Value>Instal·lació de tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Per completar aquest assistent, heu de conèixer informació relativa al servidor de base de dades ("cadena de connexió"). Poseu-vos en contacte amb el vostre ISP si cal. Si esteu instal·lant en una màquina o servidor local, és possible que necessiteu informació del vostre administrador del sistema.</Value>

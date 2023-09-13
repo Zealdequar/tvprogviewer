@@ -138,7 +138,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             }
             catch (Exception ex)
             {
-                await _logger.ErrorAsync("No access to the news. Website www.nopcommerce.com is not available.", ex);
+                await _logger.ErrorAsync("No access to the news. Website tvprogviewer.ru is not available.", ex);
             }
 
             return model;

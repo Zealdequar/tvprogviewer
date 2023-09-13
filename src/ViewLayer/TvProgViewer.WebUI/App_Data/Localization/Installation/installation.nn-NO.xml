@@ -67,10 +67,10 @@
     <Value>Velg database leverandør</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Hvis du trenger informasjon om hvordan du bruker nopCommerce, kan du gå til</Value>
+    <Value>Hvis du trenger informasjon om hvordan du bruker tvprogviewer, kan du gå til</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>dokumentasjonsdelen på nopCommerce.com</Value>
+    <Value>dokumentasjonsdelen på tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Eksempel</Value>
@@ -79,7 +79,7 @@
     <Value>Installer</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Installerer nopCommerce...</Value>
+    <Value>Installerer tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Bruk integrert Windows-godkjenning</Value>
@@ -133,7 +133,7 @@
     <Value>Butikkinformasjon</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce installasjon</Value>
+    <Value>tvprogviewer installasjon</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>For å fullføre denne veiviseren, må du kjenne til litt informasjon angående databaseserveren ("tilkoblingsstreng"). Ta kontakt med Internett-leverandøren din om nødvendig. Hvis du installerer på en lokal maskin eller server, kan det hende du trenger informasjon fra systemadministratoren.</Value>

@@ -67,10 +67,10 @@
     <Value>Izvēlieties datu sniedzēju</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Ja jums nepieciešama informācija par to, kā lietot nopCommerce, apmeklējiet</Value>
+    <Value>Ja jums nepieciešama informācija par to, kā lietot tvprogviewer, apmeklējiet</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>nopCommerce.com dokumentācijas sadaļu</Value>
+    <Value>tvprogviewer.ru dokumentācijas sadaļu</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Piemērs</Value>
@@ -79,7 +79,7 @@
     <Value>Uzstādīt</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Uzstāda nopCommerce...</Value>
+    <Value>Uzstāda tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Izmantot integrēto Windows autentifikāciju</Value>
@@ -133,7 +133,7 @@
     <Value>Veikala informācija</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce uzstādīšana</Value>
+    <Value>tvprogviewer uzstādīšana</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Lai pabeigtu šo vedni, ir jāzina informācija par datubāzes serveri ("savienojuma virkne"). Ja nepieciešams, sazinieties ar savu interneta pakalpojumu sniedzēju. Ja instalāciju veicat vietējā datorā vai serverī, iespējams, jums būs nepieciešama informācija no sistēmas administratora.</Value>

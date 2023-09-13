@@ -4663,7 +4663,7 @@
     <Value>CSS bundling and minification</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.AppSettings.WebOptimizer.EnableCssBundling.Hint">
-    <Value>Enable to combine (bundle) multiple CSS files into a single file. Do not enable if you're running nopCommerce in IIS virtual directory. And please note it could take up to two minutes for changes to existing files to be applied (when enabled).</Value>
+    <Value>Enable to combine (bundle) multiple CSS files into a single file. Do not enable if you're running tvprogviewer in IIS virtual directory. And please note it could take up to two minutes for changes to existing files to be applied (when enabled).</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.AppSettings.WebOptimizer.EnableDiskCache">
     <Value>Enable disk cache</Value>
@@ -5383,10 +5383,10 @@
     <Value>Manual plugin installation</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Plugins.Description.DownloadMorePlugins">
-    <Value><![CDATA[You can download more nopCommerce plugins in our <a href="{0}" target="_blank">marketplace</a>]]></Value>
+    <Value><![CDATA[You can download more tvprogviewer plugins in our <a href="{0}" target="_blank">marketplace</a>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Plugins.Description.Step1">
-    <Value>Upload the plugin to the /plugins folder in your nopCommerce directory.</Value>
+    <Value>Upload the plugin to the /plugins folder in your tvprogviewer directory.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Plugins.Description.Step2">
     <Value>Restart your application (or click 'Reload list of plugins' button).</Value>
@@ -7228,7 +7228,7 @@
     <Value>The goal of the canonicalization process is to transform a URL into a canonical URL so it is possible to determine if two syntactically different URLs may be equivalent.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Settings.GeneralCommon.Captcha.Instructions">
-    <Value><![CDATA[CAPTCHA is a program that can tell whether it is a human or a computer is trying to access your web site. nopCommerce uses <a href="http://www.google.com/recaptcha" target="_blank">reCAPTCHA</a> by Google. reCAPTCHA is a free service that protects your website from spam and abuse. reCAPTCHA uses an advanced risk analysis engine and adaptive challenges to keep automated software from engaging in abusive activities on your site. It does this while letting your valid users pass through with ease.]]></Value>
+    <Value><![CDATA[CAPTCHA is a program that can tell whether it is a human or a computer is trying to access your web site. tvprogviewer uses <a href="http://www.google.com/recaptcha" target="_blank">reCAPTCHA</a> by Google. reCAPTCHA is a free service that protects your website from spam and abuse. reCAPTCHA uses an advanced risk analysis engine and adaptive challenges to keep automated software from engaging in abusive activities on your site. It does this while letting your valid users pass through with ease.]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Settings.GeneralCommon.CaptchaAppropriateKeysNotEnteredError">
     <Value>Captcha is enabled but the appropriate keys are not entered</Value>
@@ -7336,7 +7336,7 @@
     <Value><![CDATA[You can get more themes in our <a href="{0}" target="_blank">marketplace</a>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Settings.GeneralCommon.DefaultStoreTheme.Hint">
-    <Value>The public store theme. You can download themes from the extensions page at www.nopcommerce.com.</Value>
+    <Value>The public store theme. You can download themes from the extensions page at tvprogviewer.ru.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Settings.GeneralCommon.DisablePdfInvoicesForPendingOrders">
     <Value>Disable PDF invoices for pending orders</Value>
@@ -9919,13 +9919,13 @@
     <Value>Personalize your store</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.PoweredBy.Description">
-    <Value>Remove the “Powered by nopCommerce” link from the footer</Value>
+    <Value>Remove the “Powered by tvprogviewer” link from the footer</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.PoweredBy.Title">
     <Value>“Powered by” link</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.Product.Details.Text">
-    <Value><![CDATA[Enter the relevant product details in these fields. The screenshot below shows how they will be displayed on the product page with the default nopCommerce theme: <div><img src="../../js/admintour/images/product-page.jpg"/></div>]]></Value>
+    <Value><![CDATA[Enter the relevant product details in these fields. The screenshot below shows how they will be displayed on the product page with the default tvprogviewer theme: <div><img src="../../js/admintour/images/product-page.jpg"/></div>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.Product.Details.Title">
     <Value>Product details</Value>
@@ -12319,7 +12319,7 @@
     <Value><![CDATA[Learn more about <a target="_blank" href="{0}">forums</a>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Documentation.Reference.Gdpr">
-    <Value><![CDATA[Learn more about <a target="_blank" href="{0}">GDPR in nopCommerce</a>]]></Value>
+    <Value><![CDATA[Learn more about <a target="_blank" href="{0}">GDPR in tvprogviewer</a>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Documentation.Reference.GiftCards">
     <Value><![CDATA[Learn more about <a target="_blank" href="{0}">gift cards</a>]]></Value>
@@ -12367,7 +12367,7 @@
     <Value><![CDATA[Learn more about <a target="_blank" href="{0}">pickup points</a>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Documentation.Reference.Plugins">
-    <Value><![CDATA[Learn more about <a target="_blank" href="{0}">plugins in nopCommerce</a>]]></Value>
+    <Value><![CDATA[Learn more about <a target="_blank" href="{0}">plugins in tvprogviewer</a>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Documentation.Reference.Polls">
     <Value><![CDATA[Learn more about <a target="_blank" href="{0}">polls</a>]]></Value>
@@ -12699,8 +12699,8 @@
   <LocaleResource Name="Admin.Menu.Search">
     <Value>Search</Value>
   </LocaleResource>
-  <LocaleResource Name="Admin.NopCommerceNews">
-    <Value>NopCommerce News</Value>
+  <LocaleResource Name="Admin.tvprogviewerNews">
+    <Value>tvprogviewer News</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Orders">
     <Value>Orders</Value>
@@ -13747,7 +13747,7 @@
     <Value>Shipping not required</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.PageTitle">
-    <Value>nopCommerce administration</Value>
+    <Value>tvprogviewer administration</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Picture.RemovePicture">
     <Value>Remove picture</Value>
@@ -15217,10 +15217,10 @@
     <Value>Message.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.Log.List.PremiumSupport">
-    <Value><![CDATA[Have questions or need help? Get dedicated support from the nopCommerce team with a guaranteed response within 24 hours. Please find more about our premium support services <a href="{0}" target="_blank">here</a>.]]></Value>
+    <Value><![CDATA[Have questions or need help? Get dedicated support from the tvprogviewer team with a guaranteed response within 24 hours. Please find more about our premium support services <a href="{0}" target="_blank">here</a>.]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.Log.PremiumSupport">
-    <Value><![CDATA[Have questions or need help? Get dedicated support from the nopCommerce team with a guaranteed response within 24 hours. Please find more about our premium support services <a href="{0}" target="_blank">here</a>.]]></Value>
+    <Value><![CDATA[Have questions or need help? Get dedicated support from the tvprogviewer team with a guaranteed response within 24 hours. Please find more about our premium support services <a href="{0}" target="_blank">here</a>.]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.Log.ViewLogDetails">
     <Value>View log entry details</Value>
@@ -15247,7 +15247,7 @@
     <Value>Delete</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.Maintenance.BackupDatabase.Description">
-    <Value>Database backup functionality works only when your nopCommerce application is deployed on the same server as the database. Otherwise you will have to take care of the backup yourself (contact your system administrator).</Value>
+    <Value>Database backup functionality works only when your tvprogviewer application is deployed on the same server as the database. Otherwise you will have to take care of the backup yourself (contact your system administrator).</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.Maintenance.BackupDatabase.Download">
     <Value>Download</Value>
@@ -15721,10 +15721,10 @@
     <Value>A list of loaded assemblies.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.SystemInfo.NopVersion">
-    <Value>nopCommerce version</Value>
+    <Value>tvprogviewer version</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.SystemInfo.NopVersion.Hint">
-    <Value>nopCommerce version.</Value>
+    <Value>tvprogviewer version.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.System.SystemInfo.OperatingSystem">
     <Value>Operating system</Value>

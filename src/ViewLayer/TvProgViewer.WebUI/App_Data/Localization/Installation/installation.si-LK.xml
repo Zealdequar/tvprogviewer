@@ -67,10 +67,10 @@
     <Value>දත්ත ගබඩා සේවා සපයන්නා තෝරන්න</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>ඔබට nopCommerce භාවිතා කරන්නේ කෙසේද යන්න පිළිබඳ තොරතුරු අවශ්‍ය නම්, පිවිසෙන්න</Value>
+    <Value>ඔබට tvprogviewer භාවිතා කරන්නේ කෙසේද යන්න පිළිබඳ තොරතුරු අවශ්‍ය නම්, පිවිසෙන්න</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>nopCommerce.com හි ප්‍රලේඛන අංශය</Value>
+    <Value>tvprogviewer.ru හි ප්‍රලේඛන අංශය</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>උදාහරණයක්</Value>
@@ -79,7 +79,7 @@
     <Value>ස්ථාපනය කරන්න</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>nopCommerce ස්ථාපනය කරමින් පවතී...</Value>
+    <Value>tvprogviewer ස්ථාපනය කරමින් පවතී...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>ඒකාබද්ධ වින්ඩෝස් සත්‍යාපනය භාවිතා කරන්න</Value>
@@ -133,7 +133,7 @@
     <Value>වෙලඳසැලේ තොරතුරු</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce ස්ථාපනය</Value>
+    <Value>tvprogviewer ස්ථාපනය</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>මෙම Wizard යෙදුම සම්පූර්ණ කිරීම සඳහා, ඔබේ දත්ත සමුදා සේවාදායකය ("සම්බන්ධතා නූල") පිළිබඳ යම් තොරතුරු ඔබ දැන සිටිය යුතුය. අවශ්‍ය නම් කරුණාකර ඔබේ සේවා සැපයුම්කරු අමතන්න. ඔබ දේශීය(Local) යන්ත්‍රයක හෝ සර්වරයක ස්ථාපනය කරන්නේ නම්, ඔබට ඔබේ පද්ධති පරිපාලකගෙන් තොරතුරු අවශ්‍ය විය හැකිය.</Value>

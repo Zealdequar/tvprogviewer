@@ -9,7 +9,7 @@ namespace TvProgViewer.Core.Domain
     {
         /// <summary>
         /// Gets or sets a value indicating whether "powered by tvProgViewer" text should be displayed.
-        /// Please find more info at https://www.nopcommerce.com/nopcommerce-copyright-removal-key
+        /// Please find more info at https://tvprogviewer.ru/tvprogviewer-copyright-removal-key
         /// </summary>
         public bool HidePoweredByTvProgViewer { get; set; }
 

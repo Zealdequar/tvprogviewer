@@ -802,7 +802,7 @@ namespace TvProgViewer.Services.Installation
             var storeId = defaultStore.Id;
 
             //second user
-            var secondUserEmail = "steve_gates@tvProgViewer.com";
+            var secondUserEmail = "steve_gates@tvprogviewer.ru";
             var secondUser = new User
             {
                 UserGuid = Guid.NewGuid(),
@@ -852,7 +852,7 @@ namespace TvProgViewer.Services.Installation
             });
 
             //third user
-            var thirdUserEmail = "arthur_holmes@tvProgViewer.com";
+            var thirdUserEmail = "arthur_holmes@tvprogviewer.ru";
             var thirdUser = new User
             {
                 UserGuid = Guid.NewGuid(),
@@ -902,7 +902,7 @@ namespace TvProgViewer.Services.Installation
             });
 
             //fourth user
-            var fourthUserEmail = "james_pan@tvProgViewer.com";
+            var fourthUserEmail = "james_pan@tvprogviewer.ru";
             var fourthUser = new User
             {
                 UserGuid = Guid.NewGuid(),
@@ -951,7 +951,7 @@ namespace TvProgViewer.Services.Installation
             });
 
             //fifth user
-            var fifthUserEmail = "brenda_lindgren@tvProgViewer.com";
+            var fifthUserEmail = "brenda_lindgren@tvprogviewer.ru";
             var fifthUser = new User
             {
                 UserGuid = Guid.NewGuid(),
@@ -1001,7 +1001,7 @@ namespace TvProgViewer.Services.Installation
             });
 
             //sixth user
-            var sixthUserEmail = "victoria_victoria@tvProgViewer.com";
+            var sixthUserEmail = "victoria_victoria@tvprogviewer.ru";
             var sixthUser = new User
             {
                 UserGuid = Guid.NewGuid(),
@@ -1227,7 +1227,7 @@ namespace TvProgViewer.Services.Installation
                 throw new Exception("No default store could be loaded");
 
             //first order
-            var firstUser = await _userRepository.Table.FirstAsync(c => c.Email == "steve_gates@tvProgViewer.com");
+            var firstUser = await _userRepository.Table.FirstAsync(c => c.Email == "steve_gates@tvprogviewer.ru");
 
             var firstUserBillingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(firstUser.BillingAddressId)));
             var firstUserShippingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(firstUser.ShippingAddressId)));
@@ -1354,8 +1354,8 @@ namespace TvProgViewer.Services.Installation
                 PriceInclTax = 25M,
                 PriceExclTax = 25M,
                 OriginalProductCost = decimal.Zero,
-                AttributeDescription = "From: Steve Gates &lt;steve_gates@tvProgViewer.com&gt;<br />For: Brenda Lindgren &lt;brenda_lindgren@tvProgViewer.com&gt;",
-                AttributesXml = "<Attributes><GiftCardInfo><RecipientName>Brenda Lindgren</RecipientName><RecipientEmail>brenda_lindgren@tvProgViewer.com</RecipientEmail><SenderName>Steve Gates</SenderName><SenderEmail>steve_gates@gmail.com</SenderEmail><Message></Message></GiftCardInfo></Attributes>",
+                AttributeDescription = "From: Steve Gates &lt;steve_gates@tvprogviewer.ru&gt;<br />For: Brenda Lindgren &lt;brenda_lindgren@tvprogviewer.ru&gt;",
+                AttributesXml = "<Attributes><GiftCardInfo><RecipientName>Brenda Lindgren</RecipientName><RecipientEmail>brenda_lindgren@tvprogviewer.ru</RecipientEmail><SenderName>Steve Gates</SenderName><SenderEmail>steve_gates@gmail.com</SenderEmail><Message></Message></GiftCardInfo></Attributes>",
                 Quantity = 1,
                 DiscountAmountInclTax = decimal.Zero,
                 DiscountAmountExclTax = decimal.Zero,
@@ -1377,9 +1377,9 @@ namespace TvProgViewer.Services.Installation
                 IsGiftCardActivated = false,
                 GiftCardCouponCode = string.Empty,
                 RecipientName = "Brenda Lindgren",
-                RecipientEmail = "brenda_lindgren@tvProgViewer.com",
+                RecipientEmail = "brenda_lindgren@tvprogviewer.ru",
                 SenderName = "Steve Gates",
-                SenderEmail = "steve_gates@tvProgViewer.com",
+                SenderEmail = "steve_gates@tvprogviewer.ru",
                 Message = string.Empty,
                 IsRecipientNotified = false,
                 CreatedOnUtc = DateTime.UtcNow
@@ -1403,7 +1403,7 @@ namespace TvProgViewer.Services.Installation
             });
 
             //second order
-            var secondUser = await _userRepository.Table.FirstAsync(c => c.Email == "arthur_holmes@tvProgViewer.com");
+            var secondUser = await _userRepository.Table.FirstAsync(c => c.Email == "arthur_holmes@tvprogviewer.ru");
 
             var secondUserBillingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(secondUser.BillingAddressId)));
             var secondUserShippingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(secondUser.ShippingAddressId)));
@@ -1528,7 +1528,7 @@ namespace TvProgViewer.Services.Installation
             await InsertInstallationDataAsync(secondOrderItem2);
 
             //third order
-            var thirdUser = await _userRepository.Table.FirstAsync(c => c.Email == "james_pan@tvProgViewer.com");
+            var thirdUser = await _userRepository.Table.FirstAsync(c => c.Email == "james_pan@tvprogviewer.ru");
 
             var thirdUserBillingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(thirdUser.BillingAddressId)));
 
@@ -1677,7 +1677,7 @@ namespace TvProgViewer.Services.Installation
             await InsertInstallationDataAsync(thirdOrderItem3);
 
             //fourth order
-            var fourthUser = await _userRepository.Table.FirstAsync(c => c.Email == "brenda_lindgren@tvProgViewer.com");
+            var fourthUser = await _userRepository.Table.FirstAsync(c => c.Email == "brenda_lindgren@tvprogviewer.ru");
 
             var fourthUserBillingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(fourthUser.BillingAddressId)));
             var fourthUserShippingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(fourthUser.ShippingAddressId)));
@@ -1903,7 +1903,7 @@ namespace TvProgViewer.Services.Installation
             await InsertInstallationDataAsync(fourthOrderShipment2Item1);
 
             //fifth order
-            var fifthUser = _userRepository.Table.First(c => c.Email == "victoria_victoria@tvProgViewer.com");
+            var fifthUser = _userRepository.Table.First(c => c.Email == "victoria_victoria@tvprogviewer.ru");
 
             var fifthUserBillingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(fifthUser.BillingAddressId)));
             var fifthUserShippingAddress = await InsertInstallationDataAsync(cloneAddress(await _addressRepository.GetByIdAsync(fifthUser.ShippingAddressId)));
@@ -2657,7 +2657,7 @@ namespace TvProgViewer.Services.Installation
                     Published = true,
                     Title = "Welcome to our store",
                     Body =
-                        "<p>Online shopping is the process consumers go through to purchase products or services over the Internet. You can edit this in the admin site.</p><p>If you have questions, see the <a href=\"http://docs.nopcommerce.com/\">Documentation</a>, or post in the <a href=\"https://www.nopcommerce.com/boards/\">Forums</a> at <a href=\"https://www.nopcommerce.com\">tvProgViewer.com</a></p>",
+                        "<p>Online shopping is the process consumers go through to purchase products or services over the Internet. You can edit this in the admin site.</p><p>If you have questions, see the <a href=\"http://docs.tvprogviewer.ru/\">Documentation</a>, or post in the <a href=\"https://tvprogviewer.ru/boards/\">Forums</a> at <a href=\"https://tvprogviewer.ru\">tvprogviewer.ru</a></p>",
                     TopicTemplateId = defaultTopicTemplate.Id
                 },
                 new Topic
@@ -3121,7 +3121,7 @@ namespace TvProgViewer.Services.Installation
                 FacebookLink = "https://www.facebook.com/tvProgViewer",
                 TwitterLink = "https://twitter.com/tvProgViewer",
                 YoutubeLink = "https://www.youtube.com/user/tvProgViewer",
-                InstagramLink = "https://www.instagram.com/nopcommerce_official",
+                InstagramLink = "https://www.instagram.com/tvprogviewer_official",
                 HidePoweredByTvProgViewer = false
             });
 
@@ -7957,7 +7957,7 @@ namespace TvProgViewer.Services.Installation
                     LanguageId = defaultLanguage.Id,
                     Title = "How a blog can help your growing e-Viewer business",
                     BodyOverview = "<p>When you start an online business, your main aim is to sell the products, right? As a business owner, you want to showcase your store to more audience. So, you decide to go on social media, why? Because everyone is doing it, then why shouldn&rsquo;t you? It is tempting as everyone is aware of the hype that it is the best way to market your brand.</p><p>Do you know having a blog for your online store can be very helpful? Many businesses do not understand the importance of having a blog because they don&rsquo;t have time to post quality content.</p><p>Today, we will talk about how a blog can play an important role for the growth of your e-Viewer business. Later, we will also discuss some tips that will be helpful to you for writing business related blog posts.</p>",
-                    Body = "<p>When you start an online business, your main aim is to sell the products, right? As a business owner, you want to showcase your store to more audience. So, you decide to go on social media, why? Because everyone is doing it, then why shouldn&rsquo;t you? It is tempting as everyone is aware of the hype that it is the best way to market your brand.</p><p>Do you know having a blog for your online store can be very helpful? Many businesses do not understand the importance of having a blog because they don&rsquo;t have time to post quality content.</p><p>Today, we will talk about how a blog can play an important role for the growth of your e-Viewer business. Later, we will also discuss some tips that will be helpful to you for writing business related blog posts.</p><h3>1) Blog is useful in educating your users</h3><p>Blogging is one of the best way by which you can educate your users about your products/services that you offer. This helps you as a business owner to bring more value to your brand. When you provide useful information to the users about your products, they are more likely to buy products from you. You can use your blog for providing tutorials in regard to the use of your products.</p><p><strong>For example:</strong> If you have an online store that offers computer parts. You can write tutorials about how to build a computer or how to make your computer&rsquo;s performance better. While talking about these things, you can mention products in the tutorials and provide link to your products within the blog post from your website. Your potential users might get different ideas of using your product and will likely to buy products from your online store.</p><h3>2) Blog helps your business in Search Engine Optimization (SEO)</h3><p>Blog posts create more internal links to your website which helps a lot in SEO. Blog is a great way to have quality content on your website related to your products/services which is indexed by all major search engines like Google, Bing and Yahoo. The more original content you write in your blog post, the better ranking you will get in search engines. SEO is an on-going process and posting blog posts regularly keeps your site active all the time which is beneficial when it comes to search engine optimization.</p><p><strong>For example:</strong> Let&rsquo;s say you sell &ldquo;Sony Television Model XYZ&rdquo; and you regularly publish blog posts about your product. Now, whenever someone searches for &ldquo;Sony Television Model XYZ&rdquo;, Google will crawl on your website knowing that you have something to do with this particular product. Hence, your website will show up on the search result page whenever this item is being searched.</p><h3>3) Blog helps in boosting your sales by convincing the potential users to buy</h3><p>If you own an online business, there are so many ways you can share different stories with your audience in regard your products/services that you offer. Talk about how you started your business, share stories that educate your audience about what&rsquo;s new in your industry, share stories about how your product/service was beneficial to someone or share anything that you think your audience might find interesting (it does not have to be related to your product). This kind of blogging shows that you are an expert in your industry and interested in educating your audience. It sets you apart in the competitive market. This gives you an opportunity to showcase your expertise by educating the visitors and it can turn your audience into buyers.</p><p><strong>Fun Fact:</strong> Did you know that 92% of companies who decided to blog acquired users through their blog?</p><p><a href=\"https://www.nopcommerce.com/\">tvProgViewer</a> is great e-Viewer solution that also offers a variety of CMS features including blog. A store owner has full access for managing the blog posts and related comments.</p>",
+                    Body = "<p>When you start an online business, your main aim is to sell the products, right? As a business owner, you want to showcase your store to more audience. So, you decide to go on social media, why? Because everyone is doing it, then why shouldn&rsquo;t you? It is tempting as everyone is aware of the hype that it is the best way to market your brand.</p><p>Do you know having a blog for your online store can be very helpful? Many businesses do not understand the importance of having a blog because they don&rsquo;t have time to post quality content.</p><p>Today, we will talk about how a blog can play an important role for the growth of your e-Viewer business. Later, we will also discuss some tips that will be helpful to you for writing business related blog posts.</p><h3>1) Blog is useful in educating your users</h3><p>Blogging is one of the best way by which you can educate your users about your products/services that you offer. This helps you as a business owner to bring more value to your brand. When you provide useful information to the users about your products, they are more likely to buy products from you. You can use your blog for providing tutorials in regard to the use of your products.</p><p><strong>For example:</strong> If you have an online store that offers computer parts. You can write tutorials about how to build a computer or how to make your computer&rsquo;s performance better. While talking about these things, you can mention products in the tutorials and provide link to your products within the blog post from your website. Your potential users might get different ideas of using your product and will likely to buy products from your online store.</p><h3>2) Blog helps your business in Search Engine Optimization (SEO)</h3><p>Blog posts create more internal links to your website which helps a lot in SEO. Blog is a great way to have quality content on your website related to your products/services which is indexed by all major search engines like Google, Bing and Yahoo. The more original content you write in your blog post, the better ranking you will get in search engines. SEO is an on-going process and posting blog posts regularly keeps your site active all the time which is beneficial when it comes to search engine optimization.</p><p><strong>For example:</strong> Let&rsquo;s say you sell &ldquo;Sony Television Model XYZ&rdquo; and you regularly publish blog posts about your product. Now, whenever someone searches for &ldquo;Sony Television Model XYZ&rdquo;, Google will crawl on your website knowing that you have something to do with this particular product. Hence, your website will show up on the search result page whenever this item is being searched.</p><h3>3) Blog helps in boosting your sales by convincing the potential users to buy</h3><p>If you own an online business, there are so many ways you can share different stories with your audience in regard your products/services that you offer. Talk about how you started your business, share stories that educate your audience about what&rsquo;s new in your industry, share stories about how your product/service was beneficial to someone or share anything that you think your audience might find interesting (it does not have to be related to your product). This kind of blogging shows that you are an expert in your industry and interested in educating your audience. It sets you apart in the competitive market. This gives you an opportunity to showcase your expertise by educating the visitors and it can turn your audience into buyers.</p><p><strong>Fun Fact:</strong> Did you know that 92% of companies who decided to blog acquired users through their blog?</p><p><a href=\"https://tvprogviewer.ru/\">tvProgViewer</a> is great e-Viewer solution that also offers a variety of CMS features including blog. A store owner has full access for managing the blog posts and related comments.</p>",
                     Tags = "e-commerce, blog, moey",
                     CreatedOnUtc = DateTime.UtcNow
                 },
@@ -7967,7 +7967,7 @@ namespace TvProgViewer.Services.Installation
                     LanguageId = defaultLanguage.Id,
                     Title = "Why your online store needs a wish list",
                     BodyOverview = "<p>What comes to your mind, when you hear the term&rdquo; wish list&rdquo;? The application of this feature is exactly how it sounds like: a list of things that you wish to get. As an online store owner, would you like your users to be able to save products in a wish list so that they review or buy them later? Would you like your users to be able to share their wish list with friends and family for gift giving?</p><p>Offering your users a feature of wish list as part of shopping cart is a great way to build loyalty to your store site. Having the feature of wish list on a store site allows online businesses to engage with their users in a smart way as it allows the shoppers to create a list of what they desire and their preferences for future purchase.</p>",
-                    Body = "<p>What comes to your mind, when you hear the term&rdquo; wish list&rdquo;? The application of this feature is exactly how it sounds like: a list of things that you wish to get. As an online store owner, would you like your users to be able to save products in a wish list so that they review or buy them later? Would you like your users to be able to share their wish list with friends and family for gift giving?</p><p>Offering your users a feature of wish list as part of shopping cart is a great way to build loyalty to your store site. Having the feature of wish list on a store site allows online businesses to engage with their users in a smart way as it allows the shoppers to create a list of what they desire and their preferences for future purchase.</p><p>Does every e-Viewer store needs a wish list? The answer to this question in most cases is yes, because of the following reasons:</p><p><strong>Understanding the needs of your users</strong> - A wish list is a great way to know what is in your user&rsquo;s mind. Try to think the purchase history as a small portion of the user&rsquo;s preferences. But, the wish list is like a wide open door that can give any online business a lot of valuable information about their user and what they like or desire.</p><p><strong>Shoppers like to share their wish list with friends and family</strong> - Providing your users a way to email their wish list to their friends and family is a pleasant way to make online shopping enjoyable for the shoppers. It is always a good idea to make the wish list sharable by a unique link so that it can be easily shared though different channels like email or on social media sites.</p><p><strong>Wish list can be a great marketing tool</strong> &ndash; Another way to look at wish list is a great marketing tool because it is extremely targeted and the recipients are always motivated to use it. For example: when your younger brother tells you that his wish list is on a certain e-Viewer store. What is the first thing you are going to do? You are most likely to visit the e-Viewer store, check out the wish list and end up buying something for your younger brother.</p><p>So, how a wish list is a marketing tool? The reason is quite simple, it introduce your online store to new users just how it is explained in the above example.</p><p><strong>Encourage users to return to the store site</strong> &ndash; Having a feature of wish list on the store site can increase the return traffic because it encourages users to come back and buy later. Allowing the users to save the wish list to their online accounts gives them a reason return to the store site and login to the account at any time to view or edit the wish list items.</p><p><strong>Wish list can be used for gifts for different occasions like weddings or birthdays. So, what kind of benefits a gift-giver gets from a wish list?</strong></p><ul><li>It gives them a surety that they didn&rsquo;t buy a wrong gift</li><li>It guarantees that the recipient will like the gift</li><li>It avoids any awkward moments when the recipient unwraps the gift and as a gift-giver you got something that the recipient do not want</li></ul><p><strong>Wish list is a great feature to have on a store site &ndash; So, what kind of benefits a business owner gets from a wish list</strong></p><ul><li>It is a great way to advertise an online store as many people do prefer to shop where their friend or family shop online</li><li>It allows the current users to return to the store site and open doors for the new users</li><li>It allows store admins to track what&rsquo;s in users wish list and run promotions accordingly to target specific user segments</li></ul><p><a href=\"https://www.nopcommerce.com/\">tvProgViewer</a> offers the feature of wish list that allows users to create a list of products that they desire or planning to buy in future.</p>",
+                    Body = "<p>What comes to your mind, when you hear the term&rdquo; wish list&rdquo;? The application of this feature is exactly how it sounds like: a list of things that you wish to get. As an online store owner, would you like your users to be able to save products in a wish list so that they review or buy them later? Would you like your users to be able to share their wish list with friends and family for gift giving?</p><p>Offering your users a feature of wish list as part of shopping cart is a great way to build loyalty to your store site. Having the feature of wish list on a store site allows online businesses to engage with their users in a smart way as it allows the shoppers to create a list of what they desire and their preferences for future purchase.</p><p>Does every e-Viewer store needs a wish list? The answer to this question in most cases is yes, because of the following reasons:</p><p><strong>Understanding the needs of your users</strong> - A wish list is a great way to know what is in your user&rsquo;s mind. Try to think the purchase history as a small portion of the user&rsquo;s preferences. But, the wish list is like a wide open door that can give any online business a lot of valuable information about their user and what they like or desire.</p><p><strong>Shoppers like to share their wish list with friends and family</strong> - Providing your users a way to email their wish list to their friends and family is a pleasant way to make online shopping enjoyable for the shoppers. It is always a good idea to make the wish list sharable by a unique link so that it can be easily shared though different channels like email or on social media sites.</p><p><strong>Wish list can be a great marketing tool</strong> &ndash; Another way to look at wish list is a great marketing tool because it is extremely targeted and the recipients are always motivated to use it. For example: when your younger brother tells you that his wish list is on a certain e-Viewer store. What is the first thing you are going to do? You are most likely to visit the e-Viewer store, check out the wish list and end up buying something for your younger brother.</p><p>So, how a wish list is a marketing tool? The reason is quite simple, it introduce your online store to new users just how it is explained in the above example.</p><p><strong>Encourage users to return to the store site</strong> &ndash; Having a feature of wish list on the store site can increase the return traffic because it encourages users to come back and buy later. Allowing the users to save the wish list to their online accounts gives them a reason return to the store site and login to the account at any time to view or edit the wish list items.</p><p><strong>Wish list can be used for gifts for different occasions like weddings or birthdays. So, what kind of benefits a gift-giver gets from a wish list?</strong></p><ul><li>It gives them a surety that they didn&rsquo;t buy a wrong gift</li><li>It guarantees that the recipient will like the gift</li><li>It avoids any awkward moments when the recipient unwraps the gift and as a gift-giver you got something that the recipient do not want</li></ul><p><strong>Wish list is a great feature to have on a store site &ndash; So, what kind of benefits a business owner gets from a wish list</strong></p><ul><li>It is a great way to advertise an online store as many people do prefer to shop where their friend or family shop online</li><li>It allows the current users to return to the store site and open doors for the new users</li><li>It allows store admins to track what&rsquo;s in users wish list and run promotions accordingly to target specific user segments</li></ul><p><a href=\"https://tvprogviewer.ru/\">tvProgViewer</a> offers the feature of wish list that allows users to create a list of products that they desire or planning to buy in future.</p>",
                     Tags = "e-commerce, tvProgViewer, sample tag, money",
                     CreatedOnUtc = DateTime.UtcNow.AddSeconds(1)
                 }
@@ -8027,8 +8027,8 @@ namespace TvProgViewer.Services.Installation
                     AllowComments = true,
                     LanguageId = defaultLanguage.Id,
                     Title = "About tvProgViewer",
-                    Short = "It's stable and highly usable. From downloads to documentation, www.tvProgViewer.com offers a comprehensive base of information, resources, and support to the tvProgViewer community.",
-                    Full = "<p>For full feature list go to <a href=\"https://www.tvProgViewer.com\">tvProgViewer.com</a></p><p>Providing outstanding custom search engine optimization, web development services and e-commerce development solutions to our clients at a fair price in a professional manner.</p>",
+                    Short = "It's stable and highly usable. From downloads to documentation, www.tvprogviewer.ru offers a comprehensive base of information, resources, and support to the tvProgViewer community.",
+                    Full = "<p>For full feature list go to <a href=\"https://www.tvprogviewer.ru\">tvprogviewer.ru</a></p><p>Providing outstanding custom search engine optimization, web development services and e-commerce development solutions to our clients at a fair price in a professional manner.</p>",
                     Published = true,
                     CreatedOnUtc = DateTime.UtcNow
                 },

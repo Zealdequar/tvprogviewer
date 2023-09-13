@@ -67,10 +67,10 @@
     <Value>Selecteer de data provider</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Als u informatie nodig heeft over hoe nopCommerce te gebruiken, bezoek</Value>
+    <Value>Als u informatie nodig heeft over hoe tvprogviewer te gebruiken, bezoek</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>de Documentatie sectie op nopCommerce.com</Value>
+    <Value>de Documentatie sectie op tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Voorbeeld</Value>
@@ -79,7 +79,7 @@
     <Value>Installeer</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>nopCommerce installeren...</Value>
+    <Value>tvprogviewer installeren...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Gebruik geïntegreerde Windows authenticatie</Value>
@@ -133,9 +133,9 @@
     <Value>Webshop informatie</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce installatie</Value>
+    <Value>tvprogviewer installatie</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
-    <Value>Om deze wizard volledig en succesvol te doorlopen, heeft u wat informatie over uw database nodig (de "connectie string"). Indien nodig, neem contact hierover op met uw ISP. Als u nopCommerce op een lokaal systeem installeert, heeft u wellicht informatie van uw Systeembeheerder nodig.</Value>
+    <Value>Om deze wizard volledig en succesvol te doorlopen, heeft u wat informatie over uw database nodig (de "connectie string"). Indien nodig, neem contact hierover op met uw ISP. Als u tvprogviewer op een lokaal systeem installeert, heeft u wellicht informatie van uw Systeembeheerder nodig.</Value>
   </LocaleResource>
 </Language>

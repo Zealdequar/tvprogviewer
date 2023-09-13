@@ -70,7 +70,7 @@
     <Value>आपल्याला नॉमकॉमर्स कसे वापरावे याबद्दल माहिती हवी असल्यास भेट द्या</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>nopCommerce.com वर दस्तऐवजीकरण विभाग</Value>
+    <Value>tvprogviewer.ru वर दस्तऐवजीकरण विभाग</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>उदाहरण</Value>
@@ -133,7 +133,7 @@
     <Value>स्टोअर माहिती</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce स्थापना</Value>
+    <Value>tvprogviewer स्थापना</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>हे विझार्ड पूर्ण करण्यासाठी आपल्या डेटाबेस सर्व्हरशी संबंधित काही माहिती आपल्याला माहित असणे आवश्यक आहे ("कनेक्शन स्ट्रिंग"). कृपया आवश्यक असल्यास आपल्या आयएसपीशी संपर्क साधा. आपण स्थानिक मशीन किंवा सर्व्हरवर स्थापित करत असल्यास आपल्या सिस्टम अ‍ॅडमिनकडून आपल्याला माहितीची आवश्यकता असू शकेल.</Value>

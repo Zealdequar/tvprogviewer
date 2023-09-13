@@ -70,7 +70,7 @@
     <Value>నోప్ కామర్స్ ఎలా ఉపయోగించాలో మీకు సమాచారం అవసరమైతే, సందర్శించండి</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>nopCommerce.com లోని డాక్యుమెంటేషన్ విభాగం</Value>
+    <Value>tvprogviewer.ru లోని డాక్యుమెంటేషన్ విభాగం</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>ఉదాహరణ</Value>
@@ -133,7 +133,7 @@
     <Value>సమాచారాన్ని నిల్వ చేయండి</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce సంస్థాపన</Value>
+    <Value>tvprogviewer సంస్థాపన</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>ఈ విజర్డ్ పూర్తి చేయడానికి, మీ డేటాబేస్ సర్వర్ ("కనెక్షన్ స్ట్రింగ్") గురించి మీకు కొంత సమాచారం తెలుసుకోవాలి. అవసరమైతే దయచేసి మీ ISP ని సంప్రదించండి. మీరు స్థానిక మెషీన్ లేదా సర్వర్‌లో ఇన్‌స్టాల్ చేస్తుంటే, మీకు మీ సిస్టమ్ అడ్మిన్ నుండి సమాచారం అవసరం కావచ్చు.</Value>

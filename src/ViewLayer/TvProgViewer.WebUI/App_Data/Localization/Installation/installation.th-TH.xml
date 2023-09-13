@@ -67,10 +67,10 @@
     <Value>กรุณาเลือก DataProvider</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>ถ้าคุณต้องการข้อมูลการใช้งานผลิตภัณฑ์ nopCommerce ติดต่อได้ที่</Value>
+    <Value>ถ้าคุณต้องการข้อมูลการใช้งานผลิตภัณฑ์ tvprogviewer ติดต่อได้ที่</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>ส่วนเอกสารประกอบบน nopCommerce.com</Value>
+    <Value>ส่วนเอกสารประกอบบน tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>ตัวอย่าง</Value>
@@ -79,7 +79,7 @@
     <Value>ติดตั้ง</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>กำลังดำเนินการติดตั้งผลิตภัณฑ์ nopCommerce...</Value>
+    <Value>กำลังดำเนินการติดตั้งผลิตภัณฑ์ tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>ใช้การยืนยันตัวตนของวินโดว์(Windows authentication)</Value>
@@ -133,7 +133,7 @@
     <Value>ข้อมูลร้านค้า</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>ติดตั้งผลิตภัณฑ์ nopCommerce</Value>
+    <Value>ติดตั้งผลิตภัณฑ์ tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>เพื่อให้การติดตั้งผลิตภัณฑ์นี้เสร็จสมบูรณ์ คุณจำเป็นจะต้องทราบรายละเอียดเกี่ยวกับฐานข้อมูลของคุณ เช่น connection string เป็นต้น กรุณาสอบถามผู้ให้บริการ หรือหากคุณใช้งานในเครื่องภายในให้สอบถามผู้ดูแลระบบของคุณเอง</Value>

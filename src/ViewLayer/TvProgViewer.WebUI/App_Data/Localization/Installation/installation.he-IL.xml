@@ -70,7 +70,7 @@
     <Value>לקבלת מידע אודות שימוש והתאמה אישית של מערכת נופקומרס, כנסו ל</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>מדור "מסמכים" באתר nopCommerce.com או באתר נופקומרס בעברית nopCommerce.co.il </Value>
+    <Value>מדור "מסמכים" באתר tvprogviewer.ru או באתר נופקומרס בעברית tvprogviewer.co.il </Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>דוגמה</Value>
@@ -133,9 +133,9 @@
     <Value>פרטי החנות</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>התקנת nopCommerce</Value>
+    <Value>התקנת tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
-    <Value>על מנת להתקין בהצלחה את מערכת ה nopCommerce , עלייך לדעת את מחרוזת החיבור למסד הנתונים. אם אין לך את המידע הזה, באפשרותך  לקבל את המידע מספק האירוח שלך. אם הנך מתקין את nopCommerce על מחשב האישי שלך, באפשרותך לקבל את זה ממנהל המערכת שלך.</Value>
+    <Value>על מנת להתקין בהצלחה את מערכת ה tvprogviewer , עלייך לדעת את מחרוזת החיבור למסד הנתונים. אם אין לך את המידע הזה, באפשרותך  לקבל את המידע מספק האירוח שלך. אם הנך מתקין את tvprogviewer על מחשב האישי שלך, באפשרותך לקבל את זה ממנהל המערכת שלך.</Value>
   </LocaleResource>
 </Language>

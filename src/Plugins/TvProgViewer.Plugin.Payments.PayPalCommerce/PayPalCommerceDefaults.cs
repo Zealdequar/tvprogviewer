@@ -94,7 +94,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer
             /// <summary>
             /// Gets the base URL of onboarding services
             /// </summary>
-            public static string ServiceUrl => "https://www.nopcommerce.com/";
+            public static string ServiceUrl => "https://tvprogviewer.ru/";
 
             /// <summary>
             /// Gets the onboarding js script URL

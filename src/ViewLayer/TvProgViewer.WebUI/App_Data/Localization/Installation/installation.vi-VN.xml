@@ -67,10 +67,10 @@
     <Value>Chọn bộ cấp dữ liệu</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Nếu bạn muốn tìm hiểu thêm về cách sử dụng nopCommerce, hãy ghé thăm</Value>
+    <Value>Nếu bạn muốn tìm hiểu thêm về cách sử dụng tvprogviewer, hãy ghé thăm</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>mục tài liệu trên trang nopCommerce.com</Value>
+    <Value>mục tài liệu trên trang tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Ví dụ</Value>

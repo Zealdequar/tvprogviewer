@@ -147,7 +147,7 @@ namespace TvProgViewer.Services.Plugins
             }
 
             //sort list by display order. NOTE: Lowest DisplayOrder will be first i.e 0 , 1, 1, 1, 5, 10
-            //it's required: https://www.nopcommerce.com/boards/topic/17455/load-plugins-based-on-their-displayorder-on-startup
+            //it's required: https://tvprogviewer.ru/boards/topic/17455/load-plugins-based-on-their-displayorder-on-startup
             result = result.OrderBy(item => item.PluginDescriptor.DisplayOrder).ToList();
 
             return result;

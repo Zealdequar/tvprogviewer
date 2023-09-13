@@ -67,10 +67,10 @@
     <Value>Zgjidhni ofruesin e të dhënave.</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Nëse keni nevojë për informacion se si të përdorni nopCommerce, vizitoni</Value>
+    <Value>Nëse keni nevojë për informacion se si të përdorni tvprogviewer, vizitoni</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>Seksioni i dokumentacionit në nopCommerce.com</Value>
+    <Value>Seksioni i dokumentacionit në tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Shembull</Value>
@@ -79,7 +79,7 @@
     <Value>Instalo</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Duke instaluar nopCommerce …</Value>
+    <Value>Duke instaluar tvprogviewer …</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Përdorni vërtetimin e integruar të Windows</Value>
@@ -133,7 +133,7 @@
     <Value>Informacioni i dyqanit</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>Instalimi i tregtisë nopCommerce</Value>
+    <Value>Instalimi i tregtisë tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Për të përfunduar këtë magjistar, duhet të dini disa informacione në lidhje me serverin tuaj të bazës të të dhënave ('vargu i lidhjes'). Ju lutemi kontaktoni ISP-në tuaj nëse është e nevojshme. Nëse jeni duke instaluar në një makinë lokale ose server, mund t'ju duhet informacion nga Administratori juaj i Sistemit.</Value>

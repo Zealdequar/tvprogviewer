@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Common
             IWorkContext workContext)
         {
             //configure client
-            client.BaseAddress = new Uri("https://www.nopcommerce.com/");
+            client.BaseAddress = new Uri("https://tvprogviewer.ru/");
             client.Timeout = TimeSpan.FromSeconds(5);
             client.DefaultRequestHeaders.Add(HeaderNames.UserAgent, $"tvProgViewer-{TvProgVersion.CURRENT_VERSION}");
 

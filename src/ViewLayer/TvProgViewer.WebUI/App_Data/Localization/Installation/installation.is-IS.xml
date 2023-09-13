@@ -67,10 +67,10 @@
     <Value>Veldu gagnaveitu</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Ef þú þarft upplýsingar um hvernig á að nota nopCommerce skaltu fara á</Value>
+    <Value>Ef þú þarft upplýsingar um hvernig á að nota tvprogviewer skaltu fara á</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>skjalahlutann á nopCommerce.com</Value>
+    <Value>skjalahlutann á tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Dæmi</Value>
@@ -79,7 +79,7 @@
     <Value>Setja upp</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Er að setja upp nopCommerce ...</Value>
+    <Value>Er að setja upp tvprogviewer ...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Nota samþætta Windows auðkenningu</Value>
@@ -133,7 +133,7 @@
     <Value>Vista upplýsingar</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce uppsetning</Value>
+    <Value>tvprogviewer uppsetning</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Til að nota þetta leiðsagnarforrit verður þú að vita upplýsingar varðandi gagnagrunnsmiðlarann („tengirstrengur“). Vinsamlegast hafðu samband við hýsingaraðilann þinn ef þörf krefur. Ef þú ert að setja upp á staðbundna vél eða netþjón gætirðu þurft upplýsingar frá kerfisstjóranum þínum.</Value>

@@ -1,7 +1,7 @@
 ﻿namespace TvProgViewer.Services.Plugins.Marketplace
 {
     /// <summary>
-    /// Support versions from tvProgViewer.com marketplace
+    /// Support versions from tvprogviewer.ru marketplace
     /// </summary>
     public partial class OfficialFeedVersion
     {

@@ -70,7 +70,7 @@
     <Value>જો તમને નોપકોમર્સનો ઉપયોગ કેવી રીતે કરવો તે અંગેની માહિતીની જરૂર હોય, તો મુલાકાત લો</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>nopCommerce.com પર દસ્તાવેજીકરણ વિભાગ</Value>
+    <Value>tvprogviewer.ru પર દસ્તાવેજીકરણ વિભાગ</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>ઉદાહરણ</Value>
@@ -133,7 +133,7 @@
     <Value>સ્ટોર માહિતી</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce સ્થાપન</Value>
+    <Value>tvprogviewer સ્થાપન</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>આ વિઝાર્ડને પૂર્ણ કરવા માટે, તમારે તમારા ડેટાબેઝ સર્વર ("કનેક્શન શબ્દમાળા") સંબંધિત કેટલીક માહિતી જાણવી જ જોઇએ. જો જરૂરી હોય તો તમારા ISP નો સંપર્ક કરો. જો તમે સ્થાનિક મશીન અથવા સર્વર પર ઇન્સ્ટોલ કરી રહ્યાં છો, તો તમારે તમારા સિસ્ટમ એડમિનમાંથી માહિતીની જરૂર પડી શકે છે.</Value>

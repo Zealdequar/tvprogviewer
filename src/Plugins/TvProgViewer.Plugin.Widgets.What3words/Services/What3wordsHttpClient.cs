@@ -24,7 +24,7 @@ namespace TvProgViewer.Plugin.Widgets.What3words.Services
         public What3wordsHttpClient(HttpClient httpClient)
         {
             //configure client
-            httpClient.BaseAddress = new Uri("https://www.nopcommerce.com/");
+            httpClient.BaseAddress = new Uri("https://tvprogviewer.ru/");
             httpClient.Timeout = TimeSpan.FromSeconds(20);
             httpClient.DefaultRequestHeaders.Add(HeaderNames.UserAgent, What3wordsDefaults.UserAgent);
             httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, MimeTypes.ApplicationJson);

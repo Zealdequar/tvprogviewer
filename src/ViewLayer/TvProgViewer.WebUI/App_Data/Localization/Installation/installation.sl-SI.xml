@@ -67,10 +67,10 @@
     <Value>Izberite ponudnika</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Če potrebujete informacije o uporabi nopCommerce, obiščite</Value>
+    <Value>Če potrebujete informacije o uporabi tvprogviewer, obiščite</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>stran z dokumentacijo na nopCommerce.com</Value>
+    <Value>stran z dokumentacijo na tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Primer</Value>
@@ -79,7 +79,7 @@
     <Value>Namesti</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Nameščam nopCommerce ...</Value>
+    <Value>Nameščam tvprogviewer ...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Uporabi vgrajeno Windows preverjanje</Value>
@@ -133,7 +133,7 @@
     <Value>Podatki o trgovini</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce namestitev</Value>
+    <Value>tvprogviewer namestitev</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Za uporabo čarovnika morate poznati nekaj informacij glede strežnika baze podatkov ("povezovalni niz"). Če je potrebno, kontaktirajte ponudnika spletnih storitev. Če namestitev izvajate na lokalnem računalniku ali strežniku, boste morda potrebovali podatke od sistemskega skrbnika.</Value>

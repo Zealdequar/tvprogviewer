@@ -5,7 +5,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Cache
     public static partial class TvProgModelCacheDefaults
     {
         /// <summary>
-        /// Key for tvProgViewer.com news cache
+        /// Key for tvprogviewer.ru news cache
         /// </summary>
         public static CacheKey OfficialNewsModelKey => new("TvProg.pres.admin.official.news");
         

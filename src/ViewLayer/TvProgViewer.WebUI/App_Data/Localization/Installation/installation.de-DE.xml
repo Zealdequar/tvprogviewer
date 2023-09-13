@@ -67,10 +67,10 @@
     <Value>Wählen Sie den Daten-Provider</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Wenn Sie Informationen zur Nutzung von nopCommerce benötigen, besuchen Sie uns unter</Value>
+    <Value>Wenn Sie Informationen zur Nutzung von tvprogviewer benötigen, besuchen Sie uns unter</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>der Doku-Bereich auf nopCommerce.com</Value>
+    <Value>der Doku-Bereich auf tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Beispiel</Value>
@@ -79,7 +79,7 @@
     <Value>Installieren</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Installieren von nopCommerce...</Value>
+    <Value>Installieren von tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Integrierte Windows-Authentifizierung verwenden</Value>
@@ -133,7 +133,7 @@
     <Value>Shop Information</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce-Installation</Value>
+    <Value>tvprogviewer-Installation</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Um diesen Assistenten abzuschließen, müssen Sie einige Informationen über Ihren Datenbankserver ("Verbindungszeichenfolge") kennen. Bitte wenden Sie sich gegebenenfalls an Ihren ISP. Wenn Sie auf einem lokalen Rechner oder Server installieren, benötigen Sie möglicherweise Informationen von Ihrem Systemadministrator.</Value>

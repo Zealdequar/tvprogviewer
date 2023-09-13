@@ -67,10 +67,10 @@
     <Value>Выберите провайдер данных</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Если вам необходима информация о том, как пользоваться и настраивать nopCommerce, пожалуйста, посетите</Value>
+    <Value>Если вам необходима информация о том, как пользоваться и настраивать tvprogviewer, пожалуйста, посетите</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>раздел "Документация" на сайте nopCommerce.com</Value>
+    <Value>раздел "Документация" на сайте tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Пример</Value>
@@ -79,7 +79,7 @@
     <Value>Установить</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Установка nopCommerce...</Value>
+    <Value>Установка tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Проверка подлинности Windows</Value>
@@ -133,9 +133,9 @@
     <Value>Информация о магазине</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>Установка nopCommerce</Value>
+    <Value>Установка tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
-    <Value>Для того, что успешно установить nopCommerce, вам необходимо знать строку подключения к вашей базе данных. Если у вас нет этой информации, то вы можете узнать ее у вашего хостинг-провайдера. Если же вы устанавливаете nopCommerce на локальный компьютер, то вы можете узнать её у вашего системного администратора.</Value>
+    <Value>Для того, что успешно установить tvprogviewer, вам необходимо знать строку подключения к вашей базе данных. Если у вас нет этой информации, то вы можете узнать ее у вашего хостинг-провайдера. Если же вы устанавливаете tvprogviewer на локальный компьютер, то вы можете узнать её у вашего системного администратора.</Value>
   </LocaleResource>
 </Language>

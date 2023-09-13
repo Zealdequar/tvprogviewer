@@ -67,10 +67,10 @@
     <Value>აირჩიეთ მონაცემთა პროვაიდერი</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>თუ გჭირდებათ ინფორმაცია, თუ როგორ გამოიყენოთ nopCommerce, ეწვიეთ</Value>
+    <Value>თუ გჭირდებათ ინფორმაცია, თუ როგორ გამოიყენოთ tvprogviewer, ეწვიეთ</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>დოკუმენტაციის სექცია nopCommerce.com– ზე</Value>
+    <Value>დოკუმენტაციის სექცია tvprogviewer.ru– ზე</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>მაგალითი</Value>
@@ -79,7 +79,7 @@
     <Value>დაინსტალირება</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>nopCommerce- ის ინსტალაცია ...</Value>
+    <Value>tvprogviewer- ის ინსტალაცია ...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>გამოიყენეთ ინტეგრირებული Windows ავტორიზაცია</Value>
@@ -133,7 +133,7 @@
     <Value>ინფორმაცია მაღაზიის შესახებ</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce-ის ინსტალაცია</Value>
+    <Value>tvprogviewer-ის ინსტალაცია</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>დასასრულებლად, თქვენ უნდა იცოდეთ ინფორმაცია თქვენს მონაცემთა ბაზასთან კავშირის შესახებ (connection string). საჭიროების შემთხვევაში გთხოვთ დაუკავშირდეთ თქვენს ინტერნეტ მომსახურეობის მომწოდებელს- ს. თუ ინსტალაცია მიმდინარეობს ლოკალურ მანქანაზე ან სერვერზე, შეიძლება დაგჭირდეთ ინფორმაცია თქვენი სისტემური ადმინისტრატორისგან.</Value>

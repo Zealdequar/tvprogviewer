@@ -67,10 +67,10 @@
     <Value>Seleziona il fornitore di dati</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Se avete bisogno di informazioni su come utilizzare nopCommerce, visitare</Value>
+    <Value>Se avete bisogno di informazioni su come utilizzare tvprogviewer, visitare</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>la sezione documentazione su nopCommerce.com</Value>
+    <Value>la sezione documentazione su tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Esempio</Value>
@@ -79,7 +79,7 @@
     <Value>Installa</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Installazione di nopCommerce...</Value>
+    <Value>Installazione di tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Utilizzare l'autenticazione integrata di Windows</Value>
@@ -133,7 +133,7 @@
     <Value>Informazioni Negozio</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>Installazione di nopCommerce</Value>
+    <Value>Installazione di tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Per completare questa procedura guidata è necessario conoscere alcune informazioni riguardanti il server di database ("stringa di connessione"). Si prega di contattare il proprio ISP, se necessario. Se si sta installando su una macchina locale o su server potrebbero essere necessarie informazioni dal proprio amministratore di sistema.</Value>

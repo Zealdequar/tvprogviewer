@@ -67,12 +67,12 @@ namespace TvProgViewer.Services.Html
             if (replaceUrl)
             {
                 var newWindow = _commonSettings.BbcodeEditorOpenLinksInNewWindow;
-                // format the URL tags: [url=https://www.tvProgViewer.com]my site[/url]
-                // becomes: <a href="https://www.tvProgViewer.com">my site</a>
+                // format the URL tags: [url=https://www.tvprogviewer.ru]my site[/url]
+                // becomes: <a href="https://www.tvprogviewer.ru">my site</a>
                 text = _regexUrl1.Replace(text, $"<a href=\"$1\" rel=\"nofollow\"{(newWindow ? " target=_blank" : "")}>$2</a>");
 
-                // format the URL tags: [url]https://www.tvProgViewer.com[/url]
-                // becomes: <a href="https://www.tvProgViewer.com">https://www.tvProgViewer.com</a>
+                // format the URL tags: [url]https://www.tvprogviewer.ru[/url]
+                // becomes: <a href="https://www.tvprogviewer.ru">https://www.tvprogviewer.ru</a>
                 text = _regexUrl2.Replace(text, $"<a href=\"$1\" rel=\"nofollow\"{(newWindow ? " target=_blank" : "")}>$1</a>");
             }
 
@@ -84,8 +84,8 @@ namespace TvProgViewer.Services.Html
                 text = CodeFormatHelper.FormatTextSimple(text);
 
             if (replaceImg)
-                // format the img tags: [img]https://www.tvProgViewer.com/Content/Images/Image.jpg[/img]
-                // becomes: <img src="https://www.tvProgViewer.com/Content/Images/Image.jpg">
+                // format the img tags: [img]https://www.tvprogviewer.ru/Content/Images/Image.jpg[/img]
+                // becomes: <img src="https://www.tvprogviewer.ru/Content/Images/Image.jpg">
                 text = _regexImg.Replace(text, "<img src=\"$1\" class=\"user-posted-image\" alt=\"\">");
 
             return text;

@@ -5,7 +5,7 @@
 @inject TvProgViewer.Services.Common.IGenericAttributeService genericAttributeService
 
 @{
-    const string cardId = "nopcommerce-news-box";
+    const string cardId = "tvprogviewer-news-box";
     const string hideCardAttributeName = "HideTvProgViewerNewsCard";
     var hideCard = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideCardAttributeName);
 }

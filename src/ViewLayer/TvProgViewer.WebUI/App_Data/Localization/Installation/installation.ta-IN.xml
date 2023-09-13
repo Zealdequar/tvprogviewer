@@ -67,10 +67,10 @@
     <Value>தரவு வழங்குநரைத் தெரிவுசெய்க</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>nopCommerce ஐ எவ்வாறு பயன்படுத்துவது என்பது குறித்த தகவல்களை பின்வரும் தளத்தில் பார்வையிடவும்</Value>
+    <Value>tvprogviewer ஐ எவ்வாறு பயன்படுத்துவது என்பது குறித்த தகவல்களை பின்வரும் தளத்தில் பார்வையிடவும்</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>nopCommerce.com இன் ஆவணப்படுத்தல் பிரிவு</Value>
+    <Value>tvprogviewer.ru இன் ஆவணப்படுத்தல் பிரிவு</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>உதாரணம்</Value>
@@ -79,7 +79,7 @@
     <Value>நிறுவு</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>nopCommerce ஐ நிறுவுகிறது...</Value>
+    <Value>tvprogviewer ஐ நிறுவுகிறது...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>ஒருங்கிணைந்த விண்டோஸ் அங்கீகாரத்தைப் பயன்படுத்தவும்</Value>
@@ -133,7 +133,7 @@
     <Value>வியாபார நிலையத் தகவல்கள்</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce நிறுவல்</Value>
+    <Value>tvprogviewer நிறுவல்</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>இந்த wizard ஐ பூரணப்படுத்த, உங்கள் தரவுத்தள சேவையகம் ("தரவுத்தள இணைப்பு") தொடர்பான சில தகவல்களை நீங்கள் அறிந்திருக்க வேண்டும். தேவைப்பட்டால் உங்கள் ISP ஐ தொடர்பு கொள்ளவும். நீங்கள் ஒரு பிரத்தியேக கணினி அல்லது சேவையகத்தில் நிறுவினால், உங்கள் System Admin னிடமிருந்து தகவல் தேவைப்படலாம்.</Value>

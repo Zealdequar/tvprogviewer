@@ -67,10 +67,10 @@
     <Value>Odaberite data providera</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Ako su vam potrebne informacije o tome kako koristiti nopCommerce, posjetite</Value>
+    <Value>Ako su vam potrebne informacije o tome kako koristiti tvprogviewer, posjetite</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>odjeljak s dokumentacijom na nopCommerce.com</Value>
+    <Value>odjeljak s dokumentacijom na tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Primjer</Value>
@@ -79,7 +79,7 @@
     <Value>Instalacija</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Instaliranje nopCommerce...</Value>
+    <Value>Instaliranje tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Koristite integriranu Windows autentifikaciju</Value>
@@ -133,7 +133,7 @@
     <Value>Informacije trgovine</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>instalacija nopCommerce</Value>
+    <Value>instalacija tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Da biste dovršili ovaj čarobnjak, morate znati neke podatke koji se odnose na vaš server baze podataka ("Podaci za povezivanje"). Po potrebi kontaktirajte svog davatelja internetskih usluga. Ako instalirate na lokalni poslužitelj, možda će vam trebati podaci s vašeg administratora sustava.</Value>

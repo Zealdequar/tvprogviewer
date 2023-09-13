@@ -67,10 +67,10 @@
     <Value>Pilih provider data</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Jika anda memerlukan informasi mengenai cara penggunaan nopCommerce, kunjungi</Value>
+    <Value>Jika anda memerlukan informasi mengenai cara penggunaan tvprogviewer, kunjungi</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>bagian dokumentasi di nopCommerce.com</Value>
+    <Value>bagian dokumentasi di tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Contoh</Value>
@@ -79,7 +79,7 @@
     <Value>Pasang</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Memasang nopCommerce...</Value>
+    <Value>Memasang tvprogviewer...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Gunakan integrated Windows authentication</Value>
@@ -133,7 +133,7 @@
     <Value>Informasi Toko</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>Pemasangan nopCommerce</Value>
+    <Value>Pemasangan tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Untuk menyelesaikan panduan ini, Anda harus mempunyai informasi mengenai server database Anda ("connection string"). Harap menghubungi ISP Anda jika diperlukan. Jika Anda memasang di mesin atau server lokal, Anda mungkin memerlukan informasi dari Sistem Admin Anda.</Value>

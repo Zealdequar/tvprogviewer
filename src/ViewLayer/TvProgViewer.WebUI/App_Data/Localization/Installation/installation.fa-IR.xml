@@ -70,7 +70,7 @@
     <Value>اگر درمورد چگونگی استفاده از ناپ‌کامرس به اطلاعاتی نیاز دارید، به وب‌سایت مراجعه کنید</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>قسمت documentation در nopCommerce.com</Value>
+    <Value>قسمت documentation در tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>مثال</Value>
@@ -133,7 +133,7 @@
     <Value>اطلاعات فروشگاه</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>نصب nopCommerce</Value>
+    <Value>نصب tvprogviewer</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>برای تکمیل فرایند نصب توسط این جادوگر، شما باید اطلاعات اتصال به سرور پایگاه داده ("connection string") را داشته باشید. در صورت لزوم، لطفا با ارائه‌دهنده سرویس میزبانی خود تماس بگیرید. اگر قصد نصب بر روی کامپیوتر شخصی یا سرور را دارید، ممکن است به اطلاعات مدیر سیستم خود نیاز داشته باشید.</Value>

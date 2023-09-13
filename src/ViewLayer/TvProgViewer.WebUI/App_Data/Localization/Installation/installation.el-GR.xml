@@ -67,10 +67,10 @@
     <Value>Επιλέξτε τα πάροχο δεδομένων</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation1">
-    <Value>Αν χρειάζεστε πληροφορίες για το πώς να χρησιμοποιήσετε τη nopCommerce, επισκεφθείτε</Value>
+    <Value>Αν χρειάζεστε πληροφορίες για το πώς να χρησιμοποιήσετε τη tvprogviewer, επισκεφθείτε</Value>
   </LocaleResource>
   <LocaleResource Name="Documentation2">
-    <Value>το τμήμα τεκμηρίωσης στο nopCommerce.com</Value>
+    <Value>το τμήμα τεκμηρίωσης στο tvprogviewer.ru</Value>
   </LocaleResource>
   <LocaleResource Name="Example">
     <Value>Παράδειγμα</Value>
@@ -79,7 +79,7 @@
     <Value>Εγκατάσταση</Value>
   </LocaleResource>
   <LocaleResource Name="Installing">
-    <Value>Εγκατάσταση nopCommerce ...</Value>
+    <Value>Εγκατάσταση tvprogviewer ...</Value>
   </LocaleResource>
   <LocaleResource Name="IntegratedAuthentication">
     <Value>Χρησιμοποιήστε το ενσωματωμένο έλεγχο ταυτότητας των Windows</Value>
@@ -133,7 +133,7 @@
     <Value>Πληροφορίες καταστηματός</Value>
   </LocaleResource>
   <LocaleResource Name="Title">
-    <Value>nopCommerce εγκατάσταση</Value>
+    <Value>tvprogviewer εγκατάσταση</Value>
   </LocaleResource>
   <LocaleResource Name="Tooltip2">
     <Value>Για την ολοκλήρωση αυτού του οδηγού θα πρέπει να γνωρίζουμε κάποιες πληροφορίες σχετικά με server της βάσης δεδομένων σας ("συμβολοσειρά σύνδεσης"). Παρακαλούμε επικοινωνήστε με τον ISP σας, εάν είναι απαραίτητο. Εάν θέλετε να εγκαταστήσετε σε έναν τοπικό υπολογιστή ή διακομιστή μπορεί να χρειαστείτε πληροφορίες από διαχειριστή του συστήματός σας.</Value>
