@@ -190,7 +190,7 @@ function imgChannel(s) {
     return "<img src='/images/i/satellite_25.png' alt='Эмблема канала' />";
 }
 
-// Получение списка натроенных пользователем каналов
+// Получение списка настроенных пользователем каналов
 function getStorageChannels() {
     let storageChannels = window.localStorage.getItem("optChans");
     let result;
