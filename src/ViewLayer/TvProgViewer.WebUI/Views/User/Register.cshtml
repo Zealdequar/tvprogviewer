@@ -88,6 +88,7 @@
                         <tvprog-required />
                         <span asp-validation-for="Email"></span>
                     </div>
+                    <strong>@T("Account.Field.Email.RuleRuDomenEmailOnly")</strong>
                     @if (Model.EnteringEmailTwice)
                     {
                         <div class="inputs">

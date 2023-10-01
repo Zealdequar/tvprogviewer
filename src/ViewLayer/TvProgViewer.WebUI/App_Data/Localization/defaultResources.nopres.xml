@@ -345,6 +345,9 @@
   <LocaleResource Name="Account.Fields.Email.EnteredEmailsDoNotMatch">
     <Value>The email and confirmation email do not match.</Value>
   </LocaleResource>
+  <LocaleResource Name="Account.Field.Email.RuleRuDomenEmailOnly">
+    <Value>В соответствии с законом от 31.07.2023 №406-ФЗ с поправками к ФЗ «Об информации, информационных технологиях и о защите информации» и ФЗ «О связи» (законопроект №570420-7) введён запрет регистрироваться на российских сайтах с помощью иностранной электронной почты</Value>
+  </LocaleResource>
   <LocaleResource Name="Account.Fields.Email.Required">
     <Value>Email is required.</Value>
   </LocaleResource>
