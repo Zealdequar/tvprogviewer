@@ -159,35 +159,35 @@ function numDateString(date) {
 
 //Получение тега пиктограммы
 function getImgTag(s, str) {
-    return "<img src='" + s + "' alt='" + str + "' />";
+    return "<img src='" + s + "' alt='" + str + "' height='25px' width='25px' />";
 }
 
 // Пиктограмма для рейтнигов
-function imgRating(s) {
-    if (s)
-        return getImgTag(s, "Рейтинг");
+function imgRating(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return getImgTag(cellvalue, rowObject.RatingName);
     return " ";
 }
 
 // Пиктограмма для жанров
-function imgGenre(s) {
-    if (s)
-        return getImgTag(s, "Жанр");
+function imgGenre(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return getImgTag(cellvalue, rowObject.GenreName);
     return " ";
 }
 
 // Пиктограмма для анонсов
-function imgAnons(s) {
-    if (s)
-        return getImgTag(s, "Анонс");
+function imgAnons(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return "<img src='" + cellvalue + "' alt='Анонс' height='21px' width='17px' />";
     return " ";
 }
 
 // Пиктограмма для каналов
-function imgChannel(s) {
-    if (s)
-        return getImgTag(s, "Эмблема канала");
-    return "<img src='/images/i/satellite_25.png' alt='Эмблема канала' />";
+function imgChannel(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return getImgTag(cellvalue, "Эмблема телеканала " + rowObject.ChannelName);
+    return "<img src='/images/i/satellite_25.png' alt='Эмблема телеканала' height='25px' width='25px' />";
 }
 
 // Получение списка настроенных пользователем каналов
@@ -285,7 +285,7 @@ function setGrids() {
             shrinkToFit: true,
             autoResizing: { minColWidth: 80 },
             viewrecords: true,
-            caption: 'Программа передач',
+            caption: 'Программа передач на сейчас | Что сейчас показывают на телевидении | Сколько процентов от времени передачи осталось до конца',
             emptyrecords: 'Программа передач не обнаружена',
             pager: '#TVProgrammePager',
             loadonce: false,
@@ -397,7 +397,7 @@ function setGrids() {
             shrinkToFit: true,
             autoResizing: { minColWidth: 80 },
             viewrecords: true,
-            caption: 'Программа передач',
+            caption: 'Телепередачи после текущих передач | Что последует в телеэфире | Через сколько в часах и минутах они начнутся',
             emptyrecords: 'Программа передач не обнаружена',
             pager: '#TVProgrammeNextPager',
             loadonce: false,
@@ -501,7 +501,7 @@ function searchProgramme(typeProgID, findTitle) {
                 autowidth: true,
                 shrinkToFit: true,
                 viewrecords: true,
-                caption: 'Программа передач',
+                caption: 'Список найденных передач из эфирной сетки | Телепередачи, которые вы ищете | Результаты поиска по программе передач',
                 emptyrecords: 'Программа передач не обнаружена',
                 pager: '#TVProgrammeSearchPager',
                 loadonce: false,
@@ -654,7 +654,7 @@ function fillUserByDay(date, channelId) {
                 autowidth: true,
                 shrinkToFit: true,
                 viewrecords: true,
-                caption: 'Программа передач',
+                caption: 'Программа передач по телеканалу на определённый день',
                 shrinkToFit: true,
                 emptyrecords: 'Программа передач не обнаружена',
                 pager: '#TVProgrammeByDaysPager',
@@ -774,7 +774,7 @@ function fillUserByChannels(date, channelId) {
                 autowidth: true,
                 shrinkToFit: true,
                 viewrecords: true,
-                caption: 'Программа передач',
+                caption: 'Программа передач по дням на определённый телеканал',
                 emptyrecords: 'Программа передач не обнаружена',
                 pager: '#TVProgrammeByChannelsPager',
                 loadonce: false,
@@ -851,7 +851,7 @@ function fillGenresToolNow() {
                 var b = $('<button id="' + response[i].GenreId + '" class="btn btn-default btn-genre-now">');
 
                 $('#genresToolNow').append(
-                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
+                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" alt="' + response[i].GenreName + '" height="24px" width="24px">'));
 
 
             }
@@ -902,7 +902,7 @@ function fillGenresToolNext() {
                 var b = $('<button id="' + response[i].GenreId + '" class="btn btn-default btn-genre-next">');
 
                 $('#genresToolNext').append(
-                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
+                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" alt="' + response[i].GenreName + '" height="24px" width="24px">'));
 
 
             }
@@ -954,7 +954,7 @@ function fillGenresToolSearch() {
                     var b = $('<button id="' + response[i].GenreId + '" class="btn btn-default btn-genre-search">');
 
                     $('#genresToolSearch').append(
-                        b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" height="24px" width="24px">'));
+                        b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" alt="' + response[i].GenreName + '" height="24px" width="24px">'));
 
 
                 }
@@ -1044,10 +1044,11 @@ function appendDateColumn(dt) {
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).valueOf();
     var dtDate = new Date(dt);
     var chb = dtDate >= today ? 'checked="checked" ' : '';
+    var days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
     return '<div class="col-sm-2"><div class="form-group form-check">' +
         (typeof dt !== 'undefined' ? '<input id="Date' + numDateString(dt) + '" type="checkbox" ' + chb + 'class="form-check-input chkDates">' : '') +
            (typeof dt !== 'undefined' ? '<label class="form-check-label label-of-checkbox" for="Date' +
-              numDateString(dt) + '"><img class="pic-of-checkbox" src="/images/i/' + getDayOfWeek(dt) + '.png"></img>' : '') +
+              numDateString(dt) + '"><img class="pic-of-checkbox" src="/images/i/' + getDayOfWeek(dt) + '.png" alt="' + days[dtDate.getDay()] +'"></img>' : '') +
                 (typeof dt !== 'undefined' ? formatDateString(dt) : '') + '</label></div></div>';
 }
 

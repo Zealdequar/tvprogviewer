@@ -121,7 +121,7 @@ function setGrid()
                 key: true, name: "ChannelId", index: "ChannelId", width: "0px", hidden: true
             },
             {
-                key: false, name: "FileName25", index: "FileName25", sortable: false, width: "3%", align: "center", formatter: imgChannel,
+                key: false, name: "FileName25", index: "FileName25", sortable: false, width: "3%", align: "center", formatter: imgTvChannel,
                 editable: true, edittype: 'file', editoptions: { enctype: "multipart/form-data" }, search: false
             },
             {
@@ -228,7 +228,7 @@ function setGrid()
                 lastcell = id;
             }
         },*/ 
-        caption: 'Настройка телеканалов - Выберите необходимые телеканалы и обновите страницу',
+        caption: 'Настройка телеканалов для отображения программы передач | Выберите необходимые телеканалы | Обновите страницу или щёлкните на кнопке «Применить» после выбора',
         emptyrecords: 'Телеканалы не обнаружены',
         /*formEditing: {
             width: 400,
@@ -280,13 +280,13 @@ function reload() {
 }
 
 // Пиктограмма для каналов
-function imgChannel(s) {
-    if (s)
-        return getImgTag(s, "Эмблема канала");
-    return "<img src='/images/i/satellite_25.png' alt='Эмблема канала' />";
+function imgTvChannel(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return getImgTag(cellvalue, "Эмблема телеканала " + rowObject.SystemTitle);
+    return "<img src='/images/i/satellite_25.png' alt='Эмблема телеканала' height='25px' width='25px' />";
 }
 
 //Получение тега пиктограммы
 function getImgTag(s, str) {
-    return "<img src='" + s + "' alt='" + str + "' />";
+    return "<img src='" + s + "' alt='" + str + "' height='25px' width='25px' />";
 }
