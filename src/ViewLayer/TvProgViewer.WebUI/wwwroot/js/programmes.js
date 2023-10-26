@@ -285,7 +285,7 @@ function setGrids() {
             shrinkToFit: true,
             autoResizing: { minColWidth: 80 },
             viewrecords: true,
-            caption: 'Программа передач на сейчас | Что сейчас показывают на телевидении | Сколько процентов от времени передачи осталось до конца',
+            caption: 'Программа передач на сейчас | Что сейчас показывают на телевидении | Сколько процентов от времени передачи осталось до окончания',
             emptyrecords: 'Программа передач не обнаружена',
             pager: '#TVProgrammePager',
             loadonce: false,
