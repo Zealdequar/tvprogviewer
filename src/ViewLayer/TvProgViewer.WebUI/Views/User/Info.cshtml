@@ -44,6 +44,18 @@
                             </div>
                         </div>
                     }
+                    @if (Model.LastNameEnabled)
+                    {
+                        <div class="inputs">
+                            <label asp-for="LastName" asp-postfix=":"></label>
+                            <input asp-for="LastName" />
+                            @if (Model.LastNameRequired)
+                            {
+                                <tvprog-required />
+                            }
+                            <span asp-validation-for="LastName"></span>
+                        </div>
+                    }
                     @if (Model.FirstNameEnabled)
                     {
                         <div class="inputs">
@@ -56,16 +68,12 @@
                             <span asp-validation-for="FirstName"></span>
                         </div>
                     }
-                    @if (Model.LastNameEnabled)
+                    @if (Model.MiddleNameEnabled)
                     {
                         <div class="inputs">
-                            <label asp-for="LastName" asp-postfix=":"></label>
-                            <input asp-for="LastName" />
-                            @if (Model.LastNameRequired)
-                            {
-                                <tvprog-required />
-                            }
-                            <span asp-validation-for="LastName"></span>
+                            <label asp-for="MiddleName" asp-postfix=":"></label>
+                            <input asp-for="MiddleName" />
+                            <span asp-validation-for="MiddleName"></span>
                         </div>
                     }
                     @if (Model.BirthDateEnabled)

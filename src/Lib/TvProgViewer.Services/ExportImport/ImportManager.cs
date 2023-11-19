@@ -2863,6 +2863,9 @@ namespace TvProgViewer.Services.ExportImport
                         case "BillingLastName":
                             orderBillingAddress.LastName = property.StringValue;
                             break;
+                        case "BillingMiddleName":
+                            orderBillingAddress.MiddleName = property.StringValue;
+                            break;
                         case "BillingPhoneNumber":
                             orderBillingAddress.PhoneNumber = property.StringValue;
                             break;
@@ -2903,6 +2906,9 @@ namespace TvProgViewer.Services.ExportImport
                             break;
                         case "ShippingLastName":
                             orderAddress.LastName = property.StringValue;
+                            break;
+                        case "ShippingMiddleName":
+                            orderAddress.MiddleName = property.StringValue;
                             break;
                         case "ShippingPhoneNumber":
                             orderAddress.PhoneNumber = property.StringValue;

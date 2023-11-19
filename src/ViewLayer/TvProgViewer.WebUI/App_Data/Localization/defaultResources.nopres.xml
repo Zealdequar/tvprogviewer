@@ -381,6 +381,9 @@
   <LocaleResource Name="Account.Fields.LastName">
     <Value>Last name</Value>
   </LocaleResource>
+  <LocaleResource Name="Account.Fields.MiddleName">
+    <Value>Middle name</Value>
+  </LocaleResource>
   <LocaleResource Name="Account.Fields.LastName.Required">
     <Value>Last name is required.</Value>
   </LocaleResource>

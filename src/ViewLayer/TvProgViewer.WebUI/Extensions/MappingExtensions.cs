@@ -26,6 +26,8 @@ namespace TvProgViewer.WebUI.Extensions
                     model.FirstName = model.FirstName.Trim();
                 if (model.LastName != null)
                     model.LastName = model.LastName.Trim();
+                if (model.MiddleName != null)
+                    model.MiddleName = model.MiddleName.Trim();
                 if (model.Email != null)
                     model.Email = model.Email.Trim();
                 if (model.Company != null)
@@ -48,6 +50,7 @@ namespace TvProgViewer.WebUI.Extensions
             destination.Id = model.Id;
             destination.FirstName = model.FirstName;
             destination.LastName = model.LastName;
+            destination.MiddleName = model.MiddleName;
             destination.Email = model.Email;
             destination.Company = model.Company;
             destination.CountryId = model.CountryId == 0 ? null : model.CountryId;

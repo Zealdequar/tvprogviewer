@@ -114,7 +114,7 @@ namespace TvProgViewer.Services.Affiliates
         /// The task result contains the affiliates
         /// </returns>
         public virtual async Task<IPagedList<Affiliate>> GetAllAffiliatesAsync(string friendlyUrlName = null,
-            string firstName = null, string lastName = null,
+            string firstName = null, string lastName = null, string middleName = null,
             bool loadOnlyWithOrders = false,
             DateTime? ordersCreatedFromUtc = null, DateTime? ordersCreatedToUtc = null,
             int pageIndex = 0, int pageSize = int.MaxValue,
@@ -136,6 +136,12 @@ namespace TvProgViewer.Services.Affiliates
                         join addr in _addressRepository.Table on aff.AddressId equals addr.Id
                         where addr.LastName.Contains(lastName)
                         select aff;
+
+                if (!string.IsNullOrWhiteSpace(middleName))
+                    query = from aff in query
+                            join addr in _addressRepository.Table on aff.AddressId equals addr.Id
+                            where addr.MiddleName.Contains(middleName)
+                            select aff;
 
                 if (!showHidden)
                     query = query.Where(a => a.Active);
@@ -199,7 +205,7 @@ namespace TvProgViewer.Services.Affiliates
             if (affiliateAddress == null)
                 return string.Empty;
 
-            var fullName = $"{affiliateAddress.FirstName} {affiliateAddress.LastName}";
+            var fullName = $"{affiliateAddress.LastName} {affiliateAddress.FirstName} {affiliateAddress.MiddleName}";
 
             return fullName;
         }

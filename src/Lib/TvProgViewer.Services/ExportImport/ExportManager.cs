@@ -1884,6 +1884,7 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<Order, Language>("CreatedOnUtc", (p, l) => p.CreatedOnUtc),
                 new PropertyByName<Order, Language>("BillingFirstName", async (p, l) => (await orderBillingAddress(p))?.FirstName ?? string.Empty),
                 new PropertyByName<Order, Language>("BillingLastName", async (p, l) => (await orderBillingAddress(p))?.LastName ?? string.Empty),
+                new PropertyByName<Order, Language>("BillingMiddleName", async (p, l) => (await orderBillingAddress(p))?.MiddleName ?? string.Empty),
                 new PropertyByName<Order, Language>("BillingEmail", async (p, l) => (await orderBillingAddress(p))?.Email ?? string.Empty),
                 new PropertyByName<Order, Language>("BillingCompany", async (p, l) => (await orderBillingAddress(p))?.Company ?? string.Empty),
                 new PropertyByName<Order, Language>("BillingCountry", async (p, l) => (await _countryService.GetCountryByAddressAsync(await orderBillingAddress(p)))?.Name ?? string.Empty),
@@ -1899,6 +1900,7 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<Order, Language>("BillingFaxNumber", async (p, l) => (await orderBillingAddress(p))?.FaxNumber ?? string.Empty),
                 new PropertyByName<Order, Language>("ShippingFirstName", async (p, l) => (await orderAddress(p))?.FirstName ?? string.Empty),
                 new PropertyByName<Order, Language>("ShippingLastName", async (p, l) => (await orderAddress(p))?.LastName ?? string.Empty),
+                new PropertyByName<Order, Language>("ShippingMiddleName", async (p, l) => (await orderAddress(p))?.MiddleName ?? string.Empty),
                 new PropertyByName<Order, Language>("ShippingEmail", async (p, l) => (await orderAddress(p))?.Email ?? string.Empty),
                 new PropertyByName<Order, Language>("ShippingCompany", async (p, l) => (await orderAddress(p))?.Company ?? string.Empty),
                 new PropertyByName<Order, Language>("ShippingCountry", async (p, l) => (await _countryService.GetCountryByAddressAsync(await orderAddress(p)))?.Name ?? string.Empty),
@@ -1986,6 +1988,7 @@ namespace TvProgViewer.Services.ExportImport
                 //attributes
                 new PropertyByName<User, Language>("FirstName", (p, l) => p.FirstName, !_userSettings.FirstNameEnabled),
                 new PropertyByName<User, Language>("LastName", (p, l) => p.LastName, !_userSettings.LastNameEnabled),
+                new PropertyByName<User, Language>("MiddleName", (p, l) => p.MiddleName, !_userSettings.MiddleNameEnabled),
                 new PropertyByName<User, Language>("Gender", (p, l) => p.Gender, !_userSettings.GenderEnabled),
                 new PropertyByName<User, Language>("Company", (p, l) => p.Company, !_userSettings.CompanyEnabled),
                 new PropertyByName<User, Language>("StreetAddress", (p, l) => p.StreetAddress, !_userSettings.StreetAddressEnabled),
@@ -2059,8 +2062,9 @@ namespace TvProgViewer.Services.ExportImport
                 await xmlWriter.WriteElementStringAsync("IsForumModerator", null, (await _userService.IsForumModeratorAsync(user)).ToString());
                 await xmlWriter.WriteElementStringAsync("CreatedOnUtc", null, user.CreatedOnUtc.ToString(CultureInfo.InvariantCulture));
 
-                await xmlWriter.WriteElementStringAsync("FirstName", null, user.FirstName);
                 await xmlWriter.WriteElementStringAsync("LastName", null, user.LastName);
+                await xmlWriter.WriteElementStringAsync("FirstName", null, user.FirstName);
+                await xmlWriter.WriteElementStringAsync("MiddleName", null, user.MiddleName);
                 await xmlWriter.WriteElementStringAsync("Gender", null, user.Gender);
                 await xmlWriter.WriteElementStringAsync("Company", null, user.Company);
 
@@ -2209,8 +2213,9 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<User, Language>("Email", (p, l) => p.Email),
                 new PropertyByName<User, Language>("Username", (p, l) => p.Username, !_userSettings.UsernamesEnabled), 
                 //attributes
-                new PropertyByName<User, Language>("First name", (p, l) => p.FirstName, !_userSettings.FirstNameEnabled),
                 new PropertyByName<User, Language>("Last name", (p, l) => p.LastName, !_userSettings.LastNameEnabled),
+                new PropertyByName<User, Language>("First name", (p, l) => p.FirstName, !_userSettings.FirstNameEnabled),
+                new PropertyByName<User, Language>("Middle name", (p, l) => p.MiddleName, !_userSettings.MiddleNameEnabled),
                 new PropertyByName<User, Language>("Gender", (p, l) => p.Gender, !_userSettings.GenderEnabled),
                 new PropertyByName<User, Language>("Date of birth", (p, l) => p.BirthDate, !_userSettings.BirthDateEnabled),
                 new PropertyByName<User, Language>("Company", (p, l) => p.Company, !_userSettings.CompanyEnabled),
@@ -2235,8 +2240,9 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<Order, Language>("Order total", async (p, l) => await _priceFormatter.FormatPriceAsync(_currencyService.ConvertCurrency(p.OrderTotal, p.CurrencyRate), true, p.UserCurrencyCode, false, currentLanguage.Id)),
                 new PropertyByName<Order, Language>("Shipping method", (p, l) => p.ShippingMethod),
                 new PropertyByName<Order, Language>("Created on", async (p, l) => (await _dateTimeHelper.ConvertToUserTimeAsync(p.CreatedOnUtc, DateTimeKind.Utc)).ToString("D")),
-                new PropertyByName<Order, Language>("Billing first name", async (p, l) => (await orderBillingAddress(p))?.FirstName ?? string.Empty),
                 new PropertyByName<Order, Language>("Billing last name", async (p, l) => (await orderBillingAddress(p))?.LastName ?? string.Empty),
+                new PropertyByName<Order, Language>("Billing first name", async (p, l) => (await orderBillingAddress(p))?.FirstName ?? string.Empty),
+                new PropertyByName<Order, Language>("Billing middle name", async (p, l) => (await orderBillingAddress(p))?.MiddleName ?? string.Empty),
                 new PropertyByName<Order, Language>("Billing email", async (p, l) => (await orderBillingAddress(p))?.Email ?? string.Empty),
                 new PropertyByName<Order, Language>("Billing company", async (p, l) => (await orderBillingAddress(p))?.Company ?? string.Empty, !_addressSettings.CompanyEnabled),
                 new PropertyByName<Order, Language>("Billing country", async (p, l) => await _countryService.GetCountryByAddressAsync(await orderBillingAddress(p)) is Country country ? await _localizationService.GetLocalizedAsync(country, c => c.Name) : string.Empty, !_addressSettings.CountryEnabled),
@@ -2248,8 +2254,9 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<Order, Language>("Billing zip postal code", async (p, l) => (await orderBillingAddress(p))?.ZipPostalCode ?? string.Empty, !_addressSettings.ZipPostalCodeEnabled),
                 new PropertyByName<Order, Language>("Billing phone number", async (p, l) => (await orderBillingAddress(p))?.PhoneNumber ?? string.Empty, !_addressSettings.SmartPhoneEnabled),
                 new PropertyByName<Order, Language>("Billing fax number", async (p, l) => (await orderBillingAddress(p))?.FaxNumber ?? string.Empty, !_addressSettings.FaxEnabled),
-                new PropertyByName<Order, Language>("Shipping first name", async (p, l) => (await orderAddress(p))?.FirstName ?? string.Empty),
                 new PropertyByName<Order, Language>("Shipping last name", async (p, l) => (await orderAddress(p))?.LastName ?? string.Empty),
+                new PropertyByName<Order, Language>("Shipping first name", async (p, l) => (await orderAddress(p))?.FirstName ?? string.Empty),
+                new PropertyByName<Order, Language>("Shipping middle name", async (p, l) => (await orderAddress(p))?.MiddleName ?? string.Empty),
                 new PropertyByName<Order, Language>("Shipping email", async (p, l) => (await orderAddress(p))?.Email ?? string.Empty),
                 new PropertyByName<Order, Language>("Shipping company", async (p, l) => (await orderAddress(p))?.Company ?? string.Empty, !_addressSettings.CompanyEnabled),
                 new PropertyByName<Order, Language>("Shipping country", async (p, l) => await _countryService.GetCountryByAddressAsync(await orderAddress(p)) is Country country ? await _localizationService.GetLocalizedAsync(country, c => c.Name) : string.Empty, !_addressSettings.CountryEnabled),
@@ -2278,8 +2285,9 @@ namespace TvProgViewer.Services.ExportImport
             //user addresses
             var addressManager = new PropertyManager<Address, Language>(new[]
             {
-                new PropertyByName<Address, Language>("First name", (p, l) => p.FirstName),
                 new PropertyByName<Address, Language>("Last name", (p, l) => p.LastName),
+                new PropertyByName<Address, Language>("First name", (p, l) => p.FirstName),
+                new PropertyByName<Address, Language>("Middle name", (p, l) => p.MiddleName),
                 new PropertyByName<Address, Language>("Email", (p, l) => p.Email),
                 new PropertyByName<Address, Language>("Company", (p, l) => p.Company, !_addressSettings.CompanyEnabled),
                 new PropertyByName<Address, Language>("Country", async (p, l) => await _countryService.GetCountryByAddressAsync(p) is Country country ? await _localizationService.GetLocalizedAsync(country, c => c.Name) : string.Empty, !_addressSettings.CountryEnabled),

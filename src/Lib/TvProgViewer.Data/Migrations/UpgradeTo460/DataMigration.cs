@@ -33,7 +33,7 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo460
         public override void Up()
         {
             //#4601 user attribute values to user table column values
-            var attributeKeys = new[] { nameof(User.FirstName), nameof(User.LastName), nameof(User.Gender),
+            var attributeKeys = new[] { nameof(User.FirstName), nameof(User.LastName), nameof(User.MiddleName), nameof(User.Gender),
                 nameof(User.Company), nameof(User.StreetAddress), nameof(User.StreetAddress2), nameof(User.ZipPostalCode),
                 nameof(User.City), nameof(User.County), nameof(User.SmartPhone), nameof(User.Fax), nameof(User.VatNumber),
                 nameof(User.GmtZone), nameof(User.CustomUserAttributesXML), nameof(User.CountryId),
@@ -101,6 +101,7 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo460
 
                     user.FirstName = getAttributeValue(userAttributes, nameof(User.FirstName), castToString);
                     user.LastName = getAttributeValue(userAttributes, nameof(User.LastName), castToString);
+                    user.MiddleName = getAttributeValue(userAttributes, nameof(User.MiddleName), castToString);
                     user.Gender = getAttributeValue(userAttributes, nameof(User.Gender), castToString);
                     user.Company = getAttributeValue(userAttributes, nameof(User.Company), castToString);
                     user.StreetAddress = getAttributeValue(userAttributes, nameof(User.StreetAddress), castToString);

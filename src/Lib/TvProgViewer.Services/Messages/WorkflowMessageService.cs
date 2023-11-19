@@ -548,7 +548,7 @@ namespace TvProgViewer.Services.Messages
 
                 var affiliateAddress = await _addressService.GetAddressByIdAsync(affiliate.AddressId);
                 var toEmail = affiliateAddress.Email;
-                var toName = $"{affiliateAddress.FirstName} {affiliateAddress.LastName}";
+                var toName = $"{affiliateAddress.LastName} {affiliateAddress.FirstName} {affiliateAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -641,7 +641,7 @@ namespace TvProgViewer.Services.Messages
 
                 var affiliateAddress = await _addressService.GetAddressByIdAsync(affiliate.AddressId);
                 var toEmail = affiliateAddress.Email;
-                var toName = $"{affiliateAddress.FirstName} {affiliateAddress.LastName}";
+                var toName = $"{affiliateAddress.LastName} {affiliateAddress.FirstName} {affiliateAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -690,7 +690,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
                     attachmentFilePath, attachmentFileName);
@@ -788,7 +788,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
                     attachmentFilePath, attachmentFileName);
@@ -840,7 +840,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -888,7 +888,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -940,7 +940,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -989,7 +989,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
                     attachmentFilePath, attachmentFileName);
@@ -1039,7 +1039,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName,
                     attachmentFilePath, attachmentFileName);
@@ -1086,7 +1086,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -1179,7 +1179,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -1231,7 +1231,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -1332,7 +1332,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();
@@ -1384,7 +1384,7 @@ namespace TvProgViewer.Services.Messages
                 var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
 
                 var toEmail = billingAddress.Email;
-                var toName = $"{billingAddress.FirstName} {billingAddress.LastName}";
+                var toName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
                 return await SendNotificationAsync(messageTemplate, emailAccount, languageId, tokens, toEmail, toName);
             }).ToListAsync();

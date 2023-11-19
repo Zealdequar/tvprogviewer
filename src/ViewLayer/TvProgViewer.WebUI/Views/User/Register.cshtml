@@ -38,18 +38,6 @@
                             </div>
                         </div>
                     }
-                    @if (Model.FirstNameEnabled)
-                    {
-                        <div class="inputs">
-                            <label asp-for="FirstName" asp-postfix=":"></label>
-                            <input asp-for="FirstName" />
-                            @if (Model.FirstNameRequired)
-                            {
-                                <tvprog-required />
-                            }
-                            <span asp-validation-for="FirstName"></span>
-                        </div>
-                    }
                     @if (Model.LastNameEnabled)
                     {
                         <div class="inputs">
@@ -62,6 +50,27 @@
                             <span asp-validation-for="LastName"></span>
                         </div>
                     }
+                    @if (Model.FirstNameEnabled)
+                    {
+                        <div class="inputs">
+                            <label asp-for="FirstName" asp-postfix=":"></label>
+                            <input asp-for="FirstName" />
+                            @if (Model.FirstNameRequired)
+                            {
+                                <tvprog-required />
+                            }
+                            <span asp-validation-for="FirstName"></span>
+                        </div>
+                    }
+                    @if (Model.MiddleNameEnabled)
+                    {
+                        <div class="inputs">
+                            <label asp-for="MiddleName" asp-postfix=":"></label>
+                            <input asp-for="MiddleName" />
+                            <span asp-validation-for="MiddleName"></span>
+                        </div>
+                    }
+                    
                     @if (Model.BirthDateEnabled)
                     {
                         <div class="inputs date-of-birth">
@@ -69,7 +78,7 @@
                             <tvprog-date-picker asp-day-name="@Html.NameFor(x => x.BirthDateDay)"
                                              asp-month-name="@Html.NameFor(x => x.BirthDateMonth)"
                                              asp-year-name="@Html.NameFor(x => x.BirthDateYear)"
-                                             asp-begin-year="@(DateTime.Now.AddYears(-110))"
+                                             asp-begin-year="@(DateTime.Now.AddYears(-130))"
                                              asp-end-year="@(DateTime.UtcNow)"
                                              asp-selected-date="@Model.ParseBirthDate()" />
 

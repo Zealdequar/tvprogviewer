@@ -1085,7 +1085,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                         PaymentStatusId = order.PaymentStatusId,
                         ShippingStatusId = order.ShippingStatusId,
                         UserEmail = billingAddress.Email,
-                        UserFullName = $"{billingAddress.FirstName} {billingAddress.LastName}",
+                        UserFullName = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}",
                         UserId = order.UserId,
                         CustomOrderNumber = order.CustomOrderNumber
                     };

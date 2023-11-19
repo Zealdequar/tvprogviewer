@@ -690,7 +690,7 @@ namespace TvProgViewer.WebUI.Controllers
             {
                 //try to find an address with the same values (don't duplicate records)
                 var address = _addressService.FindAddress((await _userService.GetAddressesByUserIdAsync(user.Id)).ToList(),
-                    newAddress.FirstName, newAddress.LastName, newAddress.PhoneNumber,
+                    newAddress.FirstName, newAddress.LastName, newAddress.MiddleName, newAddress.PhoneNumber,
                     newAddress.Email, newAddress.FaxNumber, newAddress.Company,
                     newAddress.Address1, newAddress.Address2, newAddress.City,
                     newAddress.County, newAddress.StateProvinceId, newAddress.ZipPostalCode,
@@ -848,7 +848,7 @@ namespace TvProgViewer.WebUI.Controllers
             {
                 //try to find an address with the same values (don't duplicate records)
                 var address = _addressService.FindAddress((await _userService.GetAddressesByUserIdAsync(user.Id)).ToList(),
-                    newAddress.FirstName, newAddress.LastName, newAddress.PhoneNumber,
+                    newAddress.FirstName, newAddress.LastName, newAddress.MiddleName, newAddress.PhoneNumber,
                     newAddress.Email, newAddress.FaxNumber, newAddress.Company,
                     newAddress.Address1, newAddress.Address2, newAddress.City,
                     newAddress.County, newAddress.StateProvinceId, newAddress.ZipPostalCode,
@@ -1576,7 +1576,7 @@ namespace TvProgViewer.WebUI.Controllers
 
                     //try to find an address with the same values (don't duplicate records)
                     var address = _addressService.FindAddress((await _userService.GetAddressesByUserIdAsync(user.Id)).ToList(),
-                        newAddress.FirstName, newAddress.LastName, newAddress.PhoneNumber,
+                        newAddress.FirstName, newAddress.LastName, newAddress.MiddleName, newAddress.PhoneNumber,
                         newAddress.Email, newAddress.FaxNumber, newAddress.Company,
                         newAddress.Address1, newAddress.Address2, newAddress.City,
                         newAddress.County, newAddress.StateProvinceId, newAddress.ZipPostalCode,
@@ -1737,7 +1737,7 @@ namespace TvProgViewer.WebUI.Controllers
 
                     //try to find an address with the same values (don't duplicate records)
                     var address = _addressService.FindAddress((await _userService.GetAddressesByUserIdAsync(user.Id)).ToList(),
-                        newAddress.FirstName, newAddress.LastName, newAddress.PhoneNumber,
+                        newAddress.FirstName, newAddress.LastName, newAddress.MiddleName, newAddress.PhoneNumber,
                         newAddress.Email, newAddress.FaxNumber, newAddress.Company,
                         newAddress.Address1, newAddress.Address2, newAddress.City,
                         newAddress.County, newAddress.StateProvinceId, newAddress.ZipPostalCode,

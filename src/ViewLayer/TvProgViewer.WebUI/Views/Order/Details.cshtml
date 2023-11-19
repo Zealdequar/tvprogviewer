@@ -63,7 +63,7 @@
 	                </div>
                     <ul class="info-list">
                         <li class="name">
-                            @Model.BillingAddress.FirstName @Model.BillingAddress.LastName
+                            @Model.BillingAddress.LastName @Model.BillingAddress.FirstName @Model.BillingAddress.MiddleName
                         </li>
                         <li class="email">
                             @T("Order.Email"): @Model.BillingAddress.Email
@@ -230,7 +230,7 @@
                             @if (!Model.PickupInStore)
                             {
                                 <li class="name">
-                                    @Model.ShippingAddress.FirstName @Model.ShippingAddress.LastName
+                                    @Model.ShippingAddress.LastName @Model.ShippingAddress.FirstName @Model.ShippingAddress.MiddleName
                                 </li>
                                 <li class="email">
                                     @T("Order.Email"): @Model.ShippingAddress.Email

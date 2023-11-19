@@ -255,6 +255,16 @@ namespace TvProgViewer.Core.Domain.Users
         public bool LastNameEnabled { get; set; }
 
         /// <summary>
+        /// Получает или устанавливает значение, показывающее, что 'Отчество' требуется
+        /// </summary>
+        public bool MiddleNameRequired { get; set; }
+
+        /// <summary>
+        /// Получает или устанавливает значение, покзаывающее, что 'Отчество' активизировано
+        /// </summary>
+        public bool MiddleNameEnabled { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether 'Last Name' is required
         /// </summary>
         public bool LastNameRequired { get; set; }

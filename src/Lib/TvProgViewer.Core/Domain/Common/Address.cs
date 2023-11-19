@@ -18,6 +18,11 @@ namespace TvProgViewer.Core.Domain.Common
         public string LastName { get; set; }
 
         /// <summary>
+        /// Получение или установка Отчества
+        /// </summary>
+        public string MiddleName { get; set; }
+
+        /// <summary>
         /// Gets or sets the email
         /// </summary>
         public string Email { get; set; }

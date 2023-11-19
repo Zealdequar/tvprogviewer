@@ -366,11 +366,14 @@ namespace TvProgViewer.WebUI.Controllers
                 if (oldUserInfoModel.Gender != newUserInfoModel.Gender)
                     await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.Gender")} = {newUserInfoModel.Gender}");
 
+                if (oldUserInfoModel.LastName != newUserInfoModel.LastName)
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.LastName")} = {newUserInfoModel.LastName}");
+
                 if (oldUserInfoModel.FirstName != newUserInfoModel.FirstName)
                     await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.FirstName")} = {newUserInfoModel.FirstName}");
 
-                if (oldUserInfoModel.LastName != newUserInfoModel.LastName)
-                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.LastName")} = {newUserInfoModel.LastName}");
+                if (oldUserInfoModel.MiddleName != newUserInfoModel.MiddleName)
+                    await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.MiddleName")} = {newUserInfoModel.MiddleName}");
 
                 if (oldUserInfoModel.ParseBirthDate() != newUserInfoModel.ParseBirthDate())
                     await _gdprService.InsertLogAsync(user, 0, GdprRequestType.ProfileChanged, $"{await _localizationService.GetResourceAsync("Account.Fields.BirthDate")} = {newUserInfoModel.ParseBirthDate()}");
@@ -857,6 +860,8 @@ namespace TvProgViewer.WebUI.Controllers
                         user.FirstName = model.FirstName;
                     if (_userSettings.LastNameEnabled)
                         user.LastName = model.LastName;
+                    if (_userSettings.MiddleNameEnabled)
+                        user.MiddleName = model.MiddleName;
                     if (_userSettings.BirthDateEnabled)
                         user.BirthDate = model.ParseBirthDate();
                     if (_userSettings.CompanyEnabled)
@@ -968,6 +973,7 @@ namespace TvProgViewer.WebUI.Controllers
                     {
                         FirstName = user.FirstName,
                         LastName = user.LastName,
+                        MiddleName = user.MiddleName,
                         Email = user.Email,
                         Company = user.Company,
                         CountryId = user.CountryId > 0
@@ -1258,6 +1264,8 @@ namespace TvProgViewer.WebUI.Controllers
                         user.FirstName = model.FirstName;
                     if (_userSettings.LastNameEnabled)
                         user.LastName = model.LastName;
+                    if (_userSettings.MiddleNameEnabled)
+                        user.MiddleName = model.MiddleName;
                     if (_userSettings.BirthDateEnabled)
                         user.BirthDate = model.ParseBirthDate();
                     if (_userSettings.CompanyEnabled)

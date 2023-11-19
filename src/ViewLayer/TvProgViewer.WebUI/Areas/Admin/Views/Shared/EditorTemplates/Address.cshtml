@@ -29,8 +29,8 @@
 </script>
 
 <input asp-for="Id" type="hidden" />
-<input asp-for="FirstNameRequired" type="hidden" />
 <input asp-for="LastNameRequired" type="hidden" />
+<input asp-for="FirstNameRequired" type="hidden" />
 <input asp-for="EmailRequired" type="hidden" />
 <input asp-for="CompanyRequired" type="hidden" />
 <input asp-for="CountryRequired" type="hidden" />
@@ -49,6 +49,15 @@
     <div class="col-md-9">
         <tvprog-editor asp-for="FirstName" asp-required="@Model.FirstNameRequired" />
         <span asp-validation-for="FirstName"></span>
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-3">
+        <tvprog-label asp-for="MiddleName" />
+    </div>
+    <div class="col-md-9">
+        <tvprog-editor asp-for="MiddleName" />
+        <span asp-validation-for="MiddleName"></span>
     </div>
 </div>
 <div class="form-group row">

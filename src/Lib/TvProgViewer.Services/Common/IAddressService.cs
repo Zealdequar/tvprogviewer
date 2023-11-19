@@ -76,6 +76,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="source">Source</param>
         /// <param name="firstName">First name</param>
         /// <param name="lastName">Last name</param>
+        /// <param name="middleName">Middle name</param>
         /// <param name="phoneNumber">SmartPhone number</param>
         /// <param name="email">Email</param>
         /// <param name="faxNumber">Fax number</param>
@@ -89,7 +90,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="countryId">Country identifier</param>
         /// <param name="customAttributes">Custom address attributes (XML format)</param>
         /// <returns>Address</returns>
-        Address FindAddress(List<Address> source, string firstName, string lastName, string phoneNumber, string email,
+        Address FindAddress(List<Address> source, string firstName, string lastName, string middleName, string phoneNumber, string email,
             string faxNumber, string company, string address1, string address2, string city, string county, int? stateProvinceId,
             string zipPostalCode, int? countryId, string customAttributes);
 

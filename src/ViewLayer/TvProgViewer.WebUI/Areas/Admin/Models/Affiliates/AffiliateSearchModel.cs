@@ -17,6 +17,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Affiliates
 
         [TvProgResourceDisplayName("Admin.Affiliates.List.SearchLastName")]
         public string SearchLastName { get; set; }
+        
+        [TvProgResourceDisplayName("Admin.Affiliates.List.SearchMiddleName")]
+        public string SearchMiddleName { get; set; }
 
         [TvProgResourceDisplayName("Admin.Affiliates.List.SearchFriendlyUrlName")]
         public string SearchFriendlyUrlName { get; set; }

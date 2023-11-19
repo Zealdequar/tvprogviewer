@@ -162,6 +162,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             var affiliates = await _affiliateService.GetAllAffiliatesAsync(searchModel.SearchFriendlyUrlName,
                 searchModel.SearchFirstName,
                 searchModel.SearchLastName,
+                searchModel.SearchMiddleName,
                 searchModel.LoadOnlyWithOrders,
                 searchModel.OrdersCreatedFromUtc,
                 searchModel.OrdersCreatedToUtc,

@@ -828,6 +828,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.FirstName, options => options.Ignore())
                 .ForMember(model => model.LastNameEnabled, options => options.Ignore())
                 .ForMember(model => model.LastName, options => options.Ignore())
+                .ForMember(model => model.MiddleNameEnabled, options => options.Ignore())
+                .ForMember(model => model.MiddleName, options => options.Ignore())
                 .ForMember(model => model.BirthDateEnabled, options => options.Ignore())
                 .ForMember(model => model.BirthDate, options => options.Ignore())
                 .ForMember(model => model.CompanyEnabled, options => options.Ignore())

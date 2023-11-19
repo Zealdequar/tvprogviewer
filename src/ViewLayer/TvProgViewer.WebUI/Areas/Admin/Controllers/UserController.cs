@@ -377,6 +377,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     user.FirstName = model.FirstName;
                 if (_userSettings.LastNameEnabled)
                     user.LastName = model.LastName;
+                if (_userSettings.MiddleNameEnabled)
+                    user.MiddleName = model.MiddleName;
                 if (_userSettings.BirthDateEnabled)
                     user.BirthDate = model.BirthDate;
                 if (_userSettings.CompanyEnabled)
@@ -620,6 +622,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         user.FirstName = model.FirstName;
                     if (_userSettings.LastNameEnabled)
                         user.LastName = model.LastName;
+                    if (_userSettings.MiddleNameEnabled)
+                        user.MiddleName = model.MiddleName;
                     if (_userSettings.BirthDateEnabled)
                         user.BirthDate = model.BirthDate;
                     if (_userSettings.CompanyEnabled)
@@ -1618,6 +1622,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 username: model.SearchUsername,
                 firstName: model.SearchFirstName,
                 lastName: model.SearchLastName,
+                middleName: model.SearchMiddleName,
                 dayOfBirth: int.TryParse(model.SearchDayOfBirth, out var dayOfBirth) ? dayOfBirth : 0,
                 monthOfBirth: int.TryParse(model.SearchMonthOfBirth, out var monthOfBirth) ? monthOfBirth : 0,
                 company: model.SearchCompany,
@@ -1676,6 +1681,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 username: model.SearchUsername,
                 firstName: model.SearchFirstName,
                 lastName: model.SearchLastName,
+                middleName: model.SearchMiddleName,
                 dayOfBirth: int.TryParse(model.SearchDayOfBirth, out var dayOfBirth) ? dayOfBirth : 0,
                 monthOfBirth: int.TryParse(model.SearchMonthOfBirth, out var monthOfBirth) ? monthOfBirth : 0,
                 company: model.SearchCompany,

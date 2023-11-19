@@ -8,7 +8,7 @@
 <form asp-controller="Affiliate" asp-action="Edit" method="post">
     <div class="content-header clearfix">
         <h1 class="float-left">
-            @T("Admin.Affiliates.EditAffiliateDetails") - @Model.Address.FirstName @Model.Address.LastName
+            @T("Admin.Affiliates.EditAffiliateDetails") - @Model.Address.LastName @Model.Address.FirstName @Model.Address.MiddleName
             <small>
                 <i class="fas fa-arrow-circle-left"></i>
                 <a asp-action="List">@T("Admin.Affiliates.BackToList")</a>

@@ -97,6 +97,15 @@
     </tvprog-nested-setting>
     <div class="form-group row">
         <div class="col-md-3">
+            <tvprog-label asp-for="UserSettings.MiddleNameEnabled" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="UserSettings.MiddleNameEnabled" />
+            <span asp-validation-for="UserSettings.MiddleNameEnabled"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
             <tvprog-label asp-for="UserSettings.BirthDateEnabled" />
         </div>
         <div class="col-md-9">

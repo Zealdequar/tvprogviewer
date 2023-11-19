@@ -10,13 +10,17 @@
         LengthMenu = Model.UserAddressSearchModel.AvailablePageSizes,
         ColumnCollection = new List<ColumnProperty>
         {
+            new ColumnProperty(nameof(AddressModel.LastName))
+            {
+                Title = T("Admin.Address.Fields.LastName").Text
+            },
             new ColumnProperty(nameof(AddressModel.FirstName))
             {
                 Title = T("Admin.Address.Fields.FirstName").Text
             },
-            new ColumnProperty(nameof(AddressModel.LastName))
+            new ColumnProperty(nameof(AddressModel.MiddleName))
             {
-                Title = T("Admin.Address.Fields.LastName").Text
+                Title = T("Admin.Address.Fields.MiddleName").Text
             },
             new ColumnProperty(nameof(AddressModel.Email))
             {

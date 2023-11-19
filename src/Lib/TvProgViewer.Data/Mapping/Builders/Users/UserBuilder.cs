@@ -27,6 +27,7 @@ namespace TvProgViewer.Data.Mapping.Builders.Users
                 .WithColumn(nameof(User.EmailToRevalidate)).AsString(1000).Nullable()
                 .WithColumn(nameof(User.FirstName)).AsString(1000).Nullable()
                 .WithColumn(nameof(User.LastName)).AsString(1000).Nullable()
+                .WithColumn(nameof(User.MiddleName)).AsString(1000).Nullable()
                 .WithColumn(nameof(User.Gender)).AsString(1000).Nullable()
                 .WithColumn(nameof(User.Company)).AsString(1000).Nullable()
                 .WithColumn(nameof(User.StreetAddress)).AsString(1000).Nullable()

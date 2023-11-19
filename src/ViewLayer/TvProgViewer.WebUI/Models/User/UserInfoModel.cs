@@ -46,6 +46,9 @@ namespace TvProgViewer.WebUI.Models.User
         public bool LastNameEnabled { get; set; }
         [TvProgResourceDisplayName("Account.Fields.LastName")]
         public string LastName { get; set; }
+        public bool MiddleNameEnabled { get; set; }
+        [TvProgResourceDisplayName("Account.Fields.MiddleName")]
+        public string MiddleName { get; set; }
         public bool LastNameRequired { get; set; }
 
         public bool BirthDateEnabled { get; set; }

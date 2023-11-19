@@ -556,6 +556,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             searchModel.AvatarEnabled = _userSettings.AllowUsersToUploadAvatars;
             searchModel.FirstNameEnabled = _userSettings.FirstNameEnabled;
             searchModel.LastNameEnabled = _userSettings.LastNameEnabled;
+            searchModel.MiddleNameEnabled = _userSettings.MiddleNameEnabled;
             searchModel.BirthDateEnabled = _userSettings.BirthDateEnabled;
             searchModel.CompanyEnabled = _userSettings.CompanyEnabled;
             searchModel.SmartPhoneEnabled = _userSettings.SmartPhoneEnabled;
@@ -623,6 +624,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 username: searchModel.SearchUsername,
                 firstName: searchModel.SearchFirstName,
                 lastName: searchModel.SearchLastName,
+                middleName: searchModel.SearchMiddleName,
                 dayOfBirth: dayOfBirth,
                 monthOfBirth: monthOfBirth,
                 company: searchModel.SearchCompany,
@@ -713,6 +715,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     model.Active = user.Active;
                     model.FirstName = user.FirstName;
                     model.LastName = user.LastName;
+                    model.MiddleName = user.MiddleName;
                     model.Gender = user.Gender;
                     model.BirthDate = user.BirthDate;
                     model.Company = user.Company;
@@ -784,6 +787,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             model.AllowUsersToSetTimeZone = _dateTimeSettings.AllowUsersToSetTimeZone;
             model.FirstNameEnabled = _userSettings.FirstNameEnabled;
             model.LastNameEnabled = _userSettings.LastNameEnabled;
+            model.MiddleNameEnabled = _userSettings.MiddleNameEnabled;
             model.GenderEnabled = _userSettings.GenderEnabled;
             model.BirthDateEnabled = _userSettings.BirthDateEnabled;
             model.CompanyEnabled = _userSettings.CompanyEnabled;

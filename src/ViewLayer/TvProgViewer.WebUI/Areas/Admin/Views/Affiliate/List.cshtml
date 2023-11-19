@@ -42,20 +42,28 @@
                             <div class="col-md-5">
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                        <tvprog-label asp-for="SearchFirstName" />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <tvprog-editor asp-for="SearchFirstName" />
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-md-4">
                                         <tvprog-label asp-for="SearchLastName" />
                                     </div>
                                     <div class="col-md-8">
                                         <tvprog-editor asp-for="SearchLastName" />
                                     </div>
                                 </div>
+                                <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <tvprog-label asp-for="SearchFirstName" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <tvprog-editor asp-for="SearchFirstName" />
+                                        </div>
+                                </div>
+                                    <div class="form-group row">
+                                        <div class="col-md-4">
+                                            <tvprog-label asp-for="SearchMiddleName" />
+                                        </div>
+                                        <div class="col-md-8">
+                                            <tvprog-editor asp-for="SearchMiddleName" />
+                                        </div>
+                                    </div>
                             </div>
                             <div class="col-md-7">
                                 <div class="form-group row">
@@ -122,8 +130,9 @@
                         LengthMenu = Model.AvailablePageSizes,
                         Filters = new List<FilterParameter>
                         {
-                            new FilterParameter(nameof(Model.SearchFirstName)),
                             new FilterParameter(nameof(Model.SearchLastName)),
+                            new FilterParameter(nameof(Model.SearchFirstName)),
+                            new FilterParameter(nameof(Model.SearchMiddleName)),
                             new FilterParameter(nameof(Model.SearchFriendlyUrlName)),
                             new FilterParameter(nameof(Model.LoadOnlyWithOrders), typeof(bool)),
                             new FilterParameter(nameof(Model.OrdersCreatedFromUtc)),
@@ -131,14 +140,19 @@
                         },
                         ColumnCollection = new List<ColumnProperty>
                         {
+                            new ColumnProperty($"{nameof(AffiliateModel.Address)}.{nameof(AddressModel.LastName)}")
+                            {
+                                Title = T("Admin.Address.Fields.LastName").Text,
+                                Width = "200"
+                            },
                             new ColumnProperty($"{nameof(AffiliateModel.Address)}.{nameof(AddressModel.FirstName)}")
                             {
                                 Title = T("Admin.Address.Fields.FirstName").Text,
                                 Width = "200"
                             },
-                            new ColumnProperty($"{nameof(AffiliateModel.Address)}.{nameof(AddressModel.LastName)}")
+                            new ColumnProperty($"{nameof(AffiliateModel.Address)}.{nameof(AddressModel.MiddleName)}")
                             {
-                                Title = T("Admin.Address.Fields.LastName").Text,
+                                Title = T("Admin.Address.Fields.MiddleName").Text,
                                 Width = "200"
                             },
                             new ColumnProperty(nameof(AffiliateModel.Active))

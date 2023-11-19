@@ -30,6 +30,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="username">Username; null to load all users</param>
         /// <param name="firstName">First name; null to load all users</param>
         /// <param name="lastName">Last name; null to load all users</param>
+        /// <param name="middleName">Middle name; null to load all users</param>
         /// <param name="dayOfBirth">Day of birth; 0 to load all users</param>
         /// <param name="monthOfBirth">Month of birth; 0 to load all users</param>
         /// <param name="company">Company; null to load all users</param>
@@ -46,7 +47,7 @@ namespace TvProgViewer.Services.Users
         Task<IPagedList<User>> GetAllUsersAsync(DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             DateTime? lastActivityFromUtc = null, DateTime? lastActivityToUtc = null,
             int affiliateId = 0, int vendorId = 0, int[] userRoleIds = null,
-            string email = null, string username = null, string firstName = null, string lastName = null,
+            string email = null, string username = null, string firstName = null, string lastName = null, string middleName = null,
             int dayOfBirth = 0, int monthOfBirth = 0,
             string company = null, string phone = null, string zipPostalCode = null, string ipAddress = null,
             int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false);

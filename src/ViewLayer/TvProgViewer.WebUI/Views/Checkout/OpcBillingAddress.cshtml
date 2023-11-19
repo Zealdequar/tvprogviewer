@@ -29,6 +29,7 @@
                         var addressLine = "";
                         addressLine += address.FirstName;
                         addressLine += " " + address.LastName;
+                        addressLine += " " + address.MiddleName;
                         if (address.StreetAddressEnabled && !string.IsNullOrEmpty(address.Address1))
                         {
                             addressLine += ", " + address.Address1;

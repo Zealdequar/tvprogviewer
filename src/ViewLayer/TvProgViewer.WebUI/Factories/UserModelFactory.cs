@@ -219,6 +219,7 @@ namespace TvProgViewer.WebUI.Factories
                 model.VatNumber = user.VatNumber;
                 model.FirstName = user.FirstName;
                 model.LastName = user.LastName;
+                model.MiddleName = user.MiddleName; 
                 model.Gender = user.Gender;
                 var birthDate = user.BirthDate;
                 if (birthDate.HasValue)
@@ -304,6 +305,7 @@ namespace TvProgViewer.WebUI.Factories
             model.VatNumberStatusNote = await _localizationService.GetLocalizedEnumAsync(user.VatNumberStatus);
             model.FirstNameEnabled = _userSettings.FirstNameEnabled;
             model.LastNameEnabled = _userSettings.LastNameEnabled;
+            model.MiddleNameEnabled = _userSettings.MiddleNameEnabled;
             model.FirstNameRequired = _userSettings.FirstNameRequired;
             model.LastNameRequired = _userSettings.LastNameRequired;
             model.GenderEnabled = _userSettings.GenderEnabled;
@@ -407,6 +409,7 @@ namespace TvProgViewer.WebUI.Factories
             //form fields
             model.FirstNameEnabled = _userSettings.FirstNameEnabled;
             model.LastNameEnabled = _userSettings.LastNameEnabled;
+            model.MiddleNameEnabled = _userSettings.MiddleNameEnabled;
             model.FirstNameRequired = _userSettings.FirstNameRequired;
             model.LastNameRequired = _userSettings.LastNameRequired;
             model.GenderEnabled = _userSettings.GenderEnabled;

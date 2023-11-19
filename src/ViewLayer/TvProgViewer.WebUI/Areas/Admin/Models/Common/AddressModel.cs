@@ -22,6 +22,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Common
         [TvProgResourceDisplayName("Admin.Address.Fields.LastName")]
         public string LastName { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Address.Fields.MiddleName")]
+        public string MiddleName { get; set; }
+
         [DataType(DataType.EmailAddress)]
         [TvProgResourceDisplayName("Admin.Address.Fields.Email")]
         public string Email { get; set; }

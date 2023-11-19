@@ -78,6 +78,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
         [TvProgResourceDisplayName("Admin.Orders.List.BillingLastName")]
         public string BillingLastName { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Orders.List.BillingMiddleName")]
+        public string BillingMiddleName { get; set; }
+
         [TvProgResourceDisplayName("Admin.Orders.List.BillingCountry")]
         public int BillingCountryId { get; set; }
 

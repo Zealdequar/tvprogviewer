@@ -44,6 +44,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
 
         [TvProgResourceDisplayName("Admin.Users.Users.List.SearchLastName")]
         public string SearchLastName { get; set; }
+        public bool MiddleNameEnabled { get; set; }
+        [TvProgResourceDisplayName("Admin.Users.Users.List.SearchMiddleName")]
+        public string SearchMiddleName { get; set; }
         public bool LastNameEnabled { get; set; }
 
         [UIHint("DateNullable")]

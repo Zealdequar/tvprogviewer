@@ -252,6 +252,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="source">Source</param>
         /// <param name="firstName">First name</param>
         /// <param name="lastName">Last name</param>
+        /// <param name="middleName">Middle name</param>
         /// <param name="phoneNumber">SmartPhone number</param>
         /// <param name="email">Email</param>
         /// <param name="faxNumber">Fax number</param>
@@ -265,12 +266,13 @@ namespace TvProgViewer.Services.Common
         /// <param name="countryId">Country identifier</param>
         /// <param name="customAttributes">Custom address attributes (XML format)</param>
         /// <returns>Address</returns>
-        public virtual Address FindAddress(List<Address> source, string firstName, string lastName, string phoneNumber, string email,
+        public virtual Address FindAddress(List<Address> source, string firstName, string lastName, string middleName, string phoneNumber, string email,
             string faxNumber, string company, string address1, string address2, string city, string county, int? stateProvinceId,
             string zipPostalCode, int? countryId, string customAttributes)
         {
             return source.Find(a => ((string.IsNullOrEmpty(a.FirstName) && string.IsNullOrEmpty(firstName)) || a.FirstName == firstName) &&
             ((string.IsNullOrEmpty(a.LastName) && string.IsNullOrEmpty(lastName)) || a.LastName == lastName) &&
+            ((string.IsNullOrEmpty(a.MiddleName) && string.IsNullOrEmpty(middleName)) || a.MiddleName == middleName) &&
             ((string.IsNullOrEmpty(a.PhoneNumber) && string.IsNullOrEmpty(phoneNumber)) || a.PhoneNumber == phoneNumber) &&
             ((string.IsNullOrEmpty(a.Email) && string.IsNullOrEmpty(email)) || a.Email == email) &&
             ((string.IsNullOrEmpty(a.FaxNumber) && string.IsNullOrEmpty(faxNumber)) || a.FaxNumber == faxNumber) &&
@@ -297,6 +299,7 @@ namespace TvProgViewer.Services.Common
             {
                 FirstName = address.FirstName,
                 LastName = address.LastName,
+                MiddleName = address.MiddleName,
                 Email = address.Email,
                 Company = address.Company,
                 CountryId = address.CountryId,

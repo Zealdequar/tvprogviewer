@@ -162,7 +162,7 @@ namespace TvProgViewer.Services.Common
             if (_addressSettings.CompanyEnabled && !string.IsNullOrEmpty(billingAddress.Company))
                 addressResult.Company = billingAddress.Company;
 
-            addressResult.Name = $"{billingAddress.FirstName} {billingAddress.LastName}";
+            addressResult.Name = $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}";
 
             if (_addressSettings.SmartPhoneEnabled)
                 addressResult.SmartPhone = billingAddress.PhoneNumber;
@@ -245,7 +245,7 @@ namespace TvProgViewer.Services.Common
                     if (!string.IsNullOrEmpty(shippingAddress.Company))
                         addressResult.Company = shippingAddress.Company;
 
-                    addressResult.Name = $"{shippingAddress.FirstName} {shippingAddress.LastName}";
+                    addressResult.Name = $"{shippingAddress.LastName} {shippingAddress.FirstName} {shippingAddress.MiddleName}";
 
                     if (_addressSettings.SmartPhoneEnabled)
                         addressResult.SmartPhone = shippingAddress.PhoneNumber;

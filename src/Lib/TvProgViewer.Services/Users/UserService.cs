@@ -124,6 +124,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="username">Username; null to load all users</param>
         /// <param name="firstName">First name; null to load all users</param>
         /// <param name="lastName">Last name; null to load all users</param>
+        /// <param name="middleName">Middle name; null to load all users</param>
         /// <param name="dayOfBirth">Day of birth; 0 to load all users</param>
         /// <param name="monthOfBirth">Month of birth; 0 to load all users</param>
         /// <param name="company">Company; null to load all users</param>
@@ -140,7 +141,7 @@ namespace TvProgViewer.Services.Users
         public virtual async Task<IPagedList<User>> GetAllUsersAsync(DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             DateTime? lastActivityFromUtc = null, DateTime? lastActivityToUtc = null,
             int affiliateId = 0, int vendorId = 0, int[] userRoleIds = null,
-            string email = null, string username = null, string firstName = null, string lastName = null,
+            string email = null, string username = null, string firstName = null, string lastName = null, string middleName = null,
             int dayOfBirth = 0, int monthOfBirth = 0,
             string company = null, string phone = null, string zipPostalCode = null, string ipAddress = null,
             int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
@@ -179,6 +180,8 @@ namespace TvProgViewer.Services.Users
                     query = query.Where(c => c.FirstName.Contains(firstName));
                 if (!string.IsNullOrWhiteSpace(lastName))
                     query = query.Where(c => c.LastName.Contains(lastName));
+                if (!string.IsNullOrWhiteSpace(middleName))
+                    query = query.Where(c => c.MiddleName.Contains(middleName));
                 if (!string.IsNullOrWhiteSpace(company))
                     query = query.Where(c => c.Company.Contains(company));
                 if (!string.IsNullOrWhiteSpace(phone))
@@ -748,10 +751,11 @@ namespace TvProgViewer.Services.Users
 
             var firstName = user.FirstName;
             var lastName = user.LastName;
+            var middleName = user.MiddleName;
 
             var fullName = string.Empty;
             if (!string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(lastName))
-                fullName = $"{firstName} {lastName}";
+                fullName = $"{lastName} {firstName} {middleName}";
             else
             {
                 if (!string.IsNullOrWhiteSpace(firstName))
@@ -759,6 +763,9 @@ namespace TvProgViewer.Services.Users
 
                 if (!string.IsNullOrWhiteSpace(lastName))
                     fullName = lastName;
+
+                if (!string.IsNullOrWhiteSpace(middleName))
+                    fullName = middleName;
             }
 
             return Task.FromResult(fullName);
@@ -1607,7 +1614,7 @@ namespace TvProgViewer.Services.Users
         {
             var query = from address in _userAddressRepository.Table
                         join cam in _userAddressMappingRepository.Table on address.Id equals cam.AddressId
-                        where cam.UserId == userId
+                        where cam.UserId == userId 
                         select address;
 
             var key = _staticCacheManager.PrepareKeyForShortTermCache(TvProgUserServicesDefaults.UserAddressesCacheKey, userId);

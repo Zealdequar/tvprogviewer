@@ -22,6 +22,7 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo460
 
             var firstNameUserColumnName = nameof(User.FirstName);
             var lastNameUserColumnName = nameof(User.LastName);
+            var middleNameUserColumnName = nameof(User.MiddleName);
             var genderUserColumnName = nameof(User.Gender);
             var dobUserColumnName = nameof(User.BirthDate);
             var companyUserColumnName = nameof(User.Company);
@@ -51,6 +52,11 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo460
             {
                 Alter.Table(userTableName)
                     .AddColumn(lastNameUserColumnName).AsString(1000).Nullable();
+            }
+            if (!Schema.Table(userTableName).Column(middleNameUserColumnName).Exists())
+            {
+                Alter.Table(userTableName)
+                    .AddColumn(middleNameUserColumnName).AsString(1000).Nullable();
             }
             if (!Schema.Table(userTableName).Column(genderUserColumnName).Exists())
             {

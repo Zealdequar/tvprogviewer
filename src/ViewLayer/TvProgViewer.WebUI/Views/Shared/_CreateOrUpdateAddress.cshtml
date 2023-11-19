@@ -3,16 +3,22 @@
 <input class="address-id" asp-for="Id" type="hidden"/>
 <div class="edit-address">
     <div class="inputs">
+        <label asp-for="LastName" asp-postfix=":"></label>
+        <input asp-for="LastName" />
+        <tvprog-required />
+        <span asp-validation-for="LastName"></span>
+    </div>
+    <div class="inputs">
         <label asp-for="FirstName" asp-postfix=":"></label>
         <input asp-for="FirstName" />
         <tvprog-required />
         <span asp-validation-for="FirstName"></span>
     </div>
     <div class="inputs">
-        <label asp-for="LastName" asp-postfix=":"></label>
-        <input asp-for="LastName" />
+        <label asp-for="MiddleName" asp-postfix=":"></label>
+        <input asp-for="MiddleName" />
         <tvprog-required />
-        <span asp-validation-for="LastName"></span>
+        <span asp-validation-for="MiddleName"></span>
     </div>
     <div class="inputs">
         <label asp-for="Email" asp-postfix=":"></label>

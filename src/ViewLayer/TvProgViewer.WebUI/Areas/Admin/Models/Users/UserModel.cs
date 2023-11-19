@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TvProgViewer.Core.Domain.Catalog;
 using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 using TvProgViewer.Web.Framework.Models;
+using System.Threading.Tasks.Dataflow;
 
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
 {
@@ -75,6 +76,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
         public bool LastNameEnabled { get; set; }
         [TvProgResourceDisplayName("Admin.Users.Users.Fields.LastName")]
         public string LastName { get; set; }
+
+        public bool MiddleNameEnabled { get; set; }
+        [TvProgResourceDisplayName("Admin.Users.Users.Fields.MiddleName")]
+        public string MiddleName { get; set; }
 
         [TvProgResourceDisplayName("Admin.Users.Users.Fields.FullName")]
         public string FullName { get; set; }

@@ -25,11 +25,11 @@
                         var address = Model.Addresses[i];
                         <div class="section address-item">
                             <div class="title">
-                                <strong>@address.FirstName @address.LastName</strong>
+                                <strong>@address.LastName @address.FirstName @address.MiddleName</strong>
                             </div>
                             <ul class="info">
                                 <li class="name">
-                                    @address.FirstName @address.LastName
+                                    @address.LastName @address.FirstName @address.MiddleName
                                 </li>
                                 <li class="email">
                                     <label>@T("Address.Fields.Email"):</label>

@@ -19,6 +19,8 @@ namespace TvProgViewer.WebUI.Models.Common
         public string FirstName { get; set; }
         [TvProgResourceDisplayName("Address.Fields.LastName")]
         public string LastName { get; set; }
+        [TvProgResourceDisplayName("Address.Fields.MiddleName")]
+        public string MiddleName { get; set; }
         [DataType(DataType.EmailAddress)]
         [TvProgResourceDisplayName("Address.Fields.Email")]
         public string Email { get; set; }

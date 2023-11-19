@@ -212,6 +212,7 @@ namespace TvProgViewer.Services.Messages
                     "%User.FullName%",
                     "%User.FirstName%",
                     "%User.LastName%",
+                    "%User.MiddleName%",
                     "%User.VatNumber%",
                     "%User.VatNumberStatus%",
                     "%User.CustomAttributes%",
@@ -229,6 +230,7 @@ namespace TvProgViewer.Services.Messages
                     "%Order.UserEmail%",
                     "%Order.BillingFirstName%",
                     "%Order.BillingLastName%",
+                    "%Order.BillingMiddleName%",
                     "%Order.BillingPhoneNumber%",
                     "%Order.BillingEmail%",
                     "%Order.BillingFaxNumber%",
@@ -245,6 +247,7 @@ namespace TvProgViewer.Services.Messages
                     "%Order.ShippingMethod%",
                     "%Order.ShippingFirstName%",
                     "%Order.ShippingLastName%",
+                    "%Order.ShippingMiddleName%",
                     "%Order.ShippingPhoneNumber%",
                     "%Order.ShippingEmail%",
                     "%Order.ShippingFaxNumber%",
@@ -962,11 +965,12 @@ namespace TvProgViewer.Services.Messages
             tokens.Add(new Token("Order.OrderId", order.Id));
             tokens.Add(new Token("Order.OrderNumber", order.CustomOrderNumber));
 
-            tokens.Add(new Token("Order.UserFullName", $"{billingAddress.FirstName} {billingAddress.LastName}"));
+            tokens.Add(new Token("Order.UserFullName", $"{billingAddress.LastName} {billingAddress.FirstName} {billingAddress.MiddleName}"));
             tokens.Add(new Token("Order.UserEmail", billingAddress.Email));
 
             tokens.Add(new Token("Order.BillingFirstName", billingAddress.FirstName));
             tokens.Add(new Token("Order.BillingLastName", billingAddress.LastName));
+            tokens.Add(new Token("Order.BillingMiddleName", billingAddress.MiddleName));
             tokens.Add(new Token("Order.BillingPhoneNumber", billingAddress.PhoneNumber));
             tokens.Add(new Token("Order.BillingEmail", billingAddress.Email));
             tokens.Add(new Token("Order.BillingFaxNumber", billingAddress.FaxNumber));
@@ -985,6 +989,7 @@ namespace TvProgViewer.Services.Messages
             tokens.Add(new Token("Order.PickupInStore", order.PickupInStore));
             tokens.Add(new Token("Order.ShippingFirstName", (await orderAddress(order))?.FirstName ?? string.Empty));
             tokens.Add(new Token("Order.ShippingLastName", (await orderAddress(order))?.LastName ?? string.Empty));
+            tokens.Add(new Token("Order.ShippingMiddleName", (await orderAddress(order))?.MiddleName ?? string.Empty));
             tokens.Add(new Token("Order.ShippingPhoneNumber", (await orderAddress(order))?.PhoneNumber ?? string.Empty));
             tokens.Add(new Token("Order.ShippingEmail", (await orderAddress(order))?.Email ?? string.Empty));
             tokens.Add(new Token("Order.ShippingFaxNumber", (await orderAddress(order))?.FaxNumber ?? string.Empty));
@@ -1209,6 +1214,7 @@ namespace TvProgViewer.Services.Messages
             tokens.Add(new Token("User.FullName", await _userService.GetUserFullNameAsync(user)));
             tokens.Add(new Token("User.FirstName", user.FirstName));
             tokens.Add(new Token("User.LastName", user.LastName));
+            tokens.Add(new Token("User.MiddleName", user.MiddleName));
             tokens.Add(new Token("User.VatNumber", user.VatNumber));
             tokens.Add(new Token("User.VatNumberStatus", ((VatNumberStatus)user.VatNumberStatusId).ToString()));
 

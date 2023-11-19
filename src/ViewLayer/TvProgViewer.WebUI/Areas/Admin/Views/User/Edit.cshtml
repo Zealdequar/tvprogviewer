@@ -12,7 +12,7 @@
 <form asp-controller="User" asp-action="Edit" method="post">
     <div class="content-header clearfix">
         <h1 class="float-left">
-            @T("Admin.Users.Users.EditUserDetails") - @Model.LastName @Model.FirstName
+            @T("Admin.Users.Users.EditUserDetails") - @Model.LastName @Model.FirstName @Model.MiddleName
             <small>
                 <i class="fas fa-arrow-circle-left"></i>
                 <a asp-action="List">@T("Admin.Users.Users.BackToList")</a>

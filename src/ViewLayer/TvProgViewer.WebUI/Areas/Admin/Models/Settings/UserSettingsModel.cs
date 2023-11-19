@@ -136,6 +136,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.LastNameRequired")]
         public bool LastNameRequired { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.MiddleNameEnabled")]
+        public bool MiddleNameEnabled { get; set; }
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.BirthDateEnabled")]
         public bool BirthDateEnabled { get; set; }
 

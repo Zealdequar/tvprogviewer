@@ -186,6 +186,7 @@ namespace TvProgViewer.WebUI.Factories
                 model.Id = address.Id;
                 model.FirstName = address.FirstName;
                 model.LastName = address.LastName;
+                model.MiddleName = address.MiddleName;
                 model.Email = address.Email;
                 model.Company = address.Company;
                 model.CountryId = address.CountryId;
@@ -208,6 +209,7 @@ namespace TvProgViewer.WebUI.Factories
                 model.Email = user.Email;
                 model.FirstName = user.FirstName;
                 model.LastName = user.LastName;
+                model.MiddleName = user.MiddleName;
                 model.Company = user.Company;
                 model.Address1 = user.StreetAddress;
                 model.Address2 = user.StreetAddress2;

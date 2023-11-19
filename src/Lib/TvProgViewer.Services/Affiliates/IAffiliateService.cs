@@ -54,7 +54,7 @@ namespace TvProgViewer.Services.Affiliates
         /// The task result contains the affiliates
         /// </returns>
         Task<IPagedList<Affiliate>> GetAllAffiliatesAsync(string friendlyUrlName = null,
-            string firstName = null, string lastName = null,
+            string firstName = null, string lastName = null, string middleName = null,
             bool loadOnlyWithOrders = false,
             DateTime? ordersCreatedFromUtc = null, DateTime? ordersCreatedToUtc = null,
             int pageIndex = 0, int pageSize = int.MaxValue,
