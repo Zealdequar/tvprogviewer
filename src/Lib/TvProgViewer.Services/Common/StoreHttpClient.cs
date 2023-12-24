@@ -136,7 +136,9 @@ namespace TvProgViewer.Services.Common
 
         public virtual async Task UpdateTvProgrammes()
         {
-            if (!(DateTime.Now.DayOfWeek == DayOfWeek.Sunday || DateTime.Now.DayOfWeek == DayOfWeek.Saturday))
+            if (!(DateTime.Now.DayOfWeek == DayOfWeek.Sunday || 
+                                    DateTime.Now.DayOfWeek == DayOfWeek.Saturday || 
+                                                                            DateTime.Now.DayOfWeek == DayOfWeek.Monday))
                 return;
              
             _logger.Info(" =========== Начало обновления ============ ");
