@@ -643,7 +643,7 @@ namespace TvProgViewer.Web.Framework
             if (userCategory == null)
             {
                 var categories = await _programmeService.GetCategoriesAsync();
-                userCategory = categories.FirstOrDefault();
+                userCategory = null;
             }
 
             // Кэширование найденной категории ТВ-программы:

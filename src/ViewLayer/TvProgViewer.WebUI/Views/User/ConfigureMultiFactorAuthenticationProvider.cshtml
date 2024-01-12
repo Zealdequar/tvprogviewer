@@ -3,10 +3,10 @@
 @using TvProgViewer.Core
 @using TvProgViewer.Services.Users
 @inject IWorkContext workContext
-@inject IUserService customerService
+@inject IUserService userService
 
 @{
-    var isRegisterUser = await customerService.IsRegisteredAsync(await workContext.GetCurrentUserAsync());
+    var isRegisterUser = await userService.IsRegisteredAsync(await workContext.GetCurrentUserAsync());
     Layout = isRegisterUser ? "_ColumnsTwo" : "_ColumnsOne";
 
     //title

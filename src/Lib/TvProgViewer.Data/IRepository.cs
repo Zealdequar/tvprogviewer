@@ -206,6 +206,13 @@ namespace TvProgViewer.Data
         void Delete(TEntity entity, bool publishEvent = true);
 
         /// <summary>
+        /// Удаление сущностей
+        /// </summary>
+        /// <param name="entities">Сущности</param>
+        /// <param name="publishEvent">Опубликовать уведомление о событии</param>
+        void Delete(IList<TEntity> entities, bool publishEvent = true); 
+
+        /// <summary>
         /// Delete entity entries
         /// </summary>
         /// <param name="entities">Entity entries</param>

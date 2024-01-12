@@ -3,10 +3,10 @@
 @using TvProgViewer.Core
 @using TvProgViewer.Services.Users
 @inject IWorkContext workContext
-@inject IUserService customerService
+@inject IUserService userService
 
 @{
-    var isRegisterUser = await customerService.IsRegisteredAsync(await workContext.GetCurrentUserAsync());
+    var isRegisterUser = await userService.IsRegisteredAsync(await workContext.GetCurrentUserAsync());
     Layout = isRegisterUser ? "_ColumnsTwo" : "_ColumnsOne";
 
     //title
@@ -76,7 +76,7 @@
             </div>
             
             <div class="buttons">
-                <button type="submit" id="save-mfa-settings-button" name="save-mfa-settsing-button" class="button-1 save-customer-mfa-button">@T("Common.Save")</button>
+                <button type="submit" id="save-mfa-settings-button" name="save-mfa-settsing-button" class="button-1 save-user-mfa-button">@T("Common.Save")</button>
             </div>
         </form>        
     </div>

@@ -141,7 +141,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Components
 
             //try to find an existing address with the same values
             var existingAddress = _addressService.FindAddress((await _userService.GetAddressesByUserIdAsync(user.Id)).ToList(),
-                validatedAddress.FirstName, validatedAddress.LastName, validatedAddress.PhoneNumber,
+                validatedAddress.FirstName, validatedAddress.LastName, validatedAddress.MiddleName, validatedAddress.PhoneNumber,
                 validatedAddress.Email, validatedAddress.FaxNumber, validatedAddress.Company,
                 validatedAddress.Address1, validatedAddress.Address2, validatedAddress.City,
                 validatedAddress.County, validatedAddress.StateProvinceId, validatedAddress.ZipPostalCode,

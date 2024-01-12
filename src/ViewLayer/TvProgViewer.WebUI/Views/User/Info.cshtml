@@ -8,7 +8,7 @@
     TvProgHtml.AddTitleParts(T("PageTitle.Account").Text);
     //page class
     TvProgHtml.AppendPageCssClassParts("html-account-page");
-    TvProgHtml.AppendPageCssClassParts("html-customer-info-page");
+    TvProgHtml.AppendPageCssClassParts("html-user-info-page");
 }
 
 @section left
@@ -16,7 +16,7 @@
     @await Component.InvokeAsync(typeof(UserNavigationViewComponent), new { selectedTabId = UserNavigationEnum.Info })
 }
 
-<div class="page account-page customer-info-page">
+<div class="page account-page user-info-page">
     <div class="page-title">
         <h1>@T("Account.MyAccount") - @T("Account.UserInfo")</h1>
     </div>
@@ -462,7 +462,7 @@
                 </div>
             }
             <div class="buttons">
-                <button type="submit" id="save-info-button" name="save-info-button" class="button-1 save-customer-info-button">@T("Common.Save")</button>
+                <button type="submit" id="save-info-button" name="save-info-button" class="button-1 save-user-info-button">@T("Common.Save")</button>
             </div>
         </form>
     </div>

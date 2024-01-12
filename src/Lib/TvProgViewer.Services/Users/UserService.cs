@@ -679,7 +679,7 @@ namespace TvProgViewer.Services.Users
                                     where ccm.UserRoleId == guestRole.Id
                                     select guest;
 
-            var guestsToDelete = from guest in _userRepository.Table
+            var guestsToDelete = (from guest in _userRepository.Table
                                  join g in allGuestUsers on guest.Id equals g.Id
                                  from sCart in _shoppingCartRepository.Table.Where(sci => sci.UserId == guest.Id).DefaultIfEmpty()
                                  from order in _orderRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
@@ -696,24 +696,26 @@ namespace TvProgViewer.Services.Users
                                      !guest.IsSystemAccount &&
                                      (createdFromUtc == null || guest.CreatedOnUtc > createdFromUtc) &&
                                      (createdToUtc == null || guest.CreatedOnUtc < createdToUtc)
-                                 select new { UserId = guest.Id };
+                                 select guest).ToList();
 
-            await using var tmpGuests = await _dataProvider.CreateTempDataStorageAsync("tmp_guestsToDelete", guestsToDelete);
+            /*await using var tmpGuests = await _dataProvider.CreateTempDataStorageAsync("tmp_guestsToDelete", guestsToDelete);
             await using var tmpAddresses = await _dataProvider.CreateTempDataStorageAsync("tmp_guestsAddressesToDelete",
                 _userAddressMappingRepository.Table
                     .Where(ca => tmpGuests.Any(c => c.UserId == ca.UserId))
-                    .Select(ca => new { AddressId = ca.AddressId }));
-
+                    .Select(ca => new { AddressId = ca.AddressId }));*/
+            var addressesToDelete = _userAddressMappingRepository.Table
+                    .Where(ca => guestsToDelete.Any(c => c.Id == ca.UserId))
+                    .Select(ca => new { AddressId = ca.AddressId });
             //delete guests
-            var totalRecordsDeleted = await _userRepository.DeleteAsync(c => tmpGuests.Any(tmp => tmp.UserId == c.Id));
+            await _userRepository.DeleteAsync(guestsToDelete);
 
             //delete attributes
-            await _gaRepository.DeleteAsync(ga => tmpGuests.Any(c => c.UserId == ga.EntityId) && ga.KeyGroup == nameof(User));
+            await _gaRepository.DeleteAsync(ga => guestsToDelete.Any(c => c.Id == ga.EntityId) && ga.KeyGroup == nameof(User));
 
             //delete m -> m addresses
-            await _userAddressRepository.DeleteAsync(a => tmpAddresses.Any(tmp => tmp.AddressId == a.Id));
+            await _userAddressRepository.DeleteAsync(a => addressesToDelete.Any(tmp => tmp.AddressId == a.Id));
 
-            return totalRecordsDeleted;
+            return 0;
         }
 
         /// <summary>

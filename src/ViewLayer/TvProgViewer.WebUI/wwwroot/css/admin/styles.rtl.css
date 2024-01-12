@@ -1502,7 +1502,7 @@ div.dataTables_wrapper div.dataTables_processing .fa {
   border-right: 1px solid #ddd !important;
 }
 
-.nav-tabs-customer-statistics .chart, .nav-tabs-order-statistics .chart {
+.nav-tabs-user-statistics .chart, .nav-tabs-order-statistics .chart {
   height: 300px;
 }
 

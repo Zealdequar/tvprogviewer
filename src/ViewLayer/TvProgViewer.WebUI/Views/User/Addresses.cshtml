@@ -123,13 +123,13 @@
                             <div class="buttons">
                                 <button type="button" class="button-2 edit-address-button" onclick="location.href = '@(Url.RouteUrl("UserAddressEdit", new {addressId = address.Id}))'">@T("Common.Edit")</button>
 
-                                <button type="button" class="button-2 delete-address-button" onclick="deletecustomeraddress(@(address.Id))">@T("Common.Delete")</button>
+                                <button type="button" class="button-2 delete-address-button" onclick="deleteuseraddress(@(address.Id))">@T("Common.Delete")</button>
                             </div>
                         </div>
                     }
                 </div>
                 <script asp-location="Footer">
-                    function deletecustomeraddress(addressId) {
+                    function deleteuseraddress(addressId) {
                         if (confirm('@T("Common.AreYouSure")')) {
                             var postData = {
                                 addressId: addressId

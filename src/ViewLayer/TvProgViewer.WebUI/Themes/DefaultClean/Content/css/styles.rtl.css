@@ -2376,24 +2376,24 @@ label, label + * {
   text-decoration: underline;
 }
 
-.customer-entered-price {
+.user-entered-price {
   margin: 0 0 20px;
   overflow: hidden;
 }
 
-.customer-entered-price .price-input label {
+.user-entered-price .price-input label {
   display: block;
   margin: 0 0 5px;
   font-weight: bold;
   color: #444;
 }
 
-.customer-entered-price .price-input input {
+.user-entered-price .price-input input {
   width: 170px;
   text-align: center;
 }
 
-.customer-entered-price .price-range {
+.user-entered-price .price-range {
   margin: 5px 0 0;
   color: #777;
 }
@@ -3644,27 +3644,27 @@ label, label + * {
   color: #4cb17c;
 }
 
-.customer-info-page .email-to-revalidate,
-.customer-info-page .readonly-username,
-.customer-info-page .vat-status {
+.user-info-page .email-to-revalidate,
+.user-info-page .readonly-username,
+.user-info-page .vat-status {
   margin: 0 5px;
   font-size: 14px;
 }
 
-.customer-info-page .vat-status {
+.user-info-page .vat-status {
   display: block;
 }
 
 .registration-page .vat-note,
-.customer-info-page .vat-note,
-.customer-info-page .email-to-revalidate-note {
+.user-info-page .vat-note,
+.user-info-page .email-to-revalidate-note {
   display: block;
   font-size: 14px;
   margin-top: 7px;
   white-space: normal;
 }
 
-.login-page .customer-blocks {
+.login-page .user-blocks {
   margin: 0 0 30px;
 }
 
@@ -8444,7 +8444,7 @@ label, label + * {
     margin: 10px auto;
   }
 
-  .login-page .customer-blocks {
+  .login-page .user-blocks {
     overflow: hidden;
   }
 
@@ -8502,12 +8502,12 @@ label, label + * {
     margin-right: 275px;
   }
 
-  .customer-info-page .vat-note,
-  .customer-info-page .email-to-revalidate-note {
+  .user-info-page .vat-note,
+  .user-info-page .email-to-revalidate-note {
     margin-right: 150px;
   }
 
-  .customer-info-page .vat-status {
+  .user-info-page .vat-status {
     display: inline-block;
   }
 
@@ -8787,8 +8787,8 @@ label, label + * {
     margin-right: 385px;
   }
 
-  .customer-info-page .vat-note,
-  .customer-info-page .email-to-revalidate-note {
+  .user-info-page .vat-note,
+  .user-info-page .email-to-revalidate-note {
     margin-right: 225px;
   }
 

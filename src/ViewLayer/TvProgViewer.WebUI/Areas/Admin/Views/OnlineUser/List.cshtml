@@ -4,7 +4,7 @@
     //page title
     ViewBag.PageTitle = T("Admin.Users.OnlineUsers").Text;
     //active menu item (system name)
-    TvProgHtml.SetActiveMenuItemSystemName("Online customers");
+    TvProgHtml.SetActiveMenuItemSystemName("Online users");
 }
 
 <div class="content-header clearfix">
@@ -27,7 +27,7 @@
 
                     @await Html.PartialAsync("Table", new DataTablesModel
                     {
-                        Name = "onlinecustomers-grid",
+                        Name = "onlineusers-grid",
                         UrlRead = new DataUrl("List", "OnlineUser", null),
                         Length = Model.PageSize,
                         LengthMenu = Model.AvailablePageSizes,

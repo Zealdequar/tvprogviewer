@@ -1,5 +1,5 @@
 ﻿/*
-** nopCommerce custom js functions
+** TvProgViewer custom js functions
 */
 
 

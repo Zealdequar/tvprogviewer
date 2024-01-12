@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LinqToDB.DataProvider;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -590,6 +591,43 @@ namespace TvProgViewer.Data
             if (publishEvent)
                 _eventPublisher.EntityDeleted(entity);
         }
+
+        /// <summary>
+        /// Удаление экземпляров сущностей
+        /// </summary>
+        /// <param name="entities">Сущность</param>
+        /// <param name="publishEvent">Публиковать ли уведомление об удалении</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public virtual void Delete(IList<TEntity> entities, bool publishEvent = true)
+        {
+            if (entities == null)
+                throw new ArgumentNullException(nameof(entities));
+
+            if (entities.OfType<ISoftDeletedEntity>().Any())
+            {
+                foreach (var entity in entities)
+                {
+                    if (entity is ISoftDeletedEntity softDeletedEntity)
+                    {
+                        softDeletedEntity.Deleted = true;
+                        _dataProvider.UpdateEntity(entity);
+                    }
+                }
+            }
+            else
+            {
+                using var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+                _dataProvider.BulkDeleteEntities(entities);
+                transaction.Complete();
+            }
+
+            //event notification
+            if (!publishEvent)
+                return;
+
+            foreach (var entity in entities)
+                _eventPublisher.EntityDeleted(entity);
+}
 
         /// <summary>
         /// Delete entity entries
