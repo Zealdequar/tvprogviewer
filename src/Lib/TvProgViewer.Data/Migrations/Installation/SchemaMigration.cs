@@ -172,7 +172,6 @@ namespace TvProgViewer.Data.Migrations.Installation
             Create.TableFor<GenreClassificator>();
             Create.TableFor<Ratings>();
             Create.TableFor<RatingClassificator>();
-            Create.TableFor<UserChannels>();
             Create.TableFor<TypeProg>();
             Create.TableFor<WebResources>();
             Create.TableFor<UpdateProgLog>();

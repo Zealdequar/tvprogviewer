@@ -201,6 +201,16 @@ namespace TvProgViewer.Services.Users
         Task<User> InsertGuestUserAsync();
 
         /// <summary>
+        /// Вставка пользователя с ролью TvGuest
+        /// </summary>
+        /// <param name="uuid">Уникальный идентификатор пользователя</param>
+        /// <returns>
+        /// Задача представляет асинхронную операцию
+        /// Результат задачи содержит пользователя
+        /// </returns>
+        Task<User> InsertTvGuestUserAsync(string uuid);
+
+        /// <summary>
         /// Insert a user
         /// </summary>
         /// <param name="user">User</param>
@@ -360,6 +370,20 @@ namespace TvProgViewer.Services.Users
         Task AddUserRoleMappingAsync(UserUserRoleMapping roleMapping);
 
         /// <summary>
+        /// Добавить пользователю маппинг телеканалов
+        /// </summary>
+        /// <param name="userChannelMapping">Пользовательский маппинг телеканалов</param>
+        /// <returns>Задача предоставляет асинхронные операции</returns>
+        Task AddUserChannelMappingAsync(UserChannelMapping userChannelMapping);
+
+        /// <summary>
+        /// Добпвить пользователю маппинг телеканалов
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <param name="listChannelId">Список идентификаторов телеканалов</param>
+        /// <returns>Задача, которая предоставляет асинхронные операции</returns>
+        Task AddUserChannelMappingAsync(User user, IList<int> listChannelId);
+        /// <summary>
         /// Remove a user-user role mapping
         /// </summary>
         /// <param name="user">User</param>
@@ -367,6 +391,12 @@ namespace TvProgViewer.Services.Users
         /// <returns>A task that represents the asynchronous operation</returns>
         Task RemoveUserRoleMappingAsync(User user, UserRole role);
 
+        /// <summary>
+        /// Удалить маппинг телеканалов для пользователя
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <returns>Задача, которая представляет асинхронные операции</returns>
+        Task RemoveUserChannelMappingAsync(User user);
         /// <summary>
         /// Delete a user role
         /// </summary>

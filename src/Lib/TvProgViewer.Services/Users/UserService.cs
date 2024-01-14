@@ -37,6 +37,7 @@ namespace TvProgViewer.Services.Users
         private readonly IRepository<BlogComment> _blogCommentRepository;
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<UserAddressMapping> _userAddressMappingRepository;
+        private readonly IRepository<UserChannelMapping> _userChannelMappingRepository;
         private readonly IRepository<UserUserRoleMapping> _userUserRoleMappingRepository;
         private readonly IRepository<UserPassword> _userPasswordRepository;
         private readonly IRepository<UserRole> _userRoleRepository;
@@ -55,7 +56,7 @@ namespace TvProgViewer.Services.Users
 
         #endregion
 
-        #region Ctor
+        #region Конструктор
 
         public UserService(UserSettings userSettings,
             IGenericAttributeService genericAttributeService,
@@ -64,6 +65,7 @@ namespace TvProgViewer.Services.Users
             IRepository<BlogComment> blogCommentRepository,
             IRepository<User> userRepository,
             IRepository<UserAddressMapping> userAddressMappingRepository,
+            IRepository<UserChannelMapping> userChannelMappingRepository,
             IRepository<UserUserRoleMapping> userUserRoleMappingRepository,
             IRepository<UserPassword> userPasswordRepository,
             IRepository<UserRole> userRoleRepository,
@@ -87,6 +89,7 @@ namespace TvProgViewer.Services.Users
             _blogCommentRepository = blogCommentRepository;
             _userRepository = userRepository;
             _userAddressMappingRepository = userAddressMappingRepository;
+            _userChannelMappingRepository = userChannelMappingRepository;
             _userUserRoleMappingRepository = userUserRoleMappingRepository;
             _userPasswordRepository = userPasswordRepository;
             _userRoleRepository = userRoleRepository;
@@ -587,6 +590,42 @@ namespace TvProgViewer.Services.Users
             await _userRepository.InsertAsync(user);
 
             await AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = user.Id, UserRoleId = guestRole.Id });
+
+            return user;
+        }
+
+        /// <summary>
+        /// Вставка пользователя с ролью TvGuest
+        /// </summary>
+        /// <param name="uuid">Уникальный идентификатор пользователя</param>
+        /// <returns>
+        /// Задача представляет асинхронную операцию
+        /// Результат задачи содержит пользователя
+        /// </returns>
+        public virtual async Task<User> InsertTvGuestUserAsync(string uuid)
+        {
+            Guid guid = new Guid(uuid);
+            var user = await GetUserByGuidAsync(guid);
+
+            if (user != null)
+                return user;
+
+            user = new User
+            {
+                UserGuid = guid,
+                Active = true,
+                CreatedOnUtc = DateTime.UtcNow,
+                LastActivityDateUtc = DateTime.UtcNow
+            };
+
+            // Добавить роль TvGuest:
+            var tvGuestRole = await GetUserRoleBySystemNameAsync(TvProgUserDefaults.TvGuestsRoleName);
+            if (tvGuestRole == null)
+                throw new TvProgException("Роль 'TvGuests' не cмогла загрузиться");
+
+            await _userRepository.InsertAsync(user);
+
+            await AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = user.Id, UserRoleId = tvGuestRole.Id });
 
             return user;
         }
@@ -1125,6 +1164,30 @@ namespace TvProgViewer.Services.Users
         }
 
         /// <summary>
+        /// Добавить пользователю маппинг телеканалов
+        /// </summary>
+        /// <param name="channelMapping">Пользовательский маппинг телеканалов</param>
+        /// <returns>Задача, которая предоставляет асинхронные операции</returns>
+        public async Task AddUserChannelMappingAsync(UserChannelMapping channelMapping)
+        {
+            await _userChannelMappingRepository.InsertAsync(channelMapping);
+        }
+
+        /// <summary>
+        /// Добпвить пользователю маппинг телеканалов
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <param name="listChannelId">Список идентификаторов телеканалов</param>
+        /// <returns>Задача, которая предоставляет асинхронные операции</returns>
+        public async Task AddUserChannelMappingAsync(User user, IList<int> listChannelId)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            await listChannelId.Select(async id => await AddUserChannelMappingAsync(new UserChannelMapping { UserId = user.Id, ChannelId = id }))
+                               .ToListAsync();
+        }
+
+        /// <summary>
         /// Remove a user-user role mapping
         /// </summary>
         /// <param name="user">User</param>
@@ -1143,6 +1206,23 @@ namespace TvProgViewer.Services.Users
 
             if (mapping != null)
                 await _userUserRoleMappingRepository.DeleteAsync(mapping);
+        }
+
+        /// <summary>
+        /// Удалить маппинг телеканалов для пользователя
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <returns>Задача, которая представляет асинхроннные операции</returns>
+        public async Task RemoveUserChannelMappingAsync(User user)
+        {
+            if (user is null)
+                throw new ArgumentNullException(nameof(user));
+
+            var mapping = await _userChannelMappingRepository.Table
+                .Where(ucm => ucm.UserId == user.Id).ToListAsync();
+
+            if (mapping != null && mapping.Count > 0)
+                await _userChannelMappingRepository.DeleteAsync(mapping);
         }
 
         /// <summary>

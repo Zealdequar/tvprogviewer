@@ -11,6 +11,8 @@ using LinqToDB;
 using TvProgViewer.Data.TvProgMain;
 using System.Threading;
 using Newtonsoft.Json;
+using TvProgViewer.Core.Domain.Users;
+using System.Text.RegularExpressions;
 
 namespace TvProgViewer.Services.TvProgMain
 {
@@ -24,18 +26,23 @@ namespace TvProgViewer.Services.TvProgMain
         private readonly IRepository<Channels> _channelsRepository;
         private readonly IRepository<MediaPic> _mediaPicRepository;
         private readonly IRepository<Programmes> _programmesRepository;
-
+        private readonly IRepository<UserChannelMapping> _userChannelMappingRepository;
+        private readonly List<string> _firstMultiplex = new List<string> {
+            "Первый канал", "Россия 1", "Матч!", "НТВ", "Пятый Канал", "Культура", "Россия 24", "Карусель", "ОТР", "ТВ Центр",
+            "РЕН ТВ", "Спас ТВ", "СТС", "Домашний", "ТВ-3", "Пятница", "Звезда", "МИР", "ТНТ", "МУЗ-ТВ" }; 
         #endregion
 
         #region Конструктор
 
         public ChannelService(IRepository<Channels> channelsRepositry,
                               IRepository<MediaPic> mediaPicRepository,
-                              IRepository<Programmes> programmesRepository)
+                              IRepository<Programmes> programmesRepository,
+                              IRepository<UserChannelMapping> userChannelMappingRepository)
         {
             _channelsRepository = channelsRepositry;
             _mediaPicRepository = mediaPicRepository;
             _programmesRepository = programmesRepository;
+            _userChannelMappingRepository = userChannelMappingRepository;   
         }
 
         #endregion
@@ -104,6 +111,59 @@ namespace TvProgViewer.Services.TvProgMain
                                         .OrderBy(o => o.SysOrderCol)
                                         .ThenBy(o => o.InternalId)
                                         .ToListAsync();
+        }
+
+        /// <summary>
+        /// Перерасчёт пользовательского рейтинга телеканалов
+        /// </summary>
+        public async Task RecalculateChannelUserRatingAsync()
+        {
+            // Группировка по идентификаторам телеканалов:
+            var grouped = await _userChannelMappingRepository.Table.GroupBy(ucm => ucm.ChannelId)
+                                                     .Select(group => new {
+                                                         ChannelId = group.Key,
+                                                         Qty = group.Count()
+                                                     }).ToListAsync();
+
+            // Получение телеканалов, попавших в выборку:
+            var channels = await _channelsRepository.GetByIdsAsync(await grouped.Select(gr => gr.ChannelId).ToListAsync());
+
+            // Установка количества повторений соответствующим телеканалам:
+            foreach (var (channel, gr) in from channel in channels
+                                          from gr in grouped
+                                          where channel.Id == gr.ChannelId
+                                          select (channel, gr))
+            {
+                channel.UserRating = gr.Qty;
+            }
+
+            // Обновление телеканалов:
+            await _channelsRepository.UpdateAsync(channels);
+        }
+
+        /// <summary>
+        /// Пересортировка телеканалов в соответствии с пользовательским рейтингом
+        /// </summary>
+        public async Task ReorderChannelAsync()
+        {
+            // Получение всех неудалённых телеканалов и не входящих в первый мультиплекс,
+            // у которых есть пользовательский рейтинг:
+            var channels = await _channelsRepository.GetAllAsync(query =>
+            {
+                query = query.Where(q => q.Deleted == null && q.UserRating != null);
+                query = query.Where(q => !_firstMultiplex.Contains(q.TitleChannel));
+                return Task.FromResult(query);
+            });
+            
+            // Установка сортировки в соответствии с рейтингом
+            int i = 21;
+            foreach (var channel in channels.OrderBy(o => o.UserRating))
+            {
+                channel.SysOrderCol = i++;
+            }
+
+            // Обновление телеканалов:
+            await _channelsRepository.UpdateAsync(channels);
         }
         #endregion
     }

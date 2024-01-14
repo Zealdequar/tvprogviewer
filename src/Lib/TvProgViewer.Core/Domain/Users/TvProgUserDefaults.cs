@@ -28,6 +28,11 @@
         public static string GuestsRoleName => "Guests";
 
         /// <summary>
+        /// Получение системной гостевой роли для работы с программой передач
+        /// </summary>
+        public static string TvGuestsRoleName => "TvGuests";
+
+        /// <summary>
         /// Gets a system name of 'vendors' user role
         /// </summary>
         public static string VendorsRoleName => "Vendors";

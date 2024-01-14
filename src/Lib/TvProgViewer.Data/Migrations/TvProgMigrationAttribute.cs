@@ -21,9 +21,9 @@ namespace TvProgViewer.Data.Migrations
             return GetVersion(dateTime) + (int)migrationType;
         }
 
-        protected static string GetDescription(string nopVersion, UpdateMigrationType migrationType)
+        protected static string GetDescription(string tvProgVersion, UpdateMigrationType migrationType)
         {
-            return string.Format(TvProgMigrationDefaults.UpdateMigrationDescription, nopVersion, migrationType.ToString());
+            return string.Format(TvProgMigrationDefaults.UpdateMigrationDescription, tvProgVersion, migrationType.ToString());
         }
 
         #endregion
@@ -57,11 +57,11 @@ namespace TvProgViewer.Data.Migrations
         /// Initializes a new instance of the TvProgMigrationAttribute class
         /// </summary>
         /// <param name="dateTime">The migration date time string to convert on version</param>
-        /// <param name="nopVersion">tvProgViewer full version</param>
+        /// <param name="tvProgVersion">tvProgViewer full version</param>
         /// <param name="migrationType">The migration type</param>
         /// <param name="targetMigrationProcess">The target migration process</param>
-        public TvProgMigrationAttribute(string dateTime, string nopVersion, UpdateMigrationType migrationType, MigrationProcessType targetMigrationProcess = MigrationProcessType.NoMatter) :
-            base(GetVersion(dateTime, migrationType), GetDescription(nopVersion, migrationType))
+        public TvProgMigrationAttribute(string dateTime, string tvProgVersion, UpdateMigrationType migrationType, MigrationProcessType targetMigrationProcess = MigrationProcessType.NoMatter) :
+            base(GetVersion(dateTime, migrationType), GetDescription(tvProgVersion, migrationType))
         {
             TargetMigrationProcess = targetMigrationProcess;
         }

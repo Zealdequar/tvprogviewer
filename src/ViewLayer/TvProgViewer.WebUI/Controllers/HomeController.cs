@@ -12,6 +12,9 @@ using TvProgViewer.WebUI.Models.Tree;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 using System.Linq;
+using TvProgViewer.Services.Users;
+using FluentMigrator.Model;
+using NUglify.Helpers;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -22,6 +25,7 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IProgrammeService _programmeService;
         private readonly IChannelService _channelService;
         private readonly IGenreService _genreService;
+        private readonly IUserService _userService;
         /// <summary>
         /// Словарь с днями недели для обтображения пиктограмм
         /// </summary>
@@ -37,6 +41,9 @@ namespace TvProgViewer.WebUI.Controllers
                                                        };
 
         #endregion
+
+        #region Классы
+
         [DataContract]
         internal class Rules
         {
@@ -58,26 +65,29 @@ namespace TvProgViewer.WebUI.Controllers
 
         }
 
+        #endregion
+
         #region Конструктор
 
         public HomeController(IProgrammeService programmeService,
             IChannelService channelService,
-            IGenreService genreService)
+            IGenreService genreService,
+            IUserService userService)
         {
             _programmeService = programmeService;
             _channelService = channelService;
             _genreService = genreService;
+            _userService = userService;
         }
 
         #endregion
+
+        #region Методы
 
         public virtual IActionResult Index()
         {
             return View();
         }
-
-
-
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
@@ -146,6 +156,21 @@ namespace TvProgViewer.WebUI.Controllers
                 sidx, sord, page, rows, genres, channels);
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task SendStatForChannelRating(string uuid, int progType, string channels)
+        {
+            var user = await _userService.InsertTvGuestUserAsync(uuid);
+            await _userService.RemoveUserChannelMappingAsync(user);
+            if (!channels.IsNullOrWhiteSpace())
+            {
+                var listChannelId = await channels.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Where(ch => int.TryParse(ch, out int id))
+                    .Select(ch => { _ = int.TryParse(ch, out int id); return id; }).ToListAsync();
+                await _userService.AddUserChannelMappingAsync(user, listChannelId);
+            }
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
@@ -392,5 +417,7 @@ namespace TvProgViewer.WebUI.Controllers
                                 Convert.ToDateTime(tsDate).AddHours(5).AddMinutes(45),
                                 Convert.ToDateTime(tsDate).AddDays(1).AddHours(5).AddMinutes(45), (category != "null") ? category : null));
         }
+
+        #endregion
     }
 }

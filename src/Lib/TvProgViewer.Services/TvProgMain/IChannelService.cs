@@ -25,5 +25,15 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="tvProgProvder">Идентификатор провайдера телеканалов</param>
         /// <param name="jsonChannels">Данные из localStorage</param>
         public Task<List<UserChannel>> GetUserChannelsByLocalStorageAsync(int tvProgProvder, string jsonChannels);
+
+        /// <summary>
+        /// Перерасчёт пользовательского рейтинга телеканалов
+        /// </summary>
+        public Task RecalculateChannelUserRatingAsync();
+
+        /// <summary>
+        /// Пересортировка телеканалов в соответствии с пользовательским рейтингом
+        /// </summary>
+        public Task ReorderChannelAsync();
     }
 }

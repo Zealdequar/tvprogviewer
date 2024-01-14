@@ -3,6 +3,7 @@ var pageNum = 1;
 $(function () {
     setGrid();
     let jsonData = window.localStorage.getItem("optChans");
+    let uuid = window.localStorage.getItem("_tv_uuid");
     if (jsonData && jsonData.length != 0) {
         try {
             checkedArray = JSON.parse(jsonData);
@@ -12,6 +13,10 @@ $(function () {
             window.localStorage.setItem("optChans", "[]");
         }
     }
+    if (!uuid || uuid.length == 0) {
+        window.localStorage.setItem("_tv_uuid", crypto.randomUUID());
+    }
+
     if (!jsonData || !checkedArray || checkedArray.length == 0) {
         $("#infoPanel").show(300);
     } else {
@@ -35,15 +40,38 @@ function chAction() {
     }
     window.localStorage.setItem("optChans", "[]");
 }
+// Отправка статистических данных для создания пользователя
+function sendStatForChannelRating() {
+    let result;
+    let chansArr = getStorageChannels();
+    $.ajax({
+        url: "Home/SendStatForChannelRating?uuid=" + window.localStorage.getItem("_tv_uuid") +
+            "&progType=" + $('#userTypeProg option:selected').val().split(';')[1] +
+            "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
+        dataType: 'json',
+        type: 'GET',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            result = "OK";
+        },
+        error: function (err) {
+            result = err.statusText;
+        }
+    });
+    return result;
+}
 
-$("#ChannelTool").click(chAction);
-$("#ChannelToolBottom").click(chAction);
-$("#ApplyTool").click(function () {
+
+    $("#ChannelTool").on('click', chAction);
+    $("#ChannelToolBottom").on('click', chAction);
+$("#ApplyTool").on('click', function () {
+    sendStatForChannelRating();
     document.location.href = "/";
-});
-$("#ApplyToolBottom").click(function () {
+    });
+$("#ApplyToolBottom").on('click', function () {
+    sendStatForChannelRating();
     document.location.href = "/";
-});
+    });
 // Заполнение раскрывающихся списков
 /*
 function fillSelects() {
@@ -75,8 +103,7 @@ function UploadImage(response, postData) {
     var formData = new FormData();
     formData.append('file', $('#FileName25')[0].files[0]);
     formData.append('userChannelId', postData.UserChannelID);
-    $.ajax(
-        {
+    $.ajax({
             url: '/Channel/UploadFile',
             type: 'POST',
             data: formData,
@@ -89,9 +116,7 @@ function UploadImage(response, postData) {
             error: function (data, status, e) {
                 
             }
-        }
-    );
-    
+    });
     return [true, '', false];
 }
 // Установка таблички
@@ -139,14 +164,14 @@ function setGrid()
             // Цикл по массиву чтобы сделать rowId в выбранной странице
             if (checkedArray) {
                 for (var i = 0; i < checkedArray.length; i++) {
-                    if (checkedArray[i].pageNum == pageNum) {
+                    //if (checkedArray[i].pageNum == pageNum) {
                         $("#tblSystemChannelsGrid").jqGrid('setSelection', checkedArray[i].rowId, true);
-                    }
+                   // }
                 }
             }
             
             $(window).triggerHandler('resize.jqGrid');
-            $("tr.jqgrow td input", "#tblSystemChannelsGrid").click(function () {
+            $("tr.jqgrow td input", "#tblSystemChannelsGrid").on('click', function () {
                // if ($(this).closest('tr').find('td:nth-child(4)').find('img').length) {
                 $("#mainToolChannel").show(50);
                 $("#ChannelTool").show(100);
@@ -177,18 +202,22 @@ function setGrid()
                 if (status) {
                     // Если строка отмечена, массив будет дополнен если такого нет в массиве:
                     for (let i = 0; i < checkedArray.length; i++) {
-                        if (checkedArray[i].pageNum == pageNum && checkedArray[i].rowId == rowId) {
+                        if (checkedArray[i].rowId == rowId) {
                             return false;
                         }
                     };
-                    checkedArray.push(checkedItem);
+                    var sel_id = $('#tblSystemChannelsGrid').getGridParam('selrow');
+                    var index = $('#tblSystemChannelsGrid').jqGrid('getInd', sel_id);
+                    // Если строка отмечена, массив будет дополнен если такого нет в массиве:
+                    checkedArray.splice((pageNum - 1) * 20 + index - 1, 0, checkedItem);  
                 } else {
                     for (let i = 0; i < checkedArray.length; i++) {
-                        if (checkedArray[i].pageNum == pageNum && checkedArray[i].rowId == rowId) {
+                        if (checkedArray[i].rowId == rowId) {
                             checkedArray.splice(i, 1);
                             break;
                         }
                     }
+                    
                 }
                 $("#hiddenChannels").val(checkedArray.map(ch => ch.ChannelId).join(";"));
                 window.localStorage.setItem("optChans", JSON.stringify(checkedArray));
@@ -271,7 +300,7 @@ function setGrid()
     jQuery("#tblSystemChannelsGrid").jqGrid("setGridHeight", 548);
     $("input#gs_SystemTitle").attr("placeholder", "Начните вводить телеканал...");
     $("input#gs_SystemTitle").height(25);
-    $("input#gs_SystemTitle").focus();
+    $("input#gs_SystemTitle").trigger("focus");
 }
 
 // Перезагрузка после подтверждения

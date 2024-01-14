@@ -46,5 +46,10 @@ namespace TvProgViewer.Core.Domain.TvProgMain
         /// Порядок сортировки
         /// </summary>
         public int SysOrderCol { get; set; }
+
+        /// <summary>
+        /// Пользовательский рейтинг
+        /// </summary>
+        public int? UserRating { get; set; }
     }
 }

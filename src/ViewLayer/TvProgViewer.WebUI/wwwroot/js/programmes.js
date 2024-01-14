@@ -54,24 +54,24 @@ $(function () {
         }
     });
 
-    $("#anonsTool").click(function () {
+    $("#anonsTool").on('click', function () {
         $('#anonsDescr').toggle(100);
     });
-    $("#anonsToolNext").click(function () {
+    $("#anonsToolNext").on('click', function () {
         $('#anonsDescrNext').toggle(100);
     });
 
-    $("#anonsToolSearch").click(function () {
+    $("#anonsToolSearch").on('click', function () {
         $('#anonsDescrSearch').toggle(100);
     });
 
-    $("#anonsToolByDays").click(function () {
+    $("#anonsToolByDays").on('click', function () {
         $('#anonsDescrByDays').toggle(100);
     });
-    $("#anonsToolByChannels").click(function () {
+    $("#anonsToolByChannels").on('click', function () {
         $('#anonsDescrByChannels').toggle(100);
     });
-$("#btnSearch").click(function () {
+    $("#btnSearch").on('click', function () {
     searchProgramme($('#userTypeProg option:selected').val().split(';')[1], $('#tbContains').val());
 });
 
@@ -265,7 +265,7 @@ function setGrids() {
             },            
             loadComplete: function () {
                 $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
-                $("tr.jqgrow td input", "#TVProgrammeNowGrid").click(function () {
+                $("tr.jqgrow td input", "#TVProgrammeNowGrid").on('click', function () {
                     if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
                         $("#mainToolNow").show(50); 
                         $("#anonsTool").show(50);
@@ -377,7 +377,7 @@ function setGrids() {
             loadComplete: function () {
                 $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
 
-                $("tr.jqgrow td input", "#TVProgrammeNextGrid").click(function () {
+                $("tr.jqgrow td input", "#TVProgrammeNextGrid").on('click', function () {
                     if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
                         $("#mainToolNext").show(50);
                         $("#anonsToolNext").show(50);
@@ -482,7 +482,7 @@ function searchProgramme(typeProgID, findTitle) {
                 loadComplete: function () {
                     $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
 
-                    $("tr.jqgrow td input", "#SearchedTVProgramme").click(function () {
+                    $("tr.jqgrow td input", "#SearchedTVProgramme").on('click', function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
                             $("#mainToolSearch").show(50);
                             $("#anonsToolSearch").show(50);
@@ -635,7 +635,7 @@ function fillUserByDay(date, channelId) {
                 loadComplete: function () {
                     $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
 
-                    $("tr.jqgrow td input", "#TVProgrammeByDaysGrid").click(function () {
+                    $("tr.jqgrow td input", "#TVProgrammeByDaysGrid").on('click', function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
                             $("#mainToolByDays").show(50); 
                             $("#anonsToolByDays").show(50);
@@ -755,7 +755,7 @@ function fillUserByChannels(date, channelId) {
                 loadComplete: function () {
                     $("tr.jqgrow:odd").css("background", "#EFFFEF");
 
-                    $("tr.jqgrow td input", "#TVProgrammeByChannelsGrid").click(function () {
+                    $("tr.jqgrow td input", "#TVProgrammeByChannelsGrid").on('click', function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
                             $("#mainToolByChannels").show(50);
                             $("#anonsToolByChannels").show(50);
