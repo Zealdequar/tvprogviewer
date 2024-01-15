@@ -204,11 +204,12 @@ namespace TvProgViewer.Services.Users
         /// Вставка пользователя с ролью TvGuest
         /// </summary>
         /// <param name="uuid">Уникальный идентификатор пользователя</param>
+        /// <param name="ipAddress">IP-адрес</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// Результат задачи содержит пользователя
         /// </returns>
-        Task<User> InsertTvGuestUserAsync(string uuid);
+        Task<User> InsertTvGuestUserAsync(string uuid, string ipAddress);
 
         /// <summary>
         /// Insert a user

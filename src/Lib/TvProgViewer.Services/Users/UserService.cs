@@ -598,11 +598,12 @@ namespace TvProgViewer.Services.Users
         /// Вставка пользователя с ролью TvGuest
         /// </summary>
         /// <param name="uuid">Уникальный идентификатор пользователя</param>
+        /// <param name="ipAddress">IP-адрес</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// Результат задачи содержит пользователя
         /// </returns>
-        public virtual async Task<User> InsertTvGuestUserAsync(string uuid)
+        public virtual async Task<User> InsertTvGuestUserAsync(string uuid, string ipAddress)
         {
             Guid guid = new Guid(uuid);
             var user = await GetUserByGuidAsync(guid);
@@ -615,7 +616,8 @@ namespace TvProgViewer.Services.Users
                 UserGuid = guid,
                 Active = true,
                 CreatedOnUtc = DateTime.UtcNow,
-                LastActivityDateUtc = DateTime.UtcNow
+                LastActivityDateUtc = DateTime.UtcNow,
+                LastIpAddress = ipAddress
             };
 
             // Добавить роль TvGuest:

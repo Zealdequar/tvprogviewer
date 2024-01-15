@@ -15,6 +15,7 @@ using System.Linq;
 using TvProgViewer.Services.Users;
 using FluentMigrator.Model;
 using NUglify.Helpers;
+using TvProgViewer.Core;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -26,6 +27,8 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IChannelService _channelService;
         private readonly IGenreService _genreService;
         private readonly IUserService _userService;
+        private readonly IWebHelper _webHelper;
+
         /// <summary>
         /// Словарь с днями недели для обтображения пиктограмм
         /// </summary>
@@ -72,12 +75,14 @@ namespace TvProgViewer.WebUI.Controllers
         public HomeController(IProgrammeService programmeService,
             IChannelService channelService,
             IGenreService genreService,
-            IUserService userService)
+            IUserService userService,
+            IWebHelper webHelper)
         {
             _programmeService = programmeService;
             _channelService = channelService;
             _genreService = genreService;
             _userService = userService;
+            _webHelper = webHelper;
         }
 
         #endregion
@@ -162,7 +167,7 @@ namespace TvProgViewer.WebUI.Controllers
         [HttpGet]
         public async Task SendStatForChannelRating(string uuid, int progType, string channels)
         {
-            var user = await _userService.InsertTvGuestUserAsync(uuid);
+            var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
             await _userService.RemoveUserChannelMappingAsync(user);
             if (!channels.IsNullOrWhiteSpace())
             {

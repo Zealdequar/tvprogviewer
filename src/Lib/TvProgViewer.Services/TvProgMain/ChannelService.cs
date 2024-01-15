@@ -157,7 +157,7 @@ namespace TvProgViewer.Services.TvProgMain
             
             // Установка сортировки в соответствии с рейтингом
             int i = 21;
-            foreach (var channel in channels.OrderBy(o => o.UserRating))
+            foreach (var channel in channels.OrderByDescending(o => o.UserRating))
             {
                 channel.SysOrderCol = i++;
             }
