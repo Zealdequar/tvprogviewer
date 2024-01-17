@@ -107,6 +107,9 @@
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/54311379" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- Yandex.Metrika counter -->
+    <!-- Yandex.RTB -->
+    <script>window.yaContextCb = window.yaContextCb || []</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-142558739-2"></script>
     <script>
@@ -149,6 +152,38 @@
             @await Component.InvokeAsync("HeaderLinks")
         </div>
     </nav>
+    <div class="left-banner">
+        <!-- Yandex.RTB R-A-5258749-2 -->
+        <div id="yandex_rtb_R-A-5258749-2"></div>
+        <script>
+            window.yaContextCb.push(() => {
+                Ya.Context.AdvManager.render({
+                    "blockId": "R-A-5258749-2",
+                    "renderTo": "yandex_rtb_R-A-5258749-2"
+                });
+            })
+        </script>
+    </div>
+    <!-- Yandex.RTB R-A-5258749-3 -->
+    <script>
+        window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-5258749-3",
+                "type": "rewarded",
+                "platform": "desktop"
+            })
+        })
+    </script>
+    <!-- Yandex.RTB R-A-5258749-4 -->
+    <script>
+        window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-5258749-4",
+                "type": "rewarded",
+                "platform": "touch"
+            })
+        })
+    </script>
     @RenderBody()
 
     @TvProgHtml.GenerateScripts(ResourceLocation.Footer)
