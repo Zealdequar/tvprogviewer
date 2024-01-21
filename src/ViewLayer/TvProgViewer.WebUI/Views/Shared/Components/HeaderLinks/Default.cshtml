@@ -1,10 +1,23 @@
 ﻿@model HeaderLinksModel
+@using TvProgViewer.Core.Domain.Topics
 @using TvProgViewer.Core.Domain.Users
 @inject TvProgViewer.Core.IWebHelper webHelper
 
 <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderLinksBefore, additionalData = Model })
+        @if (Model.DisplayHomepageMenuItem)
+        {
+            <li class="nav-item"><a class="nav-link ico-homepage" href="@Url.RouteUrl("Homepage")">@T("Homepage")</a></li>
+        }
+        @foreach (var topic in Model.Topics)
+        {
+            <li class="nav-item"><a class="nav-link ico-topic-@topic.Id" href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
+        }
+        @if (Model.DisplayProductSearchMenuItem)
+        {
+            <li class="nav-item"><a class="nav-link ico-search" href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
+        }
         @if (Model.IsAuthenticated)
         {
             <li class="nav-item"><a class="nav-link ico-account" href="@Url.RouteUrl("UserInfo")" >@T("Account.MyAccount")@*@Model.UserName*@</a></li>
@@ -39,6 +52,10 @@
                     <span class="wishlist-qty">@T("Wishlist.HeaderQuantity", Model.WishlistItems)</span>
                 </a>
             </li>
+        }
+        @if (Model.DisplayContactUsMenuItem)
+        {
+            <li class="nav-item"><a class="nav-link ico-contactus" href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
         }
         @if (Model.ShoppingCartEnabled)
         {

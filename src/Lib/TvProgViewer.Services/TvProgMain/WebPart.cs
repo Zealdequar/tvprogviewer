@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using NLog;
-using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Xml.Linq;
 using System.Diagnostics;
-using System.Configuration;
+
 
 
 namespace TvProgViewer.Services.TvProgMain

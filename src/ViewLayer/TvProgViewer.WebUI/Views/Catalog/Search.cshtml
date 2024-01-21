@@ -6,6 +6,11 @@
     TvProgHtml.AddTitleParts(T("PageTitle.Search").Text);
     //page class
     TvProgHtml.AppendPageCssClassParts("html-search-page");
+    TvProgHtml.AppendCssFileParts("~/css/jqGrid/ui.jqgrid.css");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/i18n/grid.locale-ru.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/jquery.jqgrid.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/search.min.js");
 }
 <script asp-location="Footer">
     $(document).ready(function () {
@@ -32,9 +37,24 @@
         <h1>@T("Search")</h1>
     </div>
     <div class="page-body">
+        <div class="header-upper">
+            <div class="input-group row">
+                <div class="input-row search-row">
+                    <label for="userProvider" class="col-xs-2">Провайдер ТВ-программы</label>
+                    @await Component.InvokeAsync("TvProgProviderSelector")
+                </div>
+                <div class="input-row search-row">
+                    <label for="userTypeProg" class="col-xs-2">Тип ТВ-программы</label>
+                    @await Component.InvokeAsync("TvTypeProgSelector")
+                </div>
+                <div class="input-row search-row">
+                    <label for="userCategory" class="col-xs-2">Категория</label>
+                    @await Component.InvokeAsync("TvCategorySelector")
+                </div>
+            </div>
+        </div>
         <div class="search-input">
-            <form asp-route="ProductSearch" method="get">
-                <div class="fieldset">
+            <div class="fieldset">
                     <div class="form-fields">
                         <div class="basic-search">
                             <div class="inputs">
@@ -42,12 +62,12 @@
                                 <input asp-for="q" class="search-text" />
                             </div>
                             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductSearchPageBasic, additionalData = Model })
-                            <div class="inputs reversed">
+                            @*<div class="inputs reversed">
                                 <input asp-for="advs" />
                                 <label asp-for="advs">@T("Search.AdvancedSearch")</label>
-                            </div>
+                            </div>*@
                         </div>
-                        <div class="advanced-search" id="advanced-search-block">
+                        @*<div class="advanced-search" id="advanced-search-block">
                             @if (Model.AvailableCategories.Count > 0)
                             {
                                 <div class="inputs">
@@ -78,15 +98,28 @@
                                 <label asp-for="sid">@T("Search.SearchInDescriptions")</label>
                             </div>
                             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductSearchPageAdvanced, additionalData = Model })
-                        </div>
+                        </div>*@
                     </div>
                 </div>
                 <div class="buttons">
-                    <button type="submit" class="button-1 search-button">@T("Search.Button")</button>
+                    <button class="button-1 search-button">@T("Search.Button")</button>
                 </div>
-            </form>
         </div>
-        @await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
+        <div class="search-result">
+            <div id="mainToolbarSearch" class="height-panel" style="display: none;">
+                <button id="anonsToolbarSearch" class="btn-anons" style="display: none;"><img src="~/images/i/GreenAnons.png" alt="Показать анонс" /></button>
+            </div>
+            <div id="dragToolbarGenreSearch" class="drag-tool-genre tool-genre-global-search">
+                <div id="genresToolbarSearch" class="btn-group-genres-global-search" style="display: none;">
+                </div>
+            </div>
+            <div id="mwSearch" class="mainwindow">
+                <table id="TvProgrammeGlobalSearchGrid"></table>
+                <table id="TvProgrammeGlobalSearchPager"></table>
+            </div>
+            <div id="anonsDescrGlobalSearch" class="description" style="display: none;"></div>
+        </div>
+        @*@await Html.PartialAsync("_CatalogSelectors", Model.CatalogProductsModel)
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductSearchPageBeforeResults, additionalData = Model })
         <div class="search-results">
             @{
@@ -114,7 +147,7 @@
                     });
                 });
             </script>
-        </div>
+        </div>*@
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ProductSearchPageAfterResults, additionalData = Model })
     </div>
 </div>

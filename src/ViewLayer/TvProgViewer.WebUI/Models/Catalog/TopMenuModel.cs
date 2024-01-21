@@ -39,7 +39,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
                        && !(DisplayForumsMenuItem && ForumEnabled)
                        && !DisplayContactUsMenuItem;
 
-        #region Nested classes
+        #region Вложенные классы
 
         public partial record TopicModel : BaseTvProgEntityModel
         {

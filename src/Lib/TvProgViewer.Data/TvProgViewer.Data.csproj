@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Copyright>Copyright © TvProgViewer</Copyright>
     <Company>TvProgViewer</Company>
     <Authors>TvProgViewer</Authors>
@@ -18,7 +18,7 @@
     <PackageReference Include="FluentMigrator" Version="3.3.2" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.3.2" />
     <PackageReference Include="linq2db" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
     <PackageReference Include="MySqlConnector" Version="2.2.7" />
     <PackageReference Include="Npgsql" Version="7.0.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />

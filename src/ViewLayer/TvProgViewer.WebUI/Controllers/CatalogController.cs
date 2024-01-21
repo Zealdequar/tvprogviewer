@@ -23,6 +23,8 @@ using TvProgViewer.Web.Framework.Mvc;
 using TvProgViewer.Web.Framework.Mvc.Filters;
 using TvProgViewer.Web.Framework.Mvc.Routing;
 using TvProgViewer.WebUI.Models.Catalog;
+using TvProgViewer.Data.TvProgMain.ProgObjs;
+using TvProgViewer.Services.TvProgMain;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -52,6 +54,8 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IWorkContext _workContext;
         private readonly MediaSettings _mediaSettings;
         private readonly VendorSettings _vendorSettings;
+        private readonly IProgrammeService _programmeService;
+        private readonly IGenreService _genreService; 
 
         #endregion
 
@@ -77,7 +81,9 @@ namespace TvProgViewer.WebUI.Controllers
             IWebHelper webHelper,
             IWorkContext workContext,
             MediaSettings mediaSettings,
-            VendorSettings vendorSettings)
+            VendorSettings vendorSettings,
+            IProgrammeService programmeService,
+            IGenreService genreService)
         {
             _catalogSettings = catalogSettings;
             _aclService = aclService;
@@ -100,6 +106,8 @@ namespace TvProgViewer.WebUI.Controllers
             _workContext = workContext;
             _mediaSettings = mediaSettings;
             _vendorSettings = vendorSettings;
+            _programmeService = programmeService;
+            _genreService = genreService;
         }
 
         #endregion
@@ -451,6 +459,56 @@ namespace TvProgViewer.WebUI.Controllers
             return PartialView("_ProductsInGridOrLines", model);
         }
 
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GlobalSearchProgramme(int progType, string findTitle, string category,
+                                                        string sidx, string sord, int page, int rows, string genres, string channels)
+        {
+            object jsonData;
+            KeyValuePair<int, List<SystemProgramme>> result;
+            if (User.Identity.IsAuthenticated)
+            {
+                /*result = await progRepository.SearchUserProgramme(UserId.Value, progType, findTitle
+                    , (category != "null") ? category : null, sidx, sord, page, rows, genres, dates);
+
+                jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
+                return Json(jsonData, JsonRequestBehavior.AllowGet);*/
+            }
+            result = await _programmeService.SearchGlobalProgrammeAsync(progType, findTitle
+                , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
+            jsonData = GetJsonPagingInfo(page, rows, result);
+            return Json(jsonData);
+        }
+        
+        /// <summary>
+        /// Постраничное отображение
+        /// </summary>
+        /// <typeparam name="T">Тип список программы</typeparam>
+        /// <param name="page">Страница</param>
+        /// <param name="rows">Количество строк</param>
+        /// <param name="result">Тип для постраничного отображения</param>
+        /// <returns></returns>
+        public static object GetJsonPagingInfo<T>(int page, int rows, KeyValuePair<int, T> result)
+        {
+            int pageSize = rows;
+            int totalRecords = result.Key;
+            int totalPages = (int)Math.Ceiling((float)totalRecords / (float)pageSize);
+            var jsonData = new
+            {
+                total = totalPages,
+                page = page,
+                records = totalRecords,
+                rows = result.Value
+            };
+            return jsonData;
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GetGenres()
+        {
+            return Json(await _genreService.GetGenresAsync(null, true));
+        }
         #endregion
 
         #region Utilities

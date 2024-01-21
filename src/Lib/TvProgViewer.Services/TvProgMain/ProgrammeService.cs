@@ -30,6 +30,7 @@ namespace TvProgViewer.Services.TvProgMain
         private readonly IRepository<GenreClassificator> _genreClassificatorRepository;
         private readonly IRepository<Genres> _genresRepository;
         private readonly IStaticCacheManager _cacheManager;
+        private static readonly char[] separator = new[] { ';' };
 
         #endregion
 
@@ -489,12 +490,16 @@ namespace TvProgViewer.Services.TvProgMain
 
         {
             int count = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? new List<int>() : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
+            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : 
+                await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
             if (string.IsNullOrWhiteSpace(dates))
                 return new KeyValuePair<int, List<SystemProgramme>>();
             DateTime date;
-            CultureInfo ci = new CultureInfo("Ru-ru");
-            var rawDates = dates.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => DateTime.TryParseExact(x, "yyyyMMdd", ci, DateTimeStyles.None, out date) ? DateTime.ParseExact(x, "yyyyMMdd", ci) : new DateTime()).ToList();
+            CultureInfo ci = new("Ru-ru");
+            var rawDates = dates.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => DateTime.TryParseExact(x, "yyyyMMdd", ci, DateTimeStyles.None, out date) ? 
+                DateTime.ParseExact(x, "yyyyMMdd", ci) : 
+                new DateTime()).ToList();
             DateTime minDateTime = rawDates.Min();
             DateTime maxDateTime = rawDates.Max().AddDays(1);
 
@@ -533,11 +538,60 @@ namespace TvProgViewer.Services.TvProgMain
             systemProgramme = await FilterGenresAsync(systemProgramme, genres);
             systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
             systemProgramme = await FilterExcludeDates(systemProgramme, rawDates);
-            count = systemProgramme.Count();
+            count = systemProgramme.Count;
 
             systemProgramme = await systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMo", sord)
                                          .Skip((page - 1) * rows).Take(rows)
                                          .ToListAsync<SystemProgramme>();
+            return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme);
+        }
+
+        public async Task<KeyValuePair<int, List<SystemProgramme>>> SearchGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels)
+        {
+            int count = 0;
+            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : 
+                await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
+            CultureInfo ci = new("Ru-ru");
+            
+            var systemProgramme = await(from pr in _programmesRepository.Table
+                                        where pr.TypeProgId == typeProgId
+                                   && pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
+                                   && (category == null || pr.Category == category)
+                                   && pr.Title.Contains(findTitle)
+                                   && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+                                        orderby pr.TsStartMo, pr.TsStopMo
+                                        select new SystemProgramme
+                                        {
+                                            ProgrammesId = pr.Id,
+                                            Cid = pr.ChannelId,
+                                            InternalChanId = pr.InternalChanId ?? 0,
+                                            Start = pr.TsStart,
+                                            Stop = pr.TsStop,
+                                            TsStartMo = pr.TsStartMo,
+                                            TsStopMo = pr.TsStopMo,
+                                            TelecastTitle = pr.Title,
+                                            TelecastDescr = pr.Descr,
+                                            AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
+                                               _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                               _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName : null),
+                                            Category = pr.Category,
+                                            Remain = 1
+                                        }).ToListAsync();
+            systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
+            _ = Parallel.ForEach(systemProgramme, pr =>
+            {
+                pr.DayMonth = pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru")) +
+           string.Format("({0:D2}.{1:D2})", pr.TsStartMo.Day, pr.TsStartMo.Month);
+            });
+            SetGenres(systemProgramme, null);
+            systemProgramme = await FilterGenresAsync(systemProgramme, genres);
+            systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
+            count = systemProgramme.Count;
+
+            systemProgramme = await systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMo", sord)
+                                         .Skip((page - 1) * rows).Take(rows)
+                                         .ToListAsync();
             return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme);
         }
 

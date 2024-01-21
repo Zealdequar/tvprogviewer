@@ -199,3 +199,55 @@ function addAntiForgeryToken(data) {
     }
     return data;
 };
+
+// Получение списка настроенных пользователем каналов
+function getStorageChannels() {
+    let storageChannels = window.localStorage.getItem("optChans");
+    let result;
+    if (storageChannels && storageChannels.length > 0) {
+        result = JSON.parse(storageChannels);
+    }
+    return result;
+}
+
+function GetGenres(btnActive) {
+    var ids_genres = $(btnActive).map(function () {
+        return this.id;
+    }).get();
+
+    return ids_genres.join(";");
+}
+
+
+//Получение тега пиктограммы
+function getImgTag(s, str) {
+    return "<img src='" + s + "' alt='" + str + "' height='25px' width='25px' />";
+}
+
+// Пиктограмма для рейтнигов
+function imgRating(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return getImgTag(cellvalue, rowObject.RatingName);
+    return " ";
+}
+
+// Пиктограмма для жанров
+function imgGenre(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return getImgTag(cellvalue, rowObject.GenreName);
+    return " ";
+}
+
+// Пиктограмма для анонсов
+function imgAnons(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return "<img src='" + cellvalue + "' alt='Анонс' height='21px' width='17px' />";
+    return " ";
+}
+
+// Пиктограмма для каналов
+function imgChannel(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return getImgTag(cellvalue, "Эмблема телеканала " + rowObject.ChannelName);
+    return "<img src='/images/i/satellite_25.png' alt='Эмблема телеканала' height='25px' width='25px' />";
+}

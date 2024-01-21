@@ -36,6 +36,7 @@ using TvProgViewer.Web.Framework.Themes;
 using TvProgViewer.Web.Framework.UI;
 using TvProgViewer.WebUI.Infrastructure.Cache;
 using TvProgViewer.WebUI.Models.Common;
+using TvProgViewer.WebUI.Models.Catalog;
 
 namespace TvProgViewer.WebUI.Factories
 {
@@ -82,6 +83,7 @@ namespace TvProgViewer.WebUI.Factories
         private readonly StoreInformationSettings _storeInformationSettings;
         private readonly VendorSettings _vendorSettings;
         private readonly IProgrammeService _programmeService;
+        private readonly DisplayDefaultMenuItemSettings _displayDefaultMenuItemSettings;
 
         #endregion
 
@@ -122,7 +124,8 @@ namespace TvProgViewer.WebUI.Factories
             SitemapXmlSettings sitemapXmlSettings,
             StoreInformationSettings storeInformationSettings,
             VendorSettings vendorSettings,
-            IProgrammeService programmeService)
+            IProgrammeService programmeService,
+            DisplayDefaultMenuItemSettings displayDefaultMenuItemSettings)
         {
             _blogSettings = blogSettings;
             _captchaSettings = captchaSettings;
@@ -160,6 +163,7 @@ namespace TvProgViewer.WebUI.Factories
             _storeInformationSettings = storeInformationSettings;
             _vendorSettings = vendorSettings;
             _programmeService = programmeService;
+            _displayDefaultMenuItemSettings = displayDefaultMenuItemSettings;
         }
 
         #endregion
@@ -429,6 +433,14 @@ namespace TvProgViewer.WebUI.Factories
                     alertMessage = string.Format(await _localizationService.GetResourceAsync("PrivateMessages.YouHaveUnreadPM"), unreadMessageCount);
                 }
             }
+            // Топики меню
+            var topicModel = await (await _topicService.GetAllTopicsAsync(store.Id, onlyIncludedInTopMenu: true))
+                .SelectAwait(async t => new HeaderLinksModel.TopicModel
+                {
+                    Id = t.Id,
+                    Name = await _localizationService.GetLocalizedAsync(t, x => x.Title),
+                    SeName = await _urlRecordService.GetSeNameAsync(t)
+                }).ToListAsync();
 
             var model = new HeaderLinksModel
             {
@@ -436,6 +448,10 @@ namespace TvProgViewer.WebUI.Factories
                 IsAuthenticated = await _userService.IsRegisteredAsync(user),
                 UserName = await _userService.IsRegisteredAsync(user) ? await _userService.FormatUsernameAsync(user) : string.Empty,
                 ShoppingCartEnabled = await _permissionService.AuthorizeAsync(StandardPermissionProvider.EnableShoppingCart),
+                Topics = topicModel,
+                DisplayHomepageMenuItem = _displayDefaultMenuItemSettings.DisplayHomepageMenuItem,
+                DisplayProductSearchMenuItem = _displayDefaultMenuItemSettings.DisplayProductSearchMenuItem,
+                DisplayContactUsMenuItem = _displayDefaultMenuItemSettings.DisplayContactUsMenuItem,
                 WishlistEnabled = await _permissionService.AuthorizeAsync(StandardPermissionProvider.EnableWishlist),
                 AllowPrivateMessages = await _userService.IsRegisteredAsync(user) && _forumSettings.AllowPrivateMessages,
                 UnreadPrivateMessages = unreadMessage,

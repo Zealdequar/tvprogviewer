@@ -292,7 +292,8 @@
             }
     }
 
-    .drag-tool-genre {
+    .drag-tool-genre 
+    {
         width: auto;
         padding-left: 1px;
         margin-bottom: 4px;
@@ -305,6 +306,12 @@
         cursor: move;
     }
 
+.btn-group-genres-global-search {
+    display: inline-block;
+    *diaplay: inline;
+    zoom: 1;
+    height: auto;
+}
     .footer-font-small {
         font-size: 10pt;
         font-weight: 300;
@@ -379,7 +386,6 @@
         background: linear-gradient(#fff, lightgray) !important;
     }
 
-
     .btn-genre-search {
         border: 1px solid #dddddd !important;
         padding: 2px 3px !important;
@@ -389,10 +395,28 @@
         border-color: #c8c8c8 !important;
         /*background-image: linear-gradient(to bottom, #fff 0, #e8e8e8 100%);*/
     }
-
-    #genresToolNow, #genresToolNext, #genresToolSearch {
-        width: 100%;
+.btn-genre-global-search :hover {
+    border: 1px solid lavender;
+    width: 30px;
+    height: 30px;
+    margin: -2px;
+}
+    .btn-genre-global-search.active {
+         background: linear-gradient(#fff, lightgray) !important;
     }
+
+.btn-genre-global-search {
+    border: 1px solid #dddddd !important;
+    padding: 2px 3px !important;
+    height: 32px;
+    width: 32px;
+    background-color: #fff;
+    border-color: #c8c8c8 !important;
+}
+
+#genresToolNow, #genresToolNext, #genresToolSearch {
+    width: 100%;
+}
 
     ol, ul {
         list-style: none;
@@ -515,6 +539,11 @@
     .header-select {
         font-size: 10pt;
         padding: 0 2px 2px 4px !important;
+        margin-top: -7px;
+    }
+
+    .search-row{
+        margin-left: 10px;
     }
 
     input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
@@ -542,7 +571,7 @@
 
     .header-label {
         font-size: 10pt !important;
-        margin: 10px 5px 0 15px !important;
+        margin: 5px 5px 0 15px !important;
     }
 
     .master-wrapper-content {
@@ -1194,6 +1223,7 @@
     }
 
     .header-upper {
+        top: 0;
         position: relative;
         z-index: 1;
         border-bottom: 1px solid #ddd;

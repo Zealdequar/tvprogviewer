@@ -73,9 +73,9 @@ $(function () {
     });
     $("#btnSearch").on('click', function () {
     searchProgramme($('#userTypeProg option:selected').val().split(';')[1], $('#tbContains').val());
-});
+    });
 
-$("#containerByDays")
+    $("#containerByDays")
     .on('open_node.jstree', function (evt, data) {
         if (data.node.parents.length === 3)
             data.instance.set_icon(data.node, (data.node.icon.indexOf('_exp') === -1) ? [data.node.icon.slice(0, 13), '_exp', data.node.icon.slice(13)].join('') : data.node.icon);
@@ -84,7 +84,7 @@ $("#containerByDays")
         if (data.node.parents.length === 3)
             data.instance.set_icon(data.node, data.node.icon.replace('_exp', ''));
     });
-$('#containerByDays').on('select_node.jstree', function (e, data) {
+    $('#containerByDays').on('select_node.jstree', function (e, data) {
     if (data.node.parents.length === 4) {
         $("#pic").hide(100);
         $("#pic").attr("src", data.node.icon.replace("/small/", "/large/"));
@@ -157,48 +157,7 @@ function numDateString(date) {
     return year + '' + month + '' + day;
 }
 
-//Получение тега пиктограммы
-function getImgTag(s, str) {
-    return "<img src='" + s + "' alt='" + str + "' height='25px' width='25px' />";
-}
 
-// Пиктограмма для рейтнигов
-function imgRating(cellvalue, options, rowObject) {
-    if (cellvalue)
-        return getImgTag(cellvalue, rowObject.RatingName);
-    return " ";
-}
-
-// Пиктограмма для жанров
-function imgGenre(cellvalue, options, rowObject) {
-    if (cellvalue)
-        return getImgTag(cellvalue, rowObject.GenreName);
-    return " ";
-}
-
-// Пиктограмма для анонсов
-function imgAnons(cellvalue, options, rowObject) {
-    if (cellvalue)
-        return "<img src='" + cellvalue + "' alt='Анонс' height='21px' width='17px' />";
-    return " ";
-}
-
-// Пиктограмма для каналов
-function imgChannel(cellvalue, options, rowObject) {
-    if (cellvalue)
-        return getImgTag(cellvalue, "Эмблема телеканала " + rowObject.ChannelName);
-    return "<img src='/images/i/satellite_25.png' alt='Эмблема телеканала' height='25px' width='25px' />";
-}
-
-// Получение списка настроенных пользователем каналов
-function getStorageChannels() {
-    let storageChannels = window.localStorage.getItem("optChans");
-    let result;
-    if (storageChannels && storageChannels.length > 0) {
-        result = JSON.parse(storageChannels);
-    }
-    return result;
-}
 
 // Установка табличек
 function setGrids() {
@@ -308,6 +267,7 @@ function setGrids() {
     //}
     jQuery('#TVProgrammeNowGrid').jqGrid('setGridWidth', $("#mw").width()); 
     jQuery("#TVProgrammeNowGrid").jqGrid("setGridHeight", 548);
+    $(".drag-tool-genre").width($("#mw").width());
 
     // Табличка затем в эфире
     $('#TVProgrammeNextGrid').jqGrid(
@@ -419,6 +379,7 @@ function setGrids() {
     //}
     jQuery('#TVProgrammeNextGrid').jqGrid('setGridWidth', $("#mw2").width());
     jQuery("#TVProgrammeNextGrid").jqGrid("setGridHeight", 548);
+    $(".drag-tool-genre").width($("#mw2").width());
 }
 
 // Поиск по всей программе передач
@@ -698,7 +659,8 @@ function fillUserByDay(date, channelId) {
     }
     incChannelByDay++;
   jQuery("#TVProgrammeByDaysGrid").jqGrid('setGridWidth', $("#mw5").width());
-  jQuery("#TVProgrammeByDaysGrid").jqGrid("setGridHeight", 548);    
+    jQuery("#TVProgrammeByDaysGrid").jqGrid("setGridHeight", 548);    
+    $(".drag-tool-genre").width($("#mw5").width());
     /*if (uv == 0) {
         jQuery("#TVProgrammeByDaysGrid").jqGrid('hideCol', "RatingContent");
     }*/
@@ -815,19 +777,13 @@ function fillUserByChannels(date, channelId) {
     }
   incDayByChannel++;
   jQuery("#TVProgrammeByChannelsGrid").jqGrid('setGridWidth', $("#mw6").width());
-  jQuery("#TVProgrammeByChannelsGrid").jqGrid("setGridHeight", 548);  
+    jQuery("#TVProgrammeByChannelsGrid").jqGrid("setGridHeight", 548);  
+    $(".drag-tool-genre").width($("#mw6").width());
     /*if (uv == 0) {
         jQuery("#TVProgrammeByChannelsGrid").jqGrid('hideCol', "RatingContent");
     }*/
 }
 
-function GetGenres(btnActive) {
-    var ids_genres = $(btnActive).map(function () {
-        return this.id;
-    }).get();
-
-    return ids_genres.join(";");
-}
 
 function GetDates(chbChecked) {
     var ids_dates = $(chbChecked).map(function () {

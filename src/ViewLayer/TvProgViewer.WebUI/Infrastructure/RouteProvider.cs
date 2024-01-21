@@ -86,7 +86,7 @@ namespace TvProgViewer.WebUI.Infrastructure
                 defaults: new { controller = "Common", action = "ContactUs" });
 
             //product search
-            endpointRouteBuilder.MapControllerRoute(name: "ProductSearch",
+            endpointRouteBuilder.MapControllerRoute(name: "TvSearch",
                 pattern: $"{lang}/search/",
                 defaults: new { controller = "Catalog", action = "Search" });
 

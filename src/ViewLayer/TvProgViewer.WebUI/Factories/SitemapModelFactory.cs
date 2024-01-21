@@ -172,7 +172,7 @@ namespace TvProgViewer.WebUI.Factories
                 await PrepareLocalizedSitemapUrlAsync("Homepage"),
 
                 //search products
-                await PrepareLocalizedSitemapUrlAsync("ProductSearch"),
+                await PrepareLocalizedSitemapUrlAsync("TvSearch"),
 
                 //contact us
                 await PrepareLocalizedSitemapUrlAsync("ContactUs")
@@ -589,7 +589,7 @@ namespace TvProgViewer.WebUI.Factories
                 {
                     GroupTitle = commonGroupTitle,
                     Name = await _localizationService.GetResourceAsync("Search"),
-                    Url = urlHelper.RouteUrl("ProductSearch")
+                    Url = urlHelper.RouteUrl("TvSearch")
                 });
 
                 //news
