@@ -211,9 +211,6 @@ namespace TvProgViewer.Services.Common
 
         public virtual async Task UpdateTvProgrammes()
         {
-            if (!(DateTime.Now.DayOfWeek == DayOfWeek.Sunday || DateTime.Now.DayOfWeek == DayOfWeek.Monday))
-                return;
-             
             _logger.Info(" =========== Начало обновления ============ ");
             Stopwatch sw = Stopwatch.StartNew();
             IList<WebResources> webResources = await GetAllWebResourcesAsync();
@@ -356,43 +353,47 @@ namespace TvProgViewer.Services.Common
                                 Category = category
                             });
                     }
+
                     if (programmesToInsert.Count > 0)
                     {
                         // Вставка новой программы передач
-                        _programmesRepository.Insert(programmesToInsert);
+                        await _programmesRepository.InsertAsync(programmesToInsert);
                     }
+
                     programmes = await GetAllProgrammesAsync();
 
                     // Удаление дубликатов:
                     var groupProgrammes = programmes.GroupBy(p => new { p.TypeProgId, p.InternalChanId, p.ChannelId, p.TsStartMo, p.TsStopMo })
                                                                                 .SelectMany(g => g.Select((j, i) => new { j, rn = i + 1 }));
-                    List<Programmes> dupleProgToDelete = new List<Programmes>();
-                    foreach (var g in groupProgrammes)
-                    {
-                        if (g.rn > 1) dupleProgToDelete.Add(g.j);
-                    }
-                                        _programmesRepository.Delete(dupleProgToDelete);
+                    List<Programmes> dupleProgToDelete = await (from g in groupProgrammes
+                                                          where g.rn > 1
+                                                          select g.j).ToListAsync();
+
+                    await _programmesRepository.DeleteAsync(dupleProgToDelete);
 
                     programmes = await GetAllProgrammesAsync();
 
                     // Удаление программы передач, которая превысила две недели от сегодняшнего дня:
-                    List<Programmes> deleleTwoWeekFuture = programmes.Where(x => x.TsStartMo >= DateTime.Now.AddDays(14)).ToList();
-                    _programmesRepository.Delete(deleleTwoWeekFuture);
+                    List<Programmes> deleleTwoWeekFuture = await programmes.Where(x => x.TsStartMo >= DateTime.Now.AddDays(14)).ToListAsync();
+                    await _programmesRepository.DeleteAsync(deleleTwoWeekFuture);
 
                     programmes = await GetAllProgrammesAsync();
 
                     // Удаление программы передач за две недели ранее последней передачи:
                     DateTime maxTsStartMo = programmes.Max(x => x.TsStartMo);
-                    int[] days = new int[] { 0, 1, 2, 3, 4, 5, 6 };
-                    List<Programmes> deleteTwoWeeksAgo = new List<Programmes>();
-                    foreach (var day in from int day in days
-                                        where maxTsStartMo.AddDays(-21).AddDays(day).DayOfWeek == DayOfWeek.Monday
-                                        select day)
+                    int[] days = [0, 1, 2, 3, 4, 5, 6];
+                    List<Programmes> deleteTwoWeeksAgo = [];
+                    foreach (var tsStartMonday in from day in
+                                                      from int day in days
+                                                      where maxTsStartMo.AddDays(-21).AddDays(day).DayOfWeek == DayOfWeek.Monday
+                                                      select day
+                                                  let tsStartMonday = maxTsStartMo.AddDays(-21).AddDays(day)
+                                                  select tsStartMonday)
                     {
-                        DateTime tsStartMonday = maxTsStartMo.AddDays(-21).AddDays(day);
-                        deleteTwoWeeksAgo = programmes.Where(x => x.TsStartMo < tsStartMonday).ToList();
+                        deleteTwoWeeksAgo = await programmes.Where(x => x.TsStartMo < tsStartMonday).ToListAsync();
                     }
-                    _programmesRepository.Delete(deleteTwoWeeksAgo);
+
+                    await _programmesRepository.DeleteAsync(deleteTwoWeeksAgo);
                     
                     // Отчёт:
                     TimeSpan tsElapsed = DateTime.Now - tsUpdateStart;

@@ -1,6 +1,6 @@
 ﻿@model TvProgViewer.WebUI.Models.Catalog.SearchModel
 @{
-    Layout = "_ColumnsTwo";
+    Layout = "_ColumnsOne";
 
     //title
     TvProgHtml.AddTitleParts(T("PageTitle.Search").Text);
@@ -27,10 +27,6 @@
         }
     }
 </script>
-
-@section CatalogFilters {
-    @await Html.PartialAsync("_CatalogFilters", Model.CatalogProductsModel)
-}
 
 <div class="page search-page">
     <div class="page-title">

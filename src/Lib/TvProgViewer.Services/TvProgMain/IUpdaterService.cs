@@ -43,5 +43,10 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="contentCoding">Кодировка пиктограммы</param>
         /// <param name="channelOrigIcon">Оригинальная пиктограмма</param>
         public Task UpdateIconAsync(int channelId, string iconWebSrc, string channelIconName, string contentType, string contentCoding, byte[] channelOrigIcon);
+
+        /// <summary>
+        /// Обновление телепрограммы
+        /// </summary>
+        public Task UpdateTvProgrammes();
     }
 }

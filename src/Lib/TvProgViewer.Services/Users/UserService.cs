@@ -717,7 +717,7 @@ namespace TvProgViewer.Services.Users
 
             var allGuestUsers = from guest in _userRepository.Table
                                     join ccm in _userUserRoleMappingRepository.Table on guest.Id equals ccm.UserId
-                                    where ccm.UserRoleId == guestRole.Id
+                                    where ccm.UserRoleId == guestRole.Id && !guest.Deleted
                                     select guest;
 
             var guestsToDelete = await (from guest in _userRepository.Table
@@ -734,7 +734,7 @@ namespace TvProgViewer.Services.Users
                                  where (!onlyWithoutShoppingCart || sCart == null) &&
                                      order == null && blogComment == null && newsComment == null && productReview == null && productReviewHelpfulness == null &&
                                      pollVotingRecord == null && forumTopic == null && forumPost == null &&
-                                     !guest.IsSystemAccount &&
+                                     !guest.IsSystemAccount && !guest.Deleted && !g.Deleted &&
                                      (createdFromUtc == null || guest.CreatedOnUtc > createdFromUtc) &&
                                      (createdToUtc == null || guest.CreatedOnUtc < createdToUtc)
                                  select guest).ToListAsync();

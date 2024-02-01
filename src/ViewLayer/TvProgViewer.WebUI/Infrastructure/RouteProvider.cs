@@ -37,6 +37,10 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"{lang}/login/",
                 defaults: new { controller = "User", action = "Login" });
 
+            endpointRouteBuilder.MapControllerRoute(name: "TeleGuideInfoUpdate",
+                pattern: $"{lang}/teleguideinfo-update/",
+                defaults: new { controller = "TvGuideInfo", action = "Update" });
+
             // multi-factor verification digit code page
             endpointRouteBuilder.MapControllerRoute(name: "MultiFactorVerification",
                 pattern: $"{lang}/multi-factor-verification/",

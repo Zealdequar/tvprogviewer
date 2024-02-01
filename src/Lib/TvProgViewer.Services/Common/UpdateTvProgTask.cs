@@ -39,6 +39,9 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         public async System.Threading.Tasks.Task ExecuteAsync()
         {
+            if (!(DateTime.Now.DayOfWeek == DayOfWeek.Sunday || DateTime.Now.DayOfWeek == DayOfWeek.Monday))
+                return;
+
             await _storeHttpClient.UpdateTvProgrammes();
         }
 
