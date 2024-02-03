@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Nito.AsyncEx.Synchronous;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TvProgViewer.Services.Common;
-using TvProgViewer.Services.TvProgMain;
+
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -24,10 +26,18 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region Методы
 
-        public async Task<IActionResult> Update()
+        public virtual IActionResult Update()
+        {
+            Task.Run(async() => await _storeHttpClient.UpdateTvProgrammes());
+            return View();
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> RunUpdateAsync(string uuid)
         {
             await _storeHttpClient.UpdateTvProgrammes();
-            return View();
+            return Json("{\"result\": \"OK\", \"guid\": \"" + uuid + "\"}");
         }
 
         #endregion
