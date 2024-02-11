@@ -64,8 +64,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
         [TvProgResourceDisplayName("Admin.Orders.List.Warehouse")]
         public int WarehouseId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Orders.List.Product")]
-        public int ProductId { get; set; }
+        [TvProgResourceDisplayName("Admin.Orders.List.TvChannel")]
+        public int TvChannelId { get; set; }
 
         [TvProgResourceDisplayName("Admin.Orders.List.BillingEmail")]
         public string BillingEmail { get; set; }

@@ -97,7 +97,7 @@ namespace TvProgViewer.Services.Payments
         /// <summary>
         /// Gets or sets the cycle period
         /// </summary>
-        public RecurringProductCyclePeriod RecurringCyclePeriod { get; set; }
+        public RecurringTvChannelCyclePeriod RecurringCyclePeriod { get; set; }
 
         /// <summary>
         /// Gets or sets the total cycles

@@ -1,0 +1,87 @@
+﻿@model CategoryModel
+
+@if (Model.Id > 0)
+{
+    <div class="card-body">
+        @await Html.PartialAsync("Table", new DataTablesModel
+        {
+            Name = "tvchannels-grid",
+            UrlRead = new DataUrl("TvChannelList", "Category", new RouteValueDictionary { [nameof(Model.CategoryTvChannelSearchModel.CategoryId)] = Model.CategoryTvChannelSearchModel.CategoryId }),
+            UrlDelete = new DataUrl("TvChannelDelete", "Category", null),
+            UrlUpdate = new DataUrl("TvChannelUpdate", "Category", null),
+            Length = Model.CategoryTvChannelSearchModel.PageSize,
+            LengthMenu = Model.CategoryTvChannelSearchModel.AvailablePageSizes,
+            ColumnCollection = new List<ColumnProperty>
+                {
+                    new ColumnProperty(nameof(CategoryTvChannelModel.TvChannelName))
+                    {
+                        Title = T("Admin.Catalog.Categories.TvChannels.Fields.TvChannel").Text
+                    },
+                    new ColumnProperty(nameof(CategoryTvChannelModel.IsFeaturedTvChannel))
+                    {
+                        Title = T("Admin.Catalog.Categories.TvChannels.Fields.IsFeaturedTvChannel").Text,
+                        Width = "150",
+                        ClassName = TvProgColumnClassDefaults.CenterAll,
+                        Render = new RenderBoolean(),
+                        Editable = true,
+                        EditType = EditType.Checkbox
+                    },
+                    new ColumnProperty(nameof(CategoryTvChannelModel.DisplayOrder))
+                    {
+                        Title = T("Admin.Catalog.Categories.TvChannels.Fields.DisplayOrder").Text,
+                        Width = "150",
+                        ClassName = TvProgColumnClassDefaults.CenterAll,
+                        Editable = true,
+                        EditType = EditType.Number
+                    },
+                    new ColumnProperty(nameof(CategoryTvChannelModel.TvChannelId))
+                    {
+                        Title = T("Admin.Common.View").Text,
+                        Width = "150",
+                        ClassName = TvProgColumnClassDefaults.Button,
+                        Render = new RenderButtonView(new DataUrl("~/Admin/TvChannel/Edit/", nameof(CategoryTvChannelModel.TvChannelId)))
+                    },
+                    new ColumnProperty(nameof(CategoryTvChannelModel.Id))
+                    {
+                        Title = T("Admin.Common.Edit").Text,
+                        Width = "200",
+                        ClassName =  TvProgColumnClassDefaults.Button,
+                        Render = new RenderButtonsInlineEdit()
+                    },
+                    new ColumnProperty(nameof(CategoryTvChannelModel.Id))
+                    {
+                        Title = T("Admin.Common.Delete").Text,
+                        Width = "100",
+                        Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                        ClassName = TvProgColumnClassDefaults.Button
+                    }
+                }
+        })
+    </div>
+    <div class="card-footer">
+        <button type="submit" id="btnAddNewTvChannel"
+                onclick="javascript:OpenWindow('@(Url.Action("TvChannelAddPopup", "Category", new { categoryId = Model.Id, btnId = "btnRefreshTvChannels", formId = "category-form" }))', 800, 800, true); return false;"
+                class="btn btn-primary">
+            @T("Admin.Catalog.Categories.TvChannels.AddNew")
+        </button>
+        <button type="submit" id="btnRefreshTvChannels" style="display: none"></button>
+        <script>
+            $(document).ready(function () {
+                $('#btnRefreshTvChannels').click(function () {
+                    //refresh grid
+                    updateTable('#tvchannels-grid');
+
+                    //return false to don't reload a page
+                    return false;
+                });
+            });
+        </script>
+    </div>
+}
+else
+{
+    <div class="card-body">
+        @T("Admin.Catalog.Categories.TvChannels.SaveBeforeEdit")
+    </div>
+}
+

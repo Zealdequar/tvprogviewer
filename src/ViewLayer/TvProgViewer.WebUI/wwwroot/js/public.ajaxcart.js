@@ -25,8 +25,8 @@ var AjaxCart = {
         this.loadWaiting = display;
     },
 
-    //add a product to the cart/wishlist from the catalog pages
-    addproducttocart_catalog: function (urladd) {
+    //add a tvchannel to the cart/wishlist from the catalog pages
+    addtvchanneltocart_catalog: function (urladd) {
         if (this.loadWaiting !== false) {
             return;
         }
@@ -46,8 +46,8 @@ var AjaxCart = {
         });
     },
 
-    //add a product to the cart/wishlist from the product details page
-    addproducttocart_details: function (urladd, formselector) {
+    //add a tvchannel to the cart/wishlist from the tvchannel details page
+    addtvchanneltocart_details: function (urladd, formselector) {
         if (this.loadWaiting !== false) {
             return;
         }
@@ -64,8 +64,8 @@ var AjaxCart = {
         });
     },
 
-    //add a product to compare list
-    addproducttocomparelist: function (urladd) {
+    //add a tvchannel to compare list
+    addtvchanneltocomparelist: function (urladd) {
         if (this.loadWaiting !== false) {
             return;
         }

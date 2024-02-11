@@ -18,10 +18,10 @@ namespace TvProgViewer.WebUI.Models.Common
         public bool SearchEnabled { get; set; }
         public bool NewsEnabled { get; set; }
         public bool BlogEnabled { get; set; }
-        public bool CompareProductsEnabled { get; set; }
+        public bool CompareTvChannelsEnabled { get; set; }
         public bool ForumEnabled { get; set; }
-        public bool RecentlyViewedProductsEnabled { get; set; }
-        public bool NewProductsEnabled { get; set; }
+        public bool RecentlyViewedTvChannelsEnabled { get; set; }
+        public bool NewTvChannelsEnabled { get; set; }
         public bool AllowUsersToApplyForVendorAccount { get; set; }
         public bool AllowUsersToCheckGiftCardBalance { get; set; }
         public bool DisplayTaxShippingInfoFooter { get; set; }
@@ -33,13 +33,13 @@ namespace TvProgViewer.WebUI.Models.Common
 
         public bool DisplaySitemapFooterItem { get; set; }
         public bool DisplayContactUsFooterItem { get; set; }
-        public bool DisplayProductSearchFooterItem { get; set; }
+        public bool DisplayTvChannelSearchFooterItem { get; set; }
         public bool DisplayNewsFooterItem { get; set; }
         public bool DisplayBlogFooterItem { get; set; }
         public bool DisplayForumsFooterItem { get; set; }
-        public bool DisplayRecentlyViewedProductsFooterItem { get; set; }
-        public bool DisplayCompareProductsFooterItem { get; set; }
-        public bool DisplayNewProductsFooterItem { get; set; }
+        public bool DisplayRecentlyViewedTvChannelsFooterItem { get; set; }
+        public bool DisplayCompareTvChannelsFooterItem { get; set; }
+        public bool DisplayNewTvChannelsFooterItem { get; set; }
         public bool DisplayUserInfoFooterItem { get; set; }
         public bool DisplayUserOrdersFooterItem { get; set; }
         public bool DisplayUserAddressesFooterItem { get; set; }

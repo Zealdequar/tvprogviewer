@@ -46,9 +46,9 @@
         public static string SubscriptionTokens => "Newsletter subscription tokens";
 
         /// <summary>
-        /// Represents tokens with information about the product
+        /// Represents tokens with information about the tvchannel
         /// </summary>
-        public static string ProductTokens => "Product tokens";
+        public static string TvChannelTokens => "TvChannel tokens";
 
         /// <summary>
         /// Represents tokens with information about the return request
@@ -86,9 +86,9 @@
         public static string GiftCardTokens => "Gift card tokens";
 
         /// <summary>
-        /// Represents tokens with information about the product review
+        /// Represents tokens with information about the tvchannel review
         /// </summary>
-        public static string ProductReviewTokens => "Product review tokens";
+        public static string TvChannelReviewTokens => "TvChannel review tokens";
 
         /// <summary>
         /// Represents tokens with information about the attribute combination 
@@ -106,9 +106,9 @@
         public static string NewsCommentTokens => "News comment tokens";
 
         /// <summary>
-        /// Represents tokens with information that product is in stock
+        /// Represents tokens with information that tvchannel is in stock
         /// </summary>
-        public static string ProductBackInStockTokens => "Back in stock tokens";
+        public static string TvChannelBackInStockTokens => "Back in stock tokens";
 
         /// <summary>
         /// Represents tokens with information about the sending email to friend 

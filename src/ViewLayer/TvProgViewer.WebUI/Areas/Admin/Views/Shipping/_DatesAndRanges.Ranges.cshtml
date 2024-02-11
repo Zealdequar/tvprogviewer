@@ -2,39 +2,39 @@
 
 <div class="card-body">
     <p>
-        <em>@T("Admin.Configuration.Shipping.ProductAvailabilityRanges.Hint")</em>
+        <em>@T("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Hint")</em>
     </p>
     @await Html.PartialAsync("Table", new DataTablesModel
     {
-        Name = "productavailabilityrange-grid",
-        UrlRead = new DataUrl("ProductAvailabilityRanges", "Shipping", null),
+        Name = "tvchannelavailabilityrange-grid",
+        UrlRead = new DataUrl("TvChannelAvailabilityRanges", "Shipping", null),
         SearchButtonId = "search-categories",
-        Length = Model.ProductAvailabilityRangeSearchModel.PageSize,
-        LengthMenu = Model.ProductAvailabilityRangeSearchModel.AvailablePageSizes,
+        Length = Model.TvChannelAvailabilityRangeSearchModel.PageSize,
+        LengthMenu = Model.TvChannelAvailabilityRangeSearchModel.AvailablePageSizes,
         ColumnCollection = new List<ColumnProperty>
         {
-            new ColumnProperty(nameof(ProductAvailabilityRangeModel.Name))
+            new ColumnProperty(nameof(TvChannelAvailabilityRangeModel.Name))
             {
-                Title = T("Admin.Configuration.Shipping.ProductAvailabilityRanges.Fields.Name").Text
+                Title = T("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Fields.Name").Text
             },
-            new ColumnProperty(nameof(ProductAvailabilityRangeModel.DisplayOrder))
+            new ColumnProperty(nameof(TvChannelAvailabilityRangeModel.DisplayOrder))
             {
-                Title = T("Admin.Configuration.Shipping.ProductAvailabilityRanges.Fields.DisplayOrder").Text,
+                Title = T("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Fields.DisplayOrder").Text,
                 Width = "150",
                 ClassName =  TvProgColumnClassDefaults.CenterAll
             },
-            new ColumnProperty(nameof(ProductAvailabilityRangeModel.Id))
+            new ColumnProperty(nameof(TvChannelAvailabilityRangeModel.Id))
             {
                 Title = T("Admin.Common.Edit").Text,
                 Width = "100",
                 ClassName =  TvProgColumnClassDefaults.Button,
-                Render = new RenderButtonEdit(new DataUrl("EditProductAvailabilityRange"))
+                Render = new RenderButtonEdit(new DataUrl("EditTvChannelAvailabilityRange"))
             }
         }
     })
 </div>
 <div class="card-footer">
-    <a asp-action="CreateProductAvailabilityRange" class="btn btn-primary">
+    <a asp-action="CreateTvChannelAvailabilityRange" class="btn btn-primary">
         <i class="fas fa-plus-square"></i>
         @T("Admin.Common.AddNew")
     </a>

@@ -19,7 +19,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Discounts
             AvailableDiscountRequirementRules = new List<SelectListItem>();
             AvailableRequirementGroups = new List<SelectListItem>();
             DiscountUsageHistorySearchModel = new DiscountUsageHistorySearchModel();
-            DiscountProductSearchModel = new DiscountProductSearchModel();
+            DiscountTvChannelSearchModel = new DiscountTvChannelSearchModel();
             DiscountCategorySearchModel = new DiscountCategorySearchModel();
             DiscountManufacturerSearchModel = new DiscountManufacturerSearchModel();
         }
@@ -110,7 +110,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Discounts
 
         public DiscountUsageHistorySearchModel DiscountUsageHistorySearchModel { get; set; }
 
-        public DiscountProductSearchModel DiscountProductSearchModel { get; set; }
+        public DiscountTvChannelSearchModel DiscountTvChannelSearchModel { get; set; }
 
         public DiscountCategorySearchModel DiscountCategorySearchModel { get; set; }
 

@@ -1,0 +1,32 @@
+@model TvChannelAttributeMappingModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AddNew").Text;
+    //active menu item (system name)
+    TvProgHtml.SetActiveMenuItemSystemName("TvChannels");
+}
+
+<form asp-controller="TvChannel" asp-action="TvChannelAttributeMappingCreate" method="post" id="tvchannelattribute-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AddNew")
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a asp-action="Edit" asp-route-id="@Model.TvChannelId">@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.BackToTvChannel")</a>
+            </small>
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelAttributeMappingDetailsButtons, additionalData = Model })
+        </div>
+    </div>
+    @await Html.PartialAsync("_CreateOrUpdateTvChannelAttributeMapping", Model)
+</form>

@@ -389,8 +389,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 SitemapPageSize = sitemapSettings.SitemapPageSize,
                 SitemapIncludeCategories = sitemapSettings.SitemapIncludeCategories,
                 SitemapIncludeManufacturers = sitemapSettings.SitemapIncludeManufacturers,
-                SitemapIncludeProducts = sitemapSettings.SitemapIncludeProducts,
-                SitemapIncludeProductTags = sitemapSettings.SitemapIncludeProductTags,
+                SitemapIncludeTvChannels = sitemapSettings.SitemapIncludeTvChannels,
+                SitemapIncludeTvChannelTags = sitemapSettings.SitemapIncludeTvChannelTags,
                 SitemapIncludeBlogPosts = sitemapSettings.SitemapIncludeBlogPosts,
                 SitemapIncludeNews = sitemapSettings.SitemapIncludeNews,
                 SitemapIncludeTopics = sitemapSettings.SitemapIncludeTopics
@@ -404,8 +404,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             model.SitemapPageSize_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapPageSize, storeId);
             model.SitemapIncludeCategories_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeCategories, storeId);
             model.SitemapIncludeManufacturers_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeManufacturers, storeId);
-            model.SitemapIncludeProducts_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeProducts, storeId);
-            model.SitemapIncludeProductTags_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeProductTags, storeId);
+            model.SitemapIncludeTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeTvChannels, storeId);
+            model.SitemapIncludeTvChannelTags_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeTvChannelTags, storeId);
             model.SitemapIncludeBlogPosts_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeBlogPosts, storeId);
             model.SitemapIncludeNews_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeNews, storeId);
             model.SitemapIncludeTopics_OverrideForStore = await _settingService.SettingExistsAsync(sitemapSettings, x => x.SitemapIncludeTopics, storeId);
@@ -462,7 +462,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 PageTitleSeparator = seoSettings.PageTitleSeparator,
                 PageTitleSeoAdjustment = (int)seoSettings.PageTitleSeoAdjustment,
                 PageTitleSeoAdjustmentValues = await seoSettings.PageTitleSeoAdjustment.ToSelectListAsync(),
-                GenerateProductMetaDescription = seoSettings.GenerateProductMetaDescription,
+                GenerateTvChannelMetaDescription = seoSettings.GenerateTvChannelMetaDescription,
                 ConvertNonWesternChars = seoSettings.ConvertNonWesternChars,
                 CanonicalUrlsEnabled = seoSettings.CanonicalUrlsEnabled,
                 WwwRequirement = (int)seoSettings.WwwRequirement,
@@ -480,7 +480,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //fill in overridden values
             model.PageTitleSeparator_OverrideForStore = await _settingService.SettingExistsAsync(seoSettings, x => x.PageTitleSeparator, storeId);
             model.PageTitleSeoAdjustment_OverrideForStore = await _settingService.SettingExistsAsync(seoSettings, x => x.PageTitleSeoAdjustment, storeId);
-            model.GenerateProductMetaDescription_OverrideForStore = await _settingService.SettingExistsAsync(seoSettings, x => x.GenerateProductMetaDescription, storeId);
+            model.GenerateTvChannelMetaDescription_OverrideForStore = await _settingService.SettingExistsAsync(seoSettings, x => x.GenerateTvChannelMetaDescription, storeId);
             model.ConvertNonWesternChars_OverrideForStore = await _settingService.SettingExistsAsync(seoSettings, x => x.ConvertNonWesternChars, storeId);
             model.CanonicalUrlsEnabled_OverrideForStore = await _settingService.SettingExistsAsync(seoSettings, x => x.CanonicalUrlsEnabled, storeId);
             model.WwwRequirement_OverrideForStore = await _settingService.SettingExistsAsync(seoSettings, x => x.WwwRequirement, storeId);
@@ -545,10 +545,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             model.ShowOnRegistrationPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnRegistrationPage, storeId);
             model.ShowOnContactUsPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnContactUsPage, storeId);
             model.ShowOnEmailWishlistToFriendPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnEmailWishlistToFriendPage, storeId);
-            model.ShowOnEmailProductToFriendPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnEmailProductToFriendPage, storeId);
+            model.ShowOnEmailTvChannelToFriendPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnEmailTvChannelToFriendPage, storeId);
             model.ShowOnBlogCommentPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnBlogCommentPage, storeId);
             model.ShowOnNewsCommentPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnNewsCommentPage, storeId);
-            model.ShowOnProductReviewPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnProductReviewPage, storeId);
+            model.ShowOnTvChannelReviewPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnTvChannelReviewPage, storeId);
             model.ShowOnApplyVendorPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnApplyVendorPage, storeId);
             model.ShowOnForgotPasswordPage_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnForgotPasswordPage, storeId);
             model.ShowOnForum_OverrideForStore = await _settingService.SettingExistsAsync(captchaSettings, x => x.ShowOnForum, storeId);
@@ -669,8 +669,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             var model = new DisplayDefaultMenuItemSettingsModel
             {
                 DisplayHomepageMenuItem = displayDefaultMenuItemSettings.DisplayHomepageMenuItem,
-                DisplayNewProductsMenuItem = displayDefaultMenuItemSettings.DisplayNewProductsMenuItem,
-                DisplayProductSearchMenuItem = displayDefaultMenuItemSettings.DisplayProductSearchMenuItem,
+                DisplayNewTvChannelsMenuItem = displayDefaultMenuItemSettings.DisplayNewTvChannelsMenuItem,
+                DisplayTvChannelSearchMenuItem = displayDefaultMenuItemSettings.DisplayTvChannelSearchMenuItem,
                 DisplayUserInfoMenuItem = displayDefaultMenuItemSettings.DisplayUserInfoMenuItem,
                 DisplayBlogMenuItem = displayDefaultMenuItemSettings.DisplayBlogMenuItem,
                 DisplayForumsMenuItem = displayDefaultMenuItemSettings.DisplayForumsMenuItem,
@@ -682,8 +682,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
             //fill in overridden values
             model.DisplayHomepageMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayHomepageMenuItem, storeId);
-            model.DisplayNewProductsMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayNewProductsMenuItem, storeId);
-            model.DisplayProductSearchMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayProductSearchMenuItem, storeId);
+            model.DisplayNewTvChannelsMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayNewTvChannelsMenuItem, storeId);
+            model.DisplayTvChannelSearchMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayTvChannelSearchMenuItem, storeId);
             model.DisplayUserInfoMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayUserInfoMenuItem, storeId);
             model.DisplayBlogMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayBlogMenuItem, storeId);
             model.DisplayForumsMenuItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultMenuItemSettings, x => x.DisplayForumsMenuItem, storeId);
@@ -710,13 +710,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             {
                 DisplaySitemapFooterItem = displayDefaultFooterItemSettings.DisplaySitemapFooterItem,
                 DisplayContactUsFooterItem = displayDefaultFooterItemSettings.DisplayContactUsFooterItem,
-                DisplayProductSearchFooterItem = displayDefaultFooterItemSettings.DisplayProductSearchFooterItem,
+                DisplayTvChannelSearchFooterItem = displayDefaultFooterItemSettings.DisplayTvChannelSearchFooterItem,
                 DisplayNewsFooterItem = displayDefaultFooterItemSettings.DisplayNewsFooterItem,
                 DisplayBlogFooterItem = displayDefaultFooterItemSettings.DisplayBlogFooterItem,
                 DisplayForumsFooterItem = displayDefaultFooterItemSettings.DisplayForumsFooterItem,
-                DisplayRecentlyViewedProductsFooterItem = displayDefaultFooterItemSettings.DisplayRecentlyViewedProductsFooterItem,
-                DisplayCompareProductsFooterItem = displayDefaultFooterItemSettings.DisplayCompareProductsFooterItem,
-                DisplayNewProductsFooterItem = displayDefaultFooterItemSettings.DisplayNewProductsFooterItem,
+                DisplayRecentlyViewedTvChannelsFooterItem = displayDefaultFooterItemSettings.DisplayRecentlyViewedTvChannelsFooterItem,
+                DisplayCompareTvChannelsFooterItem = displayDefaultFooterItemSettings.DisplayCompareTvChannelsFooterItem,
+                DisplayNewTvChannelsFooterItem = displayDefaultFooterItemSettings.DisplayNewTvChannelsFooterItem,
                 DisplayUserInfoFooterItem = displayDefaultFooterItemSettings.DisplayUserInfoFooterItem,
                 DisplayUserOrdersFooterItem = displayDefaultFooterItemSettings.DisplayUserOrdersFooterItem,
                 DisplayUserAddressesFooterItem = displayDefaultFooterItemSettings.DisplayUserAddressesFooterItem,
@@ -731,13 +731,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //fill in overridden values
             model.DisplaySitemapFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplaySitemapFooterItem, storeId);
             model.DisplayContactUsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayContactUsFooterItem, storeId);
-            model.DisplayProductSearchFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayProductSearchFooterItem, storeId);
+            model.DisplayTvChannelSearchFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayTvChannelSearchFooterItem, storeId);
             model.DisplayNewsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayNewsFooterItem, storeId);
             model.DisplayBlogFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayBlogFooterItem, storeId);
             model.DisplayForumsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayForumsFooterItem, storeId);
-            model.DisplayRecentlyViewedProductsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayRecentlyViewedProductsFooterItem, storeId);
-            model.DisplayCompareProductsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayCompareProductsFooterItem, storeId);
-            model.DisplayNewProductsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayNewProductsFooterItem, storeId);
+            model.DisplayRecentlyViewedTvChannelsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayRecentlyViewedTvChannelsFooterItem, storeId);
+            model.DisplayCompareTvChannelsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayCompareTvChannelsFooterItem, storeId);
+            model.DisplayNewTvChannelsFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayNewTvChannelsFooterItem, storeId);
             model.DisplayUserInfoFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayUserInfoFooterItem, storeId);
             model.DisplayUserOrdersFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayUserOrdersFooterItem, storeId);
             model.DisplayUserAddressesFooterItem_OverrideForStore = await _settingService.SettingExistsAsync(displayDefaultFooterItemSettings, x => x.DisplayUserAddressesFooterItem, storeId);
@@ -946,7 +946,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (storeId > 0)
             {
                 model.VendorsBlockItemsToDisplay_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.VendorsBlockItemsToDisplay, storeId);
-                model.ShowVendorOnProductDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.ShowVendorOnProductDetailsPage, storeId);
+                model.ShowVendorOnTvChannelDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.ShowVendorOnTvChannelDetailsPage, storeId);
                 model.ShowVendorOnOrderDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.ShowVendorOnOrderDetailsPage, storeId);
                 model.AllowUsersToContactVendors_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.AllowUsersToContactVendors, storeId);
                 model.AllowUsersToApplyForVendorAccount_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.AllowUsersToApplyForVendorAccount, storeId);
@@ -954,8 +954,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 model.AllowSearchByVendor_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.AllowSearchByVendor, storeId);
                 model.AllowVendorsToEditInfo_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.AllowVendorsToEditInfo, storeId);
                 model.NotifyStoreOwnerAboutVendorInformationChange_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.NotifyStoreOwnerAboutVendorInformationChange, storeId);
-                model.MaximumProductNumber_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.MaximumProductNumber, storeId);
-                model.AllowVendorsToImportProducts_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.AllowVendorsToImportProducts, storeId);
+                model.MaximumTvChannelNumber_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.MaximumTvChannelNumber, storeId);
+                model.AllowVendorsToImportTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(vendorSettings, x => x.AllowVendorsToImportTvChannels, storeId);
             }
 
             //prepare nested search model
@@ -1088,13 +1088,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 model.FreeShippingOverXValue_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.FreeShippingOverXValue, storeId);
                 model.FreeShippingOverXIncludingTax_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.FreeShippingOverXIncludingTax, storeId);
                 model.EstimateShippingCartPageEnabled_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.EstimateShippingCartPageEnabled, storeId);
-                model.EstimateShippingProductPageEnabled_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.EstimateShippingProductPageEnabled, storeId);
+                model.EstimateShippingTvChannelPageEnabled_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.EstimateShippingTvChannelPageEnabled, storeId);
                 model.EstimateShippingCityNameEnabled_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.EstimateShippingCityNameEnabled, storeId);
                 model.DisplayShipmentEventsToUsers_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.DisplayShipmentEventsToUsers, storeId);
                 model.DisplayShipmentEventsToStoreOwner_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.DisplayShipmentEventsToStoreOwner, storeId);
                 model.HideShippingTotal_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.HideShippingTotal, storeId);
                 model.BypassShippingMethodSelectionIfOnlyOne_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.BypassShippingMethodSelectionIfOnlyOne, storeId);
-                model.ConsiderAssociatedProductsDimensions_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.ConsiderAssociatedProductsDimensions, storeId);
+                model.ConsiderAssociatedTvChannelsDimensions_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.ConsiderAssociatedTvChannelsDimensions, storeId);
                 model.ShippingOriginAddress_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.ShippingOriginAddressId, storeId);
                 model.ShippingSorting_OverrideForStore = await _settingService.SettingExistsAsync(shippingSettings, x => x.ShippingSorting, storeId);
             }
@@ -1198,7 +1198,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             model.ActiveStoreScopeConfiguration = storeId;
             model.PrimaryStoreCurrencyCode = (await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId))?.CurrencyCode;
             model.AttributeValueOutOfStockDisplayTypes = await catalogSettings.AttributeValueOutOfStockDisplayType.ToSelectListAsync();
-            model.ProductUrlStructureTypes = await ((ProductUrlStructureType)catalogSettings.ProductUrlStructureTypeId).ToSelectListAsync();
+            model.TvChannelUrlStructureTypes = await ((TvChannelUrlStructureType)catalogSettings.TvChannelUrlStructureTypeId).ToSelectListAsync();
             model.AvailableViewModes.Add(new SelectListItem
             {
                 Text = await _localizationService.GetResourceAsync("Admin.Catalog.ViewMode.Grid"),
@@ -1213,86 +1213,86 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //fill in overridden values
             if (storeId > 0)
             {
-                model.AllowViewUnpublishedProductPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowViewUnpublishedProductPage, storeId);
-                model.DisplayDiscontinuedMessageForUnpublishedProducts_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayDiscontinuedMessageForUnpublishedProducts, storeId);
-                model.ShowSkuOnProductDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowSkuOnProductDetailsPage, storeId);
+                model.AllowViewUnpublishedTvChannelPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowViewUnpublishedTvChannelPage, storeId);
+                model.DisplayDiscontinuedMessageForUnpublishedTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayDiscontinuedMessageForUnpublishedTvChannels, storeId);
+                model.ShowSkuOnTvChannelDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowSkuOnTvChannelDetailsPage, storeId);
                 model.ShowSkuOnCatalogPages_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowSkuOnCatalogPages, storeId);
                 model.ShowManufacturerPartNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowManufacturerPartNumber, storeId);
                 model.ShowGtin_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowGtin, storeId);
                 model.ShowFreeShippingNotification_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowFreeShippingNotification, storeId);
                 model.ShowShortDescriptionOnCatalogPages_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowShortDescriptionOnCatalogPages, storeId);
-                model.AllowProductSorting_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowProductSorting, storeId);
-                model.AllowProductViewModeChanging_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowProductViewModeChanging, storeId);
+                model.AllowTvChannelSorting_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowTvChannelSorting, storeId);
+                model.AllowTvChannelViewModeChanging_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowTvChannelViewModeChanging, storeId);
                 model.DefaultViewMode_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DefaultViewMode, storeId);
-                model.ShowProductsFromSubcategories_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowProductsFromSubcategories, storeId);
-                model.ShowCategoryProductNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowCategoryProductNumber, storeId);
-                model.ShowCategoryProductNumberIncludingSubcategories_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowCategoryProductNumberIncludingSubcategories, storeId);
+                model.ShowTvChannelsFromSubcategories_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowTvChannelsFromSubcategories, storeId);
+                model.ShowCategoryTvChannelNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowCategoryTvChannelNumber, storeId);
+                model.ShowCategoryTvChannelNumberIncludingSubcategories_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowCategoryTvChannelNumberIncludingSubcategories, storeId);
                 model.CategoryBreadcrumbEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.CategoryBreadcrumbEnabled, storeId);
                 model.ShowShareButton_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowShareButton, storeId);
                 model.PageShareCode_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.PageShareCode, storeId);
-                model.ProductReviewsMustBeApproved_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductReviewsMustBeApproved, storeId);
-                model.OneReviewPerProductFromUser_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.OneReviewPerProductFromUser, storeId);
-                model.AllowAnonymousUsersToReviewProduct_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowAnonymousUsersToReviewProduct, storeId);
-                model.ProductReviewPossibleOnlyAfterPurchasing_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductReviewPossibleOnlyAfterPurchasing, storeId);
-                model.NotifyStoreOwnerAboutNewProductReviews_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NotifyStoreOwnerAboutNewProductReviews, storeId);
-                model.NotifyUserAboutProductReviewReply_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NotifyUserAboutProductReviewReply, storeId);
+                model.TvChannelReviewsMustBeApproved_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelReviewsMustBeApproved, storeId);
+                model.OneReviewPerTvChannelFromUser_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.OneReviewPerTvChannelFromUser, storeId);
+                model.AllowAnonymousUsersToReviewTvChannel_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowAnonymousUsersToReviewTvChannel, storeId);
+                model.TvChannelReviewPossibleOnlyAfterPurchasing_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelReviewPossibleOnlyAfterPurchasing, storeId);
+                model.NotifyStoreOwnerAboutNewTvChannelReviews_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NotifyStoreOwnerAboutNewTvChannelReviews, storeId);
+                model.NotifyUserAboutTvChannelReviewReply_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NotifyUserAboutTvChannelReviewReply, storeId);
                 model.EmailAFriendEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.EmailAFriendEnabled, storeId);
                 model.AllowAnonymousUsersToEmailAFriend_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowAnonymousUsersToEmailAFriend, storeId);
-                model.RecentlyViewedProductsNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.RecentlyViewedProductsNumber, storeId);
-                model.RecentlyViewedProductsEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.RecentlyViewedProductsEnabled, storeId);
-                model.NewProductsEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewProductsEnabled, storeId);
-                model.NewProductsPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewProductsPageSize, storeId);
-                model.NewProductsAllowUsersToSelectPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewProductsAllowUsersToSelectPageSize, storeId);
-                model.NewProductsPageSizeOptions_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewProductsPageSizeOptions, storeId);
-                model.CompareProductsEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.CompareProductsEnabled, storeId);
+                model.RecentlyViewedTvChannelsNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.RecentlyViewedTvChannelsNumber, storeId);
+                model.RecentlyViewedTvChannelsEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.RecentlyViewedTvChannelsEnabled, storeId);
+                model.NewTvChannelsEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewTvChannelsEnabled, storeId);
+                model.NewTvChannelsPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewTvChannelsPageSize, storeId);
+                model.NewTvChannelsAllowUsersToSelectPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewTvChannelsAllowUsersToSelectPageSize, storeId);
+                model.NewTvChannelsPageSizeOptions_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NewTvChannelsPageSizeOptions, storeId);
+                model.CompareTvChannelsEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.CompareTvChannelsEnabled, storeId);
                 model.ShowBestsellersOnHomepage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowBestsellersOnHomepage, storeId);
                 model.NumberOfBestsellersOnHomepage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NumberOfBestsellersOnHomepage, storeId);
-                model.SearchPageProductsPerPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPageProductsPerPage, storeId);
+                model.SearchPageTvChannelsPerPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPageTvChannelsPerPage, storeId);
                 model.SearchPageAllowUsersToSelectPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPageAllowUsersToSelectPageSize, storeId);
                 model.SearchPagePriceRangeFiltering_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPagePriceRangeFiltering, storeId);
                 model.SearchPagePriceFrom_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPagePriceFrom, storeId);
                 model.SearchPagePriceTo_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPagePriceTo, storeId);
                 model.SearchPageManuallyPriceRange_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPageManuallyPriceRange, storeId);
                 model.SearchPagePageSizeOptions_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.SearchPagePageSizeOptions, storeId);
-                model.ProductSearchAutoCompleteEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductSearchAutoCompleteEnabled, storeId);
-                model.ProductSearchAutoCompleteNumberOfProducts_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductSearchAutoCompleteNumberOfProducts, storeId);
-                model.ShowProductImagesInSearchAutoComplete_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowProductImagesInSearchAutoComplete, storeId);
+                model.TvChannelSearchAutoCompleteEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelSearchAutoCompleteEnabled, storeId);
+                model.TvChannelSearchAutoCompleteNumberOfTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelSearchAutoCompleteNumberOfTvChannels, storeId);
+                model.ShowTvChannelImagesInSearchAutoComplete_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowTvChannelImagesInSearchAutoComplete, storeId);
                 model.ShowLinkToAllResultInSearchAutoComplete_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowLinkToAllResultInSearchAutoComplete, storeId);
-                model.ProductSearchTermMinimumLength_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductSearchTermMinimumLength, storeId);
-                model.ProductsAlsoPurchasedEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsAlsoPurchasedEnabled, storeId);
-                model.ProductsAlsoPurchasedNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsAlsoPurchasedNumber, storeId);
-                model.NumberOfProductTags_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NumberOfProductTags, storeId);
-                model.ProductsByTagPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsByTagPageSize, storeId);
-                model.ProductsByTagAllowUsersToSelectPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsByTagAllowUsersToSelectPageSize, storeId);
-                model.ProductsByTagPageSizeOptions_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsByTagPageSizeOptions, storeId);
-                model.ProductsByTagPriceRangeFiltering_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsByTagPriceRangeFiltering, storeId);
-                model.ProductsByTagPriceFrom_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsByTagPriceFrom, storeId);
-                model.ProductsByTagPriceTo_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsByTagPriceTo, storeId);
-                model.ProductsByTagManuallyPriceRange_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductsByTagManuallyPriceRange, storeId);
-                model.IncludeShortDescriptionInCompareProducts_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.IncludeShortDescriptionInCompareProducts, storeId);
-                model.IncludeFullDescriptionInCompareProducts_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.IncludeFullDescriptionInCompareProducts, storeId);
+                model.TvChannelSearchTermMinimumLength_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelSearchTermMinimumLength, storeId);
+                model.TvChannelsAlsoPurchasedEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsAlsoPurchasedEnabled, storeId);
+                model.TvChannelsAlsoPurchasedNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsAlsoPurchasedNumber, storeId);
+                model.NumberOfTvChannelTags_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NumberOfTvChannelTags, storeId);
+                model.TvChannelsByTagPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsByTagPageSize, storeId);
+                model.TvChannelsByTagAllowUsersToSelectPageSize_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsByTagAllowUsersToSelectPageSize, storeId);
+                model.TvChannelsByTagPageSizeOptions_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsByTagPageSizeOptions, storeId);
+                model.TvChannelsByTagPriceRangeFiltering_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsByTagPriceRangeFiltering, storeId);
+                model.TvChannelsByTagPriceFrom_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsByTagPriceFrom, storeId);
+                model.TvChannelsByTagPriceTo_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsByTagPriceTo, storeId);
+                model.TvChannelsByTagManuallyPriceRange_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelsByTagManuallyPriceRange, storeId);
+                model.IncludeShortDescriptionInCompareTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.IncludeShortDescriptionInCompareTvChannels, storeId);
+                model.IncludeFullDescriptionInCompareTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.IncludeFullDescriptionInCompareTvChannels, storeId);
                 model.ManufacturersBlockItemsToDisplay_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ManufacturersBlockItemsToDisplay, storeId);
                 model.DisplayTaxShippingInfoFooter_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoFooter, storeId);
-                model.DisplayTaxShippingInfoProductDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoProductDetailsPage, storeId);
-                model.DisplayTaxShippingInfoProductBoxes_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoProductBoxes, storeId);
+                model.DisplayTaxShippingInfoTvChannelDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoTvChannelDetailsPage, storeId);
+                model.DisplayTaxShippingInfoTvChannelBoxes_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoTvChannelBoxes, storeId);
                 model.DisplayTaxShippingInfoShoppingCart_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoShoppingCart, storeId);
                 model.DisplayTaxShippingInfoWishlist_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoWishlist, storeId);
                 model.DisplayTaxShippingInfoOrderDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayTaxShippingInfoOrderDetailsPage, storeId);
-                model.ShowProductReviewsPerStore_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowProductReviewsPerStore, storeId);
-                model.ShowProductReviewsOnAccountPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowProductReviewsTabOnAccountPage, storeId);
-                model.ProductReviewsPageSizeOnAccountPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductReviewsPageSizeOnAccountPage, storeId);
-                model.ProductReviewsSortByCreatedDateAscending_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductReviewsSortByCreatedDateAscending, storeId);
-                model.ExportImportProductAttributes_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportProductAttributes, storeId);
-                model.ExportImportProductSpecificationAttributes_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportProductSpecificationAttributes, storeId);
-                model.ExportImportProductCategoryBreadcrumb_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportProductCategoryBreadcrumb, storeId);
+                model.ShowTvChannelReviewsPerStore_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowTvChannelReviewsPerStore, storeId);
+                model.ShowTvChannelReviewsOnAccountPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ShowTvChannelReviewsTabOnAccountPage, storeId);
+                model.TvChannelReviewsPageSizeOnAccountPage_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelReviewsPageSizeOnAccountPage, storeId);
+                model.TvChannelReviewsSortByCreatedDateAscending_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelReviewsSortByCreatedDateAscending, storeId);
+                model.ExportImportTvChannelAttributes_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportTvChannelAttributes, storeId);
+                model.ExportImportTvChannelSpecificationAttributes_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportTvChannelSpecificationAttributes, storeId);
+                model.ExportImportTvChannelCategoryBreadcrumb_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportTvChannelCategoryBreadcrumb, storeId);
                 model.ExportImportCategoriesUsingCategoryName_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportCategoriesUsingCategoryName, storeId);
                 model.ExportImportAllowDownloadImages_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportAllowDownloadImages, storeId);
-                model.ExportImportSplitProductsFile_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportSplitProductsFile, storeId);
-                model.RemoveRequiredProducts_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.RemoveRequiredProducts, storeId);
+                model.ExportImportSplitTvChannelsFile_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportSplitTvChannelsFile, storeId);
+                model.RemoveRequiredTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.RemoveRequiredTvChannels, storeId);
                 model.ExportImportRelatedEntitiesByName_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportRelatedEntitiesByName, storeId);
-                model.ExportImportProductUseLimitedToStores_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportProductUseLimitedToStores, storeId);
+                model.ExportImportTvChannelUseLimitedToStores_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ExportImportTvChannelUseLimitedToStores, storeId);
                 model.DisplayDatePreOrderAvailability_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayDatePreOrderAvailability, storeId);
-                model.UseAjaxCatalogProductsLoading_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.UseAjaxCatalogProductsLoading, storeId);
+                model.UseAjaxCatalogTvChannelsLoading_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.UseAjaxCatalogTvChannelsLoading, storeId);
                 model.EnableManufacturerFiltering_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.EnableManufacturerFiltering, storeId);
                 model.EnablePriceRangeFiltering_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.EnablePriceRangeFiltering, storeId);
                 model.EnableSpecificationAttributeFiltering_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.EnableSpecificationAttributeFiltering, storeId);
@@ -1301,7 +1301,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 model.AllowUsersToSearchWithManufacturerName_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowUsersToSearchWithManufacturerName, storeId);
                 model.AllowUsersToSearchWithCategoryName_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowUsersToSearchWithCategoryName, storeId);
                 model.DisplayAllPicturesOnCatalogPages_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.DisplayAllPicturesOnCatalogPages, storeId);
-                model.ProductUrlStructureTypeId_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.ProductUrlStructureTypeId, storeId);
+                model.TvChannelUrlStructureTypeId_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelUrlStructureTypeId, storeId);
             }
 
             //prepare nested search model
@@ -1328,7 +1328,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             var catalogSettings = await _settingService.LoadSettingAsync<CatalogSettings>(storeId);
 
             //get sort options
-            var sortOptions = Enum.GetValues(typeof(ProductSortingEnum)).OfType<ProductSortingEnum>().ToList().ToPagedList(searchModel);
+            var sortOptions = Enum.GetValues(typeof(TvChannelSortingEnum)).OfType<TvChannelSortingEnum>().ToList().ToPagedList(searchModel);
 
             //prepare list model
             var model = await new SortOptionListModel().PrepareToGridAsync(searchModel, sortOptions, () =>
@@ -1340,9 +1340,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
                     //fill in additional values (not existing in the entity)
                     sortOptionModel.Name = await _localizationService.GetLocalizedEnumAsync(option);
-                    sortOptionModel.IsActive = !catalogSettings.ProductSortingEnumDisabled.Contains((int)option);
+                    sortOptionModel.IsActive = !catalogSettings.TvChannelSortingEnumDisabled.Contains((int)option);
                     sortOptionModel.DisplayOrder = catalogSettings
-                        .ProductSortingEnumDisplayOrder.TryGetValue((int)option, out var value) ? value : (int)option;
+                        .TvChannelSortingEnumDisplayOrder.TryGetValue((int)option, out var value) ? value : (int)option;
 
                     return sortOptionModel;
                 }).OrderBy(option => option.DisplayOrder);
@@ -1442,9 +1442,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 model.ReturnRequestNumberMask_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.ReturnRequestNumberMask, storeId);
                 model.NumberOfDaysReturnRequestAvailable_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.NumberOfDaysReturnRequestAvailable, storeId);
                 model.CustomOrderNumberMask_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.CustomOrderNumberMask, storeId);
-                model.ExportWithProducts_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.ExportWithProducts, storeId);
-                model.AllowAdminsToBuyCallForPriceProducts_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.AllowAdminsToBuyCallForPriceProducts, storeId);
-                model.ShowProductThumbnailInOrderDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.ShowProductThumbnailInOrderDetailsPage, storeId);
+                model.ExportWithTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.ExportWithTvChannels, storeId);
+                model.AllowAdminsToBuyCallForPriceTvChannels_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.AllowAdminsToBuyCallForPriceTvChannels, storeId);
+                model.ShowTvChannelThumbnailInOrderDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.ShowTvChannelThumbnailInOrderDetailsPage, storeId);
                 model.DeleteGiftCardUsageHistory_OverrideForStore = await _settingService.SettingExistsAsync(orderSettings, x => x.DeleteGiftCardUsageHistory, storeId);
             }
 
@@ -1479,23 +1479,23 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 return model;
 
             //fill in overridden values
-            model.DisplayCartAfterAddingProduct_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.DisplayCartAfterAddingProduct, storeId);
-            model.DisplayWishlistAfterAddingProduct_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.DisplayWishlistAfterAddingProduct, storeId);
+            model.DisplayCartAfterAddingTvChannel_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.DisplayCartAfterAddingTvChannel, storeId);
+            model.DisplayWishlistAfterAddingTvChannel_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.DisplayWishlistAfterAddingTvChannel, storeId);
             model.MaximumShoppingCartItems_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.MaximumShoppingCartItems, storeId);
             model.MaximumWishlistItems_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.MaximumWishlistItems, storeId);
             model.AllowOutOfStockItemsToBeAddedToWishlist_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.AllowOutOfStockItemsToBeAddedToWishlist, storeId);
             model.MoveItemsFromWishlistToCart_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.MoveItemsFromWishlistToCart, storeId);
             model.CartsSharedBetweenStores_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.CartsSharedBetweenStores, storeId);
-            model.ShowProductImagesOnShoppingCart_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowProductImagesOnShoppingCart, storeId);
-            model.ShowProductImagesOnWishList_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowProductImagesOnWishList, storeId);
+            model.ShowTvChannelImagesOnShoppingCart_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowTvChannelImagesOnShoppingCart, storeId);
+            model.ShowTvChannelImagesOnWishList_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowTvChannelImagesOnWishList, storeId);
             model.ShowDiscountBox_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowDiscountBox, storeId);
             model.ShowGiftCardBox_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowGiftCardBox, storeId);
             model.CrossSellsNumber_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.CrossSellsNumber, storeId);
             model.EmailWishlistEnabled_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.EmailWishlistEnabled, storeId);
             model.AllowAnonymousUsersToEmailWishlist_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.AllowAnonymousUsersToEmailWishlist, storeId);
             model.MiniShoppingCartEnabled_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.MiniShoppingCartEnabled, storeId);
-            model.ShowProductImagesInMiniShoppingCart_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowProductImagesInMiniShoppingCart, storeId);
-            model.MiniShoppingCartProductNumber_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.MiniShoppingCartProductNumber, storeId);
+            model.ShowTvChannelImagesInMiniShoppingCart_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.ShowTvChannelImagesInMiniShoppingCart, storeId);
+            model.MiniShoppingCartTvChannelNumber_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.MiniShoppingCartTvChannelNumber, storeId);
             model.AllowCartItemEditing_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.AllowCartItemEditing, storeId);
             model.GroupTierPricesForDistinctShoppingCartItems_OverrideForStore = await _settingService.SettingExistsAsync(shoppingCartSettings, x => x.GroupTierPricesForDistinctShoppingCartItems, storeId);
 
@@ -1528,10 +1528,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
             //fill in overridden values
             model.AvatarPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.AvatarPictureSize, storeId);
-            model.ProductThumbPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ProductThumbPictureSize, storeId);
-            model.ProductDetailsPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ProductDetailsPictureSize, storeId);
-            model.ProductThumbPictureSizeOnProductDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ProductThumbPictureSizeOnProductDetailsPage, storeId);
-            model.AssociatedProductPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.AssociatedProductPictureSize, storeId);
+            model.TvChannelThumbPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.TvChannelThumbPictureSize, storeId);
+            model.TvChannelDetailsPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.TvChannelDetailsPictureSize, storeId);
+            model.TvChannelThumbPictureSizeOnTvChannelDetailsPage_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.TvChannelThumbPictureSizeOnTvChannelDetailsPage, storeId);
+            model.AssociatedTvChannelPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.AssociatedTvChannelPictureSize, storeId);
             model.CategoryThumbPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.CategoryThumbPictureSize, storeId);
             model.ManufacturerThumbPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ManufacturerThumbPictureSize, storeId);
             model.VendorThumbPictureSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.VendorThumbPictureSize, storeId);
@@ -1541,10 +1541,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             model.MaximumImageSize_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.MaximumImageSize, storeId);
             model.MultipleThumbDirectories_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.MultipleThumbDirectories, storeId);
             model.DefaultImageQuality_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.DefaultImageQuality, storeId);
-            model.ImportProductImagesUsingHash_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ImportProductImagesUsingHash, storeId);
+            model.ImportTvChannelImagesUsingHash_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ImportTvChannelImagesUsingHash, storeId);
             model.DefaultPictureZoomEnabled_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.DefaultPictureZoomEnabled, storeId);
             model.AllowSVGUploads_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.AllowSVGUploads, storeId);
-            model.ProductDefaultImageId_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.ProductDefaultImageId, storeId);
+            model.TvChannelDefaultImageId_OverrideForStore = await _settingService.SettingExistsAsync(mediaSettings, x => x.TvChannelDefaultImageId, storeId);
 
             return model;
         }
@@ -1752,20 +1752,20 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare product editor settings model
+        /// Prepare tvchannel editor settings model
         /// </summary>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product editor settings model
+        /// The task result contains the tvchannel editor settings model
         /// </returns>
-        public virtual async Task<ProductEditorSettingsModel> PrepareProductEditorSettingsModelAsync()
+        public virtual async Task<TvChannelEditorSettingsModel> PrepareTvChannelEditorSettingsModelAsync()
         {
             //load settings for a chosen store scope
             var storeId = await _storeContext.GetActiveStoreScopeConfigurationAsync();
-            var productEditorSettings = await _settingService.LoadSettingAsync<ProductEditorSettings>(storeId);
+            var tvchannelEditorSettings = await _settingService.LoadSettingAsync<TvChannelEditorSettings>(storeId);
 
             //fill in model values from the entity
-            var model = productEditorSettings.ToSettingsModel<ProductEditorSettingsModel>();
+            var model = tvchannelEditorSettings.ToSettingsModel<TvChannelEditorSettingsModel>();
 
             return model;
         }

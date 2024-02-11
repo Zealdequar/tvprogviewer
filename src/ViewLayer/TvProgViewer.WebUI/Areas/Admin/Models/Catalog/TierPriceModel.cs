@@ -24,33 +24,33 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 
         #region Properties
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.UserRole")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.TierPrices.Fields.UserRole")]
         public int UserRoleId { get; set; }
 
         public IList<SelectListItem> AvailableUserRoles { get; set; }
 
         public string UserRole { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.Store")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.TierPrices.Fields.Store")]
         public int StoreId { get; set; }
 
         public IList<SelectListItem> AvailableStores { get; set; }
 
         public string Store { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.Quantity")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.TierPrices.Fields.Quantity")]
         public int Quantity { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.Price")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.TierPrices.Fields.Price")]
         public decimal Price { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.StartDateTimeUtc")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.TierPrices.Fields.StartDateTimeUtc")]
         [UIHint("DateTimeNullable")]
         public DateTime? StartDateTimeUtc { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.TierPrices.Fields.EndDateTimeUtc")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.TierPrices.Fields.EndDateTimeUtc")]
         [UIHint("DateTimeNullable")]
         public DateTime? EndDateTimeUtc { get; set; }
 

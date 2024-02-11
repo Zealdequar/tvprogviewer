@@ -20,7 +20,7 @@ namespace TvProgViewer.Data.Mapping.Builders.Orders
         {
             table
                 .WithColumn(nameof(OrderItem.OrderId)).AsInt32().ForeignKey<Order>()
-                .WithColumn(nameof(OrderItem.ProductId)).AsInt32().ForeignKey<Product>();
+                .WithColumn(nameof(OrderItem.TvChannelId)).AsInt32().ForeignKey<TvChannel>();
         }
 
         #endregion

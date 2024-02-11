@@ -1,6 +1,6 @@
-﻿@model CatalogProductsModel
+﻿@model CatalogTvChannelsModel
 
-@if (Model.Products.Count <= 0 &&
+@if (Model.TvChannels.Count <= 0 &&
      !Model.PriceRangeFilter.Enabled &&
      !Model.SpecificationFilter.Enabled &&
      !Model.ManufacturerFilter.Enabled)
@@ -8,11 +8,11 @@
     return;
 }
 
-<div class="product-selectors">
+<div class="tvchannel-selectors">
     @*view mode*@
-    @if (Model.AllowProductViewModeChanging)
+    @if (Model.AllowTvChannelViewModeChanging)
     {
-        <div class="product-viewmode">
+        <div class="tvchannel-viewmode">
             <span>@T("Catalog.ViewMode")</span>
             @if (Model.AvailableViewModes.Count > 1)
             {
@@ -29,12 +29,12 @@
                 $viewModeEls.on('click', function () {
                     if (!$(this).hasClass('selected')) {
                         $viewModeEls.toggleClass('selected');
-                        CatalogProducts.getProducts();
+                        CatalogTvChannels.getTvChannels();
                     }
                     return false;
                 });
 
-                $(CatalogProducts).on('before', function (e) {
+                $(CatalogTvChannels).on('before', function (e) {
                     var $viewModeEl = $('[data-viewmode].selected');
                     if ($viewModeEl) {
                         e.payload.urlBuilder
@@ -45,20 +45,20 @@
         </script>
     }
 
-    @if (Model.AllowProductSorting)
+    @if (Model.AllowTvChannelSorting)
     {
-        <div class="product-sorting">
+        <div class="tvchannel-sorting">
             <span>@T("Catalog.OrderBy")</span>
-            @Html.DropDownList("products-orderby", Model.AvailableSortOptions, new { aria_label = T("Catalog.OrderBy.Label") })
+            @Html.DropDownList("tvchannels-orderby", Model.AvailableSortOptions, new { aria_label = T("Catalog.OrderBy.Label") })
         </div>
         <script asp-location="Footer">
             $(document).ready(function () {
-                var $orderByEl = $('#products-orderby');
+                var $orderByEl = $('#tvchannels-orderby');
                 $orderByEl.on('change', function () {
-                    CatalogProducts.getProducts();
+                    CatalogTvChannels.getTvChannels();
                 });
 
-                $(CatalogProducts).on('before', function (e) {
+                $(CatalogTvChannels).on('before', function (e) {
                     e.payload.urlBuilder
                         .addParameter('orderby', $orderByEl.val());
                 });
@@ -68,19 +68,19 @@
 
     @if (Model.AllowUsersToSelectPageSize)
     {
-        <div class="product-page-size">
+        <div class="tvchannel-page-size">
             <span>@T("Catalog.PageSize")</span>
-            @Html.DropDownList("products-pagesize", Model.PageSizeOptions, new { aria_label = T("Catalog.PageSize.Label") })
+            @Html.DropDownList("tvchannels-pagesize", Model.PageSizeOptions, new { aria_label = T("Catalog.PageSize.Label") })
             <span>@T("Catalog.PageSize.PerPage")</span>
         </div>
         <script asp-location="Footer">
             $(document).ready(function () {
-                var $pageSizeEl = $('#products-pagesize');
+                var $pageSizeEl = $('#tvchannels-pagesize');
                 $pageSizeEl.on('change', function () {
-                    CatalogProducts.getProducts();
+                    CatalogTvChannels.getTvChannels();
                 });
 
-                $(CatalogProducts).on('before', function (e) {
+                $(CatalogTvChannels).on('before', function (e) {
                     e.payload.urlBuilder
                         .addParameter('pagesize', $pageSizeEl.val());
                 });

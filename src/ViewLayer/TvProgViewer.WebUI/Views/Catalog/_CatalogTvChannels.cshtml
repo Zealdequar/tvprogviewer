@@ -1,0 +1,32 @@
+﻿@model CatalogTvChannelsModel
+
+<script src="~/js/public.catalogtvchannels.js" asp-location="Footer"></script>
+
+<div class="tvchannels-container">
+    <div class="ajax-tvchannels-busy"></div>
+    <div class="tvchannels-wrapper">
+        @await Html.PartialAsync("_TvChannelsInGridOrLines", Model)
+    </div>
+</div>
+<script asp-location="Footer">
+    $(document).ready(function () {
+        CatalogTvChannels.init({
+            ajax: @Model.UseAjaxLoading.ToString().ToLowerInvariant(),
+            browserPath: '@Context.Request.Path',
+            fetchUrl: '@ViewData["fetchUrl"]'
+        });
+
+        addPagerHandlers();
+        $(CatalogTvChannels).on('loaded', function () {
+            addPagerHandlers();
+        });
+    });
+
+    function addPagerHandlers() {
+        $('[data-page]').on('click', function (e) {
+            e.preventDefault();
+            CatalogTvChannels.getTvChannels($(this).data('page'));
+            return false;
+        });
+    }
+</script>

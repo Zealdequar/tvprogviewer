@@ -109,11 +109,11 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="sci">Shopping cart item</param>
         /// <param name="pictureSize">Picture size</param>
         /// <param name="showDefaultPicture">Whether to show the default picture</param>
-        /// <param name="productName">Product name</param>
+        /// <param name="tvchannelName">TvChannel name</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the picture model
         /// </returns>
-        Task<PictureModel> PrepareCartItemPictureModelAsync(ShoppingCartItem sci, int pictureSize, bool showDefaultPicture, string productName);
+        Task<PictureModel> PrepareCartItemPictureModelAsync(ShoppingCartItem sci, int pictureSize, bool showDefaultPicture, string tvchannelName);
     }
 }

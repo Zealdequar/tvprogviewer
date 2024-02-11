@@ -1,0 +1,84 @@
+@model TvChannelModel
+
+<div class="card-body">
+    @await Html.PartialAsync("Table", new DataTablesModel
+    {
+        Name = "tvchannelpictures-grid",
+        UrlRead = new DataUrl("TvChannelPictureList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelPictureSearchModel.TvChannelId)] = Model.TvChannelPictureSearchModel.TvChannelId }),
+        UrlDelete = new DataUrl("TvChannelPictureDelete", "TvChannel", null),
+        UrlUpdate = new DataUrl("TvChannelPictureUpdate", "TvChannel", null),
+        Length = Model.TvChannelPictureSearchModel.PageSize,
+        LengthMenu = Model.TvChannelPictureSearchModel.AvailablePageSizes,
+        ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(TvChannelPictureModel.PictureUrl))
+                {
+                    Title = T("Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.Picture").Text,
+                    Render = new RenderCustom("renderPicturesColumnTvChannelPictureUrl")
+                },
+                new ColumnProperty(nameof(TvChannelPictureModel.DisplayOrder))
+                {
+                    Title = T("Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.DisplayOrder").Text,
+                    Width = "150",
+                    ClassName = TvProgColumnClassDefaults.CenterAll,
+                    Editable = true,
+                    EditType = EditType.Number
+                },
+                new ColumnProperty(nameof(TvChannelPictureModel.OverrideAltAttribute))
+                {
+                    Title = T("Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.OverrideAltAttribute").Text,
+                    Width = "200",
+                    Editable = true,
+                    EditType = EditType.String
+                },
+                new ColumnProperty(nameof(TvChannelPictureModel.OverrideTitleAttribute))
+                {
+                    Title = T("Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.OverrideTitleAttribute").Text,
+                    Width = "200",
+                    Editable = true,
+                    EditType = EditType.String
+                },
+                new ColumnProperty(nameof(TvChannelPictureModel.Id))
+                {
+                    Title = T("Admin.Common.Edit").Text,
+                    Width = "200",
+                    ClassName =  TvProgColumnClassDefaults.Button,
+                    Render = new RenderButtonsInlineEdit()
+                },
+                new ColumnProperty(nameof(TvChannelPictureModel.Id))
+                {
+                    Title = T("Admin.Common.Delete").Text,
+                    Width = "100",
+                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                    ClassName = TvProgColumnClassDefaults.Button
+                }
+            }
+    })
+        
+    <script>
+        function renderPicturesColumnTvChannelPictureUrl(data, type, row, meta) {
+            return '<a href="' + row.PictureUrl + '" target="_blank"><img alt="' + row.PictureId + '" src="' + row.PictureUrl + '" width="150" /></a>';
+        }
+    </script>
+
+    <div class="card card-default">
+        <div class="card-header">
+            @T("Admin.Catalog.TvChannels.Multimedia.Pictures.AddNew")
+        </div>
+        <div class="card-body">
+            <div class="form-group row">
+                @{
+                    ViewData["Endpoint"] = this.Url.Action("TvChannelPictureAdd", "TvChannel", new { tvchannelId = Model.Id });
+                    ViewData["TableSelector"] = "#tvchannelpictures-grid";
+                }
+                <div class="col-md-3">
+                    <tvprog-label asp-for="AddPictureModel.PictureId" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="AddPictureModel.PictureId" />
+                    <span asp-validation-for="AddPictureModel.PictureId"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

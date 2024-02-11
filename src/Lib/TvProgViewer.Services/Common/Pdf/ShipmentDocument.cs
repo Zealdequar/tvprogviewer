@@ -34,7 +34,7 @@ namespace TvProgViewer.Services.Common.Pdf
 
                 column.Item().Row(row => row.AutoItem().Element(ComposeAddress));
 
-                column.Item().Element(ComposeProducts);
+                column.Item().Element(ComposeTvChannels);
             });
         }
 
@@ -55,10 +55,10 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose shipment products
+        /// Compose shipment tvchannels
         /// </summary>
         /// <param name="container">Content placement container</param>
-        protected void ComposeProducts(IContainer container)
+        protected void ComposeTvChannels(IContainer container)
         {
             container.Table(table =>
             {
@@ -71,26 +71,26 @@ namespace TvProgViewer.Services.Common.Pdf
 
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellHeaderStyle).Text(t => ComposeLabel<ProductItem>(t, x => x.Name));
-                    header.Cell().Element(CellHeaderStyle).Text(t => ComposeLabel<ProductItem>(t, x => x.Sku));
-                    header.Cell().Element(CellHeaderStyle).AlignRight().Text(t => ComposeLabel<ProductItem>(t, x => x.Quantity));
+                    header.Cell().Element(CellHeaderStyle).Text(t => ComposeLabel<TvChannelItem>(t, x => x.Name));
+                    header.Cell().Element(CellHeaderStyle).Text(t => ComposeLabel<TvChannelItem>(t, x => x.Sku));
+                    header.Cell().Element(CellHeaderStyle).AlignRight().Text(t => ComposeLabel<TvChannelItem>(t, x => x.Quantity));
                 });
 
-                foreach (var product in Source.Products)
+                foreach (var tvchannel in Source.TvChannels)
                 {
-                    table.Cell().Element(CellContentStyle).Element(productContainer =>
+                    table.Cell().Element(CellContentStyle).Element(tvchannelContainer =>
                     {
-                        productContainer.Column(pColumn =>
+                        tvchannelContainer.Column(pColumn =>
                         {
-                            pColumn.Item().Text(product.Name);
+                            pColumn.Item().Text(tvchannel.Name);
 
-                            foreach (var attribute in product.ProductAttributes)
+                            foreach (var attribute in tvchannel.TvChannelAttributes)
                                 pColumn.Item().DefaultTextStyle(s => s.Italic().FontSize(9)).Text(attribute);
                         });
                     });
 
-                    table.Cell().Element(CellContentStyle).Text(product.Sku);
-                    table.Cell().Element(CellContentStyle).AlignRight().Text(product.Quantity);
+                    table.Cell().Element(CellContentStyle).Text(tvchannel.Sku);
+                    table.Cell().Element(CellContentStyle).AlignRight().Text(tvchannel.Quantity);
                 }
 
                 static IContainer CellHeaderStyle(IContainer container)

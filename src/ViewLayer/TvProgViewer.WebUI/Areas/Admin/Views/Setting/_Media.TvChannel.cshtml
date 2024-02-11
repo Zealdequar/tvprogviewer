@@ -1,0 +1,59 @@
+@model MediaSettingsModel
+
+<div class="card-body">
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelDetailsPictureSize_OverrideForStore" asp-input="TvChannelDetailsPictureSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelDetailsPictureSize" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelDetailsPictureSize" />
+            <span asp-validation-for="TvChannelDetailsPictureSize"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelThumbPictureSize_OverrideForStore" asp-input="TvChannelThumbPictureSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelThumbPictureSize" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelThumbPictureSize" />
+            <span asp-validation-for="TvChannelThumbPictureSize"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelThumbPictureSizeOnTvChannelDetailsPage_OverrideForStore" asp-input="TvChannelThumbPictureSizeOnTvChannelDetailsPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelThumbPictureSizeOnTvChannelDetailsPage" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelThumbPictureSizeOnTvChannelDetailsPage" />
+            <span asp-validation-for="TvChannelThumbPictureSizeOnTvChannelDetailsPage"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AssociatedTvChannelPictureSize_OverrideForStore" asp-input="AssociatedTvChannelPictureSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AssociatedTvChannelPictureSize" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AssociatedTvChannelPictureSize" />
+            <span asp-validation-for="AssociatedTvChannelPictureSize"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelDefaultImageId_OverrideForStore" asp-input="TvChannelDefaultImageId" asp-parent-container="default-image" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <div class="label-wrapper">
+                <label class="col-form-label">@T("Admin.Configuration.Settings.Media.TvChannelDefaultImage")</label>
+                <div class="ico-help" data-toggle="tooltip" title="@T("Admin.Configuration.Settings.Media.TvChannelDefaultImage.Hint", TvProgViewer.Services.Media.TvProgMediaDefaults.DefaultImageFileName)">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9" id="default-image">
+            <tvprog-editor asp-for="TvChannelDefaultImageId" />
+            <span asp-validation-for="TvChannelDefaultImageId"></span>
+        </div>
+    </div>
+</div>

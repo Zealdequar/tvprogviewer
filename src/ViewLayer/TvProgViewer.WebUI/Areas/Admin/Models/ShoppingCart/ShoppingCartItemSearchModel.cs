@@ -19,7 +19,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.ShoppingCart
 
         public DateTime? EndDate { get; set; }
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         public int BillingCountryId { get; set; }
 

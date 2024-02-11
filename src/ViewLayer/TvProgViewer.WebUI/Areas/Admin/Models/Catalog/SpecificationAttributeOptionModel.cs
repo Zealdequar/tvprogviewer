@@ -34,8 +34,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
         [TvProgResourceDisplayName("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.DisplayOrder")]
         public int DisplayOrder { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.NumberOfAssociatedProducts")]
-        public int NumberOfAssociatedProducts { get; set; }
+        [TvProgResourceDisplayName("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.NumberOfAssociatedTvChannels")]
+        public int NumberOfAssociatedTvChannels { get; set; }
         
         public IList<SpecificationAttributeOptionLocalizedModel> Locales { get; set; }
 

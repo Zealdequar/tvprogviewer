@@ -9,7 +9,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public VendorModel()
         {
             PictureModel = new PictureModel();
-            CatalogProductsModel = new CatalogProductsModel();
+            CatalogTvChannelsModel = new CatalogTvChannelsModel();
         }
 
         public string Name { get; set; }
@@ -22,6 +22,6 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         public PictureModel PictureModel { get; set; }
 
-        public CatalogProductsModel CatalogProductsModel { get; set; }
+        public CatalogTvChannelsModel CatalogTvChannelsModel { get; set; }
     }
 }

@@ -1,0 +1,28 @@
+﻿@model PopularTvChannelTagsModel
+
+@using TvProgViewer.Core.Domain.Catalog
+
+@if (Model.Tags.Count > 0)
+{
+    <div class="block block-popular-tags">
+        <div class="title">
+            <strong>@T("TvChannels.Tags.Popular")</strong>
+        </div>
+        <div class="listbox">
+            <div class="tags">
+                <ul>
+                    @foreach (var item in Model.Tags)
+                    {
+                        <li><a href="@(Url.RouteUrl<TvChannelTag>(new { SeName = item.SeName }))" style="font-size:@(Model.GetFontSize(item))%;">@item.Name</a></li>
+                    }
+                </ul>
+            </div>
+            @if (Model.TotalTags > Model.Tags.Count)
+            {
+                <div class="view-all">
+                    <a href="@Url.RouteUrl("TvChannelTagsAll")">@T("TvChannels.Tags.Popular.ViewAll")</a>
+                </div>
+            }
+        </div>
+    </div>
+}

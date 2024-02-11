@@ -1,11 +1,11 @@
 ﻿@model ManufacturerFilterModel
 
-<div class="product-filter product-manufacturer-filter">
+<div class="tvchannel-filter tvchannel-manufacturer-filter">
     <div class="filter-title">
         <strong>@T("Filtering.ManufacturerFilter")</strong>
     </div>
     <div class="filter-content">
-        <ul class="group product-manufacturer-group">
+        <ul class="group tvchannel-manufacturer-group">
             @foreach (var manufacturer in Model.Manufacturers)
             {
                 <li class="item">
@@ -22,10 +22,10 @@
     $(document).ready(function () {
         var $msEls = $('[data-manufacturer-id]');
         $msEls.on('change', function () {
-            CatalogProducts.getProducts();
+            CatalogTvChannels.getTvChannels();
         });
 
-        $(CatalogProducts).on('before', function (e) {
+        $(CatalogTvChannels).on('before', function (e) {
             var selectedMs = $.map($msEls, function (el) {
                 var $mEl = $(el);
                 if ($mEl.is(':checked')) return $mEl.data('manufacturer-id')

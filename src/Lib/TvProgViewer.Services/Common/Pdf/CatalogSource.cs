@@ -12,7 +12,7 @@ namespace TvProgViewer.Services.Common.Pdf
         /// <summary>
         /// Gets or sets entries of the catalog
         /// </summary>
-        public List<CatalogItem> Products { get; set; }
+        public List<CatalogItem> TvChannels { get; set; }
 
         #endregion
     }

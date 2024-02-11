@@ -29,7 +29,7 @@ namespace TvProgViewer.WebUI.Factories
         private readonly ILocalizationService _localizationService;
         private readonly IOrderService _orderService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IReturnRequestService _returnRequestService;
         private readonly IStoreContext _storeContext;
         private readonly IUrlRecordService _urlRecordService;
@@ -46,7 +46,7 @@ namespace TvProgViewer.WebUI.Factories
             ILocalizationService localizationService,
             IOrderService orderService,
             IPriceFormatter priceFormatter,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IReturnRequestService returnRequestService,
             IStoreContext storeContext,
             IUrlRecordService urlRecordService,
@@ -59,7 +59,7 @@ namespace TvProgViewer.WebUI.Factories
             _localizationService = localizationService;
             _orderService = orderService;
             _priceFormatter = priceFormatter;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _returnRequestService = returnRequestService;
             _storeContext = storeContext;
             _urlRecordService = urlRecordService;
@@ -110,7 +110,7 @@ namespace TvProgViewer.WebUI.Factories
                 })
                 .ToListAsync();
 
-            //returnable products
+            //returnable tvchannels
             model.Items = await PrepareSubmitReturnRequestOrderItemModelsAsync(order);
 
             return model;
@@ -135,7 +135,7 @@ namespace TvProgViewer.WebUI.Factories
                 var orderItem = await _orderService.GetOrderItemByIdAsync(returnRequest.OrderItemId);
                 if (orderItem != null)
                 {
-                    var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                     var download = await _downloadService.GetDownloadByIdAsync(returnRequest.UploadedFileId);
 
@@ -144,9 +144,9 @@ namespace TvProgViewer.WebUI.Factories
                         Id = returnRequest.Id,
                         CustomNumber = returnRequest.CustomNumber,
                         ReturnRequestStatus = await _localizationService.GetLocalizedEnumAsync(returnRequest.ReturnRequestStatus),
-                        ProductId = product.Id,
-                        ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                        ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                        TvChannelId = tvchannel.Id,
+                        TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
+                        TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
                         Quantity = returnRequest.Quantity,
                         ReturnAction = returnRequest.RequestedAction,
                         ReturnReason = returnRequest.ReasonForReturn,
@@ -184,14 +184,14 @@ namespace TvProgViewer.WebUI.Factories
                         continue;
 
                     var orderItem = returnableOrderItem.OrderItem;
-                    var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                     var model = new SubmitReturnRequestModel.OrderItemModel
                     {
                         Id = orderItem.Id,
-                        ProductId = product.Id,
-                        ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                        ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                        TvChannelId = tvchannel.Id,
+                        TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
+                        TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
                         AttributeInfo = orderItem.AttributeDescription,
                         Quantity = returnableOrderItem.AvailableQuantityForReturn
                     };

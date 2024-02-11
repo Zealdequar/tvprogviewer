@@ -36,8 +36,8 @@ namespace TvProgViewer.Services.Shipping
         private readonly ILogger _logger;
         private readonly IPickupPluginManager _pickupPluginManager;
         private readonly IPriceCalculationService _priceCalculationService;
-        private readonly IProductAttributeParser _productAttributeParser;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IRepository<ShippingMethod> _shippingMethodRepository;
         private readonly IRepository<ShippingMethodCountryMapping> _shippingMethodCountryMappingRepository;
         private readonly IRepository<Warehouse> _warehouseRepository;
@@ -60,8 +60,8 @@ namespace TvProgViewer.Services.Shipping
             ILogger logger,
             IPickupPluginManager pickupPluginManager,
             IPriceCalculationService priceCalculationService,
-            IProductAttributeParser productAttributeParser,
-            IProductService productService,
+            ITvChannelAttributeParser tvchannelAttributeParser,
+            ITvChannelService tvchannelService,
             IRepository<ShippingMethod> shippingMethodRepository,
             IRepository<ShippingMethodCountryMapping> shippingMethodCountryMappingRepository,
             IRepository<Warehouse> warehouseRepository,
@@ -80,8 +80,8 @@ namespace TvProgViewer.Services.Shipping
             _logger = logger;
             _pickupPluginManager = pickupPluginManager;
             _priceCalculationService = priceCalculationService;
-            _productAttributeParser = productAttributeParser;
-            _productService = productService;
+            _tvchannelAttributeParser = tvchannelAttributeParser;
+            _tvchannelService = tvchannelService;
             _shippingMethodRepository = shippingMethodRepository;
             _shippingMethodCountryMappingRepository = shippingMethodCountryMappingRepository;
             _warehouseRepository = warehouseRepository;
@@ -125,25 +125,25 @@ namespace TvProgViewer.Services.Shipping
             if (string.IsNullOrEmpty(singleItem.ShoppingCartItem.AttributesXml))
                 return false;
 
-            //find associated products of item
-            var associatedAttributeValues = (await _productAttributeParser.ParseProductAttributeValuesAsync(singleItem.ShoppingCartItem.AttributesXml))
-                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct);
+            //find associated tvchannels of item
+            var associatedAttributeValues = (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(singleItem.ShoppingCartItem.AttributesXml))
+                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel);
 
-            //whether to ship associated products
+            //whether to ship associated tvchannels
             return await associatedAttributeValues.AnyAwaitAsync(async attributeValue =>
-                (await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId))?.IsShipEnabled ?? false);
+                (await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId))?.IsShipEnabled ?? false);
         }
 
         /// <summary>
-        /// Get dimensions of associated products (for quantity 1)
+        /// Get dimensions of associated tvchannels (for quantity 1)
         /// </summary>
         /// <param name="shoppingCartItem">Shopping cart item</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the width. Length. Height
         /// </returns>
-        protected virtual async Task<(decimal width, decimal length, decimal height)> GetAssociatedProductDimensionsAsync(ShoppingCartItem shoppingCartItem,
+        protected virtual async Task<(decimal width, decimal length, decimal height)> GetAssociatedTvChannelDimensionsAsync(ShoppingCartItem shoppingCartItem,
             bool ignoreFreeShippedItems = false)
         {
             if (shoppingCartItem == null)
@@ -155,26 +155,26 @@ namespace TvProgViewer.Services.Shipping
 
             width = length = height = decimal.Zero;
 
-            //don't consider associated products dimensions
-            if (!_shippingSettings.ConsiderAssociatedProductsDimensions)
+            //don't consider associated tvchannels dimensions
+            if (!_shippingSettings.ConsiderAssociatedTvChannelsDimensions)
                 return (width, length, height);
 
             //attributes
             if (string.IsNullOrEmpty(shoppingCartItem.AttributesXml))
                 return (width, length, height);
 
-            //bundled products (associated attributes)
-            var attributeValues = (await _productAttributeParser.ParseProductAttributeValuesAsync(shoppingCartItem.AttributesXml))
-                .Where(x => x.AttributeValueType == AttributeValueType.AssociatedToProduct).ToList();
+            //bundled tvchannels (associated attributes)
+            var attributeValues = (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(shoppingCartItem.AttributesXml))
+                .Where(x => x.AttributeValueType == AttributeValueType.AssociatedToTvChannel).ToList();
             foreach (var attributeValue in attributeValues)
             {
-                var associatedProduct = await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId);
-                if (associatedProduct == null || !associatedProduct.IsShipEnabled || (associatedProduct.IsFreeShipping && ignoreFreeShippedItems))
+                var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
+                if (associatedTvChannel == null || !associatedTvChannel.IsShipEnabled || (associatedTvChannel.IsFreeShipping && ignoreFreeShippedItems))
                     continue;
 
-                width += associatedProduct.Width * attributeValue.Quantity;
-                length += associatedProduct.Length * attributeValue.Quantity;
-                height += associatedProduct.Height * attributeValue.Quantity;
+                width += associatedTvChannel.Width * attributeValue.Quantity;
+                length += associatedTvChannel.Length * attributeValue.Quantity;
+                height += associatedTvChannel.Height * attributeValue.Quantity;
             }
 
             return (width, length, height);
@@ -458,7 +458,7 @@ namespace TvProgViewer.Services.Shipping
         /// Gets shopping cart item weight (of one item)
         /// </summary>
         /// <param name="shoppingCartItem">Shopping cart item</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the shopping cart item weight
@@ -468,36 +468,36 @@ namespace TvProgViewer.Services.Shipping
             if (shoppingCartItem == null)
                 throw new ArgumentNullException(nameof(shoppingCartItem));
 
-            var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
 
-            return await GetShoppingCartItemWeightAsync(product, shoppingCartItem.AttributesXml, ignoreFreeShippedItems);
+            return await GetShoppingCartItemWeightAsync(tvchannel, shoppingCartItem.AttributesXml, ignoreFreeShippedItems);
         }
 
         /// <summary>
-        /// Gets product item weight (of one item)
+        /// Gets tvchannel item weight (of one item)
         /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="attributesXml">Selected product attributes in XML</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="attributesXml">Selected tvchannel attributes in XML</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the item weight
         /// </returns>
-        public virtual async Task<decimal> GetShoppingCartItemWeightAsync(Product product, string attributesXml, bool ignoreFreeShippedItems = false)
+        public virtual async Task<decimal> GetShoppingCartItemWeightAsync(TvChannel tvchannel, string attributesXml, bool ignoreFreeShippedItems = false)
         {
-            if (product == null)
+            if (tvchannel == null)
                 return decimal.Zero;
 
-            //product weight
-            var productWeight = !product.IsFreeShipping || !ignoreFreeShippedItems ? product.Weight : decimal.Zero;
+            //tvchannel weight
+            var tvchannelWeight = !tvchannel.IsFreeShipping || !ignoreFreeShippedItems ? tvchannel.Weight : decimal.Zero;
 
             //attribute weight
             var attributesTotalWeight = decimal.Zero;
 
-            if (!_shippingSettings.ConsiderAssociatedProductsDimensions || string.IsNullOrEmpty(attributesXml))
-                return productWeight + attributesTotalWeight;
+            if (!_shippingSettings.ConsiderAssociatedTvChannelsDimensions || string.IsNullOrEmpty(attributesXml))
+                return tvchannelWeight + attributesTotalWeight;
 
-            var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml);
+            var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
             foreach (var attributeValue in attributeValues)
             {
                 switch (attributeValue.AttributeValueType)
@@ -506,16 +506,16 @@ namespace TvProgViewer.Services.Shipping
                         //simple attribute
                         attributesTotalWeight += attributeValue.WeightAdjustment;
                         break;
-                    case AttributeValueType.AssociatedToProduct:
-                        //bundled product
-                        var associatedProduct = await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId);
-                        if (associatedProduct != null && associatedProduct.IsShipEnabled && (!associatedProduct.IsFreeShipping || !ignoreFreeShippedItems))
-                            attributesTotalWeight += associatedProduct.Weight * attributeValue.Quantity;
+                    case AttributeValueType.AssociatedToTvChannel:
+                        //bundled tvchannel
+                        var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
+                        if (associatedTvChannel != null && associatedTvChannel.IsShipEnabled && (!associatedTvChannel.IsFreeShipping || !ignoreFreeShippedItems))
+                            attributesTotalWeight += associatedTvChannel.Weight * attributeValue.Quantity;
                         break;
                 }
             }
 
-            return productWeight + attributesTotalWeight;
+            return tvchannelWeight + attributesTotalWeight;
         }
 
         /// <summary>
@@ -523,7 +523,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="request">Request</param>
         /// <param name="includeCheckoutAttributes">A value indicating whether we should calculate weights of selected checkotu attributes</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the otal weight
@@ -558,7 +558,7 @@ namespace TvProgViewer.Services.Shipping
         /// Get total dimensions
         /// </summary>
         /// <param name="packageItems">Package items</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the width. Length. Height
@@ -576,47 +576,47 @@ namespace TvProgViewer.Services.Shipping
             if (_shippingSettings.UseCubeRootMethod && await AreMultipleItemsAsync(packageItems))
             {
                 //find max dimensions of the shipped items
-                var maxWidth = packageItems.Max(item => !item.Product.IsFreeShipping || !ignoreFreeShippedItems
-                    ? item.Product.Width : decimal.Zero);
-                var maxLength = packageItems.Max(item => !item.Product.IsFreeShipping || !ignoreFreeShippedItems
-                    ? item.Product.Length : decimal.Zero);
-                var maxHeight = packageItems.Max(item => !item.Product.IsFreeShipping || !ignoreFreeShippedItems
-                    ? item.Product.Height : decimal.Zero);
+                var maxWidth = packageItems.Max(item => !item.TvChannel.IsFreeShipping || !ignoreFreeShippedItems
+                    ? item.TvChannel.Width : decimal.Zero);
+                var maxLength = packageItems.Max(item => !item.TvChannel.IsFreeShipping || !ignoreFreeShippedItems
+                    ? item.TvChannel.Length : decimal.Zero);
+                var maxHeight = packageItems.Max(item => !item.TvChannel.IsFreeShipping || !ignoreFreeShippedItems
+                    ? item.TvChannel.Height : decimal.Zero);
 
                 //get total volume of the shipped items
                 var totalVolume = await packageItems.SumAwaitAsync(async packageItem =>
                 {
-                    //product volume
-                    var productVolume = !packageItem.Product.IsFreeShipping || !ignoreFreeShippedItems ?
-                        packageItem.Product.Width * packageItem.Product.Length * packageItem.Product.Height : decimal.Zero;
+                    //tvchannel volume
+                    var tvchannelVolume = !packageItem.TvChannel.IsFreeShipping || !ignoreFreeShippedItems ?
+                        packageItem.TvChannel.Width * packageItem.TvChannel.Length * packageItem.TvChannel.Height : decimal.Zero;
 
-                    //associated products volume
-                    if (_shippingSettings.ConsiderAssociatedProductsDimensions && !string.IsNullOrEmpty(packageItem.ShoppingCartItem.AttributesXml))
+                    //associated tvchannels volume
+                    if (_shippingSettings.ConsiderAssociatedTvChannelsDimensions && !string.IsNullOrEmpty(packageItem.ShoppingCartItem.AttributesXml))
                     {
-                        productVolume += await (await _productAttributeParser.ParseProductAttributeValuesAsync(packageItem.ShoppingCartItem.AttributesXml))
-                            .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct).SumAwaitAsync(async attributeValue =>
+                        tvchannelVolume += await (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(packageItem.ShoppingCartItem.AttributesXml))
+                            .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel).SumAwaitAsync(async attributeValue =>
                             {
-                                var associatedProduct = await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId);
-                                if (associatedProduct == null || !associatedProduct.IsShipEnabled || (associatedProduct.IsFreeShipping && ignoreFreeShippedItems))
+                                var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
+                                if (associatedTvChannel == null || !associatedTvChannel.IsShipEnabled || (associatedTvChannel.IsFreeShipping && ignoreFreeShippedItems))
                                     return 0;
 
                                 //adjust max dimensions
-                                maxWidth = Math.Max(maxWidth, associatedProduct.Width);
-                                maxLength = Math.Max(maxLength, associatedProduct.Length);
-                                maxHeight = Math.Max(maxHeight, associatedProduct.Height);
+                                maxWidth = Math.Max(maxWidth, associatedTvChannel.Width);
+                                maxLength = Math.Max(maxLength, associatedTvChannel.Length);
+                                maxHeight = Math.Max(maxHeight, associatedTvChannel.Height);
 
-                                return attributeValue.Quantity * associatedProduct.Width * associatedProduct.Length * associatedProduct.Height;
+                                return attributeValue.Quantity * associatedTvChannel.Width * associatedTvChannel.Length * associatedTvChannel.Height;
                             });
                     }
 
                     //total volume of item
-                    return productVolume * packageItem.GetQuantity();
+                    return tvchannelVolume * packageItem.GetQuantity();
                 });
 
                 //set dimensions as cube root of volume
                 width = length = height = Convert.ToDecimal(Math.Pow(Convert.ToDouble(totalVolume), 1.0 / 3.0));
 
-                //sometimes we have products with sizes like 1x1x20
+                //sometimes we have tvchannels with sizes like 1x1x20
                 //that's why let's ensure that a maximum dimension is always preserved
                 //otherwise, shipping rate computation methods can return low rates
                 width = Math.Max(width, maxWidth);
@@ -629,23 +629,23 @@ namespace TvProgViewer.Services.Shipping
                 width = length = height = decimal.Zero;
                 foreach (var packageItem in packageItems)
                 {
-                    var productWidth = decimal.Zero;
-                    var productLength = decimal.Zero;
-                    var productHeight = decimal.Zero;
-                    if (!packageItem.Product.IsFreeShipping || !ignoreFreeShippedItems)
+                    var tvchannelWidth = decimal.Zero;
+                    var tvchannelLength = decimal.Zero;
+                    var tvchannelHeight = decimal.Zero;
+                    if (!packageItem.TvChannel.IsFreeShipping || !ignoreFreeShippedItems)
                     {
-                        productWidth = packageItem.Product.Width;
-                        productLength = packageItem.Product.Length;
-                        productHeight = packageItem.Product.Height;
+                        tvchannelWidth = packageItem.TvChannel.Width;
+                        tvchannelLength = packageItem.TvChannel.Length;
+                        tvchannelHeight = packageItem.TvChannel.Height;
                     }
 
-                    //associated products
-                    var (associatedProductsWidth, associatedProductsLength, associatedProductsHeight)  = await GetAssociatedProductDimensionsAsync(packageItem.ShoppingCartItem);
+                    //associated tvchannels
+                    var (associatedTvChannelsWidth, associatedTvChannelsLength, associatedTvChannelsHeight)  = await GetAssociatedTvChannelDimensionsAsync(packageItem.ShoppingCartItem);
 
                     var quantity = packageItem.GetQuantity();
-                    width += (productWidth + associatedProductsWidth) * quantity;
-                    length += (productLength + associatedProductsLength) * quantity;
-                    height += (productHeight + associatedProductsHeight) * quantity;
+                    width += (tvchannelWidth + associatedTvChannelsWidth) * quantity;
+                    length += (tvchannelLength + associatedTvChannelsLength) * quantity;
+                    height += (tvchannelHeight + associatedTvChannelsHeight) * quantity;
                 }
             }
 
@@ -673,7 +673,7 @@ namespace TvProgViewer.Services.Shipping
             //value - request
             var requests = new Dictionary<int, GetShippingOptionRequest>();
 
-            //a list of requests with products which should be shipped separately
+            //a list of requests with tvchannels which should be shipped separately
             var separateRequests = new List<GetShippingOptionRequest>();
 
             foreach (var sci in cart)
@@ -681,29 +681,29 @@ namespace TvProgViewer.Services.Shipping
                 if (!await IsShipEnabledAsync(sci))
                     continue;
 
-                var product = await _productService.GetProductByIdAsync(sci.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
-                if (product == null || !product.IsShipEnabled)
+                if (tvchannel == null || !tvchannel.IsShipEnabled)
                 {
-                    var associatedProducts = await (await _productAttributeParser.ParseProductAttributeValuesAsync(sci.AttributesXml))
-                        .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct)
-                        .SelectAwait(async attributeValue => await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId)).ToListAsync();
-                    product = associatedProducts.FirstOrDefault(associatedProduct => associatedProduct != null && associatedProduct.IsShipEnabled);
+                    var associatedTvChannels = await (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(sci.AttributesXml))
+                        .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel)
+                        .SelectAwait(async attributeValue => await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId)).ToListAsync();
+                    tvchannel = associatedTvChannels.FirstOrDefault(associatedTvChannel => associatedTvChannel != null && associatedTvChannel.IsShipEnabled);
                 }
 
-                if (product == null)
+                if (tvchannel == null)
                     continue;
 
                 //warehouses
                 Warehouse warehouse = null;
                 if (_shippingSettings.UseWarehouseLocation)
                 {
-                    if (product.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
-                        product.UseMultipleWarehouses)
+                    if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                        tvchannel.UseMultipleWarehouses)
                     {
                         var allWarehouses = new List<Warehouse>();
                         //multiple warehouses supported
-                        foreach (var pwi in await _productService.GetAllProductWarehouseInventoryRecordsAsync(product.Id))
+                        foreach (var pwi in await _tvchannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(tvchannel.Id))
                         {
                             var tmpWarehouse = await GetWarehouseByIdAsync(pwi.WarehouseId);
                             if (tmpWarehouse != null)
@@ -715,16 +715,16 @@ namespace TvProgViewer.Services.Shipping
                     else
                     {
                         //multiple warehouses are not supported
-                        warehouse = await GetWarehouseByIdAsync(product.WarehouseId);
+                        warehouse = await GetWarehouseByIdAsync(tvchannel.WarehouseId);
                     }
                 }
 
                 var warehouseId = warehouse?.Id ?? 0;
 
-                if (requests.ContainsKey(warehouseId) && !product.ShipSeparately)
+                if (requests.ContainsKey(warehouseId) && !tvchannel.ShipSeparately)
                 {
                     //add item to existing request
-                    requests[warehouseId].Items.Add(new GetShippingOptionRequest.PackageItem(sci, product));
+                    requests[warehouseId].Items.Add(new GetShippingOptionRequest.PackageItem(sci, tvchannel));
                 }
                 else
                 {
@@ -764,16 +764,16 @@ namespace TvProgViewer.Services.Shipping
                         request.AddressFrom = originAddress.Address1;
                     }
 
-                    //whether this product should be shipped separately from other ones
-                    if (product.ShipSeparately)
+                    //whether this tvchannel should be shipped separately from other ones
+                    if (tvchannel.ShipSeparately)
                     {
-                        //whether product items should be shipped separately
+                        //whether tvchannel items should be shipped separately
                         if (_shippingSettings.ShipSeparatelyOneItemEach)
                         {
                             //add item with overridden quantity 1
-                            request.Items.Add(new GetShippingOptionRequest.PackageItem(sci, product, 1));
+                            request.Items.Add(new GetShippingOptionRequest.PackageItem(sci, tvchannel, 1));
 
-                            //create separate requests for all product quantity
+                            //create separate requests for all tvchannel quantity
                             for (var i = 0; i < sci.Quantity; i++)
                             {
                                 separateRequests.Add(request);
@@ -781,15 +781,15 @@ namespace TvProgViewer.Services.Shipping
                         }
                         else
                         {
-                            //all of product items should be shipped in a single box, so create the single separate request 
-                            request.Items.Add(new GetShippingOptionRequest.PackageItem(sci, product));
+                            //all of tvchannel items should be shipped in a single box, so create the single separate request 
+                            request.Items.Add(new GetShippingOptionRequest.PackageItem(sci, tvchannel));
                             separateRequests.Add(request);
                         }
                     }
                     else
                     {
                         //usual request
-                        request.Items.Add(new GetShippingOptionRequest.PackageItem(sci, product));
+                        request.Items.Add(new GetShippingOptionRequest.PackageItem(sci, tvchannel));
                         requests.Add(warehouseId, request);
                     }
                 }
@@ -970,17 +970,17 @@ namespace TvProgViewer.Services.Shipping
         /// </returns>
         public virtual async Task<bool> IsShipEnabledAsync(ShoppingCartItem shoppingCartItem)
         {
-            //whether the product requires shipping
-            if (shoppingCartItem.ProductId != 0 && (await _productService.GetProductByIdAsync(shoppingCartItem.ProductId))?.IsShipEnabled == true)
+            //whether the tvchannel requires shipping
+            if (shoppingCartItem.TvChannelId != 0 && (await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId))?.IsShipEnabled == true)
                 return true;
 
             if (string.IsNullOrEmpty(shoppingCartItem.AttributesXml))
                 return false;
 
-            //or whether associated products of the shopping cart item require shipping
-            return await (await _productAttributeParser.ParseProductAttributeValuesAsync(shoppingCartItem.AttributesXml))
-                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct)
-                .AnyAwaitAsync(async attributeValue => (await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId))?.IsShipEnabled ?? false);
+            //or whether associated tvchannels of the shopping cart item require shipping
+            return await (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(shoppingCartItem.AttributesXml))
+                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel)
+                .AnyAwaitAsync(async attributeValue => (await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId))?.IsShipEnabled ?? false);
         }
 
         /// <summary>
@@ -997,17 +997,17 @@ namespace TvProgViewer.Services.Shipping
             if (!await IsShipEnabledAsync(shoppingCartItem))
                 return true;
 
-            //then whether the product is free shipping
-            if (shoppingCartItem.ProductId != 0 && !(await _productService.GetProductByIdAsync(shoppingCartItem.ProductId)).IsFreeShipping)
+            //then whether the tvchannel is free shipping
+            if (shoppingCartItem.TvChannelId != 0 && !(await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId)).IsFreeShipping)
                 return false;
 
             if (string.IsNullOrEmpty(shoppingCartItem.AttributesXml))
                 return true;
 
-            //and whether associated products of the shopping cart item is free shipping
-            return await (await _productAttributeParser.ParseProductAttributeValuesAsync(shoppingCartItem.AttributesXml))
-                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct)
-                .AllAwaitAsync(async attributeValue => (await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId))?.IsFreeShipping ?? true);
+            //and whether associated tvchannels of the shopping cart item is free shipping
+            return await (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(shoppingCartItem.AttributesXml))
+                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel)
+                .AllAwaitAsync(async attributeValue => (await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId))?.IsFreeShipping ?? true);
         }
 
         /// <summary>
@@ -1024,16 +1024,16 @@ namespace TvProgViewer.Services.Shipping
             if (await IsFreeShippingAsync(shoppingCartItem))
                 return decimal.Zero;
 
-            //get additional shipping charge of the product
-            var additionalShippingCharge = ((await _productService.GetProductByIdAsync(shoppingCartItem.ProductId))?.AdditionalShippingCharge ?? decimal.Zero) * shoppingCartItem.Quantity;
+            //get additional shipping charge of the tvchannel
+            var additionalShippingCharge = ((await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId))?.AdditionalShippingCharge ?? decimal.Zero) * shoppingCartItem.Quantity;
 
             if (string.IsNullOrEmpty(shoppingCartItem.AttributesXml))
                 return additionalShippingCharge;
 
-            //and sum with associated products additional shipping charges
-            additionalShippingCharge += await (await _productAttributeParser.ParseProductAttributeValuesAsync(shoppingCartItem.AttributesXml))
-                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct)
-                .SumAwaitAsync(async attributeValue => (await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId))?.AdditionalShippingCharge ?? decimal.Zero);
+            //and sum with associated tvchannels additional shipping charges
+            additionalShippingCharge += await (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(shoppingCartItem.AttributesXml))
+                .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel)
+                .SumAwaitAsync(async attributeValue => (await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId))?.AdditionalShippingCharge ?? decimal.Zero);
 
             return additionalShippingCharge;
         }

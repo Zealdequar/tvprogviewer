@@ -554,10 +554,10 @@
                     </div>
                 </div>
             }
-            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageBeforeproducts, additionalData = Model })
-            <div class="section products">
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageBeforetvchannels, additionalData = Model })
+            <div class="section tvchannels">
                 <div class="title">
-                    <strong>@T("Order.Product(s)")</strong>
+                    <strong>@T("Order.TvChannel(s)")</strong>
                 </div>
                 <div class="table-wrapper">
                     <table class="data-table">
@@ -566,7 +566,7 @@
                             {
                                 <col width="1" />
                             }
-                            @if (Model.ShowProductThumbnail)
+                            @if (Model.ShowTvChannelThumbnail)
                             {
                                 <col width="1" />
                             }
@@ -584,32 +584,32 @@
                                 @if (Model.ShowSku)
                                 {
                                     <th class="sku">
-                                        @T("Order.Product(s).SKU")
+                                        @T("Order.TvChannel(s).SKU")
                                     </th>
                                 }
-                                @if (Model.ShowProductThumbnail)
+                                @if (Model.ShowTvChannelThumbnail)
                                 {
                                     <th class="picture">
-                                        @T("Order.Product(s).Image")
+                                        @T("Order.TvChannel(s).Image")
                                     </th>
                                 }
                                 <th class="name">
-                                    @T("Order.Product(s).Name")
+                                    @T("Order.TvChannel(s).Name")
                                 </th>
                                 @if (Model.ShowVendorName)
                                 {
                                     <th class="vendor">
-                                        @T("Order.Product(s).VendorName")
+                                        @T("Order.TvChannel(s).VendorName")
                                     </th>
                                 }
                                 <th class="price">
-                                    @T("Order.Product(s).Price")
+                                    @T("Order.TvChannel(s).Price")
                                 </th>
                                 <th class="quantity">
-                                    @T("Order.Product(s).Quantity")
+                                    @T("Order.TvChannel(s).Quantity")
                                 </th>
                                 <th class="total">
-                                    @T("Order.Product(s).Total")
+                                    @T("Order.TvChannel(s).Total")
                                 </th>
                             </tr>
                         </thead>
@@ -620,24 +620,24 @@
                                     @if (Model.ShowSku)
                                     {
                                         <td class="sku">
-                                            <label class="td-title">@T("Order.Product(s).SKU"):</label>
+                                            <label class="td-title">@T("Order.TvChannel(s).SKU"):</label>
                                             <span class="sku-number">@item.Sku</span>
                                         </td>
                                     }
-                                    @if (Model.ShowProductThumbnail)
+                                    @if (Model.ShowTvChannelThumbnail)
                                     {
                                         <td class="picture">
-                                            <a href="@(Url.RouteUrl<Product>(new {SeName = item.ProductSeName}))"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                            <a href="@(Url.RouteUrl<TvChannel>(new {SeName = item.TvChannelSeName}))"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
                                         </td>
                                     }
-                                    <td class="product">
+                                    <td class="tvchannel">
                                         @if (!Model.PrintMode)
                                         {
-                                            <em><a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))">@item.ProductName</a></em>
+                                            <em><a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))">@item.TvChannelName</a></em>
                                         }
                                         else
                                         {
-                                            @item.ProductName
+                                            @item.TvChannelName
                                         }
                                         @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                         {
@@ -654,35 +654,35 @@
                                         @if (item.DownloadId > 0)
                                         {
                                             <div class="download">
-                                                <a href="@Url.RouteUrl("GetDownload", new { orderItemId = item.OrderItemGuid })">@T("DownloadableProducts.Fields.Download")</a>
+                                                <a href="@Url.RouteUrl("GetDownload", new { orderItemId = item.OrderItemGuid })">@T("DownloadableTvChannels.Fields.Download")</a>
                                             </div>
                                         }
                                         @if (item.LicenseId > 0)
                                         {
                                             <div class="download license">
-                                                <a href="@Url.RouteUrl("GetLicense", new {orderItemId = item.OrderItemGuid})">@T("DownloadableProducts.Fields.DownloadLicense")</a>
+                                                <a href="@Url.RouteUrl("GetLicense", new {orderItemId = item.OrderItemGuid})">@T("DownloadableTvChannels.Fields.DownloadLicense")</a>
                                             </div>
                                         }
-                                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsProductLine, additionalData = item })
+                                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsTvChannelLine, additionalData = item })
                                     </td>
                                     @if (Model.ShowVendorName)
                                     {
                                         <td class="vendor">
-                                            <label class="td-title">@T("Order.Product(s).VendorName"):</label>
+                                            <label class="td-title">@T("Order.TvChannel(s).VendorName"):</label>
                                             <span class="vendor-name">@item.VendorName</span>
                                         </td>
                                     }
                                     <td class="unit-price">
-                                        <label class="td-title">@T("Order.Product(s).Price"):</label>
-                                        <span class="product-unit-price">@item.UnitPrice</span>
+                                        <label class="td-title">@T("Order.TvChannel(s).Price"):</label>
+                                        <span class="tvchannel-unit-price">@item.UnitPrice</span>
                                     </td>
                                     <td class="quantity">
-                                        <label class="td-title">@T("Order.Product(s).Quantity"):</label>
-                                        <span class="product-quantity">@item.Quantity</span>
+                                        <label class="td-title">@T("Order.TvChannel(s).Quantity"):</label>
+                                        <span class="tvchannel-quantity">@item.Quantity</span>
                                     </td>
                                     <td class="total">
-                                        <label class="td-title">@T("Order.Product(s).Total"):</label>
-                                        <span class="product-subtotal">@item.SubTotal</span>
+                                        <label class="td-title">@T("Order.TvChannel(s).Total"):</label>
+                                        <span class="tvchannel-subtotal">@item.SubTotal</span>
                                     </td>
                                 </tr>
                             }
@@ -699,7 +699,7 @@
                     </div>
                 }
             </div>
-            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageAfterproducts, additionalData = Model })
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageAftertvchannels, additionalData = Model })
             <div class="section options">
                 @if (!string.IsNullOrEmpty(Model.CheckoutAttributeInfo))
                 {

@@ -50,11 +50,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
 
         public IList<SelectListItem> TaxDisplayTypeValues { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Users.UserRoles.Fields.PurchasedWithProduct")]
-        public int PurchasedWithProductId { get; set; }
+        [TvProgResourceDisplayName("Admin.Users.UserRoles.Fields.PurchasedWithTvChannel")]
+        public int PurchasedWithTvChannelId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Users.UserRoles.Fields.PurchasedWithProduct")]
-        public string PurchasedWithProductName { get; set; }
+        [TvProgResourceDisplayName("Admin.Users.UserRoles.Fields.PurchasedWithTvChannel")]
+        public string PurchasedWithTvChannelName { get; set; }
 
         #endregion
     }

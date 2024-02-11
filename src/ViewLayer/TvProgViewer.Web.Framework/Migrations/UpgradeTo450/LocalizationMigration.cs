@@ -89,7 +89,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo450
                 ["Admin.System.Warnings.PluginNotInstalled"] = "You haven't installed the following plugin(s)",
                 ["Admin.System.Warnings.PluginNotInstalled.HelpText"] = "You may delete the plugins you don't use in order to increase startup time",
 
-                ["Admin.Catalog.Products.ProductAttributes.Attributes.Values.AlreadyExistsInCombination"] = "This attribute value cannot be removed because it is already used in this combination: {0}.",
+                ["Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.AlreadyExistsInCombination"] = "This attribute value cannot be removed because it is already used in this combination: {0}.",
 
                 //#5162
                 ["Admin.ContentManagement.MessageTemplates.Description.ShipmentDelivered.UserNotification"] = "This message template is used to notify a user that the shipment of the certain order is delivered.",
@@ -109,8 +109,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo450
                 ["Admin.Orders.Shipments.ReadyForPickupSelected"] = "Set as ready for pickup (selected)",
                 ["Order.Shipments.ReadyForPickupDate"] = "Date ready for pickup",
                 ["Order.Shipments.ReadyForPickupDate.NotYet"] = "Not yet",
-                ["Admin.Orders.Shipments.Products.QtyReadyForPickup"] = "Qty ready for pickup",
-                ["Admin.Orders.Shipments.Products.QtyToPickup"] = "Qty to pickup",
+                ["Admin.Orders.Shipments.TvChannels.QtyReadyForPickup"] = "Qty ready for pickup",
+                ["Admin.Orders.Shipments.TvChannels.QtyToPickup"] = "Qty to pickup",
                 
                 //#5042
                 ["Admin.Help.Documentation"] = "Documentation",
@@ -131,7 +131,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo450
                 ["Admin.Configuration.Settings.Catalog.EnableSpecificationAttributeFiltering.Hint"] = "Check to enable the specification attribute filtering on catalog pages.",
 
                 //#5952
-                ["Admin.Catalog.Products.Fields.ShortDescription.Hint"] = "Short description is the text that is displayed in product list i.e. category / manufacturer pages.",
+                ["Admin.Catalog.TvChannels.Fields.ShortDescription.Hint"] = "Short description is the text that is displayed in tvchannel list i.e. category / manufacturer pages.",
 
                 //#5654
                 ["Admin.Configuration.Settings.GeneralCommon.SeoFriendlyUrlsForLanguagesEnabled.Warning"] = "Attention! The changes will take effect only after the application is restarted.",

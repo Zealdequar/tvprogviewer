@@ -1,13 +1,13 @@
 ﻿@model SpecificationFilterModel
 
-<div class="product-filter product-spec-filter">
+<div class="tvchannel-filter tvchannel-spec-filter">
     <div class="filter-title">
         <strong>@T("Filtering.SpecificationFilter")</strong>
     </div>
     <div class="filter-content">
         @foreach (var attr in Model.Attributes)
         {
-            <ul class="group product-spec-group @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "product-spec-color" : null )">
+            <ul class="group tvchannel-spec-group @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "tvchannel-spec-color" : null )">
                 <li class="name">
                     <strong>@attr.Name</strong>
                 </li>
@@ -38,10 +38,10 @@
     $(document).ready(function () {
         var $optionEls = $('[data-option-id]');
         $optionEls.on('change', function () {
-            CatalogProducts.getProducts();
+            CatalogTvChannels.getTvChannels();
         });
 
-        $(CatalogProducts).on('before', function (e) {
+        $(CatalogTvChannels).on('before', function (e) {
             var selectedOptions = $.map($optionEls, function (el) {
                 var $optionEl = $(el);
                 if ($optionEl.is(':checked')) return $optionEl.data('option-id');

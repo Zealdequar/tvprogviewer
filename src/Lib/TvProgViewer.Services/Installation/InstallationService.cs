@@ -77,11 +77,11 @@ namespace TvProgViewer.Services.Installation
         private readonly IRepository<ManufacturerTemplate> _manufacturerTemplateRepository;
         private readonly IRepository<MeasureDimension> _measureDimensionRepository;
         private readonly IRepository<MeasureWeight> _measureWeightRepository;
-        private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<ProductAttribute> _productAttributeRepository;
-        private readonly IRepository<ProductAvailabilityRange> _productAvailabilityRangeRepository;
-        private readonly IRepository<ProductTag> _productTagRepository;
-        private readonly IRepository<ProductTemplate> _productTemplateRepository;
+        private readonly IRepository<TvChannel> _tvchannelRepository;
+        private readonly IRepository<TvChannelAttribute> _tvchannelAttributeRepository;
+        private readonly IRepository<TvChannelAvailabilityRange> _tvchannelAvailabilityRangeRepository;
+        private readonly IRepository<TvChannelTag> _tvchannelTagRepository;
+        private readonly IRepository<TvChannelTemplate> _tvchannelTemplateRepository;
         private readonly IRepository<SpecificationAttribute> _specificationAttributeRepository;
         private readonly IRepository<SpecificationAttributeOption> _specificationAttributeOptionRepository;
         private readonly IRepository<StateProvince> _stateProvinceRepository;
@@ -112,11 +112,11 @@ namespace TvProgViewer.Services.Installation
             IRepository<ManufacturerTemplate> manufacturerTemplateRepository,
             IRepository<MeasureDimension> measureDimensionRepository,
             IRepository<MeasureWeight> measureWeightRepository,
-            IRepository<Product> productRepository,
-            IRepository<ProductAttribute> productAttributeRepository,
-            IRepository<ProductAvailabilityRange> productAvailabilityRangeRepository,
-            IRepository<ProductTag> productTagRepository,
-            IRepository<ProductTemplate> productTemplateRepository,
+            IRepository<TvChannel> tvchannelRepository,
+            IRepository<TvChannelAttribute> tvchannelAttributeRepository,
+            IRepository<TvChannelAvailabilityRange> tvchannelAvailabilityRangeRepository,
+            IRepository<TvChannelTag> tvchannelTagRepository,
+            IRepository<TvChannelTemplate> tvchannelTemplateRepository,
             IRepository<SpecificationAttribute> specificationAttributeRepository,
             IRepository<SpecificationAttributeOption> specificationAttributeOptionRepository,
             IRepository<StateProvince> stateProvinceRepository,
@@ -143,11 +143,11 @@ namespace TvProgViewer.Services.Installation
             _manufacturerTemplateRepository = manufacturerTemplateRepository;
             _measureDimensionRepository = measureDimensionRepository;
             _measureWeightRepository = measureWeightRepository;
-            _productAttributeRepository = productAttributeRepository;
-            _productAvailabilityRangeRepository = productAvailabilityRangeRepository;
-            _productRepository = productRepository;
-            _productTagRepository = productTagRepository;
-            _productTemplateRepository = productTemplateRepository;
+            _tvchannelAttributeRepository = tvchannelAttributeRepository;
+            _tvchannelAvailabilityRangeRepository = tvchannelAvailabilityRangeRepository;
+            _tvchannelRepository = tvchannelRepository;
+            _tvchannelTagRepository = tvchannelTagRepository;
+            _tvchannelTemplateRepository = tvchannelTemplateRepository;
             _specificationAttributeRepository = specificationAttributeRepository;
             _specificationAttributeOptionRepository = specificationAttributeOptionRepository;
             _stateProvinceRepository = stateProvinceRepository;
@@ -214,24 +214,24 @@ namespace TvProgViewer.Services.Installation
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="product"></param>
+        /// <param name="tvchannel"></param>
         /// <param name="fileName"></param>
         /// <param name="displayOrder"></param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the identifier of inserted picture
         /// </returns>
-        protected virtual async Task<int> InsertProductPictureAsync(Product product, string fileName, int displayOrder = 1)
+        protected virtual async Task<int> InsertTvChannelPictureAsync(TvChannel tvchannel, string fileName, int displayOrder = 1)
         {
             var pictureService = EngineContext.Current.Resolve<IPictureService>();
             var sampleImagesPath = GetSamplesPath();
 
-            var pic = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, fileName)), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(product.Name));
+            var pic = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, fileName)), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannel.Name));
 
             await InsertInstallationDataAsync(
-                new ProductPicture
+                new TvChannelPicture
                 {
-                    ProductId = product.Id,
+                    TvChannelId = tvchannel.Id,
                     PictureId = pic.Id,
                     DisplayOrder = displayOrder
                 });
@@ -409,7 +409,7 @@ namespace TvProgViewer.Services.Installation
             {
                 new TaxCategory {Name = "Books", DisplayOrder = 1},
                 new TaxCategory {Name = "Electronics & Software", DisplayOrder = 5},
-                new TaxCategory {Name = "Downloadable Products", DisplayOrder = 10},
+                new TaxCategory {Name = "Downloadable TvChannels", DisplayOrder = 10},
                 new TaxCategory {Name = "Jewelry", DisplayOrder = 15},
                 new TaxCategory {Name = "Apparel", DisplayOrder = 20}
             };
@@ -760,28 +760,28 @@ namespace TvProgViewer.Services.Installation
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallProductAvailabilityRangesAsync()
+        protected virtual async Task InstallTvChannelAvailabilityRangesAsync()
         {
-            var productAvailabilityRanges = new List<ProductAvailabilityRange>
+            var tvchannelAvailabilityRanges = new List<TvChannelAvailabilityRange>
             {
-                new ProductAvailabilityRange
+                new TvChannelAvailabilityRange
                 {
                     Name = "2-4 days",
                     DisplayOrder = 1
                 },
-                new ProductAvailabilityRange
+                new TvChannelAvailabilityRange
                 {
                     Name = "7-10 days",
                     DisplayOrder = 2
                 },
-                new ProductAvailabilityRange
+                new TvChannelAvailabilityRange
                 {
                     Name = "2 weeks",
                     DisplayOrder = 3
                 }
             };
 
-            await InsertInstallationDataAsync(productAvailabilityRanges);
+            await InsertInstallationDataAsync(tvchannelAvailabilityRanges);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
@@ -1309,12 +1309,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = firstOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Apple iCam").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Apple iCam").Id,
                 UnitPriceInclTax = 1300M,
                 UnitPriceExclTax = 1300M,
                 PriceInclTax = 1300M,
                 PriceExclTax = 1300M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1335,12 +1335,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = firstOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Leica T Mirrorless Digital Camera").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Leica T Mirrorless Digital Camera").Id,
                 UnitPriceInclTax = 530M,
                 UnitPriceExclTax = 530M,
                 PriceInclTax = 530M,
                 PriceExclTax = 530M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1361,12 +1361,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = firstOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "$25 Virtual Gift Card").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "$25 Virtual Gift Card").Id,
                 UnitPriceInclTax = 25M,
                 UnitPriceExclTax = 25M,
                 PriceInclTax = 25M,
                 PriceExclTax = 25M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = "From: Steve Gates &lt;steve_gates@tvprogviewer.ru&gt;<br />For: Brenda Lindgren &lt;brenda_lindgren@tvprogviewer.ru&gt;",
                 AttributesXml = "<Attributes><GiftCardInfo><RecipientName>Brenda Lindgren</RecipientName><RecipientEmail>brenda_lindgren@tvprogviewer.ru</RecipientEmail><SenderName>Steve Gates</SenderName><SenderEmail>steve_gates@gmail.com</SenderEmail><Message></Message></GiftCardInfo></Attributes>",
                 Quantity = 1,
@@ -1493,12 +1493,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = secondOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Vintage Style Engagement Ring").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Vintage Style Engagement Ring").Id,
                 UnitPriceInclTax = 2100M,
                 UnitPriceExclTax = 2100M,
                 PriceInclTax = 2100M,
                 PriceExclTax = 2100M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1519,12 +1519,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = secondOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Flower Girl Bracelet").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Flower Girl Bracelet").Id,
                 UnitPriceInclTax = 360M,
                 UnitPriceExclTax = 360M,
                 PriceInclTax = 360M,
                 PriceExclTax = 360M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1616,12 +1616,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = thirdOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "If You Wait (donation)").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "If You Wait (donation)").Id,
                 UnitPriceInclTax = 3M,
                 UnitPriceExclTax = 3M,
                 PriceInclTax = 3M,
                 PriceExclTax = 3M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1642,12 +1642,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = thirdOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Night Visions").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Night Visions").Id,
                 UnitPriceInclTax = 2.8M,
                 UnitPriceExclTax = 2.8M,
                 PriceInclTax = 2.8M,
                 PriceExclTax = 2.8M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1668,12 +1668,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = thirdOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Science & Faith").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Science & Faith").Id,
                 UnitPriceInclTax = 3M,
                 UnitPriceExclTax = 3M,
                 PriceInclTax = 3M,
                 PriceExclTax = 3M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1783,12 +1783,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = fourthOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Pride and Prejudice").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Pride and Prejudice").Id,
                 UnitPriceInclTax = 24M,
                 UnitPriceExclTax = 24M,
                 PriceInclTax = 24M,
                 PriceExclTax = 24M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1809,12 +1809,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = fourthOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "First Prize Pies").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "First Prize Pies").Id,
                 UnitPriceInclTax = 51M,
                 UnitPriceExclTax = 51M,
                 PriceInclTax = 51M,
                 PriceExclTax = 51M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -1835,12 +1835,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = fourthOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Fahrenheit 451 by Ray Bradbury").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Fahrenheit 451 by Ray Bradbury").Id,
                 UnitPriceInclTax = 27M,
                 UnitPriceExclTax = 27M,
                 PriceInclTax = 27M,
                 PriceExclTax = 27M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -2014,12 +2014,12 @@ namespace TvProgViewer.Services.Installation
             {
                 OrderItemGuid = Guid.NewGuid(),
                 OrderId = fifthOrder.Id,
-                ProductId = _productRepository.Table.First(p => p.Name == "Levi's 511 Jeans").Id,
+                TvChannelId = _tvchannelRepository.Table.First(p => p.Name == "Levi's 511 Jeans").Id,
                 UnitPriceInclTax = 43.50M,
                 UnitPriceExclTax = 43.50M,
                 PriceInclTax = 43.50M,
                 PriceExclTax = 43.50M,
-                OriginalProductCost = decimal.Zero,
+                OriginalTvChannelCost = decimal.Zero,
                 AttributeDescription = string.Empty,
                 AttributesXml = string.Empty,
                 Quantity = 1,
@@ -2097,8 +2097,8 @@ namespace TvProgViewer.Services.Installation
 
             await InsertInstallationDataAsync(new ActivityLog
             {
-                ActivityLogTypeId = _activityLogTypeRepository.Table.FirstOrDefault(alt => alt.SystemKeyword == "AddNewProductAttribute")?.Id ?? throw new Exception("Cannot load LogType: AddNewProductAttribute"),
-                Comment = "Added a new product attribute ('Some attribute')",
+                ActivityLogTypeId = _activityLogTypeRepository.Table.FirstOrDefault(alt => alt.SystemKeyword == "AddNewTvChannelAttribute")?.Id ?? throw new Exception("Cannot load LogType: AddNewTvChannelAttribute"),
+                Comment = "Added a new tvchannel attribute ('Some attribute')",
                 CreatedOnUtc = DateTime.UtcNow,
                 UserId = defaultUser.Id,
                 IpAddress = "127.0.0.1"
@@ -2207,7 +2207,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.BackInStockNotification,
                     Subject = "%Store.Name%. Back in stock notification",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %User.FullName%,{Environment.NewLine}<br />{Environment.NewLine}Product <a target=\"_blank\" href=\"%BackInStockSubscription.ProductUrl%\">%BackInStockSubscription.ProductName%</a> is in stock.{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %User.FullName%,{Environment.NewLine}<br />{Environment.NewLine}TvChannel <a target=\"_blank\" href=\"%BackInStockSubscription.TvChannelUrl%\">%BackInStockSubscription.TvChannelName%</a> is in stock.{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2247,7 +2247,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.UserWelcomeMessage,
                     Subject = "Welcome to %Store.Name%",
-                    Body = $"We welcome you to <a href=\"%Store.URL%\"> %Store.Name%</a>.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}You can now take part in the various services we have to offer you. Some of these services include:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Permanent Cart - Any products added to your online cart remain there until you remove them, or check them out.{Environment.NewLine}<br />{Environment.NewLine}Address Book - We can now deliver your products to another address other than yours! This is perfect to send birthday gifts direct to the birthday-person themselves.{Environment.NewLine}<br />{Environment.NewLine}Order History - View your history of purchases that you have made with us.{Environment.NewLine}<br />{Environment.NewLine}Products Reviews - Share your opinions on products with our other users.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}For help with any of our online services, please email the store-owner: <a href=\"mailto:%Store.Email%\">%Store.Email%</a>.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Note: This email address was provided on our registration page. If you own the email and did not register on our site, please send an email to <a href=\"mailto:%Store.Email%\">%Store.Email%</a>.{Environment.NewLine}",
+                    Body = $"We welcome you to <a href=\"%Store.URL%\"> %Store.Name%</a>.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}You can now take part in the various services we have to offer you. Some of these services include:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Permanent Cart - Any tvchannels added to your online cart remain there until you remove them, or check them out.{Environment.NewLine}<br />{Environment.NewLine}Address Book - We can now deliver your tvchannels to another address other than yours! This is perfect to send birthday gifts direct to the birthday-person themselves.{Environment.NewLine}<br />{Environment.NewLine}Order History - View your history of purchases that you have made with us.{Environment.NewLine}<br />{Environment.NewLine}TvChannels Reviews - Share your opinions on tvchannels with our other users.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}For help with any of our online services, please email the store-owner: <a href=\"mailto:%Store.Email%\">%Store.Email%</a>.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Note: This email address was provided on our registration page. If you own the email and did not register on our site, please send an email to <a href=\"mailto:%Store.Email%\">%Store.Email%</a>.{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2287,7 +2287,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.NewReturnRequestStoreOwnerNotification,
                     Subject = "%Store.Name%. New return request.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%User.FullName% has just submitted a new return request. Details are below:{Environment.NewLine}<br />{Environment.NewLine}Request ID: %ReturnRequest.CustomNumber%{Environment.NewLine}<br />{Environment.NewLine}Product: %ReturnRequest.Product.Quantity% x Product: %ReturnRequest.Product.Name%{Environment.NewLine}<br />{Environment.NewLine}Reason for return: %ReturnRequest.Reason%{Environment.NewLine}<br />{Environment.NewLine}Requested action: %ReturnRequest.RequestedAction%{Environment.NewLine}<br />{Environment.NewLine}User comments:{Environment.NewLine}<br />{Environment.NewLine}%ReturnRequest.UserComment%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%User.FullName% has just submitted a new return request. Details are below:{Environment.NewLine}<br />{Environment.NewLine}Request ID: %ReturnRequest.CustomNumber%{Environment.NewLine}<br />{Environment.NewLine}TvChannel: %ReturnRequest.TvChannel.Quantity% x TvChannel: %ReturnRequest.TvChannel.Name%{Environment.NewLine}<br />{Environment.NewLine}Reason for return: %ReturnRequest.Reason%{Environment.NewLine}<br />{Environment.NewLine}Requested action: %ReturnRequest.RequestedAction%{Environment.NewLine}<br />{Environment.NewLine}User comments:{Environment.NewLine}<br />{Environment.NewLine}%ReturnRequest.UserComment%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2295,7 +2295,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.NewReturnRequestUserNotification,
                     Subject = "%Store.Name%. New return request.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %User.FullName%!{Environment.NewLine}<br />{Environment.NewLine}You have just submitted a new return request. Details are below:{Environment.NewLine}<br />{Environment.NewLine}Request ID: %ReturnRequest.CustomNumber%{Environment.NewLine}<br />{Environment.NewLine}Product: %ReturnRequest.Product.Quantity% x Product: %ReturnRequest.Product.Name%{Environment.NewLine}<br />{Environment.NewLine}Reason for return: %ReturnRequest.Reason%{Environment.NewLine}<br />{Environment.NewLine}Requested action: %ReturnRequest.RequestedAction%{Environment.NewLine}<br />{Environment.NewLine}User comments:{Environment.NewLine}<br />{Environment.NewLine}%ReturnRequest.UserComment%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %User.FullName%!{Environment.NewLine}<br />{Environment.NewLine}You have just submitted a new return request. Details are below:{Environment.NewLine}<br />{Environment.NewLine}Request ID: %ReturnRequest.CustomNumber%{Environment.NewLine}<br />{Environment.NewLine}TvChannel: %ReturnRequest.TvChannel.Quantity% x TvChannel: %ReturnRequest.TvChannel.Name%{Environment.NewLine}<br />{Environment.NewLine}Reason for return: %ReturnRequest.Reason%{Environment.NewLine}<br />{Environment.NewLine}Requested action: %ReturnRequest.RequestedAction%{Environment.NewLine}<br />{Environment.NewLine}User comments:{Environment.NewLine}<br />{Environment.NewLine}%ReturnRequest.UserComment%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2335,7 +2335,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderCancelledUserNotification,
                     Subject = "%Store.Name%. Your order cancelled",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Your order has been cancelled. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Your order has been cancelled. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2343,7 +2343,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderProcessingUserNotification,
                     Subject = "%Store.Name%. Your order is processing",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Your order is processing. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Your order is processing. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2351,7 +2351,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderCompletedUserNotification,
                     Subject = "%Store.Name%. Your order completed",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Your order has been completed. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Your order has been completed. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2359,7 +2359,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.ShipmentDeliveredUserNotification,
                     Subject = "Your order from %Store.Name% has been %if (!%Order.IsCompletelyDelivered%) partially endif%delivered.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Good news! You order has been %if (!%Order.IsCompletelyDelivered%) partially endif%delivered.{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% Delivered Products:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Shipment.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Good news! You order has been %if (!%Order.IsCompletelyDelivered%) partially endif%delivered.{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% Delivered TvChannels:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Shipment.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2367,7 +2367,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderPlacedUserNotification,
                     Subject = "Order receipt from %Store.Name%.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Thanks for buying from <a href=\"%Store.URL%\">%Store.Name%</a>. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Thanks for buying from <a href=\"%Store.URL%\">%Store.Name%</a>. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a target=\"_blank\" href=\"%Order.OrderURLForUser%\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2375,7 +2375,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderPlacedStoreOwnerNotification,
                     Subject = "%Store.Name%. Purchase Receipt for Order #%Order.OrderNumber%",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.UserFullName% (%Order.UserEmail%) has just placed an order from your store. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.UserFullName% (%Order.UserEmail%) has just placed an order from your store. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2383,7 +2383,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.ShipmentSentUserNotification,
                     Subject = "Your order from %Store.Name% has been %if (!%Order.IsCompletelyShipped%) partially endif%shipped.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%!,{Environment.NewLine}<br />{Environment.NewLine}Good news! You order has been %if (!%Order.IsCompletelyShipped%) partially endif%shipped.{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% Shipped Products:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Shipment.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%!,{Environment.NewLine}<br />{Environment.NewLine}Good news! You order has been %if (!%Order.IsCompletelyShipped%) partially endif%shipped.{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% Shipped TvChannels:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Shipment.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2391,39 +2391,39 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.ShipmentReadyForPickupUserNotification,
                     Subject = "Your order from %Store.Name% has been %if (!%Order.IsCompletelyReadyForPickup%) partially endif%ready for pickup.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%!,{Environment.NewLine}<br />{Environment.NewLine}Good news! You order has been %if (!%Order.IsCompletelyReadyForPickup%) partially endif%ready for pickup.{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% Products ready for pickup:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Shipment.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%!,{Environment.NewLine}<br />{Environment.NewLine}Good news! You order has been %if (!%Order.IsCompletelyReadyForPickup%) partially endif%ready for pickup.{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% TvChannels ready for pickup:{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Shipment.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
                 new MessageTemplate
                 {
-                    Name = MessageTemplateSystemNames.ProductReviewStoreOwnerNotification,
-                    Subject = "%Store.Name%. New product review.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}A new product review has been written for product \"%ProductReview.ProductName%\".{Environment.NewLine}</p>{Environment.NewLine}",
+                    Name = MessageTemplateSystemNames.TvChannelReviewStoreOwnerNotification,
+                    Subject = "%Store.Name%. New tvchannel review.",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}A new tvchannel review has been written for tvchannel \"%TvChannelReview.TvChannelName%\".{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
                 new MessageTemplate
                 {
-                    Name = MessageTemplateSystemNames.ProductReviewReplyUserNotification,
-                    Subject = "%Store.Name%. Product review reply.",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %User.FullName%,{Environment.NewLine}<br />{Environment.NewLine}You received a reply from the store administration to your review for product \"%ProductReview.ProductName%\".{Environment.NewLine}</p>{Environment.NewLine}",
+                    Name = MessageTemplateSystemNames.TvChannelReviewReplyUserNotification,
+                    Subject = "%Store.Name%. TvChannel review reply.",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %User.FullName%,{Environment.NewLine}<br />{Environment.NewLine}You received a reply from the store administration to your review for tvchannel \"%TvChannelReview.TvChannelName%\".{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
                 },
                 new MessageTemplate
                 {
                     Name = MessageTemplateSystemNames.QuantityBelowStoreOwnerNotification,
-                    Subject = "%Store.Name%. Quantity below notification. %Product.Name%",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Product.Name% (ID: %Product.ID%) low quantity.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Quantity: %Product.StockQuantity%{Environment.NewLine}<br />{Environment.NewLine}</p>{Environment.NewLine}",
+                    Subject = "%Store.Name%. Quantity below notification. %TvChannel.Name%",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%TvChannel.Name% (ID: %TvChannel.ID%) low quantity.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Quantity: %TvChannel.StockQuantity%{Environment.NewLine}<br />{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
                 new MessageTemplate
                 {
                     Name = MessageTemplateSystemNames.QuantityBelowAttributeCombinationStoreOwnerNotification,
-                    Subject = "%Store.Name%. Quantity below notification. %Product.Name%",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Product.Name% (ID: %Product.ID%) low quantity.{Environment.NewLine}<br />{Environment.NewLine}%AttributeCombination.Formatted%{Environment.NewLine}<br />{Environment.NewLine}Quantity: %AttributeCombination.StockQuantity%{Environment.NewLine}<br />{Environment.NewLine}</p>{Environment.NewLine}",
+                    Subject = "%Store.Name%. Quantity below notification. %TvChannel.Name%",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%TvChannel.Name% (ID: %TvChannel.ID%) low quantity.{Environment.NewLine}<br />{Environment.NewLine}%AttributeCombination.Formatted%{Environment.NewLine}<br />{Environment.NewLine}Quantity: %AttributeCombination.StockQuantity%{Environment.NewLine}<br />{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2439,7 +2439,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.EmailAFriendMessage,
                     Subject = "%Store.Name%. Referred Item",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%EmailAFriend.Email% was shopping on %Store.Name% and wanted to share the following item with you.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<b><a target=\"_blank\" href=\"%Product.ProductURLForUser%\">%Product.Name%</a></b>{Environment.NewLine}<br />{Environment.NewLine}%Product.ShortDescription%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}For more info click <a target=\"_blank\" href=\"%Product.ProductURLForUser%\">here</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%EmailAFriend.PersonalMessage%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Store.Name%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\"> %Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%EmailAFriend.Email% was shopping on %Store.Name% and wanted to share the following item with you.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<b><a target=\"_blank\" href=\"%TvChannel.TvChannelURLForUser%\">%TvChannel.Name%</a></b>{Environment.NewLine}<br />{Environment.NewLine}%TvChannel.ShortDescription%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}For more info click <a target=\"_blank\" href=\"%TvChannel.TvChannelURLForUser%\">here</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%EmailAFriend.PersonalMessage%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Store.Name%{Environment.NewLine}</p>{Environment.NewLine}",
                     IsActive = true,
                     EmailAccountId = eaGeneral.Id
                 },
@@ -2487,7 +2487,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderPlacedVendorNotification,
                     Subject = "%Store.Name%. Order placed",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%User.FullName% (%User.Email%) has just placed an order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%User.FullName% (%User.Email%) has just placed an order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     //this template is disabled by default
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
@@ -2496,7 +2496,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderPlacedAffiliateNotification,
                     Subject = "%Store.Name%. Order placed",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%User.FullName% (%User.Email%) has just placed an order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%User.FullName% (%User.Email%) has just placed an order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     //this template is disabled by default
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
@@ -2505,7 +2505,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderRefundedUserNotification,
                     Subject = "%Store.Name%. Order #%Order.OrderNumber% refunded",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Thanks for buying from <a href=\"%Store.URL%\">%Store.Name%</a>. Order #%Order.OrderNumber% has been has been refunded. Please allow 7-14 days for the refund to be reflected in your account.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Amount refunded: %Order.AmountRefunded%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingFirstName% %Order.BillingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br /{Environment.NewLine}>Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Thanks for buying from <a href=\"%Store.URL%\">%Store.Name%</a>. Order #%Order.OrderNumber% has been has been refunded. Please allow 7-14 days for the refund to be reflected in your account.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Amount refunded: %Order.AmountRefunded%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingFirstName% %Order.BillingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br /{Environment.NewLine}>Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     //this template is disabled by default
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
@@ -2532,7 +2532,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderPaidUserNotification,
                     Subject = "%Store.Name%. Order #%Order.OrderNumber% paid",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Thanks for buying from <a href=\"%Store.URL%\">%Store.Name%</a>. Order #%Order.OrderNumber% has been just paid. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Hello %Order.UserFullName%,{Environment.NewLine}<br />{Environment.NewLine}Thanks for buying from <a href=\"%Store.URL%\">%Store.Name%</a>. Order #%Order.OrderNumber% has been just paid. Below is the summary of the order.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Order Details: <a href=\"%Order.OrderURLForUser%\" target=\"_blank\">%Order.OrderURLForUser%</a>{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Billing Address{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingLastName% %Order.BillingFirstName% %Order.BillingMiddleName%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingCity% %Order.BillingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.BillingStateProvince% %Order.BillingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%if (%Order.Shippable%) Shipping Address{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingFirstName% %Order.ShippingLastName%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress1%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingAddress2%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingCity% %Order.ShippingZipPostalCode%{Environment.NewLine}<br />{Environment.NewLine}%Order.ShippingStateProvince% %Order.ShippingCountry%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Shipping Method: %Order.ShippingMethod%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine} endif% %Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     //this template is disabled by default
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
@@ -2541,7 +2541,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderPaidVendorNotification,
                     Subject = "%Store.Name%. Order #%Order.OrderNumber% paid",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order #%Order.OrderNumber% has been just paid.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order #%Order.OrderNumber% has been just paid.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     //this template is disabled by default
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
@@ -2550,7 +2550,7 @@ namespace TvProgViewer.Services.Installation
                 {
                     Name = MessageTemplateSystemNames.OrderPaidAffiliateNotification,
                     Subject = "%Store.Name%. Order #%Order.OrderNumber% paid",
-                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order #%Order.OrderNumber% has been just paid.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.Product(s)%{Environment.NewLine}</p>{Environment.NewLine}",
+                    Body = $"<p>{Environment.NewLine}<a href=\"%Store.URL%\">%Store.Name%</a>{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order #%Order.OrderNumber% has been just paid.{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}Order Number: %Order.OrderNumber%{Environment.NewLine}<br />{Environment.NewLine}Date Ordered: %Order.CreatedOn%{Environment.NewLine}<br />{Environment.NewLine}<br />{Environment.NewLine}%Order.TvChannel(s)%{Environment.NewLine}</p>{Environment.NewLine}",
                     //this template is disabled by default
                     IsActive = false,
                     EmailAccountId = eaGeneral.Id
@@ -2670,7 +2670,7 @@ namespace TvProgViewer.Services.Installation
                     Published = true,
                     Title = "Welcome to our store",
                     Body =
-                        "<p>Online shopping is the process consumers go through to purchase products or services over the Internet. You can edit this in the admin site.</p><p>If you have questions, see the <a href=\"http://docs.tvprogviewer.ru/\">Documentation</a>, or post in the <a href=\"https://tvprogviewer.ru/boards/\">Forums</a> at <a href=\"https://tvprogviewer.ru\">tvprogviewer.ru</a></p>",
+                        "<p>Online shopping is the process consumers go through to purchase tvchannels or services over the Internet. You can edit this in the admin site.</p><p>If you have questions, see the <a href=\"http://docs.tvprogviewer.ru/\">Documentation</a>, or post in the <a href=\"https://tvprogviewer.ru/boards/\">Forums</a> at <a href=\"https://tvprogviewer.ru\">tvprogviewer.ru</a></p>",
                     TopicTemplateId = defaultTopicTemplate.Id
                 },
                 new Topic
@@ -2788,8 +2788,8 @@ namespace TvProgViewer.Services.Installation
                 SitemapPageSize = 200,
                 SitemapIncludeCategories = true,
                 SitemapIncludeManufacturers = true,
-                SitemapIncludeProducts = false,
-                SitemapIncludeProductTags = false,
+                SitemapIncludeTvChannels = false,
+                SitemapIncludeTvChannelTags = false,
                 SitemapIncludeBlogPosts = true,
                 SitemapIncludeNews = false,
                 SitemapIncludeTopics = true
@@ -2802,8 +2802,8 @@ namespace TvProgViewer.Services.Installation
                 SitemapXmlIncludeCategories = true,
                 SitemapXmlIncludeManufacturers = true,
                 SitemapXmlIncludeNews = true,
-                SitemapXmlIncludeProducts = true,
-                SitemapXmlIncludeProductTags = true,
+                SitemapXmlIncludeTvChannels = true,
+                SitemapXmlIncludeTvChannelTags = true,
                 SitemapXmlIncludeCustomUrls = true,
                 SitemapXmlIncludeTopics = true,
                 RebuildSitemapXmlAfterHours = 2 * 24,
@@ -2832,7 +2832,7 @@ namespace TvProgViewer.Services.Installation
             {
                 PageTitleSeparator = ". ",
                 PageTitleSeoAdjustment = PageTitleSeoAdjustment.PagenameAfterStorename,
-                GenerateProductMetaDescription = true,
+                GenerateTvChannelMetaDescription = true,
                 ConvertNonWesternChars = false,
                 AllowUnicodeCharsInUrls = true,
                 CanonicalUrlsEnabled = false,
@@ -2860,11 +2860,11 @@ namespace TvProgViewer.Services.Installation
                 ShowDocumentationReferenceLinks = true
             });
 
-            await settingService.SaveSettingAsync(new ProductEditorSettings
+            await settingService.SaveSettingAsync(new TvChannelEditorSettings
             {
                 Weight = true,
                 Dimensions = true,
-                ProductAttributes = true,
+                TvChannelAttributes = true,
                 SpecificationAttributes = true,
                 PAngV = isGermany
             });
@@ -2880,83 +2880,83 @@ namespace TvProgViewer.Services.Installation
 
             await settingService.SaveSettingAsync(new CatalogSettings
             {
-                AllowViewUnpublishedProductPage = true,
-                DisplayDiscontinuedMessageForUnpublishedProducts = true,
-                PublishBackProductWhenCancellingOrders = false,
-                ShowSkuOnProductDetailsPage = true,
+                AllowViewUnpublishedTvChannelPage = true,
+                DisplayDiscontinuedMessageForUnpublishedTvChannels = true,
+                PublishBackTvChannelWhenCancellingOrders = false,
+                ShowSkuOnTvChannelDetailsPage = true,
                 ShowSkuOnCatalogPages = false,
                 ShowManufacturerPartNumber = false,
                 ShowGtin = false,
                 ShowFreeShippingNotification = true,
                 ShowShortDescriptionOnCatalogPages = false,
-                AllowProductSorting = true,
-                AllowProductViewModeChanging = true,
+                AllowTvChannelSorting = true,
+                AllowTvChannelViewModeChanging = true,
                 DefaultViewMode = "grid",
-                ShowProductsFromSubcategories = false,
-                ShowCategoryProductNumber = false,
-                ShowCategoryProductNumberIncludingSubcategories = false,
+                ShowTvChannelsFromSubcategories = false,
+                ShowCategoryTvChannelNumber = false,
+                ShowCategoryTvChannelNumberIncludingSubcategories = false,
                 CategoryBreadcrumbEnabled = true,
                 ShowShareButton = true,
                 PageShareCode =
                     "<!-- AddThis Button BEGIN --><div class=\"addthis_toolbox addthis_default_style \"><a class=\"addthis_button_preferred_1\"></a><a class=\"addthis_button_preferred_2\"></a><a class=\"addthis_button_preferred_3\"></a><a class=\"addthis_button_preferred_4\"></a><a class=\"addthis_button_compact\"></a><a class=\"addthis_counter addthis_bubble_style\"></a></div><script src=\"http://s7.addthis.com/js/250/addthis_widget.js#pubid=nopsolutions\"></script><!-- AddThis Button END -->",
-                ProductReviewsMustBeApproved = false,
-                OneReviewPerProductFromUser = false,
-                DefaultProductRatingValue = 5,
-                AllowAnonymousUsersToReviewProduct = false,
-                ProductReviewPossibleOnlyAfterPurchasing = false,
-                NotifyStoreOwnerAboutNewProductReviews = false,
-                NotifyUserAboutProductReviewReply = false,
+                TvChannelReviewsMustBeApproved = false,
+                OneReviewPerTvChannelFromUser = false,
+                DefaultTvChannelRatingValue = 5,
+                AllowAnonymousUsersToReviewTvChannel = false,
+                TvChannelReviewPossibleOnlyAfterPurchasing = false,
+                NotifyStoreOwnerAboutNewTvChannelReviews = false,
+                NotifyUserAboutTvChannelReviewReply = false,
                 EmailAFriendEnabled = true,
                 AllowAnonymousUsersToEmailAFriend = false,
-                RecentlyViewedProductsNumber = 3,
-                RecentlyViewedProductsEnabled = true,
-                NewProductsEnabled = true,
-                NewProductsPageSize = 6,
-                NewProductsAllowUsersToSelectPageSize = true,
-                NewProductsPageSizeOptions = "6, 3, 9",
-                CompareProductsEnabled = true,
-                CompareProductsNumber = 4,
-                ProductSearchAutoCompleteEnabled = true,
-                ProductSearchEnabled = true,
-                ProductSearchAutoCompleteNumberOfProducts = 10,
+                RecentlyViewedTvChannelsNumber = 3,
+                RecentlyViewedTvChannelsEnabled = true,
+                NewTvChannelsEnabled = true,
+                NewTvChannelsPageSize = 6,
+                NewTvChannelsAllowUsersToSelectPageSize = true,
+                NewTvChannelsPageSizeOptions = "6, 3, 9",
+                CompareTvChannelsEnabled = true,
+                CompareTvChannelsNumber = 4,
+                TvChannelSearchAutoCompleteEnabled = true,
+                TvChannelSearchEnabled = true,
+                TvChannelSearchAutoCompleteNumberOfTvChannels = 10,
                 ShowLinkToAllResultInSearchAutoComplete = false,
-                ProductSearchTermMinimumLength = 3,
-                ShowProductImagesInSearchAutoComplete = false,
+                TvChannelSearchTermMinimumLength = 3,
+                ShowTvChannelImagesInSearchAutoComplete = false,
                 ShowBestsellersOnHomepage = false,
                 NumberOfBestsellersOnHomepage = 4,
-                SearchPageProductsPerPage = 6,
+                SearchPageTvChannelsPerPage = 6,
                 SearchPageAllowUsersToSelectPageSize = true,
                 SearchPagePageSizeOptions = "6, 3, 9, 18",
                 SearchPagePriceRangeFiltering = true,
                 SearchPageManuallyPriceRange = true,
                 SearchPagePriceFrom = TvProgCatalogDefaults.DefaultPriceRangeFrom,
                 SearchPagePriceTo = TvProgCatalogDefaults.DefaultPriceRangeTo,
-                ProductsAlsoPurchasedEnabled = true,
-                ProductsAlsoPurchasedNumber = 4,
+                TvChannelsAlsoPurchasedEnabled = true,
+                TvChannelsAlsoPurchasedNumber = 4,
                 AjaxProcessAttributeChange = true,
-                NumberOfProductTags = 15,
-                ProductsByTagPageSize = 6,
-                IncludeShortDescriptionInCompareProducts = false,
-                IncludeFullDescriptionInCompareProducts = false,
-                IncludeFeaturedProductsInNormalLists = false,
-                UseLinksInRequiredProductWarnings = true,
+                NumberOfTvChannelTags = 15,
+                TvChannelsByTagPageSize = 6,
+                IncludeShortDescriptionInCompareTvChannels = false,
+                IncludeFullDescriptionInCompareTvChannels = false,
+                IncludeFeaturedTvChannelsInNormalLists = false,
+                UseLinksInRequiredTvChannelWarnings = true,
                 DisplayTierPricesWithDiscounts = true,
                 IgnoreDiscounts = false,
-                IgnoreFeaturedProducts = false,
+                IgnoreFeaturedTvChannels = false,
                 IgnoreAcl = true,
                 IgnoreStoreLimitations = true,
-                CacheProductPrices = false,
-                ProductsByTagAllowUsersToSelectPageSize = true,
-                ProductsByTagPageSizeOptions = "6, 3, 9, 18",
-                ProductsByTagPriceRangeFiltering = true,
-                ProductsByTagManuallyPriceRange = true,
-                ProductsByTagPriceFrom = TvProgCatalogDefaults.DefaultPriceRangeFrom,
-                ProductsByTagPriceTo = TvProgCatalogDefaults.DefaultPriceRangeTo,
+                CacheTvChannelPrices = false,
+                TvChannelsByTagAllowUsersToSelectPageSize = true,
+                TvChannelsByTagPageSizeOptions = "6, 3, 9, 18",
+                TvChannelsByTagPriceRangeFiltering = true,
+                TvChannelsByTagManuallyPriceRange = true,
+                TvChannelsByTagPriceFrom = TvProgCatalogDefaults.DefaultPriceRangeFrom,
+                TvChannelsByTagPriceTo = TvProgCatalogDefaults.DefaultPriceRangeTo,
                 MaximumBackInStockSubscriptions = 200,
                 ManufacturersBlockItemsToDisplay = 2,
                 DisplayTaxShippingInfoFooter = isGermany,
-                DisplayTaxShippingInfoProductDetailsPage = isGermany,
-                DisplayTaxShippingInfoProductBoxes = isGermany,
+                DisplayTaxShippingInfoTvChannelDetailsPage = isGermany,
+                DisplayTaxShippingInfoTvChannelBoxes = isGermany,
                 DisplayTaxShippingInfoShoppingCart = isGermany,
                 DisplayTaxShippingInfoWishlist = isGermany,
                 DisplayTaxShippingInfoOrderDetailsPage = isGermany,
@@ -2964,18 +2964,18 @@ namespace TvProgViewer.Services.Installation
                 DefaultCategoryPageSize = 6,
                 DefaultManufacturerPageSizeOptions = "6, 3, 9",
                 DefaultManufacturerPageSize = 6,
-                ShowProductReviewsTabOnAccountPage = true,
-                ProductReviewsPageSizeOnAccountPage = 10,
-                ProductReviewsSortByCreatedDateAscending = false,
-                ExportImportProductAttributes = true,
-                ExportImportProductSpecificationAttributes = true,
+                ShowTvChannelReviewsTabOnAccountPage = true,
+                TvChannelReviewsPageSizeOnAccountPage = 10,
+                TvChannelReviewsSortByCreatedDateAscending = false,
+                ExportImportTvChannelAttributes = true,
+                ExportImportTvChannelSpecificationAttributes = true,
                 ExportImportUseDropdownlistsForAssociatedEntities = true,
-                ExportImportProductsCountInOneFile = 500,
-                ExportImportSplitProductsFile = false,
+                ExportImportTvChannelsCountInOneFile = 500,
+                ExportImportSplitTvChannelsFile = false,
                 ExportImportRelatedEntitiesByName = true,
                 CountDisplayedYearsDatePicker = 1,
                 UseAjaxLoadMenu = false,
-                UseAjaxCatalogProductsLoading = true,
+                UseAjaxCatalogTvChannelsLoading = true,
                 EnableManufacturerFiltering = true,
                 EnablePriceRangeFiltering = true,
                 EnableSpecificationAttributeFiltering = true,
@@ -2984,7 +2984,7 @@ namespace TvProgViewer.Services.Installation
                 AllowUsersToSearchWithCategoryName = true,
                 AllowUsersToSearchWithManufacturerName = true,
                 DisplayAllPicturesOnCatalogPages = false,
-                ProductUrlStructureTypeId = (int)ProductUrlStructureType.Product,
+                TvChannelUrlStructureTypeId = (int)TvChannelUrlStructureType.TvChannel,
                 ActiveSearchProviderSystemName = string.Empty
             });
 
@@ -3027,9 +3027,9 @@ namespace TvProgViewer.Services.Installation
                 ShowUsersJoinDate = false,
                 AllowViewingProfiles = false,
                 NotifyNewUserRegistration = false,
-                HideDownloadableProductsTab = false,
+                HideDownloadableTvChannelsTab = false,
                 HideBackInStockSubscriptionsTab = false,
-                DownloadableProductsValidateUser = false,
+                DownloadableTvChannelsValidateUser = false,
                 UserNameFormat = UserNameFormat.ShowFirstName,
                 FirstNameEnabled = true,
                 FirstNameRequired = true,
@@ -3064,7 +3064,7 @@ namespace TvProgViewer.Services.Installation
                 LastActivityMinutes = 15,
                 SuffixDeletedUsers = false,
                 EnteringEmailTwice = false,
-                RequireRegistrationForDownloadableProducts = false,
+                RequireRegistrationForDownloadableTvChannels = false,
                 AllowUsersToCheckGiftCardBalance = false,
                 DeleteGuestTaskOlderThanMinutes = 1440,
                 PhoneNumberValidationEnabled = false,
@@ -3101,10 +3101,10 @@ namespace TvProgViewer.Services.Installation
             await settingService.SaveSettingAsync(new MediaSettings
             {
                 AvatarPictureSize = 120,
-                ProductThumbPictureSize = 415,
-                ProductDetailsPictureSize = 550,
-                ProductThumbPictureSizeOnProductDetailsPage = 100,
-                AssociatedProductPictureSize = 220,
+                TvChannelThumbPictureSize = 415,
+                TvChannelDetailsPictureSize = 550,
+                TvChannelThumbPictureSizeOnTvChannelDetailsPage = 100,
+                AssociatedTvChannelPictureSize = 220,
                 CategoryThumbPictureSize = 450,
                 ManufacturerThumbPictureSize = 420,
                 VendorThumbPictureSize = 450,
@@ -3118,7 +3118,7 @@ namespace TvProgViewer.Services.Installation
                 AllowSVGUploads = false,
                 DefaultImageQuality = 80,
                 MultipleThumbDirectories = false,
-                ImportProductImagesUsingHash = true,
+                ImportTvChannelImagesUsingHash = true,
                 AzureCacheControlHeader = string.Empty,
                 UseAbsoluteImagePath = true,
                 VideoIframeAllow = "fullscreen",
@@ -3197,23 +3197,23 @@ namespace TvProgViewer.Services.Installation
 
             await settingService.SaveSettingAsync(new ShoppingCartSettings
             {
-                DisplayCartAfterAddingProduct = false,
-                DisplayWishlistAfterAddingProduct = false,
+                DisplayCartAfterAddingTvChannel = false,
+                DisplayWishlistAfterAddingTvChannel = false,
                 MaximumShoppingCartItems = 1000,
                 MaximumWishlistItems = 1000,
                 AllowOutOfStockItemsToBeAddedToWishlist = false,
                 MoveItemsFromWishlistToCart = true,
                 CartsSharedBetweenStores = false,
-                ShowProductImagesOnShoppingCart = true,
-                ShowProductImagesOnWishList = true,
+                ShowTvChannelImagesOnShoppingCart = true,
+                ShowTvChannelImagesOnWishList = true,
                 ShowDiscountBox = true,
                 ShowGiftCardBox = true,
                 CrossSellsNumber = 4,
                 EmailWishlistEnabled = true,
                 AllowAnonymousUsersToEmailWishlist = false,
                 MiniShoppingCartEnabled = true,
-                ShowProductImagesInMiniShoppingCart = true,
-                MiniShoppingCartProductNumber = 5,
+                ShowTvChannelImagesInMiniShoppingCart = true,
+                MiniShoppingCartTvChannelNumber = 5,
                 RoundPricesDuringCalculation = true,
                 GroupTierPricesForDistinctShoppingCartItems = false,
                 AllowCartItemEditing = true,
@@ -3251,9 +3251,9 @@ namespace TvProgViewer.Services.Installation
                 DeactivateGiftCardsAfterDeletingOrder = false,
                 CompleteOrderWhenDelivered = true,
                 CustomOrderNumberMask = "{ID}",
-                ExportWithProducts = true,
-                AllowAdminsToBuyCallForPriceProducts = true,
-                ShowProductThumbnailInOrderDetailsPage = true,
+                ExportWithTvChannels = true,
+                AllowAdminsToBuyCallForPriceTvChannels = true,
+                ShowTvChannelThumbnailInOrderDetailsPage = true,
                 DisplayUserCurrencyOnOrders = false,
                 DisplayOrderSummary = true
             });
@@ -3280,7 +3280,7 @@ namespace TvProgViewer.Services.Installation
                 FreeShippingOverXEnabled = false,
                 FreeShippingOverXValue = decimal.Zero,
                 FreeShippingOverXIncludingTax = false,
-                EstimateShippingProductPageEnabled = true,
+                EstimateShippingTvChannelPageEnabled = true,
                 EstimateShippingCartPageEnabled = true,
                 EstimateShippingCityNameEnabled = false,
                 DisplayShipmentEventsToUsers = false,
@@ -3289,7 +3289,7 @@ namespace TvProgViewer.Services.Installation
                 ReturnValidOptionsIfThereAreAny = true,
                 BypassShippingMethodSelectionIfOnlyOne = false,
                 UseCubeRootMethod = true,
-                ConsiderAssociatedProductsDimensions = true,
+                ConsiderAssociatedTvChannelsDimensions = true,
                 ShipSeparatelyOneItemEach = true,
                 RequestDelay = 300,
                 ShippingSorting = ShippingSortingEnum.Position,
@@ -3411,14 +3411,14 @@ namespace TvProgViewer.Services.Installation
             {
                 DefaultVendorPageSizeOptions = "6, 3, 9",
                 VendorsBlockItemsToDisplay = 0,
-                ShowVendorOnProductDetailsPage = true,
+                ShowVendorOnTvChannelDetailsPage = true,
                 AllowUsersToContactVendors = true,
                 AllowUsersToApplyForVendorAccount = true,
                 TermsOfServiceEnabled = false,
                 AllowVendorsToEditInfo = false,
                 NotifyStoreOwnerAboutVendorInformationChange = true,
-                MaximumProductNumber = 3000,
-                AllowVendorsToImportProducts = true
+                MaximumTvChannelNumber = 3000,
+                AllowVendorsToImportTvChannels = true
             });
 
             var eaGeneral = _emailAccountRepository.Table.FirstOrDefault();
@@ -3434,8 +3434,8 @@ namespace TvProgViewer.Services.Installation
             await settingService.SaveSettingAsync(new DisplayDefaultMenuItemSettings
             {
                 DisplayHomepageMenuItem = true,
-                DisplayNewProductsMenuItem = true,
-                DisplayProductSearchMenuItem = true,
+                DisplayNewTvChannelsMenuItem = true,
+                DisplayTvChannelSearchMenuItem = true,
                 DisplayUserInfoMenuItem = true,
                 DisplayBlogMenuItem = true,
                 DisplayForumsMenuItem = true,
@@ -3446,13 +3446,13 @@ namespace TvProgViewer.Services.Installation
             {
                 DisplaySitemapFooterItem = true,
                 DisplayContactUsFooterItem = true,
-                DisplayProductSearchFooterItem = true,
+                DisplayTvChannelSearchFooterItem = true,
                 DisplayNewsFooterItem = true,
                 DisplayBlogFooterItem = true,
                 DisplayForumsFooterItem = true,
-                DisplayRecentlyViewedProductsFooterItem = true,
-                DisplayCompareProductsFooterItem = true,
-                DisplayNewProductsFooterItem = true,
+                DisplayRecentlyViewedTvChannelsFooterItem = true,
+                DisplayCompareTvChannelsFooterItem = true,
+                DisplayNewTvChannelsFooterItem = true,
                 DisplayUserInfoFooterItem = true,
                 DisplayUserOrdersFooterItem = true,
                 DisplayUserAddressesFooterItem = true,
@@ -3476,13 +3476,13 @@ namespace TvProgViewer.Services.Installation
                 ShowOnApplyVendorPage = false,
                 ShowOnBlogCommentPage = false,
                 ShowOnContactUsPage = false,
-                ShowOnEmailProductToFriendPage = false,
+                ShowOnEmailTvChannelToFriendPage = false,
                 ShowOnEmailWishlistToFriendPage = false,
                 ShowOnForgotPasswordPage = false,
                 ShowOnForum = false,
                 ShowOnLoginPage = false,
                 ShowOnNewsCommentPage = false,
-                ShowOnProductReviewPage = false,
+                ShowOnTvChannelReviewPage = false,
                 ShowOnRegistrationPage = false,
                 ShowOnCheckoutPageForGuests = false,
             });
@@ -3502,8 +3502,8 @@ namespace TvProgViewer.Services.Installation
 
             await settingService.SaveSettingAsync(new CookieSettings
             {
-                CompareProductsCookieExpires = 24 * 10,
-                RecentlyViewedProductsCookieExpires = 24 * 10,
+                CompareTvChannelsCookieExpires = 24 * 10,
+                RecentlyViewedTvChannelsCookieExpires = 24 * 10,
                 UserCookieExpires = 24 * 365
             });
 
@@ -3517,13 +3517,13 @@ namespace TvProgViewer.Services.Installation
                     "/files/exportimport/",
                     "/country/getstatesbycountryid",
                     "/install",
-                    "/setproductreviewhelpfulness",
+                    "/settvchannelreviewhelpfulness",
                     "/*?*returnUrl="
                 },
                 LocalizableDisallowPaths = new List<string>
                 {
-                    "/addproducttocart/catalog/",
-                    "/addproducttocart/details/",
+                    "/addtvchanneltocart/catalog/",
+                    "/addtvchanneltocart/details/",
                     "/backinstocksubscriptions/manage",
                     "/boards/forumsubscriptions",
                     "/boards/forumwatch",
@@ -3548,16 +3548,16 @@ namespace TvProgViewer.Services.Installation
                     "/checkout/paymentinfo",
                     "/checkout/paymentmethod",
                     "/clearcomparelist",
-                    "/compareproducts",
-                    "/compareproducts/add/*",
+                    "/comparetvchannels",
+                    "/comparetvchannels/add/*",
                     "/user/avatar",
                     "/user/activation",
                     "/user/addresses",
                     "/user/changepassword",
                     "/user/checkusernameavailability",
-                    "/user/downloadableproducts",
+                    "/user/downloadabletvchannels",
                     "/user/info",
-                    "/user/productreviews",
+                    "/user/tvchannelreviews",
                     "/deletepm",
                     "/emailwishlist",
                     "/eucookielawaccept",
@@ -3569,7 +3569,7 @@ namespace TvProgViewer.Services.Installation
                     "/passwordrecovery/confirm",
                     "/poll/vote",
                     "/privatemessages",
-                    "/recentlyviewedproducts",
+                    "/recentlyviewedtvchannels",
                     "/returnrequest",
                     "/returnrequest/history",
                     "/rewardpoints/history",
@@ -3582,7 +3582,7 @@ namespace TvProgViewer.Services.Installation
                     "/topic/authenticate",
                     "/viewpm",
                     "/uploadfilecheckoutattribute",
-                    "/uploadfileproductattribute",
+                    "/uploadfiletvchannelattribute",
                     "/uploadfilereturnrequest",
                     "/wishlist"
                 }
@@ -3596,7 +3596,7 @@ namespace TvProgViewer.Services.Installation
             {
                 Name = "Gift wrapping",
                 IsRequired = true,
-                ShippableProductRequired = true,
+                ShippableTvChannelRequired = true,
                 AttributeControlType = AttributeControlType.DropdownList,
                 DisplayOrder = 1
             });
@@ -3777,49 +3777,49 @@ namespace TvProgViewer.Services.Installation
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallProductAttributesAsync()
+        protected virtual async Task InstallTvChannelAttributesAsync()
         {
-            var productAttributes = new List<ProductAttribute>
+            var tvchannelAttributes = new List<TvChannelAttribute>
             {
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "Color"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "Print"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "Custom Text"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "HDD"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "OS"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "Processor"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "RAM"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "Size"
                 },
-                new ProductAttribute
+                new TvChannelAttribute
                 {
                     Name = "Software"
                 }
             };
 
-            await InsertInstallationDataAsync(productAttributes);
+            await InsertInstallationDataAsync(tvchannelAttributes);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
@@ -3830,7 +3830,7 @@ namespace TvProgViewer.Services.Installation
             var sampleImagesPath = GetSamplesPath();
 
             var categoryTemplateInGridAndLines = _categoryTemplateRepository
-                .Table.FirstOrDefault(pt => pt.Name == "Products in Grid or Lines");
+                .Table.FirstOrDefault(pt => pt.Name == "TvChannels in Grid or Lines");
             if (categoryTemplateInGridAndLines == null)
                 throw new Exception("Category template cannot be loaded");
 
@@ -4185,7 +4185,7 @@ namespace TvProgViewer.Services.Installation
             var sampleImagesPath = GetSamplesPath();
 
             var manufacturerTemplateInGridAndLines =
-                _manufacturerTemplateRepository.Table.FirstOrDefault(pt => pt.Name == "Products in Grid or Lines");
+                _manufacturerTemplateRepository.Table.FirstOrDefault(pt => pt.Name == "TvChannels in Grid or Lines");
             if (manufacturerTemplateInGridAndLines == null)
                 throw new Exception("Manufacturer template cannot be loaded");
 
@@ -4265,17 +4265,17 @@ namespace TvProgViewer.Services.Installation
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallComputersAsync(ProductTemplate productTemplateSimple, List<Product> allProducts, string sampleImagesPath, IPictureService pictureService, List<RelatedProduct> relatedProducts)
+        protected virtual async Task InstallComputersAsync(TvChannelTemplate tvchannelTemplateSimple, List<TvChannel> allTvChannels, string sampleImagesPath, IPictureService pictureService, List<RelatedTvChannel> relatedTvChannels)
         {
-            var productBuildComputer = new Product
+            var tvchannelBuildComputer = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Build your own computer",
                 Sku = "COMP_CUST",
                 ShortDescription = "Build it",
                 FullDescription = "<p>Fight back against cluttered workspaces with the stylish IBM zBC12 All-in-One desktop PC, featuring powerful computing resources and a stunning 20.1-inch widescreen display with stunning XBRITE-HiColor LCD technology. The black IBM zBC12 has a built-in microphone and MOTION EYE camera with face-tracking technology that allows for easy communication with friends and family. And it has a built-in DVD burner and Sony's Movie Store software so you can create a digital entertainment library for personal viewing at your convenience. Easy to setup and even easier to use, this JS-series All-in-One includes an elegantly designed keyboard and a USB mouse.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "build-your-own-computer",
                 AllowUserReviews = true,
                 Price = 1200M,
@@ -4302,53 +4302,53 @@ namespace TvProgViewer.Services.Installation
                 UpdatedOnUtc = DateTime.UtcNow
             };
 
-            allProducts.Add(productBuildComputer);
+            allTvChannels.Add(tvchannelBuildComputer);
 
-            await InsertInstallationDataAsync(productBuildComputer);
+            await InsertInstallationDataAsync(tvchannelBuildComputer);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productBuildComputer.Id,
+                TvChannelId = tvchannelBuildComputer.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Desktops").Id,
                 DisplayOrder = 1
             });
 
-            var picProductDesktops1 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_Desktops_1.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productBuildComputer.Name));
-            var picProductDesktops2 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_Desktops_2.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productBuildComputer.Name));
+            var picTvChannelDesktops1 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_Desktops_1.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelBuildComputer.Name));
+            var picTvChannelDesktops2 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_Desktops_2.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelBuildComputer.Name));
 
             await InsertInstallationDataAsync(
-                new ProductPicture
+                new TvChannelPicture
                 {
-                    ProductId = productBuildComputer.Id,
-                    PictureId = picProductDesktops1.Id,
+                    TvChannelId = tvchannelBuildComputer.Id,
+                    PictureId = picTvChannelDesktops1.Id,
                     DisplayOrder = 1
                 },
-                new ProductPicture
+                new TvChannelPicture
                 {
-                    ProductId = productBuildComputer.Id,
-                    PictureId = picProductDesktops2.Id,
+                    TvChannelId = tvchannelBuildComputer.Id,
+                    PictureId = picTvChannelDesktops2.Id,
                     DisplayOrder = 2
                 });
 
-            var pamProcessor = await InsertInstallationDataAsync(new ProductAttributeMapping
+            var pamProcessor = await InsertInstallationDataAsync(new TvChannelAttributeMapping
             {
-                ProductId = productBuildComputer.Id,
-                ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Processor").Id,
+                TvChannelId = tvchannelBuildComputer.Id,
+                TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Processor").Id,
                 AttributeControlType = AttributeControlType.DropdownList,
                 IsRequired = true
             });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamProcessor.Id,
+                    TvChannelAttributeMappingId = pamProcessor.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "2.2 GHz Intel Pentium Dual-Core E2200",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamProcessor.Id,
+                    TvChannelAttributeMappingId = pamProcessor.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "2.5 GHz Intel Pentium Dual-Core E2200",
                     IsPreSelected = true,
@@ -4356,33 +4356,33 @@ namespace TvProgViewer.Services.Installation
                     DisplayOrder = 2
                 });
 
-            var pamRam = await InsertInstallationDataAsync(new ProductAttributeMapping
+            var pamRam = await InsertInstallationDataAsync(new TvChannelAttributeMapping
             {
-                ProductId = productBuildComputer.Id,
-                ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "RAM").Id,
+                TvChannelId = tvchannelBuildComputer.Id,
+                TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "RAM").Id,
                 AttributeControlType = AttributeControlType.DropdownList,
                 IsRequired = true
             });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamRam.Id,
+                    TvChannelAttributeMappingId = pamRam.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "2 GB",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamRam.Id,
+                    TvChannelAttributeMappingId = pamRam.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "4GB",
                     PriceAdjustment = 20,
                     DisplayOrder = 2
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamRam.Id,
+                    TvChannelAttributeMappingId = pamRam.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "8GB",
                     PriceAdjustment = 60,
@@ -4390,25 +4390,25 @@ namespace TvProgViewer.Services.Installation
                 });
 
             var pamHdd = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productBuildComputer.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "HDD").Id,
+                    TvChannelId = tvchannelBuildComputer.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "HDD").Id,
                     AttributeControlType = AttributeControlType.RadioList,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamHdd.Id,
+                    TvChannelAttributeMappingId = pamHdd.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "320 GB",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamHdd.Id,
+                    TvChannelAttributeMappingId = pamHdd.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "400 GB",
                     PriceAdjustment = 100,
@@ -4416,79 +4416,79 @@ namespace TvProgViewer.Services.Installation
                 });
 
             var pamOs = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productBuildComputer.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "OS").Id,
+                    TvChannelId = tvchannelBuildComputer.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "OS").Id,
                     AttributeControlType = AttributeControlType.RadioList,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamOs.Id,
+                    TvChannelAttributeMappingId = pamOs.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Vista Home",
                     PriceAdjustment = 50,
                     IsPreSelected = true,
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamOs.Id,
+                    TvChannelAttributeMappingId = pamOs.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Vista Premium",
                     PriceAdjustment = 60,
                     DisplayOrder = 2
                 });
 
-            var pamSoftware = await InsertInstallationDataAsync(new ProductAttributeMapping
+            var pamSoftware = await InsertInstallationDataAsync(new TvChannelAttributeMapping
             {
-                ProductId = productBuildComputer.Id,
-                ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Software").Id,
+                TvChannelId = tvchannelBuildComputer.Id,
+                TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Software").Id,
                 AttributeControlType = AttributeControlType.Checkboxes
             });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamSoftware.Id,
+                    TvChannelAttributeMappingId = pamSoftware.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Microsoft Office",
                     PriceAdjustment = 50,
                     IsPreSelected = true,
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamSoftware.Id,
+                    TvChannelAttributeMappingId = pamSoftware.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Acrobat Reader",
                     PriceAdjustment = 10,
                     DisplayOrder = 2
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamSoftware.Id,
+                    TvChannelAttributeMappingId = pamSoftware.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Total Commander",
                     PriceAdjustment = 5,
                     DisplayOrder = 2
                 });
 
-            await AddProductTagAsync(productBuildComputer, "awesome");
-            await AddProductTagAsync(productBuildComputer, "computer");
+            await AddTvChannelTagAsync(tvchannelBuildComputer, "awesome");
+            await AddTvChannelTagAsync(tvchannelBuildComputer, "computer");
 
-            var productDigitalStorm = new Product
+            var tvchannelDigitalStorm = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Digital Storm VANQUISH 3 Custom Performance PC",
                 Sku = "DS_VA3_PC",
                 ShortDescription = "Digital Storm Vanquish 3 Desktop PC",
                 FullDescription = "<p>Blow the doors off today’s most demanding games with maximum detail, speed, and power for an immersive gaming experience without breaking the bank.</p><p>Stay ahead of the competition, VANQUISH 3 is fully equipped to easily handle future upgrades, keeping your system on the cutting edge for years to come.</p><p>Each system is put through an extensive stress test, ensuring you experience zero bottlenecks and get the maximum performance from your hardware.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "compaq-presario-sr1519x-pentium-4-desktop-pc-with-cdrw",
                 AllowUserReviews = true,
                 Price = 1259M,
@@ -4511,38 +4511,38 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productDigitalStorm);
+            allTvChannels.Add(tvchannelDigitalStorm);
 
-            await InsertInstallationDataAsync(productDigitalStorm);
+            await InsertInstallationDataAsync(tvchannelDigitalStorm);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productDigitalStorm.Id,
+                TvChannelId = tvchannelDigitalStorm.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Desktops").Id,
                 DisplayOrder = 1
             });
 
-            var picProductDigitalStorm = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_DigitalStorm.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productDigitalStorm.Name));
+            var picTvChannelDigitalStorm = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_DigitalStorm.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelDigitalStorm.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productDigitalStorm.Id,
-                PictureId = picProductDigitalStorm.Id,
+                TvChannelId = tvchannelDigitalStorm.Id,
+                PictureId = picTvChannelDigitalStorm.Id,
                 DisplayOrder = 1
             });
 
-            await AddProductTagAsync(productDigitalStorm, "cool");
-            await AddProductTagAsync(productDigitalStorm, "computer");
+            await AddTvChannelTagAsync(tvchannelDigitalStorm, "cool");
+            await AddTvChannelTagAsync(tvchannelDigitalStorm, "computer");
 
-            var productLenovoIdeaCentre = new Product
+            var tvchannelLenovoIdeaCentre = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Lenovo IdeaCentre 600 All-in-One PC",
                 Sku = "LE_IC_600",
                 ShortDescription = string.Empty,
                 FullDescription = "<p>The A600 features a 21.5in screen, DVD or optional Blu-Ray drive, support for the full beans 1920 x 1080 HD, Dolby Home Cinema certification and an optional hybrid analogue/digital TV tuner.</p><p>Connectivity is handled by 802.11a/b/g - 802.11n is optional - and an ethernet port. You also get four USB ports, a Firewire slot, a six-in-one card reader and a 1.3- or two-megapixel webcam.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "hp-iq506-touchsmart-desktop-pc",
                 AllowUserReviews = true,
                 Price = 500M,
@@ -4565,38 +4565,38 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productLenovoIdeaCentre);
+            allTvChannels.Add(tvchannelLenovoIdeaCentre);
 
-            await InsertInstallationDataAsync(productLenovoIdeaCentre);
+            await InsertInstallationDataAsync(tvchannelLenovoIdeaCentre);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productLenovoIdeaCentre.Id,
+                TvChannelId = tvchannelLenovoIdeaCentre.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Desktops").Id,
                 DisplayOrder = 1
             });
 
-            var picProductLenovoIdeaCentre = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_LenovoIdeaCentre.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productLenovoIdeaCentre.Name));
+            var picTvChannelLenovoIdeaCentre = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_LenovoIdeaCentre.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelLenovoIdeaCentre.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productLenovoIdeaCentre.Id,
-                PictureId = picProductLenovoIdeaCentre.Id,
+                TvChannelId = tvchannelLenovoIdeaCentre.Id,
+                PictureId = picTvChannelLenovoIdeaCentre.Id,
                 DisplayOrder = 1
             });
 
-            await AddProductTagAsync(productLenovoIdeaCentre, "awesome");
-            await AddProductTagAsync(productLenovoIdeaCentre, "computer");
+            await AddTvChannelTagAsync(tvchannelLenovoIdeaCentre, "awesome");
+            await AddTvChannelTagAsync(tvchannelLenovoIdeaCentre, "computer");
 
-            var productAppleMacBookPro = new Product
+            var tvchannelAppleMacBookPro = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Apple MacBook Pro 13-inch",
                 Sku = "AP_MBP_13",
                 ShortDescription = "A groundbreaking Retina display. A new force-sensing trackpad. All-flash architecture. Powerful dual-core and quad-core Intel processors. Together, these features take the notebook to a new level of performance. And they will do the same for you in everything you create.",
                 FullDescription = "<p>With fifth-generation Intel Core processors, the latest graphics, and faster flash storage, the incredibly advanced MacBook Pro with Retina display moves even further ahead in performance and battery life.* *Compared with the previous generation.</p><p>Retina display with 2560-by-1600 resolution</p><p>Fifth-generation dual-core Intel Core i5 processor</p><p>Intel Iris Graphics</p><p>Up to 9 hours of battery life1</p><p>Faster flash storage2</p><p>802.11ac Wi-Fi</p><p>Two Thunderbolt 2 ports for connecting high-performance devices and transferring data at lightning speed</p><p>Two USB 3 ports (compatible with USB 2 devices) and HDMI</p><p>FaceTime HD camera</p><p>Pages, Numbers, Keynote, iPhoto, iMovie, GarageBand included</p><p>OS X, the world's most advanced desktop operating system</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "asus-eee-pc-1000ha-10-inch-netbook",
                 AllowUserReviews = true,
                 Price = 1800M,
@@ -4621,78 +4621,78 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productAppleMacBookPro);
+            allTvChannels.Add(tvchannelAppleMacBookPro);
 
-            await InsertInstallationDataAsync(productAppleMacBookPro);
+            await InsertInstallationDataAsync(tvchannelAppleMacBookPro);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productAppleMacBookPro.Id,
+                TvChannelId = tvchannelAppleMacBookPro.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Notebooks").Id,
                 DisplayOrder = 1
             });
 
-            await InsertInstallationDataAsync(new ProductManufacturer
+            await InsertInstallationDataAsync(new TvChannelManufacturer
             {
-                ProductId = productAppleMacBookPro.Id,
+                TvChannelId = tvchannelAppleMacBookPro.Id,
                 ManufacturerId = _manufacturerRepository.Table.Single(c => c.Name == "Apple").Id,
                 DisplayOrder = 2
             });
 
-            var picProductMacBook1 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_macbook_1.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productAppleMacBookPro.Name));
-            var picProductMacBook2 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_macbook_2.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productAppleMacBookPro.Name));
+            var picTvChannelMacBook1 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_macbook_1.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelAppleMacBookPro.Name));
+            var picTvChannelMacBook2 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_macbook_2.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelAppleMacBookPro.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productAppleMacBookPro.Id,
-                PictureId = picProductMacBook1.Id,
+                TvChannelId = tvchannelAppleMacBookPro.Id,
+                PictureId = picTvChannelMacBook1.Id,
                 DisplayOrder = 1
-            }, new ProductPicture
+            }, new TvChannelPicture
             {
-                ProductId = productAppleMacBookPro.Id,
-                PictureId = picProductMacBook2.Id,
+                TvChannelId = tvchannelAppleMacBookPro.Id,
+                PictureId = picTvChannelMacBook2.Id,
                 DisplayOrder = 2
             });
 
             await InsertInstallationDataAsync(
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAppleMacBookPro.Id,
+                    TvChannelId = tvchannelAppleMacBookPro.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 1,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Screensize", "13.0''")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAppleMacBookPro.Id,
+                    TvChannelId = tvchannelAppleMacBookPro.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 2,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("CPU Type", "Intel Core i5")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAppleMacBookPro.Id,
+                    TvChannelId = tvchannelAppleMacBookPro.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 3,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Memory", "4 GB")
                 });
 
-            await AddProductTagAsync(productAppleMacBookPro, "compact");
-            await AddProductTagAsync(productAppleMacBookPro, "awesome");
-            await AddProductTagAsync(productAppleMacBookPro, "computer");
+            await AddTvChannelTagAsync(tvchannelAppleMacBookPro, "compact");
+            await AddTvChannelTagAsync(tvchannelAppleMacBookPro, "awesome");
+            await AddTvChannelTagAsync(tvchannelAppleMacBookPro, "computer");
 
-            var productAsusN551JK = new Product
+            var tvchannelAsusN551JK = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Asus N551JK-XO076H Laptop",
                 Sku = "AS_551_LP",
                 ShortDescription = "Laptop Asus N551JK Intel Core i7-4710HQ 2.5 GHz, RAM 16GB, HDD 1TB, Video NVidia GTX 850M 4GB, BluRay, 15.6, Full HD, Win 8.1",
                 FullDescription = "<p>The ASUS N550JX combines cutting-edge audio and visual technology to deliver an unsurpassed multimedia experience. A full HD wide-view IPS panel is tailor-made for watching movies and the intuitive touchscreen makes for easy, seamless navigation. ASUS has paired the N550JX’s impressive display with SonicMaster Premium, co-developed with Bang & Olufsen ICEpower® audio experts, for true surround sound. A quad-speaker array and external subwoofer combine for distinct vocals and a low bass that you can feel.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "asus-eee-pc-900ha-89-inch-netbook-black",
                 AllowUserReviews = true,
                 Price = 1500M,
@@ -4716,73 +4716,73 @@ namespace TvProgViewer.Services.Installation
                 UpdatedOnUtc = DateTime.UtcNow
             };
 
-            allProducts.Add(productAsusN551JK);
+            allTvChannels.Add(tvchannelAsusN551JK);
 
-            await InsertInstallationDataAsync(productAsusN551JK);
+            await InsertInstallationDataAsync(tvchannelAsusN551JK);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productAsusN551JK.Id,
+                TvChannelId = tvchannelAsusN551JK.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Notebooks").Id,
                 DisplayOrder = 1
             });
 
-            var picProductAsuspcN551Jk = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_asuspc_N551JK.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productAsusN551JK.Name));
+            var picTvChannelAsuspcN551Jk = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_asuspc_N551JK.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelAsusN551JK.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productAsusN551JK.Id,
-                PictureId = picProductAsuspcN551Jk.Id,
+                TvChannelId = tvchannelAsusN551JK.Id,
+                PictureId = picTvChannelAsuspcN551Jk.Id,
                 DisplayOrder = 1
             });
 
             await InsertInstallationDataAsync(
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAsusN551JK.Id,
+                    TvChannelId = tvchannelAsusN551JK.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 1,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Screensize", "15.6''")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAsusN551JK.Id,
+                    TvChannelId = tvchannelAsusN551JK.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 2,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("CPU Type", "Intel Core i7")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAsusN551JK.Id,
+                    TvChannelId = tvchannelAsusN551JK.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 3,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Memory", "16 GB")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAsusN551JK.Id,
+                    TvChannelId = tvchannelAsusN551JK.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 4,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Hard drive", "1 TB")
                 });
 
-            await AddProductTagAsync(productAsusN551JK, "compact");
-            await AddProductTagAsync(productAsusN551JK, "awesome");
-            await AddProductTagAsync(productAsusN551JK, "computer");
+            await AddTvChannelTagAsync(tvchannelAsusN551JK, "compact");
+            await AddTvChannelTagAsync(tvchannelAsusN551JK, "awesome");
+            await AddTvChannelTagAsync(tvchannelAsusN551JK, "computer");
 
-            var productSamsungSeries = new Product
+            var tvchannelSamsungSeries = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Samsung Series 9 NP900X4C Premium Ultrabook",
                 Sku = "SM_900_PU",
                 ShortDescription = "Samsung Series 9 NP900X4C-A06US 15-Inch Ultrabook (1.70 GHz Intel Core i5-3317U Processor, 8GB DDR3, 128GB SSD, Windows 8) Ash Black",
                 FullDescription = "<p>Designed with mobility in mind, Samsung's durable, ultra premium, lightweight Series 9 laptop (model NP900X4C-A01US) offers mobile professionals and power users a sophisticated laptop equally suited for work and entertainment. Featuring a minimalist look that is both simple and sophisticated, its polished aluminum uni-body design offers an iconic look and feel that pushes the envelope with an edge just 0.58 inches thin. This Series 9 laptop also includes a brilliant 15-inch SuperBright Plus display with HD+ technology, 128 GB Solid State Drive (SSD), 8 GB of system memory, and up to 10 hours of battery life.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "hp-pavilion-artist-edition-dv2890nr-141-inch-laptop",
                 AllowUserReviews = true,
                 Price = 1590M,
@@ -4806,73 +4806,73 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productSamsungSeries);
+            allTvChannels.Add(tvchannelSamsungSeries);
 
-            await InsertInstallationDataAsync(productSamsungSeries);
+            await InsertInstallationDataAsync(tvchannelSamsungSeries);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productSamsungSeries.Id,
+                TvChannelId = tvchannelSamsungSeries.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Notebooks").Id,
                 DisplayOrder = 1
             });
 
-            var picProductSamsungNp900X4C = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_SamsungNP900X4C.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productSamsungSeries.Name));
+            var picTvChannelSamsungNp900X4C = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_SamsungNP900X4C.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelSamsungSeries.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productSamsungSeries.Id,
-                PictureId = picProductSamsungNp900X4C.Id,
+                TvChannelId = tvchannelSamsungSeries.Id,
+                PictureId = picTvChannelSamsungNp900X4C.Id,
                 DisplayOrder = 1
             });
 
             await InsertInstallationDataAsync(
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productSamsungSeries.Id,
+                    TvChannelId = tvchannelSamsungSeries.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 1,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Screensize", "15.0''")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productSamsungSeries.Id,
+                    TvChannelId = tvchannelSamsungSeries.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 2,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("CPU Type", "Intel Core i5")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productSamsungSeries.Id,
+                    TvChannelId = tvchannelSamsungSeries.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 3,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Memory", "8 GB")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productSamsungSeries.Id,
+                    TvChannelId = tvchannelSamsungSeries.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 4,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Hard drive", "128 GB")
                 });
 
-            await AddProductTagAsync(productSamsungSeries, "nice");
-            await AddProductTagAsync(productSamsungSeries, "computer");
-            await AddProductTagAsync(productSamsungSeries, "compact");
+            await AddTvChannelTagAsync(tvchannelSamsungSeries, "nice");
+            await AddTvChannelTagAsync(tvchannelSamsungSeries, "computer");
+            await AddTvChannelTagAsync(tvchannelSamsungSeries, "compact");
 
-            var productHpSpectre = new Product
+            var tvchannelHpSpectre = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "HP Spectre XT Pro UltraBook",
                 Sku = "HP_SPX_UB",
                 ShortDescription = "HP Spectre XT Pro UltraBook / Intel Core i5-2467M / 13.3 / 4GB / 128GB / Windows 7 Professional / Laptop",
                 FullDescription = "<p>Introducing HP ENVY Spectre XT, the Ultrabook designed for those who want style without sacrificing substance. It's sleek. It's thin. And with Intel. Corer i5 processor and premium materials, it's designed to go anywhere from the bistro to the boardroom, it's unlike anything you've ever seen from HP.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "hp-pavilion-elite-m9150f-desktop-pc",
                 AllowUserReviews = true,
                 Price = 1350M,
@@ -4895,86 +4895,86 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productHpSpectre);
+            allTvChannels.Add(tvchannelHpSpectre);
 
-            await InsertInstallationDataAsync(productHpSpectre);
+            await InsertInstallationDataAsync(tvchannelHpSpectre);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productHpSpectre.Id,
+                TvChannelId = tvchannelHpSpectre.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Notebooks").Id,
                 DisplayOrder = 1
             });
 
-            await InsertInstallationDataAsync(new ProductManufacturer
+            await InsertInstallationDataAsync(new TvChannelManufacturer
             {
-                ProductId = productHpSpectre.Id,
+                TvChannelId = tvchannelHpSpectre.Id,
                 ManufacturerId = _manufacturerRepository.Table.Single(c => c.Name == "HP").Id,
                 DisplayOrder = 3
             });
 
-            var picProductHpSpectreXt1 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_HPSpectreXT_1.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productHpSpectre.Name));
-            var picProductHpSpectreXt2 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_HPSpectreXT_2.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productHpSpectre.Name));
+            var picTvChannelHpSpectreXt1 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_HPSpectreXT_1.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelHpSpectre.Name));
+            var picTvChannelHpSpectreXt2 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_HPSpectreXT_2.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelHpSpectre.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productHpSpectre.Id,
-                PictureId = picProductHpSpectreXt1.Id,
+                TvChannelId = tvchannelHpSpectre.Id,
+                PictureId = picTvChannelHpSpectreXt1.Id,
                 DisplayOrder = 1
             },
-            new ProductPicture
+            new TvChannelPicture
             {
-                ProductId = productHpSpectre.Id,
-                PictureId = picProductHpSpectreXt2.Id,
+                TvChannelId = tvchannelHpSpectre.Id,
+                PictureId = picTvChannelHpSpectreXt2.Id,
                 DisplayOrder = 2
             });
 
             await InsertInstallationDataAsync(
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpSpectre.Id,
+                    TvChannelId = tvchannelHpSpectre.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 1,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Screensize", "13.3''")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpSpectre.Id,
+                    TvChannelId = tvchannelHpSpectre.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 2,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("CPU Type", "Intel Core i5")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpSpectre.Id,
+                    TvChannelId = tvchannelHpSpectre.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 3,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Memory", "4 GB")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpSpectre.Id,
+                    TvChannelId = tvchannelHpSpectre.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 4,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Hard drive", "128 GB")
                 });
 
-            await AddProductTagAsync(productHpSpectre, "nice");
-            await AddProductTagAsync(productHpSpectre, "computer");
+            await AddTvChannelTagAsync(tvchannelHpSpectre, "nice");
+            await AddTvChannelTagAsync(tvchannelHpSpectre, "computer");
 
-            var productHpEnvy = new Product
+            var tvchannelHpEnvy = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "HP Envy 6-1180ca 15.6-Inch Sleekbook",
                 Sku = "HP_ESB_15",
                 ShortDescription = "HP ENVY 6-1202ea Ultrabook Beats Audio, 3rd generation Intel® CoreTM i7-3517U processor, 8GB RAM, 500GB HDD, Microsoft Windows 8, AMD Radeon HD 8750M (2 GB DDR3 dedicated)",
                 FullDescription = "The UltrabookTM that's up for anything. Thin and light, the HP ENVY is the large screen UltrabookTM with Beats AudioTM. With a soft-touch base that makes it easy to grab and go, it's a laptop that's up for anything.<br /><br /><b>Features</b><br /><br />- Windows 8 or other operating systems available<br /><br /><b>Top performance. Stylish design. Take notice.</b><br /><br />- At just 19.8 mm (0.78 in) thin, the HP ENVY UltrabookTM is slim and light enough to take anywhere. It's the laptop that gets you noticed with the power to get it done.<br />- With an eye-catching metal design, it's a laptop that you want to carry with you. The soft-touch, slip-resistant base gives you the confidence to carry it with ease.<br /><br /><b>More entertaining. More gaming. More fun.</b><br /><br />- Own the UltrabookTM with Beats AudioTM, dual speakers, a subwoofer, and an awesome display. Your music, movies and photo slideshows will always look and sound their best.<br />- Tons of video memory let you experience incredible gaming and multimedia without slowing down. Create and edit videos in a flash. And enjoy more of what you love to the fullest.<br />- The HP ENVY UltrabookTM is loaded with the ports you'd expect on a world-class laptop, but on a Sleekbook instead. Like HDMI, USB, RJ-45, and a headphone jack. You get all the right connections without compromising size.<br /><br /><b>Only from HP.</b><br /><br />- Life heats up. That's why there's HP CoolSense technology, which automatically adjusts your notebook's temperature based on usage and conditions. It stays cool. You stay comfortable.<br />- With HP ProtectSmart, your notebook's data stays safe from accidental bumps and bruises. It senses motion and plans ahead, stopping your hard drive and protecting your entire digital life.<br />- Keep playing even in dimly lit rooms or on red eye flights. The optional backlit keyboard[1] is full-size so you don't compromise comfort. Backlit keyboard. Another bright idea.<br /><br />",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "hp-pavilion-g60-230us-160-inch-laptop",
                 AllowUserReviews = true,
                 Price = 1460M,
@@ -4997,80 +4997,80 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productHpEnvy);
+            allTvChannels.Add(tvchannelHpEnvy);
 
-            await InsertInstallationDataAsync(productHpEnvy);
+            await InsertInstallationDataAsync(tvchannelHpEnvy);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productHpEnvy.Id,
+                TvChannelId = tvchannelHpEnvy.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Notebooks").Id,
                 DisplayOrder = 1
             });
 
-            await InsertInstallationDataAsync(new ProductManufacturer
+            await InsertInstallationDataAsync(new TvChannelManufacturer
             {
-                ProductId = productHpEnvy.Id,
+                TvChannelId = tvchannelHpEnvy.Id,
                 ManufacturerId = _manufacturerRepository.Table.Single(c => c.Name == "HP").Id,
                 DisplayOrder = 4
             });
 
-            var picProductHpEnvy6 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_HpEnvy6.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productHpEnvy.Name));
+            var picTvChannelHpEnvy6 = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_HpEnvy6.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelHpEnvy.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productHpEnvy.Id,
-                PictureId = picProductHpEnvy6.Id,
+                TvChannelId = tvchannelHpEnvy.Id,
+                PictureId = picTvChannelHpEnvy6.Id,
                 DisplayOrder = 1
             });
 
             await InsertInstallationDataAsync(
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpEnvy.Id,
+                    TvChannelId = tvchannelHpEnvy.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 1,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Screensize", "15.6''")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpEnvy.Id,
+                    TvChannelId = tvchannelHpEnvy.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 2,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("CPU Type", "Intel Core i7")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpEnvy.Id,
+                    TvChannelId = tvchannelHpEnvy.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 3,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Memory", "8 GB")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productHpEnvy.Id,
+                    TvChannelId = tvchannelHpEnvy.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 4,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Hard drive", "500 GB")
                 });
 
-            await AddProductTagAsync(productHpEnvy, "computer");
-            await AddProductTagAsync(productHpEnvy, "cool");
-            await AddProductTagAsync(productHpEnvy, "compact");
+            await AddTvChannelTagAsync(tvchannelHpEnvy, "computer");
+            await AddTvChannelTagAsync(tvchannelHpEnvy, "cool");
+            await AddTvChannelTagAsync(tvchannelHpEnvy, "compact");
 
-            var productLenovoThinkpad = new Product
+            var tvchannelLenovoThinkpad = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Lenovo Thinkpad X1 Carbon Laptop",
                 Sku = "LE_TX1_CL",
                 ShortDescription = "Lenovo Thinkpad X1 Carbon Touch Intel Core i7 14 Ultrabook",
                 FullDescription = "<p>The X1 Carbon brings a new level of quality to the ThinkPad legacy of high standards and innovation. It starts with the durable, carbon fiber-reinforced roll cage, making for the best Ultrabook construction available, and adds a host of other new features on top of the old favorites. Because for 20 years, we haven't stopped innovating. And you shouldn't stop benefiting from that.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "toshiba-satellite-a305-s6908-154-inch-laptop",
                 AllowUserReviews = true,
                 Price = 1360M,
@@ -5093,57 +5093,57 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productLenovoThinkpad);
+            allTvChannels.Add(tvchannelLenovoThinkpad);
 
-            await InsertInstallationDataAsync(productLenovoThinkpad);
+            await InsertInstallationDataAsync(tvchannelLenovoThinkpad);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productLenovoThinkpad.Id,
+                TvChannelId = tvchannelLenovoThinkpad.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Notebooks").Id,
                 DisplayOrder = 1
             });
 
-            var picProductLenovoThinkpad = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "product_LenovoThinkpad.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(productLenovoThinkpad.Name));
+            var picTvChannelLenovoThinkpad = await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "tvchannel_LenovoThinkpad.jpeg")), MimeTypes.ImageJpeg, await pictureService.GetPictureSeNameAsync(tvchannelLenovoThinkpad.Name));
 
-            await InsertInstallationDataAsync(new ProductPicture
+            await InsertInstallationDataAsync(new TvChannelPicture
             {
-                ProductId = productLenovoThinkpad.Id,
-                PictureId = picProductLenovoThinkpad.Id,
+                TvChannelId = tvchannelLenovoThinkpad.Id,
+                PictureId = picTvChannelLenovoThinkpad.Id,
                 DisplayOrder = 1
             });
 
             await InsertInstallationDataAsync(
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productLenovoThinkpad.Id,
+                    TvChannelId = tvchannelLenovoThinkpad.Id,
                     AllowFiltering = false,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 1,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Screensize", "14.0''")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productLenovoThinkpad.Id,
+                    TvChannelId = tvchannelLenovoThinkpad.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = true,
+                    ShowOnTvChannelPage = true,
                     DisplayOrder = 2,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("CPU Type", "Intel Core i7")
                 });
 
-            await AddProductTagAsync(productLenovoThinkpad, "awesome");
-            await AddProductTagAsync(productLenovoThinkpad, "computer");
-            await AddProductTagAsync(productLenovoThinkpad, "compact");
+            await AddTvChannelTagAsync(tvchannelLenovoThinkpad, "awesome");
+            await AddTvChannelTagAsync(tvchannelLenovoThinkpad, "computer");
+            await AddTvChannelTagAsync(tvchannelLenovoThinkpad, "compact");
 
-            var productAdobePhotoshop = new Product
+            var tvchannelAdobePhotoshop = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Adobe Photoshop CS4",
                 Sku = "AD_CS4_PH",
                 ShortDescription = "Easily find and view all your photos",
                 FullDescription = "<p>Adobe Photoshop CS4 software combines power and simplicity so you can make ordinary photos extraordinary; tell engaging stories in beautiful, personalized creations for print and web; and easily find and view all your photos. New Photoshop.com membership* works with Photoshop CS4 so you can protect your photos with automatic online backup and 2 GB of storage; view your photos anywhere you are; and share your photos in fun, interactive ways with invitation-only Online Albums.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "adobe-photoshop-elements-7",
                 AllowUserReviews = true,
                 Price = 75M,
@@ -5166,31 +5166,31 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productAdobePhotoshop);
+            allTvChannels.Add(tvchannelAdobePhotoshop);
 
-            await InsertInstallationDataAsync(productAdobePhotoshop);
+            await InsertInstallationDataAsync(tvchannelAdobePhotoshop);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productAdobePhotoshop.Id,
+                TvChannelId = tvchannelAdobePhotoshop.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Software").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productAdobePhotoshop, "product_AdobePhotoshop.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelAdobePhotoshop, "tvchannel_AdobePhotoshop.jpeg");
 
-            await AddProductTagAsync(productAdobePhotoshop, "computer");
-            await AddProductTagAsync(productAdobePhotoshop, "awesome");
+            await AddTvChannelTagAsync(tvchannelAdobePhotoshop, "computer");
+            await AddTvChannelTagAsync(tvchannelAdobePhotoshop, "awesome");
 
-            var productWindows8Pro = new Product
+            var tvchannelWindows8Pro = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Windows 8 Pro",
                 Sku = "MS_WIN_8P",
                 ShortDescription = "Windows 8 is a Microsoft operating system that was released in 2012 as part of the company's Windows NT OS family. ",
                 FullDescription = "<p>Windows 8 Pro is comparable to Windows 7 Professional and Ultimate and is targeted towards enthusiasts and business users; it includes all the features of Windows 8. Additional features include the ability to receive Remote Desktop connections, the ability to participate in a Windows Server domain, Encrypting File System, Hyper-V, and Virtual Hard Disk Booting, Group Policy as well as BitLocker and BitLocker To Go. Windows Media Center functionality is available only for Windows 8 Pro as a separate software package.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "corel-paint-shop-pro-photo-x2",
                 AllowUserReviews = true,
                 Price = 65M,
@@ -5213,35 +5213,35 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productWindows8Pro);
+            allTvChannels.Add(tvchannelWindows8Pro);
 
-            await InsertInstallationDataAsync(productWindows8Pro);
+            await InsertInstallationDataAsync(tvchannelWindows8Pro);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productWindows8Pro.Id,
+                TvChannelId = tvchannelWindows8Pro.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Software").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productWindows8Pro, "product_Windows8.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelWindows8Pro, "tvchannel_Windows8.jpeg");
 
-            await AddProductTagAsync(productWindows8Pro, "awesome");
-            await AddProductTagAsync(productWindows8Pro, "computer");
+            await AddTvChannelTagAsync(tvchannelWindows8Pro, "awesome");
+            await AddTvChannelTagAsync(tvchannelWindows8Pro, "computer");
 
-            var productSoundForge = new Product
+            var tvchannelSoundForge = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Sound Forge Pro 11 (recurring)",
                 Sku = "SF_PRO_11",
                 ShortDescription = "Advanced audio waveform editor.",
                 FullDescription = "<p>Sound Forge™ Pro is the application of choice for a generation of creative and prolific artists, producers, and editors. Record audio quickly on a rock-solid platform, address sophisticated audio processing tasks with surgical precision, and render top-notch master files with ease. New features include one-touch recording, metering for the new critical standards, more repair and restoration tools, and exclusive round-trip interoperability with SpectraLayers Pro. Taken together, these enhancements make this edition of Sound Forge Pro the deepest and most advanced audio editing platform available.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "major-league-baseball-2k9",
                 IsRecurring = true,
                 RecurringCycleLength = 30,
-                RecurringCyclePeriod = RecurringProductCyclePeriod.Months,
+                RecurringCyclePeriod = RecurringTvChannelCyclePeriod.Months,
                 RecurringTotalCycles = 12,
                 AllowUserReviews = true,
                 Price = 54.99M,
@@ -5264,201 +5264,201 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productSoundForge);
+            allTvChannels.Add(tvchannelSoundForge);
 
-            await InsertInstallationDataAsync(productSoundForge);
+            await InsertInstallationDataAsync(tvchannelSoundForge);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productSoundForge.Id,
+                TvChannelId = tvchannelSoundForge.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Software").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productSoundForge, "product_SoundForge.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelSoundForge, "tvchannel_SoundForge.jpeg");
 
-            await AddProductTagAsync(productSoundForge, "game");
-            await AddProductTagAsync(productSoundForge, "computer");
-            await AddProductTagAsync(productSoundForge, "cool");
+            await AddTvChannelTagAsync(tvchannelSoundForge, "game");
+            await AddTvChannelTagAsync(tvchannelSoundForge, "computer");
+            await AddTvChannelTagAsync(tvchannelSoundForge, "cool");
 
-            relatedProducts.AddRange(new[]
+            relatedTvChannels.AddRange(new[]
             {
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoIdeaCentre.Id,
-                    ProductId2 = productDigitalStorm.Id
+                    TvChannelId1 = tvchannelLenovoIdeaCentre.Id,
+                    TvChannelId2 = tvchannelDigitalStorm.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productDigitalStorm.Id,
-                    ProductId2 = productBuildComputer.Id
+                    TvChannelId1 = tvchannelDigitalStorm.Id,
+                    TvChannelId2 = tvchannelBuildComputer.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productDigitalStorm.Id,
-                    ProductId2 = productLenovoIdeaCentre.Id
+                    TvChannelId1 = tvchannelDigitalStorm.Id,
+                    TvChannelId2 = tvchannelLenovoIdeaCentre.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productDigitalStorm.Id,
-                    ProductId2 = productLenovoThinkpad.Id
+                    TvChannelId1 = tvchannelDigitalStorm.Id,
+                    TvChannelId2 = tvchannelLenovoThinkpad.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productDigitalStorm.Id,
-                    ProductId2 = productAppleMacBookPro.Id
+                    TvChannelId1 = tvchannelDigitalStorm.Id,
+                    TvChannelId2 = tvchannelAppleMacBookPro.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoIdeaCentre.Id,
-                    ProductId2 = productBuildComputer.Id
+                    TvChannelId1 = tvchannelLenovoIdeaCentre.Id,
+                    TvChannelId2 = tvchannelBuildComputer.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAsusN551JK.Id,
-                    ProductId2 = productLenovoThinkpad.Id
+                    TvChannelId1 = tvchannelAsusN551JK.Id,
+                    TvChannelId2 = tvchannelLenovoThinkpad.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAsusN551JK.Id,
-                    ProductId2 = productAppleMacBookPro.Id
+                    TvChannelId1 = tvchannelAsusN551JK.Id,
+                    TvChannelId2 = tvchannelAppleMacBookPro.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAsusN551JK.Id,
-                    ProductId2 = productSamsungSeries.Id
+                    TvChannelId1 = tvchannelAsusN551JK.Id,
+                    TvChannelId2 = tvchannelSamsungSeries.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAsusN551JK.Id,
-                    ProductId2 = productHpSpectre.Id
+                    TvChannelId1 = tvchannelAsusN551JK.Id,
+                    TvChannelId2 = tvchannelHpSpectre.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoThinkpad.Id,
-                    ProductId2 = productAsusN551JK.Id
+                    TvChannelId1 = tvchannelLenovoThinkpad.Id,
+                    TvChannelId2 = tvchannelAsusN551JK.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoThinkpad.Id,
-                    ProductId2 = productAppleMacBookPro.Id
+                    TvChannelId1 = tvchannelLenovoThinkpad.Id,
+                    TvChannelId2 = tvchannelAppleMacBookPro.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoThinkpad.Id,
-                    ProductId2 = productSamsungSeries.Id
+                    TvChannelId1 = tvchannelLenovoThinkpad.Id,
+                    TvChannelId2 = tvchannelSamsungSeries.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoThinkpad.Id,
-                    ProductId2 = productHpEnvy.Id
+                    TvChannelId1 = tvchannelLenovoThinkpad.Id,
+                    TvChannelId2 = tvchannelHpEnvy.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAppleMacBookPro.Id,
-                    ProductId2 = productLenovoThinkpad.Id
+                    TvChannelId1 = tvchannelAppleMacBookPro.Id,
+                    TvChannelId2 = tvchannelLenovoThinkpad.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAppleMacBookPro.Id,
-                    ProductId2 = productSamsungSeries.Id
+                    TvChannelId1 = tvchannelAppleMacBookPro.Id,
+                    TvChannelId2 = tvchannelSamsungSeries.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAppleMacBookPro.Id,
-                    ProductId2 = productAsusN551JK.Id
+                    TvChannelId1 = tvchannelAppleMacBookPro.Id,
+                    TvChannelId2 = tvchannelAsusN551JK.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productAppleMacBookPro.Id,
-                    ProductId2 = productHpSpectre.Id
+                    TvChannelId1 = tvchannelAppleMacBookPro.Id,
+                    TvChannelId2 = tvchannelHpSpectre.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpSpectre.Id,
-                    ProductId2 = productLenovoThinkpad.Id
+                    TvChannelId1 = tvchannelHpSpectre.Id,
+                    TvChannelId2 = tvchannelLenovoThinkpad.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpSpectre.Id,
-                    ProductId2 = productSamsungSeries.Id
+                    TvChannelId1 = tvchannelHpSpectre.Id,
+                    TvChannelId2 = tvchannelSamsungSeries.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpSpectre.Id,
-                    ProductId2 = productAsusN551JK.Id
+                    TvChannelId1 = tvchannelHpSpectre.Id,
+                    TvChannelId2 = tvchannelAsusN551JK.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpSpectre.Id,
-                    ProductId2 = productHpEnvy.Id
+                    TvChannelId1 = tvchannelHpSpectre.Id,
+                    TvChannelId2 = tvchannelHpEnvy.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpEnvy.Id,
-                    ProductId2 = productAsusN551JK.Id
+                    TvChannelId1 = tvchannelHpEnvy.Id,
+                    TvChannelId2 = tvchannelAsusN551JK.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpEnvy.Id,
-                    ProductId2 = productAppleMacBookPro.Id
+                    TvChannelId1 = tvchannelHpEnvy.Id,
+                    TvChannelId2 = tvchannelAppleMacBookPro.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpEnvy.Id,
-                    ProductId2 = productHpSpectre.Id
+                    TvChannelId1 = tvchannelHpEnvy.Id,
+                    TvChannelId2 = tvchannelHpSpectre.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productHpEnvy.Id,
-                    ProductId2 = productSamsungSeries.Id
+                    TvChannelId1 = tvchannelHpEnvy.Id,
+                    TvChannelId2 = tvchannelSamsungSeries.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productSamsungSeries.Id,
-                    ProductId2 = productAsusN551JK.Id
+                    TvChannelId1 = tvchannelSamsungSeries.Id,
+                    TvChannelId2 = tvchannelAsusN551JK.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productSamsungSeries.Id,
-                    ProductId2 = productAppleMacBookPro.Id
+                    TvChannelId1 = tvchannelSamsungSeries.Id,
+                    TvChannelId2 = tvchannelAppleMacBookPro.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productSamsungSeries.Id,
-                    ProductId2 = productHpEnvy.Id
+                    TvChannelId1 = tvchannelSamsungSeries.Id,
+                    TvChannelId2 = tvchannelHpEnvy.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productSamsungSeries.Id,
-                    ProductId2 = productHpSpectre.Id
+                    TvChannelId1 = tvchannelSamsungSeries.Id,
+                    TvChannelId2 = tvchannelHpSpectre.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoIdeaCentre.Id,
-                    ProductId2 = productLenovoThinkpad.Id
+                    TvChannelId1 = tvchannelLenovoIdeaCentre.Id,
+                    TvChannelId2 = tvchannelLenovoThinkpad.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productLenovoIdeaCentre.Id,
-                    ProductId2 = productAppleMacBookPro.Id
+                    TvChannelId1 = tvchannelLenovoIdeaCentre.Id,
+                    TvChannelId2 = tvchannelAppleMacBookPro.Id
                 }
             });
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallElectronicsAsync(ProductTemplate productTemplateSimple, ProductTemplate productTemplateGrouped, List<Product> allProducts, string sampleImagesPath, IPictureService pictureService, List<RelatedProduct> relatedProducts)
+        protected virtual async Task InstallElectronicsAsync(TvChannelTemplate tvchannelTemplateSimple, TvChannelTemplate tvchannelTemplateGrouped, List<TvChannel> allTvChannels, string sampleImagesPath, IPictureService pictureService, List<RelatedTvChannel> relatedTvChannels)
         {
-            //this one is a grouped product with two associated ones
-            var productNikonD5500DSLR = new Product
+            //this one is a grouped tvchannel with two associated ones
+            var tvchannelNikonD5500DSLR = new TvChannel
             {
-                ProductType = ProductType.GroupedProduct,
+                TvChannelType = TvChannelType.GroupedTvChannel,
                 VisibleIndividually = true,
                 Name = "Nikon D5500 DSLR",
                 Sku = "N5500DS_0",
                 ShortDescription = "Slim, lightweight Nikon D5500 packs a vari-angle touchscreen",
                 FullDescription = "Nikon has announced its latest DSLR, the D5500. A lightweight, compact DX-format camera with a 24.2MP sensor, it’s the first of its type to offer a vari-angle touchscreen. The D5500 replaces the D5300 in Nikon’s range, and while it offers much the same features the company says it’s a much slimmer and lighter prospect. There’s a deep grip for easier handling and built-in Wi-Fi that lets you transfer and share shots via your phone or tablet.",
-                ProductTemplateId = productTemplateGrouped.Id,
+                TvChannelTemplateId = tvchannelTemplateGrouped.Id,
                 //SeName = "canon-digital-slr-camera",
                 AllowUserReviews = true,
                 Published = true,
@@ -5481,31 +5481,31 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productNikonD5500DSLR);
+            allTvChannels.Add(tvchannelNikonD5500DSLR);
 
-            await InsertInstallationDataAsync(productNikonD5500DSLR);
+            await InsertInstallationDataAsync(tvchannelNikonD5500DSLR);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productNikonD5500DSLR.Id,
+                TvChannelId = tvchannelNikonD5500DSLR.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Camera & photo").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productNikonD5500DSLR, "product_NikonCamera_1.jpeg");
-            await InsertProductPictureAsync(productNikonD5500DSLR, "product_NikonCamera_2.jpeg", 2);
+            await InsertTvChannelPictureAsync(tvchannelNikonD5500DSLR, "tvchannel_NikonCamera_1.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelNikonD5500DSLR, "tvchannel_NikonCamera_2.jpeg", 2);
 
-            await AddProductTagAsync(productNikonD5500DSLR, "cool");
-            await AddProductTagAsync(productNikonD5500DSLR, "camera");
+            await AddTvChannelTagAsync(tvchannelNikonD5500DSLR, "cool");
+            await AddTvChannelTagAsync(tvchannelNikonD5500DSLR, "camera");
 
-            var productNikonD5500DslrAssociated1 = new Product
+            var tvchannelNikonD5500DslrAssociated1 = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
-                VisibleIndividually = false, //hide this products
-                ParentGroupedProductId = productNikonD5500DSLR.Id,
+                TvChannelType = TvChannelType.SimpleTvChannel,
+                VisibleIndividually = false, //hide this tvchannels
+                ParentGroupedTvChannelId = tvchannelNikonD5500DSLR.Id,
                 Name = "Nikon D5500 DSLR - Black",
                 Sku = "N5500DS_B",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "canon-digital-slr-camera-black",
                 AllowUserReviews = true,
                 Published = true,
@@ -5528,20 +5528,20 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productNikonD5500DslrAssociated1);
+            allTvChannels.Add(tvchannelNikonD5500DslrAssociated1);
 
-            await InsertInstallationDataAsync(productNikonD5500DslrAssociated1);
+            await InsertInstallationDataAsync(tvchannelNikonD5500DslrAssociated1);
 
-            await InsertProductPictureAsync(productNikonD5500DslrAssociated1, "product_NikonCamera_black.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelNikonD5500DslrAssociated1, "tvchannel_NikonCamera_black.jpeg");
 
-            var productNikonD5500DslrAssociated2 = new Product
+            var tvchannelNikonD5500DslrAssociated2 = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
-                VisibleIndividually = false, //hide this products
-                ParentGroupedProductId = productNikonD5500DSLR.Id,
+                TvChannelType = TvChannelType.SimpleTvChannel,
+                VisibleIndividually = false, //hide this tvchannels
+                ParentGroupedTvChannelId = tvchannelNikonD5500DSLR.Id,
                 Name = "Nikon D5500 DSLR - Red",
                 Sku = "N5500DS_R",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "canon-digital-slr-camera-silver",
                 AllowUserReviews = true,
                 Published = true,
@@ -5564,21 +5564,21 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productNikonD5500DslrAssociated2);
+            allTvChannels.Add(tvchannelNikonD5500DslrAssociated2);
 
-            await InsertInstallationDataAsync(productNikonD5500DslrAssociated2);
+            await InsertInstallationDataAsync(tvchannelNikonD5500DslrAssociated2);
 
-            await InsertProductPictureAsync(productNikonD5500DslrAssociated2, "product_NikonCamera_red.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelNikonD5500DslrAssociated2, "tvchannel_NikonCamera_red.jpeg");
 
-            var productLeica = new Product
+            var tvchannelLeica = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Leica T Mirrorless Digital Camera",
                 Sku = "LT_MIR_DC",
                 ShortDescription = "Leica T (Typ 701) Silver",
                 FullDescription = "<p>The new Leica T offers a minimalist design that's crafted from a single block of aluminum.  Made in Germany and assembled by hand, this 16.3 effective mega pixel camera is easy to use.  With a massive 3.7 TFT LCD intuitive touch screen control, the user is able to configure and save their own menu system.  The Leica T has outstanding image quality and also has 16GB of built in memory.  This is Leica's first system camera to use Wi-Fi.  Add the T-App to your portable iOS device and be able to transfer and share your images (free download from the Apple App Store)</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "canon-vixia-hf100-camcorder",
                 AllowUserReviews = true,
                 Price = 530M,
@@ -5601,31 +5601,31 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productLeica);
+            allTvChannels.Add(tvchannelLeica);
 
-            await InsertInstallationDataAsync(productLeica);
+            await InsertInstallationDataAsync(tvchannelLeica);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productLeica.Id,
+                TvChannelId = tvchannelLeica.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Camera & photo").Id,
                 DisplayOrder = 3
             });
 
-            await InsertProductPictureAsync(productLeica, "product_LeicaT.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelLeica, "tvchannel_LeicaT.jpeg");
 
-            await AddProductTagAsync(productLeica, "camera");
-            await AddProductTagAsync(productLeica, "cool");
+            await AddTvChannelTagAsync(tvchannelLeica, "camera");
+            await AddTvChannelTagAsync(tvchannelLeica, "cool");
 
-            var productAppleICam = new Product
+            var tvchannelAppleICam = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Apple iCam",
                 Sku = "APPLE_CAM",
                 ShortDescription = "Photography becomes smart",
                 FullDescription = "<p>A few months ago we featured the amazing WVIL camera, by many considered the future of digital photography. This is another very good looking concept, iCam is the vision of Italian designer Antonio DeRosa, the idea is to have a device that attaches to the iSmartPhone 5, which then allows the user to have a camera with interchangeable lenses. The device would also feature a front-touch screen and a projector. Would be great if apple picked up on this and made it reality.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "panasonic-hdc-sdt750k-high-definition-3d-camcorder",
                 AllowUserReviews = true,
                 Price = 1300M,
@@ -5648,35 +5648,35 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productAppleICam);
+            allTvChannels.Add(tvchannelAppleICam);
 
-            await InsertInstallationDataAsync(productAppleICam);
+            await InsertInstallationDataAsync(tvchannelAppleICam);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productAppleICam.Id,
+                TvChannelId = tvchannelAppleICam.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Camera & photo").Id,
                 DisplayOrder = 2
             });
 
-            await InsertInstallationDataAsync(new ProductManufacturer
+            await InsertInstallationDataAsync(new TvChannelManufacturer
             {
-                ProductId = productAppleICam.Id,
+                TvChannelId = tvchannelAppleICam.Id,
                 ManufacturerId = _manufacturerRepository.Table.Single(c => c.Name == "Apple").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productAppleICam, "product_iCam.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelAppleICam, "tvchannel_iCam.jpeg");
 
-            var productHtcOne = new Product
+            var tvchannelHtcOne = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "HTC One M8 Android L 5.0 Lollipop",
                 Sku = "M8_HTC_5L",
                 ShortDescription = "HTC - One (M8) 4G LTE Cell SmartPhone with 32GB Memory - Gunmetal (Sprint)",
                 FullDescription = "<p><b>HTC One (M8) Cell SmartPhone for Sprint:</b> With its brushed-metal design and wrap-around unibody frame, the HTC One (M8) is designed to fit beautifully in your hand. It's fun to use with amped up sound and a large Full HD touch screen, and intuitive gesture controls make it seem like your phone almost knows what you need before you do. <br /><br />Sprint Easy Pay option available in store.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "blackberry-bold-9000-phone-black-att",
                 AllowUserReviews = true,
                 Price = 245M,
@@ -5701,32 +5701,32 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productHtcOne);
+            allTvChannels.Add(tvchannelHtcOne);
 
-            await InsertInstallationDataAsync(productHtcOne);
+            await InsertInstallationDataAsync(tvchannelHtcOne);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productHtcOne.Id,
+                TvChannelId = tvchannelHtcOne.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Cell phones").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productHtcOne, "product_HTC_One_M8.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelHtcOne, "tvchannel_HTC_One_M8.jpeg");
 
-            await AddProductTagAsync(productHtcOne, "cell");
-            await AddProductTagAsync(productHtcOne, "compact");
-            await AddProductTagAsync(productHtcOne, "awesome");
+            await AddTvChannelTagAsync(tvchannelHtcOne, "cell");
+            await AddTvChannelTagAsync(tvchannelHtcOne, "compact");
+            await AddTvChannelTagAsync(tvchannelHtcOne, "awesome");
 
-            var productHtcOneMini = new Product
+            var tvchannelHtcOneMini = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "HTC One Mini Blue",
                 Sku = "OM_HTC_BL",
                 ShortDescription = "HTC One and HTC One Mini now available in bright blue hue",
                 FullDescription = "<p>HTC One mini smartphone with 4.30-inch 720x1280 display powered by 1.4GHz processor alongside 1GB RAM and 4-Ultrapixel rear camera.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "samsung-rugby-a837-phone-black-att",
                 AllowUserReviews = true,
                 Price = 100M,
@@ -5750,33 +5750,33 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productHtcOneMini);
+            allTvChannels.Add(tvchannelHtcOneMini);
 
-            await InsertInstallationDataAsync(productHtcOneMini);
+            await InsertInstallationDataAsync(tvchannelHtcOneMini);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productHtcOneMini.Id,
+                TvChannelId = tvchannelHtcOneMini.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Cell phones").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productHtcOneMini, "product_HTC_One_Mini_1.jpeg");
-            await InsertProductPictureAsync(productHtcOneMini, "product_HTC_One_Mini_2.jpeg", 2);
+            await InsertTvChannelPictureAsync(tvchannelHtcOneMini, "tvchannel_HTC_One_Mini_1.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelHtcOneMini, "tvchannel_HTC_One_Mini_2.jpeg", 2);
 
-            await AddProductTagAsync(productHtcOneMini, "awesome");
-            await AddProductTagAsync(productHtcOneMini, "compact");
-            await AddProductTagAsync(productHtcOneMini, "cell");
+            await AddTvChannelTagAsync(tvchannelHtcOneMini, "awesome");
+            await AddTvChannelTagAsync(tvchannelHtcOneMini, "compact");
+            await AddTvChannelTagAsync(tvchannelHtcOneMini, "cell");
 
-            var productNokiaLumia = new Product
+            var tvchannelNokiaLumia = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Nokia Lumia 1020",
                 Sku = "N_1020_LU",
                 ShortDescription = "Nokia Lumia 1020 4G Cell SmartPhone (Unlocked)",
                 FullDescription = "<p>Capture special moments for friends and family with this Nokia Lumia 1020 32GB WHITE cell phone that features an easy-to-use 41.0MP rear-facing camera and a 1.2MP front-facing camera. The AMOLED touch screen offers 768 x 1280 resolution for crisp visuals.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "sony-dcr-sr85-1mp-60gb-hard-drive-handycam-camcorder",
                 AllowUserReviews = true,
                 Price = 349M,
@@ -5799,32 +5799,32 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productNokiaLumia);
+            allTvChannels.Add(tvchannelNokiaLumia);
 
-            await InsertInstallationDataAsync(productNokiaLumia);
+            await InsertInstallationDataAsync(tvchannelNokiaLumia);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productNokiaLumia.Id,
+                TvChannelId = tvchannelNokiaLumia.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Cell phones").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productNokiaLumia, "product_Lumia1020.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelNokiaLumia, "tvchannel_Lumia1020.jpeg");
 
-            await AddProductTagAsync(productNokiaLumia, "awesome");
-            await AddProductTagAsync(productNokiaLumia, "cool");
-            await AddProductTagAsync(productNokiaLumia, "camera");
+            await AddTvChannelTagAsync(tvchannelNokiaLumia, "awesome");
+            await AddTvChannelTagAsync(tvchannelNokiaLumia, "cool");
+            await AddTvChannelTagAsync(tvchannelNokiaLumia, "camera");
 
-            var productBeatsPill = new Product
+            var tvchannelBeatsPill = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Beats Pill 2.0 Wireless Speaker",
                 Sku = "BP_20_WSP",
                 ShortDescription = "<b>Pill 2.0 Portable Bluetooth Speaker (1-Piece):</b> Watch your favorite movies and listen to music with striking sound quality. This lightweight, portable speaker is easy to take with you as you travel to any destination, keeping you entertained wherever you are. ",
                 FullDescription = "<ul><li>Pair and play with your Bluetooth® device with 30 foot range</li><li>Built-in speakerphone</li><li>7 hour rechargeable battery</li><li>Power your other devices with USB charge out</li><li>Tap two Beats Pills™ together for twice the sound with Beats Bond™</li></ul>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "acer-aspire-one-89-mini-notebook-case-black",
                 AllowUserReviews = true,
                 Price = 79.99M,
@@ -5850,19 +5850,19 @@ namespace TvProgViewer.Services.Installation
                 UpdatedOnUtc = DateTime.UtcNow,
                 HasTierPrices = true
             };
-            allProducts.Add(productBeatsPill);
+            allTvChannels.Add(tvchannelBeatsPill);
 
-            await InsertInstallationDataAsync(productBeatsPill);
+            await InsertInstallationDataAsync(tvchannelBeatsPill);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productBeatsPill.Id,
+                TvChannelId = tvchannelBeatsPill.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Others").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productBeatsPill, "product_PillBeats_1.jpeg");
-            await InsertProductPictureAsync(productBeatsPill, "product_PillBeats_2.jpeg", 2);
+            await InsertTvChannelPictureAsync(tvchannelBeatsPill, "tvchannel_PillBeats_1.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelBeatsPill, "tvchannel_PillBeats_2.jpeg", 2);
 
             await InsertInstallationDataAsync(new List<TierPrice>
             {
@@ -5870,13 +5870,13 @@ namespace TvProgViewer.Services.Installation
                 {
                     Quantity = 2,
                     Price = 19,
-                    ProductId = productBeatsPill.Id
+                    TvChannelId = tvchannelBeatsPill.Id
                 },
                 new TierPrice
                 {
                     Quantity = 5,
                     Price = 17,
-                    ProductId = productBeatsPill.Id
+                    TvChannelId = tvchannelBeatsPill.Id
                 },
                 new TierPrice
                 {
@@ -5884,22 +5884,22 @@ namespace TvProgViewer.Services.Installation
                     Price = 15,
                     StartDateTimeUtc = DateTime.UtcNow.AddDays(-7),
                     EndDateTimeUtc = DateTime.UtcNow.AddDays(7),
-                    ProductId = productBeatsPill.Id
+                    TvChannelId = tvchannelBeatsPill.Id
                 }
             });
 
-            await AddProductTagAsync(productBeatsPill, "computer");
-            await AddProductTagAsync(productBeatsPill, "cool");
+            await AddTvChannelTagAsync(tvchannelBeatsPill, "computer");
+            await AddTvChannelTagAsync(tvchannelBeatsPill, "cool");
 
-            var productUniversalTabletCover = new Product
+            var tvchannelUniversalTabletCover = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Universal 7-8 Inch Tablet Cover",
                 Sku = "TC_78I_UN",
                 ShortDescription = "Universal protection for 7-inch & 8-inch tablets",
                 FullDescription = "<p>Made of durable polyurethane, our Universal Cover is slim, lightweight, and strong, with protective corners that stretch to hold most 7 and 8-inch tablets securely. This tough case helps protects your tablet from bumps, scuffs, and dings.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "apc-back-ups-rs-800va-ups-800-va-ups-battery-lead-acid-br800blk",
                 AllowUserReviews = true,
                 Price = 39M,
@@ -5922,31 +5922,31 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productUniversalTabletCover);
+            allTvChannels.Add(tvchannelUniversalTabletCover);
 
-            await InsertInstallationDataAsync(productUniversalTabletCover);
+            await InsertInstallationDataAsync(tvchannelUniversalTabletCover);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productUniversalTabletCover.Id,
+                TvChannelId = tvchannelUniversalTabletCover.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Others").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productUniversalTabletCover, "product_TabletCover.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelUniversalTabletCover, "tvchannel_TabletCover.jpeg");
 
-            await AddProductTagAsync(productUniversalTabletCover, "computer");
-            await AddProductTagAsync(productUniversalTabletCover, "cool");
+            await AddTvChannelTagAsync(tvchannelUniversalTabletCover, "computer");
+            await AddTvChannelTagAsync(tvchannelUniversalTabletCover, "cool");
 
-            var productPortableSoundSpeakers = new Product
+            var tvchannelPortableSoundSpeakers = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Portable Sound Speakers",
                 Sku = "PT_SPK_SN",
                 ShortDescription = "Universall portable sound speakers",
                 FullDescription = "<p>Your phone cut the cord, now it's time for you to set your music free and buy a Bluetooth speaker. Thankfully, there's one suited for everyone out there.</p><p>Some Bluetooth speakers excel at packing in as much functionality as the unit can handle while keeping the price down. Other speakers shuck excess functionality in favor of premium build materials instead. Whatever path you choose to go down, you'll be greeted with many options to suit your personal tastes.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "microsoft-bluetooth-notebook-mouse-5000-macwindows",
                 AllowUserReviews = true,
                 Price = 37M,
@@ -5969,116 +5969,116 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productPortableSoundSpeakers);
+            allTvChannels.Add(tvchannelPortableSoundSpeakers);
 
-            await InsertInstallationDataAsync(productPortableSoundSpeakers);
+            await InsertInstallationDataAsync(tvchannelPortableSoundSpeakers);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productPortableSoundSpeakers.Id,
+                TvChannelId = tvchannelPortableSoundSpeakers.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Others").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productPortableSoundSpeakers, "product_Speakers.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelPortableSoundSpeakers, "tvchannel_Speakers.jpeg");
 
-            relatedProducts.AddRange(new[]
+            relatedTvChannels.AddRange(new[]
             {
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeica.Id,
-                     ProductId2 = productHtcOneMini.Id
+                     TvChannelId1 = tvchannelLeica.Id,
+                     TvChannelId2 = tvchannelHtcOneMini.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeica.Id,
-                     ProductId2 = productNikonD5500DSLR.Id
+                     TvChannelId1 = tvchannelLeica.Id,
+                     TvChannelId2 = tvchannelNikonD5500DSLR.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeica.Id,
-                     ProductId2 = productAppleICam.Id
+                     TvChannelId1 = tvchannelLeica.Id,
+                     TvChannelId2 = tvchannelAppleICam.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeica.Id,
-                     ProductId2 = productNokiaLumia.Id
+                     TvChannelId1 = tvchannelLeica.Id,
+                     TvChannelId2 = tvchannelNokiaLumia.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOne.Id,
-                     ProductId2 = productHtcOneMini.Id
+                     TvChannelId1 = tvchannelHtcOne.Id,
+                     TvChannelId2 = tvchannelHtcOneMini.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOne.Id,
-                     ProductId2 = productNokiaLumia.Id
+                     TvChannelId1 = tvchannelHtcOne.Id,
+                     TvChannelId2 = tvchannelNokiaLumia.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOne.Id,
-                     ProductId2 = productBeatsPill.Id
+                     TvChannelId1 = tvchannelHtcOne.Id,
+                     TvChannelId2 = tvchannelBeatsPill.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOne.Id,
-                     ProductId2 = productPortableSoundSpeakers.Id
+                     TvChannelId1 = tvchannelHtcOne.Id,
+                     TvChannelId2 = tvchannelPortableSoundSpeakers.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOneMini.Id,
-                     ProductId2 = productHtcOne.Id
+                     TvChannelId1 = tvchannelHtcOneMini.Id,
+                     TvChannelId2 = tvchannelHtcOne.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOneMini.Id,
-                     ProductId2 = productNokiaLumia.Id
+                     TvChannelId1 = tvchannelHtcOneMini.Id,
+                     TvChannelId2 = tvchannelNokiaLumia.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOneMini.Id,
-                     ProductId2 = productBeatsPill.Id
+                     TvChannelId1 = tvchannelHtcOneMini.Id,
+                     TvChannelId2 = tvchannelBeatsPill.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productHtcOneMini.Id,
-                     ProductId2 = productPortableSoundSpeakers.Id
+                     TvChannelId1 = tvchannelHtcOneMini.Id,
+                     TvChannelId2 = tvchannelPortableSoundSpeakers.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productNokiaLumia.Id,
-                     ProductId2 = productHtcOne.Id
+                     TvChannelId1 = tvchannelNokiaLumia.Id,
+                     TvChannelId2 = tvchannelHtcOne.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productNokiaLumia.Id,
-                     ProductId2 = productHtcOneMini.Id
+                     TvChannelId1 = tvchannelNokiaLumia.Id,
+                     TvChannelId2 = tvchannelHtcOneMini.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productNokiaLumia.Id,
-                     ProductId2 = productBeatsPill.Id
+                     TvChannelId1 = tvchannelNokiaLumia.Id,
+                     TvChannelId2 = tvchannelBeatsPill.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productNokiaLumia.Id,
-                     ProductId2 = productPortableSoundSpeakers.Id
+                     TvChannelId1 = tvchannelNokiaLumia.Id,
+                     TvChannelId2 = tvchannelPortableSoundSpeakers.Id
                 }
             });
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallApparelAsync(ProductTemplate productTemplateSimple, List<Product> allProducts, string sampleImagesPath, IPictureService pictureService, List<RelatedProduct> relatedProducts, ProductAvailabilityRange productAvailabilityRange)
+        protected virtual async Task InstallApparelAsync(TvChannelTemplate tvchannelTemplateSimple, List<TvChannel> allTvChannels, string sampleImagesPath, IPictureService pictureService, List<RelatedTvChannel> relatedTvChannels, TvChannelAvailabilityRange tvchannelAvailabilityRange)
         {
-            var productNikeFloral = new Product
+            var tvchannelNikeFloral = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Nike Floral Roshe Customized Running Shoes",
                 Sku = "NK_FRC_RS",
                 ShortDescription = "When you ran across these shoes, you will immediately fell in love and needed a pair of these customized beauties.",
                 FullDescription = "<p>Each Rosh Run is personalized and exclusive, handmade in our workshop Custom. Run Your Rosh creations born from the hand of an artist specialized in sneakers, more than 10 years of experience.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "adidas-womens-supernova-csh-7-running-shoe",
                 AllowUserReviews = true,
                 Price = 40M,
@@ -6101,144 +6101,144 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productNikeFloral);
+            allTvChannels.Add(tvchannelNikeFloral);
 
-            await InsertInstallationDataAsync(productNikeFloral);
+            await InsertInstallationDataAsync(tvchannelNikeFloral);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productNikeFloral.Id,
+                TvChannelId = tvchannelNikeFloral.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Shoes").Id,
                 DisplayOrder = 1
             });
 
-            await InsertInstallationDataAsync(new ProductManufacturer
+            await InsertInstallationDataAsync(new TvChannelManufacturer
             {
-                ProductId = productNikeFloral.Id,
+                TvChannelId = tvchannelNikeFloral.Id,
                 ManufacturerId = _manufacturerRepository.Table.Single(c => c.Name == "Nike").Id,
                 DisplayOrder = 2
             });
 
-            var picProductNikeFloralShoe1Id = await InsertProductPictureAsync(productNikeFloral, "product_NikeFloralShoe_1.jpg");
-            var picProductNikeFloralShoe2Id = await InsertProductPictureAsync(productNikeFloral, "product_NikeFloralShoe_2.jpg", 2);
+            var picTvChannelNikeFloralShoe1Id = await InsertTvChannelPictureAsync(tvchannelNikeFloral, "tvchannel_NikeFloralShoe_1.jpg");
+            var picTvChannelNikeFloralShoe2Id = await InsertTvChannelPictureAsync(tvchannelNikeFloral, "tvchannel_NikeFloralShoe_2.jpg", 2);
 
-            await InsertInstallationDataAsync(new ProductSpecificationAttribute
+            await InsertInstallationDataAsync(new TvChannelSpecificationAttribute
             {
-                ProductId = productNikeFloral.Id,
+                TvChannelId = tvchannelNikeFloral.Id,
                 AllowFiltering = true,
-                ShowOnProductPage = false,
+                ShowOnTvChannelPage = false,
                 DisplayOrder = 1,
                 SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Color", "Grey")
             });
 
             var pamSize = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productNikeFloral.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Size").Id,
+                    TvChannelId = tvchannelNikeFloral.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Size").Id,
                     AttributeControlType = AttributeControlType.DropdownList,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamSize.Id,
+                    TvChannelAttributeMappingId = pamSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "8",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamSize.Id,
+                    TvChannelAttributeMappingId = pamSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "9",
                     DisplayOrder = 2
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamSize.Id,
+                    TvChannelAttributeMappingId = pamSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "10",
                     DisplayOrder = 3
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamSize.Id,
+                    TvChannelAttributeMappingId = pamSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "11",
                     DisplayOrder = 4
                 });
 
             var pamColor = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productNikeFloral.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Color").Id,
+                    TvChannelId = tvchannelNikeFloral.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Color").Id,
                     AttributeControlType = AttributeControlType.DropdownList,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamColor.Id,
+                    TvChannelAttributeMappingId = pamColor.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "White/Blue",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamColor.Id,
+                    TvChannelAttributeMappingId = pamColor.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "White/Black",
                     DisplayOrder = 2
                 });
 
             var pamPrint = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productNikeFloral.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Print").Id,
+                    TvChannelId = tvchannelNikeFloral.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Print").Id,
                     AttributeControlType = AttributeControlType.ImageSquares,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamPrint.Id,
-                    PictureId = picProductNikeFloralShoe1Id,
+                    TvChannelAttributeMappingId = pamPrint.Id,
+                    PictureId = picTvChannelNikeFloralShoe1Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Natural",
                     DisplayOrder = 1,
                     ImageSquaresPictureId = (await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "p_attribute_print_2.jpg")), MimeTypes.ImagePJpeg, await pictureService.GetPictureSeNameAsync("Natural Print"))).Id
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamPrint.Id,
-                    PictureId = picProductNikeFloralShoe2Id,
+                    TvChannelAttributeMappingId = pamPrint.Id,
+                    PictureId = picTvChannelNikeFloralShoe2Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Fresh",
                     DisplayOrder = 2,
                     ImageSquaresPictureId = (await pictureService.InsertPictureAsync(await _fileProvider.ReadAllBytesAsync(_fileProvider.Combine(sampleImagesPath, "p_attribute_print_1.jpg")), MimeTypes.ImagePJpeg, await pictureService.GetPictureSeNameAsync("Fresh Print"))).Id
                 });
 
-            await AddProductTagAsync(productNikeFloral, "cool");
-            await AddProductTagAsync(productNikeFloral, "shoes");
-            await AddProductTagAsync(productNikeFloral, "apparel");
+            await AddTvChannelTagAsync(tvchannelNikeFloral, "cool");
+            await AddTvChannelTagAsync(tvchannelNikeFloral, "shoes");
+            await AddTvChannelTagAsync(tvchannelNikeFloral, "apparel");
 
-            await UpdateInstallationDataAsync(productNikeFloral);
+            await UpdateInstallationDataAsync(tvchannelNikeFloral);
 
-            var productAdidas = new Product
+            var tvchannelAdidas = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "adidas Consortium Campus 80s Running Shoes",
                 Sku = "AD_C80_RS",
                 ShortDescription = "adidas Consortium Campus 80s Primeknit Light Maroon/Running Shoes",
                 FullDescription = "<p>One of three colorways of the adidas Consortium Campus 80s Primeknit set to drop alongside each other. This pair comes in light maroon and running white. Featuring a maroon-based primeknit upper with white accents. A limited release, look out for these at select adidas Consortium accounts worldwide.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "etnies-mens-digit-sneaker",
                 AllowUserReviews = true,
                 Price = 27.56M,
@@ -6262,140 +6262,140 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productAdidas);
+            allTvChannels.Add(tvchannelAdidas);
 
-            await InsertInstallationDataAsync(productAdidas);
+            await InsertInstallationDataAsync(tvchannelAdidas);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productAdidas.Id,
+                TvChannelId = tvchannelAdidas.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Shoes").Id,
                 DisplayOrder = 1
             });
 
-            var picProductAdidasId = await InsertProductPictureAsync(productAdidas, "product_adidas.jpg");
-            var picProductAdidas2Id = await InsertProductPictureAsync(productAdidas, "product_adidas_2.jpg", 2);
-            var picProductAdidas3Id = await InsertProductPictureAsync(productAdidas, "product_adidas_3.jpg", 3);
+            var picTvChannelAdidasId = await InsertTvChannelPictureAsync(tvchannelAdidas, "tvchannel_adidas.jpg");
+            var picTvChannelAdidas2Id = await InsertTvChannelPictureAsync(tvchannelAdidas, "tvchannel_adidas_2.jpg", 2);
+            var picTvChannelAdidas3Id = await InsertTvChannelPictureAsync(tvchannelAdidas, "tvchannel_adidas_3.jpg", 3);
 
             await InsertInstallationDataAsync(
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAdidas.Id,
+                    TvChannelId = tvchannelAdidas.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = false,
+                    ShowOnTvChannelPage = false,
                     DisplayOrder = 1,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Color", "Grey")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAdidas.Id,
+                    TvChannelId = tvchannelAdidas.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = false,
+                    ShowOnTvChannelPage = false,
                     DisplayOrder = 2,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Color", "Red")
                 },
-                new ProductSpecificationAttribute
+                new TvChannelSpecificationAttribute
                 {
-                    ProductId = productAdidas.Id,
+                    TvChannelId = tvchannelAdidas.Id,
                     AllowFiltering = true,
-                    ShowOnProductPage = false,
+                    ShowOnTvChannelPage = false,
                     DisplayOrder = 3,
                     SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Color", "Blue")
                 });
 
             var pamAdidasSize = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productAdidas.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Size").Id,
+                    TvChannelId = tvchannelAdidas.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Size").Id,
                     AttributeControlType = AttributeControlType.DropdownList,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamAdidasSize.Id,
+                    TvChannelAttributeMappingId = pamAdidasSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "8",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamAdidasSize.Id,
+                    TvChannelAttributeMappingId = pamAdidasSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "9",
                     DisplayOrder = 2
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamAdidasSize.Id,
+                    TvChannelAttributeMappingId = pamAdidasSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "10",
                     DisplayOrder = 3
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamAdidasSize.Id,
+                    TvChannelAttributeMappingId = pamAdidasSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "11",
                     DisplayOrder = 4
                 });
 
             var pamAdidasColor = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productAdidas.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Color").Id,
+                    TvChannelId = tvchannelAdidas.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Color").Id,
                     AttributeControlType = AttributeControlType.ColorSquares,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamAdidasColor.Id,
-                    PictureId = picProductAdidasId,
+                    TvChannelAttributeMappingId = pamAdidasColor.Id,
+                    PictureId = picTvChannelAdidasId,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Red",
                     IsPreSelected = true,
                     ColorSquaresRgb = "#663030",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamAdidasColor.Id,
-                    PictureId = picProductAdidas2Id,
+                    TvChannelAttributeMappingId = pamAdidasColor.Id,
+                    PictureId = picTvChannelAdidas2Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Blue",
                     ColorSquaresRgb = "#363656",
                     DisplayOrder = 2
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamAdidasColor.Id,
-                    PictureId = picProductAdidas3Id,
+                    TvChannelAttributeMappingId = pamAdidasColor.Id,
+                    PictureId = picTvChannelAdidas3Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Silver",
                     ColorSquaresRgb = "#c5c5d5",
                     DisplayOrder = 3
                 });
 
-            await AddProductTagAsync(productAdidas, "cool");
-            await AddProductTagAsync(productAdidas, "shoes");
-            await AddProductTagAsync(productAdidas, "apparel");
+            await AddTvChannelTagAsync(tvchannelAdidas, "cool");
+            await AddTvChannelTagAsync(tvchannelAdidas, "shoes");
+            await AddTvChannelTagAsync(tvchannelAdidas, "apparel");
 
-            await UpdateInstallationDataAsync(productAdidas);
+            await UpdateInstallationDataAsync(tvchannelAdidas);
 
-            var productNikeZoom = new Product
+            var tvchannelNikeZoom = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Nike SB Zoom Stefan Janoski \"Medium Mint\"",
                 Sku = "NK_ZSJ_MM",
                 ShortDescription = "Nike SB Zoom Stefan Janoski Dark Grey Medium Mint Teal ...",
                 FullDescription = "The newly Nike SB Zoom Stefan Janoski gets hit with a \"Medium Mint\" accents that sits atop a Dark Grey suede. Expected to drop in October.",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "v-blue-juniors-cuffed-denim-short-with-rhinestones",
                 AllowUserReviews = true,
                 Price = 30M,
@@ -6419,48 +6419,48 @@ namespace TvProgViewer.Services.Installation
                 UpdatedOnUtc = DateTime.UtcNow
             };
 
-            allProducts.Add(productNikeZoom);
+            allTvChannels.Add(tvchannelNikeZoom);
 
-            await InsertInstallationDataAsync(productNikeZoom);
+            await InsertInstallationDataAsync(tvchannelNikeZoom);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productNikeZoom.Id,
+                TvChannelId = tvchannelNikeZoom.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Shoes").Id,
                 DisplayOrder = 1
             });
 
-            await InsertInstallationDataAsync(new ProductManufacturer
+            await InsertInstallationDataAsync(new TvChannelManufacturer
             {
-                ProductId = productNikeZoom.Id,
+                TvChannelId = tvchannelNikeZoom.Id,
                 ManufacturerId = _manufacturerRepository.Table.Single(c => c.Name == "Nike").Id,
                 DisplayOrder = 2
             });
 
-            await InsertProductPictureAsync(productNikeZoom, "product_NikeZoom.jpg");
+            await InsertTvChannelPictureAsync(tvchannelNikeZoom, "tvchannel_NikeZoom.jpg");
 
-            await InsertInstallationDataAsync(new ProductSpecificationAttribute
+            await InsertInstallationDataAsync(new TvChannelSpecificationAttribute
             {
-                ProductId = productNikeZoom.Id,
+                TvChannelId = tvchannelNikeZoom.Id,
                 AllowFiltering = true,
-                ShowOnProductPage = false,
+                ShowOnTvChannelPage = false,
                 DisplayOrder = 1,
                 SpecificationAttributeOptionId = await GetSpecificationAttributeOptionIdAsync("Color", "Grey")
             });
 
-            await AddProductTagAsync(productNikeZoom, "jeans");
-            await AddProductTagAsync(productNikeZoom, "cool");
-            await AddProductTagAsync(productNikeZoom, "apparel");
+            await AddTvChannelTagAsync(tvchannelNikeZoom, "jeans");
+            await AddTvChannelTagAsync(tvchannelNikeZoom, "cool");
+            await AddTvChannelTagAsync(tvchannelNikeZoom, "apparel");
 
-            var productNikeTailwind = new Product
+            var tvchannelNikeTailwind = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Nike Tailwind Loose Short-Sleeve Running Shirt",
                 Sku = "NK_TLS_RS",
                 ShortDescription = string.Empty,
                 FullDescription = "<p>Boost your adrenaline with the Nike® Women's Tailwind Running Shirt. The lightweight, slouchy fit is great for layering, and moisture-wicking fabrics keep you feeling at your best. This tee has a notched hem for an enhanced range of motion, while flat seams with reinforcement tape lessen discomfort and irritation over longer distances. Put your keys and card in the side zip pocket and take off in your Nike® running t-shirt.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "50s-rockabilly-polka-dot-top-jr-plus-size",
                 AllowUserReviews = true,
                 Published = true,
@@ -6483,92 +6483,92 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productNikeTailwind);
+            allTvChannels.Add(tvchannelNikeTailwind);
 
-            await InsertInstallationDataAsync(productNikeTailwind);
+            await InsertInstallationDataAsync(tvchannelNikeTailwind);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productNikeTailwind.Id,
+                TvChannelId = tvchannelNikeTailwind.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Clothing").Id,
                 DisplayOrder = 1
             });
 
-            await InsertInstallationDataAsync(new ProductManufacturer
+            await InsertInstallationDataAsync(new TvChannelManufacturer
             {
-                ProductId = productNikeTailwind.Id,
+                TvChannelId = tvchannelNikeTailwind.Id,
                 ManufacturerId = _manufacturerRepository.Table.Single(c => c.Name == "Nike").Id,
                 DisplayOrder = 2
             });
 
-            await InsertProductPictureAsync(productNikeTailwind, "product_NikeShirt.jpg");
+            await InsertTvChannelPictureAsync(tvchannelNikeTailwind, "tvchannel_NikeShirt.jpg");
 
             var pamNikeSize = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productNikeTailwind.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Size").Id,
+                    TvChannelId = tvchannelNikeTailwind.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Size").Id,
                     AttributeControlType = AttributeControlType.DropdownList,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamNikeSize.Id,
+                    TvChannelAttributeMappingId = pamNikeSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Small",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamNikeSize.Id,
+                    TvChannelAttributeMappingId = pamNikeSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "1X",
                     DisplayOrder = 2
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamNikeSize.Id,
+                    TvChannelAttributeMappingId = pamNikeSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "2X",
                     DisplayOrder = 3
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamNikeSize.Id,
+                    TvChannelAttributeMappingId = pamNikeSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "3X",
                     DisplayOrder = 4
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamNikeSize.Id,
+                    TvChannelAttributeMappingId = pamNikeSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "4X",
                     DisplayOrder = 5
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamNikeSize.Id,
+                    TvChannelAttributeMappingId = pamNikeSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "5X",
                     DisplayOrder = 6
                 });
 
-            await AddProductTagAsync(productNikeTailwind, "cool");
-            await AddProductTagAsync(productNikeTailwind, "apparel");
-            await AddProductTagAsync(productNikeTailwind, "shirt");
+            await AddTvChannelTagAsync(tvchannelNikeTailwind, "cool");
+            await AddTvChannelTagAsync(tvchannelNikeTailwind, "apparel");
+            await AddTvChannelTagAsync(tvchannelNikeTailwind, "shirt");
 
-            var productOversizedWomenTShirt = new Product
+            var tvchannelOversizedWomenTShirt = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Oversized Women T-Shirt",
                 Sku = "WM_OVR_TS",
                 ShortDescription = string.Empty,
-                FullDescription = "<p>This oversized women t-Shirt needs minimum ironing. It is a great product at a great value!</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                FullDescription = "<p>This oversized women t-Shirt needs minimum ironing. It is a great tvchannel at a great value!</p>",
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "arrow-mens-wrinkle-free-pinpoint-solid-long-sleeve",
                 AllowUserReviews = true,
                 Price = 24M,
@@ -6593,18 +6593,18 @@ namespace TvProgViewer.Services.Installation
                 HasTierPrices = true
             };
 
-            allProducts.Add(productOversizedWomenTShirt);
+            allTvChannels.Add(tvchannelOversizedWomenTShirt);
 
-            await InsertInstallationDataAsync(productOversizedWomenTShirt);
+            await InsertInstallationDataAsync(tvchannelOversizedWomenTShirt);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productOversizedWomenTShirt.Id,
+                TvChannelId = tvchannelOversizedWomenTShirt.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Clothing").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productOversizedWomenTShirt, "product_WomenTShirt.jpg");
+            await InsertTvChannelPictureAsync(tvchannelOversizedWomenTShirt, "tvchannel_WomenTShirt.jpg");
 
             await InsertInstallationDataAsync(new List<TierPrice>
             {
@@ -6612,35 +6612,35 @@ namespace TvProgViewer.Services.Installation
                 {
                     Quantity = 3,
                     Price = 21,
-                    ProductId = productOversizedWomenTShirt.Id
+                    TvChannelId = tvchannelOversizedWomenTShirt.Id
                 },
                 new TierPrice
                 {
                     Quantity = 7,
                     Price = 19,
-                    ProductId = productOversizedWomenTShirt.Id
+                    TvChannelId = tvchannelOversizedWomenTShirt.Id
                 },
                 new TierPrice
                 {
                     Quantity = 10,
                     Price = 16,
-                    ProductId = productOversizedWomenTShirt.Id
+                    TvChannelId = tvchannelOversizedWomenTShirt.Id
                 }
             });
 
-            await AddProductTagAsync(productOversizedWomenTShirt, "cool");
-            await AddProductTagAsync(productOversizedWomenTShirt, "apparel");
-            await AddProductTagAsync(productOversizedWomenTShirt, "shirt");
+            await AddTvChannelTagAsync(tvchannelOversizedWomenTShirt, "cool");
+            await AddTvChannelTagAsync(tvchannelOversizedWomenTShirt, "apparel");
+            await AddTvChannelTagAsync(tvchannelOversizedWomenTShirt, "shirt");
 
-            var productCustomTShirt = new Product
+            var tvchannelCustomTShirt = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Custom T-Shirt",
                 Sku = "CS_TSHIRT",
                 ShortDescription = "T-Shirt - Add Your Content",
                 FullDescription = "<p>Comfort comes in all shapes and forms, yet this tee out does it all. Rising above the rest, our classic cotton crew provides the simple practicality you need to make it through the day. Tag-free, relaxed fit wears well under dress shirts or stands alone in laid-back style. Reinforced collar and lightweight feel give way to long-lasting shape and breathability. One less thing to worry about, rely on this tee to provide comfort and ease with every wear.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "custom-t-shirt",
                 AllowUserReviews = true,
                 Price = 15M,
@@ -6663,42 +6663,42 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productCustomTShirt);
+            allTvChannels.Add(tvchannelCustomTShirt);
 
-            await InsertInstallationDataAsync(productCustomTShirt);
+            await InsertInstallationDataAsync(tvchannelCustomTShirt);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productCustomTShirt.Id,
+                TvChannelId = tvchannelCustomTShirt.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Clothing").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productCustomTShirt, "product_CustomTShirt.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelCustomTShirt, "tvchannel_CustomTShirt.jpeg");
 
             await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productCustomTShirt.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Custom Text").Id,
+                    TvChannelId = tvchannelCustomTShirt.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Custom Text").Id,
                     TextPrompt = "Enter your text:",
                     AttributeControlType = AttributeControlType.TextBox,
                     IsRequired = true
                 });
 
-            await AddProductTagAsync(productCustomTShirt, "cool");
-            await AddProductTagAsync(productCustomTShirt, "shirt");
-            await AddProductTagAsync(productCustomTShirt, "apparel");
+            await AddTvChannelTagAsync(tvchannelCustomTShirt, "cool");
+            await AddTvChannelTagAsync(tvchannelCustomTShirt, "shirt");
+            await AddTvChannelTagAsync(tvchannelCustomTShirt, "apparel");
 
-            var productLeviJeans = new Product
+            var tvchannelLeviJeans = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Levi's 511 Jeans",
                 Sku = "LV_511_JN",
                 ShortDescription = "Levi's Faded Black 511 Jeans ",
                 FullDescription = "<p>Between a skinny and straight fit, our 511&trade; slim fit jeans are cut close without being too restricting. Slim throughout the thigh and leg opening for a long and lean look.</p><ul><li>Slouch1y at top; sits below the waist</li><li>Slim through the leg, close at the thigh and straight to the ankle</li><li>Stretch for added comfort</li><li>Classic five-pocket styling</li><li>99% Cotton, 1% Spandex, 11.2 oz. - Imported</li></ul>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "levis-skinny-511-jeans",
                 AllowUserReviews = true,
                 Price = 43.5M,
@@ -6723,19 +6723,19 @@ namespace TvProgViewer.Services.Installation
                 UpdatedOnUtc = DateTime.UtcNow,
                 HasTierPrices = true
             };
-            allProducts.Add(productLeviJeans);
+            allTvChannels.Add(tvchannelLeviJeans);
 
-            await InsertInstallationDataAsync(productLeviJeans);
+            await InsertInstallationDataAsync(tvchannelLeviJeans);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productLeviJeans.Id,
+                TvChannelId = tvchannelLeviJeans.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Clothing").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productLeviJeans, "product_LeviJeans_1.jpg");
-            await InsertProductPictureAsync(productLeviJeans, "product_LeviJeans_2.jpg", 2);
+            await InsertTvChannelPictureAsync(tvchannelLeviJeans, "tvchannel_LeviJeans_1.jpg");
+            await InsertTvChannelPictureAsync(tvchannelLeviJeans, "tvchannel_LeviJeans_2.jpg", 2);
 
             await InsertInstallationDataAsync(new List<TierPrice>
             {
@@ -6743,35 +6743,35 @@ namespace TvProgViewer.Services.Installation
                 {
                     Quantity = 3,
                     Price = 40,
-                    ProductId = productLeviJeans.Id
+                    TvChannelId = tvchannelLeviJeans.Id
                 },
                 new TierPrice
                 {
                     Quantity = 6,
                     Price = 38,
-                    ProductId = productLeviJeans.Id
+                    TvChannelId = tvchannelLeviJeans.Id
                 },
                 new TierPrice
                 {
                     Quantity = 10,
                     Price = 35,
-                    ProductId = productLeviJeans.Id
+                    TvChannelId = tvchannelLeviJeans.Id
                 }
             });
 
-            await AddProductTagAsync(productLeviJeans, "cool");
-            await AddProductTagAsync(productLeviJeans, "jeans");
-            await AddProductTagAsync(productLeviJeans, "apparel");
+            await AddTvChannelTagAsync(tvchannelLeviJeans, "cool");
+            await AddTvChannelTagAsync(tvchannelLeviJeans, "jeans");
+            await AddTvChannelTagAsync(tvchannelLeviJeans, "apparel");
 
-            var productObeyHat = new Product
+            var tvchannelObeyHat = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Obey Propaganda Hat",
                 Sku = "OB_HAT_PR",
                 ShortDescription = string.Empty,
                 FullDescription = "<p>Printed poplin 5 panel camp hat with debossed leather patch and web closure</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "indiana-jones-shapeable-wool-hat",
                 AllowUserReviews = true,
                 Price = 30M,
@@ -6794,70 +6794,70 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productObeyHat);
+            allTvChannels.Add(tvchannelObeyHat);
 
-            await InsertInstallationDataAsync(productObeyHat);
+            await InsertInstallationDataAsync(tvchannelObeyHat);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productObeyHat.Id,
+                TvChannelId = tvchannelObeyHat.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Accessories").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productObeyHat, "product_hat.jpg");
+            await InsertTvChannelPictureAsync(tvchannelObeyHat, "tvchannel_hat.jpg");
 
             var pamObeyHatSize = await InsertInstallationDataAsync(
-                new ProductAttributeMapping
+                new TvChannelAttributeMapping
                 {
-                    ProductId = productObeyHat.Id,
-                    ProductAttributeId = _productAttributeRepository.Table.Single(x => x.Name == "Size").Id,
+                    TvChannelId = tvchannelObeyHat.Id,
+                    TvChannelAttributeId = _tvchannelAttributeRepository.Table.Single(x => x.Name == "Size").Id,
                     AttributeControlType = AttributeControlType.DropdownList,
                     IsRequired = true
                 });
 
             await InsertInstallationDataAsync(
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamObeyHatSize.Id,
+                    TvChannelAttributeMappingId = pamObeyHatSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Small",
                     DisplayOrder = 1
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamObeyHatSize.Id,
+                    TvChannelAttributeMappingId = pamObeyHatSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Medium",
                     DisplayOrder = 2
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamObeyHatSize.Id,
+                    TvChannelAttributeMappingId = pamObeyHatSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "Large",
                     DisplayOrder = 3
                 },
-                new ProductAttributeValue
+                new TvChannelAttributeValue
                 {
-                    ProductAttributeMappingId = pamObeyHatSize.Id,
+                    TvChannelAttributeMappingId = pamObeyHatSize.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = "X-Large",
                     DisplayOrder = 4
                 });
 
-            await AddProductTagAsync(productObeyHat, "apparel");
-            await AddProductTagAsync(productObeyHat, "cool");
+            await AddTvChannelTagAsync(tvchannelObeyHat, "apparel");
+            await AddTvChannelTagAsync(tvchannelObeyHat, "cool");
 
-            var productBelt = new Product
+            var tvchannelBelt = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Reversible Horseferry Check Belt",
                 Sku = "RH_CHK_BL",
                 ShortDescription = "Reversible belt in Horseferry check with smooth leather trim",
                 FullDescription = "<p>Reversible belt in Horseferry check with smooth leather trim</p><p>Leather lining, polished metal buckle</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "nike-golf-casual-belt",
                 AllowUserReviews = true,
                 Price = 45M,
@@ -6868,7 +6868,7 @@ namespace TvProgViewer.Services.Installation
                 Height = 7,
                 TaxCategoryId = _taxCategoryRepository.Table.Single(tc => tc.Name == "Apparel").Id,
                 ManageInventoryMethod = ManageInventoryMethod.ManageStock,
-                ProductAvailabilityRangeId = productAvailabilityRange.Id,
+                TvChannelAvailabilityRangeId = tvchannelAvailabilityRange.Id,
                 StockQuantity = 0,
                 NotifyAdminForQuantityBelow = 1,
                 AllowBackInStockSubscriptions = false,
@@ -6881,28 +6881,28 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productBelt);
+            allTvChannels.Add(tvchannelBelt);
 
-            await InsertInstallationDataAsync(productBelt);
+            await InsertInstallationDataAsync(tvchannelBelt);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productBelt.Id,
+                TvChannelId = tvchannelBelt.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Accessories").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productBelt, "product_Belt.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelBelt, "tvchannel_Belt.jpeg");
 
-            var productSunglasses = new Product
+            var tvchannelSunglasses = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Ray Ban Aviator Sunglasses",
                 Sku = "RB_AVR_SG",
                 ShortDescription = "Aviator sunglasses are one of the first widely popularized styles of modern day sunwear.",
                 FullDescription = "<p>Since 1937, Ray-Ban can genuinely claim the title as the world's leading sunglasses and optical eyewear brand. Combining the best of fashion and sports performance, the Ray-Ban line of Sunglasses delivers a truly classic style that will have you looking great today and for years to come.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "ray-ban-aviator-sunglasses-rb-3025",
                 AllowUserReviews = true,
                 Price = 25M,
@@ -6925,96 +6925,96 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productSunglasses);
+            allTvChannels.Add(tvchannelSunglasses);
 
-            await InsertInstallationDataAsync(productSunglasses);
+            await InsertInstallationDataAsync(tvchannelSunglasses);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productSunglasses.Id,
+                TvChannelId = tvchannelSunglasses.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Accessories").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productSunglasses, "product_Sunglasses.jpg");
+            await InsertTvChannelPictureAsync(tvchannelSunglasses, "tvchannel_Sunglasses.jpg");
 
-            await AddProductTagAsync(productSunglasses, "apparel");
-            await AddProductTagAsync(productSunglasses, "cool");
+            await AddTvChannelTagAsync(tvchannelSunglasses, "apparel");
+            await AddTvChannelTagAsync(tvchannelSunglasses, "cool");
 
-            relatedProducts.AddRange(new[]
+            relatedTvChannels.AddRange(new[]
             {
-                 new RelatedProduct
+                 new RelatedTvChannel
                 {
-                     ProductId1 = productAdidas.Id,
-                     ProductId2 = productLeviJeans.Id
+                     TvChannelId1 = tvchannelAdidas.Id,
+                     TvChannelId2 = tvchannelLeviJeans.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productAdidas.Id,
-                     ProductId2 = productNikeFloral.Id
+                     TvChannelId1 = tvchannelAdidas.Id,
+                     TvChannelId2 = tvchannelNikeFloral.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productAdidas.Id,
-                     ProductId2 = productNikeZoom.Id
+                     TvChannelId1 = tvchannelAdidas.Id,
+                     TvChannelId2 = tvchannelNikeZoom.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productAdidas.Id,
-                     ProductId2 = productNikeTailwind.Id
+                     TvChannelId1 = tvchannelAdidas.Id,
+                     TvChannelId2 = tvchannelNikeTailwind.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeviJeans.Id,
-                     ProductId2 = productAdidas.Id
+                     TvChannelId1 = tvchannelLeviJeans.Id,
+                     TvChannelId2 = tvchannelAdidas.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeviJeans.Id,
-                     ProductId2 = productNikeFloral.Id
+                     TvChannelId1 = tvchannelLeviJeans.Id,
+                     TvChannelId2 = tvchannelNikeFloral.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeviJeans.Id,
-                     ProductId2 = productNikeZoom.Id
+                     TvChannelId1 = tvchannelLeviJeans.Id,
+                     TvChannelId2 = tvchannelNikeZoom.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productLeviJeans.Id,
-                     ProductId2 = productNikeTailwind.Id
+                     TvChannelId1 = tvchannelLeviJeans.Id,
+                     TvChannelId2 = tvchannelNikeTailwind.Id
                 },
 
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productCustomTShirt.Id,
-                     ProductId2 = productLeviJeans.Id
+                     TvChannelId1 = tvchannelCustomTShirt.Id,
+                     TvChannelId2 = tvchannelLeviJeans.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productCustomTShirt.Id,
-                     ProductId2 = productNikeTailwind.Id
+                     TvChannelId1 = tvchannelCustomTShirt.Id,
+                     TvChannelId2 = tvchannelNikeTailwind.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productCustomTShirt.Id,
-                     ProductId2 = productOversizedWomenTShirt.Id
+                     TvChannelId1 = tvchannelCustomTShirt.Id,
+                     TvChannelId2 = tvchannelOversizedWomenTShirt.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                     ProductId1 = productCustomTShirt.Id,
-                     ProductId2 = productObeyHat.Id
+                     TvChannelId1 = tvchannelCustomTShirt.Id,
+                     TvChannelId2 = tvchannelObeyHat.Id
                 }
             });
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallDigitalDownloadsAsync(ProductTemplate productTemplateSimple, List<Product> allProducts, string sampleImagesPath, IPictureService pictureService, List<RelatedProduct> relatedProducts, string sampleDownloadsPath, IDownloadService downloadService)
+        protected virtual async Task InstallDigitalDownloadsAsync(TvChannelTemplate tvchannelTemplateSimple, List<TvChannel> allTvChannels, string sampleImagesPath, IPictureService pictureService, List<RelatedTvChannel> relatedTvChannels, string sampleDownloadsPath, IDownloadService downloadService)
         {
             var downloadNightVision1 = new Download
             {
                 DownloadGuid = Guid.NewGuid(),
                 ContentType = MimeTypes.ApplicationXZipCo,
-                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "product_NightVision_1.zip"),
+                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "tvchannel_NightVision_1.zip"),
                 Extension = ".zip",
                 Filename = "Night_Vision_1",
                 IsNew = true
@@ -7024,25 +7024,25 @@ namespace TvProgViewer.Services.Installation
             {
                 DownloadGuid = Guid.NewGuid(),
                 ContentType = MimeTypes.TextPlain,
-                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "product_NightVision_2.txt"),
+                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "tvchannel_NightVision_2.txt"),
                 Extension = ".txt",
                 Filename = "Night_Vision_1",
                 IsNew = true
             };
             await downloadService.InsertDownloadAsync(downloadNightVision2);
-            var productNightVision = new Product
+            var tvchannelNightVision = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Night Visions",
                 Sku = "NIGHT_VSN",
                 ShortDescription = "Night Visions is the debut studio album by American rock band Imagine Dragons.",
                 FullDescription = "<p>Original Release Date: September 4, 2012</p><p>Release Date: September 4, 2012</p><p>Genre - Alternative rock, indie rock, electronic rock</p><p>Label - Interscope/KIDinaKORNER</p><p>Copyright: (C) 2011 Interscope Records</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "poker-face",
                 AllowUserReviews = true,
                 Price = 2.8M,
-                TaxCategoryId = _taxCategoryRepository.Table.Single(tc => tc.Name == "Downloadable Products").Id,
+                TaxCategoryId = _taxCategoryRepository.Table.Single(tc => tc.Name == "Downloadable TvChannels").Id,
                 ManageInventoryMethod = ManageInventoryMethod.DontManageStock,
                 StockQuantity = 10000,
                 NotifyAdminForQuantityBelow = 1,
@@ -7063,27 +7063,27 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productNightVision);
+            allTvChannels.Add(tvchannelNightVision);
 
-            await InsertInstallationDataAsync(productNightVision);
+            await InsertInstallationDataAsync(tvchannelNightVision);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productNightVision.Id,
+                TvChannelId = tvchannelNightVision.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Digital downloads").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productNightVision, "product_NightVisions.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelNightVision, "tvchannel_NightVisions.jpeg");
 
-            await AddProductTagAsync(productNightVision, "awesome");
-            await AddProductTagAsync(productNightVision, "digital");
+            await AddTvChannelTagAsync(tvchannelNightVision, "awesome");
+            await AddTvChannelTagAsync(tvchannelNightVision, "digital");
 
             var downloadIfYouWait1 = new Download
             {
                 DownloadGuid = Guid.NewGuid(),
                 ContentType = MimeTypes.ApplicationXZipCo,
-                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "product_IfYouWait_1.zip"),
+                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "tvchannel_IfYouWait_1.zip"),
                 Extension = ".zip",
                 Filename = "If_You_Wait_1",
                 IsNew = true
@@ -7093,27 +7093,27 @@ namespace TvProgViewer.Services.Installation
             {
                 DownloadGuid = Guid.NewGuid(),
                 ContentType = MimeTypes.TextPlain,
-                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "product_IfYouWait_2.txt"),
+                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "tvchannel_IfYouWait_2.txt"),
                 Extension = ".txt",
                 Filename = "If_You_Wait_1",
                 IsNew = true
             };
             await downloadService.InsertDownloadAsync(downloadIfYouWait2);
-            var productIfYouWait = new Product
+            var tvchannelIfYouWait = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "If You Wait (donation)",
                 Sku = "IF_YOU_WT",
                 ShortDescription = "If You Wait is the debut studio album by English indie pop band London Grammar",
                 FullDescription = "<p>Original Release Date: September 6, 2013</p><p>Genre - Electronica, dream pop downtempo, pop</p><p>Label - Metal & Dust/Ministry of Sound</p><p>Producer - Tim Bran, Roy Kerr London, Grammar</p><p>Length - 43:22</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "single-ladies-put-a-ring-on-it",
                 UserEntersPrice = true,
                 MinimumUserEnteredPrice = 0.5M,
                 MaximumUserEnteredPrice = 100M,
                 AllowUserReviews = true,
-                TaxCategoryId = _taxCategoryRepository.Table.Single(tc => tc.Name == "Downloadable Products").Id,
+                TaxCategoryId = _taxCategoryRepository.Table.Single(tc => tc.Name == "Downloadable TvChannels").Id,
                 ManageInventoryMethod = ManageInventoryMethod.DontManageStock,
                 StockQuantity = 10000,
                 NotifyAdminForQuantityBelow = 1,
@@ -7134,48 +7134,48 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productIfYouWait);
+            allTvChannels.Add(tvchannelIfYouWait);
 
-            await InsertInstallationDataAsync(productIfYouWait);
+            await InsertInstallationDataAsync(tvchannelIfYouWait);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productIfYouWait.Id,
+                TvChannelId = tvchannelIfYouWait.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Digital downloads").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productIfYouWait, "product_IfYouWait.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelIfYouWait, "tvchannel_IfYouWait.jpeg");
 
-            await AddProductTagAsync(productIfYouWait, "digital");
-            await AddProductTagAsync(productIfYouWait, "awesome");
+            await AddTvChannelTagAsync(tvchannelIfYouWait, "digital");
+            await AddTvChannelTagAsync(tvchannelIfYouWait, "awesome");
 
             var downloadScienceAndFaith = new Download
             {
                 DownloadGuid = Guid.NewGuid(),
                 ContentType = MimeTypes.ApplicationXZipCo,
-                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "product_ScienceAndFaith_1.zip"),
+                DownloadBinary = await _fileProvider.ReadAllBytesAsync(sampleDownloadsPath + "tvchannel_ScienceAndFaith_1.zip"),
                 Extension = ".zip",
                 Filename = "Science_And_Faith",
                 IsNew = true
             };
             await downloadService.InsertDownloadAsync(downloadScienceAndFaith);
-            var productScienceAndFaith = new Product
+            var tvchannelScienceAndFaith = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Science & Faith",
                 Sku = "SCI_FAITH",
                 ShortDescription = "Science & Faith is the second studio album by Irish pop rock band The Script.",
                 FullDescription = "<p># Original Release Date: September 10, 2010<br /># Label: RCA, Epic/Phonogenic(America)<br /># Copyright: 2010 RCA Records.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "the-battle-of-los-angeles",
                 AllowUserReviews = true,
                 UserEntersPrice = true,
                 MinimumUserEnteredPrice = 0.5M,
                 MaximumUserEnteredPrice = 1000M,
                 Price = decimal.Zero,
-                TaxCategoryId = _taxCategoryRepository.Table.Single(tc => tc.Name == "Downloadable Products").Id,
+                TaxCategoryId = _taxCategoryRepository.Table.Single(tc => tc.Name == "Downloadable TvChannels").Id,
                 ManageInventoryMethod = ManageInventoryMethod.DontManageStock,
                 StockQuantity = 10000,
                 NotifyAdminForQuantityBelow = 1,
@@ -7194,59 +7194,59 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productScienceAndFaith);
+            allTvChannels.Add(tvchannelScienceAndFaith);
 
-            await InsertInstallationDataAsync(productScienceAndFaith);
+            await InsertInstallationDataAsync(tvchannelScienceAndFaith);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productScienceAndFaith.Id,
+                TvChannelId = tvchannelScienceAndFaith.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Digital downloads").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productScienceAndFaith, "product_ScienceAndFaith.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelScienceAndFaith, "tvchannel_ScienceAndFaith.jpeg");
 
-            await AddProductTagAsync(productScienceAndFaith, "digital");
-            await AddProductTagAsync(productScienceAndFaith, "awesome");
+            await AddTvChannelTagAsync(tvchannelScienceAndFaith, "digital");
+            await AddTvChannelTagAsync(tvchannelScienceAndFaith, "awesome");
 
-            relatedProducts.AddRange(new[]
+            relatedTvChannels.AddRange(new[]
             {
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productIfYouWait.Id,
-                    ProductId2 = productNightVision.Id
+                    TvChannelId1 = tvchannelIfYouWait.Id,
+                    TvChannelId2 = tvchannelNightVision.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productIfYouWait.Id,
-                    ProductId2 = productScienceAndFaith.Id
+                    TvChannelId1 = tvchannelIfYouWait.Id,
+                    TvChannelId2 = tvchannelScienceAndFaith.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productNightVision.Id,
-                    ProductId2 = productIfYouWait.Id
+                    TvChannelId1 = tvchannelNightVision.Id,
+                    TvChannelId2 = tvchannelIfYouWait.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productNightVision.Id,
-                    ProductId2 = productScienceAndFaith.Id
+                    TvChannelId1 = tvchannelNightVision.Id,
+                    TvChannelId2 = tvchannelScienceAndFaith.Id
                 }
             });
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallBooksAsync(ProductTemplate productTemplateSimple, List<Product> allProducts, string sampleImagesPath, IPictureService pictureService, List<RelatedProduct> relatedProducts)
+        protected virtual async Task InstallBooksAsync(TvChannelTemplate tvchannelTemplateSimple, List<TvChannel> allTvChannels, string sampleImagesPath, IPictureService pictureService, List<RelatedTvChannel> relatedTvChannels)
         {
-            var productFahrenheit = new Product
+            var tvchannelFahrenheit = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Fahrenheit 451 by Ray Bradbury",
                 Sku = "FR_451_RB",
                 ShortDescription = "Fahrenheit 451 is a dystopian novel by Ray Bradbury published in 1953. It is regarded as one of his best works.",
                 FullDescription = "<p>The novel presents a future American society where books are outlawed and firemen burn any that are found. The title refers to the temperature that Bradbury understood to be the autoignition point of paper.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "best-grilling-recipes",
                 AllowUserReviews = true,
                 Price = 27M,
@@ -7271,32 +7271,32 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productFahrenheit);
+            allTvChannels.Add(tvchannelFahrenheit);
 
-            await InsertInstallationDataAsync(productFahrenheit);
+            await InsertInstallationDataAsync(tvchannelFahrenheit);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productFahrenheit.Id,
+                TvChannelId = tvchannelFahrenheit.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Books").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productFahrenheit, "product_Fahrenheit451.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelFahrenheit, "tvchannel_Fahrenheit451.jpeg");
 
-            await AddProductTagAsync(productFahrenheit, "awesome");
-            await AddProductTagAsync(productFahrenheit, "book");
-            await AddProductTagAsync(productFahrenheit, "nice");
+            await AddTvChannelTagAsync(tvchannelFahrenheit, "awesome");
+            await AddTvChannelTagAsync(tvchannelFahrenheit, "book");
+            await AddTvChannelTagAsync(tvchannelFahrenheit, "nice");
 
-            var productFirstPrizePies = new Product
+            var tvchannelFirstPrizePies = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "First Prize Pies",
                 Sku = "FIRST_PRP",
                 ShortDescription = "Allison Kave made pies as a hobby, until one day her boyfriend convinced her to enter a Brooklyn pie-making contest. She won. In fact, her pies were such a hit that she turned pro.",
                 FullDescription = "<p>First Prize Pies, a boutique, made-to-order pie business that originated on New York's Lower East Side, has become synonymous with tempting and unusual confections. For the home baker who is passionate about seasonal ingredients and loves a creative approach to recipes, First Prize Pies serves up 52 weeks of seasonal and eclectic pastries in an interesting pie-a-week format. Clear instructions, technical tips and creative encouragement guide novice bakers as well as pie mavens. With its nostalgia-evoking photos of homemade pies fresh out of the oven, First Prize Pies will be as giftable as it is practical.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "eatingwell-in-season",
                 AllowUserReviews = true,
                 Price = 51M,
@@ -7320,30 +7320,30 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productFirstPrizePies);
+            allTvChannels.Add(tvchannelFirstPrizePies);
 
-            await InsertInstallationDataAsync(productFirstPrizePies);
+            await InsertInstallationDataAsync(tvchannelFirstPrizePies);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productFirstPrizePies.Id,
+                TvChannelId = tvchannelFirstPrizePies.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Books").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productFirstPrizePies, "product_FirstPrizePies.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelFirstPrizePies, "tvchannel_FirstPrizePies.jpeg");
 
-            await AddProductTagAsync(productFirstPrizePies, "book");
+            await AddTvChannelTagAsync(tvchannelFirstPrizePies, "book");
 
-            var productPrideAndPrejudice = new Product
+            var tvchannelPrideAndPrejudice = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Pride and Prejudice",
                 Sku = "PRIDE_PRJ",
                 ShortDescription = "Pride and Prejudice is a novel of manners by Jane Austen, first published in 1813.",
                 FullDescription = "<p>Set in England in the early 19th century, Pride and Prejudice tells the story of Mr and Mrs Bennet's five unmarried daughters after the rich and eligible Mr Bingley and his status-conscious friend, Mr Darcy, have moved into their neighbourhood. While Bingley takes an immediate liking to the eldest Bennet daughter, Jane, Darcy has difficulty adapting to local society and repeatedly clashes with the second-eldest Bennet daughter, Elizabeth.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "the-best-skillet-recipes",
                 AllowUserReviews = true,
                 Price = 24M,
@@ -7367,68 +7367,68 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productPrideAndPrejudice);
+            allTvChannels.Add(tvchannelPrideAndPrejudice);
 
-            await InsertInstallationDataAsync(productPrideAndPrejudice);
+            await InsertInstallationDataAsync(tvchannelPrideAndPrejudice);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productPrideAndPrejudice.Id,
+                TvChannelId = tvchannelPrideAndPrejudice.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Books").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productPrideAndPrejudice, "product_PrideAndPrejudice.jpeg");
+            await InsertTvChannelPictureAsync(tvchannelPrideAndPrejudice, "tvchannel_PrideAndPrejudice.jpeg");
 
-            await AddProductTagAsync(productPrideAndPrejudice, "book");
+            await AddTvChannelTagAsync(tvchannelPrideAndPrejudice, "book");
 
-            relatedProducts.AddRange(new[]
+            relatedTvChannels.AddRange(new[]
             {
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productPrideAndPrejudice.Id,
-                    ProductId2 = productFirstPrizePies.Id
+                    TvChannelId1 = tvchannelPrideAndPrejudice.Id,
+                    TvChannelId2 = tvchannelFirstPrizePies.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productPrideAndPrejudice.Id,
-                    ProductId2 = productFahrenheit.Id
+                    TvChannelId1 = tvchannelPrideAndPrejudice.Id,
+                    TvChannelId2 = tvchannelFahrenheit.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productFirstPrizePies.Id,
-                    ProductId2 = productPrideAndPrejudice.Id
+                    TvChannelId1 = tvchannelFirstPrizePies.Id,
+                    TvChannelId2 = tvchannelPrideAndPrejudice.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productFirstPrizePies.Id,
-                    ProductId2 = productFahrenheit.Id
+                    TvChannelId1 = tvchannelFirstPrizePies.Id,
+                    TvChannelId2 = tvchannelFahrenheit.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productFahrenheit.Id,
-                    ProductId2 = productFirstPrizePies.Id
+                    TvChannelId1 = tvchannelFahrenheit.Id,
+                    TvChannelId2 = tvchannelFirstPrizePies.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productFahrenheit.Id,
-                    ProductId2 = productPrideAndPrejudice.Id
+                    TvChannelId1 = tvchannelFahrenheit.Id,
+                    TvChannelId2 = tvchannelPrideAndPrejudice.Id
                 }
             });
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallJewelryAsync(ProductTemplate productTemplateSimple, List<Product> allProducts, string sampleImagesPath, IPictureService pictureService, List<RelatedProduct> relatedProducts)
+        protected virtual async Task InstallJewelryAsync(TvChannelTemplate tvchannelTemplateSimple, List<TvChannel> allTvChannels, string sampleImagesPath, IPictureService pictureService, List<RelatedTvChannel> relatedTvChannels)
         {
-            var productElegantGemstoneNecklace = new Product
+            var tvchannelElegantGemstoneNecklace = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Elegant Gemstone Necklace (rental)",
                 Sku = "EG_GEM_NL",
                 ShortDescription = "Classic and elegant gemstone necklace now available in our store",
                 FullDescription = "<p>For those who like jewelry, creating their ownelegant jewelry from gemstone beads provides an economical way to incorporate genuine gemstones into your jewelry wardrobe. Manufacturers create beads from all kinds of precious gemstones and semi-precious gemstones, which are available in bead shops, craft stores, and online marketplaces.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "diamond-pave-earrings",
                 AllowUserReviews = true,
                 IsRental = true,
@@ -7455,31 +7455,31 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productElegantGemstoneNecklace);
+            allTvChannels.Add(tvchannelElegantGemstoneNecklace);
 
-            await InsertInstallationDataAsync(productElegantGemstoneNecklace);
+            await InsertInstallationDataAsync(tvchannelElegantGemstoneNecklace);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productElegantGemstoneNecklace.Id,
+                TvChannelId = tvchannelElegantGemstoneNecklace.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Jewelry").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productElegantGemstoneNecklace, "product_GemstoneNecklaces.jpg");
+            await InsertTvChannelPictureAsync(tvchannelElegantGemstoneNecklace, "tvchannel_GemstoneNecklaces.jpg");
 
-            await AddProductTagAsync(productElegantGemstoneNecklace, "jewelry");
-            await AddProductTagAsync(productElegantGemstoneNecklace, "awesome");
+            await AddTvChannelTagAsync(tvchannelElegantGemstoneNecklace, "jewelry");
+            await AddTvChannelTagAsync(tvchannelElegantGemstoneNecklace, "awesome");
 
-            var productFlowerGirlBracelet = new Product
+            var tvchannelFlowerGirlBracelet = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Flower Girl Bracelet",
                 Sku = "FL_GIRL_B",
                 ShortDescription = "Personalised Flower Braceled",
                 FullDescription = "<p>This is a great gift for your flower girl to wear on your wedding day. A delicate bracelet that is made with silver plated soldered cable chain, gives this bracelet a dainty look for young wrist. A Swarovski heart, shown in Rose, hangs off a silver plated flower. Hanging alongside the heart is a silver plated heart charm with Flower Girl engraved on both sides. This is a great style for the younger flower girl.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "diamond-tennis-bracelet",
                 AllowUserReviews = true,
                 Price = 360M,
@@ -7503,31 +7503,31 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productFlowerGirlBracelet);
+            allTvChannels.Add(tvchannelFlowerGirlBracelet);
 
-            await InsertInstallationDataAsync(productFlowerGirlBracelet);
+            await InsertInstallationDataAsync(tvchannelFlowerGirlBracelet);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productFlowerGirlBracelet.Id,
+                TvChannelId = tvchannelFlowerGirlBracelet.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Jewelry").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productFlowerGirlBracelet, "product_FlowerBracelet.jpg");
+            await InsertTvChannelPictureAsync(tvchannelFlowerGirlBracelet, "tvchannel_FlowerBracelet.jpg");
 
-            await AddProductTagAsync(productFlowerGirlBracelet, "awesome");
-            await AddProductTagAsync(productFlowerGirlBracelet, "jewelry");
+            await AddTvChannelTagAsync(tvchannelFlowerGirlBracelet, "awesome");
+            await AddTvChannelTagAsync(tvchannelFlowerGirlBracelet, "jewelry");
 
-            var productEngagementRing = new Product
+            var tvchannelEngagementRing = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "Vintage Style Engagement Ring",
                 Sku = "VS_ENG_RN",
                 ShortDescription = "1.24 Carat (ctw) in 14K White Gold (Certified)",
                 FullDescription = "<p>Dazzle her with this gleaming 14 karat white gold vintage proposal. A ravishing collection of 11 decadent diamonds come together to invigorate a superbly ornate gold shank. Total diamond weight on this antique style engagement ring equals 1 1/4 carat (ctw). Item includes diamond certificate.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "vintage-style-three-stone-diamond-engagement-ring",
                 AllowUserReviews = true,
                 Price = 2100M,
@@ -7550,69 +7550,69 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(productEngagementRing);
+            allTvChannels.Add(tvchannelEngagementRing);
 
-            await InsertInstallationDataAsync(productEngagementRing);
+            await InsertInstallationDataAsync(tvchannelEngagementRing);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = productEngagementRing.Id,
+                TvChannelId = tvchannelEngagementRing.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Jewelry").Id,
                 DisplayOrder = 1
             });
 
-            await InsertProductPictureAsync(productEngagementRing, "product_EngagementRing_1.jpg");
+            await InsertTvChannelPictureAsync(tvchannelEngagementRing, "tvchannel_EngagementRing_1.jpg");
 
-            await AddProductTagAsync(productEngagementRing, "jewelry");
-            await AddProductTagAsync(productEngagementRing, "awesome");
+            await AddTvChannelTagAsync(tvchannelEngagementRing, "jewelry");
+            await AddTvChannelTagAsync(tvchannelEngagementRing, "awesome");
 
-            relatedProducts.AddRange(new[]
+            relatedTvChannels.AddRange(new[]
             {
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productFlowerGirlBracelet.Id,
-                    ProductId2 = productEngagementRing.Id
+                    TvChannelId1 = tvchannelFlowerGirlBracelet.Id,
+                    TvChannelId2 = tvchannelEngagementRing.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productFlowerGirlBracelet.Id,
-                    ProductId2 = productElegantGemstoneNecklace.Id
+                    TvChannelId1 = tvchannelFlowerGirlBracelet.Id,
+                    TvChannelId2 = tvchannelElegantGemstoneNecklace.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productEngagementRing.Id,
-                    ProductId2 = productFlowerGirlBracelet.Id
+                    TvChannelId1 = tvchannelEngagementRing.Id,
+                    TvChannelId2 = tvchannelFlowerGirlBracelet.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productEngagementRing.Id,
-                    ProductId2 = productElegantGemstoneNecklace.Id
+                    TvChannelId1 = tvchannelEngagementRing.Id,
+                    TvChannelId2 = tvchannelElegantGemstoneNecklace.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productElegantGemstoneNecklace.Id,
-                    ProductId2 = productFlowerGirlBracelet.Id
+                    TvChannelId1 = tvchannelElegantGemstoneNecklace.Id,
+                    TvChannelId2 = tvchannelFlowerGirlBracelet.Id
                 },
-                new RelatedProduct
+                new RelatedTvChannel
                 {
-                    ProductId1 = productElegantGemstoneNecklace.Id,
-                    ProductId2 = productEngagementRing.Id
+                    TvChannelId1 = tvchannelElegantGemstoneNecklace.Id,
+                    TvChannelId2 = tvchannelEngagementRing.Id
                 }
             });
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallGiftCardsAsync(ProductTemplate productTemplateSimple, List<Product> allProducts, string sampleImagesPath, IPictureService pictureService, List<RelatedProduct> relatedProducts, DeliveryDate deliveryDate)
+        protected virtual async Task InstallGiftCardsAsync(TvChannelTemplate tvchannelTemplateSimple, List<TvChannel> allTvChannels, string sampleImagesPath, IPictureService pictureService, List<RelatedTvChannel> relatedTvChannels, DeliveryDate deliveryDate)
         {
-            var product25GiftCard = new Product
+            var tvchannel25GiftCard = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "$25 Virtual Gift Card",
                 Sku = "VG_CR_025",
-                ShortDescription = "$25 Gift Card. Gift Cards must be redeemed through our site Web site toward the purchase of eligible products.",
-                FullDescription = "<p>Gift Cards must be redeemed through our site Web site toward the purchase of eligible products. Purchases are deducted from the GiftCard balance. Any unused balance will be placed in the recipient's GiftCard account when redeemed. If an order exceeds the amount of the GiftCard, the balance must be paid with a credit card or other available payment method.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                ShortDescription = "$25 Gift Card. Gift Cards must be redeemed through our site Web site toward the purchase of eligible tvchannels.",
+                FullDescription = "<p>Gift Cards must be redeemed through our site Web site toward the purchase of eligible tvchannels. Purchases are deducted from the GiftCard balance. Any unused balance will be placed in the recipient's GiftCard account when redeemed. If an order exceeds the amount of the GiftCard, the balance must be paid with a credit card or other available payment method.</p>",
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "25-virtual-gift-card",
                 AllowUserReviews = true,
                 Price = 25M,
@@ -7629,31 +7629,31 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(product25GiftCard);
+            allTvChannels.Add(tvchannel25GiftCard);
 
-            await InsertInstallationDataAsync(product25GiftCard);
+            await InsertInstallationDataAsync(tvchannel25GiftCard);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = product25GiftCard.Id,
+                TvChannelId = tvchannel25GiftCard.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Gift Cards").Id,
                 DisplayOrder = 2
             });
 
-            await InsertProductPictureAsync(product25GiftCard, "product_25giftcart.jpeg");
+            await InsertTvChannelPictureAsync(tvchannel25GiftCard, "tvchannel_25giftcart.jpeg");
 
-            await AddProductTagAsync(product25GiftCard, "nice");
-            await AddProductTagAsync(product25GiftCard, "gift");
+            await AddTvChannelTagAsync(tvchannel25GiftCard, "nice");
+            await AddTvChannelTagAsync(tvchannel25GiftCard, "gift");
 
-            var product50GiftCard = new Product
+            var tvchannel50GiftCard = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "$50 Physical Gift Card",
                 Sku = "PG_CR_050",
-                ShortDescription = "$50 Gift Card. Gift Cards must be redeemed through our site Web site toward the purchase of eligible products.",
-                FullDescription = "<p>Gift Cards must be redeemed through our site Web site toward the purchase of eligible products. Purchases are deducted from the GiftCard balance. Any unused balance will be placed in the recipient's GiftCard account when redeemed. If an order exceeds the amount of the GiftCard, the balance must be paid with a credit card or other available payment method.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                ShortDescription = "$50 Gift Card. Gift Cards must be redeemed through our site Web site toward the purchase of eligible tvchannels.",
+                FullDescription = "<p>Gift Cards must be redeemed through our site Web site toward the purchase of eligible tvchannels. Purchases are deducted from the GiftCard balance. Any unused balance will be placed in the recipient's GiftCard account when redeemed. If an order exceeds the amount of the GiftCard, the balance must be paid with a credit card or other available payment method.</p>",
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "50-physical-gift-card",
                 AllowUserReviews = true,
                 Price = 50M,
@@ -7677,28 +7677,28 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(product50GiftCard);
+            allTvChannels.Add(tvchannel50GiftCard);
 
-            await InsertInstallationDataAsync(product50GiftCard);
+            await InsertInstallationDataAsync(tvchannel50GiftCard);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = product50GiftCard.Id,
+                TvChannelId = tvchannel50GiftCard.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Gift Cards").Id,
                 DisplayOrder = 3
             });
 
-            await InsertProductPictureAsync(product50GiftCard, "product_50giftcart.jpeg");
+            await InsertTvChannelPictureAsync(tvchannel50GiftCard, "tvchannel_50giftcart.jpeg");
 
-            var product100GiftCard = new Product
+            var tvchannel100GiftCard = new TvChannel
             {
-                ProductType = ProductType.SimpleProduct,
+                TvChannelType = TvChannelType.SimpleTvChannel,
                 VisibleIndividually = true,
                 Name = "$100 Physical Gift Card",
                 Sku = "PG_CR_100",
-                ShortDescription = "$100 Gift Card. Gift Cards must be redeemed through our site Web site toward the purchase of eligible products.",
-                FullDescription = "<p>Gift Cards must be redeemed through our site Web site toward the purchase of eligible products. Purchases are deducted from the GiftCard balance. Any unused balance will be placed in the recipient's GiftCard account when redeemed. If an order exceeds the amount of the GiftCard, the balance must be paid with a credit card or other available payment method.</p>",
-                ProductTemplateId = productTemplateSimple.Id,
+                ShortDescription = "$100 Gift Card. Gift Cards must be redeemed through our site Web site toward the purchase of eligible tvchannels.",
+                FullDescription = "<p>Gift Cards must be redeemed through our site Web site toward the purchase of eligible tvchannels. Purchases are deducted from the GiftCard balance. Any unused balance will be placed in the recipient's GiftCard account when redeemed. If an order exceeds the amount of the GiftCard, the balance must be paid with a credit card or other available payment method.</p>",
+                TvChannelTemplateId = tvchannelTemplateSimple.Id,
                 //SeName = "100-physical-gift-card",
                 AllowUserReviews = true,
                 Price = 100M,
@@ -7720,39 +7720,39 @@ namespace TvProgViewer.Services.Installation
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
-            allProducts.Add(product100GiftCard);
+            allTvChannels.Add(tvchannel100GiftCard);
 
-            await InsertInstallationDataAsync(product100GiftCard);
+            await InsertInstallationDataAsync(tvchannel100GiftCard);
 
-            await InsertInstallationDataAsync(new ProductCategory
+            await InsertInstallationDataAsync(new TvChannelCategory
             {
-                ProductId = product100GiftCard.Id,
+                TvChannelId = tvchannel100GiftCard.Id,
                 CategoryId = _categoryRepository.Table.Single(c => c.Name == "Gift Cards").Id,
                 DisplayOrder = 4
             });
 
-            await InsertProductPictureAsync(product100GiftCard, "product_100giftcart.jpeg");
+            await InsertTvChannelPictureAsync(tvchannel100GiftCard, "tvchannel_100giftcart.jpeg");
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallProductsAsync(string defaultUserEmail)
+        protected virtual async Task InstallTvChannelsAsync(string defaultUserEmail)
         {
-            var productTemplateSimple = _productTemplateRepository.Table.FirstOrDefault(pt => pt.Name == "Simple product");
-            if (productTemplateSimple == null)
-                throw new Exception("Simple product template could not be loaded");
-            var productTemplateGrouped = _productTemplateRepository.Table.FirstOrDefault(pt => pt.Name == "Grouped product (with variants)");
-            if (productTemplateGrouped == null)
-                throw new Exception("Grouped product template could not be loaded");
+            var tvchannelTemplateSimple = _tvchannelTemplateRepository.Table.FirstOrDefault(pt => pt.Name == "Simple tvchannel");
+            if (tvchannelTemplateSimple == null)
+                throw new Exception("Simple tvchannel template could not be loaded");
+            var tvchannelTemplateGrouped = _tvchannelTemplateRepository.Table.FirstOrDefault(pt => pt.Name == "Grouped tvchannel (with variants)");
+            if (tvchannelTemplateGrouped == null)
+                throw new Exception("Grouped tvchannel template could not be loaded");
 
             //delivery date
             var deliveryDate = _deliveryDateRepository.Table.FirstOrDefault();
             if (deliveryDate == null)
                 throw new Exception("No default deliveryDate could be loaded");
 
-            //product availability range
-            var productAvailabilityRange = _productAvailabilityRangeRepository.Table.FirstOrDefault();
-            if (productAvailabilityRange == null)
-                throw new Exception("No default product availability range could be loaded");
+            //tvchannel availability range
+            var tvchannelAvailabilityRange = _tvchannelAvailabilityRangeRepository.Table.FirstOrDefault();
+            if (tvchannelAvailabilityRange == null)
+                throw new Exception("No default tvchannel availability range could be loaded");
 
             //default user/user
             var defaultUser = _userRepository.Table.FirstOrDefault(x => x.Email == defaultUserEmail);
@@ -7772,64 +7772,64 @@ namespace TvProgViewer.Services.Installation
             var downloadService = EngineContext.Current.Resolve<IDownloadService>();
             var sampleDownloadsPath = GetSamplesPath();
 
-            //products
-            var allProducts = new List<Product>();
+            //tvchannels
+            var allTvChannels = new List<TvChannel>();
 
-            //related products
-            var relatedProducts = new List<RelatedProduct>();
+            //related tvchannels
+            var relatedTvChannels = new List<RelatedTvChannel>();
 
             //desktops, notebooks, software
-            await InstallComputersAsync(productTemplateSimple, allProducts, sampleImagesPath, pictureService, relatedProducts);
+            await InstallComputersAsync(tvchannelTemplateSimple, allTvChannels, sampleImagesPath, pictureService, relatedTvChannels);
             //camera & photo, cell phones, others
-            await InstallElectronicsAsync(productTemplateSimple, productTemplateGrouped, allProducts, sampleImagesPath, pictureService, relatedProducts);
+            await InstallElectronicsAsync(tvchannelTemplateSimple, tvchannelTemplateGrouped, allTvChannels, sampleImagesPath, pictureService, relatedTvChannels);
             //shoes, clothing, accessories
-            await InstallApparelAsync(productTemplateSimple, allProducts, sampleImagesPath, pictureService, relatedProducts, productAvailabilityRange);
+            await InstallApparelAsync(tvchannelTemplateSimple, allTvChannels, sampleImagesPath, pictureService, relatedTvChannels, tvchannelAvailabilityRange);
             //digital downloads
-            await InstallDigitalDownloadsAsync(productTemplateSimple, allProducts, sampleImagesPath, pictureService, relatedProducts, sampleDownloadsPath, downloadService);
+            await InstallDigitalDownloadsAsync(tvchannelTemplateSimple, allTvChannels, sampleImagesPath, pictureService, relatedTvChannels, sampleDownloadsPath, downloadService);
             //books
-            await InstallBooksAsync(productTemplateSimple, allProducts, sampleImagesPath, pictureService, relatedProducts);
+            await InstallBooksAsync(tvchannelTemplateSimple, allTvChannels, sampleImagesPath, pictureService, relatedTvChannels);
             //jewelry
-            await InstallJewelryAsync(productTemplateSimple, allProducts, sampleImagesPath, pictureService, relatedProducts);
+            await InstallJewelryAsync(tvchannelTemplateSimple, allTvChannels, sampleImagesPath, pictureService, relatedTvChannels);
             //gift cards
-            await InstallGiftCardsAsync(productTemplateSimple, allProducts, sampleImagesPath, pictureService, relatedProducts, deliveryDate);
+            await InstallGiftCardsAsync(tvchannelTemplateSimple, allTvChannels, sampleImagesPath, pictureService, relatedTvChannels, deliveryDate);
 
             //search engine names
-            foreach (var product in allProducts)
+            foreach (var tvchannel in allTvChannels)
                 await InsertInstallationDataAsync(new UrlRecord
                 {
-                    EntityId = product.Id,
-                    EntityName = nameof(Product),
+                    EntityId = tvchannel.Id,
+                    EntityName = nameof(TvChannel),
                     LanguageId = 0,
                     IsActive = true,
-                    Slug = await ValidateSeNameAsync(product, product.Name)
+                    Slug = await ValidateSeNameAsync(tvchannel, tvchannel.Name)
                 });
 
-            //related products
-            await InsertInstallationDataAsync(relatedProducts);
+            //related tvchannels
+            await InsertInstallationDataAsync(relatedTvChannels);
 
             //reviews
             using (var random = new SecureRandomNumberGenerator())
             {
-                foreach (var product in allProducts)
+                foreach (var tvchannel in allTvChannels)
                 {
-                    if (product.ProductType != ProductType.SimpleProduct)
+                    if (tvchannel.TvChannelType != TvChannelType.SimpleTvChannel)
                         continue;
 
-                    //only 3 of 4 products will have reviews
+                    //only 3 of 4 tvchannels will have reviews
                     if (random.Next(4) == 3)
                         continue;
 
                     //rating from 4 to 5
                     var rating = random.Next(4, 6);
 
-                    await InsertInstallationDataAsync(new ProductReview
+                    await InsertInstallationDataAsync(new TvChannelReview
                     {
                         UserId = defaultUser.Id,
-                        ProductId = product.Id,
+                        TvChannelId = tvchannel.Id,
                         StoreId = defaultStore.Id,
                         IsApproved = true,
                         Title = "Some sample review",
-                        ReviewText = $"This sample review is for the {product.Name}. I've been waiting for this product to be available. It is priced just right.",
+                        ReviewText = $"This sample review is for the {tvchannel.Name}. I've been waiting for this tvchannel to be available. It is priced just right.",
                         //random (4 or 5)
                         Rating = rating,
                         HelpfulYesTotal = 0,
@@ -7837,22 +7837,22 @@ namespace TvProgViewer.Services.Installation
                         CreatedOnUtc = DateTime.UtcNow
                     });
 
-                    product.ApprovedRatingSum = rating;
-                    product.ApprovedTotalReviews = 1;
+                    tvchannel.ApprovedRatingSum = rating;
+                    tvchannel.ApprovedTotalReviews = 1;
                 }
             }
 
-            await UpdateInstallationDataAsync(allProducts);
+            await UpdateInstallationDataAsync(allTvChannels);
 
             //stock quantity history
-            foreach (var product in allProducts)
-                if (product.StockQuantity > 0)
+            foreach (var tvchannel in allTvChannels)
+                if (tvchannel.StockQuantity > 0)
                     await InsertInstallationDataAsync(new StockQuantityHistory
                     {
-                        ProductId = product.Id,
-                        WarehouseId = product.WarehouseId > 0 ? (int?)product.WarehouseId : null,
-                        QuantityAdjustment = product.StockQuantity,
-                        StockQuantity = product.StockQuantity,
+                        TvChannelId = tvchannel.Id,
+                        WarehouseId = tvchannel.WarehouseId > 0 ? (int?)tvchannel.WarehouseId : null,
+                        QuantityAdjustment = tvchannel.StockQuantity,
+                        StockQuantity = tvchannel.StockQuantity,
                         Message = "The stock quantity has been edited",
                         CreatedOnUtc = DateTime.UtcNow
                     });
@@ -7871,11 +7871,11 @@ namespace TvProgViewer.Services.Installation
 
             await InsertInstallationDataAsync(forumGroup);
 
-            var newProductsForum = new Forum
+            var newTvChannelsForum = new Forum
             {
                 ForumGroupId = forumGroup.Id,
-                Name = "New Products",
-                Description = "Discuss new products and industry trends",
+                Name = "New TvChannels",
+                Description = "Discuss new tvchannels and industry trends",
                 NumTopics = 0,
                 NumPosts = 0,
                 LastPostUserId = 0,
@@ -7885,7 +7885,7 @@ namespace TvProgViewer.Services.Installation
                 UpdatedOnUtc = DateTime.UtcNow
             };
 
-            await InsertInstallationDataAsync(newProductsForum);
+            await InsertInstallationDataAsync(newTvChannelsForum);
 
             var mobileDevicesForum = new Forum
             {
@@ -7970,8 +7970,8 @@ namespace TvProgViewer.Services.Installation
                     AllowComments = true,
                     LanguageId = defaultLanguage.Id,
                     Title = "How a blog can help your growing e-Viewer business",
-                    BodyOverview = "<p>When you start an online business, your main aim is to sell the products, right? As a business owner, you want to showcase your store to more audience. So, you decide to go on social media, why? Because everyone is doing it, then why shouldn&rsquo;t you? It is tempting as everyone is aware of the hype that it is the best way to market your brand.</p><p>Do you know having a blog for your online store can be very helpful? Many businesses do not understand the importance of having a blog because they don&rsquo;t have time to post quality content.</p><p>Today, we will talk about how a blog can play an important role for the growth of your e-Viewer business. Later, we will also discuss some tips that will be helpful to you for writing business related blog posts.</p>",
-                    Body = "<p>When you start an online business, your main aim is to sell the products, right? As a business owner, you want to showcase your store to more audience. So, you decide to go on social media, why? Because everyone is doing it, then why shouldn&rsquo;t you? It is tempting as everyone is aware of the hype that it is the best way to market your brand.</p><p>Do you know having a blog for your online store can be very helpful? Many businesses do not understand the importance of having a blog because they don&rsquo;t have time to post quality content.</p><p>Today, we will talk about how a blog can play an important role for the growth of your e-Viewer business. Later, we will also discuss some tips that will be helpful to you for writing business related blog posts.</p><h3>1) Blog is useful in educating your users</h3><p>Blogging is one of the best way by which you can educate your users about your products/services that you offer. This helps you as a business owner to bring more value to your brand. When you provide useful information to the users about your products, they are more likely to buy products from you. You can use your blog for providing tutorials in regard to the use of your products.</p><p><strong>For example:</strong> If you have an online store that offers computer parts. You can write tutorials about how to build a computer or how to make your computer&rsquo;s performance better. While talking about these things, you can mention products in the tutorials and provide link to your products within the blog post from your website. Your potential users might get different ideas of using your product and will likely to buy products from your online store.</p><h3>2) Blog helps your business in Search Engine Optimization (SEO)</h3><p>Blog posts create more internal links to your website which helps a lot in SEO. Blog is a great way to have quality content on your website related to your products/services which is indexed by all major search engines like Google, Bing and Yahoo. The more original content you write in your blog post, the better ranking you will get in search engines. SEO is an on-going process and posting blog posts regularly keeps your site active all the time which is beneficial when it comes to search engine optimization.</p><p><strong>For example:</strong> Let&rsquo;s say you sell &ldquo;Sony Television Model XYZ&rdquo; and you regularly publish blog posts about your product. Now, whenever someone searches for &ldquo;Sony Television Model XYZ&rdquo;, Google will crawl on your website knowing that you have something to do with this particular product. Hence, your website will show up on the search result page whenever this item is being searched.</p><h3>3) Blog helps in boosting your sales by convincing the potential users to buy</h3><p>If you own an online business, there are so many ways you can share different stories with your audience in regard your products/services that you offer. Talk about how you started your business, share stories that educate your audience about what&rsquo;s new in your industry, share stories about how your product/service was beneficial to someone or share anything that you think your audience might find interesting (it does not have to be related to your product). This kind of blogging shows that you are an expert in your industry and interested in educating your audience. It sets you apart in the competitive market. This gives you an opportunity to showcase your expertise by educating the visitors and it can turn your audience into buyers.</p><p><strong>Fun Fact:</strong> Did you know that 92% of companies who decided to blog acquired users through their blog?</p><p><a href=\"https://tvprogviewer.ru/\">tvProgViewer</a> is great e-Viewer solution that also offers a variety of CMS features including blog. A store owner has full access for managing the blog posts and related comments.</p>",
+                    BodyOverview = "<p>When you start an online business, your main aim is to sell the tvchannels, right? As a business owner, you want to showcase your store to more audience. So, you decide to go on social media, why? Because everyone is doing it, then why shouldn&rsquo;t you? It is tempting as everyone is aware of the hype that it is the best way to market your brand.</p><p>Do you know having a blog for your online store can be very helpful? Many businesses do not understand the importance of having a blog because they don&rsquo;t have time to post quality content.</p><p>Today, we will talk about how a blog can play an important role for the growth of your e-Viewer business. Later, we will also discuss some tips that will be helpful to you for writing business related blog posts.</p>",
+                    Body = "<p>When you start an online business, your main aim is to sell the tvchannels, right? As a business owner, you want to showcase your store to more audience. So, you decide to go on social media, why? Because everyone is doing it, then why shouldn&rsquo;t you? It is tempting as everyone is aware of the hype that it is the best way to market your brand.</p><p>Do you know having a blog for your online store can be very helpful? Many businesses do not understand the importance of having a blog because they don&rsquo;t have time to post quality content.</p><p>Today, we will talk about how a blog can play an important role for the growth of your e-Viewer business. Later, we will also discuss some tips that will be helpful to you for writing business related blog posts.</p><h3>1) Blog is useful in educating your users</h3><p>Blogging is one of the best way by which you can educate your users about your tvchannels/services that you offer. This helps you as a business owner to bring more value to your brand. When you provide useful information to the users about your tvchannels, they are more likely to buy tvchannels from you. You can use your blog for providing tutorials in regard to the use of your tvchannels.</p><p><strong>For example:</strong> If you have an online store that offers computer parts. You can write tutorials about how to build a computer or how to make your computer&rsquo;s performance better. While talking about these things, you can mention tvchannels in the tutorials and provide link to your tvchannels within the blog post from your website. Your potential users might get different ideas of using your tvchannel and will likely to buy tvchannels from your online store.</p><h3>2) Blog helps your business in Search Engine Optimization (SEO)</h3><p>Blog posts create more internal links to your website which helps a lot in SEO. Blog is a great way to have quality content on your website related to your tvchannels/services which is indexed by all major search engines like Google, Bing and Yahoo. The more original content you write in your blog post, the better ranking you will get in search engines. SEO is an on-going process and posting blog posts regularly keeps your site active all the time which is beneficial when it comes to search engine optimization.</p><p><strong>For example:</strong> Let&rsquo;s say you sell &ldquo;Sony Television Model XYZ&rdquo; and you regularly publish blog posts about your tvchannel. Now, whenever someone searches for &ldquo;Sony Television Model XYZ&rdquo;, Google will crawl on your website knowing that you have something to do with this particular tvchannel. Hence, your website will show up on the search result page whenever this item is being searched.</p><h3>3) Blog helps in boosting your sales by convincing the potential users to buy</h3><p>If you own an online business, there are so many ways you can share different stories with your audience in regard your tvchannels/services that you offer. Talk about how you started your business, share stories that educate your audience about what&rsquo;s new in your industry, share stories about how your tvchannel/service was beneficial to someone or share anything that you think your audience might find interesting (it does not have to be related to your tvchannel). This kind of blogging shows that you are an expert in your industry and interested in educating your audience. It sets you apart in the competitive market. This gives you an opportunity to showcase your expertise by educating the visitors and it can turn your audience into buyers.</p><p><strong>Fun Fact:</strong> Did you know that 92% of companies who decided to blog acquired users through their blog?</p><p><a href=\"https://tvprogviewer.ru/\">tvProgViewer</a> is great e-Viewer solution that also offers a variety of CMS features including blog. A store owner has full access for managing the blog posts and related comments.</p>",
                     Tags = "e-commerce, blog, moey",
                     CreatedOnUtc = DateTime.UtcNow
                 },
@@ -7980,8 +7980,8 @@ namespace TvProgViewer.Services.Installation
                     AllowComments = true,
                     LanguageId = defaultLanguage.Id,
                     Title = "Why your online store needs a wish list",
-                    BodyOverview = "<p>What comes to your mind, when you hear the term&rdquo; wish list&rdquo;? The application of this feature is exactly how it sounds like: a list of things that you wish to get. As an online store owner, would you like your users to be able to save products in a wish list so that they review or buy them later? Would you like your users to be able to share their wish list with friends and family for gift giving?</p><p>Offering your users a feature of wish list as part of shopping cart is a great way to build loyalty to your store site. Having the feature of wish list on a store site allows online businesses to engage with their users in a smart way as it allows the shoppers to create a list of what they desire and their preferences for future purchase.</p>",
-                    Body = "<p>What comes to your mind, when you hear the term&rdquo; wish list&rdquo;? The application of this feature is exactly how it sounds like: a list of things that you wish to get. As an online store owner, would you like your users to be able to save products in a wish list so that they review or buy them later? Would you like your users to be able to share their wish list with friends and family for gift giving?</p><p>Offering your users a feature of wish list as part of shopping cart is a great way to build loyalty to your store site. Having the feature of wish list on a store site allows online businesses to engage with their users in a smart way as it allows the shoppers to create a list of what they desire and their preferences for future purchase.</p><p>Does every e-Viewer store needs a wish list? The answer to this question in most cases is yes, because of the following reasons:</p><p><strong>Understanding the needs of your users</strong> - A wish list is a great way to know what is in your user&rsquo;s mind. Try to think the purchase history as a small portion of the user&rsquo;s preferences. But, the wish list is like a wide open door that can give any online business a lot of valuable information about their user and what they like or desire.</p><p><strong>Shoppers like to share their wish list with friends and family</strong> - Providing your users a way to email their wish list to their friends and family is a pleasant way to make online shopping enjoyable for the shoppers. It is always a good idea to make the wish list sharable by a unique link so that it can be easily shared though different channels like email or on social media sites.</p><p><strong>Wish list can be a great marketing tool</strong> &ndash; Another way to look at wish list is a great marketing tool because it is extremely targeted and the recipients are always motivated to use it. For example: when your younger brother tells you that his wish list is on a certain e-Viewer store. What is the first thing you are going to do? You are most likely to visit the e-Viewer store, check out the wish list and end up buying something for your younger brother.</p><p>So, how a wish list is a marketing tool? The reason is quite simple, it introduce your online store to new users just how it is explained in the above example.</p><p><strong>Encourage users to return to the store site</strong> &ndash; Having a feature of wish list on the store site can increase the return traffic because it encourages users to come back and buy later. Allowing the users to save the wish list to their online accounts gives them a reason return to the store site and login to the account at any time to view or edit the wish list items.</p><p><strong>Wish list can be used for gifts for different occasions like weddings or birthdays. So, what kind of benefits a gift-giver gets from a wish list?</strong></p><ul><li>It gives them a surety that they didn&rsquo;t buy a wrong gift</li><li>It guarantees that the recipient will like the gift</li><li>It avoids any awkward moments when the recipient unwraps the gift and as a gift-giver you got something that the recipient do not want</li></ul><p><strong>Wish list is a great feature to have on a store site &ndash; So, what kind of benefits a business owner gets from a wish list</strong></p><ul><li>It is a great way to advertise an online store as many people do prefer to shop where their friend or family shop online</li><li>It allows the current users to return to the store site and open doors for the new users</li><li>It allows store admins to track what&rsquo;s in users wish list and run promotions accordingly to target specific user segments</li></ul><p><a href=\"https://tvprogviewer.ru/\">tvProgViewer</a> offers the feature of wish list that allows users to create a list of products that they desire or planning to buy in future.</p>",
+                    BodyOverview = "<p>What comes to your mind, when you hear the term&rdquo; wish list&rdquo;? The application of this feature is exactly how it sounds like: a list of things that you wish to get. As an online store owner, would you like your users to be able to save tvchannels in a wish list so that they review or buy them later? Would you like your users to be able to share their wish list with friends and family for gift giving?</p><p>Offering your users a feature of wish list as part of shopping cart is a great way to build loyalty to your store site. Having the feature of wish list on a store site allows online businesses to engage with their users in a smart way as it allows the shoppers to create a list of what they desire and their preferences for future purchase.</p>",
+                    Body = "<p>What comes to your mind, when you hear the term&rdquo; wish list&rdquo;? The application of this feature is exactly how it sounds like: a list of things that you wish to get. As an online store owner, would you like your users to be able to save tvchannels in a wish list so that they review or buy them later? Would you like your users to be able to share their wish list with friends and family for gift giving?</p><p>Offering your users a feature of wish list as part of shopping cart is a great way to build loyalty to your store site. Having the feature of wish list on a store site allows online businesses to engage with their users in a smart way as it allows the shoppers to create a list of what they desire and their preferences for future purchase.</p><p>Does every e-Viewer store needs a wish list? The answer to this question in most cases is yes, because of the following reasons:</p><p><strong>Understanding the needs of your users</strong> - A wish list is a great way to know what is in your user&rsquo;s mind. Try to think the purchase history as a small portion of the user&rsquo;s preferences. But, the wish list is like a wide open door that can give any online business a lot of valuable information about their user and what they like or desire.</p><p><strong>Shoppers like to share their wish list with friends and family</strong> - Providing your users a way to email their wish list to their friends and family is a pleasant way to make online shopping enjoyable for the shoppers. It is always a good idea to make the wish list sharable by a unique link so that it can be easily shared though different channels like email or on social media sites.</p><p><strong>Wish list can be a great marketing tool</strong> &ndash; Another way to look at wish list is a great marketing tool because it is extremely targeted and the recipients are always motivated to use it. For example: when your younger brother tells you that his wish list is on a certain e-Viewer store. What is the first thing you are going to do? You are most likely to visit the e-Viewer store, check out the wish list and end up buying something for your younger brother.</p><p>So, how a wish list is a marketing tool? The reason is quite simple, it introduce your online store to new users just how it is explained in the above example.</p><p><strong>Encourage users to return to the store site</strong> &ndash; Having a feature of wish list on the store site can increase the return traffic because it encourages users to come back and buy later. Allowing the users to save the wish list to their online accounts gives them a reason return to the store site and login to the account at any time to view or edit the wish list items.</p><p><strong>Wish list can be used for gifts for different occasions like weddings or birthdays. So, what kind of benefits a gift-giver gets from a wish list?</strong></p><ul><li>It gives them a surety that they didn&rsquo;t buy a wrong gift</li><li>It guarantees that the recipient will like the gift</li><li>It avoids any awkward moments when the recipient unwraps the gift and as a gift-giver you got something that the recipient do not want</li></ul><p><strong>Wish list is a great feature to have on a store site &ndash; So, what kind of benefits a business owner gets from a wish list</strong></p><ul><li>It is a great way to advertise an online store as many people do prefer to shop where their friend or family shop online</li><li>It allows the current users to return to the store site and open doors for the new users</li><li>It allows store admins to track what&rsquo;s in users wish list and run promotions accordingly to target specific user segments</li></ul><p><a href=\"https://tvprogviewer.ru/\">tvProgViewer</a> offers the feature of wish list that allows users to create a list of tvchannels that they desire or planning to buy in future.</p>",
                     Tags = "e-commerce, tvProgViewer, sample tag, money",
                     CreatedOnUtc = DateTime.UtcNow.AddSeconds(1)
                 }
@@ -8061,8 +8061,8 @@ namespace TvProgViewer.Services.Installation
                     AllowComments = true,
                     LanguageId = defaultLanguage.Id,
                     Title = "New online store is open!",
-                    Short = "The new tvProgViewer store is open now! We are very excited to offer our new range of products. We will be constantly adding to our range so please register on our site.",
-                    Full = "<p>Our online store is officially up and running. Stock up for the holiday season! We have a great selection of items. We will be constantly adding to our range so please register on our site, this will enable you to keep up to date with any new products.</p><p>All shipping is worldwide and will leave the same day an order is placed! Happy Shopping and spread the word!!</p>",
+                    Short = "The new tvProgViewer store is open now! We are very excited to offer our new range of tvchannels. We will be constantly adding to our range so please register on our site.",
+                    Full = "<p>Our online store is officially up and running. Stock up for the holiday season! We have a great selection of items. We will be constantly adding to our range so please register on our site, this will enable you to keep up to date with any new tvchannels.</p><p>All shipping is worldwide and will leave the same day an order is placed! Happy Shopping and spread the word!!</p>",
                     Published = true,
                     CreatedOnUtc = DateTime.UtcNow.AddSeconds(2)
                 }
@@ -8291,15 +8291,15 @@ namespace TvProgViewer.Services.Installation
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "AddNewProduct",
+                    SystemKeyword = "AddNewTvChannel",
                     Enabled = true,
-                    Name = "Add a new product"
+                    Name = "Add a new tvchannel"
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "AddNewProductAttribute",
+                    SystemKeyword = "AddNewTvChannelAttribute",
                     Enabled = true,
-                    Name = "Add a new product attribute"
+                    Name = "Add a new tvchannel attribute"
                 },
                 new ActivityLogType
                 {
@@ -8537,21 +8537,21 @@ namespace TvProgViewer.Services.Installation
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "DeleteProduct",
+                    SystemKeyword = "DeleteTvChannel",
                     Enabled = true,
-                    Name = "Delete a product"
+                    Name = "Delete a tvchannel"
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "DeleteProductAttribute",
+                    SystemKeyword = "DeleteTvChannelAttribute",
                     Enabled = true,
-                    Name = "Delete a product attribute"
+                    Name = "Delete a tvchannel attribute"
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "DeleteProductReview",
+                    SystemKeyword = "DeleteTvChannelReview",
                     Enabled = true,
-                    Name = "Delete a product review"
+                    Name = "Delete a tvchannel review"
                 },
                 new ActivityLogType
                 {
@@ -8789,21 +8789,21 @@ namespace TvProgViewer.Services.Installation
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "EditProduct",
+                    SystemKeyword = "EditTvChannel",
                     Enabled = true,
-                    Name = "Edit a product"
+                    Name = "Edit a tvchannel"
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "EditProductAttribute",
+                    SystemKeyword = "EditTvChannelAttribute",
                     Enabled = true,
-                    Name = "Edit a product attribute"
+                    Name = "Edit a tvchannel attribute"
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "EditProductReview",
+                    SystemKeyword = "EditTvChannelReview",
                     Enabled = true,
-                    Name = "Edit a product review"
+                    Name = "Edit a tvchannel review"
                 },
                 new ActivityLogType
                 {
@@ -8921,9 +8921,9 @@ namespace TvProgViewer.Services.Installation
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "ImportProducts",
+                    SystemKeyword = "ImportTvChannels",
                     Enabled = true,
-                    Name = "Products were imported"
+                    Name = "TvChannels were imported"
                 },
                 new ActivityLogType
                 {
@@ -8957,9 +8957,9 @@ namespace TvProgViewer.Services.Installation
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "ExportProducts",
+                    SystemKeyword = "ExportTvChannels",
                     Enabled = true,
-                    Name = "Products were exported"
+                    Name = "TvChannels were exported"
                 },
                 new ActivityLogType
                 {
@@ -9006,9 +9006,9 @@ namespace TvProgViewer.Services.Installation
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "PublicStore.ViewProduct",
+                    SystemKeyword = "PublicStore.ViewTvChannel",
                     Enabled = false,
-                    Name = "Public store. View a product"
+                    Name = "Public store. View a tvchannel"
                 },
                 new ActivityLogType
                 {
@@ -9060,9 +9060,9 @@ namespace TvProgViewer.Services.Installation
                 },
                 new ActivityLogType
                 {
-                    SystemKeyword = "PublicStore.AddProductReview",
+                    SystemKeyword = "PublicStore.AddTvChannelReview",
                     Enabled = false,
-                    Name = "Public store. Add product review"
+                    Name = "Public store. Add tvchannel review"
                 },
                 new ActivityLogType
                 {
@@ -9136,27 +9136,27 @@ namespace TvProgViewer.Services.Installation
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        protected virtual async Task InstallProductTemplatesAsync()
+        protected virtual async Task InstallTvChannelTemplatesAsync()
         {
-            var productTemplates = new List<ProductTemplate>
+            var tvchannelTemplates = new List<TvChannelTemplate>
             {
-                new ProductTemplate
+                new TvChannelTemplate
                 {
-                    Name = "Simple product",
-                    ViewPath = "ProductTemplate.Simple",
+                    Name = "Simple tvchannel",
+                    ViewPath = "TvChannelTemplate.Simple",
                     DisplayOrder = 10,
-                    IgnoredProductTypes = ((int)ProductType.GroupedProduct).ToString()
+                    IgnoredTvChannelTypes = ((int)TvChannelType.GroupedTvChannel).ToString()
                 },
-                new ProductTemplate
+                new TvChannelTemplate
                 {
-                    Name = "Grouped product (with variants)",
-                    ViewPath = "ProductTemplate.Grouped",
+                    Name = "Grouped tvchannel (with variants)",
+                    ViewPath = "TvChannelTemplate.Grouped",
                     DisplayOrder = 100,
-                    IgnoredProductTypes = ((int)ProductType.SimpleProduct).ToString()
+                    IgnoredTvChannelTypes = ((int)TvChannelType.SimpleTvChannel).ToString()
                 }
             };
 
-            await InsertInstallationDataAsync(productTemplates);
+            await InsertInstallationDataAsync(tvchannelTemplates);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
@@ -9166,8 +9166,8 @@ namespace TvProgViewer.Services.Installation
             {
                 new CategoryTemplate
                 {
-                    Name = "Products in Grid or Lines",
-                    ViewPath = "CategoryTemplate.ProductsInGridOrLines",
+                    Name = "TvChannels in Grid or Lines",
+                    ViewPath = "CategoryTemplate.TvChannelsInGridOrLines",
                     DisplayOrder = 1
                 }
             };
@@ -9182,8 +9182,8 @@ namespace TvProgViewer.Services.Installation
             {
                 new ManufacturerTemplate
                 {
-                    Name = "Products in Grid or Lines",
-                    ViewPath = "ManufacturerTemplate.ProductsInGridOrLines",
+                    Name = "TvChannels in Grid or Lines",
+                    ViewPath = "ManufacturerTemplate.TvChannelsInGridOrLines",
                     DisplayOrder = 1
                 }
             };
@@ -9305,17 +9305,17 @@ namespace TvProgViewer.Services.Installation
             {
                 new ReturnRequestReason
                 {
-                    Name = "Received Wrong Product",
+                    Name = "Received Wrong TvChannel",
                     DisplayOrder = 1
                 },
                 new ReturnRequestReason
                 {
-                    Name = "Wrong Product Ordered",
+                    Name = "Wrong TvChannel Ordered",
                     DisplayOrder = 2
                 },
                 new ReturnRequestReason
                 {
-                    Name = "There Was A Problem With The Product",
+                    Name = "There Was A Problem With The TvChannel",
                     DisplayOrder = 3
                 }
             };
@@ -9474,31 +9474,31 @@ namespace TvProgViewer.Services.Installation
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        private async Task AddProductTagAsync(Product product, string tag)
+        private async Task AddTvChannelTagAsync(TvChannel tvchannel, string tag)
         {
-            var productTag = _productTagRepository.Table.FirstOrDefault(pt => pt.Name == tag);
+            var tvchannelTag = _tvchannelTagRepository.Table.FirstOrDefault(pt => pt.Name == tag);
 
-            if (productTag is null)
+            if (tvchannelTag is null)
             {
-                productTag = new ProductTag
+                tvchannelTag = new TvChannelTag
                 {
                     Name = tag
                 };
 
-                await InsertInstallationDataAsync(productTag);
+                await InsertInstallationDataAsync(tvchannelTag);
 
                 //search engine name
                 await InsertInstallationDataAsync(new UrlRecord
                 {
-                    EntityId = productTag.Id,
-                    EntityName = nameof(ProductTag),
+                    EntityId = tvchannelTag.Id,
+                    EntityName = nameof(TvChannelTag),
                     LanguageId = 0,
                     IsActive = true,
-                    Slug = await ValidateSeNameAsync(productTag, productTag.Name)
+                    Slug = await ValidateSeNameAsync(tvchannelTag, tvchannelTag.Name)
                 });
             }
 
-            await InsertInstallationDataAsync(new ProductProductTagMapping { ProductTagId = productTag.Id, ProductId = product.Id });
+            await InsertInstallationDataAsync(new TvChannelTvChannelTagMapping { TvChannelTagId = tvchannelTag.Id, TvChannelId = tvchannel.Id });
         }
 
         #endregion
@@ -9525,7 +9525,7 @@ namespace TvProgViewer.Services.Installation
             await InstallCountriesAndStatesAsync();
             await InstallShippingMethodsAsync();
             await InstallDeliveryDatesAsync();
-            await InstallProductAvailabilityRangesAsync();
+            await InstallTvChannelAvailabilityRangesAsync();
             await InstallEmailAccountsAsync();
             await InstallMessageTemplatesAsync();
             await InstallTopicTemplatesAsync();
@@ -9533,7 +9533,7 @@ namespace TvProgViewer.Services.Installation
             await InstallUsersAndUsersAsync(defaultUserEmail, defaultUserPassword);
             await InstallTopicsAsync();
             await InstallActivityLogTypesAsync();
-            await InstallProductTemplatesAsync();
+            await InstallTvChannelTemplatesAsync();
             await InstallCategoryTemplatesAsync();
             await InstallManufacturerTemplatesAsync();
             await InstallScheduleTasksAsync();
@@ -9551,10 +9551,10 @@ namespace TvProgViewer.Services.Installation
             await InstallSampleUsersAsync();
             await InstallCheckoutAttributesAsync();
             await InstallSpecificationAttributesAsync();
-            await InstallProductAttributesAsync();
+            await InstallTvChannelAttributesAsync();
             await InstallCategoriesAsync();
             await InstallManufacturersAsync();
-            await InstallProductsAsync(defaultUserEmail);
+            await InstallTvChannelsAsync(defaultUserEmail);
             await InstallForumsAsync();
             await InstallDiscountsAsync();
             await InstallBlogPostsAsync(defaultUserEmail);
@@ -9572,8 +9572,8 @@ namespace TvProgViewer.Services.Installation
             await settingService.SaveSettingAsync(new DisplayDefaultMenuItemSettings
             {
                 DisplayHomepageMenuItem = false,
-                DisplayNewProductsMenuItem = false,
-                DisplayProductSearchMenuItem = false,
+                DisplayNewTvChannelsMenuItem = false,
+                DisplayTvChannelSearchMenuItem = false,
                 DisplayUserInfoMenuItem = false,
                 DisplayBlogMenuItem = false,
                 DisplayForumsMenuItem = false,

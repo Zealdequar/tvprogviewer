@@ -25,9 +25,9 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool IsRequired { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether shippable products are required in order to display this attribute
+        /// Gets or sets a value indicating whether shippable tvchannels are required in order to display this attribute
         /// </summary>
-        public bool ShippableProductRequired { get; set; }
+        public bool ShippableTvChannelRequired { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the attribute is marked as tax exempt

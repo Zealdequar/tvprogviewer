@@ -1,4 +1,4 @@
-﻿@model CatalogProductsModel
+﻿@model CatalogTvChannelsModel
 
 @if (!Model.PriceRangeFilter.Enabled &&
      !Model.SpecificationFilter.Enabled &&
@@ -7,7 +7,7 @@
     return;
 }
 
-<div class="block product-filters">
+<div class="block tvchannel-filters">
     @if (Model.PriceRangeFilter.Enabled)
     {
         @await Html.PartialAsync("_FilterPriceBox", Model.PriceRangeFilter)

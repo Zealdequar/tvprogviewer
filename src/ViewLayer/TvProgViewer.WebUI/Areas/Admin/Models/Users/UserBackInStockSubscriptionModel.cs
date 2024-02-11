@@ -14,11 +14,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
         [TvProgResourceDisplayName("Admin.Users.Users.BackInStockSubscriptions.Store")]
         public string StoreName { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Users.Users.BackInStockSubscriptions.Product")]
-        public int ProductId { get; set; }
+        [TvProgResourceDisplayName("Admin.Users.Users.BackInStockSubscriptions.TvChannel")]
+        public int TvChannelId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Users.Users.BackInStockSubscriptions.Product")]
-        public string ProductName { get; set; }
+        [TvProgResourceDisplayName("Admin.Users.Users.BackInStockSubscriptions.TvChannel")]
+        public string TvChannelName { get; set; }
 
         [TvProgResourceDisplayName("Admin.Users.Users.BackInStockSubscriptions.CreatedOn")]
         public DateTime CreatedOn { get; set; }

@@ -72,8 +72,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IOrderService _orderService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductAttributeFormatter _productAttributeFormatter;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeFormatter _tvchannelAttributeFormatter;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -115,8 +115,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IOrderService orderService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            IProductAttributeFormatter productAttributeFormatter,
-            IProductService productService,
+            ITvChannelAttributeFormatter tvchannelAttributeFormatter,
+            ITvChannelService tvchannelService,
             IRewardPointService rewardPointService,
             IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
@@ -154,8 +154,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _orderService = orderService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _productAttributeFormatter = productAttributeFormatter;
-            _productService = productService;
+            _tvchannelAttributeFormatter = tvchannelAttributeFormatter;
+            _tvchannelService = tvchannelService;
             _rewardPointService = rewardPointService;
             _shoppingCartService = shoppingCartService;
             _stateProvinceService = stateProvinceService;
@@ -1056,18 +1056,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     //fill in model values from the entity
                     var shoppingCartItemModel = item.ToModel<ShoppingCartItemModel>();
 
-                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(item.TvChannelId);
 
                     //fill in additional values (not existing in the entity)
-                    shoppingCartItemModel.ProductName = product.Name;
+                    shoppingCartItemModel.TvChannelName = tvchannel.Name;
                     shoppingCartItemModel.Store = (await _storeService.GetStoreByIdAsync(item.StoreId))?.Name ?? "Unknown";
-                    shoppingCartItemModel.AttributeInfo = await _productAttributeFormatter.FormatAttributesAsync(product, item.AttributesXml);
+                    shoppingCartItemModel.AttributeInfo = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, item.AttributesXml);
                     var (unitPrice, _, _) = await _shoppingCartService.GetUnitPriceAsync(item, true);
-                    shoppingCartItemModel.UnitPrice = await _priceFormatter.FormatPriceAsync((await _taxService.GetProductPriceAsync(product, unitPrice)).price);
-                    shoppingCartItemModel.UnitPriceValue = (await _taxService.GetProductPriceAsync(product, unitPrice)).price;
+                    shoppingCartItemModel.UnitPrice = await _priceFormatter.FormatPriceAsync((await _taxService.GetTvChannelPriceAsync(tvchannel, unitPrice)).price);
+                    shoppingCartItemModel.UnitPriceValue = (await _taxService.GetTvChannelPriceAsync(tvchannel, unitPrice)).price;
                     var (subTotal, _, _, _) = await _shoppingCartService.GetSubTotalAsync(item, true);
-                    shoppingCartItemModel.Total = await _priceFormatter.FormatPriceAsync((await _taxService.GetProductPriceAsync(product, subTotal)).price);
-                    shoppingCartItemModel.TotalValue = (await _taxService.GetProductPriceAsync(product, subTotal)).price;
+                    shoppingCartItemModel.Total = await _priceFormatter.FormatPriceAsync((await _taxService.GetTvChannelPriceAsync(tvchannel, subTotal)).price);
+                    shoppingCartItemModel.TotalValue = (await _taxService.GetTvChannelPriceAsync(tvchannel, subTotal)).price;
 
                     //convert dates to the user time
                     shoppingCartItemModel.UpdatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(item.UpdatedOnUtc, DateTimeKind.Utc);
@@ -1157,7 +1157,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
                     //fill in additional values (not existing in the entity)
                     subscriptionModel.StoreName = (await _storeService.GetStoreByIdAsync(subscription.StoreId))?.Name ?? "Unknown";
-                    subscriptionModel.ProductName = (await _productService.GetProductByIdAsync(subscription.ProductId))?.Name ?? "Unknown";
+                    subscriptionModel.TvChannelName = (await _tvchannelService.GetTvChannelByIdAsync(subscription.TvChannelId))?.Name ?? "Unknown";
 
                     return subscriptionModel;
                 });

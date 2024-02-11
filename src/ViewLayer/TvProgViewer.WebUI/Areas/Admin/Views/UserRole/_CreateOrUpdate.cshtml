@@ -9,10 +9,10 @@
     });
     
     function toggleRemoveButton() {
-        if ($('#@Html.IdFor(model => model.PurchasedWithProductId)').val() > 0) {
-            $('#purchased-with-product-name-remove').showElement();
+        if ($('#@Html.IdFor(model => model.PurchasedWithTvChannelId)').val() > 0) {
+            $('#purchased-with-tvchannel-name-remove').showElement();
         } else {
-            $('#purchased-with-product-name-remove').hideElement();
+            $('#purchased-with-tvchannel-name-remove').hideElement();
         }
     }
 </script>
@@ -91,31 +91,31 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-3">
-                                <tvprog-label asp-for="PurchasedWithProductId" />
+                                <tvprog-label asp-for="PurchasedWithTvChannelId" />
                             </div>
                             <div class="col-md-9">
-                                <input type="hidden" asp-for="PurchasedWithProductId" />
-                                <span id="purchased-with-product-name">@Model.PurchasedWithProductName</span>
-                                <span asp-validation-for="PurchasedWithProductId"></span>
-                                <button type="submit" onclick="javascript:OpenWindow('@(Url.Action("AssociateProductToUserRolePopup", "UserRole", new {productIdInput = Html.IdFor(model => model.PurchasedWithProductId), productNameInput = "purchased-with-product-name", btnId = "btnRefreshPurchasedWithProduct"}))', 800, 850, true); return false;" class="btn btn-primary">
-                                    @T("Admin.Users.UserRoles.Fields.PurchasedWithProduct.Choose")
+                                <input type="hidden" asp-for="PurchasedWithTvChannelId" />
+                                <span id="purchased-with-tvchannel-name">@Model.PurchasedWithTvChannelName</span>
+                                <span asp-validation-for="PurchasedWithTvChannelId"></span>
+                                <button type="submit" onclick="javascript:OpenWindow('@(Url.Action("AssociateTvChannelToUserRolePopup", "UserRole", new {tvchannelIdInput = Html.IdFor(model => model.PurchasedWithTvChannelId), tvchannelNameInput = "purchased-with-tvchannel-name", btnId = "btnRefreshPurchasedWithTvChannel"}))', 800, 850, true); return false;" class="btn btn-primary">
+                                    @T("Admin.Users.UserRoles.Fields.PurchasedWithTvChannel.Choose")
                                 </button>
-                                <button type="submit" id="purchased-with-product-name-remove" class="btn btn-danger">
-                                    @T("Admin.Users.UserRoles.Fields.PurchasedWithProduct.Remove")
+                                <button type="submit" id="purchased-with-tvchannel-name-remove" class="btn btn-danger">
+                                    @T("Admin.Users.UserRoles.Fields.PurchasedWithTvChannel.Remove")
                                 </button>
-                                <button type="submit" id="btnRefreshPurchasedWithProduct" style="display: none"></button>
+                                <button type="submit" id="btnRefreshPurchasedWithTvChannel" style="display: none"></button>
 
                                 <script>
                                 $(document).ready(function () {
-                                    $('#purchased-with-product-name-remove').click(function () {
-                                        $('#purchased-with-product-name').text('');
-                                        $("#@Html.IdFor(model => model.PurchasedWithProductId)").val(0);
+                                    $('#purchased-with-tvchannel-name-remove').click(function () {
+                                        $('#purchased-with-tvchannel-name').text('');
+                                        $("#@Html.IdFor(model => model.PurchasedWithTvChannelId)").val(0);
                                         toggleRemoveButton();
                                         //return false to don't reload a page
                                         return false;
                                     });
 
-                                    $('#btnRefreshPurchasedWithProduct').click(function () {
+                                    $('#btnRefreshPurchasedWithTvChannel').click(function () {
                                         toggleRemoveButton();
 
                                         //return false to don't reload a page

@@ -55,7 +55,7 @@
             <div class="card-body">
                 <p>
                     Complete onboarding to configure the plugin automatically and start accepting PayPal payments in your store.<br />
-                    This only works in production, if you want to test the functionality first, use the sandbox mode, you need to manually create REST API app and get its credentials. If you choose the sandbox mode, then PayPal Viewer integration will be used for testing purposes.<br />
+                    This only works in tvchannelion, if you want to test the functionality first, use the sandbox mode, you need to manually create REST API app and get its credentials. If you choose the sandbox mode, then PayPal Viewer integration will be used for testing purposes.<br />
                     <em>Read more about <a href="https://www.paypal.com/us/webapps/mpp/security/seller-protection" target="_blank">Seller Protection Policy</a>.</em>
                 </p>
                 <hr />
@@ -251,12 +251,12 @@
                             </div>
                             <div class="form-group row advanced-setting">
                                 <div class="col-md-3">
-                                    <tvprog-override-store-checkbox asp-for="DisplayButtonsOnProductDetails_OverrideForStore" asp-input="DisplayButtonsOnProductDetails" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                                    <tvprog-label asp-for="DisplayButtonsOnProductDetails" />
+                                    <tvprog-override-store-checkbox asp-for="DisplayButtonsOnTvChannelDetails_OverrideForStore" asp-input="DisplayButtonsOnTvChannelDetails" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                                    <tvprog-label asp-for="DisplayButtonsOnTvChannelDetails" />
                                 </div>
                                 <div class="col-md-9">
-                                    <tvprog-editor asp-for="DisplayButtonsOnProductDetails" />
-                                    <span asp-validation-for="DisplayButtonsOnProductDetails"></span>
+                                    <tvprog-editor asp-for="DisplayButtonsOnTvChannelDetails" />
+                                    <span asp-validation-for="DisplayButtonsOnTvChannelDetails"></span>
                                 </div>
                             </div>
                             <div class="form-group row advanced-setting">

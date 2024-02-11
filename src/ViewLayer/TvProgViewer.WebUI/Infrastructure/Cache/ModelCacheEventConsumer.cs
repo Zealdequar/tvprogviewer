@@ -39,19 +39,19 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         IConsumer<EntityInsertedEvent<Category>>,
         IConsumer<EntityUpdatedEvent<Category>>,
         IConsumer<EntityDeletedEvent<Category>>,
-        //product categories
-        IConsumer<EntityInsertedEvent<ProductCategory>>,
-        IConsumer<EntityDeletedEvent<ProductCategory>>,
-        //products
-        IConsumer<EntityInsertedEvent<Product>>,
-        IConsumer<EntityUpdatedEvent<Product>>,
-        IConsumer<EntityDeletedEvent<Product>>,
-        //product tags
-        IConsumer<EntityInsertedEvent<ProductTag>>,
-        IConsumer<EntityUpdatedEvent<ProductTag>>,
-        IConsumer<EntityDeletedEvent<ProductTag>>,
-        //Product attribute values
-        IConsumer<EntityUpdatedEvent<ProductAttributeValue>>,
+        //tvchannel categories
+        IConsumer<EntityInsertedEvent<TvChannelCategory>>,
+        IConsumer<EntityDeletedEvent<TvChannelCategory>>,
+        //tvchannels
+        IConsumer<EntityInsertedEvent<TvChannel>>,
+        IConsumer<EntityUpdatedEvent<TvChannel>>,
+        IConsumer<EntityDeletedEvent<TvChannel>>,
+        //tvchannel tags
+        IConsumer<EntityInsertedEvent<TvChannelTag>>,
+        IConsumer<EntityUpdatedEvent<TvChannelTag>>,
+        IConsumer<EntityDeletedEvent<TvChannelTag>>,
+        //TvChannel attribute values
+        IConsumer<EntityUpdatedEvent<TvChannelAttributeValue>>,
         //Topics
         IConsumer<EntityInsertedEvent<Topic>>,
         IConsumer<EntityUpdatedEvent<Topic>>,
@@ -64,12 +64,12 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         IConsumer<EntityInsertedEvent<Picture>>,
         IConsumer<EntityUpdatedEvent<Picture>>,
         IConsumer<EntityDeletedEvent<Picture>>,
-        //Product picture mapping
-        IConsumer<EntityInsertedEvent<ProductPicture>>,
-        IConsumer<EntityUpdatedEvent<ProductPicture>>,
-        IConsumer<EntityDeletedEvent<ProductPicture>>,
-        //Product review
-        IConsumer<EntityDeletedEvent<ProductReview>>,
+        //TvChannel picture mapping
+        IConsumer<EntityInsertedEvent<TvChannelPicture>>,
+        IConsumer<EntityUpdatedEvent<TvChannelPicture>>,
+        IConsumer<EntityDeletedEvent<TvChannelPicture>>,
+        //TvChannel review
+        IConsumer<EntityDeletedEvent<TvChannelReview>>,
         //polls
         IConsumer<EntityInsertedEvent<Poll>>,
         IConsumer<EntityUpdatedEvent<Poll>>,
@@ -145,10 +145,10 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             //clear models which depend on settings
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey); //depends on CatalogSettings.ManufacturersBlockItemsToDisplay
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey); //depends on VendorSettings.VendorBlockItemsToDisplay
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey); //depends on CatalogSettings.ShowCategoryProductNumber and CatalogSettings.ShowCategoryProductNumberIncludingSubcategories
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey); //depends on CatalogSettings.ShowCategoryTvChannelNumber and CatalogSettings.ShowCategoryTvChannelNumberIncludingSubcategories
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey); //depends on CatalogSettings.NumberOfBestsellersOnHomepage
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey); //depends on CatalogSettings.ProductsAlsoPurchasedNumber
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey); //depends on CatalogSettings.TvChannelsAlsoPurchasedNumber
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey); //depends on BlogSettings.NumberOfTags
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey); //depends on NewsSettings.MainPageNewsCount
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey); //depends on distinct sitemap settings
@@ -239,14 +239,14 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #endregion
 
-        #region Product categories
+        #region TvChannel categories
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<ProductCategory> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannelCategory> eventMessage)
         {
-            if (_catalogSettings.ShowCategoryProductNumber)
+            if (_catalogSettings.ShowCategoryTvChannelNumber)
             {
-                //depends on CatalogSettings.ShowCategoryProductNumber (when enabled)
+                //depends on CatalogSettings.ShowCategoryTvChannelNumber (when enabled)
                 //so there's no need to clear this cache in other cases
                 await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
                 await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
@@ -254,11 +254,11 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductCategory> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelCategory> eventMessage)
         {
-            if (_catalogSettings.ShowCategoryProductNumber)
+            if (_catalogSettings.ShowCategoryTvChannelNumber)
             {
-                //depends on CatalogSettings.ShowCategoryProductNumber (when enabled)
+                //depends on CatalogSettings.ShowCategoryTvChannelNumber (when enabled)
                 //so there's no need to clear this cache in other cases
                 await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
                 await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
@@ -267,62 +267,62 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #endregion
 
-        #region Products
+        #region TvChannels
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannel> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannel> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductReviewsPrefixCacheKeyById, eventMessage.Entity.Id));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelReviewsPrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannel> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
-        #region Product tags
+        #region TvChannel tags
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<ProductTag> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannelTag> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<ProductTag> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelTag> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductTag> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelTag> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
         #endregion
 
-        #region Product attributes
+        #region TvChannel attributes
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<ProductAttributeValue> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelAttributeValue> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributeImageSquarePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributeImageSquarePicturePrefixCacheKey);
         }
 
         #endregion
@@ -355,21 +355,21 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         public async Task HandleEventAsync(EntityInsertedEvent<Order> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Order> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Order> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductsAlsoPurchasedIdsPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey);
         }
 
         #endregion
@@ -379,7 +379,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Picture> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
         }
@@ -387,11 +387,11 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Picture> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductOverviewPicturesPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelDetailsPicturesPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.VendorPicturePrefixCacheKey);
@@ -400,11 +400,11 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Picture> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKey);
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductOverviewPicturesPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelDetailsPicturesPrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.VendorPicturePrefixCacheKey);
@@ -412,34 +412,34 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #endregion
 
-        #region Product picture mappings
+        #region TvChannel picture mappings
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannelPicture> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelPicture> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
         }
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelPicture> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.ProductId));
-            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ProductAttributePicturePrefixCacheKey);
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelDetailsPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
+            await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
         }
@@ -528,12 +528,12 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #endregion
 
-        #region Product reviews
+        #region TvChannel reviews
 
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductReview> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelReview> eventMessage)
         {
-            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ProductReviewsPrefixCacheKeyById, eventMessage.Entity.ProductId));
+            await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelReviewsPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
         }
 
         #endregion

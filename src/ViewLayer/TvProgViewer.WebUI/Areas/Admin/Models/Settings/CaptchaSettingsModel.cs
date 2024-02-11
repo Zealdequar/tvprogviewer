@@ -33,9 +33,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool ShowOnEmailWishlistToFriendPage { get; set; }
         public bool ShowOnEmailWishlistToFriendPage_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnEmailProductToFriendPage")]
-        public bool ShowOnEmailProductToFriendPage { get; set; }
-        public bool ShowOnEmailProductToFriendPage_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnEmailTvChannelToFriendPage")]
+        public bool ShowOnEmailTvChannelToFriendPage { get; set; }
+        public bool ShowOnEmailTvChannelToFriendPage_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnBlogCommentPage")]
         public bool ShowOnBlogCommentPage { get; set; }
@@ -45,9 +45,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool ShowOnNewsCommentPage { get; set; }
         public bool ShowOnNewsCommentPage_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnProductReviewPage")]
-        public bool ShowOnProductReviewPage { get; set; }
-        public bool ShowOnProductReviewPage_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnTvChannelReviewPage")]
+        public bool ShowOnTvChannelReviewPage { get; set; }
+        public bool ShowOnTvChannelReviewPage_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.CaptchaShowOnApplyVendorPage")]
         public bool ShowOnApplyVendorPage { get; set; }

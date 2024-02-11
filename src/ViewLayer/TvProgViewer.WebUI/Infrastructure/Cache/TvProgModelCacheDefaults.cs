@@ -66,79 +66,79 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         public static string HomepageBestsellersIdsPrefixCacheKey => "TvProg.pres.bestsellers.homepage";
 
         /// <summary>
-        /// Key for "also purchased" product identifiers displayed on the product details page
+        /// Key for "also purchased" tvchannel identifiers displayed on the tvchannel details page
         /// </summary>
         /// <remarks>
-        /// {0} : current product id
+        /// {0} : current tvchannel id
         /// {1} : current store ID
         /// </remarks>
-        public static CacheKey ProductsAlsoPurchasedIdsKey => new("TvProg.pres.alsopuchased-{0}-{1}", ProductsAlsoPurchasedIdsPrefixCacheKey);
-        public static string ProductsAlsoPurchasedIdsPrefixCacheKey => "TvProg.pres.alsopuchased";
+        public static CacheKey TvChannelsAlsoPurchasedIdsKey => new("TvProg.pres.alsopuchased-{0}-{1}", TvChannelsAlsoPurchasedIdsPrefixCacheKey);
+        public static string TvChannelsAlsoPurchasedIdsPrefixCacheKey => "TvProg.pres.alsopuchased";
 
         /// <summary>
-        /// Key for product picture caching on the product catalog pages (all pictures)
+        /// Key for tvchannel picture caching on the tvchannel catalog pages (all pictures)
         /// </summary>
         /// <remarks>
-        /// {0} : product id
+        /// {0} : tvchannel id
         /// {1} : picture size
         /// {2} : value indicating whether a default picture is displayed in case if no real picture exists
-        /// {3} : value indicating whether to display all product pictures
-        /// {4} : language ID ("alt" and "title" can depend on localized product name)
+        /// {3} : value indicating whether to display all tvchannel pictures
+        /// {4} : language ID ("alt" and "title" can depend on localized tvchannel name)
         /// {5} : is connection SSL secured?
         /// {6} : current store ID
         /// </remarks>
-        public static CacheKey ProductOverviewPicturesModelKey => new("TvProg.pres.product.overviewpictures-{0}-{1}-{2}-{3}-{4}-{5}-{6}", ProductOverviewPicturesPrefixCacheKey, ProductOverviewPicturesPrefixCacheKeyById);
-        public static string ProductOverviewPicturesPrefixCacheKey => "TvProg.pres.product.overviewpictures";
-        public static string ProductOverviewPicturesPrefixCacheKeyById => "TvProg.pres.product.overviewpictures-{0}-";
+        public static CacheKey TvChannelOverviewPicturesModelKey => new("TvProg.pres.tvchannel.overviewpictures-{0}-{1}-{2}-{3}-{4}-{5}-{6}", TvChannelOverviewPicturesPrefixCacheKey, TvChannelOverviewPicturesPrefixCacheKeyById);
+        public static string TvChannelOverviewPicturesPrefixCacheKey => "TvProg.pres.tvchannel.overviewpictures";
+        public static string TvChannelOverviewPicturesPrefixCacheKeyById => "TvProg.pres.tvchannel.overviewpictures-{0}-";
 
         /// <summary>
-        /// Key for product picture caching on the product details page (all pictures)
+        /// Key for tvchannel picture caching on the tvchannel details page (all pictures)
         /// </summary>
         /// <remarks>
-        /// {0} : product id
+        /// {0} : tvchannel id
         /// {1} : picture size
-        /// {2} : isAssociatedProduct?
-        /// {3} : language ID ("alt" and "title" can depend on localized product name)
+        /// {2} : isAssociatedTvChannel?
+        /// {3} : language ID ("alt" and "title" can depend on localized tvchannel name)
         /// {4} : is connection SSL secured?
         /// {5} : current store ID
         /// </remarks>
-        public static CacheKey ProductDetailsPicturesModelKey => new("TvProg.pres.product.detailspictures-{0}-{1}-{2}-{3}-{4}-{5}", ProductDetailsPicturesPrefixCacheKey, ProductDetailsPicturesPrefixCacheKeyById);
-        public static string ProductDetailsPicturesPrefixCacheKey => "TvProg.pres.product.detailspictures";
-        public static string ProductDetailsPicturesPrefixCacheKeyById => "TvProg.pres.product.detailspictures-{0}-";
+        public static CacheKey TvChannelDetailsPicturesModelKey => new("TvProg.pres.tvchannel.detailspictures-{0}-{1}-{2}-{3}-{4}-{5}", TvChannelDetailsPicturesPrefixCacheKey, TvChannelDetailsPicturesPrefixCacheKeyById);
+        public static string TvChannelDetailsPicturesPrefixCacheKey => "TvProg.pres.tvchannel.detailspictures";
+        public static string TvChannelDetailsPicturesPrefixCacheKeyById => "TvProg.pres.tvchannel.detailspictures-{0}-";
 
         /// <summary>
-        /// Key for product reviews caching
+        /// Key for tvchannel reviews caching
         /// </summary>
         /// <remarks>
-        /// {0} : product id
+        /// {0} : tvchannel id
         /// {1} : current store ID
         /// </remarks>
-        public static CacheKey ProductReviewsModelKey => new("TvProg.pres.product.reviews-{0}-{1}", ProductReviewsPrefixCacheKey, ProductReviewsPrefixCacheKeyById);
+        public static CacheKey TvChannelReviewsModelKey => new("TvProg.pres.tvchannel.reviews-{0}-{1}", TvChannelReviewsPrefixCacheKey, TvChannelReviewsPrefixCacheKeyById);
 
-        public static string ProductReviewsPrefixCacheKey => "TvProg.pres.product.reviews";
-        public static string ProductReviewsPrefixCacheKeyById => "TvProg.pres.product.reviews-{0}-";
+        public static string TvChannelReviewsPrefixCacheKey => "TvProg.pres.tvchannel.reviews";
+        public static string TvChannelReviewsPrefixCacheKeyById => "TvProg.pres.tvchannel.reviews-{0}-";
 
         /// <summary>
-        /// Key for product attribute picture caching on the product details page
+        /// Key for tvchannel attribute picture caching on the tvchannel details page
         /// </summary>
         /// <remarks>
         /// {0} : picture id
         /// {1} : is connection SSL secured?
         /// {2} : current store ID
         /// </remarks>
-        public static CacheKey ProductAttributePictureModelKey => new("TvProg.pres.productattribute.picture-{0}-{1}-{2}", ProductAttributePicturePrefixCacheKey);
-        public static string ProductAttributePicturePrefixCacheKey => "TvProg.pres.productattribute.picture";
+        public static CacheKey TvChannelAttributePictureModelKey => new("TvProg.pres.tvchannelattribute.picture-{0}-{1}-{2}", TvChannelAttributePicturePrefixCacheKey);
+        public static string TvChannelAttributePicturePrefixCacheKey => "TvProg.pres.tvchannelattribute.picture";
 
         /// <summary>
-        /// Key for product attribute picture caching on the product details page
+        /// Key for tvchannel attribute picture caching on the tvchannel details page
         /// </summary>
         /// <remarks>
         /// {0} : picture id
         /// {1} : is connection SSL secured?
         /// {2} : current store ID
         /// </remarks>
-        public static CacheKey ProductAttributeImageSquarePictureModelKey => new("TvProg.pres.productattribute.imagesquare.picture-{0}-{1}-{2}", ProductAttributeImageSquarePicturePrefixCacheKey);
-        public static string ProductAttributeImageSquarePicturePrefixCacheKey => "TvProg.pres.productattribute.imagesquare.picture";
+        public static CacheKey TvChannelAttributeImageSquarePictureModelKey => new("TvProg.pres.tvchannelattribute.imagesquare.picture-{0}-{1}-{2}", TvChannelAttributeImageSquarePicturePrefixCacheKey);
+        public static string TvChannelAttributeImageSquarePicturePrefixCacheKey => "TvProg.pres.tvchannelattribute.imagesquare.picture";
 
         /// <summary>
         /// Key for category picture caching
@@ -190,11 +190,11 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// </summary>
         /// <remarks>
         /// {0} : shopping cart item id
-        /// P.S. we could cache by product ID. it could increase performance.
-        /// but it won't work for product attributes with custom images
+        /// P.S. we could cache by tvchannel ID. it could increase performance.
+        /// but it won't work for tvchannel attributes with custom images
         /// {1} : picture size
         /// {2} : value indicating whether a default picture is displayed in case if no real picture exists
-        /// {3} : language ID ("alt" and "title" can depend on localized product name)
+        /// {3} : language ID ("alt" and "title" can depend on localized tvchannel name)
         /// {4} : is connection SSL secured?
         /// {5} : current store ID
         /// </remarks>
@@ -206,11 +206,11 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// </summary>
         /// <remarks>
         /// {0} : order item id
-        /// P.S. we could cache by product ID. it could increase performance.
-        /// but it won't work for product attributes with custom images
+        /// P.S. we could cache by tvchannel ID. it could increase performance.
+        /// but it won't work for tvchannel attributes with custom images
         /// {1} : picture size
         /// {2} : value indicating whether a default picture is displayed in case if no real picture exists
-        /// {3} : language ID ("alt" and "title" can depend on localized product name)
+        /// {3} : language ID ("alt" and "title" can depend on localized tvchannel name)
         /// {4} : is connection SSL secured?
         /// {5} : current store ID
         /// </remarks>

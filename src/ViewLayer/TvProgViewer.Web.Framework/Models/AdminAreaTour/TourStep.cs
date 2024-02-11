@@ -12,7 +12,7 @@
         PaymentMethods,
         TaxProviders,
         TaxManual,
-        Product,
+        TvChannel,
         EmailAccountList,
         EmailAccount,
         TopicList,

@@ -138,13 +138,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task PrepareVendorsAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
-        /// Prepare available product types
+        /// Prepare available tvchannel types
         /// </summary>
-        /// <param name="items">Product type items</param>
+        /// <param name="items">TvChannel type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task PrepareProductTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
+        Task PrepareTvChannelTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
         /// Prepare available category templates
@@ -248,13 +248,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
-        /// Prepare available product templates
+        /// Prepare available tvchannel templates
         /// </summary>
-        /// <param name="items">Product template items</param>
+        /// <param name="items">TvChannel template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task PrepareProductTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
+        Task PrepareTvChannelTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
         /// Prepare available topic templates
@@ -284,13 +284,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task PrepareDeliveryDatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
-        /// Prepare available product availability ranges
+        /// Prepare available tvchannel availability ranges
         /// </summary>
-        /// <param name="items">Product availability range items</param>
+        /// <param name="items">TvChannel availability range items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task PrepareProductAvailabilityRangesAsync(IList<SelectListItem> items,
+        Task PrepareTvChannelAvailabilityRangesAsync(IList<SelectListItem> items,
             bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>

@@ -11,7 +11,7 @@
     if (manualMethodExists) {
       AdminTourNextPageButton.action = function () { window.location = '/Admin/FixedOrByCountryStateZip/Configure?showtour=true' };
     } else {
-      AdminTourNextPageButton.action = function () { window.location = '/Admin/Product/Create?showtour=True' };
+      AdminTourNextPageButton.action = function () { window.location = '/Admin/TvChannel/Create?showtour=True' };
     }
 
     //'Tax providers' step

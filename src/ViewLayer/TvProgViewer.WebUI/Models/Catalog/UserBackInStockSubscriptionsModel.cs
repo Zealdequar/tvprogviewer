@@ -18,8 +18,8 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         public partial record BackInStockSubscriptionModel : BaseTvProgEntityModel
         {
-            public int ProductId { get; set; }
-            public string ProductName { get; set; }
+            public int TvChannelId { get; set; }
+            public string TvChannelName { get; set; }
             public string SeName { get; set; }
         }
 

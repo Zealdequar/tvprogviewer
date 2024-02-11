@@ -12,8 +12,8 @@
     var user = await workContext.GetCurrentUserAsync();
     var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideSearchBlockAttributeName);
 
-    const string hideProductReviewsBlockAttributeName = "CatalogSettingsPage.HideProductReviewsBlock";
-    var hideProductReviewsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideProductReviewsBlockAttributeName);
+    const string hideTvChannelReviewsBlockAttributeName = "CatalogSettingsPage.HideTvChannelReviewsBlock";
+    var hideTvChannelReviewsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTvChannelReviewsBlockAttributeName);
 
     const string hideReviewTypesBlockAttributeName = "CatalogSettingsPage.HideReviewTypesBlock";
     var hideReviewTypesBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideReviewTypesBlockAttributeName);
@@ -24,17 +24,17 @@
     const string hideShareBlockAttributeName = "CatalogSettingsPage.HideShareBlock";
     var hideShareBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideShareBlockAttributeName);
 
-    const string hideCompareProductsBlockAttributeName = "CatalogSettingsPage.HideCompareProductsBlock";
-    var hideCompareProductsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideCompareProductsBlockAttributeName);
+    const string hideCompareTvChannelsBlockAttributeName = "CatalogSettingsPage.HideCompareTvChannelsBlock";
+    var hideCompareTvChannelsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideCompareTvChannelsBlockAttributeName);
 
     const string hideAdditionalSectionsBlockAttributeName = "CatalogSettingsPage.HideAdditionalSectionsBlock";
     var hideAdditionalSectionsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideAdditionalSectionsBlockAttributeName);
 
-    const string hideProductFieldsBlockAttributeName = "CatalogSettingsPage.HideProductFieldsBlock";
-    var hideProductFieldsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideProductFieldsBlockAttributeName);
+    const string hideTvChannelFieldsBlockAttributeName = "CatalogSettingsPage.HideTvChannelFieldsBlock";
+    var hideTvChannelFieldsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTvChannelFieldsBlockAttributeName);
 
-    const string hideProductPageBlockAttributeName = "CatalogSettingsPage.HideProductPageBlock";
-    var hideProductPageBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideProductPageBlockAttributeName);
+    const string hideTvChannelPageBlockAttributeName = "CatalogSettingsPage.HideTvChannelPageBlock";
+    var hideTvChannelPageBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTvChannelPageBlockAttributeName);
 
     const string hideCatalogPagesBlockAttributeName = "CatalogSettingsPage.HideCatalogPagesBlock";
     var hideCatalogPagesBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideCatalogPagesBlockAttributeName);
@@ -48,8 +48,8 @@
     const string hideExportImportBlockAttributeName = "CatalogSettingsPage.HideExportImportBlock";
     var hideExportImportBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideExportImportBlockAttributeName);
 
-    const string hideProductSortingBlockAttributeName = "CatalogSettingsPage.HideProductSortingBlock";
-    var hideProductSortingBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideProductSortingBlockAttributeName);
+    const string hideTvChannelSortingBlockAttributeName = "CatalogSettingsPage.HideTvChannelSortingBlock";
+    var hideTvChannelSortingBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTvChannelSortingBlockAttributeName);
 }
 
 
@@ -76,19 +76,19 @@
 
                 <tvprog-cards id="catalogsettings-cards">
                     <tvprog-card asp-name="catalogsettings-search" asp-icon="fas fa-search" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.Search")" asp-hide-block-attribute-name="@hideSearchBlockAttributeName" asp-hide="@hideSearchBlock" asp-advanced="false">@await Html.PartialAsync("_Catalog.Search", Model)</tvprog-card>
-                    <tvprog-card asp-name="catalogsettings-product-reviews" asp-icon="far fa-comment" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.ProductReviews")" asp-hide-block-attribute-name="@hideProductReviewsBlockAttributeName" asp-hide="@hideProductReviewsBlock" asp-advanced="false">@await Html.PartialAsync("_Catalog.ProductReviews", Model)</tvprog-card>
+                    <tvprog-card asp-name="catalogsettings-tvchannel-reviews" asp-icon="far fa-comment" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.TvChannelReviews")" asp-hide-block-attribute-name="@hideTvChannelReviewsBlockAttributeName" asp-hide="@hideTvChannelReviewsBlock" asp-advanced="false">@await Html.PartialAsync("_Catalog.TvChannelReviews", Model)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-review-types" asp-icon="far fa-comments" asp-title="@T("Admin.Settings.ReviewType")" asp-hide-block-attribute-name="@hideReviewTypesBlockAttributeName" asp-hide="@hideReviewTypesBlock" asp-advanced="true">@await Html.PartialAsync("../ReviewType/List", Model.ReviewTypeSearchModel)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-performance" asp-icon="fas fa-chart-line" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.Performance")" asp-hide-block-attribute-name="@hidePerformanceBlockAttributeName" asp-hide="@hidePerformanceBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.Performance", Model)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-share" asp-icon="fas fa-share-square" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.Share")" asp-hide-block-attribute-name="@hideShareBlockAttributeName" asp-hide="@hideShareBlock" asp-advanced="false">@await Html.PartialAsync("_Catalog.Share", Model)</tvprog-card>
-                    <tvprog-card asp-name="catalogsettings-compare-products" asp-icon="far fa-clone" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.Compare")" asp-hide-block-attribute-name="@hideCompareProductsBlockAttributeName" asp-hide="@hideCompareProductsBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.CompareProducts", Model)</tvprog-card>
+                    <tvprog-card asp-name="catalogsettings-compare-tvchannels" asp-icon="far fa-clone" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.Compare")" asp-hide-block-attribute-name="@hideCompareTvChannelsBlockAttributeName" asp-hide="@hideCompareTvChannelsBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.CompareTvChannels", Model)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-additional-sections" asp-icon="fas fa-plus" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.AdditionalSections")" asp-hide-block-attribute-name="@hideAdditionalSectionsBlockAttributeName" asp-hide="@hideAdditionalSectionsBlock" asp-advanced="false">@await Html.PartialAsync("_Catalog.AdditionalSections", Model)</tvprog-card>
-                    <tvprog-card asp-name="catalogsettings-product-fields" asp-icon="fas fa-align-justify" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.ProductFields")" asp-hide-block-attribute-name="@hideProductFieldsBlockAttributeName" asp-hide="@hideProductFieldsBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.ProductFields", Model)</tvprog-card>
-                    <tvprog-card asp-name="catalogsettings-product-page" asp-icon="fas fa-file" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.ProductPage")" asp-hide-block-attribute-name="@hideProductPageBlockAttributeName" asp-hide="@hideProductPageBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.ProductPage", Model)</tvprog-card>
+                    <tvprog-card asp-name="catalogsettings-tvchannel-fields" asp-icon="fas fa-align-justify" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.TvChannelFields")" asp-hide-block-attribute-name="@hideTvChannelFieldsBlockAttributeName" asp-hide="@hideTvChannelFieldsBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.TvChannelFields", Model)</tvprog-card>
+                    <tvprog-card asp-name="catalogsettings-tvchannel-page" asp-icon="fas fa-file" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.TvChannelPage")" asp-hide-block-attribute-name="@hideTvChannelPageBlockAttributeName" asp-hide="@hideTvChannelPageBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.TvChannelPage", Model)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-catalog-pages" asp-icon="fas fa-th-list" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.CatalogPages")" asp-hide-block-attribute-name="@hideCatalogPagesBlockAttributeName" asp-hide="@hideCatalogPagesBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.CatalogPages", Model)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-tags" asp-icon="fas fa-tag" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.Tags")" asp-hide-block-attribute-name="@hideTagsBlockAttributeName" asp-hide="@hideTagsBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.Tags", Model)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-tax" asp-icon="fas fa-percent" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.Tax")" asp-hide-block-attribute-name="@hideTaxBlockAttributeName" asp-hide="@hideTaxBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.Tax", Model)</tvprog-card>
                     <tvprog-card asp-name="catalogsettings-export-import" asp-icon="fas fa-exchange-alt" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.ExportImport")" asp-hide-block-attribute-name="@hideExportImportBlockAttributeName" asp-hide="@hideExportImportBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.ExportImport", Model)</tvprog-card>
-                    <tvprog-card asp-name="catalogsettings-product-sorting" asp-icon="fas fa-sort" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.ProductSorting")" asp-hide-block-attribute-name="@hideProductSortingBlockAttributeName" asp-hide="@hideProductSortingBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.ProductSorting", Model)</tvprog-card>
+                    <tvprog-card asp-name="catalogsettings-tvchannel-sorting" asp-icon="fas fa-sort" asp-title="@T("Admin.Configuration.Settings.Catalog.BlockTitle.TvChannelSorting")" asp-hide-block-attribute-name="@hideTvChannelSortingBlockAttributeName" asp-hide="@hideTvChannelSortingBlock" asp-advanced="true">@await Html.PartialAsync("_Catalog.TvChannelSorting", Model)</tvprog-card>
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.CatalogSettingsDetailsBlock, additionalData = Model })
                 </tvprog-cards>

@@ -6,7 +6,7 @@
 
     const tour = new Shepherd.Tour(AdminTourCommonTourOptions);
 
-    AdminTourNextPageButton.action = function () { window.location = '/Admin/Product/Create?showtour=True' };
+    AdminTourNextPageButton.action = function () { window.location = '/Admin/TvChannel/Create?showtour=True' };
 
     //'Fixed Rate/By country' switch steps
     tour.addStep({

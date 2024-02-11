@@ -40,11 +40,11 @@ namespace TvProgViewer.WebUI.Models.Order
 
         public partial record OrderItemModel : BaseTvProgEntityModel
         {
-            public int ProductId { get; set; }
+            public int TvChannelId { get; set; }
 
-            public string ProductName { get; set; }
+            public string TvChannelName { get; set; }
 
-            public string ProductSeName { get; set; }
+            public string TvChannelSeName { get; set; }
 
             public string AttributeInfo { get; set; }
 

@@ -27,11 +27,11 @@
                     $('#small-searchterms').autocomplete({
                             delay: 500,
                             minLength: @(Model.SearchTermMinimumLength.ToString()),
-                            source: '@(Url.RouteUrl("ProductSearchAutoComplete"))',
+                            source: '@(Url.RouteUrl("TvChannelSearchAutoComplete"))',
                             appendTo: '.search-box',
                             select: function(event, ui) {
                                 $("#small-searchterms").val(ui.item.label);
-                                setLocation(ui.item.producturl);
+                                setLocation(ui.item.tvchannelurl);
                                 return false;
                         },
                         //append link to the end of list
@@ -50,7 +50,7 @@
                         t = htmlEncode(t);
                         return $("<li></li>")
                             .data("item.autocomplete", item)
-                            .append("<a>@(Model.ShowProductImagesInSearchAutoComplete ? Html.Raw("<img src='\" + item.productpictureurl + \"'>") : null)<span>" + t + "</span></a>")
+                            .append("<a>@(Model.ShowTvChannelImagesInSearchAutoComplete ? Html.Raw("<img src='\" + item.tvchannelpictureurl + \"'>") : null)<span>" + t + "</span></a>")
                             .appendTo(ul);
                     };
                 });

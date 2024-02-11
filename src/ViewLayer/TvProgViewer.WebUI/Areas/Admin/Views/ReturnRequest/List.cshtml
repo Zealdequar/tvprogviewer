@@ -112,11 +112,11 @@
                                 Title = T("Admin.ReturnRequests.Fields.CustomNumber").Text,
                                 Width = "100"
                             },
-                            new ColumnProperty(nameof(ReturnRequestModel.ProductName))
+                            new ColumnProperty(nameof(ReturnRequestModel.TvChannelName))
                             {
-                                Title = T("Admin.ReturnRequests.Fields.Product").Text,
+                                Title = T("Admin.ReturnRequests.Fields.TvChannel").Text,
                                 Width = "350",
-                                Render = new RenderCustom("renderColumnProductName")
+                                Render = new RenderCustom("renderColumnTvChannelName")
                             },
                             new ColumnProperty(nameof(ReturnRequestModel.Quantity))
                             {
@@ -163,15 +163,15 @@
                     })
 
                     <script asp-location="Footer">
-                        function renderColumnProductName(data, type, row, meta) {
-                            if (row.ProductId > 0) {
+                        function renderColumnTvChannelName(data, type, row, meta) {
+                            if (row.TvChannelId > 0) {
                                 var textRenderer = $.fn.dataTable.render.text().display;
-                                var productInfo = '<a href="@Url.Content("~/Admin/Product/Edit/")' + row.ProductId + '">' + textRenderer(row.ProductName) + '</a>';
+                                var tvchannelInfo = '<a href="@Url.Content("~/Admin/TvChannel/Edit/")' + row.TvChannelId + '">' + textRenderer(row.TvChannelName) + '</a>';
                                 var attributeInfo = '';
                                 if (row.AttributeInfo && row.AttributeInfo.length > 0) {
                                     attributeInfo = '<div>' + row.AttributeInfo +'</div>';
                                 }
-                                return productInfo + attributeInfo;
+                                return tvchannelInfo + attributeInfo;
                             } else {
                                 return 'order item is deleted';
                             }

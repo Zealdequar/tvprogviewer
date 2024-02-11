@@ -14,17 +14,17 @@ namespace TvProgViewer.Services.Shipping.Date
         #region Fields
 
         private readonly IRepository<DeliveryDate> _deliveryDateRepository;
-        private readonly IRepository<ProductAvailabilityRange> _productAvailabilityRangeRepository;
+        private readonly IRepository<TvChannelAvailabilityRange> _tvchannelAvailabilityRangeRepository;
 
         #endregion
 
         #region Ctor
 
         public DateRangeService(IRepository<DeliveryDate> deliveryDateRepository,
-            IRepository<ProductAvailabilityRange> productAvailabilityRangeRepository)
+            IRepository<TvChannelAvailabilityRange> tvchannelAvailabilityRangeRepository)
         {
             _deliveryDateRepository = deliveryDateRepository;
-            _productAvailabilityRangeRepository = productAvailabilityRangeRepository;
+            _tvchannelAvailabilityRangeRepository = tvchannelAvailabilityRangeRepository;
         }
 
         #endregion
@@ -97,31 +97,31 @@ namespace TvProgViewer.Services.Shipping.Date
 
         #endregion
 
-        #region Product availability ranges
+        #region TvChannel availability ranges
 
         /// <summary>
-        /// Get a product availability range
+        /// Get a tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRangeId">The product availability range identifier</param>
+        /// <param name="tvchannelAvailabilityRangeId">The tvchannel availability range identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability range
+        /// The task result contains the tvchannel availability range
         /// </returns>
-        public virtual async Task<ProductAvailabilityRange> GetProductAvailabilityRangeByIdAsync(int productAvailabilityRangeId)
+        public virtual async Task<TvChannelAvailabilityRange> GetTvChannelAvailabilityRangeByIdAsync(int tvchannelAvailabilityRangeId)
         {
-            return productAvailabilityRangeId != 0 ? await _productAvailabilityRangeRepository.GetByIdAsync(productAvailabilityRangeId, cache => default) : null;
+            return tvchannelAvailabilityRangeId != 0 ? await _tvchannelAvailabilityRangeRepository.GetByIdAsync(tvchannelAvailabilityRangeId, cache => default) : null;
         }
 
         /// <summary>
-        /// Get all product availability ranges
+        /// Get all tvchannel availability ranges
         /// </summary>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability ranges
+        /// The task result contains the tvchannel availability ranges
         /// </returns>
-        public virtual async Task<IList<ProductAvailabilityRange>> GetAllProductAvailabilityRangesAsync()
+        public virtual async Task<IList<TvChannelAvailabilityRange>> GetAllTvChannelAvailabilityRangesAsync()
         {
-            return await _productAvailabilityRangeRepository.GetAllAsync(query =>
+            return await _tvchannelAvailabilityRangeRepository.GetAllAsync(query =>
             {
                 return from par in query
                     orderby par.DisplayOrder, par.Id
@@ -130,33 +130,33 @@ namespace TvProgViewer.Services.Shipping.Date
         }
 
         /// <summary>
-        /// Insert the product availability range
+        /// Insert the tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task InsertProductAvailabilityRangeAsync(ProductAvailabilityRange productAvailabilityRange)
+        public virtual async Task InsertTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange)
         {
-            await _productAvailabilityRangeRepository.InsertAsync(productAvailabilityRange);
+            await _tvchannelAvailabilityRangeRepository.InsertAsync(tvchannelAvailabilityRange);
         }
 
         /// <summary>
-        /// Update the product availability range
+        /// Update the tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task UpdateProductAvailabilityRangeAsync(ProductAvailabilityRange productAvailabilityRange)
+        public virtual async Task UpdateTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange)
         {
-            await _productAvailabilityRangeRepository.UpdateAsync(productAvailabilityRange);
+            await _tvchannelAvailabilityRangeRepository.UpdateAsync(tvchannelAvailabilityRange);
         }
 
         /// <summary>
-        /// Delete the product availability range
+        /// Delete the tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task DeleteProductAvailabilityRangeAsync(ProductAvailabilityRange productAvailabilityRange)
+        public virtual async Task DeleteTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange)
         {
-            await _productAvailabilityRangeRepository.DeleteAsync(productAvailabilityRange);
+            await _tvchannelAvailabilityRangeRepository.DeleteAsync(tvchannelAvailabilityRange);
         }
 
         #endregion

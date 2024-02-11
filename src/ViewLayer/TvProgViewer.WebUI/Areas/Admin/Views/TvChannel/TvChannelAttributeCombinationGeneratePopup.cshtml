@@ -1,0 +1,79 @@
+@model TvChannelAttributeCombinationModel
+
+@{
+    Layout = "_AdminPopupLayout";
+
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.GenerateSeveralTitle").Text;
+}
+
+@if (ViewBag.RefreshPage == true)
+{
+<script>
+        try {window.opener.document.forms['@(Context.Request.Query["formId"])'].@(Context.Request.Query["btnId"]).click();}
+        catch (e){}
+        window.close();
+</script>
+}
+
+@if (Model.Warnings.Count > 0)
+{
+    <div class="callout callout-danger">
+        <ul>
+            @foreach (var warning in Model.Warnings)
+            {
+                <li>@warning</li>
+            }
+        </ul>
+    </div>
+}
+
+<form asp-controller="TvChannel" asp-action="TvChannelAttributeCombinationGeneratePopup"
+      asp-route-tvchannelId="@Context.Request.Query["tvchannelId"]"
+      asp-route-btnId="@Context.Request.Query["btnId"]"
+      asp-route-formId="@Context.Request.Query["formId"]">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.GenerateSeveralTitle")
+        </h1>
+        <div class="float-right">
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Generate")
+            </button>
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelAttributeCombinationDetailsButtons, additionalData = Model })
+        </div>
+    </div>
+    <section class="content">
+        <div class="container-fluid">
+            <div class="form-horizontal">
+                <h4>@T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.RequiredAttribute")</h4>
+                <div class="form-horizontal">
+                    @foreach (var attribute in Model.TvChannelAttributes)
+                    {
+                        <div class="cards-group">
+                            <div class="card card-default">
+                                <div class="card-header">
+                                    @(attribute.Name)
+                                    @if (attribute.IsRequired)
+                                    {
+                                        <span>*</span>
+                                    }
+                                </div>
+                                <div class="card-body">
+                                    @foreach (var attributeValue in attribute.Values)
+                                    {
+                                        <div>
+                                            <input id="attribute_value_@(attributeValue.Id)" type="checkbox" value="@(attributeValue.Id)" name="attribute_value_@(attributeValue.Id)" @(attributeValue.Checked)/>
+                                            <label for="attribute_value_@(attributeValue.Id)">@(attributeValue.Name)</label>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

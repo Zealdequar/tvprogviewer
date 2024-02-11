@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Models.Common
         public UserRegistrationType RegistrationType { get; set; }
         public IList<TopicModel> Topics { get; set; }
         public bool DisplayHomepageMenuItem { get; set; }
-        public bool DisplayProductSearchMenuItem { get; set; }
+        public bool DisplayTvChannelSearchMenuItem { get; set; }
         public bool DisplayContactUsMenuItem { get; set; }
 
         #region Вложенные классы

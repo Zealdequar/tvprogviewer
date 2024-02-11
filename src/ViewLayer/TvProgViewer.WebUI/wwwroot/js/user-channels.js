@@ -119,6 +119,13 @@ function UploadImage(response, postData) {
     });
     return [true, '', false];
 }
+
+function linkformatter(cellvalue, options, rowObject) {
+    if (cellvalue)
+        return '<a href="~/' + cellvalue + '" target="_blank" ><img src="/images/i/channel-prog-25.png" alt="Детальная информация"</img></a>';
+    else
+        return ""
+}
 // Установка таблички
 function setGrid()
 {
@@ -137,7 +144,7 @@ function setGrid()
         success: function () { },
         error: function (e) {
         },
-        colNames: ["", "", "Логотип", "Канал", "Номер канала"],
+        colNames: ["", "", "Логотип", "Канал", "Подробнее", "Номер канала"],
         colModel: [
             {
                 key: true, name: "UserChannelID", index: "UserChannelID", width: "0px", hidden: true
@@ -150,7 +157,10 @@ function setGrid()
                 editable: true, edittype: 'file', editoptions: { enctype: "multipart/form-data" }, search: false
             },
             {
-                key: false, name: "SystemTitle", index: "SystemTitle", sortable: true, width: "40%", editable: false
+                key: false, name: "SystemTitle", index: "SystemTitle", sortable: true, width: "35%", editable: false
+            },
+            {
+                key: false, name: "UrlDetails", index: "UrlDetails", sortable: false, width: "5%", editable: false, align: "center", formatter: linkformatter
             },
             {
                 key: false, name: "SysOrderCol", index: "SysOrderCol", sortable: true, width: "10%", align: "center", editable: true, hidden: true

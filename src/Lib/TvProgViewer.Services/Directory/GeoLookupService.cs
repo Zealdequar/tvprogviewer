@@ -1,4 +1,4 @@
-﻿//This product includes GeoLite2 data created by MaxMind, available from http://www.maxmind.com
+﻿//This tvchannel includes GeoLite2 data created by MaxMind, available from http://www.maxmind.com
 
 using System;
 using MaxMind.GeoIP2;
@@ -46,7 +46,7 @@ namespace TvProgViewer.Services.Directory
 
             try
             {
-                //This product includes GeoLite2 data created by MaxMind, available from http://www.maxmind.com
+                //This tvchannel includes GeoLite2 data created by MaxMind, available from http://www.maxmind.com
                 var databasePath = _fileProvider.MapPath("~/App_Data/GeoLite2-Country.mmdb");
                 var reader = new DatabaseReader(databasePath);
                 var omni = reader.Country(ipAddress);

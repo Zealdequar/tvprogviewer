@@ -13,14 +13,14 @@ namespace TvProgViewer.Core.Domain.Common
         public bool DisplayHomepageMenuItem { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display "new products" menu item
+        /// Gets or sets a value indicating whether to display "new tvchannels" menu item
         /// </summary>
-        public bool DisplayNewProductsMenuItem { get; set; }
+        public bool DisplayNewTvChannelsMenuItem { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display "product search" menu item
+        /// Gets or sets a value indicating whether to display "tvchannel search" menu item
         /// </summary>
-        public bool DisplayProductSearchMenuItem { get; set; }
+        public bool DisplayTvChannelSearchMenuItem { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to display "user info" menu item

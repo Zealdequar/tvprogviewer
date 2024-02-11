@@ -83,11 +83,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare product availability range search model
+        /// Prepare tvchannel availability range search model
         /// </summary>
-        /// <param name="searchModel">Product availability range search model</param>
-        /// <returns>Product availability range search model</returns>
-        protected virtual ProductAvailabilityRangeSearchModel PrepareProductAvailabilityRangeSearchModel(ProductAvailabilityRangeSearchModel searchModel)
+        /// <param name="searchModel">TvChannel availability range search model</param>
+        /// <returns>TvChannel availability range search model</returns>
+        protected virtual TvChannelAvailabilityRangeSearchModel PrepareTvChannelAvailabilityRangeSearchModel(TvChannelAvailabilityRangeSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -308,7 +308,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
             //prepare nested search models
             PrepareDeliveryDateSearchModel(searchModel.DeliveryDateSearchModel);
-            PrepareProductAvailabilityRangeSearchModel(searchModel.ProductAvailabilityRangeSearchModel);
+            PrepareTvChannelAvailabilityRangeSearchModel(searchModel.TvChannelAvailabilityRangeSearchModel);
 
             return Task.FromResult(searchModel);
         }
@@ -373,55 +373,55 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged product availability range list model
+        /// Prepare paged tvchannel availability range list model
         /// </summary>
-        /// <param name="searchModel">Product availability range search model</param>
+        /// <param name="searchModel">TvChannel availability range search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability range list model
+        /// The task result contains the tvchannel availability range list model
         /// </returns>
-        public virtual async Task<ProductAvailabilityRangeListModel> PrepareProductAvailabilityRangeListModelAsync(ProductAvailabilityRangeSearchModel searchModel)
+        public virtual async Task<TvChannelAvailabilityRangeListModel> PrepareTvChannelAvailabilityRangeListModelAsync(TvChannelAvailabilityRangeSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get product availability ranges
-            var productAvailabilityRanges = (await _dateRangeService.GetAllProductAvailabilityRangesAsync()).ToPagedList(searchModel);
+            //get tvchannel availability ranges
+            var tvchannelAvailabilityRanges = (await _dateRangeService.GetAllTvChannelAvailabilityRangesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
-            var model = new ProductAvailabilityRangeListModel().PrepareToGrid(searchModel, productAvailabilityRanges, () =>
+            var model = new TvChannelAvailabilityRangeListModel().PrepareToGrid(searchModel, tvchannelAvailabilityRanges, () =>
             {
                 //fill in model values from the entity
-                return productAvailabilityRanges.Select(range => range.ToModel<ProductAvailabilityRangeModel>());
+                return tvchannelAvailabilityRanges.Select(range => range.ToModel<TvChannelAvailabilityRangeModel>());
             });
 
             return model;
         }
 
         /// <summary>
-        /// Prepare product availability range model
+        /// Prepare tvchannel availability range model
         /// </summary>
-        /// <param name="model">Product availability range model</param>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="model">TvChannel availability range model</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability range model
+        /// The task result contains the tvchannel availability range model
         /// </returns>
-        public virtual async Task<ProductAvailabilityRangeModel> PrepareProductAvailabilityRangeModelAsync(ProductAvailabilityRangeModel model,
-            ProductAvailabilityRange productAvailabilityRange, bool excludeProperties = false)
+        public virtual async Task<TvChannelAvailabilityRangeModel> PrepareTvChannelAvailabilityRangeModelAsync(TvChannelAvailabilityRangeModel model,
+            TvChannelAvailabilityRange tvchannelAvailabilityRange, bool excludeProperties = false)
         {
-            Func<ProductAvailabilityRangeLocalizedModel, int, Task> localizedModelConfiguration = null;
+            Func<TvChannelAvailabilityRangeLocalizedModel, int, Task> localizedModelConfiguration = null;
 
-            if (productAvailabilityRange != null)
+            if (tvchannelAvailabilityRange != null)
             {
                 //fill in model values from the entity
-                model ??= productAvailabilityRange.ToModel<ProductAvailabilityRangeModel>();
+                model ??= tvchannelAvailabilityRange.ToModel<TvChannelAvailabilityRangeModel>();
 
                 //define localized model configuration action
                 localizedModelConfiguration = async (locale, languageId) =>
                 {
-                    locale.Name = await _localizationService.GetLocalizedAsync(productAvailabilityRange, entity => entity.Name, languageId, false, false);
+                    locale.Name = await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, entity => entity.Name, languageId, false, false);
                 };
             }
 

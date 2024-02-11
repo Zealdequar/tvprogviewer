@@ -222,22 +222,22 @@
         public const string GiftCardNotification = "GiftCard.Notification";
 
         /// <summary>
-        /// Represents system name of notification store owner about new product review
+        /// Represents system name of notification store owner about new tvchannel review
         /// </summary>
-        public const string ProductReviewStoreOwnerNotification = "Product.ProductReview";
+        public const string TvChannelReviewStoreOwnerNotification = "TvChannel.TvChannelReview";
 
         /// <summary>
-        /// Represents system name of notification user about product review reply
+        /// Represents system name of notification user about tvchannel review reply
         /// </summary>
-        public const string ProductReviewReplyUserNotification = "ProductReview.Reply.UserNotification";
+        public const string TvChannelReviewReplyUserNotification = "TvChannelReview.Reply.UserNotification";
 
         /// <summary>
-        /// Represents system name of notification store owner about below quantity of product
+        /// Represents system name of notification store owner about below quantity of tvchannel
         /// </summary>
         public const string QuantityBelowStoreOwnerNotification = "QuantityBelow.StoreOwnerNotification";
 
         /// <summary>
-        /// Represents system name of notification store owner about below quantity of product attribute combination
+        /// Represents system name of notification store owner about below quantity of tvchannel attribute combination
         /// </summary>
         public const string QuantityBelowAttributeCombinationStoreOwnerNotification = "QuantityBelow.AttributeCombination.StoreOwnerNotification";
 
@@ -257,7 +257,7 @@
         public const string NewsCommentStoreOwnerNotification = "News.NewsComment";
 
         /// <summary>
-        /// Represents system name of notification user about product receipt
+        /// Represents system name of notification user about tvchannel receipt
         /// </summary>
         public const string BackInStockNotification = "User.BackInStock";
 

@@ -1,0 +1,106 @@
+@model CatalogSettingsModel
+
+<div class="card-body">
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelReviewsMustBeApproved_OverrideForStore" asp-input="TvChannelReviewsMustBeApproved" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelReviewsMustBeApproved" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelReviewsMustBeApproved" />
+            <span asp-validation-for="TvChannelReviewsMustBeApproved"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="OneReviewPerTvChannelFromUser_OverrideForStore" asp-input="OneReviewPerTvChannelFromUser" asp-store-scope="@Model.ActiveStoreScopeConfiguration"/>
+            <tvprog-label asp-for="OneReviewPerTvChannelFromUser"/>
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="OneReviewPerTvChannelFromUser"/>
+            <span asp-validation-for="OneReviewPerTvChannelFromUser"></span>
+        </div>
+    </div>
+    <div class="form-group row advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="AllowAnonymousUsersToReviewTvChannel_OverrideForStore" asp-input="AllowAnonymousUsersToReviewTvChannel" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowAnonymousUsersToReviewTvChannel" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowAnonymousUsersToReviewTvChannel" />
+            <span asp-validation-for="AllowAnonymousUsersToReviewTvChannel"></span>
+        </div>
+    </div>
+    <div class="form-group row advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelReviewPossibleOnlyAfterPurchasing_OverrideForStore" asp-input="TvChannelReviewPossibleOnlyAfterPurchasing" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelReviewPossibleOnlyAfterPurchasing" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelReviewPossibleOnlyAfterPurchasing" />
+            <span asp-validation-for="TvChannelReviewPossibleOnlyAfterPurchasing"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="NotifyStoreOwnerAboutNewTvChannelReviews_OverrideForStore" asp-input="NotifyStoreOwnerAboutNewTvChannelReviews" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="NotifyStoreOwnerAboutNewTvChannelReviews" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="NotifyStoreOwnerAboutNewTvChannelReviews" />
+            <span asp-validation-for="NotifyStoreOwnerAboutNewTvChannelReviews"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="NotifyUserAboutTvChannelReviewReply_OverrideForStore" asp-input="NotifyUserAboutTvChannelReviewReply" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="NotifyUserAboutTvChannelReviewReply" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="NotifyUserAboutTvChannelReviewReply" />
+            <span asp-validation-for="NotifyUserAboutTvChannelReviewReply"></span>
+        </div>
+    </div>
+    <div class="form-group row advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="ShowTvChannelReviewsPerStore_OverrideForStore" asp-input="ShowTvChannelReviewsPerStore" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="ShowTvChannelReviewsPerStore" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="ShowTvChannelReviewsPerStore" />
+            <span asp-validation-for="ShowTvChannelReviewsPerStore"></span>
+        </div>
+    </div>
+    <div class="form-group row advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="ShowTvChannelReviewsOnAccountPage_OverrideForStore" asp-input="ShowTvChannelReviewsTabOnAccountPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="ShowTvChannelReviewsTabOnAccountPage" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="ShowTvChannelReviewsTabOnAccountPage" />
+            <span asp-validation-for="ShowTvChannelReviewsTabOnAccountPage"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="ShowTvChannelReviewsTabOnAccountPage">
+        <div class="form-group row advanced-setting">
+            <div class="col-md-3">
+                <tvprog-override-store-checkbox asp-for="TvChannelReviewsPageSizeOnAccountPage_OverrideForStore" asp-input="TvChannelReviewsPageSizeOnAccountPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="TvChannelReviewsPageSizeOnAccountPage" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="TvChannelReviewsPageSizeOnAccountPage" />
+                <span asp-validation-for="TvChannelReviewsPageSizeOnAccountPage"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+    <div class="form-group row advanced-setting">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelReviewsSortByCreatedDateAscending_OverrideForStore" asp-input="TvChannelReviewsSortByCreatedDateAscending" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelReviewsSortByCreatedDateAscending" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelReviewsSortByCreatedDateAscending" />
+            <span asp-validation-for="TvChannelReviewsSortByCreatedDateAscending"></span>
+        </div>
+    </div>
+</div>

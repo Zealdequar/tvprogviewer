@@ -18,7 +18,7 @@ namespace TvProgViewer.Services.Catalog.Caching
         protected override async Task ClearCacheAsync(SpecificationAttributeGroup entity, EntityEventType entityEventType)
         {
             if (entityEventType != EntityEventType.Insert)
-                await RemoveByPrefixAsync(TvProgCatalogDefaults.SpecificationAttributeGroupByProductPrefix);
+                await RemoveByPrefixAsync(TvProgCatalogDefaults.SpecificationAttributeGroupByTvChannelPrefix);
         }
     }
 }

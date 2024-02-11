@@ -22,9 +22,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool PageTitleSeoAdjustment_OverrideForStore { get; set; }
         public SelectList PageTitleSeoAdjustmentValues { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.GenerateProductMetaDescription")]
-        public bool GenerateProductMetaDescription { get; set; }
-        public bool GenerateProductMetaDescription_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.GenerateTvChannelMetaDescription")]
+        public bool GenerateTvChannelMetaDescription { get; set; }
+        public bool GenerateTvChannelMetaDescription_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.ConvertNonWesternChars")]
         public bool ConvertNonWesternChars { get; set; }

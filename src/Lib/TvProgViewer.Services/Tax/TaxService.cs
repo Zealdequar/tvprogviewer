@@ -179,7 +179,7 @@ namespace TvProgViewer.Services.Tax
         /// <summary>
         /// Prepare request to get tax rate
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="taxCategoryId">Tax category identifier</param>
         /// <param name="user">User</param>
         /// <param name="price">Price</param>
@@ -187,7 +187,7 @@ namespace TvProgViewer.Services.Tax
         /// A task that represents the asynchronous operation
         /// The task result contains the package for tax calculation
         /// </returns>
-        protected virtual async Task<TaxRateRequest> PrepareTaxRateRequestAsync(Product product, int taxCategoryId, User user, decimal price)
+        protected virtual async Task<TaxRateRequest> PrepareTaxRateRequestAsync(TvChannel tvchannel, int taxCategoryId, User user, decimal price)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -196,9 +196,9 @@ namespace TvProgViewer.Services.Tax
             var taxRateRequest = new TaxRateRequest
             {
                 User = user,
-                Product = product,
+                TvChannel = tvchannel,
                 Price = price,
-                TaxCategoryId = taxCategoryId > 0 ? taxCategoryId : product?.TaxCategoryId ?? 0,
+                TaxCategoryId = taxCategoryId > 0 ? taxCategoryId : tvchannel?.TaxCategoryId ?? 0,
                 CurrentStoreId = store.Id
             };
 
@@ -210,7 +210,7 @@ namespace TvProgViewer.Services.Tax
                 //EU VAT enabled?
                 _taxSettings.EuVatEnabled &&
                 //telecommunications, broadcasting and electronic services?
-                product != null && product.IsTelecommunicationsOrBroadcastingOrElectronicServices &&
+                tvchannel != null && tvchannel.IsTelecommunicationsOrBroadcastingOrElectronicServices &&
                 //January 1st 2015 passed? Yes, not required anymore
                 //DateTime.UtcNow > new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc) &&
                 //Europe Union consumer?
@@ -280,7 +280,7 @@ namespace TvProgViewer.Services.Tax
         /// <summary>
         /// Gets tax rate
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="taxCategoryId">Tax category identifier</param>
         /// <param name="user">User</param>
         /// <param name="price">Price (taxable value)</param>
@@ -288,7 +288,7 @@ namespace TvProgViewer.Services.Tax
         /// A task that represents the asynchronous operation
         /// The task result contains the calculated tax rate. A value indicating whether a request is taxable
         /// </returns>
-        protected virtual async Task<(decimal taxRate, bool isTaxable)> GetTaxRateAsync(Product product, int taxCategoryId,
+        protected virtual async Task<(decimal taxRate, bool isTaxable)> GetTaxRateAsync(TvChannel tvchannel, int taxCategoryId,
             User user, decimal price)
         {
             var taxRate = decimal.Zero;
@@ -300,9 +300,9 @@ namespace TvProgViewer.Services.Tax
                 return (taxRate, true);
 
             //tax request
-            var taxRateRequest = await PrepareTaxRateRequestAsync(product, taxCategoryId, user, price);
+            var taxRateRequest = await PrepareTaxRateRequestAsync(tvchannel, taxCategoryId, user, price);
 
-            var isTaxable = !await IsTaxExemptAsync(product, taxRateRequest.User);
+            var isTaxable = !await IsTaxExemptAsync(tvchannel, taxRateRequest.User);
 
             //tax exempt
 
@@ -451,45 +451,45 @@ namespace TvProgViewer.Services.Tax
 
         #region Methods
 
-        #region Product price
+        #region TvChannel price
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price)
+        public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price)
         {
             var user = await _workContext.GetCurrentUserAsync();
 
-            return await GetProductPriceAsync(product, price, user);
+            return await GetTvChannelPriceAsync(tvchannel, price, user);
         }
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price,
+        public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price,
             User user)
         {
             var includingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
-            return await GetProductPriceAsync(product, price, includingTax, user);
+            return await GetTvChannelPriceAsync(tvchannel, price, includingTax, user);
         }
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <param name="user">User</param>
@@ -497,18 +497,18 @@ namespace TvProgViewer.Services.Tax
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price,
+        public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price,
             bool includingTax, User user)
         {
             var priceIncludesTax = _taxSettings.PricesIncludeTax;
             var taxCategoryId = 0;
-            return await GetProductPriceAsync(product, taxCategoryId, price, includingTax, user, priceIncludesTax);
+            return await GetTvChannelPriceAsync(tvchannel, taxCategoryId, price, includingTax, user, priceIncludesTax);
         }
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="taxCategoryId">Tax category identifier</param>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
@@ -518,7 +518,7 @@ namespace TvProgViewer.Services.Tax
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        public virtual async Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, int taxCategoryId,
+        public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, int taxCategoryId,
             decimal price, bool includingTax, User user,
             bool priceIncludesTax)
         {
@@ -530,7 +530,7 @@ namespace TvProgViewer.Services.Tax
 
             bool isTaxable;
 
-            (taxRate, isTaxable) = await GetTaxRateAsync(product, taxCategoryId, user, price);
+            (taxRate, isTaxable) = await GetTaxRateAsync(tvchannel, taxCategoryId, user, price);
 
             if (priceIncludesTax)
             {
@@ -579,15 +579,15 @@ namespace TvProgViewer.Services.Tax
         }
 
         /// <summary>
-        /// Gets a value indicating whether a product is tax exempt
+        /// Gets a value indicating whether a tvchannel is tax exempt
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains a value indicating whether a product is tax exempt
+        /// The task result contains a value indicating whether a tvchannel is tax exempt
         /// </returns>
-        public virtual async Task<bool> IsTaxExemptAsync(Product product, User user)
+        public virtual async Task<bool> IsTaxExemptAsync(TvChannel tvchannel, User user)
         {
             if (user != null)
             {
@@ -598,10 +598,10 @@ namespace TvProgViewer.Services.Tax
                     return true;
             }
 
-            if (product == null)
+            if (tvchannel == null)
                 return false;
 
-            if (product.IsTaxExempt)
+            if (tvchannel.IsTaxExempt)
                 return true;
 
             return false;
@@ -649,7 +649,7 @@ namespace TvProgViewer.Services.Tax
             var taxClassId = _taxSettings.ShippingTaxClassId;
             var priceIncludesTax = _taxSettings.ShippingPriceIncludesTax;
 
-            return await GetProductPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
+            return await GetTvChannelPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
         }
 
         #endregion
@@ -693,7 +693,7 @@ namespace TvProgViewer.Services.Tax
 
             var taxClassId = _taxSettings.PaymentMethodAdditionalFeeTaxClassId;
             var priceIncludesTax = _taxSettings.PaymentMethodAdditionalFeeIncludesTax;
-            return await GetProductPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
+            return await GetTvChannelPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
         }
 
         #endregion
@@ -759,7 +759,7 @@ namespace TvProgViewer.Services.Tax
             var priceIncludesTax = _taxSettings.PricesIncludeTax;
             var taxClassId = ca.TaxCategoryId;
 
-            return await GetProductPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
+            return await GetTvChannelPriceAsync(null, taxClassId, price, includingTax, user, priceIncludesTax);
         }
 
         #endregion

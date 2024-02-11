@@ -128,33 +128,33 @@
                                             </div>
                                             <div class="form-group row">
                                                 <div class="col-md-4">
-                                                    <tvprog-label asp-for="ProductId" />
+                                                    <tvprog-label asp-for="TvChannelId" />
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input type="text" id="search-product-name" autocomplete="off" class="form-control" />
-                                                    <span id="search-product-friendly-name"></span>
-                                                    <button type="button" id="search-product-clear" class="btn bg-gray" style="display: none; margin-top: 5px;">@T("Admin.Common.Clear")</button>
-                                                    <input asp-for="ProductId" autocomplete="off" style="display: none;" />
+                                                    <input type="text" id="search-tvchannel-name" autocomplete="off" class="form-control" />
+                                                    <span id="search-tvchannel-friendly-name"></span>
+                                                    <button type="button" id="search-tvchannel-clear" class="btn bg-gray" style="display: none; margin-top: 5px;">@T("Admin.Common.Clear")</button>
+                                                    <input asp-for="TvChannelId" autocomplete="off" style="display: none;" />
                                                     <script>
                                                     $(document).ready(function() {
-                                                        $('#search-product-name').autocomplete({
+                                                        $('#search-tvchannel-name').autocomplete({
                                                             delay: 500,
                                                             minLength: 3,
                                                             source: '@Url.Action("SearchAutoComplete", "SearchComplete")',
                                                             select: function(event, ui) {
-                                                                $('#@Html.IdFor(model => model.ProductId)').val(ui.item.productid);
-                                                                $('#search-product-friendly-name').text(ui.item.label);
+                                                                $('#@Html.IdFor(model => model.TvChannelId)').val(ui.item.tvchannelid);
+                                                                $('#search-tvchannel-friendly-name').text(ui.item.label);
 
-                                                                $('#search-product-clear').show();
+                                                                $('#search-tvchannel-clear').show();
                                                                 return false;
                                                             }
                                                         });
 
                                                         //remove button
-                                                        $('#search-product-clear').click(function() {
-                                                            $('#@Html.IdFor(model => model.ProductId)').val('0');
-                                                            $('#search-product-friendly-name').text('');
-                                                            $('#search-product-clear').hide();
+                                                        $('#search-tvchannel-clear').click(function() {
+                                                            $('#@Html.IdFor(model => model.TvChannelId)').val('0');
+                                                            $('#search-tvchannel-friendly-name').text('');
+                                                            $('#search-tvchannel-clear').hide();
                                                             return false;
                                                         });
                                                     });
@@ -312,7 +312,7 @@
                                             new FilterParameter(nameof(Model.BillingLastName)),
                                             new FilterParameter(nameof(Model.BillingCountryId)),
                                             new FilterParameter(nameof(Model.PaymentMethodSystemName)),
-                                            new FilterParameter(nameof(Model.ProductId)),
+                                            new FilterParameter(nameof(Model.TvChannelId)),
                                             new FilterParameter(nameof(Model.OrderNotes))
                                         }
                                     };
@@ -438,7 +438,7 @@
                                         BillingLastName: $('#@Html.IdFor(model => model.BillingLastName)').val(),
                                         BillingCountryId: $('#@Html.IdFor(model => model.BillingCountryId)').val(),
                                         PaymentMethodSystemName: $('#@Html.IdFor(model => model.PaymentMethodSystemName)').val(),
-                                        ProductId: $('#@Html.IdFor(model => model.ProductId)').val(),
+                                        TvChannelId: $('#@Html.IdFor(model => model.TvChannelId)').val(),
                                         OrderNotes: $('#@Html.IdFor(model => model.OrderNotes)').val()
                                     };
                                     addAntiForgeryToken(postData);

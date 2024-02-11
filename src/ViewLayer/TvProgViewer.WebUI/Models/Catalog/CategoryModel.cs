@@ -9,10 +9,10 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public CategoryModel()
         {
             PictureModel = new PictureModel();
-            FeaturedProducts = new List<ProductOverviewModel>();
+            FeaturedTvChannels = new List<TvChannelOverviewModel>();
             SubCategories = new List<SubCategoryModel>();
             CategoryBreadcrumb = new List<CategoryModel>();
-            CatalogProductsModel = new CatalogProductsModel();
+            CatalogTvChannelsModel = new CatalogTvChannelsModel();
         }
 
         public string Name { get; set; }
@@ -29,9 +29,9 @@ namespace TvProgViewer.WebUI.Models.Catalog
         
         public IList<SubCategoryModel> SubCategories { get; set; }
 
-        public IList<ProductOverviewModel> FeaturedProducts { get; set; }
+        public IList<TvChannelOverviewModel> FeaturedTvChannels { get; set; }
 
-        public CatalogProductsModel CatalogProductsModel { get; set; }
+        public CatalogTvChannelsModel CatalogTvChannelsModel { get; set; }
 
         #region Nested Classes
 

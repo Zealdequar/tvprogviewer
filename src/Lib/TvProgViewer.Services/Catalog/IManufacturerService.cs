@@ -50,8 +50,8 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="overridePublished">
         /// null - process "Published" property according to "showHidden" parameter
-        /// true - load only "Published" products
-        /// false - load only "Unpublished" products
+        /// true - load only "Published" tvchannels
+        /// false - load only "Unpublished" tvchannels
         /// </param>
         /// <returns>
         /// A task that represents the asynchronous operation
@@ -134,14 +134,14 @@ namespace TvProgViewer.Services.Catalog
         Task UpdateManufacturerAsync(Manufacturer manufacturer);
 
         /// <summary>
-        /// Deletes a product manufacturer mapping
+        /// Deletes a tvchannel manufacturer mapping
         /// </summary>
-        /// <param name="productManufacturer">Product manufacturer mapping</param>
+        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task DeleteProductManufacturerAsync(ProductManufacturer productManufacturer);
+        Task DeleteTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer);
 
         /// <summary>
-        /// Gets product manufacturer collection
+        /// Gets tvchannel manufacturer collection
         /// </summary>
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <param name="pageIndex">Page index</param>
@@ -149,55 +149,55 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product manufacturer collection
+        /// The task result contains the tvchannel manufacturer collection
         /// </returns>
-        Task<IPagedList<ProductManufacturer>> GetProductManufacturersByManufacturerIdAsync(int manufacturerId,
+        Task<IPagedList<TvChannelManufacturer>> GetTvChannelManufacturersByManufacturerIdAsync(int manufacturerId,
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false);
 
         /// <summary>
-        /// Gets a product manufacturer mapping collection
+        /// Gets a tvchannel manufacturer mapping collection
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product manufacturer mapping collection
+        /// The task result contains the tvchannel manufacturer mapping collection
         /// </returns>
-        Task<IList<ProductManufacturer>> GetProductManufacturersByProductIdAsync(int productId, bool showHidden = false);
+        Task<IList<TvChannelManufacturer>> GetTvChannelManufacturersByTvChannelIdAsync(int tvchannelId, bool showHidden = false);
 
         /// <summary>
-        /// Gets a product manufacturer mapping 
+        /// Gets a tvchannel manufacturer mapping 
         /// </summary>
-        /// <param name="productManufacturerId">Product manufacturer mapping identifier</param>
+        /// <param name="tvchannelManufacturerId">TvChannel manufacturer mapping identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product manufacturer mapping
+        /// The task result contains the tvchannel manufacturer mapping
         /// </returns>
-        Task<ProductManufacturer> GetProductManufacturerByIdAsync(int productManufacturerId);
+        Task<TvChannelManufacturer> GetTvChannelManufacturerByIdAsync(int tvchannelManufacturerId);
 
         /// <summary>
-        /// Inserts a product manufacturer mapping
+        /// Inserts a tvchannel manufacturer mapping
         /// </summary>
-        /// <param name="productManufacturer">Product manufacturer mapping</param>
+        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task InsertProductManufacturerAsync(ProductManufacturer productManufacturer);
+        Task InsertTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer);
 
         /// <summary>
-        /// Updates the product manufacturer mapping
+        /// Updates the tvchannel manufacturer mapping
         /// </summary>
-        /// <param name="productManufacturer">Product manufacturer mapping</param>
+        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task UpdateProductManufacturerAsync(ProductManufacturer productManufacturer);
+        Task UpdateTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer);
 
         /// <summary>
-        /// Get manufacturer IDs for products
+        /// Get manufacturer IDs for tvchannels
         /// </summary>
-        /// <param name="productIds">Products IDs</param>
+        /// <param name="tvchannelIds">TvChannels IDs</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the manufacturer IDs for products
+        /// The task result contains the manufacturer IDs for tvchannels
         /// </returns>
-        Task<IDictionary<int, int[]>> GetProductManufacturerIdsAsync(int[] productIds);
+        Task<IDictionary<int, int[]>> GetTvChannelManufacturerIdsAsync(int[] tvchannelIds);
 
         /// <summary>
         /// Returns a list of names of not existing manufacturers
@@ -210,13 +210,13 @@ namespace TvProgViewer.Services.Catalog
         Task<string[]> GetNotExistingManufacturersAsync(string[] manufacturerIdsNames);
 
         /// <summary>
-        /// Returns a ProductManufacturer that has the specified values
+        /// Returns a TvChannelManufacturer that has the specified values
         /// </summary>
         /// <param name="source">Source</param>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="manufacturerId">Manufacturer identifier</param>
-        /// <returns>A ProductManufacturer that has the specified values; otherwise null</returns>
-        ProductManufacturer FindProductManufacturer(IList<ProductManufacturer> source, int productId, int manufacturerId);
+        /// <returns>A TvChannelManufacturer that has the specified values; otherwise null</returns>
+        TvChannelManufacturer FindTvChannelManufacturer(IList<TvChannelManufacturer> source, int tvchannelId, int manufacturerId);
 
         /// <summary>
         /// Get a discount-manufacturer mapping record

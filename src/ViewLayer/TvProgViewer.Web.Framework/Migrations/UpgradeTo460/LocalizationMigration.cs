@@ -35,11 +35,11 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 "Admin.Configuration.AppSettings.Plugin.UsePluginsShadowCopy.Hint",
 
                 //#5123
-                "Admin.Catalog.Products.Pictures.Alert.AddNew",
+                "Admin.Catalog.TvChannels.Pictures.Alert.AddNew",
 
                 //#7
-                "Admin.Catalog.Products.Pictures.SaveBeforeEdit",
-                "Admin.Catalog.Products.Pictures.AddButton",
+                "Admin.Catalog.TvChannels.Pictures.SaveBeforeEdit",
+                "Admin.Catalog.TvChannels.Pictures.AddButton",
 
                 "Admin.Configuration.AppSettings.Common.SupportPreviousTvProgcommerceVersions",
                 "Admin.Configuration.AppSettings.Common.SupportPreviousTvProgcommerceVersions.Hint",
@@ -68,7 +68,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 "PDFInvoice.OrderTotal",
                 "PDFInvoice.PaymentMethodAdditionalFee",
                 "PDFInvoice.Pickup",
-                "PDFInvoice.Product(s)",
+                "PDFInvoice.TvChannel(s)",
                 "PDFInvoice.Tax",
                 "PDFPackagingSlip.Address",
                 "PDFPackagingSlip.Address2",
@@ -76,12 +76,12 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 "PDFPackagingSlip.Name",
                 "PDFPackagingSlip.Order",
                 "PDFPackagingSlip.SmartPhone",
-                "PDFPackagingSlip.ProductName",
+                "PDFPackagingSlip.TvChannelName",
                 "PDFPackagingSlip.QTY",
                 "PDFPackagingSlip.ShippingMethod",
                 "PDFPackagingSlip.SKU",
-                "PDFProductCatalog.Price",
-                "PDFProductCatalog.SKU",
+                "PDFTvChannelCatalog.Price",
+                "PDFTvChannelCatalog.SKU",
 
             });
 
@@ -111,18 +111,18 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.Configuration.Settings.GeneralCommon.HeaderCustomHtml.Hint"] = "Enter custom HTML here for header section.",
 
                 //#5604
-                ["Admin.Configuration.Settings.Order.ShowProductThumbnailInOrderDetailsPage"] = "Show product thumbnail in order details page",
-                ["Admin.Configuration.Settings.Order.ShowProductThumbnailInOrderDetailsPage.Hint"] = "Check to show product thumbnail in order details page.",
+                ["Admin.Configuration.Settings.Order.ShowTvChannelThumbnailInOrderDetailsPage"] = "Show tvchannel thumbnail in order details page",
+                ["Admin.Configuration.Settings.Order.ShowTvChannelThumbnailInOrderDetailsPage.Hint"] = "Check to show tvchannel thumbnail in order details page.",
                 ["Admin.Configuration.Settings.Media.OrderThumbPictureSize"] = "Order thumbnail image size",
-                ["Admin.Configuration.Settings.Media.OrderThumbPictureSize.Hint"] = "The default size (pixels) for product thumbnail images on the order details page.",
-                ["Order.Product(s).Image"] = "Image",
+                ["Admin.Configuration.Settings.Media.OrderThumbPictureSize.Hint"] = "The default size (pixels) for tvchannel thumbnail images on the order details page.",
+                ["Order.TvChannel(s).Image"] = "Image",
 
                 //#3777
                 ["ActivityLog.ExportCategories"] = "{0} categories were exported",
                 ["ActivityLog.ExportUsers"] = "{0} users were exported",
                 ["ActivityLog.ExportManufacturers"] = "{0} manufacturers were exported",
                 ["ActivityLog.ExportOrders"] = "{0} orders were exported",
-                ["ActivityLog.ExportProducts"] = "{0} products were exported",
+                ["ActivityLog.ExportTvChannels"] = "{0} tvchannels were exported",
                 ["ActivityLog.ExportStates"] = "{0} states and provinces were exported",
                 ["ActivityLog.ExportNewsLetterSubscriptions"] = "{0} newsletter subscriptions were exported",
                 ["ActivityLog.ImportNewsLetterSubscriptions"] = "{0} newsletter subscriptions were imported",
@@ -140,7 +140,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 //#5313
                 ["ActivityLog.ImportOrders"] = "{0} orders were imported",
                 ["Admin.Orders.Import.UsersDontExist"] = "Users with the following GUIDs don't exist: {0}",
-                ["Admin.Orders.Import.ProductsDontExist"] = "Products with the following SKUs don't exist: {0}",
+                ["Admin.Orders.Import.TvChannelsDontExist"] = "TvChannels with the following SKUs don't exist: {0}",
                 ["Admin.Orders.Imported"] = "Orders have been imported successfully.",
                 ["Admin.Orders.List.ImportFromExcelTip"] = "Imported orders are distinguished by order GUID. If the order GUID already exists, then its details will be updated.",
 
@@ -149,13 +149,13 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.Configuration.Settings.Catalog.DisplayAllPicturesOnCatalogPages.Hint"] = "Check to display all pictures on catalog pages.",
 
                 //#3511
-                ["Admin.Configuration.Settings.Catalog.NewProductsAllowUsersToSelectPageSize"] = "'New products' page. Allow users to select page size",
-                ["Admin.Configuration.Settings.Catalog.NewProductsAllowUsersToSelectPageSize.Hint"] = "'New products' page. Check to allow users to select the page size from a predefined list of options.",
-                ["Admin.Configuration.Settings.Catalog.NewProductsPageSizeOptions"] = "'New products' page. Page size options",
-                ["Admin.Configuration.Settings.Catalog.NewProductsPageSizeOptions.Hint"] = "'New products' page. Comma separated list of page size options (e.g. 10, 5, 15, 20). First option is the default page size if none are selected.",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsAllowUsersToSelectPageSize"] = "'New tvchannels' page. Allow users to select page size",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsAllowUsersToSelectPageSize.Hint"] = "'New tvchannels' page. Check to allow users to select the page size from a predefined list of options.",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsPageSizeOptions"] = "'New tvchannels' page. Page size options",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsPageSizeOptions.Hint"] = "'New tvchannels' page. Comma separated list of page size options (e.g. 10, 5, 15, 20). First option is the default page size if none are selected.",
 
                 //#5123
-                ["Admin.Catalog.Products.Pictures.Fields.Picture.Hint"] = "You can choose multiple images to upload at once. If the picture size exceeds your stores max image size setting, it will be automatically resized.",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.Picture.Hint"] = "You can choose multiple images to upload at once. If the picture size exceeds your stores max image size setting, it will be automatically resized.",
                 ["Common.FileUploader.Upload.Files"] = "Upload files",
 
                 //#5809
@@ -164,12 +164,12 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
 
                 //#29
                 ["Admin.Configuration.Settings.Catalog.DisplayFromPrices"] = "Display 'From' prices",
-                ["Admin.Configuration.Settings.Catalog.DisplayFromPrices.Hint"] = "Check to display 'From' prices on catalog pages. This will display the minimum possible price of a product based on price adjustments of attributes and combinations instead of the fixed base price. If enabled, it is also recommended to enable setting 'Cache product prices'. But please note that it can affect performance if you use some complex discounts, discount requirement rules, etc.",
+                ["Admin.Configuration.Settings.Catalog.DisplayFromPrices.Hint"] = "Check to display 'From' prices on catalog pages. This will display the minimum possible price of a tvchannel based on price adjustments of attributes and combinations instead of the fixed base price. If enabled, it is also recommended to enable setting 'Cache tvchannel prices'. But please note that it can affect performance if you use some complex discounts, discount requirement rules, etc.",
 
                 //#5089
-                ["Products.Availability.LowStock"] = "Low stock",
-                ["Products.Availability.LowStockWithQuantity"] = "{0} low stock",
-                ["Admin.Catalog.Products.Fields.LowStockActivity.Hint"] = "Action to be taken when your current stock quantity falls below (reaches) the 'Minimum stock quantity'. Activation of the action will occur only after an order is placed. If the value is 'Nothing', the product detail page will display a low-stock message in public store.",
+                ["TvChannels.Availability.LowStock"] = "Low stock",
+                ["TvChannels.Availability.LowStockWithQuantity"] = "{0} low stock",
+                ["Admin.Catalog.TvChannels.Fields.LowStockActivity.Hint"] = "Action to be taken when your current stock quantity falls below (reaches) the 'Minimum stock quantity'. Activation of the action will occur only after an order is placed. If the value is 'Nothing', the tvchannel detail page will display a low-stock message in public store.",
 
                 //#6101
                 ["Admin.System.Warnings.PluginNotInstalled.HelpText"] = "You may delete the plugins you don't use in order to decrease startup time",
@@ -182,24 +182,24 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.ReturnRequests.Fields.ReturnedQuantity.Hint"] = "The quantity to be returned to the stock.",
 
                 //#7
-                ["Admin.Catalog.Products.Multimedia"] = "Multimedia",
-                ["Admin.Catalog.Products.Multimedia.Videos"] = "Videos",
-                ["Admin.Catalog.Products.Multimedia.Videos.SaveBeforeEdit"] = "You need to save the product before you can upload videos for this product page.",
-                ["Admin.Catalog.Products.Multimedia.Videos.AddNew"] = "Add a new video",
-                ["Admin.Catalog.Products.Multimedia.Videos.Alert.VideoAdd"] = "Failed to add product video.",
-                ["Admin.Catalog.Products.Multimedia.Videos.Alert.VideoUpdate"] = "Failed to update product video.",
-                ["Admin.Catalog.Products.Multimedia.Videos.Fields.DisplayOrder"] = "Display order",
-                ["Admin.Catalog.Products.Multimedia.Videos.Fields.DisplayOrder.Hint"] = "Display order of the video. 1 represents the top of the list.",
-                ["Admin.Catalog.Products.Multimedia.Videos.Fields.Preview"] = "Preview",
-                ["Admin.Catalog.Products.Multimedia.Videos.Fields.VideoUrl"] = "Embed video URL",
-                ["Admin.Catalog.Products.Multimedia.Videos.Fields.VideoUrl.Hint"] = "Specify the URL path to the video.",
-                ["Admin.Catalog.Products.Multimedia.Videos.AddButton"] = "Add product video",
-                ["Admin.Catalog.Products.Copy.CopyMultimedia"] = "Copy multimedia",
-                ["Admin.Catalog.Products.Copy.CopyMultimedia.Hint"] = "Check to copy the images and videos.",
+                ["Admin.Catalog.TvChannels.Multimedia"] = "Multimedia",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos"] = "Videos",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.SaveBeforeEdit"] = "You need to save the tvchannel before you can upload videos for this tvchannel page.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.AddNew"] = "Add a new video",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Alert.VideoAdd"] = "Failed to add tvchannel video.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Alert.VideoUpdate"] = "Failed to update tvchannel video.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.DisplayOrder"] = "Display order",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.DisplayOrder.Hint"] = "Display order of the video. 1 represents the top of the list.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.Preview"] = "Preview",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.VideoUrl"] = "Embed video URL",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.VideoUrl.Hint"] = "Specify the URL path to the video.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.AddButton"] = "Add tvchannel video",
+                ["Admin.Catalog.TvChannels.Copy.CopyMultimedia"] = "Copy multimedia",
+                ["Admin.Catalog.TvChannels.Copy.CopyMultimedia.Hint"] = "Check to copy the images and videos.",
 
                 //#6115
                 ["Admin.Configuration.Settings.Catalog.ShowShortDescriptionOnCatalogPages"] = "Show short description on catalog pages",
-                ["Admin.Configuration.Settings.Catalog.ShowShortDescriptionOnCatalogPages.Hint"] = "Check to show product short description on catalog pages.",
+                ["Admin.Configuration.Settings.Catalog.ShowShortDescriptionOnCatalogPages.Hint"] = "Check to show tvchannel short description on catalog pages.",
 
                 //#5905
                 ["Admin.ContentManagement.MessageTemplates.List.IsActive"] = "Is active",
@@ -214,11 +214,11 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Account.UserInfo.Updated"] = "The user info has been updated successfully.",
 
                 //#385
-                ["Admin.Configuration.Settings.Catalog.ProductUrlStructureType"] = "Product URL structure type",
-                ["Admin.Configuration.Settings.Catalog.ProductUrlStructureType.Hint"] = "Select the product URL structure type (e.g. '/product-seo-name' or '/category-seo-name/product-seo-name' or '/manufacturer-seo-name/product-seo-name').",
-                ["Enums.TvProg.Core.Domain.Catalog.ProductUrlStructureType.CategoryProduct"] = "/Category/Product",
-                ["Enums.TvProg.Core.Domain.Catalog.ProductUrlStructureType.ManufacturerProduct"] = "/Manufacturer/Product",
-                ["Enums.TvProg.Core.Domain.Catalog.ProductUrlStructureType.Product"] = "/Product",
+                ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType"] = "TvChannel URL structure type",
+                ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType.Hint"] = "Select the tvchannel URL structure type (e.g. '/tvchannel-seo-name' or '/category-seo-name/tvchannel-seo-name' or '/manufacturer-seo-name/tvchannel-seo-name').",
+                ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.CategoryTvChannel"] = "/Category/TvChannel",
+                ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.ManufacturerTvChannel"] = "/Manufacturer/TvChannel",
+                ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.TvChannel"] = "/TvChannel",
 
                 //#5261
                 ["Admin.Configuration.Settings.GeneralCommon.BlockTitle.RobotsTxt"] = "robots.txt",
@@ -236,8 +236,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.Configuration.Settings.GeneralCommon.RobotsLocalizableDisallowPaths.Hint"] = "The list of localizable paths to disallow.",
 
                 //#5753
-                ["Admin.Configuration.Settings.Media.ProductDefaultImage"] = "Default image",
-                ["Admin.Configuration.Settings.Media.ProductDefaultImage.Hint"] = "Upload a picture to be used as the default image. If nothing is uploaded, {0} will be used.",
+                ["Admin.Configuration.Settings.Media.TvChannelDefaultImage"] = "Default image",
+                ["Admin.Configuration.Settings.Media.TvChannelDefaultImage.Hint"] = "Upload a picture to be used as the default image. If nothing is uploaded, {0} will be used.",
 
                 ["Admin.Help.Training"] = "Training",
 
@@ -284,8 +284,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.Configuration.Settings.Media.AllowSVGUploads.Hint"] = "Check to allow uploading of SVG files in admin area.",
 
                 //#6396
-                ["Admin.Catalog.Products.Fields.MinStockQuantity.Hint"] = "If you track inventory, you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity.",
-                ["Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.MinStockQuantity.Hint"] = "If you track inventory by product attributes, you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity (e.g. Low stock report).",
+                ["Admin.Catalog.TvChannels.Fields.MinStockQuantity.Hint"] = "If you track inventory, you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity.",
+                ["Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.MinStockQuantity.Hint"] = "If you track inventory by tvchannel attributes, you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity (e.g. Low stock report).",
                 //#6213
                 ["Admin.System.Maintenance.DeleteMinificationFiles"] = "Delete minification files",
                 ["Admin.System.Maintenance.DeleteMinificationFiles.Text"] = "Clear the bundles directory.",
@@ -343,23 +343,23 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Forum.BreadCrumb.TopicTitle"] = "Forum.Breadcrumb.TopicTitle",
 
                 //#3511
-                ["Admin.Configuration.Settings.Catalog.NewProductsNumber"] = "Admin.Configuration.Settings.Catalog.NewProductsPageSize",
-                ["Admin.Configuration.Settings.Catalog.NewProductsNumber.Hint"] = "Admin.Configuration.Settings.Catalog.NewProductsPageSize.Hint",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsNumber"] = "Admin.Configuration.Settings.Catalog.NewTvChannelsPageSize",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsNumber.Hint"] = "Admin.Configuration.Settings.Catalog.NewTvChannelsPageSize.Hint",
 
                 //#7
-                ["Admin.Catalog.Products.Pictures"] = "Admin.Catalog.Products.Multimedia.Pictures",
-                ["Admin.Catalog.Products.Pictures.AddNew"] = "Admin.Catalog.Products.Multimedia.Pictures.AddNew",
-                ["Admin.Catalog.Products.Pictures.Alert.PictureAdd"] = "Admin.Catalog.Products.Multimedia.Pictures.Alert.PictureAdd",
-                ["Admin.Catalog.Products.Pictures.Fields.DisplayOrder"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.DisplayOrder",
-                ["Admin.Catalog.Products.Pictures.Fields.DisplayOrder.Hint"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.DisplayOrder.Hint",
-                ["Admin.Catalog.Products.Pictures.Fields.OverrideAltAttribute"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.OverrideAltAttribute",
-                ["Admin.Catalog.Products.Pictures.Fields.OverrideAltAttribute.Hint"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.OverrideAltAttribute.Hint",
-                ["Admin.Catalog.Products.Pictures.Fields.OverrideTitleAttribute"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.OverrideTitleAttribute",
-                ["Admin.Catalog.Products.Pictures.Fields.OverrideTitleAttribute.Hint"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.OverrideTitleAttribute.Hint",
-                ["Admin.Catalog.Products.Pictures.Fields.Picture"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.Picture",
-                ["Admin.Catalog.Products.Pictures.Fields.Picture.Hint"] = "Admin.Catalog.Products.Multimedia.Pictures.Fields.Picture.Hint",
-                ["Admin.Catalog.Products.Copy.CopyImages"] = "Admin.Catalog.Products.Copy.CopyMultimedia",
-                ["Admin.Catalog.Products.Copy.CopyImages.Hint"] = "Admin.Catalog.Products.Copy.CopyMultimedia.Hint",
+                ["Admin.Catalog.TvChannels.Pictures"] = "Admin.Catalog.TvChannels.Multimedia.Pictures",
+                ["Admin.Catalog.TvChannels.Pictures.AddNew"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.AddNew",
+                ["Admin.Catalog.TvChannels.Pictures.Alert.PictureAdd"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Alert.PictureAdd",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.DisplayOrder"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.DisplayOrder",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.DisplayOrder.Hint"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.DisplayOrder.Hint",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.OverrideAltAttribute"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.OverrideAltAttribute",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.OverrideAltAttribute.Hint"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.OverrideAltAttribute.Hint",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.OverrideTitleAttribute"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.OverrideTitleAttribute",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.OverrideTitleAttribute.Hint"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.OverrideTitleAttribute.Hint",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.Picture"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.Picture",
+                ["Admin.Catalog.TvChannels.Pictures.Fields.Picture.Hint"] = "Admin.Catalog.TvChannels.Multimedia.Pictures.Fields.Picture.Hint",
+                ["Admin.Catalog.TvChannels.Copy.CopyImages"] = "Admin.Catalog.TvChannels.Copy.CopyMultimedia",
+                ["Admin.Catalog.TvChannels.Copy.CopyImages.Hint"] = "Admin.Catalog.TvChannels.Copy.CopyMultimedia.Hint",
 
                 //#43
                 ["Admin.Configuration.Settings.GeneralCommon.DefaultMetaDescription"] = "Admin.Configuration.Stores.Fields.DefaultMetaDescription",
@@ -374,14 +374,14 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.Configuration.Settings.GeneralCommon.HomepageTitle.Hint"] = "Admin.Configuration.Stores.Fields.HomepageTitle.Hint",
 
                 //4622
-                ["PDFInvoice.ProductName"] = "Pdf.Product.Name",
-                ["PDFInvoice.SKU"] = "Pdf.Product.Sku",
-                ["PDFInvoice.VendorName"] = "Pdf.Product.VendorName",
-                ["PDFProductCatalog.Weight"] = "Pdf.Product.Weight",
-                ["PDFInvoice.ProductPrice"] = "Pdf.Product.Price",
-                ["PDFInvoice.ProductQuantity"] = "Pdf.Product.Quantity",
-                ["PDFProductCatalog.StockQuantity"] = "Pdf.Product.StockQuantity",
-                ["PDFInvoice.ProductTotal"] = "Pdf.Product.Total",
+                ["PDFInvoice.TvChannelName"] = "Pdf.TvChannel.Name",
+                ["PDFInvoice.SKU"] = "Pdf.TvChannel.Sku",
+                ["PDFInvoice.VendorName"] = "Pdf.TvChannel.VendorName",
+                ["PDFTvChannelCatalog.Weight"] = "Pdf.TvChannel.Weight",
+                ["PDFInvoice.TvChannelPrice"] = "Pdf.TvChannel.Price",
+                ["PDFInvoice.TvChannelQuantity"] = "Pdf.TvChannel.Quantity",
+                ["PDFTvChannelCatalog.StockQuantity"] = "Pdf.TvChannel.StockQuantity",
+                ["PDFInvoice.TvChannelTotal"] = "Pdf.TvChannel.Total",
                 ["PDFInvoice.RewardPoints"] = "Pdf.RewardPoints",
                 ["PDFInvoice.TaxRate"] = "Pdf.TaxRate",
                 ["PDFInvoice.GiftCardInfo"] = "Pdf.GiftCardInfo"

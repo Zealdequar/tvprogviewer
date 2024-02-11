@@ -62,7 +62,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         #region Utilities
 
         /// <summary>
-        /// Generate a URL for a product with the specified route values
+        /// Generate a URL for a tvchannel with the specified route values
         /// </summary>
         /// <param name="urlHelper">URL helper</param>
         /// <param name="values">An object that contains route values</param>
@@ -73,38 +73,38 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// A task that represents the asynchronous operation
         /// The task result contains the generated URL
         /// </returns>
-        protected virtual async Task<string> RouteProductUrlAsync(IUrlHelper urlHelper,
+        protected virtual async Task<string> RouteTvChannelUrlAsync(IUrlHelper urlHelper,
             object values = null, string protocol = null, string host = null, string fragment = null)
         {
-            if (_catalogSettings.ProductUrlStructureTypeId == (int)ProductUrlStructureType.Product)
-                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.Product, values, protocol, host, fragment);
+            if (_catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.TvChannel)
+                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.TvChannel, values, protocol, host, fragment);
 
             var routeValues = new RouteValueDictionary(values);
             if (!routeValues.TryGetValue(TvProgRoutingDefaults.RouteValue.SeName, out var slug))
-                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.Product, values, protocol, host, fragment);
+                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.TvChannel, values, protocol, host, fragment);
 
             var urlRecord = await _urlRecordService.GetBySlugAsync(slug.ToString());
-            if (urlRecord is null || !urlRecord.EntityName.Equals(nameof(Product), StringComparison.InvariantCultureIgnoreCase))
-                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.Product, values, protocol, host, fragment);
+            if (urlRecord is null || !urlRecord.EntityName.Equals(nameof(TvChannel), StringComparison.InvariantCultureIgnoreCase))
+                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.TvChannel, values, protocol, host, fragment);
 
             var catalogSeName = string.Empty;
-            if (_catalogSettings.ProductUrlStructureTypeId == (int)ProductUrlStructureType.CategoryProduct)
+            if (_catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.CategoryTvChannel)
             {
-                var productCategory = (await _categoryService.GetProductCategoriesByProductIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var category = await _categoryService.GetCategoryByIdAsync(productCategory?.CategoryId ?? 0);
+                var tvchannelCategory = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var category = await _categoryService.GetCategoryByIdAsync(tvchannelCategory?.CategoryId ?? 0);
                 catalogSeName = category is not null ? await _urlRecordService.GetSeNameAsync(category) : string.Empty;
             }
-            if (_catalogSettings.ProductUrlStructureTypeId == (int)ProductUrlStructureType.ManufacturerProduct)
+            if (_catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.ManufacturerTvChannel)
             {
-                var productManufacturer = (await _manufacturerService.GetProductManufacturersByProductIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(productManufacturer?.ManufacturerId ?? 0);
+                var tvchannelManufacturer = (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(tvchannelManufacturer?.ManufacturerId ?? 0);
                 catalogSeName = manufacturer is not null ? await _urlRecordService.GetSeNameAsync(manufacturer) : string.Empty;
             }
             if (string.IsNullOrEmpty(catalogSeName))
-                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.Product, values, protocol, host, fragment);
+                return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.TvChannel, values, protocol, host, fragment);
 
             routeValues[TvProgRoutingDefaults.RouteValue.CatalogSeName] = catalogSeName;
-            return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.ProductCatalog, routeValues, protocol, host, fragment);
+            return urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.TvChannelCatalog, routeValues, protocol, host, fragment);
         }
 
         #endregion
@@ -129,8 +129,8 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
             var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
             return typeof(TEntity) switch
             {
-                var entityType when entityType == typeof(Product)
-                    => await RouteProductUrlAsync(urlHelper, values, protocol, host, fragment),
+                var entityType when entityType == typeof(TvChannel)
+                    => await RouteTvChannelUrlAsync(urlHelper, values, protocol, host, fragment),
                 var entityType when entityType == typeof(Category)
                     => urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.Category, values, protocol, host, fragment),
                 var entityType when entityType == typeof(Manufacturer)
@@ -143,8 +143,8 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
                     => urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.BlogPost, values, protocol, host, fragment),
                 var entityType when entityType == typeof(Topic)
                     => urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.Topic, values, protocol, host, fragment),
-                var entityType when entityType == typeof(ProductTag)
-                    => urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.ProductTag, values, protocol, host, fragment),
+                var entityType when entityType == typeof(TvChannelTag)
+                    => urlHelper.RouteUrl(TvProgRoutingDefaults.RouteName.Generic.TvChannelTag, values, protocol, host, fragment),
                 var entityType => urlHelper.RouteUrl(entityType.Name, values, protocol, host, fragment)
             };
         }

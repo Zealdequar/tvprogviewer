@@ -14,7 +14,7 @@
         {
             <li class="nav-item"><a class="nav-link ico-topic-@topic.Id" href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
         }
-        @if (Model.DisplayProductSearchMenuItem)
+        @if (Model.DisplayTvChannelSearchMenuItem)
         {
             <li class="nav-item"><a class="nav-link ico-search" href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
         }

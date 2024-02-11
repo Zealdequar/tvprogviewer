@@ -54,7 +54,7 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IOrderService _orderService;
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly IPaymentService _paymentService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IShippingService _shippingService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStoreContext _storeContext;
@@ -87,7 +87,7 @@ namespace TvProgViewer.WebUI.Controllers
             IOrderService orderService,
             IPaymentPluginManager paymentPluginManager,
             IPaymentService paymentService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
             IStoreContext storeContext,
@@ -116,7 +116,7 @@ namespace TvProgViewer.WebUI.Controllers
             _orderService = orderService;
             _paymentPluginManager = paymentPluginManager;
             _paymentService = paymentService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _shippingService = shippingService;
             _shoppingCartService = shoppingCartService;
             _storeContext = storeContext;
@@ -332,11 +332,11 @@ namespace TvProgViewer.WebUI.Controllers
             if (!cart.Any())
                 return RedirectToRoute("ShoppingCart");
 
-            var cartProductIds = cart.Select(ci => ci.ProductId).ToArray();
-            var downloadableProductsRequireRegistration =
-                _userSettings.RequireRegistrationForDownloadableProducts && await _productService.HasAnyDownloadableProductAsync(cartProductIds);
+            var cartTvChannelIds = cart.Select(ci => ci.TvChannelId).ToArray();
+            var downloadableTvChannelsRequireRegistration =
+                _userSettings.RequireRegistrationForDownloadableTvChannels && await _tvchannelService.HasAnyDownloadableTvChannelAsync(cartTvChannelIds);
 
-            if (await _userService.IsGuestAsync(user) && (!_orderSettings.AnonymousCheckoutAllowed || downloadableProductsRequireRegistration))
+            if (await _userService.IsGuestAsync(user) && (!_orderSettings.AnonymousCheckoutAllowed || downloadableTvChannelsRequireRegistration))
                 return Challenge();
 
             //if we have only "button" payment methods available (displayed on the shopping cart page, not during checkout),
@@ -368,11 +368,11 @@ namespace TvProgViewer.WebUI.Controllers
             //validation (each shopping cart item)
             foreach (var sci in cart)
             {
-                var product = await _productService.GetProductByIdAsync(sci.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
                 var sciWarnings = await _shoppingCartService.GetShoppingCartItemWarningsAsync(user,
                     sci.ShoppingCartType,
-                    product,
+                    tvchannel,
                     sci.StoreId,
                     sci.AttributesXml,
                     sci.UserEnteredPrice,

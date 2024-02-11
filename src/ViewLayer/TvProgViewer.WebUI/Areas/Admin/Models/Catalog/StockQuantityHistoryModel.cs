@@ -12,22 +12,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
     {
         #region Properties
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.StockQuantityHistory.Fields.Warehouse")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.Warehouse")]
         public string WarehouseName { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.StockQuantityHistory.Fields.Combination")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.Combination")]
         public string AttributeCombination { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.StockQuantityHistory.Fields.QuantityAdjustment")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.QuantityAdjustment")]
         public int QuantityAdjustment { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.StockQuantityHistory.Fields.StockQuantity")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.StockQuantity")]
         public int StockQuantity { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.StockQuantityHistory.Fields.Message")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.Message")]
         public string Message { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.StockQuantityHistory.Fields.CreatedOn")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.CreatedOn")]
         [UIHint("DecimalNullable")]
         public DateTime CreatedOn { get; set; }
 

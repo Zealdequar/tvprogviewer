@@ -13,7 +13,7 @@ namespace TvProgViewer.WebUI.Components
             _blogSettings = blogSettings;
         }
 
-        public IViewComponentResult Invoke(int currentCategoryId, int currentProductId)
+        public IViewComponentResult Invoke(int currentCategoryId, int currentTvChannelId)
         {
             if (!_blogSettings.Enabled || !_blogSettings.ShowHeaderRssUrl)
                 return Content("");

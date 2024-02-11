@@ -1,0 +1,142 @@
+﻿@model CategoryModel
+
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Core.Domain.Common
+@using TvProgViewer.Core.Domain.Seo
+
+@inject TvProgViewer.Core.IWebHelper webHelper
+@inject SeoSettings seoSettings
+@inject CommonSettings commonSettings
+
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    TvProgHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-category-page");
+
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var categoryUrl = Url.RouteUrl<Category>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        TvProgHtml.AddCanonicalUrlParts(categoryUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
+}
+@*category breadcrumb*@
+@section Breadcrumb
+{
+    @if (Model.DisplayCategoryBreadcrumb)
+    {
+        <div class="breadcrumb">
+            <ul itemscope itemtype="http://schema.org/BreadcrumbList">
+                <li>
+                    <a href="@Url.RouteUrl("Homepage")" title="@T("Categories.Breadcrumb.Top")">@T("Categories.Breadcrumb.Top")</a>
+                    <span class="delimiter">@breadcrumbDelimiter</span>
+                </li>
+                @{ int position = 1; }
+                @foreach (var cat in Model.CategoryBreadcrumb)
+                {
+                    var isLastCategory = cat.Id == Model.Id;
+                    <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        @if (isLastCategory)
+                        {
+                            <strong class="current-item" itemprop="name">@cat.Name</strong>
+                            <span itemprop="item" itemscope itemtype="http://schema.org/Thing"
+                                  id="@(Url.RouteUrl<Category>(new { SeName = cat.SeName }))">
+                            </span>
+                        }
+                        else
+                        {
+                            <a href="@(Url.RouteUrl<Category>(new { SeName = cat.SeName }))" title="@cat.Name" itemprop="item">
+                                <span itemprop="name">@cat.Name</span>
+                            </a>
+                            <span class="delimiter">@breadcrumbDelimiter</span>
+                        }
+                        <meta itemprop="position" content="@position" />
+                    </li>
+                    position++;
+                }
+            </ul>
+        </div>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsAfterBreadcrumb, additionalData = Model })
+    }
+}
+
+@section CatalogFilters {
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFilters, additionalData = Model })
+    @await Html.PartialAsync("_CatalogFilters", Model.CatalogTvChannelsModel)
+}
+
+<div class="page category-page">
+    <div class="page-title">
+        <h1>@Model.Name</h1>
+    </div>
+    <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsTop, additionalData = Model })
+        @*description*@
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <div class="category-description">
+                @Html.Raw(Model.Description)
+            </div>
+        }
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeSubcategories, additionalData = Model })
+        @*subcategories*@
+        @if (Model.SubCategories.Count > 0)
+        {
+            <div class="category-grid sub-category-grid">
+                <div class="item-grid">
+                    @foreach (var item in Model.SubCategories)
+                    {
+                        <div class="item-box">
+                            <div class="sub-category-item">
+                                <h2 class="title">
+                                    <a href="@(Url.RouteUrl<Category>(new { SeName = item.SeName }))" title="@item.PictureModel.Title">
+                                        @item.Name
+                                    </a>
+                                </h2>
+                                <div class="picture">
+                                    <a href="@(Url.RouteUrl<Category>(new { SeName = item.SeName }))" title="@item.PictureModel.Title">
+                                        <img alt="@item.PictureModel.AlternateText" src="@item.PictureModel.ImageUrl" title="@item.PictureModel.Title" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFeaturedTvChannels, additionalData = Model })
+        @*featured tvchannels*@
+        @if (Model.FeaturedTvChannels.Count > 0)
+        {
+            <div class="tvchannel-grid featured-tvchannel-grid">
+                <div class="title">
+                    <strong>@T("TvChannels.FeaturedTvChannels")</strong>
+                </div>
+                <div class="item-grid">
+                    @foreach (var item in Model.FeaturedTvChannels)
+                    {
+                        <div class="item-box">
+                            @await Html.PartialAsync("_TvChannelBox", item)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsAfterFeaturedTvChannels, additionalData = Model })
+        @await Html.PartialAsync("_CatalogSelectors", Model.CatalogTvChannelsModel)
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeTvChannelList, additionalData = Model })
+        @{
+            var catalogTvChannelsViewData = new ViewDataDictionary(ViewData);
+            catalogTvChannelsViewData["fetchUrl"] = Html.Raw(Url.Action("GetCategoryTvChannels", "Catalog", new { categoryId = Model.Id }));
+        }
+        @await Html.PartialAsync("_CatalogTvChannels", Model.CatalogTvChannelsModel, catalogTvChannelsViewData)
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsBottom, additionalData = Model })
+    </div>
+</div>

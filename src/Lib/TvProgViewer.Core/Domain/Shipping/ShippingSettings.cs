@@ -82,9 +82,9 @@ namespace TvProgViewer.Core.Domain.Shipping
         public bool EstimateShippingCartPageEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether 'Estimate shipping' is enabled on the product details pages
+        /// Gets or sets a value indicating whether 'Estimate shipping' is enabled on the tvchannel details pages
         /// </summary>
-        public bool EstimateShippingProductPageEnabled { get; set; }
+        public bool EstimateShippingTvChannelPageEnabled { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to use city name on 'Estimate shipping' widget instead zip postal code
@@ -127,22 +127,22 @@ namespace TvProgViewer.Core.Domain.Shipping
         public bool UseCubeRootMethod { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to consider associated products dimensions and weight on shipping, false if main product includes them
+        /// Gets or sets a value indicating whether to consider associated tvchannels dimensions and weight on shipping, false if main tvchannel includes them
         /// </summary>
-        public bool ConsiderAssociatedProductsDimensions { get; set; }
+        public bool ConsiderAssociatedTvChannelsDimensions { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to send all the items of a product marked as "Ship Separately" separately; if false, all the items of a such product will be shipped in a single box, but separately from the other order items
+        /// Gets or sets a value indicating whether to send all the items of a tvchannel marked as "Ship Separately" separately; if false, all the items of a such tvchannel will be shipped in a single box, but separately from the other order items
         /// </summary>
         public bool ShipSeparatelyOneItemEach { get; set; }
 
         /// <summary>
-        /// Gets or sets the request delay in the shipping calculation popup (on product page/shopping cart page) when user enter the shipping address.
+        /// Gets or sets the request delay in the shipping calculation popup (on tvchannel page/shopping cart page) when user enter the shipping address.
         /// </summary>
         public int RequestDelay { get; set; }
 
         /// <summary>
-        /// Gets or sets a value for sorting shipping methods (on the product/shopping cart page when the user selects a shipping method)
+        /// Gets or sets a value for sorting shipping methods (on the tvchannel/shopping cart page when the user selects a shipping method)
         /// </summary>
         public ShippingSortingEnum ShippingSorting { get; set; }
     }

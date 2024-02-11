@@ -270,7 +270,7 @@
                                     },
                                     ChildTable = new DataTablesModel
                                     {
-                                        Name = "products-grid",
+                                        Name = "tvchannels-grid",
                                         UrlRead = new DataUrl("ShipmentsItemsByShipmentId", "Order", null),
                                         IsChildTable = true,
                                         Paging = false,
@@ -282,29 +282,29 @@
                                         },
                                         ColumnCollection = new List<ColumnProperty>
                                         {
-                                            new ColumnProperty(nameof(ShipmentItemModel.ProductName))
+                                            new ColumnProperty(nameof(ShipmentItemModel.TvChannelName))
                                             {
-                                                Title = T("Admin.Orders.Shipments.Products.ProductName").Text,
+                                                Title = T("Admin.Orders.Shipments.TvChannels.TvChannelName").Text,
                                                 Width = "400"
                                             },
                                             new ColumnProperty(nameof(ShipmentItemModel.ShippedFromWarehouse))
                                             {
-                                                Title = T("Admin.Orders.Shipments.Products.Warehouse").Text,
+                                                Title = T("Admin.Orders.Shipments.TvChannels.Warehouse").Text,
                                                 Width = "150"
                                             },
                                             new ColumnProperty(nameof(ShipmentItemModel.QuantityInThisShipment))
                                             {
-                                                Title = T("Admin.Orders.Shipments.Products.QtyShipped").Text,
+                                                Title = T("Admin.Orders.Shipments.TvChannels.QtyShipped").Text,
                                                 Width = "150"
                                             },
                                             new ColumnProperty(nameof(ShipmentItemModel.ItemWeight))
                                             {
-                                                Title = T("Admin.Orders.Shipments.Products.ItemWeight").Text,
+                                                Title = T("Admin.Orders.Shipments.TvChannels.ItemWeight").Text,
                                                 Width = "150"
                                             },
                                             new ColumnProperty(nameof(ShipmentItemModel.ItemDimensions))
                                             {
-                                                Title = T("Admin.Orders.Shipments.Products.ItemDimensions").Text,
+                                                Title = T("Admin.Orders.Shipments.TvChannels.ItemDimensions").Text,
                                                 Width = "150"
                                             }
                                         }

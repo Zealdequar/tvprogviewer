@@ -1,0 +1,154 @@
+@model TvChannelModel
+
+@await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsTvChannelAttributesCombinationsTop, additionalData = Model })
+<div class="cards-group">
+    <div class="card card-default">
+        <div class="card-body">
+            <p>
+                @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Description")
+            </p>
+            @await Html.PartialAsync("Table", new DataTablesModel
+            {
+            Name = "attributecombinations-grid",
+            UrlRead = new DataUrl("TvChannelAttributeCombinationList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelAttributeCombinationSearchModel.TvChannelId)] = Model.TvChannelAttributeCombinationSearchModel.TvChannelId }),
+            UrlDelete = new DataUrl("TvChannelAttributeCombinationDelete", "TvChannel", null),
+            Length = Model.TvChannelPictureSearchModel.PageSize,
+            LengthMenu = Model.TvChannelPictureSearchModel.AvailablePageSizes,
+            ColumnCollection = new List<ColumnProperty>
+            {
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.AttributesXml))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.Attributes").Text,
+            Width = "400",
+            Render = new RenderCustom("renderTvChannelAttributesCombinationsColumnAttributesXml")
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.StockQuantity))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.StockQuantity").Text,
+            Width = "150"
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.AllowOutOfStockOrders))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.AllowOutOfStockOrders").Text,
+            Width = "150",
+            ClassName =  TvProgColumnClassDefaults.CenterAll,
+            Render = new RenderBoolean()
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.Sku))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.Sku").Text,
+            Width = "200"
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.ManufacturerPartNumber))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.ManufacturerPartNumber").Text,
+            Width = "200"
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.Gtin))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.Gtin").Text,
+            Width = "200"
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.OverriddenPrice))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.OverriddenPrice").Text,
+            Width = "200",
+            Render = new RenderCustom("renderTvChannelAttributesCombinationsColumnPrice")
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.NotifyAdminForQuantityBelow))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.NotifyAdminForQuantityBelow").Text,
+            Width = "150"
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.PictureThumbnailUrl))
+            {
+            Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.Picture").Text,
+            Width = "200",
+            Render = new RenderPicture()
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.Id))
+            {
+            Title = T("Admin.Common.Edit").Text,
+            Width = "100",
+            ClassName =  TvProgColumnClassDefaults.Button,
+            Render = new RenderCustom("renderTvChannelAttributesCombinationsColumnEdit")
+            },
+            new ColumnProperty(nameof(TvChannelAttributeCombinationModel.Id))
+            {
+            Title = T("Admin.Common.Delete").Text,
+            Width = "100",
+            Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+            ClassName =  TvProgColumnClassDefaults.Button
+            }
+            }
+            })
+
+            <script>
+                function renderTvChannelAttributesCombinationsColumnPrice(data, type, row, meta) {
+                    return (data) ? Number.parseFloat(data).toFixed(2) : '';
+                }
+
+                function renderTvChannelAttributesCombinationsColumnAttributesXml(data, type, row, meta) {
+                    var warnings = (row.Warnings != null) ? '<div><span style="color: red">' + row.Warnings + '</span></div>' : '';
+                    return row.AttributesXml + warnings;
+                }
+
+                function renderTvChannelAttributesCombinationsColumnEdit(data, type, row, meta) {
+                    return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannel/TvChannelAttributeCombinationEditPopup/")' + data + '?btnId=btnRefreshCombinations&formId=tvchannel-form\', 800, 700, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+                }
+            </script>
+
+        </div>
+        <div class="card-footer">
+            <button type="submit" id="btnAddNewCombination" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAttributeCombinationCreatePopup", "TvChannel", new { tvchannelId = Model.Id, btnId = "btnRefreshCombinations", formId = "tvchannel-form" }))', 800, 700, true); return false;" class="btn btn-primary">
+                @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.AddNew")
+            </button>
+            <button type="button" id="btnGenerateAllCombinations" class="btn btn-info">
+                @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.GenerateAll")
+            </button>
+
+            <button type="submit" id="btnGenerateSeveralCombination" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAttributeCombinationGeneratePopup", "TvChannel", new { tvchannelId = Model.Id, btnId = "btnRefreshCombinations", formId = "tvchannel-form" }))', 800, 700, true); return false;" class="btn btn-info">
+                @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.GenerateSeveral")
+            </button>
+            <tvprog-action-confirmation asp-button-id="btnGenerateAllCombinations" />
+            <button type="submit" id="btnRefreshCombinations" style="display: none"></button>
+            <script>
+                $(document).ready(function() {
+                    $('#btnRefreshCombinations').click(function() {
+                        //refresh grid
+                        $("#attributecombinations-grid").DataTable().ajax.reload();
+
+                        //return false to don't reload a page
+                        return false;
+                    });
+
+                    //generate combinations
+                    $("#btnGenerateAllCombinations-action-confirmation-submit-button").bind("click", function () {
+                        var postData = {
+
+                        };
+                        addAntiForgeryToken(postData);
+                        $.ajax({
+                            cache: false,
+                            type: "POST",
+                            url: "@Url.Action("GenerateAllAttributeCombinations", "TvChannel", new { tvchannelId = Model.Id })",
+                            data: postData,
+                            dataType: "json",
+                            success: function (data, textStatus, jqXHR) {
+                                //reload grid
+                                updateTable('#attributecombinations-grid');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                $("#generateAllAttributeCombinationsAlert").click();
+                            }
+                        });
+                        $('#btnGenerateAllCombinations-action-confirmation').modal('toggle');
+                        return false;
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+@await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsTvChannelAttributesCombinationsBottom, additionalData = Model })
+<tvprog-alert asp-alert-id="generateAllAttributeCombinationsAlert" asp-alert-message="@T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Alert.FailedGenerate")" />

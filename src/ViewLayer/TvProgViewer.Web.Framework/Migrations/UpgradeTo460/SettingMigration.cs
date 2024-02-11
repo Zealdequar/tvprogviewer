@@ -54,29 +54,29 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             }
 
             //#3511
-            var newProductsNumber = settingService.GetSetting("catalogsettings.newproductsnumber");
-            if (newProductsNumber is not null && int.TryParse(newProductsNumber.Value, out var newProductsPageSize))
+            var newTvChannelsNumber = settingService.GetSetting("catalogsettings.newtvchannelsnumber");
+            if (newTvChannelsNumber is not null && int.TryParse(newTvChannelsNumber.Value, out var newTvChannelsPageSize))
             {
-                catalogSettings.NewProductsPageSize = newProductsPageSize;
-                settingService.SaveSetting(catalogSettings, settings => settings.NewProductsPageSize);
-                settingService.DeleteSetting(newProductsNumber);
+                catalogSettings.NewTvChannelsPageSize = newTvChannelsPageSize;
+                settingService.SaveSetting(catalogSettings, settings => settings.NewTvChannelsPageSize);
+                settingService.DeleteSetting(newTvChannelsNumber);
             }
-            else if (!settingService.SettingExists(catalogSettings, settings => settings.NewProductsPageSize))
+            else if (!settingService.SettingExists(catalogSettings, settings => settings.NewTvChannelsPageSize))
             {
-                catalogSettings.NewProductsPageSize = 6;
-                settingService.SaveSetting(catalogSettings, settings => settings.NewProductsPageSize);
-            }
-
-            if (!settingService.SettingExists(catalogSettings, settings => settings.NewProductsAllowUsersToSelectPageSize))
-            {
-                catalogSettings.NewProductsAllowUsersToSelectPageSize = false;
-                settingService.SaveSetting(catalogSettings, settings => settings.NewProductsAllowUsersToSelectPageSize);
+                catalogSettings.NewTvChannelsPageSize = 6;
+                settingService.SaveSetting(catalogSettings, settings => settings.NewTvChannelsPageSize);
             }
 
-            if (!settingService.SettingExists(catalogSettings, settings => settings.NewProductsPageSizeOptions))
+            if (!settingService.SettingExists(catalogSettings, settings => settings.NewTvChannelsAllowUsersToSelectPageSize))
             {
-                catalogSettings.NewProductsPageSizeOptions = "6, 3, 9";
-                settingService.SaveSetting(catalogSettings, settings => settings.NewProductsPageSizeOptions);
+                catalogSettings.NewTvChannelsAllowUsersToSelectPageSize = false;
+                settingService.SaveSetting(catalogSettings, settings => settings.NewTvChannelsAllowUsersToSelectPageSize);
+            }
+
+            if (!settingService.SettingExists(catalogSettings, settings => settings.NewTvChannelsPageSizeOptions))
+            {
+                catalogSettings.NewTvChannelsPageSizeOptions = "6, 3, 9";
+                settingService.SaveSetting(catalogSettings, settings => settings.NewTvChannelsPageSizeOptions);
             }
 
             //#29
@@ -120,10 +120,10 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             var orderSettings = settingService.LoadSetting<OrderSettings>();
 
             //#5604
-            if (!settingService.SettingExists(orderSettings, settings => settings.ShowProductThumbnailInOrderDetailsPage))
+            if (!settingService.SettingExists(orderSettings, settings => settings.ShowTvChannelThumbnailInOrderDetailsPage))
             {
-                orderSettings.ShowProductThumbnailInOrderDetailsPage = true;
-                settingService.SaveSetting(orderSettings, settings => settings.ShowProductThumbnailInOrderDetailsPage);
+                orderSettings.ShowTvChannelThumbnailInOrderDetailsPage = true;
+                settingService.SaveSetting(orderSettings, settings => settings.ShowTvChannelThumbnailInOrderDetailsPage);
             }
 
             var mediaSettings = settingService.LoadSetting<MediaSettings>();
@@ -182,10 +182,10 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             }
 
             //#385
-            if (!settingService.SettingExists(catalogSettings, settings => settings.ProductUrlStructureTypeId))
+            if (!settingService.SettingExists(catalogSettings, settings => settings.TvChannelUrlStructureTypeId))
             {
-                catalogSettings.ProductUrlStructureTypeId = (int)ProductUrlStructureType.Product;
-                settingService.SaveSetting(catalogSettings, settings => settings.ProductUrlStructureTypeId);
+                catalogSettings.TvChannelUrlStructureTypeId = (int)TvChannelUrlStructureType.TvChannel;
+                settingService.SaveSetting(catalogSettings, settings => settings.TvChannelUrlStructureTypeId);
             }
 
             //#5261
@@ -201,7 +201,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/files/exportimport/",
                     "/country/getstatesbycountryid",
                     "/install",
-                    "/setproductreviewhelpfulness",
+                    "/settvchannelreviewhelpfulness",
                     "/*?*returnUrl="
                 });
 
@@ -212,8 +212,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             {
                 robotsTxtSettings.LocalizableDisallowPaths.AddRange(new[]
                 {
-                    "/addproducttocart/catalog/",
-                    "/addproducttocart/details/",
+                    "/addtvchanneltocart/catalog/",
+                    "/addtvchanneltocart/details/",
                     "/backinstocksubscriptions/manage",
                     "/boards/forumsubscriptions",
                     "/boards/forumwatch",
@@ -238,16 +238,16 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/checkout/paymentinfo",
                     "/checkout/paymentmethod",
                     "/clearcomparelist",
-                    "/compareproducts",
-                    "/compareproducts/add/*",
+                    "/comparetvchannels",
+                    "/comparetvchannels/add/*",
                     "/user/avatar",
                     "/user/activation",
                     "/user/addresses",
                     "/user/changepassword",
                     "/user/checkusernameavailability",
-                    "/user/downloadableproducts",
+                    "/user/downloadabletvchannels",
                     "/user/info",
-                    "/user/productreviews",
+                    "/user/tvchannelreviews",
                     "/deletepm",
                     "/emailwishlist",
                     "/eucookielawaccept",
@@ -259,7 +259,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/passwordrecovery/confirm",
                     "/poll/vote",
                     "/privatemessages",
-                    "/recentlyviewedproducts",
+                    "/recentlyviewedtvchannels",
                     "/returnrequest",
                     "/returnrequest/history",
                     "/rewardpoints/history",
@@ -272,7 +272,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/topic/authenticate",
                     "/viewpm",
                     "/uploadfilecheckoutattribute",
-                    "/uploadfileproductattribute",
+                    "/uploadfiletvchannelattribute",
                     "/uploadfilereturnrequest",
                     "/wishlist"
                 });
@@ -290,10 +290,10 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 settingService.SaveSetting(robotsTxtSettings, settings => settings.AllowSitemapXml);
 
             //#5753
-            if (!settingService.SettingExists(mediaSettings, settings => settings.ProductDefaultImageId))
+            if (!settingService.SettingExists(mediaSettings, settings => settings.TvChannelDefaultImageId))
             {
-                mediaSettings.ProductDefaultImageId = 0;
-                settingService.SaveSetting(mediaSettings, settings => settings.ProductDefaultImageId);
+                mediaSettings.TvChannelDefaultImageId = 0;
+                settingService.SaveSetting(mediaSettings, settings => settings.TvChannelDefaultImageId);
             }
 
             //#3651

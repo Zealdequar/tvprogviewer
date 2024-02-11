@@ -22,10 +22,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
 
         public int OrderItemId { get; set; }
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Orders.Shipments.Products.ProductName")]
-        public string ProductName { get; set; }
+        [TvProgResourceDisplayName("Admin.Orders.Shipments.TvChannels.TvChannelName")]
+        public string TvChannelName { get; set; }
 
         public string Sku { get; set; }
 
@@ -35,18 +35,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
 
         public bool ShipSeparately { get; set; }
 
-        //weight of one item (product)
-        [TvProgResourceDisplayName("Admin.Orders.Shipments.Products.ItemWeight")]
+        //weight of one item (tvchannel)
+        [TvProgResourceDisplayName("Admin.Orders.Shipments.TvChannels.ItemWeight")]
         public string ItemWeight { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Orders.Shipments.Products.ItemDimensions")]
+        [TvProgResourceDisplayName("Admin.Orders.Shipments.TvChannels.ItemDimensions")]
         public string ItemDimensions { get; set; }
 
         public int QuantityToAdd { get; set; }
 
         public int QuantityOrdered { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Orders.Shipments.Products.QtyShipped")]
+        [TvProgResourceDisplayName("Admin.Orders.Shipments.TvChannels.QtyShipped")]
         public int QuantityInThisShipment { get; set; }
 
         public int QuantityInAllShipments { get; set; }

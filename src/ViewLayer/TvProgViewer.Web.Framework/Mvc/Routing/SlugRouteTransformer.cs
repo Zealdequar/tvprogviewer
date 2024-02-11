@@ -112,12 +112,12 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
             //since we are here, all is ok with the slug, so process URL
             switch (urlRecord.EntityName)
             {
-                case var name when name.Equals(nameof(Product), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "Product", "ProductDetails", slug, (TvProgRoutingDefaults.RouteValue.ProductId, urlRecord.EntityId));
+                case var name when name.Equals(nameof(TvChannel), StringComparison.InvariantCultureIgnoreCase):
+                    RouteToAction(values, "TvChannel", "TvChannelDetails", slug, (TvProgRoutingDefaults.RouteValue.TvChannelId, urlRecord.EntityId));
                     return;
 
-                case var name when name.Equals(nameof(ProductTag), StringComparison.InvariantCultureIgnoreCase):
-                    RouteToAction(values, "Catalog", "ProductsByTag", slug, (TvProgRoutingDefaults.RouteValue.ProductTagId, urlRecord.EntityId));
+                case var name when name.Equals(nameof(TvChannelTag), StringComparison.InvariantCultureIgnoreCase):
+                    RouteToAction(values, "Catalog", "TvChannelsByTag", slug, (TvProgRoutingDefaults.RouteValue.TvChannelTagId, urlRecord.EntityId));
                     return;
 
                 case var name when name.Equals(nameof(Category), StringComparison.InvariantCultureIgnoreCase):
@@ -147,7 +147,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         }
 
         /// <summary>
-        /// Try transforming the route values, assuming the passed URL record is of a product type
+        /// Try transforming the route values, assuming the passed URL record is of a tvchannel type
         /// </summary>
         /// <param name="httpContext">HTTP context</param>
         /// <param name="values">The route values associated with the current match</param>
@@ -157,37 +157,37 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// A task that represents the asynchronous operation
         /// The task result contains a value whether the route values were processed
         /// </returns>
-        protected virtual async Task<bool> TryProductCatalogRoutingAsync(HttpContext httpContext, RouteValueDictionary values, UrlRecord urlRecord, string catalogPath)
+        protected virtual async Task<bool> TryTvChannelCatalogRoutingAsync(HttpContext httpContext, RouteValueDictionary values, UrlRecord urlRecord, string catalogPath)
         {
-            //ensure it's a product URL record
-            if (!urlRecord.EntityName.Equals(nameof(Product), StringComparison.InvariantCultureIgnoreCase))
+            //ensure it's a tvchannel URL record
+            if (!urlRecord.EntityName.Equals(nameof(TvChannel), StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
-            //if the product URL structure type is product seName only, it will be processed later by a single slug
-            if (_catalogSettings.ProductUrlStructureTypeId == (int)ProductUrlStructureType.Product)
+            //if the tvchannel URL structure type is tvchannel seName only, it will be processed later by a single slug
+            if (_catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.TvChannel)
                 return false;
 
-            //get active slug for the product
+            //get active slug for the tvchannel
             var slug = urlRecord.IsActive
                 ? urlRecord.Slug
                 : await _urlRecordService.GetActiveSlugAsync(urlRecord.EntityId, urlRecord.EntityName, urlRecord.LanguageId);
             if (string.IsNullOrEmpty(slug))
                 return false;
 
-            //try to get active catalog (e.g. category or manufacturer) seName for the product
+            //try to get active catalog (e.g. category or manufacturer) seName for the tvchannel
             var catalogSeName = string.Empty;
-            var isCategoryProductUrl = _catalogSettings.ProductUrlStructureTypeId == (int)ProductUrlStructureType.CategoryProduct;
-            if (isCategoryProductUrl)
+            var isCategoryTvChannelUrl = _catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.CategoryTvChannel;
+            if (isCategoryTvChannelUrl)
             {
-                var productCategory = (await _categoryService.GetProductCategoriesByProductIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var category = await _categoryService.GetCategoryByIdAsync(productCategory?.CategoryId ?? 0);
+                var tvchannelCategory = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var category = await _categoryService.GetCategoryByIdAsync(tvchannelCategory?.CategoryId ?? 0);
                 catalogSeName = category is not null ? await _urlRecordService.GetSeNameAsync(category) : string.Empty;
             }
-            var isManufacturerProductUrl = _catalogSettings.ProductUrlStructureTypeId == (int)ProductUrlStructureType.ManufacturerProduct;
-            if (isManufacturerProductUrl)
+            var isManufacturerTvChannelUrl = _catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.ManufacturerTvChannel;
+            if (isManufacturerTvChannelUrl)
             {
-                var productManufacturer = (await _manufacturerService.GetProductManufacturersByProductIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(productManufacturer?.ManufacturerId ?? 0);
+                var tvchannelManufacturer = (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(tvchannelManufacturer?.ManufacturerId ?? 0);
                 catalogSeName = manufacturer is not null ? await _urlRecordService.GetSeNameAsync(manufacturer) : string.Empty;
             }
             if (string.IsNullOrEmpty(catalogSeName))
@@ -196,8 +196,8 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
             //get URL record by the specified catalog path
             var catalogUrlRecord = await _urlRecordService.GetBySlugAsync(catalogPath);
             if (catalogUrlRecord is null ||
-                (isCategoryProductUrl && !catalogUrlRecord.EntityName.Equals(nameof(Category), StringComparison.InvariantCultureIgnoreCase)) ||
-                (isManufacturerProductUrl && !catalogUrlRecord.EntityName.Equals(nameof(Manufacturer), StringComparison.InvariantCultureIgnoreCase)) ||
+                (isCategoryTvChannelUrl && !catalogUrlRecord.EntityName.Equals(nameof(Category), StringComparison.InvariantCultureIgnoreCase)) ||
+                (isManufacturerTvChannelUrl && !catalogUrlRecord.EntityName.Equals(nameof(Manufacturer), StringComparison.InvariantCultureIgnoreCase)) ||
                 !urlRecord.IsActive)
             {
                 //permanent redirect to new URL with active catalog seName and active slug
@@ -237,8 +237,8 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
             }
 
             //all is ok, so select the appropriate action
-            RouteToAction(values, "Product", "ProductDetails", slug,
-                (TvProgRoutingDefaults.RouteValue.ProductId, urlRecord.EntityId), (TvProgRoutingDefaults.RouteValue.CatalogSeName, catalogSeName));
+            RouteToAction(values, "TvChannel", "TvChannelDetails", slug,
+                (TvProgRoutingDefaults.RouteValue.TvChannelId, urlRecord.EntityId), (TvProgRoutingDefaults.RouteValue.CatalogSeName, catalogSeName));
             return true;
         }
 
@@ -314,7 +314,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
             var catalogPath = values.TryGetValue(TvProgRoutingDefaults.RouteValue.CatalogSeName, out var catalogPathValue)
                 ? catalogPathValue.ToString()
                 : string.Empty;
-            if (await TryProductCatalogRoutingAsync(httpContext, values, urlRecord, catalogPath))
+            if (await TryTvChannelCatalogRoutingAsync(httpContext, values, urlRecord, catalogPath))
                 return values;
 
             //finally, select an action by the URL record only

@@ -53,8 +53,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
         [TvProgResourceDisplayName("Admin.Reports.SalesSummary.BillingCountry")]
         public int BillingCountryId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Reports.SalesSummary.Product")]
-        public int ProductId { get; set; }
+        [TvProgResourceDisplayName("Admin.Reports.SalesSummary.TvChannel")]
+        public int TvChannelId { get; set; }
 
         [TvProgResourceDisplayName("Admin.Reports.SalesSummary.GroupBy")]
         public int SearchGroupId { get; set; }

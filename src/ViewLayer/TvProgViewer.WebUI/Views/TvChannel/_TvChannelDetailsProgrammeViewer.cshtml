@@ -1,0 +1,32 @@
+@model TvChannelDetailsModel
+<div class="programme-viewer">
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsBeforeProgrammeViewer, additionData = Model })
+    <div id="mainToolProgrammeViewer" class="height-panel" style="display: none;">
+        <button type="button" id="anonsToolProgrammeViewer" class="btn-anons" style="display: none;"><img src="~/images/i/GreenAnons.png" alt="Показать анонс" /></button>
+    </div>
+    <div id="mwpv" class="mainwindow">
+        <table id="TVProgrammeViewerGrid"></table>
+        <table id="TVProgrammeViewerPager"></table>
+    </div>
+    <div id="anonsDescrProgrammeViewer" class="description" style="display: none;"></div>
+    <script asp-location="Footer">
+        $(function () {
+            $.jgrid.no_legacy_api = true;
+            $.jgrid.useJSON = true;
+
+            chansArr = getStorageChannels();
+            $("#anonsToolProgrammeViewer").on('click', function () {
+                $('#anonsDescrProgrammeViewer').toggle(100);
+                return;
+            });
+
+            $(".days-selectpicker").on('change', function () {
+                let daysSelectPickerValue = $(".days-selectpicker option:selected").val();
+                if (daysSelectPickerValue && daysSelectPickerValue != 'Выберите день...') {
+                    fillProgrammeViewerByDay(daysSelectPickerValue, @Model.Sku);
+                }
+            });
+        });
+    </script>
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsAfterProgrammeViewer, additionData = Model })
+</div>

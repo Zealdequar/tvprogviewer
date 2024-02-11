@@ -35,7 +35,7 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo472
                         EnablePasswordLifetime = false,
                         OverrideTaxDisplayType = false,
                         DefaultTaxDisplayTypeId = 0,
-                        PurchasedWithProductId = 0
+                        PurchasedWithTvChannelId = 0
                     });
             }
 

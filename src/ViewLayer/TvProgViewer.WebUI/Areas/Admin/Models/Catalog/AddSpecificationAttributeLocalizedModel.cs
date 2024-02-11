@@ -10,10 +10,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
     {
         public int LanguageId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.CustomValue")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.CustomValue")]
         public string ValueRaw { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.CustomValue")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.CustomValue")]
         public string Value { get; set; }
     }
 }

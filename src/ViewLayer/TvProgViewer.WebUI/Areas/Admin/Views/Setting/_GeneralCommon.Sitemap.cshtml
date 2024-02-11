@@ -45,22 +45,22 @@
         </div>
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="SitemapSettings.SitemapIncludeProducts_OverrideForStore" asp-input="SitemapSettings.SitemapIncludeProducts" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="SitemapSettings.SitemapIncludeProducts" />
+                <tvprog-override-store-checkbox asp-for="SitemapSettings.SitemapIncludeTvChannels_OverrideForStore" asp-input="SitemapSettings.SitemapIncludeTvChannels" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="SitemapSettings.SitemapIncludeTvChannels" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="SitemapSettings.SitemapIncludeProducts" />
-                <span asp-validation-for="SitemapSettings.SitemapIncludeProducts"></span>
+                <tvprog-editor asp-for="SitemapSettings.SitemapIncludeTvChannels" />
+                <span asp-validation-for="SitemapSettings.SitemapIncludeTvChannels"></span>
             </div>
         </div>
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="SitemapSettings.SitemapIncludeProductTags_OverrideForStore" asp-input="SitemapSettings.SitemapIncludeProductTags" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="SitemapSettings.SitemapIncludeProductTags" />
+                <tvprog-override-store-checkbox asp-for="SitemapSettings.SitemapIncludeTvChannelTags_OverrideForStore" asp-input="SitemapSettings.SitemapIncludeTvChannelTags" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="SitemapSettings.SitemapIncludeTvChannelTags" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="SitemapSettings.SitemapIncludeProductTags" />
-                <span asp-validation-for="SitemapSettings.SitemapIncludeProductTags"></span>
+                <tvprog-editor asp-for="SitemapSettings.SitemapIncludeTvChannelTags" />
+                <span asp-validation-for="SitemapSettings.SitemapIncludeTvChannelTags"></span>
             </div>
         </div>
         <div class="form-group row advanced-setting">

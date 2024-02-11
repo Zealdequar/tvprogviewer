@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Components
             _catalogModelFactory = catalogModelFactory;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int? productThumbPictureSize)
+        public async Task<IViewComponentResult> InvokeAsync(int? tvchannelThumbPictureSize)
         {
             var model = await _catalogModelFactory.PrepareTopMenuModelAsync();
             return View(model);

@@ -5,33 +5,33 @@
 <div id="flyout-cart" class="flyout-cart">
     <div class="mini-shopping-cart">
         <div class="count">
-            @if (Model.TotalProducts == 0)
+            @if (Model.TotalTvChannels == 0)
             {
                 @T("ShoppingCart.Mini.NoItems")
             }
             else
             {
-                @Html.Raw(string.Format(T("ShoppingCart.Mini.ItemsText").Text, $"<a href=\"{Url.RouteUrl("ShoppingCart")}\">{string.Format(T("ShoppingCart.Mini.Items").Text, Model.TotalProducts)}</a>"))
+                @Html.Raw(string.Format(T("ShoppingCart.Mini.ItemsText").Text, $"<a href=\"{Url.RouteUrl("ShoppingCart")}\">{string.Format(T("ShoppingCart.Mini.Items").Text, Model.TotalTvChannels)}</a>"))
             }
         </div>
-        @if (Model.TotalProducts > 0)
+        @if (Model.TotalTvChannels > 0)
         {
             <div class="items">
                 @for (var i = 0; i < Model.Items.Count; i++)
                 {
                     var item = Model.Items[i];
                     <div class="item @(i == 0 ? "first" : null)">
-                        @if (Model.ShowProductImages)
+                        @if (Model.ShowTvChannelImages)
                         {
                             <div class="picture">
-                                <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))" title="@item.Picture.Title">
+                                <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))" title="@item.Picture.Title">
                                     <img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" />
                                 </a>
                             </div>
                         }
-                        <div class="product">
+                        <div class="tvchannel">
                             <div class="name">
-                                <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))">@item.ProductName</a>
+                                <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))">@item.TvChannelName</a>
                             </div>
                             @if (!string.IsNullOrEmpty(item.AttributeInfo))
                             {

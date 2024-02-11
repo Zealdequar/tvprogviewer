@@ -1,0 +1,106 @@
+@model TvChannelAttributeMappingModel
+
+@if (Model.Id > 0)
+{
+    <div class="card-body">
+        @await Html.PartialAsync("Table", new DataTablesModel
+   {
+       Name = "tvchannelattributevalues-grid",
+       UrlRead = new DataUrl("TvChannelAttributeValueList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelAttributeValueSearchModel.TvChannelAttributeMappingId)] = Model.TvChannelAttributeValueSearchModel.TvChannelAttributeMappingId }),
+       UrlDelete = new DataUrl("TvChannelAttributeValueDelete", "TvChannel", null),
+       Length = Model.TvChannelAttributeValueSearchModel.PageSize,
+       LengthMenu = Model.TvChannelAttributeValueSearchModel.AvailablePageSizes,
+       ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.AttributeValueTypeName))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.AttributeValueType").Text,
+                    Width = "200"
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.Name))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.Name").Text,
+                    Width = "200"
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.AssociatedTvChannelName))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.AssociatedTvChannel").Text,
+                    Width = "200"
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.PriceAdjustmentStr))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.PriceAdjustment").Text,
+                    Width = "200"
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.WeightAdjustmentStr))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.WeightAdjustment").Text,
+                    Width = "200"
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.IsPreSelected))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.IsPreSelected").Text,
+                    Width = "150",
+                    ClassName = TvProgColumnClassDefaults.CenterAll,
+                    Render = new RenderBoolean()
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.PictureThumbnailUrl))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.Picture").Text,
+                    Width = "200",
+                    ClassName = TvProgColumnClassDefaults.CenterAll,
+                    Render = new RenderPicture()
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.DisplayOrder))
+                {
+                    Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.DisplayOrder").Text,
+                    Width = "150",
+                    ClassName = TvProgColumnClassDefaults.CenterAll
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.Id))
+                {
+                    Title = T("Admin.Common.Edit").Text,
+                    Width = "100",
+                    ClassName =  TvProgColumnClassDefaults.Button,
+                    Render = new RenderCustom("renderTvChannelAttributeMappingValuesColumnEdit")
+                },
+                new ColumnProperty(nameof(TvChannelAttributeValueModel.Id))
+                {
+                    Title = T("Admin.Common.Delete").Text,
+                    Width = "100",
+                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                    ClassName =  TvProgColumnClassDefaults.Button
+                }
+            }
+   })
+    
+        <script>
+            function renderTvChannelAttributeMappingValuesColumnEdit(data, type, row, meta) {
+                return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannel/TvChannelAttributeValueEditPopup/")' + data + '?btnId=btnRefresh&formId=tvchannelattribute-form\', 800, 750, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+            }
+        </script>
+    </div>
+    <div class="card-footer">
+        <button type="submit" id="btnAddNewValue" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAttributeValueCreatePopup", "TvChannel", new { tvchannelAttributeMappingId = Model.Id, btnId = "btnRefresh", formId = "tvchannelattribute-form" }))', 800, 750, true);return false;" class="btn btn-primary">
+            @T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.AddNew")
+        </button>
+        <button type="submit" id="btnRefresh" style="display: none"></button>
+        <script>
+            $(document).ready(function () {
+                $('#btnRefresh').click(function () {
+                    //refresh grid
+                    updateTable('#tvchannelattributevalues-grid');
+
+                    //return false to don't reload a page
+                    return false;
+                });
+            });
+        </script>
+    </div>
+}
+else
+{
+    <div class="card-body">
+        @T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.SaveBeforeEdit")
+    </div>
+}

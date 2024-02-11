@@ -1,0 +1,146 @@
+﻿@model AddTvChannelToOrderModel
+
+@using TvProgViewer.Core.Domain.Catalog
+
+@{
+    //page title
+    ViewBag.PageTitle = string.Format(T("Admin.Orders.TvChannels.AddNew.Title2").Text, Model.Name, Model.OrderId);
+    //active menu item (system name)
+    TvProgHtml.SetActiveMenuItemSystemName("Orders");
+}
+
+@*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
+
+<form asp-controller="Order" asp-action="AddTvChannelToOrderDetails" asp-route-orderId="@Model.OrderId"
+      asp-route-tvchannelId="@Model.TvChannelId" enctype="multipart/form-data" method="post" id="tvchannel-details-form">
+    
+    <div asp-validation-summary="All"></div>
+
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @string.Format(T("Admin.Orders.TvChannels.AddNew.Title2").Text, Model.Name, Model.OrderId)
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a asp-action="AddTvChannelToOrder" asp-route-orderId="@Model.OrderId">@T("Admin.Orders.TvChannels.AddNew.BackToList")</a>
+            </small>
+        </h1>
+        <div class="float-right">
+            &nbsp;
+        </div>
+    </div>
+
+   <section class="content">
+        <div class="container-fluid">
+           @if (Model.Warnings.Count > 0)
+            {
+                <div class="callout callout-danger">
+                    <ul>
+                        @foreach (var warning in Model.Warnings)
+                        {
+                            <li>@warning</li>
+                        }
+                    </ul>
+                </div>
+            }
+
+            <div class="form-horizontal">
+                <div class="cards-group">
+                    @if (Model.TvChannelType == TvChannelType.SimpleTvChannel)
+                    {
+                        <div class="card card-default">
+                            <div class="card-body">
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <tvprog-label asp-for="UnitPriceInclTax" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <tvprog-editor asp-for="UnitPriceInclTax" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <tvprog-label asp-for="UnitPriceExclTax" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <tvprog-editor asp-for="UnitPriceExclTax" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <tvprog-label asp-for="Quantity" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <tvprog-editor asp-for="Quantity" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <tvprog-label asp-for="SubTotalInclTax" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <tvprog-editor asp-for="SubTotalInclTax" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-3">
+                                        <tvprog-label asp-for="SubTotalExclTax" />
+                                    </div>
+                                    <div class="col-md-9">
+                                        <tvprog-editor asp-for="SubTotalExclTax" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        var dataDict = new ViewDataDictionary(ViewData) { new KeyValuePair<string, object>("tvchannelId", Model.TvChannelId) };
+                        @await Html.PartialAsync("_TvChannelAddAttributes", Model.TvChannelAttributes, dataDict)
+
+                        var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                        dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{@Model.TvChannelId}";
+                        @await Html.PartialAsync("_TvChannelAddGiftCardInfo", Model.GiftCard, dataDictGiftCard)
+
+                        @await Html.PartialAsync("_TvChannelAddRentalInfo", Model)
+
+                        <div class="card card-default">
+                            <div class="card-body">
+                                @if (!Model.AutoUpdateOrderTotals)
+                                { 
+                                    <div class="form-group row">
+                                        <div class="col-md-9 offset-md-3">
+                                            <p>
+                                                <strong>@T("Admin.Orders.TvChannels.AddNew.UpdateTotals")</strong>
+                                            </p>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group row">
+                                    <div class="col-md-9 offset-md-3">
+                                        <button type="submit" class="btn btn-primary">
+                                            @T("Admin.Orders.TvChannels.AddNew")
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.TvChannelType == TvChannelType.GroupedTvChannel)
+                    {
+                        <div class="card card-default">
+                            <div class="card-body">
+                                Grouped tvchannels are not currently supported for adding to an existing order
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card card-default">
+                            <div class="card-body">
+                                This tvchannel type (unknown) is not currently supported for adding to an existing order
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+   </section>
+</form>

@@ -26,9 +26,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public int VendorsBlockItemsToDisplay { get; set; }
         public bool VendorsBlockItemsToDisplay_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.ShowVendorOnProductDetailsPage")]
-        public bool ShowVendorOnProductDetailsPage { get; set; }
-        public bool ShowVendorOnProductDetailsPage_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.ShowVendorOnTvChannelDetailsPage")]
+        public bool ShowVendorOnTvChannelDetailsPage { get; set; }
+        public bool ShowVendorOnTvChannelDetailsPage_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.AllowUsersToContactVendors")]
         public bool AllowUsersToContactVendors { get; set; }
@@ -54,13 +54,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool NotifyStoreOwnerAboutVendorInformationChange { get; set; }
         public bool NotifyStoreOwnerAboutVendorInformationChange_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.MaximumProductNumber")]
-        public int MaximumProductNumber { get; set; }
-        public bool MaximumProductNumber_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.MaximumTvChannelNumber")]
+        public int MaximumTvChannelNumber { get; set; }
+        public bool MaximumTvChannelNumber_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.AllowVendorsToImportProducts")]
-        public bool AllowVendorsToImportProducts { get; set; }
-        public bool AllowVendorsToImportProducts_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.AllowVendorsToImportTvChannels")]
+        public bool AllowVendorsToImportTvChannels { get; set; }
+        public bool AllowVendorsToImportTvChannels_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Vendor.ShowVendorOnOrderDetailsPage")]
         public bool ShowVendorOnOrderDetailsPage { get; set; }

@@ -187,7 +187,7 @@ namespace TvProgViewer.Core.Domain.Users
         public int VendorId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this user has some products in the shopping cart
+        /// Gets or sets a value indicating whether this user has some tvchannels in the shopping cart
         /// <remarks>The same as if we run ShoppingCartItems.Count > 0
         /// We use this property for performance optimization:
         /// if this property is set to false, then we do not need to load "ShoppingCartItems" navigation property for each page load

@@ -13,7 +13,7 @@
     var supportRtl = await Html.ShouldUseRtlThemeAsync();
 
     //add main CSS file
-    TvProgHtml.AppendCssFileParts($"~/Themes/{themeName}/Content/css/styles{(supportRtl ? ".rtl" : "")}.css");
+    TvProgHtml.AppendCssFileParts($"~/Themes/{themeName}/Content/css/styles{(supportRtl ? ".rtl" : "")}.css"); 
     
     //add swiper css file
     if (catalogSettings.DisplayAllPicturesOnCatalogPages)

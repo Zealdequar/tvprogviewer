@@ -3,86 +3,86 @@
 <div class="card-body">
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="NumberOfProductTags_OverrideForStore" asp-input="NumberOfProductTags" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="NumberOfProductTags" />
+            <tvprog-override-store-checkbox asp-for="NumberOfTvChannelTags_OverrideForStore" asp-input="NumberOfTvChannelTags" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="NumberOfTvChannelTags" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="NumberOfProductTags" />
-            <span asp-validation-for="NumberOfProductTags"></span>
+            <tvprog-editor asp-for="NumberOfTvChannelTags" />
+            <span asp-validation-for="NumberOfTvChannelTags"></span>
         </div>
     </div>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ProductsByTagAllowUsersToSelectPageSize_OverrideForStore" asp-input="ProductsByTagAllowUsersToSelectPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ProductsByTagAllowUsersToSelectPageSize" />
+            <tvprog-override-store-checkbox asp-for="TvChannelsByTagAllowUsersToSelectPageSize_OverrideForStore" asp-input="TvChannelsByTagAllowUsersToSelectPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelsByTagAllowUsersToSelectPageSize" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ProductsByTagAllowUsersToSelectPageSize" />
-            <span asp-validation-for="ProductsByTagAllowUsersToSelectPageSize"></span>
+            <tvprog-editor asp-for="TvChannelsByTagAllowUsersToSelectPageSize" />
+            <span asp-validation-for="TvChannelsByTagAllowUsersToSelectPageSize"></span>
         </div>
     </div>
-    <tvprog-nested-setting asp-for="ProductsByTagAllowUsersToSelectPageSize" disable-auto-generation="true">
-        <div class="form-group row" id="pnlProductsByTagPageSize">
+    <tvprog-nested-setting asp-for="TvChannelsByTagAllowUsersToSelectPageSize" disable-auto-generation="true">
+        <div class="form-group row" id="pnlTvChannelsByTagPageSize">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ProductsByTagPageSize_OverrideForStore" asp-input="ProductsByTagPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ProductsByTagPageSize" />
+                <tvprog-override-store-checkbox asp-for="TvChannelsByTagPageSize_OverrideForStore" asp-input="TvChannelsByTagPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="TvChannelsByTagPageSize" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ProductsByTagPageSize" />
-                <span asp-validation-for="ProductsByTagPageSize"></span>
+                <tvprog-editor asp-for="TvChannelsByTagPageSize" />
+                <span asp-validation-for="TvChannelsByTagPageSize"></span>
             </div>
         </div>
-        <div class="form-group row" id="pnlProductsByTagPageSizeOptions">
+        <div class="form-group row" id="pnlTvChannelsByTagPageSizeOptions">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ProductsByTagPageSizeOptions_OverrideForStore" asp-input="ProductsByTagPageSizeOptions" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ProductsByTagPageSizeOptions" />
+                <tvprog-override-store-checkbox asp-for="TvChannelsByTagPageSizeOptions_OverrideForStore" asp-input="TvChannelsByTagPageSizeOptions" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="TvChannelsByTagPageSizeOptions" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ProductsByTagPageSizeOptions" />
-                <span asp-validation-for="ProductsByTagPageSizeOptions"></span>
+                <tvprog-editor asp-for="TvChannelsByTagPageSizeOptions" />
+                <span asp-validation-for="TvChannelsByTagPageSizeOptions"></span>
             </div>
         </div>
     </tvprog-nested-setting>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ProductsByTagPriceRangeFiltering_OverrideForStore" asp-input="ProductsByTagPriceRangeFiltering" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ProductsByTagPriceRangeFiltering" />
+            <tvprog-override-store-checkbox asp-for="TvChannelsByTagPriceRangeFiltering_OverrideForStore" asp-input="TvChannelsByTagPriceRangeFiltering" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelsByTagPriceRangeFiltering" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ProductsByTagPriceRangeFiltering" />
-            <span asp-validation-for="ProductsByTagPriceRangeFiltering"></span>
+            <tvprog-editor asp-for="TvChannelsByTagPriceRangeFiltering" />
+            <span asp-validation-for="TvChannelsByTagPriceRangeFiltering"></span>
         </div>
     </div>
-    <tvprog-nested-setting asp-for="ProductsByTagPriceRangeFiltering">
+    <tvprog-nested-setting asp-for="TvChannelsByTagPriceRangeFiltering">
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ProductsByTagManuallyPriceRange_OverrideForStore" asp-input="ProductsByTagManuallyPriceRange" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ProductsByTagManuallyPriceRange" />
+                <tvprog-override-store-checkbox asp-for="TvChannelsByTagManuallyPriceRange_OverrideForStore" asp-input="TvChannelsByTagManuallyPriceRange" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="TvChannelsByTagManuallyPriceRange" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ProductsByTagManuallyPriceRange" />
-                <span asp-validation-for="ProductsByTagManuallyPriceRange"></span>
+                <tvprog-editor asp-for="TvChannelsByTagManuallyPriceRange" />
+                <span asp-validation-for="TvChannelsByTagManuallyPriceRange"></span>
             </div>
         </div>
-        <tvprog-nested-setting asp-for="ProductsByTagManuallyPriceRange">
+        <tvprog-nested-setting asp-for="TvChannelsByTagManuallyPriceRange">
             <div class="form-group row advanced-setting">
                 <div class="col-md-3">
-                    <tvprog-override-store-checkbox asp-for="ProductsByTagPriceFrom_OverrideForStore" asp-input="ProductsByTagPriceFrom" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                    <tvprog-label asp-for="ProductsByTagPriceFrom" />
+                    <tvprog-override-store-checkbox asp-for="TvChannelsByTagPriceFrom_OverrideForStore" asp-input="TvChannelsByTagPriceFrom" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <tvprog-label asp-for="TvChannelsByTagPriceFrom" />
                 </div>
                 <div class="col-md-9">
-                    <tvprog-editor asp-for="ProductsByTagPriceFrom" asp-postfix="@Model.PrimaryStoreCurrencyCode" />
-                    <span asp-validation-for="ProductsByTagPriceFrom"></span>
+                    <tvprog-editor asp-for="TvChannelsByTagPriceFrom" asp-postfix="@Model.PrimaryStoreCurrencyCode" />
+                    <span asp-validation-for="TvChannelsByTagPriceFrom"></span>
                 </div>
             </div>
             <div class="form-group row advanced-setting">
                 <div class="col-md-3">
-                    <tvprog-override-store-checkbox asp-for="ProductsByTagPriceTo_OverrideForStore" asp-input="ProductsByTagPriceTo" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                    <tvprog-label asp-for="ProductsByTagPriceTo" />
+                    <tvprog-override-store-checkbox asp-for="TvChannelsByTagPriceTo_OverrideForStore" asp-input="TvChannelsByTagPriceTo" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <tvprog-label asp-for="TvChannelsByTagPriceTo" />
                 </div>
                 <div class="col-md-9">
-                    <tvprog-editor asp-for="ProductsByTagPriceTo" asp-postfix="@Model.PrimaryStoreCurrencyCode" />
-                    <span asp-validation-for="ProductsByTagPriceTo"></span>
+                    <tvprog-editor asp-for="TvChannelsByTagPriceTo" asp-postfix="@Model.PrimaryStoreCurrencyCode" />
+                    <span asp-validation-for="TvChannelsByTagPriceTo"></span>
                 </div>
             </div>
         </tvprog-nested-setting>
@@ -91,18 +91,18 @@
 
 <script>
     $(document).ready(function () {
-        $("#@Html.IdFor(model => model.ProductsByTagAllowUsersToSelectPageSize)").click(toggleProductsByTagPageSize);
+        $("#@Html.IdFor(model => model.TvChannelsByTagAllowUsersToSelectPageSize)").click(toggleTvChannelsByTagPageSize);
 
-        toggleProductsByTagPageSize();
+        toggleTvChannelsByTagPageSize();
     });
 
-    function toggleProductsByTagPageSize() {
-        if ($('#@Html.IdFor(model => model.ProductsByTagAllowUsersToSelectPageSize)').is(':checked')) {
-            $('#pnlProductsByTagPageSize').hideElement();
-            $('#pnlProductsByTagPageSizeOptions').showElement();
+    function toggleTvChannelsByTagPageSize() {
+        if ($('#@Html.IdFor(model => model.TvChannelsByTagAllowUsersToSelectPageSize)').is(':checked')) {
+            $('#pnlTvChannelsByTagPageSize').hideElement();
+            $('#pnlTvChannelsByTagPageSizeOptions').showElement();
         } else {
-            $('#pnlProductsByTagPageSize').showElement();
-            $('#pnlProductsByTagPageSizeOptions').hideElement();
+            $('#pnlTvChannelsByTagPageSize').showElement();
+            $('#pnlTvChannelsByTagPageSizeOptions').hideElement();
         }
     }
 </script>

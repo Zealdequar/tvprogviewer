@@ -4,16 +4,16 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
 {
     /// <summary>
-    /// Represents a never sold products report model
+    /// Represents a never sold tvchannels report model
     /// </summary>
     public partial record NeverSoldReportModel : BaseTvProgModel
     {
         #region Properties
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         [TvProgResourceDisplayName("Admin.Reports.Sales.NeverSold.Fields.Name")]
-        public string ProductName { get; set; }
+        public string TvChannelName { get; set; }
 
         #endregion
     }

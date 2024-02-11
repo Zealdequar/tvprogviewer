@@ -16,12 +16,12 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public IList<TopicModel> Topics { get; set; }
 
         public bool BlogEnabled { get; set; }
-        public bool NewProductsEnabled { get; set; }
+        public bool NewTvChannelsEnabled { get; set; }
         public bool ForumEnabled { get; set; }
 
         public bool DisplayHomepageMenuItem { get; set; }
-        public bool DisplayNewProductsMenuItem { get; set; }
-        public bool DisplayProductSearchMenuItem { get; set; }
+        public bool DisplayNewTvChannelsMenuItem { get; set; }
+        public bool DisplayTvChannelSearchMenuItem { get; set; }
         public bool DisplayUserInfoMenuItem { get; set; }
         public bool DisplayBlogMenuItem { get; set; }
         public bool DisplayForumsMenuItem { get; set; }
@@ -32,8 +32,8 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public bool HasOnlyCategories => Categories.Any()
                        && !Topics.Any()
                        && !DisplayHomepageMenuItem
-                       && !(DisplayNewProductsMenuItem && NewProductsEnabled)
-                       && !DisplayProductSearchMenuItem
+                       && !(DisplayNewTvChannelsMenuItem && NewTvChannelsEnabled)
+                       && !DisplayTvChannelSearchMenuItem
                        && !DisplayUserInfoMenuItem
                        && !(DisplayBlogMenuItem && BlogEnabled)
                        && !(DisplayForumsMenuItem && ForumEnabled)

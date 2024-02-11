@@ -35,7 +35,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly IManufacturerService _manufacturerService;
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             IManufacturerService manufacturerService,
             INotificationService notificationService,
             IPermissionService permissionService,
-            IProductService productService)
+            ITvChannelService tvchannelService)
         {
             _catalogSettings = catalogSettings;
             _categoryService = categoryService;
@@ -63,7 +63,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _manufacturerService = manufacturerService;
             _notificationService = notificationService;
             _permissionService = permissionService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
         }
 
         #endregion
@@ -184,7 +184,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     switch (prevDiscountType)
                     {
                         case DiscountType.AssignedToSkus:
-                            await _productService.ClearDiscountProductMappingAsync(discount);
+                            await _tvchannelService.ClearDiscountTvChannelMappingAsync(discount);
                             break;
                         case DiscountType.AssignedToCategories:
                             await _categoryService.ClearDiscountCategoryMappingAsync(discount);
@@ -227,14 +227,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (discount == null)
                 return RedirectToAction("List");
 
-            //applied to products
-            var products = await _productService.GetProductsWithAppliedDiscountAsync(discount.Id, true);
+            //applied to tvchannels
+            var tvchannels = await _tvchannelService.GetTvChannelsWithAppliedDiscountAsync(discount.Id, true);
 
             await _discountService.DeleteDiscountAsync(discount);
 
             //update "HasDiscountsApplied" properties
-            foreach (var p in products)
-                await _productService.UpdateHasDiscountsAppliedAsync(p);
+            foreach (var p in tvchannels)
+                await _tvchannelService.UpdateHasDiscountsAppliedAsync(p);
 
             //activity log
             await _userActivityService.InsertActivityAsync("DeleteDiscount",
@@ -421,10 +421,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Applied to products
+        #region Applied to tvchannels
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductList(DiscountProductSearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelList(DiscountTvChannelSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageDiscounts))
                 return await AccessDeniedDataTablesJson();
@@ -434,12 +434,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 ?? throw new ArgumentException("No discount found with the specified id");
 
             //prepare model
-            var model = await _discountModelFactory.PrepareDiscountProductListModelAsync(searchModel, discount);
+            var model = await _discountModelFactory.PrepareDiscountTvChannelListModelAsync(searchModel, discount);
 
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> ProductDelete(int discountId, int productId)
+        public virtual async Task<IActionResult> TvChannelDelete(int discountId, int tvchannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageDiscounts))
                 return AccessDeniedView();
@@ -448,46 +448,46 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var discount = await _discountService.GetDiscountByIdAsync(discountId)
                 ?? throw new ArgumentException("No discount found with the specified id", nameof(discountId));
 
-            //try to get a product with the specified id
-            var product = await _productService.GetProductByIdAsync(productId)
-                ?? throw new ArgumentException("No product found with the specified id", nameof(productId));
+            //try to get a tvchannel with the specified id
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
+                ?? throw new ArgumentException("No tvchannel found with the specified id", nameof(tvchannelId));
 
             //remove discount
-            if (await _productService.GetDiscountAppliedToProductAsync(product.Id, discount.Id) is DiscountProductMapping discountProductMapping)
-                await _productService.DeleteDiscountProductMappingAsync(discountProductMapping);
+            if (await _tvchannelService.GetDiscountAppliedToTvChannelAsync(tvchannel.Id, discount.Id) is DiscountTvChannelMapping discountTvChannelMapping)
+                await _tvchannelService.DeleteDiscountTvChannelMappingAsync(discountTvChannelMapping);
 
-            await _productService.UpdateProductAsync(product);
-            await _productService.UpdateHasDiscountsAppliedAsync(product);
+            await _tvchannelService.UpdateTvChannelAsync(tvchannel);
+            await _tvchannelService.UpdateHasDiscountsAppliedAsync(tvchannel);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> ProductAddPopup(int discountId)
+        public virtual async Task<IActionResult> TvChannelAddPopup(int discountId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageDiscounts))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _discountModelFactory.PrepareAddProductToDiscountSearchModelAsync(new AddProductToDiscountSearchModel());
+            var model = await _discountModelFactory.PrepareAddTvChannelToDiscountSearchModelAsync(new AddTvChannelToDiscountSearchModel());
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductAddPopupList(AddProductToDiscountSearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelAddPopupList(AddTvChannelToDiscountSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageDiscounts))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _discountModelFactory.PrepareAddProductToDiscountListModelAsync(searchModel);
+            var model = await _discountModelFactory.PrepareAddTvChannelToDiscountListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
         [FormValueRequired("save")]
-        public virtual async Task<IActionResult> ProductAddPopup(AddProductToDiscountModel model)
+        public virtual async Task<IActionResult> TvChannelAddPopup(AddTvChannelToDiscountModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageDiscounts))
                 return AccessDeniedView();
@@ -496,22 +496,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var discount = await _discountService.GetDiscountByIdAsync(model.DiscountId)
                 ?? throw new ArgumentException("No discount found with the specified id");
 
-            var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
-            if (selectedProducts.Any())
+            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            if (selectedTvChannels.Any())
             {
-                foreach (var product in selectedProducts)
+                foreach (var tvchannel in selectedTvChannels)
                 {
-                    if (await _productService.GetDiscountAppliedToProductAsync(product.Id, discount.Id) is null)
-                        await _productService.InsertDiscountProductMappingAsync(new DiscountProductMapping { EntityId = product.Id, DiscountId = discount.Id });
+                    if (await _tvchannelService.GetDiscountAppliedToTvChannelAsync(tvchannel.Id, discount.Id) is null)
+                        await _tvchannelService.InsertDiscountTvChannelMappingAsync(new DiscountTvChannelMapping { EntityId = tvchannel.Id, DiscountId = discount.Id });
 
-                    await _productService.UpdateProductAsync(product);
-                    await _productService.UpdateHasDiscountsAppliedAsync(product);
+                    await _tvchannelService.UpdateTvChannelAsync(tvchannel);
+                    await _tvchannelService.UpdateHasDiscountsAppliedAsync(tvchannel);
                 }
             }
 
             ViewBag.RefreshPage = true;
 
-            return View(new AddProductToDiscountSearchModel());
+            return View(new AddTvChannelToDiscountSearchModel());
         }
 
         #endregion

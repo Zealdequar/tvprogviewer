@@ -34,14 +34,14 @@ namespace TvProgViewer.Services.Catalog
         Task<IPagedList<SpecificationAttributeGroup>> GetSpecificationAttributeGroupsAsync(int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
-        /// Gets product specification attribute groups
+        /// Gets tvchannel specification attribute groups
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the specification attribute groups
         /// </returns>
-        Task<IList<SpecificationAttributeGroup>> GetProductSpecificationAttributeGroupsAsync(int productId);
+        Task<IList<SpecificationAttributeGroup>> GetTvChannelSpecificationAttributeGroupsAsync(int tvchannelId);
 
         /// <summary>
         /// Deletes a specification attribute group
@@ -233,76 +233,76 @@ namespace TvProgViewer.Services.Catalog
 
         #endregion
 
-        #region Product specification attribute
+        #region TvChannel specification attribute
 
         /// <summary>
-        /// Deletes a product specification attribute mapping
+        /// Deletes a tvchannel specification attribute mapping
         /// </summary>
-        /// <param name="productSpecificationAttribute">Product specification attribute</param>
+        /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task DeleteProductSpecificationAttributeAsync(ProductSpecificationAttribute productSpecificationAttribute);
+        Task DeleteTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute);
 
         /// <summary>
-        /// Gets a product specification attribute mapping collection
+        /// Gets a tvchannel specification attribute mapping collection
         /// </summary>
-        /// <param name="productId">Product identifier; 0 to load all records</param>
+        /// <param name="tvchannelId">TvChannel identifier; 0 to load all records</param>
         /// <param name="specificationAttributeOptionId">Specification attribute option identifier; 0 to load all records</param>
         /// <param name="allowFiltering">0 to load attributes with AllowFiltering set to false, 1 to load attributes with AllowFiltering set to true, null to load all attributes</param>
-        /// <param name="showOnProductPage">0 to load attributes with ShowOnProductPage set to false, 1 to load attributes with ShowOnProductPage set to true, null to load all attributes</param>
+        /// <param name="showOnTvChannelPage">0 to load attributes with ShowOnTvChannelPage set to false, 1 to load attributes with ShowOnTvChannelPage set to true, null to load all attributes</param>
         /// <param name="specificationAttributeGroupId">Specification attribute group identifier; 0 to load all records; null to load attributes without group</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product specification attribute mapping collection
+        /// The task result contains the tvchannel specification attribute mapping collection
         /// </returns>
-        Task<IList<ProductSpecificationAttribute>> GetProductSpecificationAttributesAsync(int productId = 0,
-            int specificationAttributeOptionId = 0, bool? allowFiltering = null, bool? showOnProductPage = null, int? specificationAttributeGroupId = 0);
+        Task<IList<TvChannelSpecificationAttribute>> GetTvChannelSpecificationAttributesAsync(int tvchannelId = 0,
+            int specificationAttributeOptionId = 0, bool? allowFiltering = null, bool? showOnTvChannelPage = null, int? specificationAttributeGroupId = 0);
 
         /// <summary>
-        /// Gets a product specification attribute mapping 
+        /// Gets a tvchannel specification attribute mapping 
         /// </summary>
-        /// <param name="productSpecificationAttributeId">Product specification attribute mapping identifier</param>
+        /// <param name="tvchannelSpecificationAttributeId">TvChannel specification attribute mapping identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product specification attribute mapping
+        /// The task result contains the tvchannel specification attribute mapping
         /// </returns>
-        Task<ProductSpecificationAttribute> GetProductSpecificationAttributeByIdAsync(int productSpecificationAttributeId);
+        Task<TvChannelSpecificationAttribute> GetTvChannelSpecificationAttributeByIdAsync(int tvchannelSpecificationAttributeId);
 
         /// <summary>
-        /// Inserts a product specification attribute mapping
+        /// Inserts a tvchannel specification attribute mapping
         /// </summary>
-        /// <param name="productSpecificationAttribute">Product specification attribute mapping</param>
+        /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute mapping</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task InsertProductSpecificationAttributeAsync(ProductSpecificationAttribute productSpecificationAttribute);
+        Task InsertTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute);
 
         /// <summary>
-        /// Updates the product specification attribute mapping
+        /// Updates the tvchannel specification attribute mapping
         /// </summary>
-        /// <param name="productSpecificationAttribute">Product specification attribute mapping</param>
+        /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute mapping</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task UpdateProductSpecificationAttributeAsync(ProductSpecificationAttribute productSpecificationAttribute);
+        Task UpdateTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute);
 
         /// <summary>
-        /// Gets a count of product specification attribute mapping records
+        /// Gets a count of tvchannel specification attribute mapping records
         /// </summary>
-        /// <param name="productId">Product identifier; 0 to load all records</param>
+        /// <param name="tvchannelId">TvChannel identifier; 0 to load all records</param>
         /// <param name="specificationAttributeOptionId">The specification attribute option identifier; 0 to load all records</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the count
         /// </returns>
-        Task<int> GetProductSpecificationAttributeCountAsync(int productId = 0, int specificationAttributeOptionId = 0);
+        Task<int> GetTvChannelSpecificationAttributeCountAsync(int tvchannelId = 0, int specificationAttributeOptionId = 0);
 
         /// <summary>
-        /// Get mapped products for specification attribute
+        /// Get mapped tvchannels for specification attribute
         /// </summary>
         /// <param name="specificationAttributeId">The specification attribute identifier</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the products
+        /// The task result contains the tvchannels
         /// </returns>
-        Task<IPagedList<Product>> GetProductsBySpecificationAttributeIdAsync(int specificationAttributeId, int pageIndex, int pageSize);
+        Task<IPagedList<TvChannel>> GetTvChannelsBySpecificationAttributeIdAsync(int specificationAttributeId, int pageIndex, int pageSize);
 
         #endregion
     }

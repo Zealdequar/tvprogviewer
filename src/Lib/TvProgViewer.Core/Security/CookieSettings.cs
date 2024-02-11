@@ -5,14 +5,14 @@ namespace TvProgViewer.Core.Security
     public partial class CookieSettings : ISettings
     {
         /// <summary>
-        /// Expiration time on hours for the "Compare products" cookie
+        /// Expiration time on hours for the "Compare tvchannels" cookie
         /// </summary>
-        public int CompareProductsCookieExpires { get; set; }
+        public int CompareTvChannelsCookieExpires { get; set; }
 
         /// <summary>
-        /// Expiration time on hours for the "Recently viewed products" cookie
+        /// Expiration time on hours for the "Recently viewed tvchannels" cookie
         /// </summary>
-        public int RecentlyViewedProductsCookieExpires { get; set; }
+        public int RecentlyViewedTvChannelsCookieExpires { get; set; }
 
         /// <summary>
         /// Expiration time on hours for the "User" cookie

@@ -8,9 +8,9 @@
     {
         <li>
             <a href="@(Url.RouteUrl<Category>(new { SeName = lineModel.Category.SeName }))">@lineModel.Category.Name
-                @if (lineModel.Category.NumberOfProducts.HasValue)
+                @if (lineModel.Category.NumberOfTvChannels.HasValue)
                 {
-                    <text> </text>@T("Categories.TotalProducts", lineModel.Category.NumberOfProducts.Value)
+                    <text> </text>@T("Categories.TotalTvChannels", lineModel.Category.NumberOfTvChannels.Value)
                 }
             </a>
             @{
@@ -70,11 +70,11 @@
     {
         <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
     }
-    @if (Model.NewProductsEnabled && Model.DisplayNewProductsMenuItem)
+    @if (Model.NewTvChannelsEnabled && Model.DisplayNewTvChannelsMenuItem)
     {
-        <li><a href="@Url.RouteUrl("NewProducts")">@T("Products.NewProducts")</a></li>
+        <li><a href="@Url.RouteUrl("NewTvChannels")">@T("TvChannels.NewTvChannels")</a></li>
     }
-    @if (Model.DisplayProductSearchMenuItem)
+    @if (Model.DisplayTvChannelSearchMenuItem)
     {
         <li><a href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
     }
@@ -124,11 +124,11 @@
         {
             <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
         }
-        @if (Model.NewProductsEnabled && Model.DisplayNewProductsMenuItem)
+        @if (Model.NewTvChannelsEnabled && Model.DisplayNewTvChannelsMenuItem)
         {
-            <li><a href="@Url.RouteUrl("NewProducts")">@T("Products.NewProducts")</a></li>
+            <li><a href="@Url.RouteUrl("NewTvChannels")">@T("TvChannels.NewTvChannels")</a></li>
         }
-        @if (Model.DisplayProductSearchMenuItem)
+        @if (Model.DisplayTvChannelSearchMenuItem)
         {
             <li><a href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
         }

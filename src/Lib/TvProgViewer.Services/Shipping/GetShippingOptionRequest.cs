@@ -92,12 +92,12 @@ namespace TvProgViewer.Services.Shipping
             /// Constructor
             /// </summary>
             /// <param name="sci">Shopping cart item</param>
-            /// <param name="product">Product</param>
+            /// <param name="tvchannel">TvChannel</param>
             /// <param name="qty">Override "Quantity" property of shopping cart item</param>
-            public PackageItem(ShoppingCartItem sci, Product product, int? qty = null)
+            public PackageItem(ShoppingCartItem sci, TvChannel tvchannel, int? qty = null)
             {
                 ShoppingCartItem = sci;
-                Product = product;
+                TvChannel = tvchannel;
                 OverriddenQuantity = qty;
             }
 
@@ -107,9 +107,9 @@ namespace TvProgViewer.Services.Shipping
             public ShoppingCartItem ShoppingCartItem { get; set; }
 
             /// <summary>
-            /// Product
+            /// TvChannel
             /// </summary>
-            public Product Product { get; set; }
+            public TvChannel TvChannel { get; set; }
 
             /// <summary>
             /// If specified, override "Quantity" property of "ShoppingCartItem

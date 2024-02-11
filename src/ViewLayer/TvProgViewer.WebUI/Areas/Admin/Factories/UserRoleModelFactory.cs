@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         private readonly IBaseAdminModelFactory _baseAdminModelFactory;
         private readonly IUserService _userService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IWorkContext _workContext;
 
@@ -34,13 +34,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         public UserRoleModelFactory(IBaseAdminModelFactory baseAdminModelFactory,
             IUserService userService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IUrlRecordService urlRecordService,
             IWorkContext workContext)
         {
             _baseAdminModelFactory = baseAdminModelFactory;
             _userService = userService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _urlRecordService = urlRecordService;
             _workContext = workContext;
         }
@@ -93,7 +93,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     var userRoleModel = role.ToModel<UserRoleModel>();
 
                     //fill in additional values (not existing in the entity)
-                    userRoleModel.PurchasedWithProductName = (await _productService.GetProductByIdAsync(role.PurchasedWithProductId))?.Name;
+                    userRoleModel.PurchasedWithTvChannelName = (await _tvchannelService.GetTvChannelByIdAsync(role.PurchasedWithTvChannelId))?.Name;
 
                     return userRoleModel;
                 });
@@ -118,7 +118,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             {
                 //fill in model values from the entity
                 model ??= userRole.ToModel<UserRoleModel>();
-                model.PurchasedWithProductName = (await _productService.GetProductByIdAsync(userRole.PurchasedWithProductId))?.Name;
+                model.PurchasedWithTvChannelName = (await _tvchannelService.GetTvChannelByIdAsync(userRole.PurchasedWithTvChannelId))?.Name;
             }
 
             //set default values for the new model
@@ -132,19 +132,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare user role product search model
+        /// Prepare user role tvchannel search model
         /// </summary>
-        /// <param name="searchModel">User role product search model</param>
+        /// <param name="searchModel">User role tvchannel search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the user role product search model
+        /// The task result contains the user role tvchannel search model
         /// </returns>
-        public virtual async Task<UserRoleProductSearchModel> PrepareUserRoleProductSearchModelAsync(UserRoleProductSearchModel searchModel)
+        public virtual async Task<UserRoleTvChannelSearchModel> PrepareUserRoleTvChannelSearchModelAsync(UserRoleTvChannelSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //a vendor should have access only to his products
+            //a vendor should have access only to his tvchannels
             searchModel.IsLoggedInAsVendor = await _workContext.GetCurrentVendorAsync() != null;
 
             //prepare available categories
@@ -159,8 +159,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //prepare available vendors
             await _baseAdminModelFactory.PrepareVendorsAsync(searchModel.AvailableVendors);
 
-            //prepare available product types
-            await _baseAdminModelFactory.PrepareProductTypesAsync(searchModel.AvailableProductTypes);
+            //prepare available tvchannel types
+            await _baseAdminModelFactory.PrepareTvChannelTypesAsync(searchModel.AvailableTvChannelTypes);
 
             //prepare page parameters
             searchModel.SetPopupGridPageSize();
@@ -169,43 +169,43 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged user role product list model
+        /// Prepare paged user role tvchannel list model
         /// </summary>
-        /// <param name="searchModel">User role product search model</param>
+        /// <param name="searchModel">User role tvchannel search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the user role product list model
+        /// The task result contains the user role tvchannel list model
         /// </returns>
-        public virtual async Task<UserRoleProductListModel> PrepareUserRoleProductListModelAsync(UserRoleProductSearchModel searchModel)
+        public virtual async Task<UserRoleTvChannelListModel> PrepareUserRoleTvChannelListModelAsync(UserRoleTvChannelSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //a vendor should have access only to his products
+            //a vendor should have access only to his tvchannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
                 searchModel.SearchVendorId = currentVendor.Id;
 
-            //get products
-            var products = await _productService.SearchProductsAsync(showHidden: true,
+            //get tvchannels
+            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(showHidden: true,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },
                 storeId: searchModel.SearchStoreId,
                 vendorId: searchModel.SearchVendorId,
-                productType: searchModel.SearchProductTypeId > 0 ? (ProductType?)searchModel.SearchProductTypeId : null,
-                keywords: searchModel.SearchProductName,
+                tvchannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
+                keywords: searchModel.SearchTvChannelName,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-            var model = await new UserRoleProductListModel().PrepareToGridAsync(searchModel, products, () =>
+            var model = await new UserRoleTvChannelListModel().PrepareToGridAsync(searchModel, tvchannels, () =>
             {
-                return products.SelectAwait(async product =>
+                return tvchannels.SelectAwait(async tvchannel =>
                 {
-                    var productModel = product.ToModel<ProductModel>();
+                    var tvchannelModel = tvchannel.ToModel<TvChannelModel>();
 
-                    productModel.SeName = await _urlRecordService.GetSeNameAsync(product, 0, true, false);
+                    tvchannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvchannel, 0, true, false);
 
-                    return productModel;
+                    return tvchannelModel;
                 });
             });
 

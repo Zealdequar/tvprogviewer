@@ -3,33 +3,33 @@
 <div class="card-body">
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ProductSearchEnabled_OverrideForStore" asp-input="ProductSearchEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ProductSearchEnabled" />
+            <tvprog-override-store-checkbox asp-for="TvChannelSearchEnabled_OverrideForStore" asp-input="TvChannelSearchEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelSearchEnabled" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ProductSearchEnabled" />
-            <span asp-validation-for="ProductSearchEnabled"></span>
+            <tvprog-editor asp-for="TvChannelSearchEnabled" />
+            <span asp-validation-for="TvChannelSearchEnabled"></span>
         </div>
     </div>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ProductSearchAutoCompleteEnabled_OverrideForStore" asp-input="ProductSearchAutoCompleteEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ProductSearchAutoCompleteEnabled" />
+            <tvprog-override-store-checkbox asp-for="TvChannelSearchAutoCompleteEnabled_OverrideForStore" asp-input="TvChannelSearchAutoCompleteEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelSearchAutoCompleteEnabled" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ProductSearchAutoCompleteEnabled" />
-            <span asp-validation-for="ProductSearchAutoCompleteEnabled"></span>
+            <tvprog-editor asp-for="TvChannelSearchAutoCompleteEnabled" />
+            <span asp-validation-for="TvChannelSearchAutoCompleteEnabled"></span>
         </div>
     </div>
-    <tvprog-nested-setting asp-for="ProductSearchAutoCompleteEnabled">
+    <tvprog-nested-setting asp-for="TvChannelSearchAutoCompleteEnabled">
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ProductSearchAutoCompleteNumberOfProducts_OverrideForStore" asp-input="ProductSearchAutoCompleteNumberOfProducts" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ProductSearchAutoCompleteNumberOfProducts" />
+                <tvprog-override-store-checkbox asp-for="TvChannelSearchAutoCompleteNumberOfTvChannels_OverrideForStore" asp-input="TvChannelSearchAutoCompleteNumberOfTvChannels" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="TvChannelSearchAutoCompleteNumberOfTvChannels" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ProductSearchAutoCompleteNumberOfProducts" />
-                <span asp-validation-for="ProductSearchAutoCompleteNumberOfProducts"></span>
+                <tvprog-editor asp-for="TvChannelSearchAutoCompleteNumberOfTvChannels" />
+                <span asp-validation-for="TvChannelSearchAutoCompleteNumberOfTvChannels"></span>
             </div>
         </div>
         <div class="form-group row advanced-setting">
@@ -44,23 +44,23 @@
         </div>
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ShowProductImagesInSearchAutoComplete_OverrideForStore" asp-input="ShowProductImagesInSearchAutoComplete" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ShowProductImagesInSearchAutoComplete" />
+                <tvprog-override-store-checkbox asp-for="ShowTvChannelImagesInSearchAutoComplete_OverrideForStore" asp-input="ShowTvChannelImagesInSearchAutoComplete" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="ShowTvChannelImagesInSearchAutoComplete" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ShowProductImagesInSearchAutoComplete" />
-                <span asp-validation-for="ShowProductImagesInSearchAutoComplete"></span>
+                <tvprog-editor asp-for="ShowTvChannelImagesInSearchAutoComplete" />
+                <span asp-validation-for="ShowTvChannelImagesInSearchAutoComplete"></span>
             </div>
         </div>
     </tvprog-nested-setting>
     <div class="form-group row advanced-setting">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ProductSearchTermMinimumLength_OverrideForStore" asp-input="ProductSearchTermMinimumLength" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ProductSearchTermMinimumLength" />
+            <tvprog-override-store-checkbox asp-for="TvChannelSearchTermMinimumLength_OverrideForStore" asp-input="TvChannelSearchTermMinimumLength" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelSearchTermMinimumLength" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ProductSearchTermMinimumLength" />
-            <span asp-validation-for="ProductSearchTermMinimumLength"></span>
+            <tvprog-editor asp-for="TvChannelSearchTermMinimumLength" />
+            <span asp-validation-for="TvChannelSearchTermMinimumLength"></span>
         </div>
     </div>
     <div class="form-group row advanced-setting">
@@ -74,14 +74,14 @@
         </div>
     </div>
     <tvprog-nested-setting asp-for="SearchPageAllowUsersToSelectPageSize" disable-auto-generation="true">
-        <div class="form-group row advanced-setting" id="pnlSearchPageProductsPerPage">
+        <div class="form-group row advanced-setting" id="pnlSearchPageTvChannelsPerPage">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="SearchPageProductsPerPage_OverrideForStore" asp-input="SearchPageProductsPerPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="SearchPageProductsPerPage" />
+                <tvprog-override-store-checkbox asp-for="SearchPageTvChannelsPerPage_OverrideForStore" asp-input="SearchPageTvChannelsPerPage" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="SearchPageTvChannelsPerPage" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="SearchPageProductsPerPage" />
-                <span asp-validation-for="SearchPageProductsPerPage"></span>
+                <tvprog-editor asp-for="SearchPageTvChannelsPerPage" />
+                <span asp-validation-for="SearchPageTvChannelsPerPage"></span>
             </div>
         </div>
         <div class="form-group row advanced-setting" id="pnlSearchPagePageSizeOptions">
@@ -169,10 +169,10 @@
 
     function toggleSearchPagePageSize() {
         if ($('#@Html.IdFor(model => model.SearchPageAllowUsersToSelectPageSize)').is(':checked')) {
-            $('#pnlSearchPageProductsPerPage').hideElement();
+            $('#pnlSearchPageTvChannelsPerPage').hideElement();
             $('#pnlSearchPagePageSizeOptions').showElement();
         } else {
-            $('#pnlSearchPageProductsPerPage').showElement();
+            $('#pnlSearchPageTvChannelsPerPage').showElement();
             $('#pnlSearchPagePageSizeOptions').hideElement();
         }
     }

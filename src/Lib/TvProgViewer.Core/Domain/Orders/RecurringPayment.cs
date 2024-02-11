@@ -57,9 +57,9 @@ namespace TvProgViewer.Core.Domain.Orders
         /// <summary>
         /// Gets or sets the cycle period
         /// </summary>
-        public RecurringProductCyclePeriod CyclePeriod
+        public RecurringTvChannelCyclePeriod CyclePeriod
         {
-            get => (RecurringProductCyclePeriod)CyclePeriodId;
+            get => (RecurringTvChannelCyclePeriod)CyclePeriodId;
             set => CyclePeriodId = (int)value;
         }       
     }

@@ -21,9 +21,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 
         #region Properties
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.List.SearchWarehouse")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.List.SearchWarehouse")]
         public int WarehouseId { get; set; }
 
         public IList<SelectListItem> AvailableWarehouses { get; set; }

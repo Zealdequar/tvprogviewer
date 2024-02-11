@@ -1,0 +1,74 @@
+﻿@model TvChannelDetailsModel
+
+@using TvProgViewer.Core 
+@using TvProgViewer.Core.Domain.Catalog
+
+@inject IWebHelper webHelper
+
+@{ 
+    var isAssociatedTvChannel = ViewData.ContainsKey("isAccessoryOrSparePartFor");
+    var tvchannelUrl = isAssociatedTvChannel && ViewData.ContainsKey("parentURL")
+        ? ViewData["parentURL"]
+        : Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+    var tvchannelPrice = Model.AssociatedTvChannels.Any()
+        ? Model.AssociatedTvChannels.Min(associatedTvChannel => associatedTvChannel.TvChannelPrice.PriceValue)
+        : Model.TvChannelPrice.PriceValue;
+}
+
+<!--Microdata-->
+<div @if (isAssociatedTvChannel) { <text>itemprop="isAccessoryOrSparePartFor"</text> } itemscope itemtype="http://schema.org/TvChannel">
+    <meta itemprop="name" content="@Model.Name"/>
+    <meta itemprop="sku" content="@Model.Sku"/>
+    <meta itemprop="gtin" content="@Model.Gtin"/>
+    <meta itemprop="mpn" content="@Model.ManufacturerPartNumber"/>
+    <meta itemprop="description" content="@Model.ShortDescription"/>
+    <meta itemprop="image" content="@Model.DefaultPictureModel.ImageUrl"/>
+    @foreach (var manufacturer in Model.TvChannelManufacturers)
+    {
+        <div itemprop="brand" itemtype="https://schema.org/Brand" itemscope>
+            <meta itemprop="name" content="@manufacturer.Name" />
+        </div>
+    }
+    @if (Model.TvChannelReviewOverview.TotalReviews > 0)
+    {
+        <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+            @{
+                var ratingPercent = 0;
+                if (Model.TvChannelReviewOverview.TotalReviews != 0)
+                {
+                    ratingPercent = ((Model.TvChannelReviewOverview.RatingSum * 100) / Model.TvChannelReviewOverview.TotalReviews) / 5;
+                }
+                var ratingValue = ratingPercent / (decimal)20;
+            }
+            <meta itemprop="ratingValue" content="@ratingValue.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)"/>
+            <meta itemprop="reviewCount" content="@Model.TvChannelReviewOverview.TotalReviews"/>
+        </div>
+    }    
+    <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="url" content="@tvchannelUrl"/>
+        <meta itemprop="price" content="@(Model.TvChannelPrice.CallForPrice ? null : tvchannelPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))"/>
+        <meta itemprop="priceCurrency" content="@Model.TvChannelPrice.CurrencyCode"/>
+        <meta itemprop="priceValidUntil" content="@Model.AvailableEndDate"/>
+        <meta itemprop="availability" content="http://schema.org/@(Model.InStock ? "InStock" : "OutOfStock")" />
+    </div>
+    @if (Model.TvChannelReviewOverview.AllowUserReviews)
+    {
+        <div itemprop="review" itemscope itemtype="http://schema.org/Review">
+            <div itemprop="author" itemtype="https://schema.org/Person" itemscope>
+                <meta itemprop="name" content="ALL" />
+            </div>
+            <meta itemprop="url" content="@Url.RouteUrl("TvChannelReviews", new { tvchannelId = Model.TvChannelReviewOverview.TvChannelId })"/>
+        </div>
+    }
+    @foreach (var tvchannel in Model.AssociatedTvChannels)
+    {
+        var viewDataDictionary = new ViewDataDictionary(ViewData);
+        viewDataDictionary.Add("isAccessoryOrSparePartFor", "true");
+        if (!tvchannel.VisibleIndividually)
+        {
+            viewDataDictionary.Add("parentURL", tvchannelUrl);
+        }
+        
+        @await Html.PartialAsync("_Microdata", tvchannel, viewDataDictionary)        
+    }
+</div>

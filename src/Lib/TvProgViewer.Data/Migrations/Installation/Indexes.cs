@@ -47,8 +47,8 @@ namespace TvProgViewer.Data.Migrations.Installation
                 .OnColumn(nameof(ShoppingCartItem.UserId)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_RelatedProduct_ProductId1").OnTable(nameof(RelatedProduct))
-                .OnColumn(nameof(RelatedProduct.ProductId1)).Ascending()
+            Create.Index("IX_RelatedTvChannel_TvChannelId1").OnTable(nameof(RelatedTvChannel))
+                .OnColumn(nameof(RelatedTvChannel.TvChannelId1)).Ascending()
                 .WithOptions().NonClustered();
 
             Create.Index("IX_QueuedEmail_SentOnUtc_DontSendBeforeDateUtc_Extended").OnTable(nameof(QueuedEmail))
@@ -61,112 +61,112 @@ namespace TvProgViewer.Data.Migrations.Installation
                 .OnColumn(nameof(QueuedEmail.CreatedOnUtc)).Descending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_PSAM_SpecificationAttributeOptionId_AllowFiltering").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductSpecificationAttribute)))
-                .OnColumn(nameof(ProductSpecificationAttribute.SpecificationAttributeOptionId)).Ascending()
-                .OnColumn(nameof(ProductSpecificationAttribute.AllowFiltering)).Ascending()
+            Create.Index("IX_PSAM_SpecificationAttributeOptionId_AllowFiltering").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelSpecificationAttribute)))
+                .OnColumn(nameof(TvChannelSpecificationAttribute.SpecificationAttributeOptionId)).Ascending()
+                .OnColumn(nameof(TvChannelSpecificationAttribute.AllowFiltering)).Ascending()
                 .WithOptions().NonClustered()
-                .Include(nameof(ProductSpecificationAttribute.ProductId));
+                .Include(nameof(TvChannelSpecificationAttribute.TvChannelId));
 
-            Create.Index("IX_PSAM_AllowFiltering").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductSpecificationAttribute)))
-                .OnColumn(nameof(ProductSpecificationAttribute.AllowFiltering)).Ascending()
+            Create.Index("IX_PSAM_AllowFiltering").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelSpecificationAttribute)))
+                .OnColumn(nameof(TvChannelSpecificationAttribute.AllowFiltering)).Ascending()
                 .WithOptions().NonClustered()
-                .Include(nameof(ProductSpecificationAttribute.ProductId))
-                .Include(nameof(ProductSpecificationAttribute.SpecificationAttributeOptionId));
+                .Include(nameof(TvChannelSpecificationAttribute.TvChannelId))
+                .Include(nameof(TvChannelSpecificationAttribute.SpecificationAttributeOptionId));
 
-            Create.Index("IX_Product_VisibleIndividually_Published_Deleted_Extended").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.VisibleIndividually)).Ascending()
-                .OnColumn(nameof(Product.Published)).Ascending()
-                .OnColumn(nameof(Product.Deleted)).Ascending()
+            Create.Index("IX_TvChannel_VisibleIndividually_Published_Deleted_Extended").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.VisibleIndividually)).Ascending()
+                .OnColumn(nameof(TvChannel.Published)).Ascending()
+                .OnColumn(nameof(TvChannel.Deleted)).Ascending()
                 .WithOptions().NonClustered()
-                .Include(nameof(Product.Id))
-                .Include(nameof(Product.AvailableStartDateTimeUtc))
-                .Include(nameof(Product.AvailableEndDateTimeUtc));
+                .Include(nameof(TvChannel.Id))
+                .Include(nameof(TvChannel.AvailableStartDateTimeUtc))
+                .Include(nameof(TvChannel.AvailableEndDateTimeUtc));
 
-            Create.Index("IX_Product_VisibleIndividually").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.VisibleIndividually)).Ascending()
+            Create.Index("IX_TvChannel_VisibleIndividually").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.VisibleIndividually)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_ProductTag_Name").OnTable(nameof(ProductTag))
-                .OnColumn(nameof(ProductTag.Name)).Ascending()
+            Create.Index("IX_TvChannelTag_Name").OnTable(nameof(TvChannelTag))
+                .OnColumn(nameof(TvChannelTag.Name)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_SubjectToAcl").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.SubjectToAcl)).Ascending()
+            Create.Index("IX_TvChannel_SubjectToAcl").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.SubjectToAcl)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_ShowOnHomepage").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.ShowOnHomepage)).Ascending()
+            Create.Index("IX_TvChannel_ShowOnHomepage").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.ShowOnHomepage)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_Published").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.Published)).Ascending()
+            Create.Index("IX_TvChannel_Published").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.Published)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_ProductAttribute_Mapping_ProductId_DisplayOrder").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductAttributeMapping)))
-                .OnColumn(nameof(ProductAttributeMapping.ProductId)).Ascending()
-                .OnColumn(nameof(ProductAttributeMapping.DisplayOrder)).Ascending()
+            Create.Index("IX_TvChannel_TvChannelAttribute_Mapping_TvChannelId_DisplayOrder").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelAttributeMapping)))
+                .OnColumn(nameof(TvChannelAttributeMapping.TvChannelId)).Ascending()
+                .OnColumn(nameof(TvChannelAttributeMapping.DisplayOrder)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_PriceDatesEtc").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.Price)).Ascending()
-                .OnColumn(nameof(Product.AvailableStartDateTimeUtc)).Ascending()
-                .OnColumn(nameof(Product.AvailableEndDateTimeUtc)).Ascending()
-                .OnColumn(nameof(Product.Published)).Ascending()
-                .OnColumn(nameof(Product.Deleted)).Ascending()
+            Create.Index("IX_TvChannel_PriceDatesEtc").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.Price)).Ascending()
+                .OnColumn(nameof(TvChannel.AvailableStartDateTimeUtc)).Ascending()
+                .OnColumn(nameof(TvChannel.AvailableEndDateTimeUtc)).Ascending()
+                .OnColumn(nameof(TvChannel.Published)).Ascending()
+                .OnColumn(nameof(TvChannel.Deleted)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_ParentGroupedProductId").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.ParentGroupedProductId)).Ascending()
+            Create.Index("IX_TvChannel_ParentGroupedTvChannelId").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.ParentGroupedTvChannelId)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_Manufacturer_Mapping_IsFeaturedProduct")
-                .OnTable(NameCompatibilityManager.GetTableName(typeof(ProductManufacturer)))
-                .OnColumn(nameof(ProductManufacturer.IsFeaturedProduct)).Ascending()
+            Create.Index("IX_TvChannel_Manufacturer_Mapping_IsFeaturedTvChannel")
+                .OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelManufacturer)))
+                .OnColumn(nameof(TvChannelManufacturer.IsFeaturedTvChannel)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_LimitedToStores").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.LimitedToStores)).Ascending()
+            Create.Index("IX_TvChannel_LimitedToStores").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.LimitedToStores)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_Delete_Id").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.Deleted)).Ascending()
-                .OnColumn(nameof(Product.Id)).Ascending()
+            Create.Index("IX_TvChannel_Delete_Id").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.Deleted)).Ascending()
+                .OnColumn(nameof(TvChannel.Id)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_Deleted_and_Published").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.Published)).Ascending()
-                .OnColumn(nameof(Product.Deleted)).Ascending()
+            Create.Index("IX_TvChannel_Deleted_and_Published").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.Published)).Ascending()
+                .OnColumn(nameof(TvChannel.Deleted)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_Product_Category_Mapping_IsFeaturedProduct").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductCategory)))
-                .OnColumn(nameof(ProductCategory.IsFeaturedProduct)).Ascending()
+            Create.Index("IX_TvChannel_Category_Mapping_IsFeaturedTvChannel").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelCategory)))
+                .OnColumn(nameof(TvChannelCategory.IsFeaturedTvChannel)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_ProductAttributeValue_ProductAttributeMappingId_DisplayOrder").OnTable(nameof(ProductAttributeValue))
-                .OnColumn(nameof(ProductAttributeValue.ProductAttributeMappingId)).Ascending()
-                .OnColumn(nameof(ProductAttributeValue.DisplayOrder)).Ascending()
+            Create.Index("IX_TvChannelAttributeValue_TvChannelAttributeMappingId_DisplayOrder").OnTable(nameof(TvChannelAttributeValue))
+                .OnColumn(nameof(TvChannelAttributeValue.TvChannelAttributeMappingId)).Ascending()
+                .OnColumn(nameof(TvChannelAttributeValue.DisplayOrder)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_PMM_Product_and_Manufacturer").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductManufacturer)))
-                .OnColumn(nameof(ProductManufacturer.ManufacturerId)).Ascending()
-                .OnColumn(nameof(ProductManufacturer.ProductId)).Ascending()
+            Create.Index("IX_PMM_TvChannel_and_Manufacturer").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelManufacturer)))
+                .OnColumn(nameof(TvChannelManufacturer.ManufacturerId)).Ascending()
+                .OnColumn(nameof(TvChannelManufacturer.TvChannelId)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_PMM_ProductId_Extended").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductManufacturer)))
-                .OnColumn(nameof(ProductManufacturer.ProductId)).Ascending()
-                .OnColumn(nameof(ProductManufacturer.IsFeaturedProduct)).Ascending()
+            Create.Index("IX_PMM_TvChannelId_Extended").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelManufacturer)))
+                .OnColumn(nameof(TvChannelManufacturer.TvChannelId)).Ascending()
+                .OnColumn(nameof(TvChannelManufacturer.IsFeaturedTvChannel)).Ascending()
                 .WithOptions().NonClustered()
-                .Include(nameof(ProductManufacturer.ManufacturerId));
+                .Include(nameof(TvChannelManufacturer.ManufacturerId));
 
-            Create.Index("IX_PCM_ProductId_Extended").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductCategory)))
-                .OnColumn(nameof(ProductCategory.ProductId)).Ascending()
-                .OnColumn(nameof(ProductCategory.IsFeaturedProduct)).Ascending()
+            Create.Index("IX_PCM_TvChannelId_Extended").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelCategory)))
+                .OnColumn(nameof(TvChannelCategory.TvChannelId)).Ascending()
+                .OnColumn(nameof(TvChannelCategory.IsFeaturedTvChannel)).Ascending()
                 .WithOptions().NonClustered()
-                .Include(nameof(ProductCategory.CategoryId));
+                .Include(nameof(TvChannelCategory.CategoryId));
 
-            Create.Index("IX_PCM_Product_and_Category").OnTable(NameCompatibilityManager.GetTableName(typeof(ProductCategory)))
-                .OnColumn(nameof(ProductCategory.CategoryId)).Ascending()
-                .OnColumn(nameof(ProductCategory.ProductId)).Ascending()
+            Create.Index("IX_PCM_TvChannel_and_Category").OnTable(NameCompatibilityManager.GetTableName(typeof(TvChannelCategory)))
+                .OnColumn(nameof(TvChannelCategory.CategoryId)).Ascending()
+                .OnColumn(nameof(TvChannelCategory.TvChannelId)).Ascending()
                 .WithOptions().NonClustered();
 
             Create.Index("IX_Order_CreatedOnUtc").OnTable(nameof(Order))
@@ -203,13 +203,13 @@ namespace TvProgViewer.Data.Migrations.Installation
                 .OnColumn(nameof(Language.DisplayOrder)).Ascending()
                 .WithOptions().NonClustered();
 
-            Create.Index("IX_GetLowStockProducts").OnTable(nameof(Product))
-                .OnColumn(nameof(Product.Deleted)).Ascending()
-                .OnColumn(nameof(Product.VendorId)).Ascending()
-                .OnColumn(nameof(Product.ProductTypeId)).Ascending()
-                .OnColumn(nameof(Product.ManageInventoryMethodId)).Ascending()
-                .OnColumn(nameof(Product.MinStockQuantity)).Ascending()
-                .OnColumn(nameof(Product.UseMultipleWarehouses)).Ascending()
+            Create.Index("IX_GetLowStockTvChannels").OnTable(nameof(TvChannel))
+                .OnColumn(nameof(TvChannel.Deleted)).Ascending()
+                .OnColumn(nameof(TvChannel.VendorId)).Ascending()
+                .OnColumn(nameof(TvChannel.TvChannelTypeId)).Ascending()
+                .OnColumn(nameof(TvChannel.ManageInventoryMethodId)).Ascending()
+                .OnColumn(nameof(TvChannel.MinStockQuantity)).Ascending()
+                .OnColumn(nameof(TvChannel.UseMultipleWarehouses)).Ascending()
                 .WithOptions().NonClustered();
 
             Create.Index("IX_GenericAttribute_EntityId_and_KeyGroup").OnTable(nameof(GenericAttribute))

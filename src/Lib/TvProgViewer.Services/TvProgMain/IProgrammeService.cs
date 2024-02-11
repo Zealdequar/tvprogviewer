@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TvProgViewer.Core.Domain.TvProgMain;
+using TvProgViewer.Data.TvProgMain;
 using TvProgViewer.Data.TvProgMain.ProgObjs;
 
 namespace TvProgViewer.Services.TvProgMain
@@ -47,6 +48,14 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="TypeProgId">Идентификатор тип программы</param>
         /// <returns></returns>
         public Task<ProgPeriod> GetSystemProgrammePeriodAsync(int typeProgId);
+
+
+        /// <summary>
+        /// Получение дней доступной программы
+        /// </summary>
+        /// <param name="typeProg">Идентификатор типа программы</param>
+        /// <returns>Список дней</returns>
+        public Task<List<DaysItem>> GetDaysAsync(int typeProg);
 
         /// <summary>
         /// Получение категорий телепередач

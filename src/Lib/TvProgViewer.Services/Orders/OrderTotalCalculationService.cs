@@ -38,7 +38,7 @@ namespace TvProgViewer.Services.Orders
         private readonly IOrderService _orderService;
         private readonly IPaymentService _paymentService;
         private readonly IPriceCalculationService _priceCalculationService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShippingPluginManager _shippingPluginManager;
         private readonly IShippingService _shippingService;
@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Orders
             IOrderService orderService,
             IPaymentService paymentService,
             IPriceCalculationService priceCalculationService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IRewardPointService rewardPointService,
             IShippingPluginManager shippingPluginManager,
             IShippingService shippingService,
@@ -88,7 +88,7 @@ namespace TvProgViewer.Services.Orders
             _orderService = orderService;
             _paymentService = paymentService;
             _priceCalculationService = priceCalculationService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _rewardPointService = rewardPointService;
             _shippingPluginManager = shippingPluginManager;
             _shippingService = shippingService;
@@ -727,7 +727,7 @@ namespace TvProgViewer.Services.Orders
             if (await _shoppingCartService.ShoppingCartIsRecurringAsync(cart))
                 return resultTemp;
 
-            //we don't apply gift cards for recurring products
+            //we don't apply gift cards for recurring tvchannels
             var giftCards = await _giftCardService.GetActiveGiftCardsAppliedByUserAsync(user);
             if (giftCards == null)
                 return resultTemp;
@@ -840,10 +840,10 @@ namespace TvProgViewer.Services.Orders
             foreach (var shoppingCartItem in cart)
             {
                 var sciSubTotal = (await _shoppingCartService.GetSubTotalAsync(shoppingCartItem, true)).subTotal;
-                var product = await _productService.GetProductByIdAsync(shoppingCartItem.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
 
-                var (sciExclTax, taxRate) = await _taxService.GetProductPriceAsync(product, sciSubTotal, false, user);
-                var (sciInclTax, _) = await _taxService.GetProductPriceAsync(product, sciSubTotal, true, user);
+                var (sciExclTax, taxRate) = await _taxService.GetTvChannelPriceAsync(tvchannel, sciSubTotal, false, user);
+                var (sciInclTax, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, sciSubTotal, true, user);
                 
                 subTotalWithoutDiscountExclTax += sciExclTax;
                 subTotalWithoutDiscountInclTax += sciInclTax;
@@ -997,7 +997,7 @@ namespace TvProgViewer.Services.Orders
             if (user != null && (await _userService.GetUserRolesAsync(user)).Any(role => role.FreeShipping))
                 return true;
 
-            //check whether all shopping cart items and their associated products marked as free shipping
+            //check whether all shopping cart items and their associated tvchannels marked as free shipping
             if (await cart.AllAwaitAsync(async shoppingCartItem => await _shippingService.IsFreeShippingAsync(shoppingCartItem)))
                 return true;
 

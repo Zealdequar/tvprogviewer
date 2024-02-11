@@ -43,9 +43,9 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IManufacturerService _manufacturerService;
         private readonly ITvProgUrlHelper _nopUrlHelper;
         private readonly IPermissionService _permissionService;
-        private readonly IProductModelFactory _productModelFactory;
-        private readonly IProductService _productService;
-        private readonly IProductTagService _productTagService;
+        private readonly ITvChannelModelFactory _tvchannelModelFactory;
+        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelTagService _tvchannelTagService;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IUrlRecordService _urlRecordService;
@@ -71,9 +71,9 @@ namespace TvProgViewer.WebUI.Controllers
             IManufacturerService manufacturerService,
             ITvProgUrlHelper nopUrlHelper,
             IPermissionService permissionService,
-            IProductModelFactory productModelFactory,
-            IProductService productService,
-            IProductTagService productTagService,
+            ITvChannelModelFactory tvchannelModelFactory,
+            ITvChannelService tvchannelService,
+            ITvChannelTagService tvchannelTagService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IUrlRecordService urlRecordService,
@@ -95,9 +95,9 @@ namespace TvProgViewer.WebUI.Controllers
             _manufacturerService = manufacturerService;
             _nopUrlHelper = nopUrlHelper;
             _permissionService = permissionService;
-            _productModelFactory = productModelFactory;
-            _productService = productService;
-            _productTagService = productTagService;
+            _tvchannelModelFactory = tvchannelModelFactory;
+            _tvchannelService = tvchannelService;
+            _tvchannelTagService = tvchannelTagService;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
             _urlRecordService = urlRecordService;
@@ -114,7 +114,7 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region Categories
 
-        public virtual async Task<IActionResult> Category(int categoryId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> Category(int categoryId, CatalogTvChannelsCommand command)
         {
             var category = await _categoryService.GetCategoryByIdAsync(categoryId);
 
@@ -147,16 +147,16 @@ namespace TvProgViewer.WebUI.Controllers
 
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> GetCategoryProducts(int categoryId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> GetCategoryTvChannels(int categoryId, CatalogTvChannelsCommand command)
         {
             var category = await _categoryService.GetCategoryByIdAsync(categoryId);
 
             if (!await CheckCategoryAvailabilityAsync(category))
                 return NotFound();
 
-            var model = await _catalogModelFactory.PrepareCategoryProductsModelAsync(category, command);
+            var model = await _catalogModelFactory.PrepareCategoryTvChannelsModelAsync(category, command);
 
-            return PartialView("_ProductsInGridOrLines", model);
+            return PartialView("_TvChannelsInGridOrLines", model);
         }
 
         [HttpPost]
@@ -179,7 +179,7 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region Manufacturers
 
-        public virtual async Task<IActionResult> Manufacturer(int manufacturerId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> Manufacturer(int manufacturerId, CatalogTvChannelsCommand command)
         {
             var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(manufacturerId);
 
@@ -213,16 +213,16 @@ namespace TvProgViewer.WebUI.Controllers
 
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> GetManufacturerProducts(int manufacturerId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> GetManufacturerTvChannels(int manufacturerId, CatalogTvChannelsCommand command)
         {
             var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(manufacturerId);
 
             if (!await CheckManufacturerAvailabilityAsync(manufacturer))
                 return NotFound();
 
-            var model = await _catalogModelFactory.PrepareManufacturerProductsModelAsync(manufacturer, command);
+            var model = await _catalogModelFactory.PrepareManufacturerTvChannelsModelAsync(manufacturer, command);
 
-            return PartialView("_ProductsInGridOrLines", model);
+            return PartialView("_TvChannelsInGridOrLines", model);
         }
 
         public virtual async Task<IActionResult> ManufacturerAll()
@@ -236,7 +236,7 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region Vendors
 
-        public virtual async Task<IActionResult> Vendor(int vendorId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> Vendor(int vendorId, CatalogTvChannelsCommand command)
         {
             var vendor = await _vendorService.GetVendorByIdAsync(vendorId);
 
@@ -263,16 +263,16 @@ namespace TvProgViewer.WebUI.Controllers
 
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> GetVendorProducts(int vendorId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> GetVendorTvChannels(int vendorId, CatalogTvChannelsCommand command)
         {
             var vendor = await _vendorService.GetVendorByIdAsync(vendorId);
 
             if (!await CheckVendorAvailabilityAsync(vendor))
                 return NotFound();
 
-            var model = await _catalogModelFactory.PrepareVendorProductsModelAsync(vendor, command);
+            var model = await _catalogModelFactory.PrepareVendorTvChannelsModelAsync(vendor, command);
 
-            return PartialView("_ProductsInGridOrLines", model);
+            return PartialView("_TvChannelsInGridOrLines", model);
         }
 
         public virtual async Task<IActionResult> VendorAll()
@@ -287,51 +287,51 @@ namespace TvProgViewer.WebUI.Controllers
 
         #endregion
 
-        #region Product tags
+        #region TvChannel tags
 
-        public virtual async Task<IActionResult> ProductsByTag(int productTagId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> TvChannelsByTag(int tvchannelTagId, CatalogTvChannelsCommand command)
         {
-            var productTag = await _productTagService.GetProductTagByIdAsync(productTagId);
-            if (productTag == null)
+            var tvchannelTag = await _tvchannelTagService.GetTvChannelTagByIdAsync(tvchannelTagId);
+            if (tvchannelTag == null)
                 return InvokeHttp404();
 
-            var model = await _catalogModelFactory.PrepareProductsByTagModelAsync(productTag, command);
+            var model = await _catalogModelFactory.PrepareTvChannelsByTagModelAsync(tvchannelTag, command);
 
             return View(model);
         }
 
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> GetTagProducts(int tagId, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> GetTagTvChannels(int tagId, CatalogTvChannelsCommand command)
         {
-            var productTag = await _productTagService.GetProductTagByIdAsync(tagId);
-            if (productTag == null)
+            var tvchannelTag = await _tvchannelTagService.GetTvChannelTagByIdAsync(tagId);
+            if (tvchannelTag == null)
                 return NotFound();
 
-            var model = await _catalogModelFactory.PrepareTagProductsModelAsync(productTag, command);
+            var model = await _catalogModelFactory.PrepareTagTvChannelsModelAsync(tvchannelTag, command);
 
-            return PartialView("_ProductsInGridOrLines", model);
+            return PartialView("_TvChannelsInGridOrLines", model);
         }
 
-        public virtual async Task<IActionResult> ProductTagsAll()
+        public virtual async Task<IActionResult> TvChannelTagsAll()
         {
-            var model = await _catalogModelFactory.PreparePopularProductTagsModelAsync();
+            var model = await _catalogModelFactory.PreparePopularTvChannelTagsModelAsync();
 
             return View(model);
         }
 
         #endregion
 
-        #region New (recently added) products page
+        #region New (recently added) tvchannels page
 
-        public virtual async Task<IActionResult> NewProducts(CatalogProductsCommand command)
+        public virtual async Task<IActionResult> NewTvChannels(CatalogTvChannelsCommand command)
         {
-            if (!_catalogSettings.NewProductsEnabled)
+            if (!_catalogSettings.NewTvChannelsEnabled)
                 return InvokeHttp404();
 
-            var model = new NewProductsModel
+            var model = new NewTvChannelsModel
             {
-                CatalogProductsModel = await _catalogModelFactory.PrepareNewProductsModelAsync(command)
+                CatalogTvChannelsModel = await _catalogModelFactory.PrepareNewTvChannelsModelAsync(command)
             };
 
             return View(model);
@@ -339,47 +339,47 @@ namespace TvProgViewer.WebUI.Controllers
 
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> GetNewProducts(CatalogProductsCommand command)
+        public virtual async Task<IActionResult> GetNewTvChannels(CatalogTvChannelsCommand command)
         {
-            if (!_catalogSettings.NewProductsEnabled)
+            if (!_catalogSettings.NewTvChannelsEnabled)
                 return NotFound();
 
-            var model = await _catalogModelFactory.PrepareNewProductsModelAsync(command);
+            var model = await _catalogModelFactory.PrepareNewTvChannelsModelAsync(command);
 
-            return PartialView("_ProductsInGridOrLines", model);
+            return PartialView("_TvChannelsInGridOrLines", model);
         }
 
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> NewProductsRss()
+        public virtual async Task<IActionResult> NewTvChannelsRss()
         {
             var store = await _storeContext.GetCurrentStoreAsync();
             var feed = new RssFeed(
-                $"{await _localizationService.GetLocalizedAsync(store, x => x.Name)}: New products",
-                "Information about products",
+                $"{await _localizationService.GetLocalizedAsync(store, x => x.Name)}: New tvchannels",
+                "Information about tvchannels",
                 new Uri(_webHelper.GetStoreLocation()),
                 DateTime.UtcNow);
 
-            if (!_catalogSettings.NewProductsEnabled)
+            if (!_catalogSettings.NewTvChannelsEnabled)
                 return new RssActionResult(feed, _webHelper.GetThisPageUrl(false));
 
             var items = new List<RssItem>();
 
             var storeId = store.Id;
-            var products = await _productService.GetProductsMarkedAsNewAsync(storeId: storeId);
+            var tvchannels = await _tvchannelService.GetTvChannelsMarkedAsNewAsync(storeId: storeId);
 
-            foreach (var product in products)
+            foreach (var tvchannel in tvchannels)
             {
-                var seName = await _urlRecordService.GetSeNameAsync(product);
-                var productUrl = await _nopUrlHelper.RouteGenericUrlAsync<Product>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol());
-                var productName = await _localizationService.GetLocalizedAsync(product, x => x.Name);
-                var productDescription = await _localizationService.GetLocalizedAsync(product, x => x.ShortDescription);
-                var item = new RssItem(productName, productDescription, new Uri(productUrl), $"urn:store:{store.Id}:newProducts:product:{product.Id}", product.CreatedOnUtc);
+                var seName = await _urlRecordService.GetSeNameAsync(tvchannel);
+                var tvchannelUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol());
+                var tvchannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name);
+                var tvchannelDescription = await _localizationService.GetLocalizedAsync(tvchannel, x => x.ShortDescription);
+                var item = new RssItem(tvchannelName, tvchannelDescription, new Uri(tvchannelUrl), $"urn:store:{store.Id}:newTvChannels:tvchannel:{tvchannel.Id}", tvchannel.CreatedOnUtc);
                 items.Add(item);
                 //uncomment below if you want to add RSS enclosure for pictures
-                //var picture = _pictureService.GetPicturesByProductId(product.Id, 1).FirstOrDefault();
+                //var picture = _pictureService.GetPicturesByTvChannelId(tvchannel.Id, 1).FirstOrDefault();
                 //if (picture != null)
                 //{
-                //    var imageUrl = _pictureService.GetPictureUrl(picture, _mediaSettings.ProductDetailsPictureSize);
+                //    var imageUrl = _pictureService.GetPictureUrl(picture, _mediaSettings.TvChannelDetailsPictureSize);
                 //    item.ElementExtensions.Add(new XElement("enclosure", new XAttribute("type", "image/jpeg"), new XAttribute("url", imageUrl), new XAttribute("length", picture.PictureBinary.Length)));
                 //}
 
@@ -392,7 +392,7 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region Searching
 
-        public virtual async Task<IActionResult> Search(SearchModel model, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> Search(SearchModel model, CatalogTvChannelsCommand command)
         {
             var store = await _storeContext.GetCurrentStoreAsync();
 
@@ -418,29 +418,29 @@ namespace TvProgViewer.WebUI.Controllers
 
             term = term.Trim();
 
-            if (string.IsNullOrWhiteSpace(term) || term.Length < _catalogSettings.ProductSearchTermMinimumLength)
+            if (string.IsNullOrWhiteSpace(term) || term.Length < _catalogSettings.TvChannelSearchTermMinimumLength)
                 return Content("");
 
-            //products
-            var productNumber = _catalogSettings.ProductSearchAutoCompleteNumberOfProducts > 0 ?
-                _catalogSettings.ProductSearchAutoCompleteNumberOfProducts : 10;
+            //tvchannels
+            var tvchannelNumber = _catalogSettings.TvChannelSearchAutoCompleteNumberOfTvChannels > 0 ?
+                _catalogSettings.TvChannelSearchAutoCompleteNumberOfTvChannels : 10;
             var store = await _storeContext.GetCurrentStoreAsync();
-            var products = await _productService.SearchProductsAsync(0,
+            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0,
                 storeId: store.Id,
                 keywords: term,
                 languageId: (await _workContext.GetWorkingLanguageAsync()).Id,
                 visibleIndividuallyOnly: true,
-                pageSize: productNumber);
+                pageSize: tvchannelNumber);
 
-            var showLinkToResultSearch = _catalogSettings.ShowLinkToAllResultInSearchAutoComplete && (products.TotalCount > productNumber);
+            var showLinkToResultSearch = _catalogSettings.ShowLinkToAllResultInSearchAutoComplete && (tvchannels.TotalCount > tvchannelNumber);
 
-            var models = (await _productModelFactory.PrepareProductOverviewModelsAsync(products, false, _catalogSettings.ShowProductImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize)).ToList();
+            var models = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels, false, _catalogSettings.ShowTvChannelImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize)).ToList();
             var result = (from p in models
                           select new
                           {
                               label = p.Name,
-                              producturl = Url.RouteUrl<Product>(new { SeName = p.SeName }),
-                              productpictureurl = p.PictureModels.FirstOrDefault()?.ImageUrl,
+                              tvchannelurl = Url.RouteUrl<TvChannel>(new { SeName = p.SeName }),
+                              tvchannelpictureurl = p.PictureModels.FirstOrDefault()?.ImageUrl,
                               showlinktoresultsearch = showLinkToResultSearch
                           })
                 .ToList();
@@ -449,14 +449,14 @@ namespace TvProgViewer.WebUI.Controllers
 
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> SearchProducts(SearchModel searchModel, CatalogProductsCommand command)
+        public virtual async Task<IActionResult> SearchTvChannels(SearchModel searchModel, CatalogTvChannelsCommand command)
         {
             if (searchModel == null)
                 searchModel = new SearchModel();
 
-            var model = await _catalogModelFactory.PrepareSearchProductsModelAsync(searchModel, command);
+            var model = await _catalogModelFactory.PrepareSearchTvChannelsModelAsync(searchModel, command);
 
-            return PartialView("_ProductsInGridOrLines", model);
+            return PartialView("_TvChannelsInGridOrLines", model);
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]

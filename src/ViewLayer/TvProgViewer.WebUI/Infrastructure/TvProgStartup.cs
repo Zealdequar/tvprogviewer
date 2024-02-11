@@ -64,9 +64,9 @@ namespace TvProgViewer.WebUI.Infrastructure
             services.AddScoped<IPaymentModelFactory, PaymentModelFactory>();
             services.AddScoped<IPluginModelFactory, PluginModelFactory>();
             services.AddScoped<IPollModelFactory, PollModelFactory>();
-            services.AddScoped<IProductModelFactory, ProductModelFactory>();
-            services.AddScoped<IProductAttributeModelFactory, ProductAttributeModelFactory>();
-            services.AddScoped<IProductReviewModelFactory, ProductReviewModelFactory>();
+            services.AddScoped<ITvChannelModelFactory, TvChannelModelFactory>();
+            services.AddScoped<ITvChannelAttributeModelFactory, TvChannelAttributeModelFactory>();
+            services.AddScoped<ITvChannelReviewModelFactory, TvChannelReviewModelFactory>();
             services.AddScoped<IReportModelFactory, ReportModelFactory>();
             services.AddScoped<IQueuedEmailModelFactory, QueuedEmailModelFactory>();
             services.AddScoped<IRecurringPaymentModelFactory, RecurringPaymentModelFactory>();
@@ -101,7 +101,7 @@ namespace TvProgViewer.WebUI.Infrastructure
             services.AddScoped<Factories.IOrderModelFactory, Factories.OrderModelFactory>();
             services.AddScoped<Factories.IPollModelFactory, Factories.PollModelFactory>();
             services.AddScoped<Factories.IPrivateMessagesModelFactory, Factories.PrivateMessagesModelFactory>();
-            services.AddScoped<Factories.IProductModelFactory, Factories.ProductModelFactory>();
+            services.AddScoped<Factories.ITvChannelModelFactory, Factories.TvChannelModelFactory>();
             services.AddScoped<Factories.IProfileModelFactory, Factories.ProfileModelFactory>();
             services.AddScoped<Factories.IReturnRequestModelFactory, Factories.ReturnRequestModelFactory>();
             services.AddScoped<Factories.IShoppingCartModelFactory, Factories.ShoppingCartModelFactory>();

@@ -122,7 +122,7 @@ namespace TvProgViewer.WebUI.Controllers
                     downloadId = download.Id;
             }
 
-            //returnable products
+            //returnable tvchannels
             var orderItems = await _orderService.GetOrderItemsAsync(order.Id, isNotReturnable: false);
             foreach (var orderItem in orderItems)
             {

@@ -6,7 +6,7 @@ using TvProgViewer.Data.Mapping;
 
 namespace TvProgViewer.Data.Migrations.UpgradeTo460
 {
-    [TvProgMigration("2022-03-16 00:00:00", "Product video", MigrationProcessType.Update)]
+    [TvProgMigration("2022-03-16 00:00:00", "TvChannel video", MigrationProcessType.Update)]
     public class VideoMigration : Migration
     {
         /// <summary>
@@ -18,9 +18,9 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo460
             {
                 Create.TableFor<Video>();
             }
-            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(ProductVideo))).Exists())
+            if (!Schema.Table(NameCompatibilityManager.GetTableName(typeof(TvChannelVideo))).Exists())
             {
-                Create.TableFor<ProductVideo>();
+                Create.TableFor<TvChannelVideo>();
             }
 
         }

@@ -21,7 +21,7 @@ namespace TvProgViewer.WebUI.Models.ShoppingCart
 
         public bool ShowSku { get; set; }
 
-        public bool ShowProductImages { get; set; }
+        public bool ShowTvChannelImages { get; set; }
 
         public bool IsEditable { get; set; }
 
@@ -48,11 +48,11 @@ namespace TvProgViewer.WebUI.Models.ShoppingCart
 
             public PictureModel Picture {get;set;}
 
-            public int ProductId { get; set; }
+            public int TvChannelId { get; set; }
 
-            public string ProductName { get; set; }
+            public string TvChannelName { get; set; }
 
-            public string ProductSeName { get; set; }
+            public string TvChannelSeName { get; set; }
 
             public string UnitPrice { get; set; }
             public decimal UnitPriceValue { get; set; }

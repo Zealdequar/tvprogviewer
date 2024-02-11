@@ -14,22 +14,22 @@
     <tvprog-nested-setting asp-for="MiniShoppingCartEnabled">
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="MiniShoppingCartProductNumber_OverrideForStore" asp-input="MiniShoppingCartProductNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="MiniShoppingCartProductNumber" />
+                <tvprog-override-store-checkbox asp-for="MiniShoppingCartTvChannelNumber_OverrideForStore" asp-input="MiniShoppingCartTvChannelNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="MiniShoppingCartTvChannelNumber" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="MiniShoppingCartProductNumber" />
-                <span asp-validation-for="MiniShoppingCartProductNumber"></span>
+                <tvprog-editor asp-for="MiniShoppingCartTvChannelNumber" />
+                <span asp-validation-for="MiniShoppingCartTvChannelNumber"></span>
             </div>
         </div>
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ShowProductImagesInMiniShoppingCart_OverrideForStore" asp-input="ShowProductImagesInMiniShoppingCart" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ShowProductImagesInMiniShoppingCart" />
+                <tvprog-override-store-checkbox asp-for="ShowTvChannelImagesInMiniShoppingCart_OverrideForStore" asp-input="ShowTvChannelImagesInMiniShoppingCart" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="ShowTvChannelImagesInMiniShoppingCart" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ShowProductImagesInMiniShoppingCart" />
-                <span asp-validation-for="ShowProductImagesInMiniShoppingCart"></span>
+                <tvprog-editor asp-for="ShowTvChannelImagesInMiniShoppingCart" />
+                <span asp-validation-for="ShowTvChannelImagesInMiniShoppingCart"></span>
             </div>
         </div>
     </tvprog-nested-setting>

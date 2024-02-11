@@ -8,14 +8,14 @@ namespace TvProgViewer.Core.Domain.Orders
     public partial class ShoppingCartSettings : ISettings
     {
         /// <summary>
-        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a product to the cart/wishlist
+        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a tvchannel to the cart/wishlist
         /// </summary>
-        public bool DisplayCartAfterAddingProduct { get; set; }
+        public bool DisplayCartAfterAddingTvChannel { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a product to the cart/wishlist
+        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a tvchannel to the cart/wishlist
         /// </summary>
-        public bool DisplayWishlistAfterAddingProduct { get; set; }
+        public bool DisplayWishlistAfterAddingTvChannel { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating maximum number of items in the shopping cart
@@ -28,7 +28,7 @@ namespace TvProgViewer.Core.Domain.Orders
         public int MaximumWishlistItems { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show product images in the mini-shopping cart block
+        /// Gets or sets a value indicating whether to show tvchannel images in the mini-shopping cart block
         /// </summary>
         public bool AllowOutOfStockItemsToBeAddedToWishlist { get; set; }
 
@@ -43,14 +43,14 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool CartsSharedBetweenStores { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show product image on shopping cart page
+        /// Gets or sets a value indicating whether to show tvchannel image on shopping cart page
         /// </summary>
-        public bool ShowProductImagesOnShoppingCart { get; set; }
+        public bool ShowTvChannelImagesOnShoppingCart { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show product image on wishlist page
+        /// Gets or sets a value indicating whether to show tvchannel image on wishlist page
         /// </summary>
-        public bool ShowProductImagesOnWishList { get; set; }
+        public bool ShowTvChannelImagesOnWishList { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to show discount box on shopping cart page
@@ -82,13 +82,13 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool MiniShoppingCartEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show product images in the mini-shopping cart block
+        /// Gets or sets a value indicating whether to show tvchannel images in the mini-shopping cart block
         /// </summary>
-        public bool ShowProductImagesInMiniShoppingCart { get; set; }
+        public bool ShowTvChannelImagesInMiniShoppingCart { get; set; }
 
-        /// <summary>Gets or sets a maximum number of products which can be displayed in the mini-shopping cart block
+        /// <summary>Gets or sets a maximum number of tvchannels which can be displayed in the mini-shopping cart block
         /// </summary>
-        public int MiniShoppingCartProductNumber { get; set; }
+        public int MiniShoppingCartTvChannelNumber { get; set; }
 
         //Round is already an issue. 
         //When enabled it can cause one issue: https://tvprogviewer.ru/boards/topic/7679/vattax-rounding-error-important-fix
@@ -100,18 +100,18 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool RoundPricesDuringCalculation { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a store owner will be able to offer special prices when users buy bigger amounts of a particular product.
-        /// For example, a user could have two shopping cart items for the same products (different product attributes).
+        /// Gets or sets a value indicating whether a store owner will be able to offer special prices when users buy bigger amounts of a particular tvchannel.
+        /// For example, a user could have two shopping cart items for the same tvchannels (different tvchannel attributes).
         /// </summary>
         public bool GroupTierPricesForDistinctShoppingCartItems { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a user will be able to edit products in the cart
+        /// Gets or sets a value indicating whether a user will be able to edit tvchannels in the cart
         /// </summary>
         public bool AllowCartItemEditing { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a user will see quantity of attribute values associated to products (when qty > 1)
+        /// Gets or sets a value indicating whether a user will see quantity of attribute values associated to tvchannels (when qty > 1)
         /// </summary>
         public bool RenderAssociatedAttributeValueQuantity { get; set; }
     }

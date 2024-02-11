@@ -33,10 +33,10 @@ namespace TvProgViewer.Services.Orders
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<OrderItem> _orderItemRepository;
         private readonly IRepository<OrderNote> _orderNoteRepository;
-        private readonly IRepository<Product> _productRepository;
-        private readonly IRepository<ProductCategory> _productCategoryRepository;
-        private readonly IRepository<ProductManufacturer> _productManufacturerRepository;
-        private readonly IRepository<ProductWarehouseInventory> _productWarehouseInventoryRepository;
+        private readonly IRepository<TvChannel> _tvchannelRepository;
+        private readonly IRepository<TvChannelCategory> _tvchannelCategoryRepository;
+        private readonly IRepository<TvChannelManufacturer> _tvchannelManufacturerRepository;
+        private readonly IRepository<TvChannelWarehouseInventory> _tvchannelWarehouseInventoryRepository;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IWorkContext _workContext;
 
@@ -53,10 +53,10 @@ namespace TvProgViewer.Services.Orders
             IRepository<Order> orderRepository,
             IRepository<OrderItem> orderItemRepository,
             IRepository<OrderNote> orderNoteRepository,
-            IRepository<Product> productRepository,
-            IRepository<ProductCategory> productCategoryRepository,
-            IRepository<ProductManufacturer> productManufacturerRepository,
-            IRepository<ProductWarehouseInventory> productWarehouseInventoryRepository,
+            IRepository<TvChannel> tvchannelRepository,
+            IRepository<TvChannelCategory> tvchannelCategoryRepository,
+            IRepository<TvChannelManufacturer> tvchannelManufacturerRepository,
+            IRepository<TvChannelWarehouseInventory> tvchannelWarehouseInventoryRepository,
             IStoreMappingService storeMappingService,
             IWorkContext workContext)
         {
@@ -68,10 +68,10 @@ namespace TvProgViewer.Services.Orders
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _orderNoteRepository = orderNoteRepository;
-            _productRepository = productRepository;
-            _productCategoryRepository = productCategoryRepository;
-            _productManufacturerRepository = productManufacturerRepository;
-            _productWarehouseInventoryRepository = productWarehouseInventoryRepository;
+            _tvchannelRepository = tvchannelRepository;
+            _tvchannelCategoryRepository = tvchannelCategoryRepository;
+            _tvchannelManufacturerRepository = tvchannelManufacturerRepository;
+            _tvchannelWarehouseInventoryRepository = tvchannelWarehouseInventoryRepository;
             _storeMappingService = storeMappingService;
             _workContext = workContext;
         }
@@ -122,7 +122,7 @@ namespace TvProgViewer.Services.Orders
 
             var orderItems = from orderItem in _orderItemRepository.Table
                     join o in _orderRepository.Table on orderItem.OrderId equals o.Id
-                    join p in _productRepository.Table on orderItem.ProductId equals p.Id
+                    join p in _tvchannelRepository.Table on orderItem.TvChannelId equals p.Id
                     join oba in _addressRepository.Table on o.BillingAddressId equals oba.Id
                     where (storeId == 0 || storeId == o.StoreId) &&
                         (!createdFromUtc.HasValue || createdFromUtc.Value <= o.CreatedOnUtc) &&
@@ -139,8 +139,8 @@ namespace TvProgViewer.Services.Orders
             if (categoryId > 0)
             {
                 orderItems = from orderItem in orderItems
-                    join p in _productRepository.Table on orderItem.ProductId equals p.Id
-                    join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                    join p in _tvchannelRepository.Table on orderItem.TvChannelId equals p.Id
+                    join pc in _tvchannelCategoryRepository.Table on p.Id equals pc.TvChannelId
                     into p_pc
                     from pc in p_pc.DefaultIfEmpty()
                     where pc.CategoryId == categoryId
@@ -150,8 +150,8 @@ namespace TvProgViewer.Services.Orders
             if (manufacturerId > 0)
             {
                 orderItems = from orderItem in orderItems
-                    join p in _productRepository.Table on orderItem.ProductId equals p.Id
-                    join pm in _productManufacturerRepository.Table on p.Id equals pm.ProductId
+                    join p in _tvchannelRepository.Table on orderItem.TvChannelId equals p.Id
+                    join pm in _tvchannelManufacturerRepository.Table on p.Id equals pm.TvChannelId
                     into p_pm
                     from pm in p_pm.DefaultIfEmpty()
                     where pm.ManufacturerId == manufacturerId
@@ -235,7 +235,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="storeId">Store identifier; pass 0 to ignore this parameter</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore this parameter</param>
-        /// <param name="productId">Product identifier which was purchased in an order; 0 to load all orders</param>
+        /// <param name="tvchannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
         /// <param name="warehouseId">Warehouse identifier; pass 0 to ignore this parameter</param>
         /// <param name="billingCountryId">Billing country identifier; 0 to load all orders</param>
         /// <param name="orderId">Order identifier; pass 0 to ignore this parameter</param>
@@ -254,7 +254,7 @@ namespace TvProgViewer.Services.Orders
         /// The task result contains the result
         /// </returns>
         public virtual async Task<OrderAverageReportLine> GetOrderAverageReportLineAsync(int storeId = 0,
-            int vendorId = 0, int productId = 0, int warehouseId = 0, int billingCountryId = 0,
+            int vendorId = 0, int tvchannelId = 0, int warehouseId = 0, int billingCountryId = 0,
             int orderId = 0, string paymentMethodSystemName = null,
             List<int> osIds = null, List<int> psIds = null, List<int> ssIds = null,
             DateTime? startTimeUtc = null, DateTime? endTimeUtc = null,
@@ -272,18 +272,18 @@ namespace TvProgViewer.Services.Orders
             {
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    join p in _productRepository.Table on oi.ProductId equals p.Id
+                    join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
                     where p.VendorId == vendorId
                     select o;
 
                 query = query.Distinct();
             }
 
-            if (productId > 0)
+            if (tvchannelId > 0)
             {
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    where oi.ProductId == productId
+                    where oi.TvChannelId == tvchannelId
                     select o;
 
                 query = query.Distinct();
@@ -295,8 +295,8 @@ namespace TvProgViewer.Services.Orders
 
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    join p in _productRepository.Table on oi.ProductId equals p.Id
-                    join pwi in _productWarehouseInventoryRepository.Table on p.Id equals pwi.ProductId
+                    join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
+                    join pwi in _tvchannelWarehouseInventoryRepository.Table on p.Id equals pwi.TvChannelId
                     where
                         //"Use multiple warehouses" enabled
                         //we search in each warehouse
@@ -449,7 +449,7 @@ namespace TvProgViewer.Services.Orders
         /// Get sales summary report
         /// </summary>
         /// <param name="categoryId">Category identifier; 0 to load all records</param>
-        /// <param name="productId">Product identifier; 0 to load all records</param>
+        /// <param name="tvchannelId">TvChannel identifier; 0 to load all records</param>
         /// <param name="manufacturerId">Manufacturer identifier; 0 to load all records</param>
         /// <param name="storeId">Store identifier (orders placed in a specific store); 0 to load all records</param>
         /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
@@ -467,7 +467,7 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         public virtual async Task<IPagedList<SalesSummaryReportLine>> SalesSummaryReportAsync(
             int categoryId = 0,
-            int productId = 0,
+            int tvchannelId = 0,
             int manufacturerId = 0,
             int storeId = 0,
             int vendorId = 0,
@@ -512,8 +512,8 @@ namespace TvProgViewer.Services.Orders
             if (categoryId > 0)
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    join p in _productRepository.Table on oi.ProductId equals p.Id
-                    join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                    join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
+                    join pc in _tvchannelCategoryRepository.Table on p.Id equals pc.TvChannelId
                     where pc.CategoryId == categoryId
                     select o;
 
@@ -521,8 +521,8 @@ namespace TvProgViewer.Services.Orders
             if (manufacturerId > 0)
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    join p in _productRepository.Table on oi.ProductId equals p.Id
-                    join pm in _productManufacturerRepository.Table on p.Id equals pm.ProductId
+                    join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
+                    join pm in _tvchannelManufacturerRepository.Table on p.Id equals pm.TvChannelId
                     where pm.ManufacturerId == manufacturerId
                     select o;
 
@@ -534,11 +534,11 @@ namespace TvProgViewer.Services.Orders
                         billingCountryId <= 0 || oba.CountryId == billingCountryId
                     select o;
 
-            //filter by product
-            if (productId > 0)
+            //filter by tvchannel
+            if (tvchannelId > 0)
                 query = from o in query
                         join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                        where oi.ProductId == productId
+                        where oi.TvChannelId == tvchannelId
                         select o;
 
             //filter by store
@@ -549,7 +549,7 @@ namespace TvProgViewer.Services.Orders
             {
                 query = from o in query
                         join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                        join p in _productRepository.Table on oi.ProductId equals p.Id
+                        join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
                         where p.VendorId == vendorId
                         select o;
             }
@@ -573,7 +573,7 @@ namespace TvProgViewer.Services.Orders
                                           OrderTaxSum = result.Sum(o => o.OrderTax),
                                           OrderTotalSum = result.Sum(o => o.OrderTotal),
                                           OrderRefundedAmountSum = result.Sum(o => o.RefundedAmount),
-                                          OrderTotalCost = orderItems.Sum(oi => (decimal?)oi.OriginalProductCost * oi.Quantity)
+                                          OrderTotalCost = orderItems.Sum(oi => (decimal?)oi.OriginalTvChannelCost * oi.Quantity)
                                       },
                 GroupByOptions.Week => from oq in query
                                        group oq by oq.CreatedOnUtc.AddMinutes(utcOffsetInMinutes).AddDays(- (int)oq.CreatedOnUtc.AddMinutes(utcOffsetInMinutes).DayOfWeek).Date into result
@@ -588,7 +588,7 @@ namespace TvProgViewer.Services.Orders
                                            OrderTaxSum = result.Sum(o => o.OrderTax),
                                            OrderTotalSum = result.Sum(o => o.OrderTotal),
                                            OrderRefundedAmountSum = result.Sum(o => o.RefundedAmount),
-                                           OrderTotalCost = orderItems.Sum(oi => (decimal?)oi.OriginalProductCost * oi.Quantity)
+                                           OrderTotalCost = orderItems.Sum(oi => (decimal?)oi.OriginalTvChannelCost * oi.Quantity)
                                        },
                 GroupByOptions.Month => from oq in query
                                         group oq by oq.CreatedOnUtc.AddMinutes(utcOffsetInMinutes).AddDays(1 - oq.CreatedOnUtc.AddMinutes(utcOffsetInMinutes).Day).Date into result
@@ -603,7 +603,7 @@ namespace TvProgViewer.Services.Orders
                                             OrderTaxSum = result.Sum(o => o.OrderTax),
                                             OrderTotalSum = result.Sum(o => o.OrderTotal),
                                             OrderRefundedAmountSum = result.Sum(o => o.RefundedAmount),
-                                            OrderTotalCost = orderItems.Sum(oi => (decimal?)oi.OriginalProductCost * oi.Quantity)
+                                            OrderTotalCost = orderItems.Sum(oi => (decimal?)oi.OriginalTvChannelCost * oi.Quantity)
                                         },
                 _ => throw new ArgumentException("Wrong groupBy parameter", nameof(groupBy)),
             };
@@ -696,24 +696,24 @@ namespace TvProgViewer.Services.Orders
             var bestSellers = SearchOrderItems(categoryId, manufacturerId, storeId, vendorId, createdFromUtc, createdToUtc, os, ps, ss, billingCountryId, showHidden);
 
             var bsReport =
-                //group by products
+                //group by tvchannels
                 from orderItem in bestSellers
-                group orderItem by orderItem.ProductId into g
+                group orderItem by orderItem.TvChannelId into g
                 select new BestsellersReportLine
                 {
-                    ProductId = g.Key,
+                    TvChannelId = g.Key,
                     TotalAmount = g.Sum(x => x.PriceExclTax),
                     TotalQuantity = g.Sum(x => x.Quantity)
                 };
 
             bsReport = from item in bsReport
-                join p in _productRepository.Table on item.ProductId equals p.Id
+                join p in _tvchannelRepository.Table on item.TvChannelId equals p.Id
                 select new BestsellersReportLine
                 {
-                    ProductId = item.ProductId,
+                    TvChannelId = item.TvChannelId,
                     TotalAmount = item.TotalAmount,
                     TotalQuantity = item.TotalQuantity,
-                    ProductName = p.Name
+                    TvChannelName = p.Name
                 };
 
             bsReport = orderBy switch
@@ -764,33 +764,33 @@ namespace TvProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Gets a list of products (identifiers) purchased by other users who purchased a specified product
+        /// Gets a list of tvchannels (identifiers) purchased by other users who purchased a specified tvchannel
         /// </summary>
         /// <param name="storeId">Store identifier</param>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="recordsToReturn">Records to return</param>
-        /// <param name="visibleIndividuallyOnly">A values indicating whether to load only products marked as "visible individually"; "false" to load all records; "true" to load "visible individually" only</param>
+        /// <param name="visibleIndividuallyOnly">A values indicating whether to load only tvchannels marked as "visible individually"; "false" to load all records; "true" to load "visible individually" only</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the products
+        /// The task result contains the tvchannels
         /// </returns>
-        public virtual async Task<int[]> GetAlsoPurchasedProductsIdsAsync(int storeId, int productId,
+        public virtual async Task<int[]> GetAlsoPurchasedTvChannelsIdsAsync(int storeId, int tvchannelId,
             int recordsToReturn = 5, bool visibleIndividuallyOnly = true, bool showHidden = false)
         {
-            if (productId == 0)
-                throw new ArgumentException("Product ID is not specified");
+            if (tvchannelId == 0)
+                throw new ArgumentException("TvChannel ID is not specified");
 
-            //this inner query should retrieve all orders that contains a specified product ID
+            //this inner query should retrieve all orders that contains a specified tvchannel ID
             var query1 = from orderItem in _orderItemRepository.Table
-                         where orderItem.ProductId == productId
+                         where orderItem.TvChannelId == tvchannelId
                          select orderItem.OrderId;
 
             var query2 = from orderItem in _orderItemRepository.Table
-                         join p in _productRepository.Table on orderItem.ProductId equals p.Id
+                         join p in _tvchannelRepository.Table on orderItem.TvChannelId equals p.Id
                          join o in _orderRepository.Table on orderItem.OrderId equals o.Id
                          where query1.Contains(orderItem.OrderId) &&
-                         p.Id != productId &&
+                         p.Id != tvchannelId &&
                          (showHidden || p.Published) &&
                          !o.Deleted &&
                          (storeId == 0 || o.StoreId == storeId) &&
@@ -802,10 +802,10 @@ namespace TvProgViewer.Services.Orders
                          group orderItem_p by orderItem_p.p.Id into g
                          select new
                          {
-                             ProductId = g.Key,
-                             ProductsPurchased = g.Sum(x => x.orderItem.Quantity)
+                             TvChannelId = g.Key,
+                             TvChannelsPurchased = g.Sum(x => x.orderItem.Quantity)
                          };
-            query3 = query3.OrderByDescending(x => x.ProductsPurchased);
+            query3 = query3.OrderByDescending(x => x.TvChannelsPurchased);
 
             if (recordsToReturn > 0)
                 query3 = query3.Take(recordsToReturn);
@@ -814,16 +814,16 @@ namespace TvProgViewer.Services.Orders
 
             var ids = new List<int>();
             foreach (var reportLine in report)
-                ids.Add(reportLine.ProductId);
+                ids.Add(reportLine.TvChannelId);
 
             return ids.ToArray();
         }
 
         /// <summary>
-        /// Gets a list of products that were never sold
+        /// Gets a list of tvchannels that were never sold
         /// </summary>
-        /// <param name="vendorId">Vendor identifier (filter products by a specific vendor); 0 to load all records</param>
-        /// <param name="storeId">Store identifier (filter products by a specific store); 0 to load all records</param>
+        /// <param name="vendorId">Vendor identifier (filter tvchannels by a specific vendor); 0 to load all records</param>
+        /// <param name="storeId">Store identifier (filter tvchannels by a specific store); 0 to load all records</param>
         /// <param name="categoryId">Category identifier; 0 to load all records</param>
         /// <param name="manufacturerId">Manufacturer identifier; 0 to load all records</param>
         /// <param name="createdFromUtc">Order created date from (UTC); null to load all records</param>
@@ -833,30 +833,30 @@ namespace TvProgViewer.Services.Orders
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the products
+        /// The task result contains the tvchannels
         /// </returns>
-        public virtual async Task<IPagedList<Product>> ProductsNeverSoldAsync(int vendorId = 0, int storeId = 0,
+        public virtual async Task<IPagedList<TvChannel>> TvChannelsNeverSoldAsync(int vendorId = 0, int storeId = 0,
             int categoryId = 0, int manufacturerId = 0,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
         {
-            var simpleProductTypeId = (int)ProductType.SimpleProduct;
+            var simpleTvChannelTypeId = (int)TvChannelType.SimpleTvChannel;
 
-            var availableProductsQuery =
+            var availableTvChannelsQuery =
                 from oi in _orderItemRepository.Table
                 join o in _orderRepository.Table on oi.OrderId equals o.Id
                 where (!createdFromUtc.HasValue || createdFromUtc.Value <= o.CreatedOnUtc) &&
                       (!createdToUtc.HasValue || createdToUtc.Value >= o.CreatedOnUtc) &&
                       !o.Deleted
-                select new { ProductId = oi.ProductId };
+                select new { TvChannelId = oi.TvChannelId };
 
             var query =
-                from p in _productRepository.Table
-                join oi in availableProductsQuery on p.Id equals oi.ProductId
+                from p in _tvchannelRepository.Table
+                join oi in availableTvChannelsQuery on p.Id equals oi.TvChannelId
                     into p_oi
                 from oi in p_oi.DefaultIfEmpty()
                 where oi == null &&
-                      p.ProductTypeId == simpleProductTypeId &&
+                      p.TvChannelTypeId == simpleTvChannelTypeId &&
                       !p.Deleted &&
                       (vendorId == 0 || p.VendorId == vendorId) &&
                       (showHidden || p.Published)
@@ -865,7 +865,7 @@ namespace TvProgViewer.Services.Orders
             if (categoryId > 0)
             {
                 query = from p in query
-                        join pc in _productCategoryRepository.Table on p.Id equals pc.ProductId
+                        join pc in _tvchannelCategoryRepository.Table on p.Id equals pc.TvChannelId
                             into p_pc
                         from pc in p_pc.DefaultIfEmpty()
                         where pc.CategoryId == categoryId
@@ -875,7 +875,7 @@ namespace TvProgViewer.Services.Orders
             if (manufacturerId > 0)
             {
                 query = from p in query
-                        join pm in _productManufacturerRepository.Table on p.Id equals pm.ProductId
+                        join pm in _tvchannelManufacturerRepository.Table on p.Id equals pm.TvChannelId
                             into p_pm
                         from pm in p_pm.DefaultIfEmpty()
                         where pm.ManufacturerId == manufacturerId
@@ -887,8 +887,8 @@ namespace TvProgViewer.Services.Orders
 
             query = query.OrderBy(p => p.Name);
 
-            var products = await query.ToPagedListAsync(pageIndex, pageSize);
-            return products;
+            var tvchannels = await query.ToPagedListAsync(pageIndex, pageSize);
+            return tvchannels;
         }
 
         /// <summary>
@@ -896,7 +896,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="storeId">Store identifier; pass 0 to ignore this parameter</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore this parameter</param>
-        /// <param name="productId">Product identifier which was purchased in an order; 0 to load all orders</param>
+        /// <param name="tvchannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
         /// <param name="warehouseId">Warehouse identifier; pass 0 to ignore this parameter</param>
         /// <param name="orderId">Order identifier; pass 0 to ignore this parameter</param>
         /// <param name="billingCountryId">Billing country identifier; 0 to load all orders</param>
@@ -914,7 +914,7 @@ namespace TvProgViewer.Services.Orders
         /// A task that represents the asynchronous operation
         /// The task result contains the result
         /// </returns>
-        public virtual async Task<decimal> ProfitReportAsync(int storeId = 0, int vendorId = 0, int productId = 0,
+        public virtual async Task<decimal> ProfitReportAsync(int storeId = 0, int vendorId = 0, int tvchannelId = 0,
             int warehouseId = 0, int billingCountryId = 0, int orderId = 0, string paymentMethodSystemName = null,
             List<int> osIds = null, List<int> psIds = null, List<int> ssIds = null,
             DateTime? startTimeUtc = null, DateTime? endTimeUtc = null,
@@ -938,7 +938,7 @@ namespace TvProgViewer.Services.Orders
 
             var query = from orderItem in _orderItemRepository.Table
                 join o in orders on orderItem.OrderId equals o.Id
-                join p in _productRepository.Table on orderItem.ProductId equals p.Id
+                join p in _tvchannelRepository.Table on orderItem.TvChannelId equals p.Id
                 join oba in _addressRepository.Table on o.BillingAddressId equals oba.Id
                 where (storeId == 0 || storeId == o.StoreId) &&
                       (orderId == 0 || orderId == o.Id) &&
@@ -948,21 +948,21 @@ namespace TvProgViewer.Services.Orders
                       (!endTimeUtc.HasValue || endTimeUtc.Value >= o.CreatedOnUtc) &&
                       !o.Deleted &&
                       (vendorId == 0 || p.VendorId == vendorId) &&
-                      (productId == 0 || orderItem.ProductId == productId) &&
+                      (tvchannelId == 0 || orderItem.TvChannelId == tvchannelId) &&
                       (warehouseId == 0 ||
                           //"Use multiple warehouses" enabled
                           //we search in each warehouse
                           p.ManageInventoryMethodId == manageStockInventoryMethodId &&
                           p.UseMultipleWarehouses &&
-                          _productWarehouseInventoryRepository.Table.Any(pwi =>
-                              pwi.ProductId == orderItem.ProductId && pwi.WarehouseId == warehouseId)
+                          _tvchannelWarehouseInventoryRepository.Table.Any(pwi =>
+                              pwi.TvChannelId == orderItem.TvChannelId && pwi.WarehouseId == warehouseId)
                           ||
                           //"Use multiple warehouses" disabled
                           //we use standard "warehouse" property
                           (p.ManageInventoryMethodId != manageStockInventoryMethodId ||
                            !p.UseMultipleWarehouses) &&
                           p.WarehouseId == warehouseId) &&
-                      //we do not ignore deleted products when calculating order reports
+                      //we do not ignore deleted tvchannels when calculating order reports
                       //(!p.Deleted)
                       (dontSearchSmartPhone || (!string.IsNullOrEmpty(oba.PhoneNumber) &&
                                            oba.PhoneNumber.Contains(billingSmartPhone))) &&
@@ -973,12 +973,12 @@ namespace TvProgViewer.Services.Orders
                            oNote.OrderId == o.Id && oNote.Note.Contains(orderNotes)))
                 select orderItem;
 
-            var productCost = Convert.ToDecimal(await query.SumAsync(orderItem => (decimal?)orderItem.OriginalProductCost * orderItem.Quantity));
+            var tvchannelCost = Convert.ToDecimal(await query.SumAsync(orderItem => (decimal?)orderItem.OriginalTvChannelCost * orderItem.Quantity));
 
             var reportSummary = await GetOrderAverageReportLineAsync(
                 storeId,
                 vendorId,
-                productId,
+                tvchannelId,
                 warehouseId,
                 billingCountryId,
                 orderId,
@@ -998,7 +998,7 @@ namespace TvProgViewer.Services.Orders
                          - reportSummary.OrderPaymentFeeExclTaxSum
                          - reportSummary.SumTax
                          - reportSummary.SumRefundedAmount
-                         - productCost;
+                         - tvchannelCost;
             return profit;
         }
 

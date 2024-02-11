@@ -12,13 +12,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
 
         public int ActiveStoreScopeConfiguration { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.DisplayCartAfterAddingProduct")]
-        public bool DisplayCartAfterAddingProduct { get; set; }
-        public bool DisplayCartAfterAddingProduct_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.DisplayCartAfterAddingTvChannel")]
+        public bool DisplayCartAfterAddingTvChannel { get; set; }
+        public bool DisplayCartAfterAddingTvChannel_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.DisplayWishlistAfterAddingProduct")]
-        public bool DisplayWishlistAfterAddingProduct { get; set; }
-        public bool DisplayWishlistAfterAddingProduct_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.DisplayWishlistAfterAddingTvChannel")]
+        public bool DisplayWishlistAfterAddingTvChannel { get; set; }
+        public bool DisplayWishlistAfterAddingTvChannel_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.MaximumShoppingCartItems")]
         public int MaximumShoppingCartItems { get; set; }
@@ -40,13 +40,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool CartsSharedBetweenStores { get; set; }
         public bool CartsSharedBetweenStores_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.ShowProductImagesOnShoppingCart")]
-        public bool ShowProductImagesOnShoppingCart { get; set; }
-        public bool ShowProductImagesOnShoppingCart_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.ShowTvChannelImagesOnShoppingCart")]
+        public bool ShowTvChannelImagesOnShoppingCart { get; set; }
+        public bool ShowTvChannelImagesOnShoppingCart_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.ShowProductImagesOnWishList")]
-        public bool ShowProductImagesOnWishList { get; set; }
-        public bool ShowProductImagesOnWishList_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.ShowTvChannelImagesOnWishList")]
+        public bool ShowTvChannelImagesOnWishList { get; set; }
+        public bool ShowTvChannelImagesOnWishList_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.ShowDiscountBox")]
         public bool ShowDiscountBox { get; set; }
@@ -72,13 +72,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool MiniShoppingCartEnabled { get; set; }
         public bool MiniShoppingCartEnabled_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.ShowProductImagesInMiniShoppingCart")]
-        public bool ShowProductImagesInMiniShoppingCart { get; set; }
-        public bool ShowProductImagesInMiniShoppingCart_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.ShowTvChannelImagesInMiniShoppingCart")]
+        public bool ShowTvChannelImagesInMiniShoppingCart { get; set; }
+        public bool ShowTvChannelImagesInMiniShoppingCart_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.MiniShoppingCartProductNumber")]
-        public int MiniShoppingCartProductNumber { get; set; }
-        public bool MiniShoppingCartProductNumber_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.MiniShoppingCartTvChannelNumber")]
+        public int MiniShoppingCartTvChannelNumber { get; set; }
+        public bool MiniShoppingCartTvChannelNumber_OverrideForStore { get; set; }
         
         [TvProgResourceDisplayName("Admin.Configuration.Settings.ShoppingCart.AllowCartItemEditing")]
         public bool AllowCartItemEditing { get; set; }

@@ -20,26 +20,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public int AvatarPictureSize { get; set; }
         public bool AvatarPictureSize_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.ProductThumbPictureSize")]
-        public int ProductThumbPictureSize { get; set; }
-        public bool ProductThumbPictureSize_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.TvChannelThumbPictureSize")]
+        public int TvChannelThumbPictureSize { get; set; }
+        public bool TvChannelThumbPictureSize_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.ProductDetailsPictureSize")]
-        public int ProductDetailsPictureSize { get; set; }
-        public bool ProductDetailsPictureSize_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.TvChannelDetailsPictureSize")]
+        public int TvChannelDetailsPictureSize { get; set; }
+        public bool TvChannelDetailsPictureSize_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.ProductThumbPictureSizeOnProductDetailsPage")]
-        public int ProductThumbPictureSizeOnProductDetailsPage { get; set; }
-        public bool ProductThumbPictureSizeOnProductDetailsPage_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.TvChannelThumbPictureSizeOnTvChannelDetailsPage")]
+        public int TvChannelThumbPictureSizeOnTvChannelDetailsPage { get; set; }
+        public bool TvChannelThumbPictureSizeOnTvChannelDetailsPage_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.AssociatedProductPictureSize")]
-        public int AssociatedProductPictureSize { get; set; }
-        public bool AssociatedProductPictureSize_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.AssociatedTvChannelPictureSize")]
+        public int AssociatedTvChannelPictureSize { get; set; }
+        public bool AssociatedTvChannelPictureSize_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.ProductDefaultImage")]
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.TvChannelDefaultImage")]
         [UIHint("Picture")]
-        public int ProductDefaultImageId { get; set; }
-        public bool ProductDefaultImageId_OverrideForStore { get; set; }
+        public int TvChannelDefaultImageId { get; set; }
+        public bool TvChannelDefaultImageId_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.CategoryThumbPictureSize")]
         public int CategoryThumbPictureSize { get; set; }
@@ -77,9 +77,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public int DefaultImageQuality { get; set; }
         public bool DefaultImageQuality_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.ImportProductImagesUsingHash")]
-        public bool ImportProductImagesUsingHash { get; set; }
-        public bool ImportProductImagesUsingHash_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.ImportTvChannelImagesUsingHash")]
+        public bool ImportTvChannelImagesUsingHash { get; set; }
+        public bool ImportTvChannelImagesUsingHash_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Media.DefaultPictureZoomEnabled")]
         public bool DefaultPictureZoomEnabled { get; set; }

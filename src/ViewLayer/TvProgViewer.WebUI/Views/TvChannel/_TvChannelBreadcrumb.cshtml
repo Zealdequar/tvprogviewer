@@ -1,0 +1,61 @@
+@model TvChannelDetailsModel.TvChannelBreadcrumbModel
+
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Core.Domain.Common
+
+@inject CommonSettings commonSettings
+
+@{
+    var breadcrumbDelimiter = commonSettings.BreadcrumbDelimiter;
+}
+@if (Model.Enabled)
+{
+    <div class="breadcrumb">
+            <ul itemscope itemtype="http://schema.org/BreadcrumbList">
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelBreadcrumbBefore, additionalData = Model })
+                <li>
+                    <span>
+                        <a href="@Url.RouteUrl("Homepage")">
+                            <span>@T("TvChannels.Breadcrumb.Top")</span>
+                        </a>
+                    </span>
+                    <span class="delimiter">@breadcrumbDelimiter</span>
+                </li>
+                @{ int position = 1; }
+                @foreach (var category in Model.CategoryBreadcrumb)
+                {
+                    <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                        <a href="@(Url.RouteUrl<Category>(new { SeName = category.SeName }))" itemprop="item">
+                            <span itemprop="name">@category.Name</span>
+                        </a>
+                        <span class="delimiter">@breadcrumbDelimiter</span>
+                        <meta itemprop="position" content="@position" />
+                    </li>
+                    position++;
+                }
+                
+                <li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
+                    <strong class="current-item" itemprop="name">@Model.TvChannelName</strong>
+                    <span itemprop="item" itemscope itemtype="http://schema.org/Thing" 
+                          id="@(Url.RouteUrl<TvChannel>(new { SeName = Model.TvChannelSeName }))">
+                    </span>
+                    <meta itemprop="position" content="@position" />
+                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelBreadcrumbAfter, additionalData = Model })
+                </li>
+            </ul>
+    </div>
+    <div class="form-group row">
+        <div class="form-row">
+            <label for="userProvider" class="col-xs-2 col-form-label header-label">Провайдер ТВ-программы</label>
+            @await Component.InvokeAsync("TvProgProviderSelector")
+        </div>
+        <div class="form-row">
+            <label for="userTypeProg" class="col-xs-2 col-form-label header-label">Тип ТВ-программы</label>
+            @await Component.InvokeAsync("TvTypeProgSelector")
+        </div>
+        <div class="form-row">
+            <label for="userCategory" class="col-xs-2 col-form-label header-label">Категория</label>
+            @await Component.InvokeAsync("TvCategorySelector")
+        </div>
+    </div>
+}

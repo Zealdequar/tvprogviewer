@@ -1,0 +1,39 @@
+﻿@model TvChannelAttributeModel
+
+@if (Model.Id > 0)
+{
+    <div class="card-body">
+        <p>
+            @T("Admin.Catalog.Attributes.TvChannelAttributes.UsedByTvChannels.Hint")
+        </p>
+        @await Html.PartialAsync("Table", new DataTablesModel
+        {
+            Name = "used-by-tvchannels-grid",
+            UrlRead = new DataUrl("UsedByTvChannels", "TvChannelAttribute", new RouteValueDictionary { [nameof(Model.TvChannelAttributeTvChannelSearchModel.TvChannelAttributeId)] = Model.TvChannelAttributeTvChannelSearchModel.TvChannelAttributeId }),
+            Length = Model.TvChannelAttributeTvChannelSearchModel.PageSize,
+            LengthMenu = Model.TvChannelAttributeTvChannelSearchModel.AvailablePageSizes,
+            ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(TvChannelAttributeTvChannelModel.TvChannelName))
+                {
+                    Title = T("Admin.Catalog.Attributes.TvChannelAttributes.UsedByTvChannels.TvChannel").Text,
+                    Width = "400"
+                },
+                new ColumnProperty(nameof(TvChannelAttributeTvChannelModel.Published))
+                {
+                    Title = T("Admin.Catalog.Attributes.TvChannelAttributes.UsedByTvChannels.Published").Text,
+                    Width = "100",
+                    ClassName =  TvProgColumnClassDefaults.CenterAll,
+                    Render = new RenderBoolean()
+                },
+                new ColumnProperty(nameof(TvChannelAttributeTvChannelModel.Id))
+                {
+                    Title = T("Admin.Common.View").Text,
+                    Width = "100",
+                    ClassName =  TvProgColumnClassDefaults.Button,
+                    Render = new RenderButtonView(new DataUrl("~/Admin/TvChannel/Edit/"))
+                }
+            }
+        })
+    </div>
+}

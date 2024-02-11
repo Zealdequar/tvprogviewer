@@ -8,9 +8,9 @@ namespace TvProgViewer.Core.Domain.Catalog
     public partial class TierPrice : BaseEntity
     {
         /// <summary>
-        /// Gets or sets the product identifier
+        /// Gets or sets the tvchannel identifier
         /// </summary>
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         /// <summary>
         /// Gets or sets the store identifier (0 - all stores)

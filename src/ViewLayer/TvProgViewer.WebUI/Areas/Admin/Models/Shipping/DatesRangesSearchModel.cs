@@ -12,7 +12,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Shipping
         public DatesRangesSearchModel()
         {
             DeliveryDateSearchModel = new DeliveryDateSearchModel();
-            ProductAvailabilityRangeSearchModel = new ProductAvailabilityRangeSearchModel();
+            TvChannelAvailabilityRangeSearchModel = new TvChannelAvailabilityRangeSearchModel();
         }
 
         #endregion
@@ -21,7 +21,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Shipping
 
         public DeliveryDateSearchModel DeliveryDateSearchModel { get; set; }
 
-        public ProductAvailabilityRangeSearchModel ProductAvailabilityRangeSearchModel { get; set; }
+        public TvChannelAvailabilityRangeSearchModel TvChannelAvailabilityRangeSearchModel { get; set; }
 
         #endregion
     }

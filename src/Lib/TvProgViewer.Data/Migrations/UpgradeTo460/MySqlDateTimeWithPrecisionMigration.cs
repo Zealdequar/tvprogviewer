@@ -217,34 +217,34 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo460
             Alter.Table(NameCompatibilityManager.GetTableName(typeof(PollVotingRecord)))
                  .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(PollVotingRecord), nameof(PollVotingRecord.CreatedOnUtc)))
                  .AsCustom("datetime(6)");
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(Product)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(Product), nameof(Product.AvailableEndDateTimeUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannel)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannel), nameof(TvChannel.AvailableEndDateTimeUtc)))
                  .AsCustom("datetime(6)")
                  .Nullable();
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(Product)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(Product), nameof(Product.AvailableStartDateTimeUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannel)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannel), nameof(TvChannel.AvailableStartDateTimeUtc)))
                  .AsCustom("datetime(6)")
                  .Nullable();
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(Product)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(Product), nameof(Product.CreatedOnUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannel)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannel), nameof(TvChannel.CreatedOnUtc)))
                  .AsCustom("datetime(6)");
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(Product)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(Product), nameof(Product.MarkAsNewEndDateTimeUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannel)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannel), nameof(TvChannel.MarkAsNewEndDateTimeUtc)))
                  .AsCustom("datetime(6)")
                  .Nullable();
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(Product)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(Product), nameof(Product.MarkAsNewStartDateTimeUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannel)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannel), nameof(TvChannel.MarkAsNewStartDateTimeUtc)))
                  .AsCustom("datetime(6)")
                  .Nullable();
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(Product)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(Product), nameof(Product.PreOrderAvailabilityStartDateTimeUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannel)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannel), nameof(TvChannel.PreOrderAvailabilityStartDateTimeUtc)))
                  .AsCustom("datetime(6)")
                  .Nullable();
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(Product)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(Product), nameof(Product.UpdatedOnUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannel)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannel), nameof(TvChannel.UpdatedOnUtc)))
                  .AsCustom("datetime(6)");
-            Alter.Table(NameCompatibilityManager.GetTableName(typeof(ProductReview)))
-                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(ProductReview), nameof(ProductReview.CreatedOnUtc)))
+            Alter.Table(NameCompatibilityManager.GetTableName(typeof(TvChannelReview)))
+                 .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(TvChannelReview), nameof(TvChannelReview.CreatedOnUtc)))
                  .AsCustom("datetime(6)");
             Alter.Table(NameCompatibilityManager.GetTableName(typeof(QueuedEmail)))
                  .AlterColumn(NameCompatibilityManager.GetColumnName(typeof(QueuedEmail), nameof(QueuedEmail.CreatedOnUtc)))

@@ -91,10 +91,10 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
 
             //#276 AJAX filters
             var catalogSettings = settingService.LoadSetting<CatalogSettings>();
-            if (!settingService.SettingExists(catalogSettings, settings => settings.UseAjaxCatalogProductsLoading))
+            if (!settingService.SettingExists(catalogSettings, settings => settings.UseAjaxCatalogTvChannelsLoading))
             {
-                catalogSettings.UseAjaxCatalogProductsLoading = true;
-                settingService.SaveSetting(catalogSettings, settings => settings.UseAjaxCatalogProductsLoading);
+                catalogSettings.UseAjaxCatalogTvChannelsLoading = true;
+                settingService.SaveSetting(catalogSettings, settings => settings.UseAjaxCatalogTvChannelsLoading);
             }
 
             if (!settingService.SettingExists(catalogSettings, settings => settings.EnableManufacturerFiltering))
@@ -133,28 +133,28 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 settingService.SaveSetting(catalogSettings, settings => settings.SearchPageManuallyPriceRange);
             }
 
-            if (!settingService.SettingExists(catalogSettings, settings => settings.ProductsByTagPriceRangeFiltering))
+            if (!settingService.SettingExists(catalogSettings, settings => settings.TvChannelsByTagPriceRangeFiltering))
             {
-                catalogSettings.ProductsByTagPriceRangeFiltering = true;
-                settingService.SaveSetting(catalogSettings, settings => settings.ProductsByTagPriceRangeFiltering);
+                catalogSettings.TvChannelsByTagPriceRangeFiltering = true;
+                settingService.SaveSetting(catalogSettings, settings => settings.TvChannelsByTagPriceRangeFiltering);
             }
 
-            if (!settingService.SettingExists(catalogSettings, settings => settings.ProductsByTagPriceFrom))
+            if (!settingService.SettingExists(catalogSettings, settings => settings.TvChannelsByTagPriceFrom))
             {
-                catalogSettings.ProductsByTagPriceFrom = TvProgCatalogDefaults.DefaultPriceRangeFrom;
-                settingService.SaveSetting(catalogSettings, settings => settings.ProductsByTagPriceFrom);
+                catalogSettings.TvChannelsByTagPriceFrom = TvProgCatalogDefaults.DefaultPriceRangeFrom;
+                settingService.SaveSetting(catalogSettings, settings => settings.TvChannelsByTagPriceFrom);
             }
 
-            if (!settingService.SettingExists(catalogSettings, settings => settings.ProductsByTagPriceTo))
+            if (!settingService.SettingExists(catalogSettings, settings => settings.TvChannelsByTagPriceTo))
             {
-                catalogSettings.ProductsByTagPriceTo = TvProgCatalogDefaults.DefaultPriceRangeTo;
-                settingService.SaveSetting(catalogSettings, settings => settings.ProductsByTagPriceTo);
+                catalogSettings.TvChannelsByTagPriceTo = TvProgCatalogDefaults.DefaultPriceRangeTo;
+                settingService.SaveSetting(catalogSettings, settings => settings.TvChannelsByTagPriceTo);
             }
 
-            if (!settingService.SettingExists(catalogSettings, settings => settings.ProductsByTagManuallyPriceRange))
+            if (!settingService.SettingExists(catalogSettings, settings => settings.TvChannelsByTagManuallyPriceRange))
             {
-                catalogSettings.ProductsByTagManuallyPriceRange = false;
-                settingService.SaveSetting(catalogSettings, settings => settings.ProductsByTagManuallyPriceRange);
+                catalogSettings.TvChannelsByTagManuallyPriceRange = false;
+                settingService.SaveSetting(catalogSettings, settings => settings.TvChannelsByTagManuallyPriceRange);
             }
 
             //#4303

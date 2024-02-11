@@ -22,9 +22,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
 
         #region Properties
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
-        public string ProductName { get; set; }
+        public string TvChannelName { get; set; }
 
         public string VendorName { get; set; }
 

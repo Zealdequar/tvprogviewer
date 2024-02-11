@@ -28,9 +28,9 @@ namespace TvProgViewer.WebUI.Models.Order
         public partial record ShipmentItemModel : BaseTvProgEntityModel
         {
             public string Sku { get; set; }
-            public int ProductId { get; set; }
-            public string ProductName { get; set; }
-            public string ProductSeName { get; set; }
+            public int TvChannelId { get; set; }
+            public string TvChannelName { get; set; }
+            public string TvChannelSeName { get; set; }
             public string AttributeInfo { get; set; }
             public string RentalInfo { get; set; }
 

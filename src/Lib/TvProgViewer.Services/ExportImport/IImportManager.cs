@@ -9,11 +9,11 @@ namespace TvProgViewer.Services.ExportImport
     public partial interface IImportManager
     {
         /// <summary>
-        /// Import products from XLSX file
+        /// Import tvchannels from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task ImportProductsFromXlsxAsync(Stream stream);
+        Task ImportTvChannelsFromXlsxAsync(Stream stream);
 
         /// <summary>
         /// Import newsletter subscribers from TXT file

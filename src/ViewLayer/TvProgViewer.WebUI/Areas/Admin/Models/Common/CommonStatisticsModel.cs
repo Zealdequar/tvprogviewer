@@ -10,6 +10,6 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Common
 
         public int NumberOfPendingReturnRequests { get; set; }
 
-        public int NumberOfLowStockProducts { get; set; }
+        public int NumberOfLowStockTvChannels { get; set; }
     }
 }

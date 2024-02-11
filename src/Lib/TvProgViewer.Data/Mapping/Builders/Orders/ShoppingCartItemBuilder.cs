@@ -21,7 +21,7 @@ namespace TvProgViewer.Data.Mapping.Builders.Orders
         {
             table
                 .WithColumn(nameof(ShoppingCartItem.UserId)).AsInt32().ForeignKey<User>()
-                .WithColumn(nameof(ShoppingCartItem.ProductId)).AsInt32().ForeignKey<Product>();
+                .WithColumn(nameof(ShoppingCartItem.TvChannelId)).AsInt32().ForeignKey<TvChannel>();
         }
 
         #endregion

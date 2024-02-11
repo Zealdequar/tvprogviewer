@@ -62,15 +62,15 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"{{{TvProgRoutingDefaults.RouteValue.CatalogSeName}}}/{{{TvProgRoutingDefaults.RouteValue.SeName}}}",
                 defaults: new { controller = "Common", action = "GenericUrl" });
 
-            //routes for entities that support catalog path and slug (e.g. '/category-seo-name/product-seo-name')
-            endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.ProductCatalog,
+            //routes for entities that support catalog path and slug (e.g. '/category-seo-name/tvchannel-seo-name')
+            endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.TvChannelCatalog,
                 pattern: genericCatalogPattern,
-                defaults: new { controller = "Product", action = "ProductDetails" });
+                defaults: new { controller = "TvChannel", action = "TvChannelDetails" });
 
-            //routes for entities that support single slug (e.g. '/product-seo-name')
-            endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.Product,
+            //routes for entities that support single slug (e.g. '/tvchannel-seo-name')
+            endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.TvChannel,
                 pattern: genericPattern,
-                defaults: new { controller = "Product", action = "ProductDetails" });
+                defaults: new { controller = "TvChannel", action = "TvChannelDetails" });
 
             endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.Category,
                 pattern: genericPattern,
@@ -96,9 +96,9 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: genericPattern,
                 defaults: new { controller = "Topic", action = "TopicDetails" });
 
-            endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.ProductTag,
+            endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.TvChannelTag,
                 pattern: genericPattern,
-                defaults: new { controller = "Catalog", action = "ProductsByTag" });
+                defaults: new { controller = "Catalog", action = "TvChannelsByTag" });
         }
 
         #endregion

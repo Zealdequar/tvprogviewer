@@ -1,0 +1,103 @@
+﻿@model TvChannelModel
+
+@{
+    var showTour = ViewBag.ShowTour ?? false;
+
+    const string hideInfoBlockAttributeName = "TvChannelPage.HideInfoBlock";
+    var user = await workContext.GetCurrentUserAsync();
+    var hideInfoBlock = showTour ? false : await genericAttributeService.GetAttributeAsync<bool>(user, hideInfoBlockAttributeName);
+
+    const string hidePricesBlockAttributeName = "TvChannelPage.HidePricesBlock";
+    var hidePricesBlock = showTour ? false : await genericAttributeService.GetAttributeAsync<bool>(user, hidePricesBlockAttributeName);
+
+    const string hideShippingBlockAttributeName = "TvChannelPage.HideShippingBlock";
+    var hideShippingBlock = showTour ? false : await genericAttributeService.GetAttributeAsync<bool>(user, hideShippingBlockAttributeName);
+
+    const string hideInventoryBlockAttributeName = "TvChannelPage.HideInventoryBlock";
+    var hideInventoryBlock = showTour ? false : await genericAttributeService.GetAttributeAsync<bool>(user, hideInventoryBlockAttributeName);
+
+    const string hideMultimediaBlockAttributeName = "TvChannelPage.hideMultimediaBlock";
+    var hideMultimediaBlock = showTour ? false : await genericAttributeService.GetAttributeAsync<bool>(user, hideMultimediaBlockAttributeName);
+
+    const string hideTvChannelAttributesBlockAttributeName = "TvChannelPage.HideTvChannelAttributesBlock";
+    var hideTvChannelAttributesBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTvChannelAttributesBlockAttributeName, defaultValue: true);
+
+    const string hideSpecificationAttributeBlockAttributeName = "TvChannelPage.HideSpecificationAttributeBlock";
+    var hideSpecificationAttributeBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideSpecificationAttributeBlockAttributeName, defaultValue: true);
+
+    const string hideGiftCardBlockAttributeName = "TvChannelPage.HideGiftCardBlock";
+    var hideGiftCardBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideGiftCardBlockAttributeName, defaultValue: true);
+
+    const string hideDownloadableBlockAttributeName = "TvChannelPage.HideDownloadableBlock";
+    var hideDownloadableBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideDownloadableBlockAttributeName, defaultValue: true);
+
+    const string hideRentalBlockAttributeName = "TvChannelPage.HideRentalBlock";
+    var hideRentalBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideRentalBlockAttributeName, defaultValue: true);
+
+    const string hideRecurringBlockAttributeName = "TvChannelPage.HideRecurringBlock";
+    var hideRecurringBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideRecurringBlockAttributeName, defaultValue: true);
+
+    const string hideSeoBlockAttributeName = "TvChannelPage.HideSEOBlock";
+    var hideSeoBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideSeoBlockAttributeName, defaultValue: true);
+
+    const string hideRelatedTvChannelsBlockAttributeName = "TvChannelPage.HideRelatedTvChannelsBlock";
+    var hideRelatedTvChannelsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideRelatedTvChannelsBlockAttributeName, defaultValue: true);
+
+    const string hideCrossSellsTvChannelsBlockAttributeName = "TvChannelPage.HideCrossSellsTvChannelsBlock";
+    var hideCrossSellsTvChannelsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideCrossSellsTvChannelsBlockAttributeName, defaultValue: true);
+
+    const string hidePurchasedWithOrdersBlockAttributeName = "TvChannelPage.HidePurchasedWithOrdersBlock";
+    var hidePurchasedWithOrdersBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hidePurchasedWithOrdersBlockAttributeName, defaultValue: true);
+
+    const string hideStockQuantityHistoryBlockAttributeName = "TvChannelPage.HideStockQuantityHistoryBlock";
+    var hideStockQuantityHistoryBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideStockQuantityHistoryBlockAttributeName, defaultValue: true);
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div class="row">
+                <div class="col-md-12 clearfix">
+                    <div class="float-left">
+                        @await Component.InvokeAsync(typeof(SettingModeViewComponent), new { modeName = "tvchannel-advanced-mode" })
+                    </div>
+                    @if (!Model.IsLoggedInAsVendor)
+                    {
+                        <button type="button" class="btn btn-info float-left mx-2" id="tvchannel-editor-settings" data-toggle="modal" data-target="#tvchannelsettings-window">
+                            <i class="fas fa-cog"></i>
+                            @T("Admin.Configuration.Settings.TvChannelEditor.Button")
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <tvprog-cards id="tvchannel-cards">
+                <tvprog-card asp-name="tvchannel-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.TvChannels.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-price" asp-icon="fas fa-dollar-sign" asp-title="@T("Admin.Catalog.TvChannels.Price")" asp-hide-block-attribute-name="@hidePricesBlockAttributeName" asp-hide="@hidePricesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Prices", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-shipping" asp-icon="fas fa-truck" asp-title="@T("Admin.Catalog.TvChannels.Shipping")" asp-hide-block-attribute-name="@hideShippingBlockAttributeName" asp-hide="@hideShippingBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Shipping", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-inventory" asp-icon="fas fa-sitemap" asp-title="@T("Admin.Catalog.TvChannels.Inventory")" asp-hide-block-attribute-name="@hideInventoryBlockAttributeName" asp-hide="@hideInventoryBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Inventory", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-multimedia" asp-icon="fas fa-photo-video" asp-title="@T("Admin.Catalog.TvChannels.Multimedia")" asp-hide-block-attribute-name="@hideMultimediaBlockAttributeName" asp-hide="@hideMultimediaBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Multimedia", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-tvchannel-attributes" asp-icon="fas fa-paperclip" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes")" asp-hide-block-attribute-name="@hideTvChannelAttributesBlockAttributeName" asp-hide="@hideTvChannelAttributesBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.TvChannelAttributes)">@await Html.PartialAsync("_CreateOrUpdate.TvChannelAttributes", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-specification-attributes" asp-icon="fas fa-cog" asp-title="@T("Admin.Catalog.Attributes.SpecificationAttributes")" asp-hide-block-attribute-name="@hideSpecificationAttributeBlockAttributeName" asp-hide="@hideSpecificationAttributeBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.SpecificationAttributes)">@await Html.PartialAsync("_CreateOrUpdate.SpecificationAttributes", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-giftcard" asp-icon="fas fa-gift" asp-title="@T("Admin.Catalog.TvChannels.GiftCard")" asp-hide-block-attribute-name="@hideGiftCardBlockAttributeName" asp-hide="@hideGiftCardBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.IsGiftCard)">@await Html.PartialAsync("_CreateOrUpdate.GiftCard", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-downloadable" asp-icon="fas fa-download" asp-title="@T("Admin.Catalog.TvChannels.DownloadableTvChannel")" asp-hide-block-attribute-name="@hideDownloadableBlockAttributeName" asp-hide="@hideDownloadableBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.DownloadableTvChannel)">@await Html.PartialAsync("_CreateOrUpdate.DownloadableTvChannel", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-rental" asp-icon="far fa-calendar-alt" asp-title="@T("Admin.Catalog.TvChannels.Rental")" asp-hide-block-attribute-name="@hideRentalBlockAttributeName" asp-hide="@hideRentalBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.IsRental)">@await Html.PartialAsync("_CreateOrUpdate.Rental", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-recurring" asp-icon="fas fa-redo-alt" asp-title="@T("Admin.Catalog.TvChannels.RecurringTvChannel")" asp-hide-block-attribute-name="@hideRecurringBlockAttributeName" asp-hide="@hideRecurringBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.RecurringTvChannel)">@await Html.PartialAsync("_CreateOrUpdate.Recurring", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-seo" asp-icon="fas fa-search-plus" asp-title="@T("Admin.Common.SEO")" asp-hide-block-attribute-name="@hideSeoBlockAttributeName" asp-hide="@hideSeoBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.Seo)">@await Html.PartialAsync("_CreateOrUpdate.Seo", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-related-tvchannels" asp-icon="fas fa-object-group" asp-title="@T("Admin.Catalog.TvChannels.RelatedTvChannels")" asp-hide-block-attribute-name="@hideRelatedTvChannelsBlockAttributeName" asp-hide="@hideRelatedTvChannelsBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.RelatedTvChannels)">@await Html.PartialAsync("_CreateOrUpdate.RelatedTvChannels", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-crosssells-tvchannels" asp-icon="fas fa-random" asp-title="@T("Admin.Catalog.TvChannels.CrossSells")" asp-hide-block-attribute-name="@hideCrossSellsTvChannelsBlockAttributeName" asp-hide="@hideCrossSellsTvChannelsBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.CrossSellsTvChannels)">@await Html.PartialAsync("_CreateOrUpdate.CrossSellsTvChannels", Model)</tvprog-card>
+
+                @if (Model.Id > 0)
+                {
+                    <tvprog-card asp-name="tvchannel-purchased-with-orders" asp-icon="fas fa-cart-arrow-down" asp-title="@T("Admin.Catalog.TvChannels.PurchasedWithOrders")" asp-hide-block-attribute-name="@hidePurchasedWithOrdersBlockAttributeName" asp-hide="@hidePurchasedWithOrdersBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.PurchasedWithOrders)">@await Html.PartialAsync("_CreateOrUpdate.PurchasedWithOrders", Model)</tvprog-card>
+                    <tvprog-card asp-name="tvchannel-stock-quantity-history" asp-icon="fas fa-history" asp-title="@T("Admin.Catalog.TvChannels.StockQuantityHistory")" asp-hide-block-attribute-name="@hideStockQuantityHistoryBlockAttributeName" asp-hide="@hideStockQuantityHistoryBlock" asp-advanced="@(!Model.TvChannelEditorSettingsModel.StockQuantityHistory)">@await Html.PartialAsync("_CreateOrUpdate.StockQuantityHistory", Model)</tvprog-card>
+                }
+
+                @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsBlock, additionalData = Model })
+            </tvprog-cards>
+        </div>
+    </div>
+</section>

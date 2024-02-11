@@ -12,35 +12,35 @@ namespace TvProgViewer.Services.Tax
     /// </summary>
     public partial interface ITaxService
     {
-        #region Product price
+        #region TvChannel price
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price);
+        Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price);
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price, User user);
+        Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price, User user);
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <param name="user">User</param>
@@ -48,13 +48,13 @@ namespace TvProgViewer.Services.Tax
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, decimal price,
+        Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price,
             bool includingTax, User user);
 
         /// <summary>
         /// Gets price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="taxCategoryId">Tax category identifier</param>
         /// <param name="price">Price</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
@@ -64,20 +64,20 @@ namespace TvProgViewer.Services.Tax
         /// A task that represents the asynchronous operation
         /// The task result contains the price. Tax rate
         /// </returns>
-        Task<(decimal price, decimal taxRate)> GetProductPriceAsync(Product product, int taxCategoryId, decimal price,
+        Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, int taxCategoryId, decimal price,
             bool includingTax, User user,
             bool priceIncludesTax);
 
         /// <summary>
-        /// Gets a value indicating whether a product is tax exempt
+        /// Gets a value indicating whether a tvchannel is tax exempt
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains a value indicating whether a product is tax exempt
+        /// The task result contains a value indicating whether a tvchannel is tax exempt
         /// </returns>
-        Task<bool> IsTaxExemptAsync(Product product, User user);
+        Task<bool> IsTaxExemptAsync(TvChannel tvchannel, User user);
 
         #endregion
 

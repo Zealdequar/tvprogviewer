@@ -34,9 +34,9 @@
 
         <li class="@liClass">
             <a href="@(Url.RouteUrl<Category>(new { SeName = lineModel.Category.SeName }))">@lineModel.Category.Name
-                @if (lineModel.Category.NumberOfProducts.HasValue)
+                @if (lineModel.Category.NumberOfTvChannels.HasValue)
                 {
-                    <text> </text>@T("Categories.TotalProducts", lineModel.Category.NumberOfProducts.Value)
+                    <text> </text>@T("Categories.TotalTvChannels", lineModel.Category.NumberOfTvChannels.Value)
                 }
             </a>
             @{

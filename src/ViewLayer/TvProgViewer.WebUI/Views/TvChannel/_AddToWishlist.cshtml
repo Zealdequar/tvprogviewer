@@ -1,0 +1,17 @@
+﻿@model TvChannelDetailsModel.AddToCartModel
+@using TvProgViewer.Core.Domain.Orders
+@if (!Model.DisableWishlistButton)
+{
+    var addToWishlistText = "";
+    if (Model.UpdatedShoppingCartItemId > 0 && Model.UpdateShoppingCartItemType.HasValue && Model.UpdateShoppingCartItemType.Value == ShoppingCartType.Wishlist)
+    {
+        addToWishlistText = T("TvChannels.Wishlist.AddToWishlist.Update").Text;
+    }
+    else
+    {
+        addToWishlistText = T("TvChannels.Wishlist.AddToWishlist").Text;
+    }
+    <div class="add-to-wishlist">
+        <button type="button" id="add-to-wishlist-button-@Model.TvChannelId" class="button-2 add-to-wishlist-button" data-tvchannelid="@Model.TvChannelId" onclick="AjaxCart.addtvchanneltocart_details('@Url.RouteUrl("AddTvChannelToCart-Details", new {tvchannelId = Model.TvChannelId, shoppingCartTypeId = (int) ShoppingCartType.Wishlist})', '#tvchannel-details-form');return false;">@addToWishlistText</button>
+    </div>
+}

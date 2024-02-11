@@ -115,27 +115,27 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<DeliveryDateModel> PrepareDeliveryDateModelAsync(DeliveryDateModel model, DeliveryDate deliveryDate, bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare paged product availability range list model
+        /// Prepare paged tvchannel availability range list model
         /// </summary>
-        /// <param name="searchModel">Product availability range search model</param>
+        /// <param name="searchModel">TvChannel availability range search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability range list model
+        /// The task result contains the tvchannel availability range list model
         /// </returns>
-        Task<ProductAvailabilityRangeListModel> PrepareProductAvailabilityRangeListModelAsync(ProductAvailabilityRangeSearchModel searchModel);
+        Task<TvChannelAvailabilityRangeListModel> PrepareTvChannelAvailabilityRangeListModelAsync(TvChannelAvailabilityRangeSearchModel searchModel);
 
         /// <summary>
-        /// Prepare product availability range model
+        /// Prepare tvchannel availability range model
         /// </summary>
-        /// <param name="model">Product availability range model</param>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="model">TvChannel availability range model</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability range model
+        /// The task result contains the tvchannel availability range model
         /// </returns>
-        Task<ProductAvailabilityRangeModel> PrepareProductAvailabilityRangeModelAsync(ProductAvailabilityRangeModel model,
-            ProductAvailabilityRange productAvailabilityRange, bool excludeProperties = false);
+        Task<TvChannelAvailabilityRangeModel> PrepareTvChannelAvailabilityRangeModelAsync(TvChannelAvailabilityRangeModel model,
+            TvChannelAvailabilityRange tvchannelAvailabilityRange, bool excludeProperties = false);
 
         /// <summary>
         /// Prepare warehouse search model

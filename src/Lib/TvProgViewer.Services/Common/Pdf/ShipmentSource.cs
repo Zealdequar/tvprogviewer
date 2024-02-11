@@ -12,7 +12,7 @@ namespace TvProgViewer.Services.Common.Pdf
 
         public ShipmentSource()
         {
-            Products = new();
+            TvChannels = new();
         }
 
         #endregion
@@ -34,7 +34,7 @@ namespace TvProgViewer.Services.Common.Pdf
         /// <summary>
         /// Gets or sets a collection of shipping items
         /// </summary>
-        public List<ProductItem> Products { get; set; }
+        public List<TvChannelItem> TvChannels { get; set; }
 
         /// <summary>
         /// Gets or sets the shipment number

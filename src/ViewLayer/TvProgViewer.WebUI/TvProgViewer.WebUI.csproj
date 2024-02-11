@@ -44,6 +44,26 @@
     <!-- We copy the \Logs directory -->
     <Content Include="Logs\**" CopyToPublishDirectory="PreserveNewest" />
     <Content Remove="bundleconfig.json" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-grid.css" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-grid.css.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-grid.min.css" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-grid.min.css.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-reboot.css" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-reboot.css.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-reboot.min.css" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap-reboot.min.css.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap.css" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap.css.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap.min.css" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\css\bootstrap.min.css.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.bundle.js" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.bundle.js.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.bundle.min.js" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.bundle.min.js.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.js" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.js.map" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.min.js" />
+    <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.min.js.map" />
     <None Remove="Plugins\Uploaded\placeholder.txt" />
     <None Remove="Properties\defaultResources.nopres.xml" />
     <Content Include="App_Data\appsettings.json" />
@@ -168,10 +188,15 @@
     <None Include="wwwroot\lib\jqGrid\minified\jqModal.js" />
     <None Include="wwwroot\lib\jqGrid\minified\jquery.fmatter.js" />
     <None Include="wwwroot\lib\jqGrid\minified\jquery.sortable.js" />
+    <PackageReference Include="bootstrap" Version="4.5.0" />
+    <PackageReference Include="bootstrap-select" Version="1.13.18" />
     <PackageReference Include="Bootstrap.Themes" Version="1.0.0" />
     <PackageReference Include="jqGrid" Version="1.4.3" />
     <PackageReference Include="linq2db" Version="4.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+    <PackageReference Include="popper.js" Version="1.16.1" />
 
     <None Update="Areas\Admin\sitemap.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -189,6 +214,14 @@
 
   <ItemGroup>
     <Content Update="wwwroot\icons\icons_0\favicon.ico">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\js\bootstrap.min.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\js\bootstrap.min.js.map">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

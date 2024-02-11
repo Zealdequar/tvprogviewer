@@ -157,7 +157,7 @@ namespace TvProgViewer.Services.Shipping
         /// Gets shopping cart item weight (of one item)
         /// </summary>
         /// <param name="shoppingCartItem">Shopping cart item</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the shopping cart item weight
@@ -165,23 +165,23 @@ namespace TvProgViewer.Services.Shipping
         Task<decimal> GetShoppingCartItemWeightAsync(ShoppingCartItem shoppingCartItem, bool ignoreFreeShippedItems = false);
 
         /// <summary>
-        /// Gets product item weight (of one item)
+        /// Gets tvchannel item weight (of one item)
         /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="attributesXml">Selected product attributes in XML</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="attributesXml">Selected tvchannel attributes in XML</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the item weight
         /// </returns>
-        Task<decimal> GetShoppingCartItemWeightAsync(Product product, string attributesXml, bool ignoreFreeShippedItems = false);
+        Task<decimal> GetShoppingCartItemWeightAsync(TvChannel tvchannel, string attributesXml, bool ignoreFreeShippedItems = false);
 
         /// <summary>
         /// Gets shopping cart weight
         /// </summary>
         /// <param name="request">Request</param>
         /// <param name="includeCheckoutAttributes">A value indicating whether we should calculate weights of selected checkout attributes</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the otal weight
@@ -192,7 +192,7 @@ namespace TvProgViewer.Services.Shipping
         /// Get total dimensions
         /// </summary>
         /// <param name="packageItems">Package items</param>
-        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the products marked as "Free shipping"</param>
+        /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the width. Length. Height

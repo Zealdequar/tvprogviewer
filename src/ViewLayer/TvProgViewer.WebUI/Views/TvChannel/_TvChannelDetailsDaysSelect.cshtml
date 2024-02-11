@@ -1,0 +1,40 @@
+@model TvChannelDetailsModel
+<link asp-exclude-from-bundle="true" rel="stylesheet" href="~/css/bootstrap-select/bootstrap-select.css" />
+<script asp-exclude-from-bundle="true" data-src="~/js/popper.min.js"></script>
+<script asp-exclude-from-bundle="true" src="~/js/bootstrap.bundle.min.js" data-src="~/js/bootstrap.min.js"></script>
+<script asp-exclude-from-bundle="true" src="~/js/bootstrap-select.min.js"></script>
+<div class="days-select">
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsBeforeDaysSelect, additionData = Model })
+    <select title="Выберите день..." class="days-selectpicker">
+        <option>Выберите день...</option>
+        @foreach (var dayItem in Model.TvChannelDays)
+        {
+            <option data-thumbnail="@dayItem.IconSrc" data-color="@dayItem.Color">@dayItem.Name</option>
+        }
+    </select>
+    
+    <script asp-location="Footer">
+
+        const $_SELECT_PICKER = $('.days-selectpicker');
+
+        $_SELECT_PICKER.find('option').each((idx, elem) => {
+            const $OPTION = $(elem);
+            const IMAGE_URL = $OPTION.attr('data-thumbnail');
+            const TEXT_COLOR = $OPTION.attr('data-color');
+
+            if (IMAGE_URL) {
+                $OPTION.attr('data-content', "<img class='img-padding' src='%i'/>%s".replace(/%i/, IMAGE_URL).replace(/%s/, "<span class='" + TEXT_COLOR +"'>" + $OPTION.text() + "</span>"))
+            }
+        });
+
+        $_SELECT_PICKER.selectpicker();
+                
+        /* $(document).ready(function() {
+          // Initiate with custom caret icon
+          $('.days-selectpicker').selectpicker({
+            caretIcon: 'glyphicon glyphicon-menu-down'
+          });
+        }); */
+    </script>
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsAfterDaysSelect, additionData = Model })
+</div>

@@ -124,12 +124,12 @@ namespace TvProgViewer.Services.Messages
         Task AddNewsLetterSubscriptionTokensAsync(IList<Token> tokens, NewsLetterSubscription subscription);
 
         /// <summary>
-        /// Add product review tokens
+        /// Add tvchannel review tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="productReview">Product review</param>
+        /// <param name="tvchannelReview">TvChannel review</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task AddProductReviewTokensAsync(IList<Token> tokens, ProductReview productReview);
+        Task AddTvChannelReviewTokensAsync(IList<Token> tokens, TvChannelReview tvchannelReview);
 
         /// <summary>
         /// Add blog comment tokens
@@ -148,22 +148,22 @@ namespace TvProgViewer.Services.Messages
         Task AddNewsCommentTokensAsync(IList<Token> tokens, NewsComment newsComment);
         
         /// <summary>
-        /// Add product tokens
+        /// Add tvchannel tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task AddProductTokensAsync(IList<Token> tokens, Product product, int languageId);
+        Task AddTvChannelTokensAsync(IList<Token> tokens, TvChannel tvchannel, int languageId);
 
         /// <summary>
-        /// Add product attribute combination tokens
+        /// Add tvchannel attribute combination tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="combination">Product attribute combination</param>
+        /// <param name="combination">TvChannel attribute combination</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task AddAttributeCombinationTokensAsync(IList<Token> tokens, ProductAttributeCombination combination, int languageId);
+        Task AddAttributeCombinationTokensAsync(IList<Token> tokens, TvChannelAttributeCombination combination, int languageId);
 
         /// <summary>
         /// Add forum tokens

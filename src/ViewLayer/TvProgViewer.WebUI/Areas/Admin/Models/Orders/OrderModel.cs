@@ -200,7 +200,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
         public IList<GiftCard> GiftCards { get; set; }
 
         //items
-        public bool HasDownloadableProducts { get; set; }
+        public bool HasDownloadableTvChannels { get; set; }
         public IList<OrderItemModel> Items { get; set; }
 
         //creation date

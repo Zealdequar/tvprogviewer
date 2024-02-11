@@ -90,13 +90,13 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"{lang}/contactus",
                 defaults: new { controller = "Common", action = "ContactUs" });
 
-            //product search
+            //tvchannel search
             endpointRouteBuilder.MapControllerRoute(name: "TvSearch",
                 pattern: $"{lang}/search/",
                 defaults: new { controller = "Catalog", action = "Search" });
 
             //autocomplete search term (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "ProductSearchAutoComplete",
+            endpointRouteBuilder.MapControllerRoute(name: "TvChannelSearchAutoComplete",
                 pattern: $"catalog/searchtermautocomplete",
                 defaults: new { controller = "Catalog", action = "SearchTermAutoComplete" });
 
@@ -115,15 +115,15 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"{lang}/changetaxtype/{{usertaxtype:min(0)}}",
                 defaults: new { controller = "Common", action = "SetTaxType" });
 
-            //recently viewed products
-            endpointRouteBuilder.MapControllerRoute(name: "RecentlyViewedProducts",
-                pattern: $"{lang}/recentlyviewedproducts/",
-                defaults: new { controller = "Product", action = "RecentlyViewedProducts" });
+            //recently viewed tvchannels
+            endpointRouteBuilder.MapControllerRoute(name: "RecentlyViewedTvChannels",
+                pattern: $"{lang}/recentlyviewedtvchannels/",
+                defaults: new { controller = "TvChannel", action = "RecentlyViewedTvChannels" });
 
-            //new products
-            endpointRouteBuilder.MapControllerRoute(name: "NewProducts",
-                pattern: $"{lang}/newproducts/",
-                defaults: new { controller = "Catalog", action = "NewProducts" });
+            //new tvchannels
+            endpointRouteBuilder.MapControllerRoute(name: "NewTvChannels",
+                pattern: $"{lang}/newtvchannels/",
+                defaults: new { controller = "Catalog", action = "NewTvChannels" });
 
             //blog
             endpointRouteBuilder.MapControllerRoute(name: "Blog",
@@ -140,15 +140,15 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"{lang}/boards",
                 defaults: new { controller = "Boards", action = "Index" });
 
-            //compare products
-            endpointRouteBuilder.MapControllerRoute(name: "CompareProducts",
-                pattern: $"{lang}/compareproducts/",
-                defaults: new { controller = "Product", action = "CompareProducts" });
+            //compare tvchannels
+            endpointRouteBuilder.MapControllerRoute(name: "CompareTvChannels",
+                pattern: $"{lang}/comparetvchannels/",
+                defaults: new { controller = "TvChannel", action = "CompareTvChannels" });
 
-            //product tags
-            endpointRouteBuilder.MapControllerRoute(name: "ProductTagsAll",
-                pattern: $"{lang}/producttag/all/",
-                defaults: new { controller = "Catalog", action = "ProductTagsAll" });
+            //tvchannel tags
+            endpointRouteBuilder.MapControllerRoute(name: "TvChannelTagsAll",
+                pattern: $"{lang}/tvchanneltag/all/",
+                defaults: new { controller = "Catalog", action = "TvChannelTagsAll" });
 
             //manufacturers
             endpointRouteBuilder.MapControllerRoute(name: "ManufacturerList",
@@ -160,51 +160,51 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"{lang}/vendor/all/",
                 defaults: new { controller = "Catalog", action = "VendorAll" });
 
-            //add product to cart (without any attributes and options). used on catalog pages. (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "AddProductToCart-Catalog",
-                pattern: $"addproducttocart/catalog/{{productId:min(0)}}/{{shoppingCartTypeId:min(0)}}/{{quantity:min(0)}}",
-                defaults: new { controller = "ShoppingCart", action = "AddProductToCart_Catalog" });
+            //add tvchannel to cart (without any attributes and options). used on catalog pages. (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "AddTvChannelToCart-Catalog",
+                pattern: $"addtvchanneltocart/catalog/{{tvchannelId:min(0)}}/{{shoppingCartTypeId:min(0)}}/{{quantity:min(0)}}",
+                defaults: new { controller = "ShoppingCart", action = "AddTvChannelToCart_Catalog" });
 
-            //add product to cart (with attributes and options). used on the product details pages. (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "AddProductToCart-Details",
-                pattern: $"addproducttocart/details/{{productId:min(0)}}/{{shoppingCartTypeId:min(0)}}",
-                defaults: new { controller = "ShoppingCart", action = "AddProductToCart_Details" });
+            //add tvchannel to cart (with attributes and options). used on the tvchannel details pages. (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "AddTvChannelToCart-Details",
+                pattern: $"addtvchanneltocart/details/{{tvchannelId:min(0)}}/{{shoppingCartTypeId:min(0)}}",
+                defaults: new { controller = "ShoppingCart", action = "AddTvChannelToCart_Details" });
 
-            //comparing products (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "AddProductToCompare",
-                pattern: $"compareproducts/add/{{productId:min(0)}}",
-                defaults: new { controller = "Product", action = "AddProductToCompareList" });
+            //comparing tvchannels (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "AddTvChannelToCompare",
+                pattern: $"comparetvchannels/add/{{tvchannelId:min(0)}}",
+                defaults: new { controller = "TvChannel", action = "AddTvChannelToCompareList" });
 
-            //product email a friend
-            endpointRouteBuilder.MapControllerRoute(name: "ProductEmailAFriend",
-                pattern: $"{lang}/productemailafriend/{{productId:min(0)}}",
-                defaults: new { controller = "Product", action = "ProductEmailAFriend" });
+            //tvchannel email a friend
+            endpointRouteBuilder.MapControllerRoute(name: "TvChannelEmailAFriend",
+                pattern: $"{lang}/tvchannelemailafriend/{{tvchannelId:min(0)}}",
+                defaults: new { controller = "TvChannel", action = "TvChannelEmailAFriend" });
 
             //reviews
-            endpointRouteBuilder.MapControllerRoute(name: "ProductReviews",
-                pattern: $"{lang}/productreviews/{{productId}}",
-                defaults: new { controller = "Product", action = "ProductReviews" });
+            endpointRouteBuilder.MapControllerRoute(name: "TvChannelReviews",
+                pattern: $"{lang}/tvchannelreviews/{{tvchannelId}}",
+                defaults: new { controller = "TvChannel", action = "TvChannelReviews" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "UserProductReviews",
-                pattern: $"{lang}/user/productreviews",
-                defaults: new { controller = "Product", action = "UserProductReviews" });
+            endpointRouteBuilder.MapControllerRoute(name: "UserTvChannelReviews",
+                pattern: $"{lang}/user/tvchannelreviews",
+                defaults: new { controller = "TvChannel", action = "UserTvChannelReviews" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "UserProductReviewsPaged",
-                pattern: $"{lang}/user/productreviews/page/{{pageNumber:min(0)}}",
-                defaults: new { controller = "Product", action = "UserProductReviews" });
+            endpointRouteBuilder.MapControllerRoute(name: "UserTvChannelReviewsPaged",
+                pattern: $"{lang}/user/tvchannelreviews/page/{{pageNumber:min(0)}}",
+                defaults: new { controller = "TvChannel", action = "UserTvChannelReviews" });
 
             //back in stock notifications (AJAX)
             endpointRouteBuilder.MapControllerRoute(name: "BackInStockSubscribePopup",
-                pattern: $"backinstocksubscribe/{{productId:min(0)}}",
+                pattern: $"backinstocksubscribe/{{tvchannelId:min(0)}}",
                 defaults: new { controller = "BackInStockSubscription", action = "SubscribePopup" });
 
             endpointRouteBuilder.MapControllerRoute(name: "BackInStockSubscribeSend",
-                pattern: $"backinstocksubscribesend/{{productId:min(0)}}",
+                pattern: $"backinstocksubscribesend/{{tvchannelId:min(0)}}",
                 defaults: new { controller = "BackInStockSubscription", action = "SubscribePopupPOST" });
 
             //downloads (file result)
             endpointRouteBuilder.MapControllerRoute(name: "GetSampleDownload",
-                pattern: $"download/sample/{{productid:min(0)}}",
+                pattern: $"download/sample/{{tvchannelid:min(0)}}",
                 defaults: new { controller = "Download", action = "Sample" });
 
             //checkout pages
@@ -312,18 +312,18 @@ namespace TvProgViewer.WebUI.Infrastructure
                 defaults: new { controller = "News", action = "ListRss" });
 
             //set review helpfulness (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "SetProductReviewHelpfulness",
-                pattern: $"setproductreviewhelpfulness",
-                defaults: new { controller = "Product", action = "SetProductReviewHelpfulness" });
+            endpointRouteBuilder.MapControllerRoute(name: "SetTvChannelReviewHelpfulness",
+                pattern: $"settvchannelreviewhelpfulness",
+                defaults: new { controller = "TvChannel", action = "SetTvChannelReviewHelpfulness" });
 
             //user account links
             endpointRouteBuilder.MapControllerRoute(name: "UserReturnRequests",
                 pattern: $"{lang}/returnrequest/history",
                 defaults: new { controller = "ReturnRequest", action = "UserReturnRequests" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "UserDownloadableProducts",
-                pattern: $"{lang}/user/downloadableproducts",
-                defaults: new { controller = "User", action = "DownloadableProducts" });
+            endpointRouteBuilder.MapControllerRoute(name: "UserDownloadableTvChannels",
+                pattern: $"{lang}/user/downloadabletvchannels",
+                defaults: new { controller = "User", action = "DownloadableTvChannels" });
 
             endpointRouteBuilder.MapControllerRoute(name: "UserBackInStockSubscriptions",
                 pattern: $"{lang}/backinstocksubscriptions/manage/{{pageNumber:int?}}",
@@ -456,19 +456,19 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"poll/vote",
                 defaults: new { controller = "Poll", action = "Vote" });
 
-            //comparing products
-            endpointRouteBuilder.MapControllerRoute(name: "RemoveProductFromCompareList",
-                pattern: $"{lang}/compareproducts/remove/{{productId}}",
-                defaults: new { controller = "Product", action = "RemoveProductFromCompareList" });
+            //comparing tvchannels
+            endpointRouteBuilder.MapControllerRoute(name: "RemoveTvChannelFromCompareList",
+                pattern: $"{lang}/comparetvchannels/remove/{{tvchannelId}}",
+                defaults: new { controller = "TvChannel", action = "RemoveTvChannelFromCompareList" });
 
             endpointRouteBuilder.MapControllerRoute(name: "ClearCompareList",
                 pattern: $"{lang}/clearcomparelist/",
-                defaults: new { controller = "Product", action = "ClearCompareList" });
+                defaults: new { controller = "TvChannel", action = "ClearCompareList" });
 
             //new RSS (file result)
-            endpointRouteBuilder.MapControllerRoute(name: "NewProductsRSS",
-                pattern: $"newproducts/rss",
-                defaults: new { controller = "Catalog", action = "NewProductsRss" });
+            endpointRouteBuilder.MapControllerRoute(name: "NewTvChannelsRSS",
+                pattern: $"newtvchannels/rss",
+                defaults: new { controller = "Catalog", action = "NewTvChannelsRss" });
 
             //get state list by country ID (AJAX)
             endpointRouteBuilder.MapControllerRoute(name: "GetStatesByCountryId",
@@ -510,40 +510,40 @@ namespace TvProgViewer.WebUI.Infrastructure
             endpointRouteBuilder.MapControllerRoute("ChangeLanguage", $"changelanguage/{{langid:min(0)}}",
                 new { controller = "Common", action = "SetLanguage" });
 
-            //Catalog products (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "GetCategoryProducts",
-                pattern: $"category/products/",
-                defaults: new { controller = "Catalog", action = "GetCategoryProducts" });
+            //Catalog tvchannels (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "GetCategoryTvChannels",
+                pattern: $"category/tvchannels/",
+                defaults: new { controller = "Catalog", action = "GetCategoryTvChannels" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "GetManufacturerProducts",
-                pattern: $"manufacturer/products/",
-                defaults: new { controller = "Catalog", action = "GetManufacturerProducts" });
+            endpointRouteBuilder.MapControllerRoute(name: "GetManufacturerTvChannels",
+                pattern: $"manufacturer/tvchannels/",
+                defaults: new { controller = "Catalog", action = "GetManufacturerTvChannels" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "GetTagProducts",
-                pattern: $"tag/products",
-                defaults: new { controller = "Catalog", action = "GetTagProducts" });
+            endpointRouteBuilder.MapControllerRoute(name: "GetTagTvChannels",
+                pattern: $"tag/tvchannels",
+                defaults: new { controller = "Catalog", action = "GetTagTvChannels" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "SearchProducts",
-                pattern: $"product/search",
-                defaults: new { controller = "Catalog", action = "SearchProducts" });
+            endpointRouteBuilder.MapControllerRoute(name: "SearchTvChannels",
+                pattern: $"tvchannel/search",
+                defaults: new { controller = "Catalog", action = "SearchTvChannels" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "GetVendorProducts",
-                pattern: $"vendor/products",
-                defaults: new { controller = "Catalog", action = "GetVendorProducts" });
+            endpointRouteBuilder.MapControllerRoute(name: "GetVendorTvChannels",
+                pattern: $"vendor/tvchannels",
+                defaults: new { controller = "Catalog", action = "GetVendorTvChannels" });
 
-            endpointRouteBuilder.MapControllerRoute(name: "GetNewProducts",
-                pattern: $"newproducts/products/",
-                defaults: new { controller = "Catalog", action = "GetNewProducts" });
+            endpointRouteBuilder.MapControllerRoute(name: "GetNewTvChannels",
+                pattern: $"newtvchannels/tvchannels/",
+                defaults: new { controller = "Catalog", action = "GetNewTvChannels" });
 
-            //product combinations (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "GetProductCombinations",
-                pattern: $"product/combinations",
-                defaults: new { controller = "Product", action = "GetProductCombinations" });
+            //tvchannel combinations (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "GetTvChannelCombinations",
+                pattern: $"tvchannel/combinations",
+                defaults: new { controller = "TvChannel", action = "GetTvChannelCombinations" });
 
-            //product attributes with "upload file" type (AJAX)
-            endpointRouteBuilder.MapControllerRoute(name: "UploadFileProductAttribute",
-                pattern: $"uploadfileproductattribute/{{attributeId:min(0)}}",
-                defaults: new { controller = "ShoppingCart", action = "UploadFileProductAttribute" });
+            //tvchannel attributes with "upload file" type (AJAX)
+            endpointRouteBuilder.MapControllerRoute(name: "UploadFileTvChannelAttribute",
+                pattern: $"uploadfiletvchannelattribute/{{attributeId:min(0)}}",
+                defaults: new { controller = "ShoppingCart", action = "UploadFileTvChannelAttribute" });
 
             //checkout attributes with "upload file" type (AJAX)
             endpointRouteBuilder.MapControllerRoute(name: "UploadFileCheckoutAttribute",

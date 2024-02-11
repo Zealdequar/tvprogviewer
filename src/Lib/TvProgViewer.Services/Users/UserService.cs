@@ -46,8 +46,8 @@ namespace TvProgViewer.Services.Users
         private readonly IRepository<GenericAttribute> _gaRepository;
         private readonly IRepository<NewsComment> _newsCommentRepository;
         private readonly IRepository<Order> _orderRepository;
-        private readonly IRepository<ProductReview> _productReviewRepository;
-        private readonly IRepository<ProductReviewHelpfulness> _productReviewHelpfulnessRepository;
+        private readonly IRepository<TvChannelReview> _tvchannelReviewRepository;
+        private readonly IRepository<TvChannelReviewHelpfulness> _tvchannelReviewHelpfulnessRepository;
         private readonly IRepository<PollVotingRecord> _pollVotingRecordRepository;
         private readonly IRepository<ShoppingCartItem> _shoppingCartRepository;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -74,8 +74,8 @@ namespace TvProgViewer.Services.Users
             IRepository<GenericAttribute> gaRepository,
             IRepository<NewsComment> newsCommentRepository,
             IRepository<Order> orderRepository,
-            IRepository<ProductReview> productReviewRepository,
-            IRepository<ProductReviewHelpfulness> productReviewHelpfulnessRepository,
+            IRepository<TvChannelReview> tvchannelReviewRepository,
+            IRepository<TvChannelReviewHelpfulness> tvchannelReviewHelpfulnessRepository,
             IRepository<PollVotingRecord> pollVotingRecordRepository,
             IRepository<ShoppingCartItem> shoppingCartRepository,
             IStaticCacheManager staticCacheManager,
@@ -98,8 +98,8 @@ namespace TvProgViewer.Services.Users
             _gaRepository = gaRepository;
             _newsCommentRepository = newsCommentRepository;
             _orderRepository = orderRepository;
-            _productReviewRepository = productReviewRepository;
-            _productReviewHelpfulnessRepository = productReviewHelpfulnessRepository;
+            _tvchannelReviewRepository = tvchannelReviewRepository;
+            _tvchannelReviewHelpfulnessRepository = tvchannelReviewHelpfulnessRepository;
             _pollVotingRecordRepository = pollVotingRecordRepository;
             _shoppingCartRepository = shoppingCartRepository;
             _staticCacheManager = staticCacheManager;
@@ -246,7 +246,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="shoppingCartType">Shopping cart type; pass null to load all records</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
-        /// <param name="productId">Product identifier; pass null to load all records</param>
+        /// <param name="tvchannelId">TvChannel identifier; pass null to load all records</param>
         /// <param name="createdFromUtc">Created date from (UTC); pass null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); pass null to load all records</param>
         /// <param name="countryId">Billing country identifier; pass null to load all records</param>
@@ -257,7 +257,7 @@ namespace TvProgViewer.Services.Users
         /// The task result contains the users
         /// </returns>
         public virtual async Task<IPagedList<User>> GetUsersWithShoppingCartsAsync(ShoppingCartType? shoppingCartType = null,
-            int storeId = 0, int? productId = null,
+            int storeId = 0, int? tvchannelId = null,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null, int? countryId = null,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
@@ -272,9 +272,9 @@ namespace TvProgViewer.Services.Users
             if (storeId > 0 && !_shoppingCartSettings.CartsSharedBetweenStores)
                 items = items.Where(item => item.StoreId == storeId);
 
-            //filter shopping cart items by product
-            if (productId > 0)
-                items = items.Where(item => item.ProductId == productId);
+            //filter shopping cart items by tvchannel
+            if (tvchannelId > 0)
+                items = items.Where(item => item.TvChannelId == tvchannelId);
 
             //filter shopping cart items by date
             if (createdFromUtc.HasValue)
@@ -726,13 +726,13 @@ namespace TvProgViewer.Services.Users
                                  from order in _orderRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
                                  from blogComment in _blogCommentRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
                                  from newsComment in _newsCommentRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
-                                 from productReview in _productReviewRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
-                                 from productReviewHelpfulness in _productReviewHelpfulnessRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
+                                 from tvchannelReview in _tvchannelReviewRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
+                                 from tvchannelReviewHelpfulness in _tvchannelReviewHelpfulnessRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
                                  from pollVotingRecord in _pollVotingRecordRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
                                  from forumTopic in _forumTopicRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
                                  from forumPost in _forumPostRepository.Table.Where(o => o.UserId == guest.Id).DefaultIfEmpty()
                                  where (!onlyWithoutShoppingCart || sCart == null) &&
-                                     order == null && blogComment == null && newsComment == null && productReview == null && productReviewHelpfulness == null &&
+                                     order == null && blogComment == null && newsComment == null && tvchannelReview == null && tvchannelReviewHelpfulness == null &&
                                      pollVotingRecord == null && forumTopic == null && forumPost == null &&
                                      !guest.IsSystemAccount && !guest.Deleted && !g.Deleted &&
                                      (createdFromUtc == null || guest.CreatedOnUtc > createdFromUtc) &&

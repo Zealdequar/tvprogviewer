@@ -46,7 +46,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IStoreService _storeService;
@@ -70,7 +70,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             INotificationService notificationService,
             IPermissionService permissionService,
             IPictureService pictureService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IStaticCacheManager staticCacheManager,
             IStoreMappingService storeMappingService,
             IStoreService storeService,
@@ -90,7 +90,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _notificationService = notificationService;
             _permissionService = permissionService;
             _pictureService = pictureService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _staticCacheManager = staticCacheManager;
             _storeMappingService = storeMappingService;
             _storeService = storeService;
@@ -516,10 +516,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Products
+        #region TvChannels
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductList(CategoryProductSearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelList(CategoryTvChannelSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return await AccessDeniedDataTablesJson();
@@ -529,88 +529,88 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 ?? throw new ArgumentException("No category found with the specified id");
 
             //prepare model
-            var model = await _categoryModelFactory.PrepareCategoryProductListModelAsync(searchModel, category);
+            var model = await _categoryModelFactory.PrepareCategoryTvChannelListModelAsync(searchModel, category);
 
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> ProductUpdate(CategoryProductModel model)
+        public virtual async Task<IActionResult> TvChannelUpdate(CategoryTvChannelModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
 
-            //try to get a product category with the specified id
-            var productCategory = await _categoryService.GetProductCategoryByIdAsync(model.Id)
-                ?? throw new ArgumentException("No product category mapping found with the specified id");
+            //try to get a tvchannel category with the specified id
+            var tvchannelCategory = await _categoryService.GetTvChannelCategoryByIdAsync(model.Id)
+                ?? throw new ArgumentException("No tvchannel category mapping found with the specified id");
 
-            //fill entity from product
-            productCategory = model.ToEntity(productCategory);
-            await _categoryService.UpdateProductCategoryAsync(productCategory);
+            //fill entity from tvchannel
+            tvchannelCategory = model.ToEntity(tvchannelCategory);
+            await _categoryService.UpdateTvChannelCategoryAsync(tvchannelCategory);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> ProductDelete(int id)
+        public virtual async Task<IActionResult> TvChannelDelete(int id)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
 
-            //try to get a product category with the specified id
-            var productCategory = await _categoryService.GetProductCategoryByIdAsync(id)
-                ?? throw new ArgumentException("No product category mapping found with the specified id", nameof(id));
+            //try to get a tvchannel category with the specified id
+            var tvchannelCategory = await _categoryService.GetTvChannelCategoryByIdAsync(id)
+                ?? throw new ArgumentException("No tvchannel category mapping found with the specified id", nameof(id));
 
-            await _categoryService.DeleteProductCategoryAsync(productCategory);
+            await _categoryService.DeleteTvChannelCategoryAsync(tvchannelCategory);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> ProductAddPopup(int categoryId)
+        public virtual async Task<IActionResult> TvChannelAddPopup(int categoryId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _categoryModelFactory.PrepareAddProductToCategorySearchModelAsync(new AddProductToCategorySearchModel());
+            var model = await _categoryModelFactory.PrepareAddTvChannelToCategorySearchModelAsync(new AddTvChannelToCategorySearchModel());
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductAddPopupList(AddProductToCategorySearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelAddPopupList(AddTvChannelToCategorySearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _categoryModelFactory.PrepareAddProductToCategoryListModelAsync(searchModel);
+            var model = await _categoryModelFactory.PrepareAddTvChannelToCategoryListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
         [FormValueRequired("save")]
-        public virtual async Task<IActionResult> ProductAddPopup(AddProductToCategoryModel model)
+        public virtual async Task<IActionResult> TvChannelAddPopup(AddTvChannelToCategoryModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
 
-            //get selected products
-            var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
-            if (selectedProducts.Any())
+            //get selected tvchannels
+            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            if (selectedTvChannels.Any())
             {
-                var existingProductCategories = await _categoryService.GetProductCategoriesByCategoryIdAsync(model.CategoryId, showHidden: true);
-                foreach (var product in selectedProducts)
+                var existingTvChannelCategories = await _categoryService.GetTvChannelCategoriesByCategoryIdAsync(model.CategoryId, showHidden: true);
+                foreach (var tvchannel in selectedTvChannels)
                 {
-                    //whether product category with such parameters already exists
-                    if (_categoryService.FindProductCategory(existingProductCategories, product.Id, model.CategoryId) != null)
+                    //whether tvchannel category with such parameters already exists
+                    if (_categoryService.FindTvChannelCategory(existingTvChannelCategories, tvchannel.Id, model.CategoryId) != null)
                         continue;
 
-                    //insert the new product category mapping
-                    await _categoryService.InsertProductCategoryAsync(new ProductCategory
+                    //insert the new tvchannel category mapping
+                    await _categoryService.InsertTvChannelCategoryAsync(new TvChannelCategory
                     {
                         CategoryId = model.CategoryId,
-                        ProductId = product.Id,
-                        IsFeaturedProduct = false,
+                        TvChannelId = tvchannel.Id,
+                        IsFeaturedTvChannel = false,
                         DisplayOrder = 1
                     });
                 }
@@ -618,7 +618,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             ViewBag.RefreshPage = true;
 
-            return View(new AddProductToCategorySearchModel());
+            return View(new AddTvChannelToCategorySearchModel());
         }
 
         #endregion

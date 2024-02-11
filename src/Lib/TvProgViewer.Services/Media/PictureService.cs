@@ -32,10 +32,10 @@ namespace TvProgViewer.Services.Media
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger _logger;
         private readonly ITvProgFileProvider _fileProvider;
-        private readonly IProductAttributeParser _productAttributeParser;
+        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
         private readonly IRepository<Picture> _pictureRepository;
         private readonly IRepository<PictureBinary> _pictureBinaryRepository;
-        private readonly IRepository<ProductPicture> _productPictureRepository;
+        private readonly IRepository<TvChannelPicture> _tvchannelPictureRepository;
         private readonly ISettingService _settingService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IWebHelper _webHelper;
@@ -49,10 +49,10 @@ namespace TvProgViewer.Services.Media
             IHttpContextAccessor httpContextAccessor,
             ILogger logger,
             ITvProgFileProvider fileProvider,
-            IProductAttributeParser productAttributeParser,
+            ITvChannelAttributeParser tvchannelAttributeParser,
             IRepository<Picture> pictureRepository,
             IRepository<PictureBinary> pictureBinaryRepository,
-            IRepository<ProductPicture> productPictureRepository,
+            IRepository<TvChannelPicture> tvchannelPictureRepository,
             ISettingService settingService,
             IUrlRecordService urlRecordService,
             IWebHelper webHelper,
@@ -62,10 +62,10 @@ namespace TvProgViewer.Services.Media
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _fileProvider = fileProvider;
-            _productAttributeParser = productAttributeParser;
+            _tvchannelAttributeParser = tvchannelAttributeParser;
             _pictureRepository = pictureRepository;
             _pictureBinaryRepository = pictureBinaryRepository;
-            _productPictureRepository = productPictureRepository;
+            _tvchannelPictureRepository = tvchannelPictureRepository;
             _settingService = settingService;
             _urlRecordService = urlRecordService;
             _webHelper = webHelper;
@@ -483,8 +483,8 @@ namespace TvProgViewer.Services.Media
             string storeLocation = null)
         {
             //get overridden default image if exists
-            if (defaultPictureType == PictureType.Entity && _mediaSettings.ProductDefaultImageId > 0)
-                return await GetPictureUrlAsync(_mediaSettings.ProductDefaultImageId, targetSize, false, storeLocation, PictureType.Entity);
+            if (defaultPictureType == PictureType.Entity && _mediaSettings.TvChannelDefaultImageId > 0)
+                return await GetPictureUrlAsync(_mediaSettings.TvChannelDefaultImageId, targetSize, false, storeLocation, PictureType.Entity);
 
             var defaultImageFileName = defaultPictureType switch
             {
@@ -790,23 +790,23 @@ namespace TvProgViewer.Services.Media
         }
 
         /// <summary>
-        /// Gets pictures by product identifier
+        /// Gets pictures by tvchannel identifier
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="recordsToReturn">Number of records to return. 0 if you want to get all items</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the pictures
         /// </returns>
-        public virtual async Task<IList<Picture>> GetPicturesByProductIdAsync(int productId, int recordsToReturn = 0)
+        public virtual async Task<IList<Picture>> GetPicturesByTvChannelIdAsync(int tvchannelId, int recordsToReturn = 0)
         {
-            if (productId == 0)
+            if (tvchannelId == 0)
                 return new List<Picture>();
 
             var query = from p in _pictureRepository.Table
-                        join pp in _productPictureRepository.Table on p.Id equals pp.PictureId
+                        join pp in _tvchannelPictureRepository.Table on p.Id equals pp.PictureId
                         orderby pp.DisplayOrder, pp.Id
-                        where pp.ProductId == productId
+                        where pp.TvChannelId == tvchannelId
                         select p;
 
             if (recordsToReturn > 0)
@@ -1005,7 +1005,7 @@ namespace TvProgViewer.Services.Media
         }
 
         /// <summary>
-        /// Get product picture binary by picture identifier
+        /// Get tvchannel picture binary by picture identifier
         /// </summary>
         /// <param name="pictureId">The picture identifier</param>
         /// <returns>
@@ -1082,43 +1082,43 @@ namespace TvProgViewer.Services.Media
         }
 
         /// <summary>
-        /// Get product picture (for shopping cart and order details pages)
+        /// Get tvchannel picture (for shopping cart and order details pages)
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Attributes (in XML format)</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the picture
         /// </returns>
-        public virtual async Task<Picture> GetProductPictureAsync(Product product, string attributesXml)
+        public virtual async Task<Picture> GetTvChannelPictureAsync(TvChannel tvchannel, string attributesXml)
         {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
+            if (tvchannel == null)
+                throw new ArgumentNullException(nameof(tvchannel));
 
-            //first, try to get product attribute combination picture
-            var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributesXml);
+            //first, try to get tvchannel attribute combination picture
+            var combination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
             var combinationPicture = await GetPictureByIdAsync(combination?.PictureId ?? 0);
             if (combinationPicture != null)
                 return combinationPicture;
 
             //then, let's see whether we have attribute values with pictures
-            var attributePicture = await (await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml))
+            var attributePicture = await (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml))
                 .SelectAwait(async attributeValue => await GetPictureByIdAsync(attributeValue?.PictureId ?? 0))
                 .FirstOrDefaultAsync(picture => picture != null);
             if (attributePicture != null)
                 return attributePicture;
 
-            //now let's load the default product picture
-            var productPicture = (await GetPicturesByProductIdAsync(product.Id, 1)).FirstOrDefault();
-            if (productPicture != null)
-                return productPicture;
+            //now let's load the default tvchannel picture
+            var tvchannelPicture = (await GetPicturesByTvChannelIdAsync(tvchannel.Id, 1)).FirstOrDefault();
+            if (tvchannelPicture != null)
+                return tvchannelPicture;
 
-            //finally, let's check whether this product has some parent "grouped" product
-            if (product.VisibleIndividually || product.ParentGroupedProductId <= 0)
+            //finally, let's check whether this tvchannel has some parent "grouped" tvchannel
+            if (tvchannel.VisibleIndividually || tvchannel.ParentGroupedTvChannelId <= 0)
                 return null;
 
-            var parentGroupedProductPicture = (await GetPicturesByProductIdAsync(product.ParentGroupedProductId, 1)).FirstOrDefault();
-            return parentGroupedProductPicture;
+            var parentGroupedTvChannelPicture = (await GetPicturesByTvChannelIdAsync(tvchannel.ParentGroupedTvChannelId, 1)).FirstOrDefault();
+            return parentGroupedTvChannelPicture;
         }
 
         /// <summary>

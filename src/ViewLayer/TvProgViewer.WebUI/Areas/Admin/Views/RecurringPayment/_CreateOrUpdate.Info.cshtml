@@ -34,7 +34,7 @@
             <tvprog-label asp-for="CyclePeriodId" />
         </div>
         <div class="col-md-9">
-            <tvprog-select asp-for="CyclePeriodId" asp-items="@await (((RecurringProductCyclePeriod)Model.CyclePeriodId).ToSelectListAsync())" />
+            <tvprog-select asp-for="CyclePeriodId" asp-items="@await (((RecurringTvChannelCyclePeriod)Model.CyclePeriodId).ToSelectListAsync())" />
             <span asp-validation-for="CyclePeriodId"></span>
         </div>
     </div>

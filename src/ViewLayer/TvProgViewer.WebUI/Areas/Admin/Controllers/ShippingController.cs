@@ -113,11 +113,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        protected virtual async Task UpdateLocalesAsync(ProductAvailabilityRange productAvailabilityRange, ProductAvailabilityRangeModel model)
+        protected virtual async Task UpdateLocalesAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange, TvChannelAvailabilityRangeModel model)
         {
             foreach (var localized in model.Locales)
             {
-                await _localizedEntityService.SaveLocalizedValueAsync(productAvailabilityRange, x => x.Name, localized.Name, localized.LanguageId);
+                await _localizedEntityService.SaveLocalizedValueAsync(tvchannelAvailabilityRange, x => x.Name, localized.Name, localized.LanguageId);
             }
         }
 
@@ -527,118 +527,118 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Product availability ranges
+        #region TvChannel availability ranges
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductAvailabilityRanges(ProductAvailabilityRangeSearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelAvailabilityRanges(TvChannelAvailabilityRangeSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _shippingModelFactory.PrepareProductAvailabilityRangeListModelAsync(searchModel);
+            var model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeListModelAsync(searchModel);
 
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> CreateProductAvailabilityRange()
+        public virtual async Task<IActionResult> CreateTvChannelAvailabilityRange()
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _shippingModelFactory.PrepareProductAvailabilityRangeModelAsync(new ProductAvailabilityRangeModel(), null);
+            var model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(new TvChannelAvailabilityRangeModel(), null);
 
             return View(model);
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
-        public virtual async Task<IActionResult> CreateProductAvailabilityRange(ProductAvailabilityRangeModel model, bool continueEditing)
+        public virtual async Task<IActionResult> CreateTvChannelAvailabilityRange(TvChannelAvailabilityRangeModel model, bool continueEditing)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
             if (ModelState.IsValid)
             {
-                var productAvailabilityRange = model.ToEntity<ProductAvailabilityRange>();
-                await _dateRangeService.InsertProductAvailabilityRangeAsync(productAvailabilityRange);
+                var tvchannelAvailabilityRange = model.ToEntity<TvChannelAvailabilityRange>();
+                await _dateRangeService.InsertTvChannelAvailabilityRangeAsync(tvchannelAvailabilityRange);
 
                 //locales
-                await UpdateLocalesAsync(productAvailabilityRange, model);
+                await UpdateLocalesAsync(tvchannelAvailabilityRange, model);
 
-                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.ProductAvailabilityRanges.Added"));
+                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Added"));
 
-                return continueEditing ? RedirectToAction("EditProductAvailabilityRange", new { id = productAvailabilityRange.Id }) : RedirectToAction("DatesAndRanges");
+                return continueEditing ? RedirectToAction("EditTvChannelAvailabilityRange", new { id = tvchannelAvailabilityRange.Id }) : RedirectToAction("DatesAndRanges");
             }
 
             //prepare model
-            model = await _shippingModelFactory.PrepareProductAvailabilityRangeModelAsync(model, null, true);
+            model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(model, null, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
         }
 
-        public virtual async Task<IActionResult> EditProductAvailabilityRange(int id)
+        public virtual async Task<IActionResult> EditTvChannelAvailabilityRange(int id)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
-            //try to get a product availability range with the specified id
-            var productAvailabilityRange = await _dateRangeService.GetProductAvailabilityRangeByIdAsync(id);
-            if (productAvailabilityRange == null)
+            //try to get a tvchannel availability range with the specified id
+            var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(id);
+            if (tvchannelAvailabilityRange == null)
                 return RedirectToAction("DatesAndRanges");
 
             //prepare model
-            var model = await _shippingModelFactory.PrepareProductAvailabilityRangeModelAsync(null, productAvailabilityRange);
+            var model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(null, tvchannelAvailabilityRange);
 
             return View(model);
         }
 
         [HttpPost, ParameterBasedOnFormName("save-continue", "continueEditing")]
-        public virtual async Task<IActionResult> EditProductAvailabilityRange(ProductAvailabilityRangeModel model, bool continueEditing)
+        public virtual async Task<IActionResult> EditTvChannelAvailabilityRange(TvChannelAvailabilityRangeModel model, bool continueEditing)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
-            //try to get a product availability range with the specified id
-            var productAvailabilityRange = await _dateRangeService.GetProductAvailabilityRangeByIdAsync(model.Id);
-            if (productAvailabilityRange == null)
+            //try to get a tvchannel availability range with the specified id
+            var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(model.Id);
+            if (tvchannelAvailabilityRange == null)
                 return RedirectToAction("DatesAndRanges");
 
             if (ModelState.IsValid)
             {
-                productAvailabilityRange = model.ToEntity(productAvailabilityRange);
-                await _dateRangeService.UpdateProductAvailabilityRangeAsync(productAvailabilityRange);
+                tvchannelAvailabilityRange = model.ToEntity(tvchannelAvailabilityRange);
+                await _dateRangeService.UpdateTvChannelAvailabilityRangeAsync(tvchannelAvailabilityRange);
 
                 //locales
-                await UpdateLocalesAsync(productAvailabilityRange, model);
+                await UpdateLocalesAsync(tvchannelAvailabilityRange, model);
 
-                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.ProductAvailabilityRanges.Updated"));
+                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Updated"));
 
-                return continueEditing ? RedirectToAction("EditProductAvailabilityRange", productAvailabilityRange.Id) : RedirectToAction("DatesAndRanges");
+                return continueEditing ? RedirectToAction("EditTvChannelAvailabilityRange", tvchannelAvailabilityRange.Id) : RedirectToAction("DatesAndRanges");
             }
 
             //prepare model
-            model = await _shippingModelFactory.PrepareProductAvailabilityRangeModelAsync(model, productAvailabilityRange, true);
+            model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(model, tvchannelAvailabilityRange, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> DeleteProductAvailabilityRange(int id)
+        public virtual async Task<IActionResult> DeleteTvChannelAvailabilityRange(int id)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
-            //try to get a product availability range with the specified id
-            var productAvailabilityRange = await _dateRangeService.GetProductAvailabilityRangeByIdAsync(id);
-            if (productAvailabilityRange == null)
+            //try to get a tvchannel availability range with the specified id
+            var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(id);
+            if (tvchannelAvailabilityRange == null)
                 return RedirectToAction("DatesAndRanges");
 
-            await _dateRangeService.DeleteProductAvailabilityRangeAsync(productAvailabilityRange);
+            await _dateRangeService.DeleteTvChannelAvailabilityRangeAsync(tvchannelAvailabilityRange);
 
-            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.ProductAvailabilityRanges.Deleted"));
+            _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Deleted"));
 
             return RedirectToAction("DatesAndRanges");
         }

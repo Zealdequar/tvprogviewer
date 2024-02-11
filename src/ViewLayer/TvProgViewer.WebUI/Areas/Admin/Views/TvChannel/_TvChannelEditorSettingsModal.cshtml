@@ -1,0 +1,669 @@
+﻿@model TvChannelModel
+
+@inject TvProgViewer.Core.IWebHelper webHelper
+
+<div id="tvchannelsettings-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="tvchannelsettings-window-title">
+    <div class="modal-dialog editor-settings-modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="tvchannelsettings-window-title">
+                    @T("Admin.Configuration.Settings.TvChannelEditor.ModalTitle")
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                
+            </div>
+            <div class="modal-body">
+                <form asp-controller="TvChannel" asp-action="SaveTvChannelEditorSettings" method="post">
+                    <input type="hidden" name="returnurl" value="@webHelper.GetRawUrl(Context.Request)" />
+                    <div class="row">
+                        <div class="col-md-12">
+                            @T("Admin.Configuration.Settings.TvChannelEditor.ModalDescription")
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="cards-group">
+                                <div class="card card-default">
+                                    <div class="card-header clearfix">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                @T("Admin.Configuration.Settings.TvChannelEditor.BlockTitle.CommonInfo")
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="checkbox" class="select-all-fields" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Manufacturers" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Manufacturers" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Manufacturers"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Published" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Published" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Published"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TvChannelTags" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TvChannelTags" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TvChannelTags"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.GTIN" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.GTIN" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.GTIN"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.ManufacturerPartNumber" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.ManufacturerPartNumber" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.ManufacturerPartNumber"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.ShowOnHomepage" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.ShowOnHomepage" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.ShowOnHomepage"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TvChannelType" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TvChannelType" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TvChannelType"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TvChannelTemplate" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TvChannelTemplate" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TvChannelTemplate"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.VisibleIndividually" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.VisibleIndividually" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.VisibleIndividually"></span>
+                                            </div>
+                                        </div>                                        
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.ACL" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.ACL" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.ACL"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Stores" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Stores" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Stores"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Vendor" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Vendor" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Vendor"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AllowUserReviews" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AllowUserReviews" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AllowUserReviews"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AvailableStartDate" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AvailableStartDate" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AvailableStartDate"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AvailableEndDate" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AvailableEndDate" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AvailableEndDate"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.MarkAsNew" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.MarkAsNew" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.MarkAsNew"></span>
+                                            </div>
+                                        </div>                                        
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AdminComment" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AdminComment" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AdminComment"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cards-group">
+                                <div class="card card-default">
+                                    <div class="card-header clearfix">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                @T("Admin.Configuration.Settings.TvChannelEditor.BlockTitle.Price")
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="checkbox" class="select-all-fields" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.OldPrice" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.OldPrice" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.OldPrice"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TvChannelCost" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TvChannelCost" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TvChannelCost"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.DisableBuyButton" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.DisableBuyButton" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.DisableBuyButton"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.DisableWishlistButton" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.DisableWishlistButton" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.DisableWishlistButton"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AvailableForPreOrder" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AvailableForPreOrder" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AvailableForPreOrder"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.CallForPrice" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.CallForPrice" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.CallForPrice"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.UserEntersPrice" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.UserEntersPrice" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.UserEntersPrice"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.PAngV" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.PAngV" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.PAngV"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Discounts" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Discounts" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Discounts"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TelecommunicationsBroadcastingElectronicServices" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TelecommunicationsBroadcastingElectronicServices" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TelecommunicationsBroadcastingElectronicServices"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TierPrices" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TierPrices" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TierPrices"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header clearfix">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                @T("Admin.Configuration.Settings.TvChannelEditor.BlockTitle.Shipping")
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="checkbox" class="select-all-fields" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Weight" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Weight" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Weight"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Dimensions" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Dimensions" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Dimensions"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.FreeShipping" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.FreeShipping" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.FreeShipping"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.ShipSeparately" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.ShipSeparately" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.ShipSeparately"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AdditionalShippingCharge" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AdditionalShippingCharge" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AdditionalShippingCharge"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.DeliveryDate" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.DeliveryDate" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.DeliveryDate"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="cards-group">
+                                <div class="card card-default">
+                                    <div class="card-header clearfix">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                @T("Admin.Configuration.Settings.TvChannelEditor.BlockTitle.Inventory")
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="checkbox" class="select-all-fields" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TvChannelAvailabilityRange" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TvChannelAvailabilityRange" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TvChannelAvailabilityRange"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Warehouse" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Warehouse" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Warehouse"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.UseMultipleWarehouses" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.UseMultipleWarehouses" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.UseMultipleWarehouses"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.DisplayStockAvailability" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.DisplayStockAvailability" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.DisplayStockAvailability"></span>
+                                            </div>
+                                        </div>                                        
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.MinimumStockQuantity" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.MinimumStockQuantity" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.MinimumStockQuantity"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.LowStockActivity" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.LowStockActivity" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.LowStockActivity"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.NotifyAdminForQuantityBelow" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.NotifyAdminForQuantityBelow" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.NotifyAdminForQuantityBelow"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Backorders" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Backorders" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Backorders"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AllowBackInStockSubscriptions" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AllowBackInStockSubscriptions" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AllowBackInStockSubscriptions"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.MinimumCartQuantity" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.MinimumCartQuantity" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.MinimumCartQuantity"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.MaximumCartQuantity" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.MaximumCartQuantity" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.MaximumCartQuantity"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AllowedQuantities" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AllowedQuantities" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AllowedQuantities"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.AllowAddingOnlyExistingAttributeCombinations" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.AllowAddingOnlyExistingAttributeCombinations" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.AllowAddingOnlyExistingAttributeCombinations"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.NotReturnable" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.NotReturnable" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.NotReturnable"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card card-default">
+                                    <div class="card-header clearfix">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                @T("Admin.Configuration.Settings.TvChannelEditor.BlockTitle.Tabs")
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="checkbox" class="select-all-fields" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.TvChannelAttributes" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.TvChannelAttributes" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.TvChannelAttributes"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.SpecificationAttributes" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.SpecificationAttributes" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.SpecificationAttributes"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.IsGiftCard" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.IsGiftCard" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.IsGiftCard"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.DownloadableTvChannel" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.DownloadableTvChannel" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.DownloadableTvChannel"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.IsRental" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.IsRental" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.IsRental"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.RecurringTvChannel" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.RecurringTvChannel" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.RecurringTvChannel"></span>
+                                            </div>
+                                        </div>
+										<div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.Seo" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.Seo" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.Seo"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.RelatedTvChannels" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.RelatedTvChannels" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.RelatedTvChannels"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.CrossSellsTvChannels" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.CrossSellsTvChannels" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.CrossSellsTvChannels"></span>
+                                            </div>
+                                        </div>
+										<div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.PurchasedWithOrders" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.PurchasedWithOrders" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.PurchasedWithOrders"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-10">
+                                                <tvprog-label asp-for="TvChannelEditorSettingsModel.StockQuantityHistory" />
+                                            </div>
+                                            <div class="col-md-2">
+                                                <tvprog-editor asp-for="TvChannelEditorSettingsModel.StockQuantityHistory" />
+                                                <span asp-validation-for="TvChannelEditorSettingsModel.StockQuantityHistory"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-center margin-t-5">
+                            <button type="submit" name="save-tvchannel-editor-settings" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+                <script>
+                    $(document).ready(function () {
+                        $('input[type=checkbox].select-all-fields').each(function (index, value) {
+                            if ($('input[type=checkbox]:checked', $(this).closest('.card')).length > 0) {
+                                $(this).prop('checked', true);
+                            }
+                        });
+
+                        $('input[type=checkbox].select-all-fields').on('click', function () {
+                            $('input[type=checkbox]', $(this).closest('.card')).prop('checked', $(this).is(':checked'));
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>

@@ -45,7 +45,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IStoreService _storeService;
         private readonly IUrlRecordService _urlRecordService;
@@ -68,7 +68,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             INotificationService notificationService,
             IPermissionService permissionService,
             IPictureService pictureService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IStoreMappingService storeMappingService,
             IStoreService storeService,
             IUrlRecordService urlRecordService,
@@ -87,7 +87,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _notificationService = notificationService;
             _permissionService = permissionService;
             _pictureService = pictureService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _storeMappingService = storeMappingService;
             _storeService = storeService;
             _urlRecordService = urlRecordService;
@@ -512,10 +512,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Products
+        #region TvChannels
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductList(ManufacturerProductSearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelList(ManufacturerTvChannelSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return await AccessDeniedDataTablesJson();
@@ -525,91 +525,91 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 ?? throw new ArgumentException("No manufacturer found with the specified id");
 
             //prepare model
-            var model = await _manufacturerModelFactory.PrepareManufacturerProductListModelAsync(searchModel, manufacturer);
+            var model = await _manufacturerModelFactory.PrepareManufacturerTvChannelListModelAsync(searchModel, manufacturer);
 
             return Json(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductUpdate(ManufacturerProductModel model)
+        public virtual async Task<IActionResult> TvChannelUpdate(ManufacturerTvChannelModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return AccessDeniedView();
 
-            //try to get a product manufacturer with the specified id
-            var productManufacturer = await _manufacturerService.GetProductManufacturerByIdAsync(model.Id)
-                ?? throw new ArgumentException("No product manufacturer mapping found with the specified id");
+            //try to get a tvchannel manufacturer with the specified id
+            var tvchannelManufacturer = await _manufacturerService.GetTvChannelManufacturerByIdAsync(model.Id)
+                ?? throw new ArgumentException("No tvchannel manufacturer mapping found with the specified id");
 
             //fill entity from model
-            productManufacturer = model.ToEntity(productManufacturer);
-            await _manufacturerService.UpdateProductManufacturerAsync(productManufacturer);
+            tvchannelManufacturer = model.ToEntity(tvchannelManufacturer);
+            await _manufacturerService.UpdateTvChannelManufacturerAsync(tvchannelManufacturer);
 
             return new NullJsonResult();
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductDelete(int id)
+        public virtual async Task<IActionResult> TvChannelDelete(int id)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return AccessDeniedView();
 
-            //try to get a product manufacturer with the specified id
-            var productManufacturer = await _manufacturerService.GetProductManufacturerByIdAsync(id)
-                ?? throw new ArgumentException("No product manufacturer mapping found with the specified id");
+            //try to get a tvchannel manufacturer with the specified id
+            var tvchannelManufacturer = await _manufacturerService.GetTvChannelManufacturerByIdAsync(id)
+                ?? throw new ArgumentException("No tvchannel manufacturer mapping found with the specified id");
 
-            await _manufacturerService.DeleteProductManufacturerAsync(productManufacturer);
+            await _manufacturerService.DeleteTvChannelManufacturerAsync(tvchannelManufacturer);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> ProductAddPopup(int manufacturerId)
+        public virtual async Task<IActionResult> TvChannelAddPopup(int manufacturerId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _manufacturerModelFactory.PrepareAddProductToManufacturerSearchModelAsync(new AddProductToManufacturerSearchModel());
+            var model = await _manufacturerModelFactory.PrepareAddTvChannelToManufacturerSearchModelAsync(new AddTvChannelToManufacturerSearchModel());
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductAddPopupList(AddProductToManufacturerSearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelAddPopupList(AddTvChannelToManufacturerSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _manufacturerModelFactory.PrepareAddProductToManufacturerListModelAsync(searchModel);
+            var model = await _manufacturerModelFactory.PrepareAddTvChannelToManufacturerListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
         [FormValueRequired("save")]
-        public virtual async Task<IActionResult> ProductAddPopup(AddProductToManufacturerModel model)
+        public virtual async Task<IActionResult> TvChannelAddPopup(AddTvChannelToManufacturerModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return AccessDeniedView();
 
-            //get selected products
-            var selectedProducts = await _productService.GetProductsByIdsAsync(model.SelectedProductIds.ToArray());
-            if (selectedProducts.Any())
+            //get selected tvchannels
+            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            if (selectedTvChannels.Any())
             {
-                var existingProductmanufacturers = await _manufacturerService
-                    .GetProductManufacturersByManufacturerIdAsync(model.ManufacturerId, showHidden: true);
-                foreach (var product in selectedProducts)
+                var existingTvChannelmanufacturers = await _manufacturerService
+                    .GetTvChannelManufacturersByManufacturerIdAsync(model.ManufacturerId, showHidden: true);
+                foreach (var tvchannel in selectedTvChannels)
                 {
-                    //whether product manufacturer with such parameters already exists
-                    if (_manufacturerService.FindProductManufacturer(existingProductmanufacturers, product.Id, model.ManufacturerId) != null)
+                    //whether tvchannel manufacturer with such parameters already exists
+                    if (_manufacturerService.FindTvChannelManufacturer(existingTvChannelmanufacturers, tvchannel.Id, model.ManufacturerId) != null)
                         continue;
 
-                    //insert the new product manufacturer mapping
-                    await _manufacturerService.InsertProductManufacturerAsync(new ProductManufacturer
+                    //insert the new tvchannel manufacturer mapping
+                    await _manufacturerService.InsertTvChannelManufacturerAsync(new TvChannelManufacturer
                     {
                         ManufacturerId = model.ManufacturerId,
-                        ProductId = product.Id,
-                        IsFeaturedProduct = false,
+                        TvChannelId = tvchannel.Id,
+                        IsFeaturedTvChannel = false,
                         DisplayOrder = 1
                     });
                 }
@@ -617,7 +617,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             ViewBag.RefreshPage = true;
 
-            return View(new AddProductToManufacturerSearchModel());
+            return View(new AddTvChannelToManufacturerSearchModel());
         }
 
         #endregion

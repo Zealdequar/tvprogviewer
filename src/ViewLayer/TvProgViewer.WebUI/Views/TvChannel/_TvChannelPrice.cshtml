@@ -1,0 +1,80 @@
+﻿@model TvChannelDetailsModel.TvChannelPriceModel
+
+@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Tax
+
+@inject IWorkContext workContext
+
+@if (!Model.UserEntersPrice && 1==0)
+{
+    <div class="prices">
+        @if (Model.CallForPrice)
+        {
+            @*call for price*@
+            <div class="tvchannel-price call-for-price">
+                <span>@T("TvChannels.CallForPrice")</span>
+            </div>
+        }
+        else
+        {
+            if (Model.IsRental)
+            {
+                <div class="rental-price">
+                    <span>@T("TvChannels.Price.RentalPrice"):</span>
+                    <span>@Model.RentalPrice</span>
+                </div>
+            }
+            if (!string.IsNullOrWhiteSpace(Model.OldPrice))
+            {
+                @*old price*@
+                <div class="old-tvchannel-price">
+                    <span>@T("TvChannels.Price.OldPrice"):</span>
+                    <span>@Model.OldPrice</span>
+                </div>
+            }
+            <div class="@if (string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
+                        {
+                            <text>tvchannel-price</text>
+                        }
+                        else
+                        {
+                            <text>non-discounted-price</text>
+                        }">
+                @if (!string.IsNullOrWhiteSpace(Model.OldPrice) || !string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
+                {
+                    @*display "Price:" label if we have old price or discounted one*@
+                    <label for="price-value-@(Model.TvChannelId)">@T("TvChannels.Price"):</label>
+                }
+                @*render price*@
+                <span @if (string.IsNullOrWhiteSpace(Model.PriceWithDiscount)) { <text> id="price-value-@(Model.TvChannelId)" class="price-value-@(Model.TvChannelId)" </text> }>
+                    @Html.Raw(Model.Price)
+                </span>
+            </div>
+            if (!string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
+            {
+                @*discounted price*@
+                <div class="tvchannel-price discounted-price">
+                    <span>@T("TvChannels.Price.WithDiscount"):</span>
+                    <span class="price-value-@(Model.TvChannelId)">
+                        @Html.Raw(Model.PriceWithDiscount)
+                    </span>
+                </div>
+            }
+            if (!string.IsNullOrEmpty(Model.BasePricePAngV))
+            {
+                <div class="base-price-pangv" id="base-price-pangv-@Model.TvChannelId">
+                    @Model.BasePricePAngV
+                </div>
+            }
+            if (Model.DisplayTaxShippingInfo)
+            {
+                var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
+                //tax info is already included in the price (incl/excl tax). that's why we display only shipping info here
+                //of course, you can modify appropriate locales to include VAT info there
+                <div class="tax-shipping-info">
+                    @T(inclTax ? "TvChannels.Price.TaxShipping.InclTax" : "TvChannels.Price.TaxShipping.ExclTax", Url.RouteTopicUrl("shippinginfo"))
+                </div>
+            }
+        }
+    </div>
+}

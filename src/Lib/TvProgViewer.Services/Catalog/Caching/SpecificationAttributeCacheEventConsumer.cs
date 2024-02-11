@@ -21,8 +21,8 @@ namespace TvProgViewer.Services.Catalog.Caching
 
             if (entityEventType != EntityEventType.Insert)
             {
-                await RemoveByPrefixAsync(TvProgCatalogDefaults.ProductSpecificationAttributeAllByProductPrefix);
-                await RemoveByPrefixAsync(TvProgCatalogDefaults.SpecificationAttributeGroupByProductPrefix);
+                await RemoveByPrefixAsync(TvProgCatalogDefaults.TvChannelSpecificationAttributeAllByTvChannelPrefix);
+                await RemoveByPrefixAsync(TvProgCatalogDefaults.SpecificationAttributeGroupByTvChannelPrefix);
                 await RemoveByPrefixAsync(TvProgCatalogDefaults.FilterableSpecificationAttributeOptionsPrefix);
             }
 

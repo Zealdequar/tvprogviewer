@@ -129,6 +129,12 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         }
 
         /// <summary>
+        /// Ссылка на подробности телеканала
+        /// </summary>
+        [DataMember]
+        public string UrlDetails { get; set; }
+
+        /// <summary>
         /// Частота телеканала (устаревшее, использовалось для работы с аналоговым тв-тюнером)
         /// </summary>
         public int Freq { get; set; }

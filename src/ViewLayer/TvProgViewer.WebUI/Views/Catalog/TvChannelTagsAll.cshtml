@@ -1,0 +1,32 @@
+﻿@model PopularTvChannelTagsModel
+
+@using TvProgViewer.Core.Domain.Catalog
+
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    TvProgHtml.AddTitleParts(T("PageTitle.AllTvChannelTags").Text);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-tvchannel-tags-all-page");
+}
+<div class="page tvchannel-tags-all-page">
+    <div class="page-title">
+        <h1>@T("TvChannels.Tags.All")</h1>
+    </div>
+    <div class="page-body">
+        @if (Model.Tags.Count > 0)
+        {
+            <ul class="tvchannel-tags-list">
+                @foreach (var item in Model.Tags)
+                {
+                    <li>
+                        <a href="@(Url.RouteUrl<TvChannelTag>(new { SeName = item.SeName }))" class="tvchanneltag" style="font-size:@(Model.GetFontSize(item))%;">
+                            @item.Name
+                        </a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>

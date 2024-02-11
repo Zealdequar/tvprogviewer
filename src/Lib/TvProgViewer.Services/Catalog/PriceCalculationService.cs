@@ -28,8 +28,8 @@ namespace TvProgViewer.Services.Catalog
         private readonly IUserService _userService;
         private readonly IDiscountService _discountService;
         private readonly IManufacturerService _manufacturerService;
-        private readonly IProductAttributeParser _productAttributeParser;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
@@ -43,8 +43,8 @@ namespace TvProgViewer.Services.Catalog
             IUserService userService,
             IDiscountService discountService,
             IManufacturerService manufacturerService,
-            IProductAttributeParser productAttributeParser,
-            IProductService productService,
+            ITvChannelAttributeParser tvchannelAttributeParser,
+            ITvChannelService tvchannelService,
             IStaticCacheManager staticCacheManager)
         {
             _catalogSettings = catalogSettings;
@@ -54,8 +54,8 @@ namespace TvProgViewer.Services.Catalog
             _userService = userService;
             _discountService = discountService;
             _manufacturerService = manufacturerService;
-            _productAttributeParser = productAttributeParser;
-            _productService = productService;
+            _tvchannelAttributeParser = tvchannelAttributeParser;
+            _tvchannelService = tvchannelService;
             _staticCacheManager = staticCacheManager;
         }
 
@@ -64,25 +64,25 @@ namespace TvProgViewer.Services.Catalog
         #region Utilities
 
         /// <summary>
-        /// Gets allowed discounts applied to product
+        /// Gets allowed discounts applied to tvchannel
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the discounts
         /// </returns>
-        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToProductAsync(Product product, User user)
+        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToTvChannelAsync(TvChannel tvchannel, User user)
         {
             var allowedDiscounts = new List<Discount>();
             if (_catalogSettings.IgnoreDiscounts)
                 return allowedDiscounts;
 
-            if (!product.HasDiscountsApplied)
+            if (!tvchannel.HasDiscountsApplied)
                 return allowedDiscounts;
 
             //we use this property ("HasDiscountsApplied") for performance optimization to avoid unnecessary database calls
-            foreach (var discount in await _discountService.GetAppliedDiscountsAsync(product))
+            foreach (var discount in await _discountService.GetAppliedDiscountsAsync(tvchannel))
                 if (discount.DiscountType == DiscountType.AssignedToSkus &&
                     (await _discountService.ValidateDiscountAsync(discount, user)).IsValid)
                     allowedDiscounts.Add(discount);
@@ -93,13 +93,13 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets allowed discounts applied to categories
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the discounts
         /// </returns>
-        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToCategoriesAsync(Product product, User user)
+        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToCategoriesAsync(TvChannel tvchannel, User user)
         {
             var allowedDiscounts = new List<Discount>();
             if (_catalogSettings.IgnoreDiscounts)
@@ -111,17 +111,17 @@ namespace TvProgViewer.Services.Catalog
                 //load identifier of categories with this discount applied to
                 var discountCategoryIds = await _categoryService.GetAppliedCategoryIdsAsync(discount, user);
 
-                //compare with categories of this product
-                var productCategoryIds = new List<int>();
+                //compare with categories of this tvchannel
+                var tvchannelCategoryIds = new List<int>();
                 if (discountCategoryIds.Any())
                 {
-                    productCategoryIds = (await _categoryService
-                        .GetProductCategoriesByProductIdAsync(product.Id))
+                    tvchannelCategoryIds = (await _categoryService
+                        .GetTvChannelCategoriesByTvChannelIdAsync(tvchannel.Id))
                         .Select(x => x.CategoryId)
                         .ToList();
                 }
 
-                foreach (var categoryId in productCategoryIds)
+                foreach (var categoryId in tvchannelCategoryIds)
                 {
                     if (!discountCategoryIds.Contains(categoryId))
                         continue;
@@ -138,13 +138,13 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets allowed discounts applied to manufacturers
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the discounts
         /// </returns>
-        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToManufacturersAsync(Product product, User user)
+        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToManufacturersAsync(TvChannel tvchannel, User user)
         {
             var allowedDiscounts = new List<Discount>();
             if (_catalogSettings.IgnoreDiscounts)
@@ -155,18 +155,18 @@ namespace TvProgViewer.Services.Catalog
                 //load identifier of manufacturers with this discount applied to
                 var discountManufacturerIds = await _manufacturerService.GetAppliedManufacturerIdsAsync(discount, user);
 
-                //compare with manufacturers of this product
-                var productManufacturerIds = new List<int>();
+                //compare with manufacturers of this tvchannel
+                var tvchannelManufacturerIds = new List<int>();
                 if (discountManufacturerIds.Any())
                 {
-                    productManufacturerIds =
+                    tvchannelManufacturerIds =
                         (await _manufacturerService
-                        .GetProductManufacturersByProductIdAsync(product.Id))
+                        .GetTvChannelManufacturersByTvChannelIdAsync(tvchannel.Id))
                         .Select(x => x.ManufacturerId)
                         .ToList();
                 }
 
-                foreach (var manufacturerId in productManufacturerIds)
+                foreach (var manufacturerId in tvchannelManufacturerIds)
                 {
                     if (!discountManufacturerIds.Contains(manufacturerId))
                         continue;
@@ -183,30 +183,30 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets allowed discounts
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the discounts
         /// </returns>
-        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAsync(Product product, User user)
+        protected virtual async Task<IList<Discount>> GetAllowedDiscountsAsync(TvChannel tvchannel, User user)
         {
             var allowedDiscounts = new List<Discount>();
             if (_catalogSettings.IgnoreDiscounts)
                 return allowedDiscounts;
 
-            //discounts applied to products
-            foreach (var discount in await GetAllowedDiscountsAppliedToProductAsync(product, user))
+            //discounts applied to tvchannels
+            foreach (var discount in await GetAllowedDiscountsAppliedToTvChannelAsync(tvchannel, user))
                 if (!_discountService.ContainsDiscount(allowedDiscounts, discount))
                     allowedDiscounts.Add(discount);
 
             //discounts applied to categories
-            foreach (var discount in await GetAllowedDiscountsAppliedToCategoriesAsync(product, user))
+            foreach (var discount in await GetAllowedDiscountsAppliedToCategoriesAsync(tvchannel, user))
                 if (!_discountService.ContainsDiscount(allowedDiscounts, discount))
                     allowedDiscounts.Add(discount);
 
             //discounts applied to manufacturers
-            foreach (var discount in await GetAllowedDiscountsAppliedToManufacturersAsync(product, user))
+            foreach (var discount in await GetAllowedDiscountsAppliedToManufacturersAsync(tvchannel, user))
                 if (!_discountService.ContainsDiscount(allowedDiscounts, discount))
                     allowedDiscounts.Add(discount);
 
@@ -216,38 +216,38 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets discount amount
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">The user</param>
-        /// <param name="productPriceWithoutDiscount">Already calculated product price without discount</param>
+        /// <param name="tvchannelPriceWithoutDiscount">Already calculated tvchannel price without discount</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the discount amount, Applied discounts
         /// </returns>
-        protected virtual async Task<(decimal, List<Discount>)> GetDiscountAmountAsync(Product product,
+        protected virtual async Task<(decimal, List<Discount>)> GetDiscountAmountAsync(TvChannel tvchannel,
             User user,
-            decimal productPriceWithoutDiscount)
+            decimal tvchannelPriceWithoutDiscount)
         {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
+            if (tvchannel == null)
+                throw new ArgumentNullException(nameof(tvchannel));
 
             var appliedDiscounts = new List<Discount>();
             var appliedDiscountAmount = decimal.Zero;
 
-            //we don't apply discounts to products with price entered by a user
-            if (product.UserEntersPrice)
+            //we don't apply discounts to tvchannels with price entered by a user
+            if (tvchannel.UserEntersPrice)
                 return (appliedDiscountAmount, appliedDiscounts);
 
             //discounts are disabled
             if (_catalogSettings.IgnoreDiscounts)
                 return (appliedDiscountAmount, appliedDiscounts);
 
-            var allowedDiscounts = await GetAllowedDiscountsAsync(product, user);
+            var allowedDiscounts = await GetAllowedDiscountsAsync(tvchannel, user);
 
             //no discounts
             if (!allowedDiscounts.Any())
                 return (appliedDiscountAmount, appliedDiscounts);
 
-            appliedDiscounts = _discountService.GetPreferredDiscount(allowedDiscounts, productPriceWithoutDiscount, out appliedDiscountAmount);
+            appliedDiscounts = _discountService.GetPreferredDiscount(allowedDiscounts, tvchannelPriceWithoutDiscount, out appliedDiscountAmount);
 
             return (appliedDiscountAmount, appliedDiscounts);
         }
@@ -259,7 +259,7 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets the final price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">The user</param>
         /// <param name="store">Store</param>
         /// <param name="additionalCharge">Additional charge</param>
@@ -269,14 +269,14 @@ namespace TvProgViewer.Services.Catalog
         /// A task that represents the asynchronous operation
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
-        public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(Product product,
+        public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
             User user,
             Store store,
             decimal additionalCharge = 0,
             bool includeDiscounts = true,
             int quantity = 1)
         {
-            return await GetFinalPriceAsync(product, user, store,
+            return await GetFinalPriceAsync(tvchannel, user, store,
                 additionalCharge, includeDiscounts, quantity,
                 null, null);
         }
@@ -284,19 +284,19 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets the final price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">The user</param>
         /// <param name="store">Store</param>
         /// <param name="additionalCharge">Additional charge</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for final price computation</param>
         /// <param name="quantity">Shopping cart item quantity</param>
-        /// <param name="rentalStartDate">Rental period start date (for rental products)</param>
-        /// <param name="rentalEndDate">Rental period end date (for rental products)</param>
+        /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
+        /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
-        public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(Product product,
+        public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
             User user,
             Store store,
             decimal additionalCharge,
@@ -305,51 +305,51 @@ namespace TvProgViewer.Services.Catalog
             DateTime? rentalStartDate,
             DateTime? rentalEndDate)
         {
-            return await GetFinalPriceAsync(product, user, store, null, additionalCharge, includeDiscounts, quantity,
+            return await GetFinalPriceAsync(tvchannel, user, store, null, additionalCharge, includeDiscounts, quantity,
                 rentalStartDate, rentalEndDate);
         }
 
         /// <summary>
         /// Gets the final price
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">The user</param>
         /// <param name="store">Store</param>
-        /// <param name="overriddenProductPrice">Overridden product price. If specified, then it'll be used instead of a product price. For example, used with product attribute combinations</param>
+        /// <param name="overriddenTvChannelPrice">Overridden tvchannel price. If specified, then it'll be used instead of a tvchannel price. For example, used with tvchannel attribute combinations</param>
         /// <param name="additionalCharge">Additional charge</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for final price computation</param>
         /// <param name="quantity">Shopping cart item quantity</param>
-        /// <param name="rentalStartDate">Rental period start date (for rental products)</param>
-        /// <param name="rentalEndDate">Rental period end date (for rental products)</param>
+        /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
+        /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
-        public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(Product product,
+        public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
             User user,
             Store store,
-            decimal? overriddenProductPrice,
+            decimal? overriddenTvChannelPrice,
             decimal additionalCharge,
             bool includeDiscounts,
             int quantity,
             DateTime? rentalStartDate,
             DateTime? rentalEndDate)
         {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
+            if (tvchannel == null)
+                throw new ArgumentNullException(nameof(tvchannel));
 
-            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.ProductPriceCacheKey,
-                product,
-                overriddenProductPrice,
+            var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelPriceCacheKey,
+                tvchannel,
+                overriddenTvChannelPrice,
                 additionalCharge,
                 includeDiscounts,
                 quantity,
                 await _userService.GetUserRoleIdsAsync(user),
                 store);
 
-            //we do not cache price if this not allowed by settings or if the product is rental product
+            //we do not cache price if this not allowed by settings or if the tvchannel is rental tvchannel
             //otherwise, it can cause memory leaks (to store all possible date period combinations)
-            if (!_catalogSettings.CacheProductPrices || product.IsRental)
+            if (!_catalogSettings.CacheTvChannelPrices || tvchannel.IsRental)
                 cacheKey.CacheTime = 0;
 
             decimal rezPrice;
@@ -363,10 +363,10 @@ namespace TvProgViewer.Services.Catalog
                 var appliedDiscountAmount = decimal.Zero;
 
                 //initial price
-                var price = overriddenProductPrice ?? product.Price;
+                var price = overriddenTvChannelPrice ?? tvchannel.Price;
 
                 //tier prices
-                var tierPrice = await _productService.GetPreferredTierPriceAsync(product, user, store, quantity);
+                var tierPrice = await _tvchannelService.GetPreferredTierPriceAsync(tvchannel, user, store, quantity);
 
                 if (tierPrice != null)
                     price = tierPrice.Price;
@@ -374,17 +374,17 @@ namespace TvProgViewer.Services.Catalog
                 //additional charge
                 price += additionalCharge;
 
-                //rental products
-                if (product.IsRental)
+                //rental tvchannels
+                if (tvchannel.IsRental)
                     if (rentalStartDate.HasValue && rentalEndDate.HasValue)
-                        price *= _productService.GetRentalPeriods(product, rentalStartDate.Value, rentalEndDate.Value);
+                        price *= _tvchannelService.GetRentalPeriods(tvchannel, rentalStartDate.Value, rentalEndDate.Value);
 
                 var priceWithoutDiscount = price;
 
                 if (includeDiscounts)
                 {
                     //discount
-                    var (tmpDiscountAmount, tmpAppliedDiscounts) = await GetDiscountAmountAsync(product, user, price);
+                    var (tmpDiscountAmount, tmpAppliedDiscounts) = await GetDiscountAmountAsync(tvchannel, user, price);
                     price -= tmpDiscountAmount;
 
                     if (tmpAppliedDiscounts?.Any() ?? false)
@@ -407,21 +407,21 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets the product cost (one item)
+        /// Gets the tvchannel cost (one item)
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Shopping cart item attributes in XML</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product cost (one item)
+        /// The task result contains the tvchannel cost (one item)
         /// </returns>
-        public virtual async Task<decimal> GetProductCostAsync(Product product, string attributesXml)
+        public virtual async Task<decimal> GetTvChannelCostAsync(TvChannel tvchannel, string attributesXml)
         {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
+            if (tvchannel == null)
+                throw new ArgumentNullException(nameof(tvchannel));
 
-            var cost = product.ProductCost;
-            var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributesXml);
+            var cost = tvchannel.TvChannelCost;
+            var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
             foreach (var attributeValue in attributeValues)
             {
                 switch (attributeValue.AttributeValueType)
@@ -430,11 +430,11 @@ namespace TvProgViewer.Services.Catalog
                         //simple attribute
                         cost += attributeValue.Cost;
                         break;
-                    case AttributeValueType.AssociatedToProduct:
-                        //bundled product
-                        var associatedProduct = await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId);
-                        if (associatedProduct != null)
-                            cost += associatedProduct.ProductCost * attributeValue.Quantity;
+                    case AttributeValueType.AssociatedToTvChannel:
+                        //bundled tvchannel
+                        var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
+                        if (associatedTvChannel != null)
+                            cost += associatedTvChannel.TvChannelCost * attributeValue.Quantity;
                         break;
                     default:
                         break;
@@ -445,23 +445,23 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get a price adjustment of a product attribute value
+        /// Get a price adjustment of a tvchannel attribute value
         /// </summary>
-        /// <param name="product">Product</param>
-        /// <param name="value">Product attribute value</param>
+        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="value">TvChannel attribute value</param>
         /// <param name="user">User</param>
         /// <param name="store">Store</param>
-        /// <param name="productPrice">Product price (null for using the base product price)</param>
+        /// <param name="tvchannelPrice">TvChannel price (null for using the base tvchannel price)</param>
         /// <param name="quantity">Shopping cart item quantity</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the price adjustment
         /// </returns>
-        public virtual async Task<decimal> GetProductAttributeValuePriceAdjustmentAsync(Product product,
-            ProductAttributeValue value,
+        public virtual async Task<decimal> GetTvChannelAttributeValuePriceAdjustmentAsync(TvChannel tvchannel,
+            TvChannelAttributeValue value,
             User user,
             Store store,
-            decimal? productPrice = null,
+            decimal? tvchannelPrice = null,
             int quantity = 1)
         {
             if (value == null)
@@ -474,10 +474,10 @@ namespace TvProgViewer.Services.Catalog
                     //simple attribute
                     if (value.PriceAdjustmentUsePercentage)
                     {
-                        if (!productPrice.HasValue)
-                            productPrice = (await GetFinalPriceAsync(product, user, store, quantity: quantity)).finalPrice;
+                        if (!tvchannelPrice.HasValue)
+                            tvchannelPrice = (await GetFinalPriceAsync(tvchannel, user, store, quantity: quantity)).finalPrice;
 
-                        adjustment = (decimal)((float)productPrice * (float)value.PriceAdjustment / 100f);
+                        adjustment = (decimal)((float)tvchannelPrice * (float)value.PriceAdjustment / 100f);
                     }
                     else
                     {
@@ -485,11 +485,11 @@ namespace TvProgViewer.Services.Catalog
                     }
 
                     break;
-                case AttributeValueType.AssociatedToProduct:
-                    //bundled product
-                    var associatedProduct = await _productService.GetProductByIdAsync(value.AssociatedProductId);
-                    if (associatedProduct != null)
-                        adjustment = (await GetFinalPriceAsync(associatedProduct, user, store)).finalPrice * value.Quantity;
+                case AttributeValueType.AssociatedToTvChannel:
+                    //bundled tvchannel
+                    var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(value.AssociatedTvChannelId);
+                    if (associatedTvChannel != null)
+                        adjustment = (await GetFinalPriceAsync(associatedTvChannel, user, store)).finalPrice * value.Quantity;
 
                     break;
                 default:
@@ -500,7 +500,7 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Round a product or order total for the currency
+        /// Round a tvchannel or order total for the currency
         /// </summary>
         /// <param name="value">Value to round</param>
         /// <param name="currency">Currency; pass null to use the primary store currency</param>

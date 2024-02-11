@@ -1,0 +1,45 @@
+﻿@model TvChannelsByTagModel
+
+@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Core.Domain.Seo
+
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    TvProgHtml.AddTitleParts(string.Format(T("PageTitle.TvChannelsByTag").Text, Model.TagName));
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-tvchannel-tag-page");
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var tvchannelsByTagUrl = Url.RouteUrl<TvChannelTag>(new { SeName = Model.TagSeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        TvProgHtml.AddCanonicalUrlParts(tvchannelsByTagUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+}
+
+@section CatalogFilters {
+    @await Html.PartialAsync("_CatalogFilters", Model.CatalogTvChannelsModel)
+}
+
+<div class="page tvchannel-tag-page">
+    <div class="page-title">
+        <h1>@string.Format(T("TvChannels.Tags.TvChannelsTaggedWith").Text, Model.TagName)</h1>
+    </div>
+    <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelsByTagTop, additionalData = Model })
+        @await Html.PartialAsync("_CatalogSelectors", Model.CatalogTvChannelsModel)
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelsByTagBeforeTvChannelList, additionalData = Model })
+        @{
+            var catalogTvChannelsViewData = new ViewDataDictionary(ViewData);
+            catalogTvChannelsViewData["fetchUrl"] = Html.Raw(Url.Action("GetTagTvChannels", "Catalog", new { tagId = Model.Id }));
+        }
+        @await Html.PartialAsync("_CatalogTvChannels", Model.CatalogTvChannelsModel, catalogTvChannelsViewData)
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelsByTagBottom, additionalData = Model })
+    </div>
+</div>

@@ -43,35 +43,35 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             Manufacturer manufacturer, bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare paged manufacturer product list model
+        /// Prepare paged manufacturer tvchannel list model
         /// </summary>
-        /// <param name="searchModel">Manufacturer product search model</param>
+        /// <param name="searchModel">Manufacturer tvchannel search model</param>
         /// <param name="manufacturer">Manufacturer</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the manufacturer product list model
+        /// The task result contains the manufacturer tvchannel list model
         /// </returns>
-        Task<ManufacturerProductListModel> PrepareManufacturerProductListModelAsync(ManufacturerProductSearchModel searchModel,
+        Task<ManufacturerTvChannelListModel> PrepareManufacturerTvChannelListModelAsync(ManufacturerTvChannelSearchModel searchModel,
             Manufacturer manufacturer);
 
         /// <summary>
-        /// Prepare product search model to add to the manufacturer
+        /// Prepare tvchannel search model to add to the manufacturer
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the manufacturer</param>
+        /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product search model to add to the manufacturer
+        /// The task result contains the tvchannel search model to add to the manufacturer
         /// </returns>
-        Task<AddProductToManufacturerSearchModel> PrepareAddProductToManufacturerSearchModelAsync(AddProductToManufacturerSearchModel searchModel);
+        Task<AddTvChannelToManufacturerSearchModel> PrepareAddTvChannelToManufacturerSearchModelAsync(AddTvChannelToManufacturerSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged product list model to add to the manufacturer
+        /// Prepare paged tvchannel list model to add to the manufacturer
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the manufacturer</param>
+        /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product list model to add to the manufacturer
+        /// The task result contains the tvchannel list model to add to the manufacturer
         /// </returns>
-        Task<AddProductToManufacturerListModel> PrepareAddProductToManufacturerListModelAsync(AddProductToManufacturerSearchModel searchModel);
+        Task<AddTvChannelToManufacturerListModel> PrepareAddTvChannelToManufacturerListModelAsync(AddTvChannelToManufacturerSearchModel searchModel);
     }
 }

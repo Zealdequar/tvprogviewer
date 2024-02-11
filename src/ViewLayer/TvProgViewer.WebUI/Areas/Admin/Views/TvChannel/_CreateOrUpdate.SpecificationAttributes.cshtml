@@ -1,0 +1,96 @@
+﻿@model TvChannelModel
+
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.TvChannels.SpecificationAttributes.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        /*hide "add spec" table if no attributes are defined*/
+        if (Model.HasAvailableSpecificationAttributes)
+        {
+            <div class="card card-default">
+                <div class="card-body">
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "specificationattributes-grid",
+                        UrlRead = new DataUrl("TvChannelSpecAttrList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelSpecificationAttributeSearchModel.TvChannelId)] = Model.TvChannelSpecificationAttributeSearchModel.TvChannelId }),
+                        Length = Model.TvChannelPictureSearchModel.PageSize,
+                        LengthMenu = Model.TvChannelPictureSearchModel.AvailablePageSizes,
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(TvChannelSpecificationAttributeModel.AttributeTypeName))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.AttributeType").Text,
+                                Width = "150"
+                            },
+                            new ColumnProperty(nameof(TvChannelSpecificationAttributeModel.AttributeName))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.SpecificationAttribute").Text,
+                                Width = "200"
+                            },
+                            new ColumnProperty(nameof(TvChannelSpecificationAttributeModel.ValueRaw))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.Value").Text,
+                                Width = "200",
+                                Encode = false
+                            },
+                            new ColumnProperty(nameof(TvChannelSpecificationAttributeModel.AllowFiltering))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.AllowFiltering").Text,
+                                Width = "150",
+                                ClassName = TvProgColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(TvChannelSpecificationAttributeModel.ShowOnTvChannelPage))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.ShowOnTvChannelPage").Text,
+                                Width = "150",
+                                ClassName = TvProgColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(TvChannelSpecificationAttributeModel.DisplayOrder))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.DisplayOrder").Text,
+                                Width = "150",
+                                ClassName =  TvProgColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(TvChannelSpecificationAttributeModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "100",
+                                ClassName =  TvProgColumnClassDefaults.Button,
+                                Render = new RenderButtonEdit(new DataUrl("~/Admin/TvChannel/TvChannelSpecAttributeAddOrEdit?tvchannelId=" + Model.TvChannelSpecificationAttributeSearchModel.TvChannelId + "&specificationId=", true))  
+                            }
+                        }
+                    })
+                </div>
+                <div class="card-footer">
+                    <a asp-action="TvChannelSpecAttributeAddOrEdit"
+                       asp-route-tvchannelId="@Model.Id"
+                       class="btn btn-primary">
+                        <i class="fas fa-plus-square"></i>
+                        @T("Admin.Catalog.TvChannels.SpecificationAttributes.AddButton")
+                    </a>
+
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card card-default">
+                <div class="card-body">
+                    @T("Admin.Catalog.TvChannels.SpecificationAttributes.NoAttributes")
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.TvChannels.SpecificationAttributes.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

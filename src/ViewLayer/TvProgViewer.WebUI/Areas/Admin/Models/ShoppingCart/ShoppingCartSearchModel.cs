@@ -38,8 +38,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.ShoppingCart
         [UIHint("DateNullable")]
         public DateTime? EndDate { get; set; }
 
-        [TvProgResourceDisplayName("Admin.ShoppingCartType.Product")]
-        public int ProductId { get; set; }
+        [TvProgResourceDisplayName("Admin.ShoppingCartType.TvChannel")]
+        public int TvChannelId { get; set; }
 
         [TvProgResourceDisplayName("Admin.ShoppingCartType.BillingCountry")]
         public int BillingCountryId { get; set; }

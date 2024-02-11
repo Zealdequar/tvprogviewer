@@ -19,8 +19,8 @@ namespace TvProgViewer.WebUI.Components
         private readonly CatalogSettings _catalogSettings;
         private readonly IAclService _aclService;
         private readonly IOrderReportService _orderReportService;
-        private readonly IProductModelFactory _productModelFactory;
-        private readonly IProductService _productService;
+        private readonly ITvChannelModelFactory _tvchannelModelFactory;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
@@ -28,8 +28,8 @@ namespace TvProgViewer.WebUI.Components
         public HomepageBestSellersViewComponent(CatalogSettings catalogSettings,
             IAclService aclService,
             IOrderReportService orderReportService,
-            IProductModelFactory productModelFactory,
-            IProductService productService,
+            ITvChannelModelFactory tvchannelModelFactory,
+            ITvChannelService tvchannelService,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService)
@@ -37,14 +37,14 @@ namespace TvProgViewer.WebUI.Components
             _catalogSettings = catalogSettings;
             _aclService = aclService;
             _orderReportService = orderReportService;
-            _productModelFactory = productModelFactory;
-            _productService = productService;
+            _tvchannelModelFactory = tvchannelModelFactory;
+            _tvchannelService = tvchannelService;
             _staticCacheManager = staticCacheManager;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int? productThumbPictureSize)
+        public async Task<IViewComponentResult> InvokeAsync(int? tvchannelThumbPictureSize)
         {
             if (!_catalogSettings.ShowBestsellersOnHomepage || _catalogSettings.NumberOfBestsellersOnHomepage == 0)
                 return Content("");
@@ -58,18 +58,18 @@ namespace TvProgViewer.WebUI.Components
                     storeId: store.Id,
                     pageSize: _catalogSettings.NumberOfBestsellersOnHomepage)).ToListAsync());
 
-            //load products
-            var products = await (await _productService.GetProductsByIdsAsync(report.Select(x => x.ProductId).ToArray()))
+            //load tvchannels
+            var tvchannels = await (await _tvchannelService.GetTvChannelsByIdsAsync(report.Select(x => x.TvChannelId).ToArray()))
             //ACL and store mapping
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            .Where(p => _productService.ProductIsAvailable(p)).ToListAsync();
+            .Where(p => _tvchannelService.TvChannelIsAvailable(p)).ToListAsync();
 
-            if (!products.Any())
+            if (!tvchannels.Any())
                 return Content("");
 
             //prepare model
-            var model = (await _productModelFactory.PrepareProductOverviewModelsAsync(products, true, true, productThumbPictureSize)).ToList();
+            var model = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels, true, true, tvchannelThumbPictureSize)).ToList();
             return View(model);
         }
     }

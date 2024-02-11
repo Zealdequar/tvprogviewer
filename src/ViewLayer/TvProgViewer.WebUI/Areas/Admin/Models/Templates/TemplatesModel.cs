@@ -13,12 +13,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Templates
         {
             TemplatesCategory = new CategoryTemplateSearchModel();
             TemplatesManufacturer = new ManufacturerTemplateSearchModel();
-            TemplatesProduct = new ProductTemplateSearchModel();
+            TemplatesTvChannel = new TvChannelTemplateSearchModel();
             TemplatesTopic = new TopicTemplateSearchModel();
 
             AddCategoryTemplate = new CategoryTemplateModel();
             AddManufacturerTemplate = new ManufacturerTemplateModel();
-            AddProductTemplate = new ProductTemplateModel();
+            AddTvChannelTemplate = new TvChannelTemplateModel();
             AddTopicTemplate = new TopicTemplateModel();
         }
 
@@ -30,7 +30,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Templates
 
         public ManufacturerTemplateSearchModel TemplatesManufacturer { get; set; }
 
-        public ProductTemplateSearchModel TemplatesProduct { get; set; }
+        public TvChannelTemplateSearchModel TemplatesTvChannel { get; set; }
 
         public TopicTemplateSearchModel TemplatesTopic { get; set; }
 
@@ -38,7 +38,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Templates
 
         public ManufacturerTemplateModel AddManufacturerTemplate { get; set; }
 
-        public ProductTemplateModel AddProductTemplate { get; set; }
+        public TvChannelTemplateModel AddTvChannelTemplate { get; set; }
 
         public TopicTemplateModel AddTopicTemplate { get; set; }
 

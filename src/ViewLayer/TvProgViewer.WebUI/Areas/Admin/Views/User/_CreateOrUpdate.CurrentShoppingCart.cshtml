@@ -25,11 +25,11 @@
         },
         ColumnCollection = new List<ColumnProperty>
         {
-            new ColumnProperty(nameof(ShoppingCartItemModel.ProductName))
+            new ColumnProperty(nameof(ShoppingCartItemModel.TvChannelName))
             {
-                Title = T("Admin.CurrentCarts.Product").Text,
+                Title = T("Admin.CurrentCarts.TvChannel").Text,
                 Width = "500",
-                Render = new RenderCustom("renderProductName")
+                Render = new RenderCustom("renderTvChannelName")
             },
             new ColumnProperty(nameof(ShoppingCartItemModel.Quantity))
             {
@@ -70,8 +70,8 @@
     </script>
 
     <script>
-        function renderProductName(data, type, row, meta) {
-            var link = '@Url.Content("~/Admin/Product/Edit/")' + row.ProductId;
+        function renderTvChannelName(data, type, row, meta) {
+            var link = '@Url.Content("~/Admin/TvChannel/Edit/")' + row.TvChannelId;
             var div = "";
 
             if (row.AttributeInfo && row.AttributeInfo.length > 0)

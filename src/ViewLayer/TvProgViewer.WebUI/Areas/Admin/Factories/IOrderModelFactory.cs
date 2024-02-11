@@ -68,38 +68,38 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<UploadLicenseModel> PrepareUploadLicenseModelAsync(UploadLicenseModel model, Order order, OrderItem orderItem);
 
         /// <summary>
-        /// Prepare product search model to add to the order
+        /// Prepare tvchannel search model to add to the order
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the order</param>
+        /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product search model to add to the order
+        /// The task result contains the tvchannel search model to add to the order
         /// </returns>
-        Task<AddProductToOrderSearchModel> PrepareAddProductToOrderSearchModelAsync(AddProductToOrderSearchModel searchModel, Order order);
+        Task<AddTvChannelToOrderSearchModel> PrepareAddTvChannelToOrderSearchModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order);
 
         /// <summary>
-        /// Prepare paged product list model to add to the order
+        /// Prepare paged tvchannel list model to add to the order
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the order</param>
+        /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product search model to add to the order
+        /// The task result contains the tvchannel search model to add to the order
         /// </returns>
-        Task<AddProductToOrderListModel> PrepareAddProductToOrderListModelAsync(AddProductToOrderSearchModel searchModel, Order order);
+        Task<AddTvChannelToOrderListModel> PrepareAddTvChannelToOrderListModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order);
 
         /// <summary>
-        /// Prepare product model to add to the order
+        /// Prepare tvchannel model to add to the order
         /// </summary>
-        /// <param name="model">Product model to add to the order</param>
+        /// <param name="model">TvChannel model to add to the order</param>
         /// <param name="order">Order</param>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product model to add to the order
+        /// The task result contains the tvchannel model to add to the order
         /// </returns>
-        Task<AddProductToOrderModel> PrepareAddProductToOrderModelAsync(AddProductToOrderModel model, Order order, Product product);
+        Task<AddTvChannelToOrderModel> PrepareAddTvChannelToOrderModelAsync(AddTvChannelToOrderModel model, Order order, TvChannel tvchannel);
 
         /// <summary>
         /// Prepare order address model

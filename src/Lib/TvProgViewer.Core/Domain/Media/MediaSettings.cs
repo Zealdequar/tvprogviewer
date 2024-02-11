@@ -13,24 +13,24 @@ namespace TvProgViewer.Core.Domain.Media
         public int AvatarPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of product picture thumbs displayed on catalog pages (e.g. category details page)
+        /// Picture size of tvchannel picture thumbs displayed on catalog pages (e.g. category details page)
         /// </summary>
-        public int ProductThumbPictureSize { get; set; }
+        public int TvChannelThumbPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of the main product picture displayed on the product details page
+        /// Picture size of the main tvchannel picture displayed on the tvchannel details page
         /// </summary>
-        public int ProductDetailsPictureSize { get; set; }
+        public int TvChannelDetailsPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of the product picture thumbs displayed on the product details page
+        /// Picture size of the tvchannel picture thumbs displayed on the tvchannel details page
         /// </summary>
-        public int ProductThumbPictureSizeOnProductDetailsPage { get; set; }
+        public int TvChannelThumbPictureSizeOnTvChannelDetailsPage { get; set; }
 
         /// <summary>
-        /// Picture size of the associated product picture
+        /// Picture size of the associated tvchannel picture
         /// </summary>
-        public int AssociatedProductPictureSize { get; set; }
+        public int AssociatedTvChannelPictureSize { get; set; }
 
         /// <summary>
         /// Picture size of category pictures
@@ -48,27 +48,27 @@ namespace TvProgViewer.Core.Domain.Media
         public int VendorThumbPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of product pictures on the shopping cart page
+        /// Picture size of tvchannel pictures on the shopping cart page
         /// </summary>
         public int CartThumbPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of product pictures on the order details page
+        /// Picture size of tvchannel pictures on the order details page
         /// </summary>
         public int OrderThumbPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of product pictures for minishipping cart box
+        /// Picture size of tvchannel pictures for minishipping cart box
         /// </summary>
         public int MiniCartThumbPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of product pictures for autocomplete search box
+        /// Picture size of tvchannel pictures for autocomplete search box
         /// </summary>
         public int AutoCompleteSearchThumbPictureSize { get; set; }
 
         /// <summary>
-        /// Picture size of image squares on a product details page (used with "image squares" attribute type
+        /// Picture size of image squares on a tvchannel details page (used with "image squares" attribute type
         /// </summary>
         public int ImageSquarePictureSize { get; set; }
 
@@ -98,9 +98,9 @@ namespace TvProgViewer.Core.Domain.Media
         public bool MultipleThumbDirectories { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether we should use fast HASHBYTES (hash sum) database function to compare pictures when importing products
+        /// Gets or sets a value indicating whether we should use fast HASHBYTES (hash sum) database function to compare pictures when importing tvchannels
         /// </summary>
-        public bool ImportProductImagesUsingHash { get; set; }
+        public bool ImportTvChannelImagesUsingHash { get; set; }
 
         /// <summary>
         /// Gets or sets Azure CacheControl header (e.g. "max-age=3600, public")
@@ -138,8 +138,8 @@ namespace TvProgViewer.Core.Domain.Media
         public int VideoIframeHeight { get; set; }
 
         /// <summary>
-        /// Gets or sets the product default image id. If 0, then wwwroot/images/default-image.png will be used
+        /// Gets or sets the tvchannel default image id. If 0, then wwwroot/images/default-image.png will be used
         /// </summary>
-        public int ProductDefaultImageId { get; set; }
+        public int TvChannelDefaultImageId { get; set; }
     }
 }

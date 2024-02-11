@@ -4,9 +4,9 @@ namespace TvProgViewer.WebUI.Models.Catalog
 {
     public partial record BackInStockSubscribeModel : BaseTvProgModel
     {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; }
-        public string ProductSeName { get; set; }
+        public int TvChannelId { get; set; }
+        public string TvChannelName { get; set; }
+        public string TvChannelSeName { get; set; }
 
         public bool IsCurrentUserRegistered { get; set; }
         public bool SubscriptionAllowed { get; set; }

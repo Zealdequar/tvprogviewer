@@ -1,0 +1,81 @@
+@model TvChannelModel
+
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.TvChannels.StockQuantityHistory.Hint")
+    </p>
+    @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsStockQuantityHistoryTop, additionalData = Model })
+    @*hide the entire search block if no elements are displayed*@
+    <div @(Model.StockQuantityHistorySearchModel.AvailableWarehouses.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+        <div class="form-group row" @(Model.StockQuantityHistorySearchModel.AvailableWarehouses.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null)>
+            <div class="col-md-3">
+                <tvprog-label asp-for="StockQuantityHistorySearchModel.WarehouseId" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-select asp-for="StockQuantityHistorySearchModel.WarehouseId" asp-items="Model.StockQuantityHistorySearchModel.AvailableWarehouses" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-9 offset-md-3">
+                <button type="button" id="search-stock-quantity-history" class="btn btn-primary btn-search">
+                    <i class="fas fa-search"></i>
+                    @T("Admin.Common.Search")
+                </button>
+            </div>
+        </div>
+    </div>
+        
+    @await Html.PartialAsync("Table", new DataTablesModel
+    {
+        Name = "stock-quantity-history-grid",
+        UrlRead = new DataUrl("StockQuantityHistory", "TvChannel", new RouteValueDictionary { [nameof(Model.StockQuantityHistorySearchModel.TvChannelId)] = Model.StockQuantityHistorySearchModel.TvChannelId }),
+        SearchButtonId = "search-stock-quantity-history",
+        Length = Model.StockQuantityHistorySearchModel.PageSize,
+        LengthMenu = Model.StockQuantityHistorySearchModel.AvailablePageSizes,
+        Filters = new List<FilterParameter>
+        {
+            new FilterParameter(nameof(StockQuantityHistorySearchModel.WarehouseId), nameof(StockQuantityHistorySearchModel))
+        },
+        ColumnCollection = new List<ColumnProperty>
+        {
+            new ColumnProperty(nameof(StockQuantityHistoryModel.WarehouseName))
+            {
+                Title = T("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.Warehouse").Text,
+                Width = "150"
+            },
+            new ColumnProperty(nameof(StockQuantityHistoryModel.AttributeCombination))
+            {
+                Title = T("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.Combination").Text,
+                Width = "180",
+                Encode = false
+            },
+            new ColumnProperty(nameof(StockQuantityHistoryModel.QuantityAdjustment))
+            {
+                Title = T("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.QuantityAdjustment").Text,
+                Width = "150",
+                Render = new RenderCustom("renderStockQuantityHistoryQuantityAdjustment")
+            },
+            new ColumnProperty(nameof(StockQuantityHistoryModel.StockQuantity))
+            {
+                Title = T("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.StockQuantity").Text,
+                Width = "130"
+            },
+            new ColumnProperty(nameof(StockQuantityHistoryModel.Message))
+            {
+                Title = T("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.Message").Text
+            },
+            new ColumnProperty(nameof(StockQuantityHistoryModel.CreatedOn))
+            {
+                Title = T("Admin.Catalog.TvChannels.StockQuantityHistory.Fields.CreatedOn").Text,
+                Width = "170",
+                Render = new RenderDate()
+            }
+        }
+    })
+    <script>
+        function renderStockQuantityHistoryQuantityAdjustment(data, type, row, meta) {
+            return (data > 0 ? '+' : '') + data;
+        }
+    </script>
+    @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsStockQuantityHistoryBottom, additionalData = Model })
+</div>

@@ -312,87 +312,87 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
         {
             CreateMap<CatalogSettings, CatalogSettingsModel>()
                 .ForMember(model => model.AllowAnonymousUsersToEmailAFriend_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.AllowAnonymousUsersToReviewProduct_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.AllowProductSorting_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.AllowProductViewModeChanging_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.AllowViewUnpublishedProductPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.AllowAnonymousUsersToReviewTvChannel_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.AllowTvChannelSorting_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.AllowTvChannelViewModeChanging_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.AllowViewUnpublishedTvChannelPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AvailableViewModes, options => options.Ignore())
                 .ForMember(model => model.CategoryBreadcrumbEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.CompareProductsEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.CompareTvChannelsEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DefaultViewMode_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.DisplayDiscontinuedMessageForUnpublishedProducts_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.DisplayDiscontinuedMessageForUnpublishedTvChannels_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayTaxShippingInfoFooter_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayTaxShippingInfoOrderDetailsPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.DisplayTaxShippingInfoProductBoxes_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.DisplayTaxShippingInfoProductDetailsPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.DisplayTaxShippingInfoTvChannelBoxes_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.DisplayTaxShippingInfoTvChannelDetailsPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayTaxShippingInfoShoppingCart_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayTaxShippingInfoWishlist_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.EmailAFriendEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ExportImportAllowDownloadImages_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ExportImportCategoriesUsingCategoryName_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ExportImportProductAttributes_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ExportImportProductCategoryBreadcrumb_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ExportImportProductSpecificationAttributes_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ExportImportTvChannelAttributes_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ExportImportTvChannelCategoryBreadcrumb_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ExportImportTvChannelSpecificationAttributes_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ExportImportRelatedEntitiesByName_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ExportImportProductUseLimitedToStores_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ExportImportSplitProductsFile_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.IncludeFullDescriptionInCompareProducts_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.IncludeShortDescriptionInCompareProducts_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ExportImportTvChannelUseLimitedToStores_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ExportImportSplitTvChannelsFile_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.IncludeFullDescriptionInCompareTvChannels_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.IncludeShortDescriptionInCompareTvChannels_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ManufacturersBlockItemsToDisplay_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.NewProductsEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.NewProductsPageSize_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.NewProductsAllowUsersToSelectPageSize_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.NewProductsPageSizeOptions_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.NotifyUserAboutProductReviewReply_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.NotifyStoreOwnerAboutNewProductReviews_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.NewTvChannelsEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.NewTvChannelsPageSize_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.NewTvChannelsAllowUsersToSelectPageSize_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.NewTvChannelsPageSizeOptions_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.NotifyUserAboutTvChannelReviewReply_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.NotifyStoreOwnerAboutNewTvChannelReviews_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.NumberOfBestsellersOnHomepage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.NumberOfProductTags_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.NumberOfTvChannelTags_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.PageShareCode_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductReviewPossibleOnlyAfterPurchasing_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductReviewsMustBeApproved_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.OneReviewPerProductFromUser_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductReviewsPageSizeOnAccountPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductReviewsSortByCreatedDateAscending_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductsAlsoPurchasedEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductsAlsoPurchasedNumber_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductsByTagAllowUsersToSelectPageSize_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductsByTagPageSizeOptions_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductsByTagPageSize_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductSearchAutoCompleteEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductSearchEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductSearchAutoCompleteNumberOfProducts_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductSearchTermMinimumLength_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.RecentlyViewedProductsEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.RecentlyViewedProductsNumber_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.RemoveRequiredProducts_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelReviewPossibleOnlyAfterPurchasing_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelReviewsMustBeApproved_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.OneReviewPerTvChannelFromUser_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelReviewsPageSizeOnAccountPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelReviewsSortByCreatedDateAscending_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelsAlsoPurchasedEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelsAlsoPurchasedNumber_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelsByTagAllowUsersToSelectPageSize_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelsByTagPageSizeOptions_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelsByTagPageSize_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelSearchAutoCompleteEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelSearchEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelSearchAutoCompleteNumberOfTvChannels_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelSearchTermMinimumLength_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.RecentlyViewedTvChannelsEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.RecentlyViewedTvChannelsNumber_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.RemoveRequiredTvChannels_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.SearchPageAllowUsersToSelectPageSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.SearchPagePageSizeOptions_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.SearchPageProductsPerPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.SearchPageTvChannelsPerPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowBestsellersOnHomepage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowCategoryProductNumberIncludingSubcategories_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowCategoryProductNumber_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowCategoryTvChannelNumberIncludingSubcategories_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowCategoryTvChannelNumber_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowFreeShippingNotification_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowShortDescriptionOnCatalogPages_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowGtin_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowLinkToAllResultInSearchAutoComplete_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowManufacturerPartNumber_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductImagesInSearchAutoComplete_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductReviewsOnAccountPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductReviewsPerStore_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductsFromSubcategories_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowTvChannelImagesInSearchAutoComplete_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowTvChannelReviewsOnAccountPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowTvChannelReviewsPerStore_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowTvChannelsFromSubcategories_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowShareButton_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowSkuOnCatalogPages_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowSkuOnProductDetailsPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowSkuOnTvChannelDetailsPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayDatePreOrderAvailability_OverrideForStore, mo => mo.Ignore())
-                .ForMember(model => model.UseAjaxCatalogProductsLoading_OverrideForStore, mo => mo.Ignore())
+                .ForMember(model => model.UseAjaxCatalogTvChannelsLoading_OverrideForStore, mo => mo.Ignore())
                 .ForMember(model => model.SearchPagePriceRangeFiltering_OverrideForStore, mo => mo.Ignore())
                 .ForMember(model => model.SearchPagePriceFrom_OverrideForStore, mo => mo.Ignore())
                 .ForMember(model => model.SearchPagePriceTo_OverrideForStore, mo => mo.Ignore())
                 .ForMember(model => model.SearchPageManuallyPriceRange_OverrideForStore, mo => mo.Ignore())
-                .ForMember(model => model.ProductsByTagPriceRangeFiltering_OverrideForStore, mo => mo.Ignore())
-                .ForMember(model => model.ProductsByTagPriceFrom_OverrideForStore, mo => mo.Ignore())
-                .ForMember(model => model.ProductsByTagPriceTo_OverrideForStore, mo => mo.Ignore())
-                .ForMember(model => model.ProductsByTagManuallyPriceRange_OverrideForStore, mo => mo.Ignore())
+                .ForMember(model => model.TvChannelsByTagPriceRangeFiltering_OverrideForStore, mo => mo.Ignore())
+                .ForMember(model => model.TvChannelsByTagPriceFrom_OverrideForStore, mo => mo.Ignore())
+                .ForMember(model => model.TvChannelsByTagPriceTo_OverrideForStore, mo => mo.Ignore())
+                .ForMember(model => model.TvChannelsByTagManuallyPriceRange_OverrideForStore, mo => mo.Ignore())
                 .ForMember(model => model.EnableManufacturerFiltering_OverrideForStore, mo => mo.Ignore())
                 .ForMember(model => model.EnablePriceRangeFiltering_OverrideForStore, mo => mo.Ignore())
                 .ForMember(model => model.EnableSpecificationAttributeFiltering_OverrideForStore, mo => mo.Ignore())
@@ -405,40 +405,40 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.AllowUsersToSearchWithManufacturerName_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AllowUsersToSearchWithCategoryName_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayAllPicturesOnCatalogPages_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductUrlStructureTypeId_OverrideForStore, mo => mo.Ignore())
-                .ForMember(model => model.ProductUrlStructureTypes, mo => mo.Ignore());
+                .ForMember(model => model.TvChannelUrlStructureTypeId_OverrideForStore, mo => mo.Ignore())
+                .ForMember(model => model.TvChannelUrlStructureTypes, mo => mo.Ignore());
             CreateMap<CatalogSettingsModel, CatalogSettings>()
                 .ForMember(settings => settings.AjaxProcessAttributeChange, options => options.Ignore())
-                .ForMember(settings => settings.CompareProductsNumber, options => options.Ignore())
+                .ForMember(settings => settings.CompareTvChannelsNumber, options => options.Ignore())
                 .ForMember(settings => settings.CountDisplayedYearsDatePicker, options => options.Ignore())
                 .ForMember(settings => settings.DefaultCategoryPageSize, options => options.Ignore())
                 .ForMember(settings => settings.DefaultCategoryPageSizeOptions, options => options.Ignore())
                 .ForMember(settings => settings.DefaultManufacturerPageSize, options => options.Ignore())
                 .ForMember(settings => settings.DefaultManufacturerPageSizeOptions, options => options.Ignore())
-                .ForMember(settings => settings.DefaultProductRatingValue, options => options.Ignore())
+                .ForMember(settings => settings.DefaultTvChannelRatingValue, options => options.Ignore())
                 .ForMember(settings => settings.DisplayTierPricesWithDiscounts, options => options.Ignore())
-                .ForMember(settings => settings.ExportImportProductsCountInOneFile, options => options.Ignore())
+                .ForMember(settings => settings.ExportImportTvChannelsCountInOneFile, options => options.Ignore())
                 .ForMember(settings => settings.ExportImportUseDropdownlistsForAssociatedEntities, options => options.Ignore())
-                .ForMember(settings => settings.IncludeFeaturedProductsInNormalLists, options => options.Ignore())
+                .ForMember(settings => settings.IncludeFeaturedTvChannelsInNormalLists, options => options.Ignore())
                 .ForMember(settings => settings.MaximumBackInStockSubscriptions, options => options.Ignore())
-                .ForMember(settings => settings.ProductSortingEnumDisabled, options => options.Ignore())
-                .ForMember(settings => settings.ProductSortingEnumDisplayOrder, options => options.Ignore())
-                .ForMember(settings => settings.PublishBackProductWhenCancellingOrders, options => options.Ignore())
+                .ForMember(settings => settings.TvChannelSortingEnumDisabled, options => options.Ignore())
+                .ForMember(settings => settings.TvChannelSortingEnumDisplayOrder, options => options.Ignore())
+                .ForMember(settings => settings.PublishBackTvChannelWhenCancellingOrders, options => options.Ignore())
                 .ForMember(settings => settings.UseAjaxLoadMenu, options => options.Ignore())
-                .ForMember(settings => settings.UseLinksInRequiredProductWarnings, options => options.Ignore())
+                .ForMember(settings => settings.UseLinksInRequiredTvChannelWarnings, options => options.Ignore())
                 .ForMember(settings => settings.ActiveSearchProviderSystemName, options => options.Ignore());
 
-            CreateMap<ProductCategory, CategoryProductModel>()
-                .ForMember(model => model.ProductName, options => options.Ignore());
-            CreateMap<CategoryProductModel, ProductCategory>()
+            CreateMap<TvChannelCategory, CategoryTvChannelModel>()
+                .ForMember(model => model.TvChannelName, options => options.Ignore());
+            CreateMap<CategoryTvChannelModel, TvChannelCategory>()
                 .ForMember(entity => entity.CategoryId, options => options.Ignore())
-                .ForMember(entity => entity.ProductId, options => options.Ignore());
+                .ForMember(entity => entity.TvChannelId, options => options.Ignore());
 
             CreateMap<Category, CategoryModel>()
                 .ForMember(model => model.AvailableCategories, options => options.Ignore())
                 .ForMember(model => model.AvailableCategoryTemplates, options => options.Ignore())
                 .ForMember(model => model.Breadcrumb, options => options.Ignore())
-                .ForMember(model => model.CategoryProductSearchModel, options => options.Ignore())
+                .ForMember(model => model.CategoryTvChannelSearchModel, options => options.Ignore())
                 .ForMember(model => model.SeName, options => options.Ignore())
                 .ForMember(model => model.PrimaryStoreCurrencyCode, options => options.Ignore());
             CreateMap<CategoryModel, Category>()
@@ -449,15 +449,15 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<CategoryTemplate, CategoryTemplateModel>();
             CreateMap<CategoryTemplateModel, CategoryTemplate>();
 
-            CreateMap<ProductManufacturer, ManufacturerProductModel>()
-                .ForMember(model => model.ProductName, options => options.Ignore());
-            CreateMap<ManufacturerProductModel, ProductManufacturer>()
+            CreateMap<TvChannelManufacturer, ManufacturerTvChannelModel>()
+                .ForMember(model => model.TvChannelName, options => options.Ignore());
+            CreateMap<ManufacturerTvChannelModel, TvChannelManufacturer>()
                 .ForMember(entity => entity.ManufacturerId, options => options.Ignore())
-                .ForMember(entity => entity.ProductId, options => options.Ignore());
+                .ForMember(entity => entity.TvChannelId, options => options.Ignore());
 
             CreateMap<Manufacturer, ManufacturerModel>()
                 .ForMember(model => model.AvailableManufacturerTemplates, options => options.Ignore())
-                .ForMember(model => model.ManufacturerProductSearchModel, options => options.Ignore())
+                .ForMember(model => model.ManufacturerTvChannelSearchModel, options => options.Ignore())
                 .ForMember(model => model.SeName, options => options.Ignore())
                 .ForMember(model => model.PrimaryStoreCurrencyCode, options => options.Ignore());
             CreateMap<ManufacturerModel, Manufacturer>()
@@ -472,64 +472,64 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<ReviewType, ReviewTypeModel>();
             CreateMap<ReviewTypeModel, ReviewType>();
 
-            //product review
-            CreateMap<ProductReview, ProductReviewModel>()
+            //tvchannel review
+            CreateMap<TvChannelReview, TvChannelReviewModel>()
                 .ForMember(model => model.UserInfo, mo => mo.Ignore())
                 .ForMember(model => model.IsLoggedInAsVendor, mo => mo.Ignore())
-                .ForMember(model => model.ProductReviewReviewTypeMappingSearchModel, mo => mo.Ignore())
+                .ForMember(model => model.TvChannelReviewReviewTypeMappingSearchModel, mo => mo.Ignore())
                 .ForMember(model => model.CreatedOn, mo => mo.Ignore())
                 .ForMember(model => model.StoreName, mo => mo.Ignore())
                 .ForMember(model => model.ShowStoreName, mo => mo.Ignore())
-                .ForMember(model => model.ProductName, mo => mo.Ignore());
+                .ForMember(model => model.TvChannelName, mo => mo.Ignore());
 
-            //product review type mapping
-            CreateMap<ProductReviewReviewTypeMapping, ProductReviewReviewTypeMappingModel>()
+            //tvchannel review type mapping
+            CreateMap<TvChannelReviewReviewTypeMapping, TvChannelReviewReviewTypeMappingModel>()
                 .ForMember(model => model.Name, mo => mo.Ignore())
                 .ForMember(model => model.Description, mo => mo.Ignore())
                 .ForMember(model => model.VisibleToAllUsers, mo => mo.Ignore());
 
-            //products
-            CreateMap<Product, ProductModel>()
+            //tvchannels
+            CreateMap<TvChannel, TvChannelModel>()
                 .ForMember(model => model.AddPictureModel, options => options.Ignore())
-                .ForMember(model => model.AssociatedProductSearchModel, options => options.Ignore())
-                .ForMember(model => model.AssociatedToProductId, options => options.Ignore())
-                .ForMember(model => model.AssociatedToProductName, options => options.Ignore())
+                .ForMember(model => model.AssociatedTvChannelSearchModel, options => options.Ignore())
+                .ForMember(model => model.AssociatedToTvChannelId, options => options.Ignore())
+                .ForMember(model => model.AssociatedToTvChannelName, options => options.Ignore())
                 .ForMember(model => model.AvailableBasepriceBaseUnits, options => options.Ignore())
                 .ForMember(model => model.AvailableBasepriceUnits, options => options.Ignore())
                 .ForMember(model => model.AvailableCategories, options => options.Ignore())
                 .ForMember(model => model.AvailableDeliveryDates, options => options.Ignore())
                 .ForMember(model => model.AvailableManufacturers, options => options.Ignore())
-                .ForMember(model => model.AvailableProductAvailabilityRanges, options => options.Ignore())
-                .ForMember(model => model.AvailableProductTemplates, options => options.Ignore())
+                .ForMember(model => model.AvailableTvChannelAvailabilityRanges, options => options.Ignore())
+                .ForMember(model => model.AvailableTvChannelTemplates, options => options.Ignore())
                 .ForMember(model => model.AvailableTaxCategories, options => options.Ignore())
                 .ForMember(model => model.AvailableVendors, options => options.Ignore())
                 .ForMember(model => model.AvailableWarehouses, options => options.Ignore())
                 .ForMember(model => model.BaseDimensionIn, options => options.Ignore())
                 .ForMember(model => model.BaseWeightIn, options => options.Ignore())
-                .ForMember(model => model.CopyProductModel, options => options.Ignore())
-                .ForMember(model => model.CrossSellProductSearchModel, options => options.Ignore())
+                .ForMember(model => model.CopyTvChannelModel, options => options.Ignore())
+                .ForMember(model => model.CrossSellTvChannelSearchModel, options => options.Ignore())
                 .ForMember(model => model.HasAvailableSpecificationAttributes, options => options.Ignore())
                 .ForMember(model => model.IsLoggedInAsVendor, options => options.Ignore())
                 .ForMember(model => model.LastStockQuantity, options => options.Ignore())
                 .ForMember(model => model.PictureThumbnailUrl, options => options.Ignore())
                 .ForMember(model => model.PrimaryStoreCurrencyCode, options => options.Ignore())
-                .ForMember(model => model.ProductAttributeCombinationSearchModel, options => options.Ignore())
-                .ForMember(model => model.ProductAttributeMappingSearchModel, options => options.Ignore())
-                .ForMember(model => model.ProductAttributesExist, options => options.Ignore())
+                .ForMember(model => model.TvChannelAttributeCombinationSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelAttributeMappingSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelAttributesExist, options => options.Ignore())
                 .ForMember(model => model.CanCreateCombinations, options => options.Ignore())
-                .ForMember(model => model.ProductEditorSettingsModel, options => options.Ignore())
-                .ForMember(model => model.ProductOrderSearchModel, options => options.Ignore())
-                .ForMember(model => model.ProductPictureModels, options => options.Ignore())
-                .ForMember(model => model.ProductPictureSearchModel, options => options.Ignore())
-                .ForMember(model => model.ProductVideoModels, options => options.Ignore())
-                .ForMember(model => model.ProductVideoSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelEditorSettingsModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelOrderSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelPictureModels, options => options.Ignore())
+                .ForMember(model => model.TvChannelPictureSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelVideoModels, options => options.Ignore())
+                .ForMember(model => model.TvChannelVideoSearchModel, options => options.Ignore())
                 .ForMember(model => model.AddVideoModel, options => options.Ignore())
-                .ForMember(model => model.ProductSpecificationAttributeSearchModel, options => options.Ignore())
-                .ForMember(model => model.ProductsTypesSupportedByProductTemplates, options => options.Ignore())
-                .ForMember(model => model.ProductTags, options => options.Ignore())
-                .ForMember(model => model.ProductTypeName, options => options.Ignore())
-                .ForMember(model => model.ProductWarehouseInventoryModels, options => options.Ignore())
-                .ForMember(model => model.RelatedProductSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelSpecificationAttributeSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelsTypesSupportedByTvChannelTemplates, options => options.Ignore())
+                .ForMember(model => model.TvChannelTags, options => options.Ignore())
+                .ForMember(model => model.TvChannelTypeName, options => options.Ignore())
+                .ForMember(model => model.TvChannelWarehouseInventoryModels, options => options.Ignore())
+                .ForMember(model => model.RelatedTvChannelSearchModel, options => options.Ignore())
                 .ForMember(model => model.SelectedCategoryIds, options => options.Ignore())
                 .ForMember(model => model.SelectedManufacturerIds, options => options.Ignore())
                 .ForMember(model => model.SeName, options => options.Ignore())
@@ -537,8 +537,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.StockQuantityHistorySearchModel, options => options.Ignore())
                 .ForMember(model => model.StockQuantityStr, options => options.Ignore())
                 .ForMember(model => model.TierPriceSearchModel, options => options.Ignore())
-                .ForMember(model => model.InitialProductTags, options => options.Ignore());
-            CreateMap<ProductModel, Product>()
+                .ForMember(model => model.InitialTvChannelTags, options => options.Ignore());
+            CreateMap<TvChannelModel, TvChannel>()
                 .ForMember(entity => entity.ApprovedRatingSum, options => options.Ignore())
                 .ForMember(entity => entity.ApprovedTotalReviews, options => options.Ignore())
                 .ForMember(entity => entity.BackorderMode, options => options.Ignore())
@@ -552,92 +552,92 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(entity => entity.ManageInventoryMethod, options => options.Ignore())
                 .ForMember(entity => entity.NotApprovedRatingSum, options => options.Ignore())
                 .ForMember(entity => entity.NotApprovedTotalReviews, options => options.Ignore())
-                .ForMember(entity => entity.ParentGroupedProductId, options => options.Ignore())
-                .ForMember(entity => entity.ProductType, options => options.Ignore())
+                .ForMember(entity => entity.ParentGroupedTvChannelId, options => options.Ignore())
+                .ForMember(entity => entity.TvChannelType, options => options.Ignore())
                 .ForMember(entity => entity.RecurringCyclePeriod, options => options.Ignore())
                 .ForMember(entity => entity.RentalPricePeriod, options => options.Ignore())
                 .ForMember(entity => entity.UpdatedOnUtc, options => options.Ignore());
 
-            CreateMap<Product, DiscountProductModel>()
-                .ForMember(model => model.ProductId, options => options.Ignore())
-                .ForMember(model => model.ProductName, options => options.Ignore());
+            CreateMap<TvChannel, DiscountTvChannelModel>()
+                .ForMember(model => model.TvChannelId, options => options.Ignore())
+                .ForMember(model => model.TvChannelName, options => options.Ignore());
 
-            CreateMap<Product, AssociatedProductModel>()
-                .ForMember(model => model.ProductName, options => options.Ignore());
+            CreateMap<TvChannel, AssociatedTvChannelModel>()
+                .ForMember(model => model.TvChannelName, options => options.Ignore());
 
-            CreateMap<ProductAttributeCombination, ProductAttributeCombinationModel>()
+            CreateMap<TvChannelAttributeCombination, TvChannelAttributeCombinationModel>()
                .ForMember(model => model.AttributesXml, options => options.Ignore())
-               .ForMember(model => model.ProductAttributes, options => options.Ignore())
-               .ForMember(model => model.ProductPictureModels, options => options.Ignore())
+               .ForMember(model => model.TvChannelAttributes, options => options.Ignore())
+               .ForMember(model => model.TvChannelPictureModels, options => options.Ignore())
                .ForMember(model => model.PictureThumbnailUrl, options => options.Ignore())
                .ForMember(model => model.Warnings, options => options.Ignore());
-            CreateMap<ProductAttributeCombinationModel, ProductAttributeCombination>()
+            CreateMap<TvChannelAttributeCombinationModel, TvChannelAttributeCombination>()
                .ForMember(entity => entity.AttributesXml, options => options.Ignore());
 
-            CreateMap<ProductAttribute, ProductAttributeModel>()
-                .ForMember(model => model.PredefinedProductAttributeValueSearchModel, options => options.Ignore())
-                .ForMember(model => model.ProductAttributeProductSearchModel, options => options.Ignore());
-            CreateMap<ProductAttributeModel, ProductAttribute>();
+            CreateMap<TvChannelAttribute, TvChannelAttributeModel>()
+                .ForMember(model => model.PredefinedTvChannelAttributeValueSearchModel, options => options.Ignore())
+                .ForMember(model => model.TvChannelAttributeTvChannelSearchModel, options => options.Ignore());
+            CreateMap<TvChannelAttributeModel, TvChannelAttribute>();
 
-            CreateMap<Product, ProductAttributeProductModel>()
-                .ForMember(model => model.ProductName, options => options.Ignore());
+            CreateMap<TvChannel, TvChannelAttributeTvChannelModel>()
+                .ForMember(model => model.TvChannelName, options => options.Ignore());
 
-            CreateMap<PredefinedProductAttributeValue, PredefinedProductAttributeValueModel>()
+            CreateMap<PredefinedTvChannelAttributeValue, PredefinedTvChannelAttributeValueModel>()
                 .ForMember(model => model.WeightAdjustmentStr, options => options.Ignore())
                 .ForMember(model => model.PriceAdjustmentStr, options => options.Ignore());
-            CreateMap<PredefinedProductAttributeValueModel, PredefinedProductAttributeValue>();
+            CreateMap<PredefinedTvChannelAttributeValueModel, PredefinedTvChannelAttributeValue>();
 
-            CreateMap<ProductAttributeMapping, ProductAttributeMappingModel>()
+            CreateMap<TvChannelAttributeMapping, TvChannelAttributeMappingModel>()
                 .ForMember(model => model.ValidationRulesString, options => options.Ignore())
                 .ForMember(model => model.AttributeControlType, options => options.Ignore())
                 .ForMember(model => model.ConditionString, options => options.Ignore())
-                .ForMember(model => model.ProductAttribute, options => options.Ignore())
-                .ForMember(model => model.AvailableProductAttributes, options => options.Ignore())
+                .ForMember(model => model.TvChannelAttribute, options => options.Ignore())
+                .ForMember(model => model.AvailableTvChannelAttributes, options => options.Ignore())
                 .ForMember(model => model.ConditionAllowed, options => options.Ignore())
                 .ForMember(model => model.ConditionModel, options => options.Ignore())
-                .ForMember(model => model.ProductAttributeValueSearchModel, options => options.Ignore());
-            CreateMap<ProductAttributeMappingModel, ProductAttributeMapping>()
+                .ForMember(model => model.TvChannelAttributeValueSearchModel, options => options.Ignore());
+            CreateMap<TvChannelAttributeMappingModel, TvChannelAttributeMapping>()
                 .ForMember(entity => entity.ConditionAttributeXml, options => options.Ignore())
                 .ForMember(entity => entity.AttributeControlType, options => options.Ignore());
 
-            CreateMap<ProductAttributeValue, ProductAttributeValueModel>()
+            CreateMap<TvChannelAttributeValue, TvChannelAttributeValueModel>()
                 .ForMember(model => model.AttributeValueTypeName, options => options.Ignore())
                 .ForMember(model => model.Name, options => options.Ignore())
                 .ForMember(model => model.PriceAdjustmentStr, options => options.Ignore())
-                .ForMember(model => model.AssociatedProductName, options => options.Ignore())
+                .ForMember(model => model.AssociatedTvChannelName, options => options.Ignore())
                 .ForMember(model => model.PictureThumbnailUrl, options => options.Ignore())
                 .ForMember(model => model.WeightAdjustmentStr, options => options.Ignore())
                 .ForMember(model => model.DisplayColorSquaresRgb, options => options.Ignore())
                 .ForMember(model => model.DisplayImageSquaresPicture, options => options.Ignore())
-                .ForMember(model => model.ProductPictureModels, options => options.Ignore());
-            CreateMap<ProductAttributeValueModel, ProductAttributeValue>()
+                .ForMember(model => model.TvChannelPictureModels, options => options.Ignore());
+            CreateMap<TvChannelAttributeValueModel, TvChannelAttributeValue>()
                .ForMember(entity => entity.AttributeValueType, options => options.Ignore())
                .ForMember(entity => entity.Quantity, options => options.Ignore());
 
-            CreateMap<ProductEditorSettings, ProductEditorSettingsModel>();
-            CreateMap<ProductEditorSettingsModel, ProductEditorSettings>();
+            CreateMap<TvChannelEditorSettings, TvChannelEditorSettingsModel>();
+            CreateMap<TvChannelEditorSettingsModel, TvChannelEditorSettings>();
 
-            CreateMap<ProductPicture, ProductPictureModel>()
+            CreateMap<TvChannelPicture, TvChannelPictureModel>()
                 .ForMember(model => model.OverrideAltAttribute, options => options.Ignore())
                 .ForMember(model => model.OverrideTitleAttribute, options => options.Ignore())
                 .ForMember(model => model.PictureUrl, options => options.Ignore());
 
-            CreateMap<ProductVideo, ProductVideoModel>()
+            CreateMap<TvChannelVideo, TvChannelVideoModel>()
                .ForMember(model => model.VideoUrl, options => options.Ignore());
 
-            CreateMap<Product, SpecificationAttributeProductModel>()
+            CreateMap<TvChannel, SpecificationAttributeTvChannelModel>()
                 .ForMember(model => model.SpecificationAttributeId, options => options.Ignore())
-                .ForMember(model => model.ProductId, options => options.Ignore())
-                .ForMember(model => model.ProductName, options => options.Ignore());
+                .ForMember(model => model.TvChannelId, options => options.Ignore())
+                .ForMember(model => model.TvChannelName, options => options.Ignore());
 
-            CreateMap<ProductSpecificationAttribute, ProductSpecificationAttributeModel>()
+            CreateMap<TvChannelSpecificationAttribute, TvChannelSpecificationAttributeModel>()
                 .ForMember(model => model.AttributeTypeName, options => options.Ignore())
                 .ForMember(model => model.ValueRaw, options => options.Ignore())
                 .ForMember(model => model.AttributeId, options => options.Ignore())
                 .ForMember(model => model.AttributeName, options => options.Ignore())
                 .ForMember(model => model.SpecificationAttributeOptionId, options => options.Ignore());
 
-            CreateMap<ProductSpecificationAttribute, AddSpecificationAttributeModel>()
+            CreateMap<TvChannelSpecificationAttribute, AddSpecificationAttributeModel>()
                 .ForMember(entity => entity.SpecificationId, options => options.Ignore())
                 .ForMember(entity => entity.AttributeTypeName, options => options.Ignore())
                 .ForMember(entity => entity.AttributeId, options => options.Ignore())
@@ -647,28 +647,28 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(entity => entity.AvailableOptions, options => options.Ignore())
                 .ForMember(entity => entity.AvailableAttributes, options => options.Ignore());
 
-            CreateMap<AddSpecificationAttributeModel, ProductSpecificationAttribute>()
+            CreateMap<AddSpecificationAttributeModel, TvChannelSpecificationAttribute>()
                 .ForMember(model => model.CustomValue, options => options.Ignore())
                 .ForMember(model => model.AttributeType, options => options.Ignore());
 
-            CreateMap<ProductTag, ProductTagModel>()
-               .ForMember(model => model.ProductCount, options => options.Ignore());
+            CreateMap<TvChannelTag, TvChannelTagModel>()
+               .ForMember(model => model.TvChannelCount, options => options.Ignore());
 
-            CreateMap<ProductTemplate, ProductTemplateModel>();
-            CreateMap<ProductTemplateModel, ProductTemplate>();
+            CreateMap<TvChannelTemplate, TvChannelTemplateModel>();
+            CreateMap<TvChannelTemplateModel, TvChannelTemplate>();
 
-            CreateMap<RelatedProduct, RelatedProductModel>()
-               .ForMember(model => model.Product2Name, options => options.Ignore());
+            CreateMap<RelatedTvChannel, RelatedTvChannelModel>()
+               .ForMember(model => model.TvChannel2Name, options => options.Ignore());
 
             CreateMap<SpecificationAttribute, SpecificationAttributeModel>()
                 .ForMember(model => model.SpecificationAttributeOptionSearchModel, options => options.Ignore())
-                .ForMember(model => model.SpecificationAttributeProductSearchModel, options => options.Ignore())
+                .ForMember(model => model.SpecificationAttributeTvChannelSearchModel, options => options.Ignore())
                 .ForMember(model => model.AvailableGroups, options => options.Ignore());
             CreateMap<SpecificationAttributeModel, SpecificationAttribute>();
 
             CreateMap<SpecificationAttributeOption, SpecificationAttributeOptionModel>()
                 .ForMember(model => model.EnableColorSquaresRgb, options => options.Ignore())
-                .ForMember(model => model.NumberOfAssociatedProducts, options => options.Ignore());
+                .ForMember(model => model.NumberOfAssociatedTvChannels, options => options.Ignore());
             CreateMap<SpecificationAttributeOptionModel, SpecificationAttributeOption>();
 
             CreateMap<SpecificationAttributeGroup, SpecificationAttributeGroupModel>();
@@ -686,7 +686,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.UserRole, options => options.Ignore());
             CreateMap<TierPriceModel, TierPrice>()
                 .ForMember(entity => entity.UserRoleId, options => options.Ignore())
-                .ForMember(entity => entity.ProductId, options => options.Ignore());
+                .ForMember(entity => entity.TvChannelId, options => options.Ignore());
         }
 
         /// <summary>
@@ -762,7 +762,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<UserAttributeValueModel, UserAttributeValue>();
 
             CreateMap<UserRole, UserRoleModel>()
-                .ForMember(model => model.PurchasedWithProductName, options => options.Ignore())
+                .ForMember(model => model.PurchasedWithTvChannelName, options => options.Ignore())
                 .ForMember(model => model.TaxDisplayTypeValues, options => options.Ignore());
             CreateMap<UserRoleModel, UserRole>();
 
@@ -770,7 +770,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<UserSettingsModel, UserSettings>()
                 .ForMember(settings => settings.AvatarMaximumSizeBytes, options => options.Ignore())
                 .ForMember(settings => settings.DeleteGuestTaskOlderThanMinutes, options => options.Ignore())
-                .ForMember(settings => settings.DownloadableProductsValidateUser, options => options.Ignore())
+                .ForMember(settings => settings.DownloadableTvChannelsValidateUser, options => options.Ignore())
                 .ForMember(settings => settings.HashedPasswordFormat, options => options.Ignore())
                 .ForMember(settings => settings.OnlineUserMinutes, options => options.Ignore())
                 .ForMember(settings => settings.SuffixDeletedUsers, options => options.Ignore())
@@ -915,7 +915,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<BackInStockSubscription, UserBackInStockSubscriptionModel>()
                 .ForMember(model => model.CreatedOn, options => options.Ignore())
                 .ForMember(model => model.StoreName, options => options.Ignore())
-                .ForMember(model => model.ProductName, options => options.Ignore());
+                .ForMember(model => model.TvChannelName, options => options.Ignore());
         }
 
         /// <summary>
@@ -960,7 +960,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.AvailableRequirementGroups, options => options.Ignore())
                 .ForMember(model => model.DiscountCategorySearchModel, options => options.Ignore())
                 .ForMember(model => model.DiscountManufacturerSearchModel, options => options.Ignore())
-                .ForMember(model => model.DiscountProductSearchModel, options => options.Ignore())
+                .ForMember(model => model.DiscountTvChannelSearchModel, options => options.Ignore())
                 .ForMember(model => model.DiscountTypeName, options => options.Ignore())
                 .ForMember(model => model.DiscountUrl, options => options.Ignore())
                 .ForMember(model => model.DiscountUsageHistorySearchModel, options => options.Ignore())
@@ -1119,24 +1119,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
         protected virtual void CreateMediaMaps()
         {
             CreateMap<MediaSettings, MediaSettingsModel>()
-                .ForMember(model => model.AssociatedProductPictureSize_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.AssociatedTvChannelPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AvatarPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.CartThumbPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.OrderThumbPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.CategoryThumbPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DefaultImageQuality_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DefaultPictureZoomEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ImportProductImagesUsingHash_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ImportTvChannelImagesUsingHash_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ManufacturerThumbPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MaximumImageSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MiniCartThumbPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MultipleThumbDirectories_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.PicturesStoredIntoDatabase, options => options.Ignore())
-                .ForMember(model => model.ProductDetailsPictureSize_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductThumbPictureSizeOnProductDetailsPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductThumbPictureSize_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelDetailsPictureSize_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelThumbPictureSizeOnTvChannelDetailsPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelThumbPictureSize_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.VendorThumbPictureSize_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ProductDefaultImageId_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelDefaultImageId_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AllowSVGUploads_OverrideForStore, options => options.Ignore());
             CreateMap<MediaSettingsModel, MediaSettings>()
                 .ForMember(settings => settings.AutoCompleteSearchThumbPictureSize, options => options.Ignore())
@@ -1303,8 +1303,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(entity => entity.UsedValue, options => options.Ignore());
 
             CreateMap<OrderSettings, OrderSettingsModel>()
-                .ForMember(model => model.AllowAdminsToBuyCallForPriceProducts_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductThumbnailInOrderDetailsPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.AllowAdminsToBuyCallForPriceTvChannels_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowTvChannelThumbnailInOrderDetailsPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AnonymousCheckoutAllowed_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AttachPdfInvoiceToOrderProcessingEmail_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AttachPdfInvoiceToOrderCompletedEmail_OverrideForStore, options => options.Ignore())
@@ -1317,7 +1317,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.DisableBillingAddressCheckoutStep_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisableOrderCompletedPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayPickupInStoreOnShippingMethodPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ExportWithProducts_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ExportWithTvChannels_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.IsReOrderAllowed_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MinOrderSubtotalAmountIncludingTax_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MinOrderSubtotalAmount_OverrideForStore, options => options.Ignore())
@@ -1352,8 +1352,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.CreatedOn, options => options.Ignore())
                 .ForMember(model => model.UserInfo, options => options.Ignore())
                 .ForMember(model => model.ReturnRequestStatusStr, options => options.Ignore())
-                .ForMember(model => model.ProductId, options => options.Ignore())
-                .ForMember(model => model.ProductName, options => options.Ignore())
+                .ForMember(model => model.TvChannelId, options => options.Ignore())
+                .ForMember(model => model.TvChannelName, options => options.Ignore())
                 .ForMember(model => model.OrderId, options => options.Ignore())
                 .ForMember(model => model.AttributeInfo, options => options.Ignore())
                 .ForMember(model => model.CustomOrderNumber, options => options.Ignore())
@@ -1376,19 +1376,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.CartsSharedBetweenStores_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.CrossSellsNumber_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.GroupTierPricesForDistinctShoppingCartItems_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.DisplayCartAfterAddingProduct_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.DisplayWishlistAfterAddingProduct_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.DisplayCartAfterAddingTvChannel_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.DisplayWishlistAfterAddingTvChannel_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.EmailWishlistEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MaximumShoppingCartItems_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MaximumWishlistItems_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MiniShoppingCartEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.MiniShoppingCartProductNumber_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.MiniShoppingCartTvChannelNumber_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.MoveItemsFromWishlistToCart_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowDiscountBox_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowGiftCardBox_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductImagesInMiniShoppingCart_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductImagesOnShoppingCart_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowProductImagesOnWishList_OverrideForStore, options => options.Ignore());
+                .ForMember(model => model.ShowTvChannelImagesInMiniShoppingCart_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowTvChannelImagesOnShoppingCart_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowTvChannelImagesOnWishList_OverrideForStore, options => options.Ignore());
             CreateMap<ShoppingCartSettingsModel, ShoppingCartSettings>()
                 .ForMember(settings => settings.RenderAssociatedAttributeValueQuantity, options => options.Ignore())
                 .ForMember(settings => settings.RoundPricesDuringCalculation, options => options.Ignore());
@@ -1399,7 +1399,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.UnitPrice, options => options.Ignore())
                 .ForMember(model => model.UnitPriceValue, options => options.Ignore())
                 .ForMember(model => model.UpdatedOn, options => options.Ignore())
-                .ForMember(model => model.ProductName, options => options.Ignore())
+                .ForMember(model => model.TvChannelName, options => options.Ignore())
                 .ForMember(model => model.Total, options => options.Ignore())
                 .ForMember(model => model.TotalValue, options => options.Ignore());
         }
@@ -1476,11 +1476,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.ShowOnApplyVendorPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnBlogCommentPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnContactUsPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowOnEmailProductToFriendPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowOnEmailTvChannelToFriendPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnEmailWishlistToFriendPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnLoginPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnNewsCommentPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowOnProductReviewPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowOnTvChannelReviewPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnRegistrationPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnForgotPasswordPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowOnForum_OverrideForStore, options => options.Ignore())
@@ -1520,8 +1520,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
 
             CreateMap<IPickupPointProvider, PickupPointProviderModel>();
 
-            CreateMap<ProductAvailabilityRange, ProductAvailabilityRangeModel>();
-            CreateMap<ProductAvailabilityRangeModel, ProductAvailabilityRange>();
+            CreateMap<TvChannelAvailabilityRange, TvChannelAvailabilityRangeModel>();
+            CreateMap<TvChannelAvailabilityRangeModel, TvChannelAvailabilityRange>();
 
             CreateMap<ShippingMethod, ShippingMethodModel>();
             CreateMap<ShippingMethodModel, ShippingMethod>();
@@ -1545,7 +1545,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<ShippingSettings, ShippingSettingsModel>()
                 .ForMember(model => model.AllowPickupInStore_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.BypassShippingMethodSelectionIfOnlyOne_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ConsiderAssociatedProductsDimensions_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ConsiderAssociatedTvChannelsDimensions_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.SortShippingValues, options => options.Ignore())
                 .ForMember(model => model.ShippingSorting_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayPickupPointsOnMap_OverrideForStore, options => options.Ignore())
@@ -1553,7 +1553,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.DisplayShipmentEventsToUsers_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayShipmentEventsToStoreOwner_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.EstimateShippingCartPageEnabled_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.EstimateShippingProductPageEnabled_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.EstimateShippingTvChannelPageEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.EstimateShippingCityNameEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.FreeShippingOverXEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.FreeShippingOverXIncludingTax_OverrideForStore, options => options.Ignore())
@@ -1698,11 +1698,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.AllowUsersToContactVendors_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AllowSearchByVendor_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.AllowVendorsToEditInfo_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.AllowVendorsToImportProducts_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.MaximumProductNumber_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.AllowVendorsToImportTvChannels_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.MaximumTvChannelNumber_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.NotifyStoreOwnerAboutVendorInformationChange_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ShowVendorOnOrderDetailsPage_OverrideForStore, options => options.Ignore())
-                .ForMember(model => model.ShowVendorOnProductDetailsPage_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.ShowVendorOnTvChannelDetailsPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.TermsOfServiceEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.VendorAttributeSearchModel, options => options.Ignore())
                 .ForMember(model => model.VendorsBlockItemsToDisplay_OverrideForStore, options => options.Ignore());

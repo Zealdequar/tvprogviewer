@@ -1,0 +1,76 @@
+@model TvChannelModel
+
+@await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsTvChannelAttributesInfoTop, additionalData = Model })
+<div class="cards-group">
+    <div class="card card-default">
+        <div class="card-body">
+            @await Html.PartialAsync("Table", new DataTablesModel
+            {
+                Name = "tvchannelattributemappings-grid",
+                UrlRead = new DataUrl("TvChannelAttributeMappingList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelAttributeMappingSearchModel.TvChannelId)] = Model.TvChannelAttributeMappingSearchModel.TvChannelId }),
+                Length = Model.TvChannelPictureSearchModel.PageSize,
+                LengthMenu = Model.TvChannelPictureSearchModel.AvailablePageSizes,
+                ColumnCollection = new List<ColumnProperty>
+                {
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.TvChannelAttribute))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Fields.Attribute").Text,
+                        Width = "200"
+                    },
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.TextPrompt))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Fields.TextPrompt").Text,
+                        Width = "150"
+                    },
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.IsRequired))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Fields.IsRequired").Text,
+                        Width = "100",
+                        ClassName = TvProgColumnClassDefaults.CenterAll,
+                        Render = new RenderBoolean()
+                    },
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.AttributeControlType))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Fields.AttributeControlType").Text,
+                        Width = "250"
+                    },
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.DisplayOrder))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Fields.DisplayOrder").Text,
+                        Width = "150",
+                        ClassName =  TvProgColumnClassDefaults.CenterAll
+                    },
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.ValidationRulesString))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.ValidationRules").Text,
+                        Width = "150",
+                        ClassName = TvProgColumnClassDefaults.CenterAll,
+                        Encode = false
+                    },
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.ConditionString))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Condition").Text,
+                        Width = "150",
+                        ClassName = TvProgColumnClassDefaults.CenterAll,
+                        Encode = false
+                    },
+                    new ColumnProperty(nameof(TvChannelAttributeMappingModel.Id))
+                    {
+                        Title = T("Admin.Common.Edit").Text,
+                        Width = "100",
+                        ClassName =  TvProgColumnClassDefaults.Button,
+                        Render = new RenderButtonEdit(new DataUrl("~/Admin/TvChannel/TvChannelAttributeMappingEdit/"))
+                    }
+                }
+            })
+        </div>
+
+        <div class="card-footer">
+            <a asp-action="TvChannelAttributeMappingCreate" asp-route-tvchannelId="@Model.Id" class="btn btn-primary">
+                <i class="fas fa-plus-square"></i>
+                @T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AddNew")
+            </a>
+        </div>
+    </div>
+</div>
+@await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsTvChannelAttributesInfoBottom, additionalData = Model })

@@ -461,7 +461,7 @@ i.false-icon {
   background-color: #b76d68;
 }
 
-.products-step .configuration-step-icon {
+.tvchannels-step .configuration-step-icon {
   background-color: #1b9aaa;
 }
 
@@ -690,7 +690,7 @@ i.false-icon {
   padding: 10px 0 5px 20px;
 }
 
-.requirement-container .requirement-product-names.filled {
+.requirement-container .requirement-tvchannel-names.filled {
   clear: both;
   max-width: 600px;
   padding-top: 5px;

@@ -452,7 +452,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         [HttpPost]
         public virtual async Task<IActionResult> PopularSearchTermsReport(PopularSearchTermSearchModel searchModel)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model

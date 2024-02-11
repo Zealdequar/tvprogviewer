@@ -4,7 +4,7 @@ using TvProgViewer.Services.Catalog;
 
 namespace TvProgViewer.Services.ExportImport
 {
-    public partial class ExportSpecificationAttribute : ProductSpecificationAttribute
+    public partial class ExportSpecificationAttribute : TvChannelSpecificationAttribute
     {
         protected ExportSpecificationAttribute() { }
 
@@ -14,13 +14,13 @@ namespace TvProgViewer.Services.ExportImport
         public int SpecificationAttributeId { get; set; }
 
         /// <summary>
-        /// Create data to export the product specification attribute
+        /// Create data to export the tvchannel specification attribute
         /// </summary>
-        /// <param name="specificationAttribute">The product specification attribute to export</param>
+        /// <param name="specificationAttribute">The tvchannel specification attribute to export</param>
         /// <param name="specificationAttributeService">Specification attribute service</param>
         /// <param name="localizationService"></param>
         /// <returns></returns>
-        public static async Task<ExportSpecificationAttribute> CreateAsync(ProductSpecificationAttribute specificationAttribute, ISpecificationAttributeService specificationAttributeService)
+        public static async Task<ExportSpecificationAttribute> CreateAsync(TvChannelSpecificationAttribute specificationAttribute, ISpecificationAttributeService specificationAttributeService)
         {
             var specificationAttributeOption = await specificationAttributeService.GetSpecificationAttributeOptionByIdAsync(specificationAttribute.SpecificationAttributeOptionId);
 
@@ -29,7 +29,7 @@ namespace TvProgViewer.Services.ExportImport
                 Id = specificationAttribute.Id,
                 AttributeTypeId = specificationAttribute.AttributeTypeId,
                 AllowFiltering = specificationAttribute.AllowFiltering,
-                ShowOnProductPage = specificationAttribute.ShowOnProductPage,
+                ShowOnTvChannelPage = specificationAttribute.ShowOnTvChannelPage,
                 DisplayOrder = specificationAttribute.DisplayOrder,
                 SpecificationAttributeOptionId = specificationAttribute.SpecificationAttributeOptionId,
                 SpecificationAttributeId = specificationAttributeOption.SpecificationAttributeId

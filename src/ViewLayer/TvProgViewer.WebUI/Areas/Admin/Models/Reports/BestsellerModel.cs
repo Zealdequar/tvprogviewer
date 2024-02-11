@@ -10,10 +10,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
     {
         #region Properties
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         [TvProgResourceDisplayName("Admin.Reports.Sales.Bestsellers.Fields.Name")]
-        public string ProductName { get; set; }
+        public string TvChannelName { get; set; }
 
         [TvProgResourceDisplayName("Admin.Reports.Sales.Bestsellers.Fields.TotalAmount")]
         public string TotalAmount { get; set; }

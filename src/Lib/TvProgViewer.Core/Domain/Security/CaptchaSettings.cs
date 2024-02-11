@@ -40,7 +40,7 @@ namespace TvProgViewer.Core.Domain.Security
         /// <summary>
         /// A value indicating whether CAPTCHA should be displayed on the "email a friend" page
         /// </summary>
-        public bool ShowOnEmailProductToFriendPage { get; set; }
+        public bool ShowOnEmailTvChannelToFriendPage { get; set; }
 
         /// <summary>
         /// A value indicating whether CAPTCHA should be displayed on the "comment blog" page
@@ -53,9 +53,9 @@ namespace TvProgViewer.Core.Domain.Security
         public bool ShowOnNewsCommentPage { get; set; }
 
         /// <summary>
-        /// A value indicating whether CAPTCHA should be displayed on the product reviews page
+        /// A value indicating whether CAPTCHA should be displayed on the tvchannel reviews page
         /// </summary>
-        public bool ShowOnProductReviewPage { get; set; }
+        public bool ShowOnTvChannelReviewPage { get; set; }
 
         /// <summary>
         /// A value indicating whether CAPTCHA should be displayed on the "Apply for vendor account" page

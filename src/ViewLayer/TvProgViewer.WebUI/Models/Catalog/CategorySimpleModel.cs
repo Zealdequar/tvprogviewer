@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         public string SeName { get; set; }
 
-        public int? NumberOfProducts { get; set; }
+        public int? NumberOfTvChannels { get; set; }
 
         public bool IncludeInTopMenu { get; set; }
 

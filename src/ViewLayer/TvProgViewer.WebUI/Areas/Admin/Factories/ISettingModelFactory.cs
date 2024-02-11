@@ -192,13 +192,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<GeneralCommonSettingsModel> PrepareGeneralCommonSettingsModelAsync(GeneralCommonSettingsModel model = null);
 
         /// <summary>
-        /// Prepare product editor settings model
+        /// Prepare tvchannel editor settings model
         /// </summary>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product editor settings model
+        /// The task result contains the tvchannel editor settings model
         /// </returns>
-        Task<ProductEditorSettingsModel> PrepareProductEditorSettingsModelAsync();
+        Task<TvChannelEditorSettingsModel> PrepareTvChannelEditorSettingsModelAsync();
 
         /// <summary>
         /// Prepare setting search model

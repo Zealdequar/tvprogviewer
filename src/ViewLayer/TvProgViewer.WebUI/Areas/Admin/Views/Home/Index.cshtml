@@ -7,7 +7,7 @@
 
     var canManageOrders = await permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders);
     var canManageUsers = await permissionService.AuthorizeAsync(StandardPermissionProvider.ManageUsers);
-    var canManageProducts = await permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts);
+    var canManageTvChannels = await permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels);
     var canManageReturnRequests = await permissionService.AuthorizeAsync(StandardPermissionProvider.ManageReturnRequests);
 
     //close configuration steps value
@@ -50,7 +50,7 @@
                     }
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardNewsAfter, additionalData = Model })
-                    @if (!Model.IsLoggedInAsVendor && canManageOrders && canManageUsers && canManageProducts && canManageReturnRequests)
+                    @if (!Model.IsLoggedInAsVendor && canManageOrders && canManageUsers && canManageTvChannels && canManageReturnRequests)
                     {
                         <div class="row">
                             <div class="col-md-12">
@@ -89,7 +89,7 @@
                         </div>
                     }
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DashboardOrderreportsAfter, additionalData = Model })
-                    @if (!Model.IsLoggedInAsVendor && (canManageOrders || canManageProducts))
+                    @if (!Model.IsLoggedInAsVendor && (canManageOrders || canManageTvChannels))
                     {
                         <div class="row">
                             @if (canManageOrders)
@@ -99,7 +99,7 @@
                                 </div>
                             }
                             <div class="col-md-4">
-                                @if (canManageProducts)
+                                @if (canManageTvChannels)
                                 {
                                     @await Html.PartialAsync("_PopularSearchTermsReport", Model.PopularSearchTerms)
                                 }

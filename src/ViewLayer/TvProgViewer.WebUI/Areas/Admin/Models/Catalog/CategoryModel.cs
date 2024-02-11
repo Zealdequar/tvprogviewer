@@ -33,7 +33,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
             SelectedStoreIds = new List<int>();
             AvailableStores = new List<SelectListItem>();
 
-            CategoryProductSearchModel = new CategoryProductSearchModel();
+            CategoryTvChannelSearchModel = new CategoryTvChannelSearchModel();
         }
 
         #endregion
@@ -126,7 +126,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
         public IList<int> SelectedDiscountIds { get; set; }
         public IList<SelectListItem> AvailableDiscounts { get; set; }
 
-        public CategoryProductSearchModel CategoryProductSearchModel { get; set; }
+        public CategoryTvChannelSearchModel CategoryTvChannelSearchModel { get; set; }
 
         public string PrimaryStoreCurrencyCode { get; set; }
 

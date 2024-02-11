@@ -487,8 +487,8 @@ label, label + * {
   text-decoration: underline;
 }
 
-.cart .product,
-.data-table .product,
+.cart .tvchannel,
+.data-table .tvchannel,
 .data-table .message,
 .data-table .info,
 .data-table .name {
@@ -501,34 +501,34 @@ label, label + * {
   text-align: right;
 }
 
-.cart .product a,
-.data-table .product a,
+.cart .tvchannel a,
+.data-table .tvchannel a,
 .data-table .info a {
   font-weight: bold;
   color: #444;
 }
 
-.cart .product a:hover,
-.cart .product a:focus,
-.data-table .product a:hover,
-.data-table .product a:focus,
+.cart .tvchannel a:hover,
+.cart .tvchannel a:focus,
+.data-table .tvchannel a:hover,
+.data-table .tvchannel a:focus,
 .data-table .info a:hover,
 .data-table .info a:focus {
   color: #4ab2f1;
   text-decoration: none;
 }
 
-.cart .product .edit-item {
+.cart .tvchannel .edit-item {
   margin: 10px 0 0;
 }
 
-.cart .product .edit-item a {
+.cart .tvchannel .edit-item a {
   font-weight: normal;
   color: #4ab2f1;
 }
 
-.cart .product .edit-item a:hover,
-.cart .product .edit-item a:focus {
+.cart .tvchannel .edit-item a:hover,
+.cart .tvchannel .edit-item a:focus {
   text-decoration: underline;
 }
 
@@ -1358,11 +1358,11 @@ label, label + * {
   color: #4ab2f1;
 }
 
-.block a.product-picture {
+.block a.tvchannel-picture {
   display: none;
 }
 
-.block a.product-picture:before {
+.block a.tvchannel-picture:before {
   display: none;
 }
 
@@ -1399,7 +1399,7 @@ label, label + * {
 }
 
 .block .tags li,
-.product-tags-all-page li {
+.tvchannel-tags-all-page li {
   display: inline-block;
   position: relative;
   margin: 0 10px;
@@ -1408,7 +1408,7 @@ label, label + * {
 }
 
 .block .tags li a,
-.product-tags-all-page li a {
+.tvchannel-tags-all-page li a {
   float: right;
   line-height: 30px;
   color: #444;
@@ -1416,8 +1416,8 @@ label, label + * {
 
 .block .tags li a:hover,
 .block .tags li a:focus,
-.product-tags-all-page li a:hover,
-.product-tags-all-page li a:focus {
+.tvchannel-tags-all-page li a:hover,
+.tvchannel-tags-all-page li a:focus {
   color: #4ab2f1;
 }
 
@@ -1563,48 +1563,48 @@ label, label + * {
   background-color: #248ece;
 }
 
-.product-selectors {
+.tvchannel-selectors {
   margin: 0 0 20px;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   padding: 20px 0;
 }
 
-.product-selectors:first-child {
+.tvchannel-selectors:first-child {
   border-top: none;
 }
 
-.product-selectors:after {
+.tvchannel-selectors:after {
   content: "";
   display: block;
   clear: both;
 }
 
-.product-selectors > div {
+.tvchannel-selectors > div {
   display: inline-block;
   margin: 5px;
 }
 
-.product-selectors span {
+.tvchannel-selectors span {
   display: inline-block;
   vertical-align: middle;
   font-size: 16px;
 }
 
-.product-selectors select {
+.tvchannel-selectors select {
   margin: 0 8px;
 }
 
-.product-selectors .product-viewmode {
+.tvchannel-selectors .tvchannel-viewmode {
   display: none;
   font-size: 0;
 }
 
-.product-filter + .product-filter {
+.tvchannel-filter + .tvchannel-filter {
   margin-top: 20px;
 }
 
-.product-filter .filter-title {
+.tvchannel-filter .filter-title {
   margin: 0 0 10px;
   background-color: #f6f6f6;
   padding: 10px;
@@ -1612,38 +1612,38 @@ label, label + * {
   color: #444;
 }
 
-.product-filter .filter-title strong {
+.tvchannel-filter .filter-title strong {
   font-weight: normal;
 }
 
-.product-filter .filter-content {
+.tvchannel-filter .filter-content {
   padding: 10px;
   color: #444;
 }
 
-.product-filter .group {
+.tvchannel-filter .group {
   font-size: 15px;
 }
 
-.product-filter .group + .group {
+.tvchannel-filter .group + .group {
   margin-top: 16px;
 }
 
-.product-filter .group .name {
+.tvchannel-filter .group .name {
   padding-bottom: 10px;
 }
 
-.product-filter .group .item {
+.tvchannel-filter .group .item {
   display: flex;
   padding-left: 15px;
   align-items: center;
 }
 
-.product-filter .group .item + .item {
+.tvchannel-filter .group .item + .item {
   padding-top: 8px;
 }
 
-.product-filter .group .item label {
+.tvchannel-filter .group .item label {
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1672,11 +1672,11 @@ label, label + * {
   width: 50%;
 }
 
-.product-filter .attribute-squares {
+.tvchannel-filter .attribute-squares {
   font-size: inherit;
 }
 
-.product-filter .attribute-squares .attribute-square {
+.tvchannel-filter .attribute-squares .attribute-square {
   width: 20px !important;
   height: 20px !important;
   margin-right: 8px;
@@ -1739,7 +1739,7 @@ label, label + * {
   padding: 0 10px;
 }
 
-.item-box .product-title {
+.item-box .tvchannel-title {
   margin: 0 0 10px;
   font-size: 17px;
   line-height: 1.2;
@@ -1747,11 +1747,11 @@ label, label + * {
   color: #4ab2f1;
 }
 
-.item-box .product-title a {
+.item-box .tvchannel-title a {
   display: block;
 }
 
-.item-box .product-title a:hover {
+.item-box .tvchannel-title a:hover {
   color: #248ece;
 }
 
@@ -1759,7 +1759,7 @@ label, label + * {
   margin: 0 0 15px;
 }
 
-.item-box .product-rating-box {
+.item-box .tvchannel-rating-box {
   display: inline-block;
   margin: 0 0 10px;
 }
@@ -1779,7 +1779,7 @@ label, label + * {
   margin-right: auto;
 }
 
-.product-grid .item-box .description:not([data-short-description]) {
+.tvchannel-grid .item-box .description:not([data-short-description]) {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -1838,7 +1838,7 @@ label, label + * {
   vertical-align: middle;
 }
 
-.item-box .product-box-add-to-cart-button {
+.item-box .tvchannel-box-add-to-cart-button {
   width: 60%;
   background-color: #4ab2f1;
   text-align: center;
@@ -1847,8 +1847,8 @@ label, label + * {
   text-transform: uppercase;
 }
 
-.item-box .product-box-add-to-cart-button:hover,
-.item-box .product-box-add-to-cart-button:focus {
+.item-box .tvchannel-box-add-to-cart-button:hover,
+.item-box .tvchannel-box-add-to-cart-button:focus {
   background-color: #248ece;
 }
 
@@ -1909,11 +1909,11 @@ label, label + * {
   padding-top: 65%;
 }
 
-.products-container {
+.tvchannels-container {
   position: relative;
 }
 
-.products-container .ajax-products-busy {
+.tvchannels-container .ajax-tvchannels-busy {
   display: none;
   position: absolute;
   z-index: 2;
@@ -1922,12 +1922,12 @@ label, label + * {
   background: #ffffffab url(../images/loading.gif) center no-repeat;
 }
 
-.product-grid,
-.product-list {
+.tvchannel-grid,
+.tvchannel-list {
   margin: 0 0 50px;
 }
 
-.product-grid .title {
+.tvchannel-grid .title {
   margin: 0 0 30px;
   border-bottom: 1px solid #ddd;
   padding: 0 0 15px;
@@ -1936,7 +1936,7 @@ label, label + * {
   color: #444;
 }
 
-.product-grid .title strong {
+.tvchannel-grid .title strong {
   font-weight: normal;
 }
 
@@ -2040,17 +2040,17 @@ label, label + * {
 /********** PRODUCT PAGE **********/
 
 
-.product-details-page {
+.tvchannel-details-page {
   padding: 20px 0 0;
 }
 
-.product-essential {
+.tvchannel-essential {
   margin: 0 0 40px;
   border-bottom: 1px solid #ddd;
   padding: 0 0 10px;
 }
 
-.product-essential:after {
+.tvchannel-essential:after {
   content: "";
   display: block;
   clear: both;
@@ -2118,26 +2118,26 @@ label, label + * {
   margin: 0 0 50px;
 }
 
-.overview .discontinued-product {
+.overview .discontinued-tvchannel {
   background: #f3f3f3;
   margin: 0 0 20px;
 }
 
-.overview .discontinued-product h4 {
+.overview .discontinued-tvchannel h4 {
   display: inline-block;
   font-size: 14px;
   padding: 17px 17px 17px 40px;
-  background: url('../images/discontinued-product-icon.png') no-repeat 13px center;
+  background: url('../images/discontinued-tvchannel-icon.png') no-repeat 13px center;
   color: #de444c;
 }
 
-.overview .product-name {
+.overview .tvchannel-name {
   margin: 0 0 25px;
   border-bottom: 1px solid #ddd;
   padding: 0 0 10px;
 }
 
-.overview .product-name h1 {
+.overview .tvchannel-name h1 {
   font-size: 30px;
   font-weight: normal;
 }
@@ -2148,22 +2148,22 @@ label, label + * {
   color: #666;
 }
 
-.product-no-reviews,
-.product-reviews-overview {
+.tvchannel-no-reviews,
+.tvchannel-reviews-overview {
   margin: 0 0 25px;
   color: #444;
 }
 
-.product-no-reviews a {
+.tvchannel-no-reviews a {
   text-decoration: underline;
 }
 
-.product-review-box {
+.tvchannel-review-box {
   display: inline-block;
   margin: 0 0 8px;
 }
 
-.product-review-box .rating {
+.tvchannel-review-box .rating {
   width: 95px;
   height: 14px;
   background: url('../images/rating1.png') repeat-x;
@@ -2172,19 +2172,19 @@ label, label + * {
   transform: scaleX(-1);
 }
 
-.product-review-box .rating div {
+.tvchannel-review-box .rating div {
   height: 14px;
   background: url('../images/rating2.png') repeat-x;
   margin-right: auto;
 }
 
-.product-review-links a {
+.tvchannel-review-links a {
   display: inline-block;
   text-decoration: underline;
 }
 
-.product-review-links a:hover,
-.product-review-links a:focus {
+.tvchannel-review-links a:hover,
+.tvchannel-review-links a:focus {
   color: #4ab2f1;
 }
 
@@ -2348,8 +2348,8 @@ label, label + * {
   vertical-align: middle;
 }
 
-.overview .old-product-price,
-.variant-overview .old-product-price,
+.overview .old-tvchannel-price,
+.variant-overview .old-tvchannel-price,
 .overview .non-discounted-price,
 .variant-overview .non-discounted-price {
   font-size: 14px;
@@ -2357,8 +2357,8 @@ label, label + * {
   text-decoration: line-through;
 }
 
-.overview .product-price,
-.variant-overview .product-price {
+.overview .tvchannel-price,
+.variant-overview .tvchannel-price {
   font-size: 20px;
   font-weight: bold;
   color: #444;
@@ -2478,7 +2478,7 @@ label, label + * {
   background-color: #248ece;
 }
 
-.product-share-button {
+.tvchannel-share-button {
   display: inline-block;
   overflow: hidden;
 }
@@ -2488,27 +2488,27 @@ label, label + * {
   line-height: 24px;
 }
 
-.product-collateral {
+.tvchannel-collateral {
   margin: 0 0 75px;
 }
 
-.product-collateral .title {
+.tvchannel-collateral .title {
   margin: 0 0 10px;
   font-size: 18px;
   color: #444;
 }
 
-.product-collateral .title strong {
+.tvchannel-collateral .title strong {
   font-weight: normal;
 }
 
-.product-variant-line {
+.tvchannel-variant-line {
   margin: 0 0 30px;
   border-bottom: 1px solid #ddd;
   padding: 0 0 20px;
 }
 
-.product-variant-line:after {
+.tvchannel-variant-line:after {
   content: "";
   display: block;
   clear: both;
@@ -2552,42 +2552,42 @@ label, label + * {
   margin: 0 0 10px;
 }
 
-.product-specs-box {
+.tvchannel-specs-box {
   margin: 0 0 40px;
 }
 
-.product-specs-box td {
+.tvchannel-specs-box td {
   border: 1px solid #ddd;
   padding: 10px;
 }
 
-.product-specs-box td.spec-group-name {
+.tvchannel-specs-box td.spec-group-name {
   border: 0;
   padding-top: 20px;
   font-size: 16px;
   color: #444;
 }
 
-.product-tags-list {
+.tvchannel-tags-list {
   font-size: 0;
 }
 
-.product-tags-list li {
+.tvchannel-tags-list li {
   display: inline-block;
   font-size: 14px; /*reset zeroing*/
 }
 
-.product-tags-list li.separator {
+.tvchannel-tags-list li.separator {
   margin: 0 3px 0 5px;
 }
 
-.product-tags-list a {
+.tvchannel-tags-list a {
   display: inline-block;
   line-height: 24px;
 }
 
-.product-tags-list a:hover,
-.product-tags-list a:focus {
+.tvchannel-tags-list a:hover,
+.tvchannel-tags-list a:focus {
   color: #444;
 }
 
@@ -2942,23 +2942,23 @@ label, label + * {
 
 
 
-.product-reviews-page h1 a {
+.tvchannel-reviews-page h1 a {
   display: inline-block;
   color: #4ab2f1;
 }
 
-.product-reviews-page h1 a:before,
-.product-reviews-page h1 a:after {
+.tvchannel-reviews-page h1 a:before,
+.tvchannel-reviews-page h1 a:after {
   content: "''";
 }
 
-.product-reviews-page .title {
+.tvchannel-reviews-page .title {
   margin: 0 0 20px;
   font-size: 20px;
   color: #444;
 }
 
-.product-reviews-page .title strong {
+.tvchannel-reviews-page .title strong {
   font-weight: normal;
 }
 
@@ -3051,95 +3051,95 @@ label, label + * {
   background-color: #248ece;
 }
 
-.product-reviews-page .result,
-.product-reviews-page .message-error {
+.tvchannel-reviews-page .result,
+.tvchannel-reviews-page .message-error {
   margin: 0 0 20px;
 }
 
-.product-review-list {
+.tvchannel-review-list {
   overflow: hidden;
 }
 
-.product-review-item {
+.tvchannel-review-item {
   margin: 0 0 40px;
 }
 
-.product-review-item .review-item-head {
+.tvchannel-review-item .review-item-head {
   border-top: 1px solid #ddd;
   overflow: hidden;
   background-color: #f6f6f6;
   padding: 10px;
 }
 
-.product-review-item .review-title {
+.tvchannel-review-item .review-title {
   line-height: 20px;
   font-size: 15px;
   color: #444;
 }
 
-.product-review-item .product-review-box {
+.tvchannel-review-item .tvchannel-review-box {
   margin: 3px 0 0;
 }
 
-.product-review-item .review-content {
+.tvchannel-review-item .review-content {
   padding: 20px 10px;
 }
 
-.product-review-item .review-text {
+.tvchannel-review-item .review-text {
   margin: 0 0 15px;
   line-height: 22px;
   color: #444;
 }
 
-.product-review-item .avatar {
+.tvchannel-review-item .avatar {
   margin: 0 0 10px;
 }
 
-.product-review-item .reply {
+.tvchannel-review-item .reply {
   margin: 15px 0;
   border-top: 1px solid #ddd;
 }
 
-.product-review-item .reply-header {
+.tvchannel-review-item .reply-header {
   margin: 15px 0;
   font-weight: bold;
 }
 
-.product-review-item .reply-text {
+.tvchannel-review-item .reply-text {
   line-height: 22px;
 }
 
-.product-review-item .review-info {
+.tvchannel-review-item .review-info {
   margin: 0 0 5px;
 }
 
-.product-review-item .review-info label {
+.tvchannel-review-item .review-info label {
   font-weight: normal;
 }
 
-.product-review-item .review-info *,
-.product-review-helpfulness * {
+.tvchannel-review-item .review-info *,
+.tvchannel-review-helpfulness * {
   display: inline-block;
 }
 
-.product-review-item .review-info a,
-.product-review-helpfulness .vote {
+.tvchannel-review-item .review-info a,
+.tvchannel-review-helpfulness .vote {
   display: inline-block;
   padding: 0 5px;
   color: #4ab2f1;
   cursor: pointer;
 }
 
-.product-review-helpfulness .question {
+.tvchannel-review-helpfulness .question {
   margin: 0 0 0 5px;
   font-style: italic;
 }
 
-.product-review-helpfulness .result {
+.tvchannel-review-helpfulness .result {
   margin: 0 10px 0 0;
 }
 
-.product-review-item .review-type-rating-ext {
+.tvchannel-review-item .review-type-rating-ext {
   overflow: hidden;
   margin: 0 0 20px;
 }
@@ -3165,7 +3165,7 @@ label, label + * {
   margin: 0 0 30px;
 }
 
-.wishlist-content .product-content {
+.wishlist-content .tvchannel-content {
   min-width: 300px;
   text-align: right;
 }
@@ -3245,12 +3245,12 @@ label, label + * {
   margin: 25px 0 0;
 }
 
-.compare-products-page {
+.compare-tvchannels-page {
   position: relative;
   overflow: hidden;
 }
 
-.compare-products-page .clear-list {
+.compare-tvchannels-page .clear-list {
   display: inline-block;
   margin: 0 0 20px;
   background-color: #4ab2f1;
@@ -3260,17 +3260,17 @@ label, label + * {
   text-transform: uppercase;
 }
 
-.compare-products-page .clear-list:hover,
-.compare-products-page .clear-list:focus {
+.compare-tvchannels-page .clear-list:hover,
+.compare-tvchannels-page .clear-list:focus {
   background-color: #248ece;
 }
 
-.compare-products-page .table-wrapper {
+.compare-tvchannels-page .table-wrapper {
   margin: 0 0 30px;
   padding: 0 0 1px; /*IE mobile table border fix*/
 }
 
-.compare-products-table td {
+.compare-tvchannels-table td {
   min-width: 150px;
   border: 1px solid #ddd;
   background-color: #fff;
@@ -3280,26 +3280,26 @@ label, label + * {
   color: #444;
 }
 
-.compare-products-table td:first-child {
+.compare-tvchannels-table td:first-child {
   min-width: 0;
 }
 
-.compare-products-table td label {
+.compare-tvchannels-table td label {
   font-weight: normal;
   color: #777;
 }
 
-.compare-products-table .specification-group td {
+.compare-tvchannels-table .specification-group td {
   border: 0;
   padding: 20px 10px 10px 10px;
 }
 
-.compare-products-table .specification-group td label {
+.compare-tvchannels-table .specification-group td label {
   font-size: 16px;
   color: #444;
 }
 
-.compare-products-table .remove-button {
+.compare-tvchannels-table .remove-button {
   display: inline-block;
   border: none;
   background: url('../images/remove.png') right center no-repeat;
@@ -3308,12 +3308,12 @@ label, label + * {
   color: #666;
 }
 
-.compare-products-table .remove-button:hover,
-.compare-products-table .remove-button:focus {
+.compare-tvchannels-table .remove-button:hover,
+.compare-tvchannels-table .remove-button:focus {
   color: #4ab2f1;
 }
 
-.compare-products-table .picture {
+.compare-tvchannels-table .picture {
   display: block;
   position: relative;
   max-width: 200px;
@@ -3321,7 +3321,7 @@ label, label + * {
   overflow: hidden;
 }
 
-.compare-products-table .picture img {
+.compare-tvchannels-table .picture img {
   position: absolute;
   top: 0;
   right: 0;
@@ -3332,24 +3332,24 @@ label, label + * {
   margin: auto;
 }
 
-.compare-products-table .product-name td {
+.compare-tvchannels-table .tvchannel-name td {
   font-weight: bold;
 }
 
-.compare-products-table .product-name td a:hover,
-.compare-products-table .product-name td a:focus {
+.compare-tvchannels-table .tvchannel-name td a:hover,
+.compare-tvchannels-table .tvchannel-name td a:focus {
   color: #4ab2f1;
 }
 
-.compare-products-table .short-description td {
+.compare-tvchannels-table .short-description td {
   line-height: 22px;
 }
 
-.compare-products-table .full-description td {
+.compare-tvchannels-table .full-description td {
   display: none;
 }
 
-.compare-products-page .no-data {
+.compare-tvchannels-page .no-data {
   margin: 25px 0 0;
 }
 
@@ -3933,7 +3933,7 @@ label, label + * {
   color: #444;
 }
 
-.downloadable-products-page table td {
+.downloadable-tvchannels-page table td {
   color: #444;
 }
 
@@ -4670,15 +4670,15 @@ label, label + * {
 /*** PRODUCT ESTIMATE SHIPPING ***/
 
 
-.product-estimate-shipping {
+.tvchannel-estimate-shipping {
   margin-bottom: 20px;
 }
 
-.product-estimate-shipping .shipping-date {
+.tvchannel-estimate-shipping .shipping-date {
   margin-top: 3px;
 }
 
-.product-estimate-shipping .shipping-title {
+.tvchannel-estimate-shipping .shipping-title {
   font-size: 16px;
   font-weight: bold;
   color: #444;
@@ -4686,12 +4686,12 @@ label, label + * {
   justify-content: center;
 }
 
-.product-estimate-shipping .shipping-title .shipping-price {
+.tvchannel-estimate-shipping .shipping-title .shipping-price {
   margin-left: 5px;
   vertical-align: middle;
 }
 
-.product-estimate-shipping .shipping-title .shipping-loading {
+.tvchannel-estimate-shipping .shipping-title .shipping-loading {
   margin-left: 5px;
   vertical-align: middle;
   background: url(../images/ajax-loader-small.gif) no-repeat;
@@ -4700,7 +4700,7 @@ label, label + * {
   display: inline-block;
 }
 
-.product-estimate-shipping .open-estimate-shipping-popup .arrow-down {
+.tvchannel-estimate-shipping .open-estimate-shipping-popup .arrow-down {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
   margin: 0 0 3px 6px;
@@ -6654,12 +6654,12 @@ label, label + * {
     padding: 10px;
   }
 
-  .cart td.product-picture {
+  .cart td.tvchannel-picture {
     border-top: 1px solid #ddd;
     padding: 15px 10px 5px;
   }
 
-  .cart td.product {
+  .cart td.tvchannel {
     min-width: 0;
     border-bottom: 1px solid #ddd;
     padding: 5px 10px 15px;
@@ -6711,7 +6711,7 @@ label, label + * {
     padding: 10px;
   }
 
-  .order-details-page .data-table td.product,
+  .order-details-page .data-table td.tvchannel,
   .order-details-page .data-table td.tracking-number {
     min-width: 0;
     border-bottom: 1px solid #ddd;
@@ -6930,7 +6930,7 @@ label, label + * {
     clear: both;
   }
 
-  .item-box .product-rating-box {
+  .item-box .tvchannel-rating-box {
     margin: 0 0 15px;
   }
 
@@ -6938,7 +6938,7 @@ label, label + * {
     min-height: 40px;
   }
 
-  .item-box .product-title {
+  .item-box .tvchannel-title {
     min-height: 42px;
     margin: 0 0 5px;
   }
@@ -7145,20 +7145,20 @@ label, label + * {
   /*** CATEGORY ***/
 
 
-  .product-selectors {
+  .tvchannel-selectors {
     text-align: right;
   }
 
-  .product-selectors .product-viewmode {
+  .tvchannel-selectors .tvchannel-viewmode {
     display: inline-block;
     float: left;
   }
 
-  .product-selectors .product-viewmode span {
+  .tvchannel-selectors .tvchannel-viewmode span {
     display: none;
   }
 
-  .product-selectors .product-viewmode a {
+  .tvchannel-selectors .tvchannel-viewmode a {
     display: inline-block;
     width: 24px;
     height: 32px;
@@ -7168,15 +7168,15 @@ label, label + * {
     opacity: 0.5;
   }
 
-  .product-selectors .product-viewmode a.grid {
+  .tvchannel-selectors .tvchannel-viewmode a.grid {
     background-image: url('../images/view-grid.png');
   }
 
-  .product-selectors .product-viewmode a.list {
+  .tvchannel-selectors .tvchannel-viewmode a.list {
     background-image: url('../images/view-list.png');
   }
 
-  .product-selectors .product-viewmode a.selected {
+  .tvchannel-selectors .tvchannel-viewmode a.selected {
     opacity: 1;
   }
 
@@ -7193,65 +7193,65 @@ label, label + * {
     clear: both;
   }
 
-  .product-list .item-box {
+  .tvchannel-list .item-box {
     float: none;
     width: auto;
     margin: 0 5px 20px;
   }
 
-  .product-list .item-box .product-item:after {
+  .tvchannel-list .item-box .tvchannel-item:after {
     content: "";
     display: block;
     clear: both;
   }
 
-  .product-list .item-box .picture {
+  .tvchannel-list .item-box .picture {
     float: right;
     width: 220px;
   }
 
-  .product-list .item-box:hover .picture a img,
-  .product-list .item-box:focus .picture a img {
+  .tvchannel-list .item-box:hover .picture a img,
+  .tvchannel-list .item-box:focus .picture a img {
     opacity: 1;
   }
 
-  .product-list .item-box .picture:hover a img,
-  .product-list .item-box .picture:focus a img {
+  .tvchannel-list .item-box .picture:hover a img,
+  .tvchannel-list .item-box .picture:focus a img {
     opacity: 0.85;
   }
 
-  .product-list .item-box .picture + .details {
+  .tvchannel-list .item-box .picture + .details {
     margin: 0 240px 0 0;
   }
 
-  .product-list .item-box .product-title {
+  .tvchannel-list .item-box .tvchannel-title {
     height: auto;
     padding: 10px 0;
     font-size: 18px;
   }
 
-  .product-list .item-box .description {
+  .tvchannel-list .item-box .description {
     display: block;
     margin: 0 0 10px;
     line-height: 22px;
   }
 
-  .product-list .item-box .prices {
+  .tvchannel-list .item-box .prices {
     height: auto;
     margin: 0 0 30px;
   }
 
-  .product-list .item-box .buttons {
+  .tvchannel-list .item-box .buttons {
   }
 
-  .product-list .item-box .product-box-add-to-cart-button {
+  .tvchannel-list .item-box .tvchannel-box-add-to-cart-button {
     width: auto;
     min-width: 150px;
     padding: 0 20px;
   }
 
-  .product-list .item-box .add-to-compare-list-button,
-  .product-list .item-box .add-to-wishlist-button {
+  .tvchannel-list .item-box .add-to-compare-list-button,
+  .tvchannel-list .item-box .add-to-wishlist-button {
     width: 42px;
   }
 
@@ -7280,12 +7280,12 @@ label, label + * {
   /*** PRODUCT REVIEWS ***/
 
 
-  .product-review-item .review-title {
+  .tvchannel-review-item .review-title {
     float: right;
     max-width: 600px;
   }
 
-  .product-review-item .product-review-box {
+  .tvchannel-review-item .tvchannel-review-box {
     float: left;
   }
 
@@ -7969,7 +7969,7 @@ label, label + * {
     max-width: 100%;
   }
 
-  .mini-shopping-cart .picture + .product {
+  .mini-shopping-cart .picture + .tvchannel {
     margin: 0 80px 0 0;
   }
 
@@ -8255,7 +8255,7 @@ label, label + * {
     border-bottom: none;
   }
 
-  .block a.product-picture {
+  .block a.tvchannel-picture {
     display: inline-block;
     position: relative;
     width: 30%;
@@ -8263,15 +8263,15 @@ label, label + * {
     vertical-align: middle;
   }
 
-  .block a.product-name {
+  .block a.tvchannel-name {
     vertical-align: middle;
   }
 
-  .block a.product-picture + a.product-name {
+  .block a.tvchannel-picture + a.tvchannel-name {
     width: 70%;
   }
 
-  .block a.product-picture + a.product-name:before {
+  .block a.tvchannel-picture + a.tvchannel-name:before {
     display: none;
   }
 
@@ -8287,22 +8287,22 @@ label, label + * {
     text-align: right;
   }
 
-  .home-page .product-grid .item-box,
-  .product-details-page .product-grid .item-box,
-  .shopping-cart-page .product-grid .item-box {
+  .home-page .tvchannel-grid .item-box,
+  .tvchannel-details-page .tvchannel-grid .item-box,
+  .shopping-cart-page .tvchannel-grid .item-box {
     width: 24%;
     margin: 0 0.5% 50px;
   }
 
-  .home-page .product-grid .item-box:nth-child(3n+1),
-  .product-details-page .product-grid .item-box:nth-child(3n+1),
-  .shopping-cart-page .product-grid .item-box:nth-child(3n+1) {
+  .home-page .tvchannel-grid .item-box:nth-child(3n+1),
+  .tvchannel-details-page .tvchannel-grid .item-box:nth-child(3n+1),
+  .shopping-cart-page .tvchannel-grid .item-box:nth-child(3n+1) {
     clear: none;
   }
 
-  .home-page .product-grid .item-box:nth-child(4n+1),
-  .product-details-page .product-grid .item-box:nth-child(4n+1),
-  .shopping-cart-page .product-grid .item-box:nth-child(4n+1) {
+  .home-page .tvchannel-grid .item-box:nth-child(4n+1),
+  .tvchannel-details-page .tvchannel-grid .item-box:nth-child(4n+1),
+  .shopping-cart-page .tvchannel-grid .item-box:nth-child(4n+1) {
     clear: both;
   }
 
@@ -8347,7 +8347,7 @@ label, label + * {
     margin: 0 0 10px 10px;
   }
 
-  .product-details-page .title {
+  .tvchannel-details-page .title {
     text-align: right;
   }
 
@@ -8355,7 +8355,7 @@ label, label + * {
   /*** PRODUCT REVIEWS ***/
 
 
-  .product-review-item .review-title {
+  .tvchannel-review-item .review-title {
     max-width: 850px;
   }
 
@@ -8365,49 +8365,49 @@ label, label + * {
     text-align: right
   }
 
-  .product-review-item .review-text {
+  .tvchannel-review-item .review-text {
     display: table;
     width: 100%;
     table-layout: fixed;
   }
 
-  .product-review-item .avatar {
+  .tvchannel-review-item .avatar {
     display: table-cell;
     vertical-align: top;
     width: 120px;
   }
 
-  .product-review-item .avatar img {
+  .tvchannel-review-item .avatar img {
     max-width: 100%;
   }
 
-  .product-review-item .text-body {
+  .tvchannel-review-item .text-body {
     display: table-cell;
     vertical-align: top;
   }
 
-  .product-review-item .avatar + .text-body {
+  .tvchannel-review-item .avatar + .text-body {
     padding: 0 20px 0 0;
   }
 
 
   /*** WISHLIST & COMPARE LIST ***/
 
-  .compare-products-page .page-title {
+  .compare-tvchannels-page .page-title {
     margin: 0 0 -1px;
   }
 
-  .compare-products-page .clear-list {
+  .compare-tvchannels-page .clear-list {
     position: absolute;
     top: 7px;
     left: 0;
   }
 
-  .compare-products-table .full-description td {
+  .compare-tvchannels-table .full-description td {
     display: table-cell;
   }
 
-  .compare-products-table .full-description td p {
+  .compare-tvchannels-table .full-description td p {
     margin-top: 0;
   }
 
@@ -8764,7 +8764,7 @@ label, label + * {
   /*** PRODUCT REVIEWS ***/
 
 
-  .product-review-item .review-title {
+  .tvchannel-review-item .review-title {
     max-width: 1050px;
   }
 

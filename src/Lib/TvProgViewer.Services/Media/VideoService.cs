@@ -16,17 +16,17 @@ namespace TvProgViewer.Services.Media
     {
         #region Fields
 
-        private readonly IRepository<ProductVideo> _productVideoRepository;
+        private readonly IRepository<TvChannelVideo> _tvchannelVideoRepository;
         private readonly IRepository<Video> _videoRepository;
 
         #endregion
 
         #region Ctor
 
-        public VideoService(IRepository<ProductVideo> productVideoRepository,
+        public VideoService(IRepository<TvChannelVideo> tvchannelVideoRepository,
             IRepository<Video> videoRepository)
         {
-            _productVideoRepository = productVideoRepository;
+            _tvchannelVideoRepository = tvchannelVideoRepository;
             _videoRepository = videoRepository;
         }
 
@@ -48,22 +48,22 @@ namespace TvProgViewer.Services.Media
         }
 
         /// <summary>
-        /// Gets videos by product identifier
+        /// Gets videos by tvchannel identifier
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the videos
         /// </returns>
-        public virtual async Task<IList<Video>> GetVideosByProductIdAsync(int productId)
+        public virtual async Task<IList<Video>> GetVideosByTvChannelIdAsync(int tvchannelId)
         {
-            if (productId == 0)
+            if (tvchannelId == 0)
                 return new List<Video>();
 
             var query = from v in _videoRepository.Table
-                        join pv in _productVideoRepository.Table on v.Id equals pv.VideoId
+                        join pv in _tvchannelVideoRepository.Table on v.Id equals pv.VideoId
                         orderby pv.DisplayOrder, pv.Id
-                        where pv.ProductId == productId
+                        where pv.TvChannelId == tvchannelId
                         select v;
 
             var videos = await query.ToListAsync();

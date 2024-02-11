@@ -17,7 +17,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
             AvailableGroups = new List<SelectListItem>();
             Locales = new List<SpecificationAttributeLocalizedModel>();
             SpecificationAttributeOptionSearchModel = new SpecificationAttributeOptionSearchModel();
-            SpecificationAttributeProductSearchModel = new SpecificationAttributeProductSearchModel();
+            SpecificationAttributeTvChannelSearchModel = new SpecificationAttributeTvChannelSearchModel();
         }
 
         #endregion
@@ -39,7 +39,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 
         public SpecificationAttributeOptionSearchModel SpecificationAttributeOptionSearchModel { get; set; }
 
-        public SpecificationAttributeProductSearchModel SpecificationAttributeProductSearchModel { get; set; }
+        public SpecificationAttributeTvChannelSearchModel SpecificationAttributeTvChannelSearchModel { get; set; }
 
         #endregion
     }

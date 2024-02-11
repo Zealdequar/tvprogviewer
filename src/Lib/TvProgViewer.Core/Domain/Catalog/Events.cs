@@ -1,22 +1,22 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Product review approved event
+    /// TvChannel review approved event
     /// </summary>
-    public partial class ProductReviewApprovedEvent
+    public partial class TvChannelReviewApprovedEvent
     {
         /// <summary>
         /// Ctor
         /// </summary>
-        /// <param name="productReview">Product review</param>
-        public ProductReviewApprovedEvent(ProductReview productReview)
+        /// <param name="tvchannelReview">TvChannel review</param>
+        public TvChannelReviewApprovedEvent(TvChannelReview tvchannelReview)
         {
-            ProductReview = productReview;
+            TvChannelReview = tvchannelReview;
         }
 
         /// <summary>
-        /// Product review
+        /// TvChannel review
         /// </summary>
-        public ProductReview ProductReview { get; }
+        public TvChannelReview TvChannelReview { get; }
     }
 }

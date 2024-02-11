@@ -16,9 +16,9 @@ namespace TvProgViewer.Services.Catalog.Caching
         /// <returns>A task that represents the asynchronous operation</returns>
         protected override async Task ClearCacheAsync(TierPrice entity)
         {
-            await RemoveAsync(TvProgCatalogDefaults.TierPricesByProductCacheKey, entity.ProductId);
-            await RemoveByPrefixAsync(TvProgCatalogDefaults.ProductPricePrefix, entity.ProductId);
-            await RemoveByPrefixAsync(TvProgCatalogDefaults.ProductMultiplePricePrefix, entity.ProductId);
+            await RemoveAsync(TvProgCatalogDefaults.TierPricesByTvChannelCacheKey, entity.TvChannelId);
+            await RemoveByPrefixAsync(TvProgCatalogDefaults.TvChannelPricePrefix, entity.TvChannelId);
+            await RemoveByPrefixAsync(TvProgCatalogDefaults.TvChannelMultiplePricePrefix, entity.TvChannelId);
         }
     }
 }

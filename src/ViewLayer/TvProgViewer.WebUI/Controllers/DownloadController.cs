@@ -17,36 +17,36 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IDownloadService _downloadService;
         private readonly ILocalizationService _localizationService;
         private readonly IOrderService _orderService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IWorkContext _workContext;
 
         public DownloadController(UserSettings userSettings,
             IDownloadService downloadService,
             ILocalizationService localizationService,
             IOrderService orderService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IWorkContext workContext)
         {
             _userSettings = userSettings;
             _downloadService = downloadService;
             _localizationService = localizationService;
             _orderService = orderService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _workContext = workContext;
         }
         
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> Sample(int productId)
+        public virtual async Task<IActionResult> Sample(int tvchannelId)
         {
-            var product = await _productService.GetProductByIdAsync(productId);
-            if (product == null)
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
+            if (tvchannel == null)
                 return InvokeHttp404();
 
-            if (!product.HasSampleDownload)
-                return Content("Product doesn't have a sample download.");
+            if (!tvchannel.HasSampleDownload)
+                return Content("TvChannel doesn't have a sample download.");
 
-            var download = await _downloadService.GetDownloadByIdAsync(product.SampleDownloadId);
+            var download = await _downloadService.GetDownloadByIdAsync(tvchannel.SampleDownloadId);
             if (download == null)
                 return Content("Sample download is not available any more.");
 
@@ -58,7 +58,7 @@ namespace TvProgViewer.WebUI.Controllers
             if (download.DownloadBinary == null)
                 return Content("Download data is not available any more.");
             
-            var fileName = !string.IsNullOrWhiteSpace(download.Filename) ? download.Filename : product.Id.ToString();
+            var fileName = !string.IsNullOrWhiteSpace(download.Filename) ? download.Filename : tvchannel.Id.ToString();
             var contentType = !string.IsNullOrWhiteSpace(download.ContentType) ? download.ContentType : MimeTypes.ApplicationOctetStream;
             return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension }; 
         }
@@ -76,7 +76,7 @@ namespace TvProgViewer.WebUI.Controllers
             if (!await _orderService.IsDownloadAllowedAsync(orderItem))
                 return Content("Downloads are not allowed");
 
-            if (_userSettings.DownloadableProductsValidateUser)
+            if (_userSettings.DownloadableTvChannelsValidateUser)
             {
                 var user = await _workContext.GetCurrentUserAsync();
                 if (user == null)
@@ -86,18 +86,18 @@ namespace TvProgViewer.WebUI.Controllers
                     return Content("This is not your order");
             }
 
-            var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-            var download = await _downloadService.GetDownloadByIdAsync(product.DownloadId);
+            var download = await _downloadService.GetDownloadByIdAsync(tvchannel.DownloadId);
             if (download == null)
                 return Content("Download is not available any more.");
 
-            if (product.HasUserAgreement && !agree)
+            if (tvchannel.HasUserAgreement && !agree)
                 return RedirectToRoute("DownloadUserAgreement", new { orderItemId = orderItemId });
 
 
-            if (!product.UnlimitedDownloads && orderItem.DownloadCount >= product.MaxNumberOfDownloads)
-                return Content(string.Format(await _localizationService.GetResourceAsync("DownloadableProducts.ReachedMaximumNumber"), product.MaxNumberOfDownloads));
+            if (!tvchannel.UnlimitedDownloads && orderItem.DownloadCount >= tvchannel.MaxNumberOfDownloads)
+                return Content(string.Format(await _localizationService.GetResourceAsync("DownloadableTvChannels.ReachedMaximumNumber"), tvchannel.MaxNumberOfDownloads));
            
             if (download.UseDownloadUrl)
             {
@@ -120,7 +120,7 @@ namespace TvProgViewer.WebUI.Controllers
             await _orderService.UpdateOrderItemAsync(orderItem);
 
             //return result
-            var fileName = !string.IsNullOrWhiteSpace(download.Filename) ? download.Filename : product.Id.ToString();
+            var fileName = !string.IsNullOrWhiteSpace(download.Filename) ? download.Filename : tvchannel.Id.ToString();
             var contentType = !string.IsNullOrWhiteSpace(download.ContentType) ? download.ContentType : MimeTypes.ApplicationOctetStream;
             return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };  
         }
@@ -138,7 +138,7 @@ namespace TvProgViewer.WebUI.Controllers
             if (!await _orderService.IsLicenseDownloadAllowedAsync(orderItem))
                 return Content("Downloads are not allowed");
 
-            if (_userSettings.DownloadableProductsValidateUser)
+            if (_userSettings.DownloadableTvChannelsValidateUser)
             {
                 var user = await _workContext.GetCurrentUserAsync();
                 if (user == null || order.UserId != user.Id)
@@ -159,7 +159,7 @@ namespace TvProgViewer.WebUI.Controllers
                 return Content("Download data is not available any more.");
 
             //return result
-            var fileName = !string.IsNullOrWhiteSpace(download.Filename) ? download.Filename : orderItem.ProductId.ToString();
+            var fileName = !string.IsNullOrWhiteSpace(download.Filename) ? download.Filename : orderItem.TvChannelId.ToString();
             var contentType = !string.IsNullOrWhiteSpace(download.ContentType) ? download.ContentType : MimeTypes.ApplicationOctetStream;
             return new FileContentResult(download.DownloadBinary, contentType) { FileDownloadName = fileName + download.Extension };
         }

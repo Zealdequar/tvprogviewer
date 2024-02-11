@@ -3,12 +3,12 @@
 <div class="card-body">
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="AllowProductViewModeChanging_OverrideForStore" asp-input="AllowProductViewModeChanging" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="AllowProductViewModeChanging" />
+            <tvprog-override-store-checkbox asp-for="AllowTvChannelViewModeChanging_OverrideForStore" asp-input="AllowTvChannelViewModeChanging" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowTvChannelViewModeChanging" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="AllowProductViewModeChanging" />
-            <span asp-validation-for="AllowProductViewModeChanging"></span>
+            <tvprog-editor asp-for="AllowTvChannelViewModeChanging" />
+            <span asp-validation-for="AllowTvChannelViewModeChanging"></span>
         </div>
     </div>
     <div class="form-group row">
@@ -23,33 +23,33 @@
     </div>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ShowProductsFromSubcategories_OverrideForStore" asp-input="ShowProductsFromSubcategories" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ShowProductsFromSubcategories" />
+            <tvprog-override-store-checkbox asp-for="ShowTvChannelsFromSubcategories_OverrideForStore" asp-input="ShowTvChannelsFromSubcategories" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="ShowTvChannelsFromSubcategories" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ShowProductsFromSubcategories" />
-            <span asp-validation-for="ShowProductsFromSubcategories"></span>
+            <tvprog-editor asp-for="ShowTvChannelsFromSubcategories" />
+            <span asp-validation-for="ShowTvChannelsFromSubcategories"></span>
         </div>
     </div>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ShowCategoryProductNumber_OverrideForStore" asp-input="ShowCategoryProductNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ShowCategoryProductNumber" />
+            <tvprog-override-store-checkbox asp-for="ShowCategoryTvChannelNumber_OverrideForStore" asp-input="ShowCategoryTvChannelNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="ShowCategoryTvChannelNumber" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ShowCategoryProductNumber" />
-            <span asp-validation-for="ShowCategoryProductNumber"></span>
+            <tvprog-editor asp-for="ShowCategoryTvChannelNumber" />
+            <span asp-validation-for="ShowCategoryTvChannelNumber"></span>
         </div>
     </div>
-    <tvprog-nested-setting asp-for="ShowCategoryProductNumber">
+    <tvprog-nested-setting asp-for="ShowCategoryTvChannelNumber">
         <div class="form-group row">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ShowCategoryProductNumberIncludingSubcategories_OverrideForStore" asp-input="ShowCategoryProductNumberIncludingSubcategories" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ShowCategoryProductNumberIncludingSubcategories" />
+                <tvprog-override-store-checkbox asp-for="ShowCategoryTvChannelNumberIncludingSubcategories_OverrideForStore" asp-input="ShowCategoryTvChannelNumberIncludingSubcategories" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="ShowCategoryTvChannelNumberIncludingSubcategories" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ShowCategoryProductNumberIncludingSubcategories" />
-                <span asp-validation-for="ShowCategoryProductNumberIncludingSubcategories"></span>
+                <tvprog-editor asp-for="ShowCategoryTvChannelNumberIncludingSubcategories" />
+                <span asp-validation-for="ShowCategoryTvChannelNumberIncludingSubcategories"></span>
             </div>
         </div>
     </tvprog-nested-setting>
@@ -75,12 +75,12 @@
     </div>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="UseAjaxCatalogProductsLoading_OverrideForStore" asp-input="UseAjaxCatalogProductsLoading" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="UseAjaxCatalogProductsLoading" />
+            <tvprog-override-store-checkbox asp-for="UseAjaxCatalogTvChannelsLoading_OverrideForStore" asp-input="UseAjaxCatalogTvChannelsLoading" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="UseAjaxCatalogTvChannelsLoading" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="UseAjaxCatalogProductsLoading" />
-            <span asp-validation-for="UseAjaxCatalogProductsLoading"></span>
+            <tvprog-editor asp-for="UseAjaxCatalogTvChannelsLoading" />
+            <span asp-validation-for="UseAjaxCatalogTvChannelsLoading"></span>
         </div>
     </div>
     <div class="form-group row">

@@ -25,10 +25,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
         [TvProgResourceDisplayName("Admin.ReturnRequests.Fields.User")]
         public string UserInfo { get; set; }
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.ReturnRequests.Fields.Product")]
-        public string ProductName { get; set; }
+        [TvProgResourceDisplayName("Admin.ReturnRequests.Fields.TvChannel")]
+        public string TvChannelName { get; set; }
 
         public string AttributeInfo { get; set; }
 

@@ -49,7 +49,7 @@ namespace TvProgViewer.Services.Common.Pdf
                     table.Cell().Element(ComposeShippingAddress);
                 });
 
-                column.Item().Element(ComposeProducts);
+                column.Item().Element(ComposeTvChannels);
 
                 column.Item().ShowEntire().Element(ComposeCheckoutAttributes);
 
@@ -126,19 +126,19 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose order products
+        /// Compose order tvchannels
         /// </summary>
         /// <param name="container">Content placement container</param>
-        protected void ComposeProducts(IContainer container)
+        protected void ComposeTvChannels(IContainer container)
         {
             container.Table(table =>
             {
                 table.ColumnsDefinition(columns =>
                 {
                     columns.RelativeColumn(3);
-                    if (Source.ShowSkuInProductList)
+                    if (Source.ShowSkuInTvChannelList)
                         columns.RelativeColumn();
-                    if (Source.ShowVendorInProductList)
+                    if (Source.ShowVendorInTvChannelList)
                         columns.RelativeColumn();
                     columns.RelativeColumn();
                     columns.RelativeColumn();
@@ -147,17 +147,17 @@ namespace TvProgViewer.Services.Common.Pdf
 
                 table.Header(header =>
                 {
-                    header.Cell().Element(CellStyle).Text(t => ComposeLabel<ProductItem>(t, x => x.Name));
+                    header.Cell().Element(CellStyle).Text(t => ComposeLabel<TvChannelItem>(t, x => x.Name));
 
-                    if (Source.ShowSkuInProductList)
-                        header.Cell().Element(CellStyle).Text(t => ComposeLabel<ProductItem>(t, x => x.Sku));
+                    if (Source.ShowSkuInTvChannelList)
+                        header.Cell().Element(CellStyle).Text(t => ComposeLabel<TvChannelItem>(t, x => x.Sku));
 
-                    if (Source.ShowVendorInProductList)
-                        header.Cell().Element(CellStyle).Text(t => ComposeLabel<ProductItem>(t, x => x.VendorName));
+                    if (Source.ShowVendorInTvChannelList)
+                        header.Cell().Element(CellStyle).Text(t => ComposeLabel<TvChannelItem>(t, x => x.VendorName));
 
-                    header.Cell().Element(CellStyle).AlignRight().Text(t => ComposeLabel<ProductItem>(t, x => x.Price));
-                    header.Cell().Element(CellStyle).AlignRight().Text(t => ComposeLabel<ProductItem>(t, x => x.Quantity));
-                    header.Cell().Element(CellStyle).AlignRight().Text(t => ComposeLabel<ProductItem>(t, x => x.Total));
+                    header.Cell().Element(CellStyle).AlignRight().Text(t => ComposeLabel<TvChannelItem>(t, x => x.Price));
+                    header.Cell().Element(CellStyle).AlignRight().Text(t => ComposeLabel<TvChannelItem>(t, x => x.Quantity));
+                    header.Cell().Element(CellStyle).AlignRight().Text(t => ComposeLabel<TvChannelItem>(t, x => x.Total));
 
                     static IContainer CellStyle(IContainer container)
                     {
@@ -165,26 +165,26 @@ namespace TvProgViewer.Services.Common.Pdf
                     }
                 });
 
-                foreach (var product in Source.Products)
+                foreach (var tvchannel in Source.TvChannels)
                 {
-                    table.Cell().Element(CellStyle).Element(productContainer =>
+                    table.Cell().Element(CellStyle).Element(tvchannelContainer =>
                     {
-                        productContainer.Column(pColumn =>
+                        tvchannelContainer.Column(pColumn =>
                         {
-                            pColumn.Item().Text(product.Name);
+                            pColumn.Item().Text(tvchannel.Name);
 
-                            foreach (var attribute in product.ProductAttributes)
+                            foreach (var attribute in tvchannel.TvChannelAttributes)
                                 pColumn.Item().DefaultTextStyle(s => s.Italic().FontSize(9)).Text(attribute);
                         });
                     });
 
-                    if (Source.ShowSkuInProductList)
-                        table.Cell().Element(CellStyle).Text(product.Sku);
-                    if (Source.ShowVendorInProductList)
-                        table.Cell().Element(CellStyle).Text(product.VendorName);
-                    table.Cell().Element(CellStyle).AlignRight().Text(product.Price);
-                    table.Cell().Element(CellStyle).AlignRight().Text(product.Quantity);
-                    table.Cell().Element(CellStyle).AlignRight().Text(product.Total);
+                    if (Source.ShowSkuInTvChannelList)
+                        table.Cell().Element(CellStyle).Text(tvchannel.Sku);
+                    if (Source.ShowVendorInTvChannelList)
+                        table.Cell().Element(CellStyle).Text(tvchannel.VendorName);
+                    table.Cell().Element(CellStyle).AlignRight().Text(tvchannel.Price);
+                    table.Cell().Element(CellStyle).AlignRight().Text(tvchannel.Quantity);
+                    table.Cell().Element(CellStyle).AlignRight().Text(tvchannel.Total);
 
                     static IContainer CellStyle(IContainer container)
                     {

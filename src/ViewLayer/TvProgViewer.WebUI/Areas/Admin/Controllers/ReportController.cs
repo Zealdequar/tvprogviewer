@@ -61,23 +61,23 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         public virtual async Task<IActionResult> LowStock()
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _reportModelFactory.PrepareLowStockProductSearchModelAsync(new LowStockProductSearchModel());
+            var model = await _reportModelFactory.PrepareLowStockTvChannelSearchModelAsync(new LowStockTvChannelSearchModel());
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> LowStockList(LowStockProductSearchModel searchModel)
+        public virtual async Task<IActionResult> LowStockList(LowStockTvChannelSearchModel searchModel)
         {
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _reportModelFactory.PrepareLowStockProductListModelAsync(searchModel);
+            var model = await _reportModelFactory.PrepareLowStockTvChannelListModelAsync(searchModel);
 
             return Json(model);
         }

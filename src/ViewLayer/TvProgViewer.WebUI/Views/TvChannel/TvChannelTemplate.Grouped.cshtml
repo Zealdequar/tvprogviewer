@@ -1,0 +1,210 @@
+﻿@model TvChannelDetailsModel
+
+@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Core.Domain.Seo
+@using TvProgViewer.Services.Html
+
+@inject IHtmlFormatter htmlFormatter
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    TvProgHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-tvchannel-details-page");
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var tvchannelUrl = Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        TvProgHtml.AddCanonicalUrlParts(tvchannelUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"tvchannel\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+    }
+}
+<!--tvchannel breadcrumb-->
+@section Breadcrumb
+    {
+    @await Html.PartialAsync("_TvChannelBreadcrumb", Model.Breadcrumb)
+}
+@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsAfterBreadcrumb, additionalData = Model })
+<div class="page tvchannel-details-page">
+    <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsTop, additionalData = Model })
+        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvchannel-details-form">
+            @if (seoSettings.MicrodataEnabled)
+            {
+                @await Html.PartialAsync("_Microdata", Model)
+            }
+            <div data-tvchannelid="@Model.Id">
+                <div class="tvchannel-essential">
+                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialTop, additionalData = Model })
+                    <div class="gallery">
+                        <!--tvchannel pictures-->
+                        @await Html.PartialAsync("_TvChannelDetailsPictures", Model)
+                        <!--tvchannel videos-->
+                        @await Html.PartialAsync("_TvChannelDetailsVideos", Model)
+                    </div>
+                    <div class="overview">
+                        @await Html.PartialAsync("_Discontinued", Model)
+                        <div class="tvchannel-name">
+                            <h1>
+                                @Model.Name
+                            </h1>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                        {
+                            <div class="short-description">
+                                @Html.Raw(Model.ShortDescription)
+                            </div>
+                        }
+                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewTop, additionalData = Model })
+                        <!--tvchannel reviews-->
+                        @await Html.PartialAsync("_TvChannelReviewOverview", Model.TvChannelReviewOverview)
+                        <!--tvchannel manufacturers-->
+                        @await Html.PartialAsync("_TvChannelManufacturers", Model.TvChannelManufacturers)
+                        <!--compare, email a friend-->
+                        <div class="overview-buttons">
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsInsideOverviewButtonsBefore, additionalData = Model })
+                            @await Html.PartialAsync("_CompareTvChannelsButton", Model)
+                            @await Html.PartialAsync("_TvChannelEmailAFriendButton", Model)
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsInsideOverviewButtonsAfter, additionalData = Model })
+                        </div>
+                        @await Html.PartialAsync("_ShareButton", Model)
+                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewBottom, additionalData = Model })
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="full-description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }
+                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialBottom, additionalData = Model })
+                </div>
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforeCollateral, additionalData = Model })
+                <div class="tvchannel-collateral">
+                    <!--associated tvchannels-->
+                    <div class="tvchannel-variant-list">
+                        @foreach (var variant in Model.AssociatedTvChannels)
+                        {
+                            <div class="tvchannel-variant-line" data-tvchannelid="@variant.Id">
+                                @if (!string.IsNullOrWhiteSpace(variant.DefaultPictureModel.ImageUrl))
+                                {
+                                    <div class="variant-picture">
+                                        <img alt="@variant.DefaultPictureModel.AlternateText" src="@variant.DefaultPictureModel.ImageUrl"
+                                             title="@variant.DefaultPictureModel.Title" id="main-tvchannel-img-@variant.Id" />
+                                    </div>
+                                }
+                                <div class="variant-overview">
+                                    @if (!string.IsNullOrWhiteSpace(variant.Name))
+                                    {
+                                        <div class="variant-name">
+                                            @variant.Name
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(variant.ShortDescription))
+                                    {
+                                        <div class="variant-description">
+                                            @Html.Raw(variant.ShortDescription)
+                                        </div>
+                                    }
+                                    <!--availability-->
+                                    @await Html.PartialAsync("_Availability", variant)
+                                    <!--SKU, MAN, GTIN, vendor-->
+                                    @await Html.PartialAsync("_SKU_Man_GTIN_Ven", variant)
+                                    <!--delivery-->
+                                    @await Html.PartialAsync("_DeliveryInfo", variant)
+                                    <!--sample download-->
+                                    @await Html.PartialAsync("_DownloadSample", variant)
+                                    <!--attributes-->
+                                    @{
+                                        var dataDictAttributes = new ViewDataDictionary(ViewData);
+                                        dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{variant.Id}";
+                                        @await Html.PartialAsync("_TvChannelAttributes", variant, dataDictAttributes)
+                                    }
+                                    <!--gift card-->
+                                    @{
+                                        var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                                        dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{variant.Id}";
+                                        @await Html.PartialAsync("_GiftCardInfo", variant.GiftCard, dataDictGiftCard)
+                                    }
+                                    <!--rental info-->
+                                    @{
+                                        var dataDictRental = new ViewDataDictionary(ViewData);
+                                        dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{variant.Id}";
+                                        @await Html.PartialAsync("_RentalInfo", variant, dataDictRental)
+                                    }
+                                    <!--price & add to cart-->
+                                    @{
+                                        var dataDictPrice = new ViewDataDictionary(ViewData);
+                                        dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{variant.Id}";
+                                        @await Html.PartialAsync("_TvChannelPrice", variant.TvChannelPrice, dataDictPrice)
+                                    }
+                                    <!--price breaks-->
+                                    @await Html.PartialAsync("_TvChannelTierPrices", variant.TierPrices)
+                                    @{
+                                        var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                                        dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{variant.Id}";
+                                        @await Html.PartialAsync("_AddToCart", variant.AddToCart, dataDictAddToCart)
+                                    }
+                                    <!--estimate shipping-->
+                                    @{
+                                        var dataDictEstimateShipping = new ViewDataDictionary(ViewData);
+                                        dataDictEstimateShipping.TemplateInfo.HtmlFieldPrefix = $"estimate_shipping_{variant.Id}";
+                                        @await Html.PartialAsync("_TvChannelEstimateShipping", variant.TvChannelEstimateShipping, dataDictEstimateShipping)
+                                    }
+                                    <!--wishlist-->
+                                    @{
+                                        var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
+                                        dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{variant.Id}";
+                                        @await Html.PartialAsync("_AddToWishlist", variant.AddToCart, dataDictAddToWishlist)
+                                    }
+                                </div>
+                            </div>
+                        }
+                        @if (Model.AssociatedTvChannels.Count == 0)
+                        {
+                            <div class="no-associated-tvchannels">
+                                @T("TvChannels.NoAssociatedTvChannels")
+                            </div>
+                        }
+                    </div>
+                    @await Html.PartialAsync("_TvChannelSpecifications", Model.TvChannelSpecificationModel)
+                    @await Html.PartialAsync("_TvChannelTags", Model.TvChannelTags)
+                </div>
+                @*we do not display "also purchased" for grouped tvchannels
+                    @await Component.InvokeAsync(typeof(TvChannelsAlsoPurchasedViewComponent), new { tvchannelId = Model.Id })*@
+                @await Component.InvokeAsync(typeof(RelatedTvChannelsViewComponent), new { tvchannelId = Model.Id })
+            </div>
+        </form>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBottom, additionalData = Model })
+    </div>
+</div>

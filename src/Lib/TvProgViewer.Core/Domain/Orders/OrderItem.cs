@@ -18,9 +18,9 @@ namespace TvProgViewer.Core.Domain.Orders
         public int OrderId { get; set; }
 
         /// <summary>
-        /// Gets or sets the product identifier
+        /// Gets or sets the tvchannel identifier
         /// </summary>
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         /// <summary>
         /// Gets or sets the quantity
@@ -60,7 +60,7 @@ namespace TvProgViewer.Core.Domain.Orders
         /// <summary>
         /// Gets or sets the original cost of this order item (when an order was placed), qty 1
         /// </summary>
-        public decimal OriginalProductCost { get; set; }
+        public decimal OriginalTvChannelCost { get; set; }
 
         /// <summary>
         /// Gets or sets the attribute description
@@ -68,7 +68,7 @@ namespace TvProgViewer.Core.Domain.Orders
         public string AttributeDescription { get; set; }
 
         /// <summary>
-        /// Gets or sets the product attributes in XML format
+        /// Gets or sets the tvchannel attributes in XML format
         /// </summary>
         public string AttributesXml { get; set; }
         
@@ -83,7 +83,7 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool IsDownloadActivated { get; set; }
 
         /// <summary>
-        /// Gets or sets a license download identifier (in case this is a downloadable product)
+        /// Gets or sets a license download identifier (in case this is a downloadable tvchannel)
         /// </summary>
         public int? LicenseDownloadId { get; set; }
 
@@ -94,12 +94,12 @@ namespace TvProgViewer.Core.Domain.Orders
         public decimal? ItemWeight { get; set; }
 
         /// <summary>
-        /// Gets or sets the rental product start date (null if it's not a rental product)
+        /// Gets or sets the rental tvchannel start date (null if it's not a rental tvchannel)
         /// </summary>
         public DateTime? RentalStartDateUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the rental product end date (null if it's not a rental product)
+        /// Gets or sets the rental tvchannel end date (null if it's not a rental tvchannel)
         /// </summary>
         public DateTime? RentalEndDateUtc { get; set; }
     }

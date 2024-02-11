@@ -18,9 +18,9 @@ namespace TvProgViewer.Core.Domain.Vendors
         public int VendorsBlockItemsToDisplay { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display vendor name on the product details page
+        /// Gets or sets a value indicating whether to display vendor name on the tvchannel details page
         /// </summary>
-        public bool ShowVendorOnProductDetailsPage { get; set; }
+        public bool ShowVendorOnTvChannelDetailsPage { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to display vendor name on the order details page
@@ -58,13 +58,13 @@ namespace TvProgViewer.Core.Domain.Vendors
         public bool NotifyStoreOwnerAboutVendorInformationChange { get; set; }
 
         /// <summary>
-        /// Gets or sets a maximum number of products per vendor
+        /// Gets or sets a maximum number of tvchannels per vendor
         /// </summary>
-        public int MaximumProductNumber { get; set; }
+        public int MaximumTvChannelNumber { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether vendors are allowed to import products
+        /// Gets or sets a value indicating whether vendors are allowed to import tvchannels
         /// </summary>
-        public bool AllowVendorsToImportProducts { get; set; }
+        public bool AllowVendorsToImportTvChannels { get; set; }
     }
 }

@@ -41,7 +41,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IManufacturerService _manufacturerService;
         private readonly IOrderService _orderService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IWebHelper _webHelper;
 
@@ -60,7 +60,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IManufacturerService manufacturerService,
             IOrderService orderService,
             IPriceFormatter priceFormatter,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IUrlRecordService urlRecordService,
             IWebHelper webHelper)
         {
@@ -75,7 +75,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _manufacturerService = manufacturerService;
             _orderService = orderService;
             _priceFormatter = priceFormatter;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _urlRecordService = urlRecordService;
             _webHelper = webHelper;
         }
@@ -108,12 +108,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare discount product search model
+        /// Prepare discount tvchannel search model
         /// </summary>
-        /// <param name="searchModel">Discount product search model</param>
+        /// <param name="searchModel">Discount tvchannel search model</param>
         /// <param name="discount">Discount</param>
-        /// <returns>Discount product search model</returns>
-        protected virtual DiscountProductSearchModel PrepareDiscountProductSearchModel(DiscountProductSearchModel searchModel, Discount discount)
+        /// <returns>Discount tvchannel search model</returns>
+        protected virtual DiscountTvChannelSearchModel PrepareDiscountTvChannelSearchModel(DiscountTvChannelSearchModel searchModel, Discount discount)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -315,7 +315,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
                 //prepare nested search models
                 PrepareDiscountUsageHistorySearchModel(model.DiscountUsageHistorySearchModel, discount);
-                PrepareDiscountProductSearchModel(model.DiscountProductSearchModel, discount);
+                PrepareDiscountTvChannelSearchModel(model.DiscountTvChannelSearchModel, discount);
                 PrepareDiscountCategorySearchModel(model.DiscountCategorySearchModel, discount);
                 PrepareDiscountManufacturerSearchModel(model.DiscountManufacturerSearchModel, discount);
             }
@@ -448,15 +448,15 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged discount product list model
+        /// Prepare paged discount tvchannel list model
         /// </summary>
-        /// <param name="searchModel">Discount product search model</param>
+        /// <param name="searchModel">Discount tvchannel search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the discount product list model
+        /// The task result contains the discount tvchannel list model
         /// </returns>
-        public virtual async Task<DiscountProductListModel> PrepareDiscountProductListModelAsync(DiscountProductSearchModel searchModel, Discount discount)
+        public virtual async Task<DiscountTvChannelListModel> PrepareDiscountTvChannelListModelAsync(DiscountTvChannelSearchModel searchModel, Discount discount)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -464,22 +464,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (discount == null)
                 throw new ArgumentNullException(nameof(discount));
 
-            //get products with applied discount
-            var discountProducts = await _productService.GetProductsWithAppliedDiscountAsync(discountId: discount.Id,
+            //get tvchannels with applied discount
+            var discountTvChannels = await _tvchannelService.GetTvChannelsWithAppliedDiscountAsync(discountId: discount.Id,
                 showHidden: false,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-            var model = new DiscountProductListModel().PrepareToGrid(searchModel, discountProducts, () =>
+            var model = new DiscountTvChannelListModel().PrepareToGrid(searchModel, discountTvChannels, () =>
             {
                 //fill in model values from the entity
-                return discountProducts.Select(product =>
+                return discountTvChannels.Select(tvchannel =>
                 {
-                    var discountProductModel = product.ToModel<DiscountProductModel>();
-                    discountProductModel.ProductId = product.Id;
-                    discountProductModel.ProductName = product.Name;
+                    var discountTvChannelModel = tvchannel.ToModel<DiscountTvChannelModel>();
+                    discountTvChannelModel.TvChannelId = tvchannel.Id;
+                    discountTvChannelModel.TvChannelName = tvchannel.Name;
 
-                    return discountProductModel;
+                    return discountTvChannelModel;
                 });
             });
 
@@ -487,14 +487,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare product search model to add to the discount
+        /// Prepare tvchannel search model to add to the discount
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the discount</param>
+        /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product search model to add to the discount
+        /// The task result contains the tvchannel search model to add to the discount
         /// </returns>
-        public virtual async Task<AddProductToDiscountSearchModel> PrepareAddProductToDiscountSearchModelAsync(AddProductToDiscountSearchModel searchModel)
+        public virtual async Task<AddTvChannelToDiscountSearchModel> PrepareAddTvChannelToDiscountSearchModelAsync(AddTvChannelToDiscountSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
@@ -511,8 +511,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //prepare available vendors
             await _baseAdminModelFactory.PrepareVendorsAsync(searchModel.AvailableVendors);
 
-            //prepare available product types
-            await _baseAdminModelFactory.PrepareProductTypesAsync(searchModel.AvailableProductTypes);
+            //prepare available tvchannel types
+            await _baseAdminModelFactory.PrepareTvChannelTypesAsync(searchModel.AvailableTvChannelTypes);
 
             //prepare page parameters
             searchModel.SetPopupGridPageSize();
@@ -521,37 +521,37 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged product list model to add to the discount
+        /// Prepare paged tvchannel list model to add to the discount
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the discount</param>
+        /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product list model to add to the discount
+        /// The task result contains the tvchannel list model to add to the discount
         /// </returns>
-        public virtual async Task<AddProductToDiscountListModel> PrepareAddProductToDiscountListModelAsync(AddProductToDiscountSearchModel searchModel)
+        public virtual async Task<AddTvChannelToDiscountListModel> PrepareAddTvChannelToDiscountListModelAsync(AddTvChannelToDiscountSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get products
-            var products = await _productService.SearchProductsAsync(showHidden: true,
+            //get tvchannels
+            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(showHidden: true,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },
                 storeId: searchModel.SearchStoreId,
                 vendorId: searchModel.SearchVendorId,
-                productType: searchModel.SearchProductTypeId > 0 ? (ProductType?)searchModel.SearchProductTypeId : null,
-                keywords: searchModel.SearchProductName,
+                tvchannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
+                keywords: searchModel.SearchTvChannelName,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-            var model = await new AddProductToDiscountListModel().PrepareToGridAsync(searchModel, products, () =>
+            var model = await new AddTvChannelToDiscountListModel().PrepareToGridAsync(searchModel, tvchannels, () =>
             {
-                return products.SelectAwait(async product =>
+                return tvchannels.SelectAwait(async tvchannel =>
                 {
-                    var productModel = product.ToModel<ProductModel>();
-                    productModel.SeName = await _urlRecordService.GetSeNameAsync(product, 0, true, false);
+                    var tvchannelModel = tvchannel.ToModel<TvChannelModel>();
+                    tvchannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvchannel, 0, true, false);
 
-                    return productModel;
+                    return tvchannelModel;
                 });
             });
 

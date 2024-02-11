@@ -28,12 +28,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public DateTime CreatedOnUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the product identifier
+        /// Gets or sets the tvchannel identifier
         /// </summary>
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         /// <summary>
-        /// Gets or sets the product attribute combination identifier
+        /// Gets or sets the tvchannel attribute combination identifier
         /// </summary>
         public int? CombinationId { get; set; }
 

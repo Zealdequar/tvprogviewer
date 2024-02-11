@@ -159,19 +159,19 @@ namespace TvProgViewer.Core.Domain.Orders
         public string CustomOrderNumberMask { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the orders need to be exported with their products
+        /// Gets or sets a value indicating whether the orders need to be exported with their tvchannels
         /// </summary>
-        public bool ExportWithProducts { get; set; }
+        public bool ExportWithTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether administrators (in impersonation mode) are allowed to buy products marked as "Call for price"
+        /// Gets or sets a value indicating whether administrators (in impersonation mode) are allowed to buy tvchannels marked as "Call for price"
         /// </summary>
-        public bool AllowAdminsToBuyCallForPriceProducts { get; set; }
+        public bool AllowAdminsToBuyCallForPriceTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show product thumbnail in order details page"
+        /// Gets or sets a value indicating whether to show tvchannel thumbnail in order details page"
         /// </summary>
-        public bool ShowProductThumbnailInOrderDetailsPage { get; set; }
+        public bool ShowTvChannelThumbnailInOrderDetailsPage { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the gift card usage history have to delete when an order is cancelled

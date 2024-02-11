@@ -1,0 +1,37 @@
+﻿@model TvChannelReviewReviewTypeMappingSearchModel
+
+@await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelReviewDetailsTop, additionalData = Model })
+<div class="card card-default">
+    <div class="card-header">
+        @T("Admin.Settings.ReviewType")
+    </div>
+    <div class="card-body">
+        @await Html.PartialAsync("Table", new DataTablesModel
+   {
+       Name = "reviewext-grid",
+       UrlRead = new DataUrl("TvChannelReviewReviewTypeMappingList", "TvChannelReview", new RouteValueDictionary { [nameof(Model.TvChannelReviewId)] = Model.TvChannelReviewId }),
+       Length = Model.PageSize,
+       LengthMenu = Model.AvailablePageSizes,
+       ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(TvChannelReviewReviewTypeMappingModel.Name))
+                {
+                    Title = T("Admin.Catalog.AdditionalTvChannelReviews.Fields.Name").Text,
+                    Width = "300"
+                },
+                new ColumnProperty(nameof(TvChannelReviewReviewTypeMappingModel.Rating))
+                {
+                    Title = T("Admin.Catalog.AdditionalTvChannelReviews.Fields.Rating").Text,
+                    Width = "100"
+                },
+                new ColumnProperty(nameof(TvChannelReviewReviewTypeMappingModel.VisibleToAllUsers))
+                {
+                    Title = T("Admin.Catalog.AdditionalTvChannelReviews.Fields.VisibleToAllUsers").Text,
+                    Width = "100",
+                    ClassName = TvProgColumnClassDefaults.CenterAll,
+                    Render = new RenderBoolean()
+                }
+            }
+   })
+    </div>
+</div>

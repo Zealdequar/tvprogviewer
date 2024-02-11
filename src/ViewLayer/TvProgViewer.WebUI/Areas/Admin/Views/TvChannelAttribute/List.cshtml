@@ -1,0 +1,102 @@
+@model TvChannelAttributeSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.Attributes.TvChannelAttributes").Text;
+    //active menu item (system name)
+    TvProgHtml.SetActiveMenuItemSystemName("TvChannel attributes");
+}
+
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Catalog.Attributes.TvChannelAttributes")
+    </h1>
+    <div class="float-right">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus-square"></i>
+            @T("Admin.Common.AddNew")
+        </a>
+        @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelAttributeListButtons, additionalData = Model })
+        <button type="button" id="delete-selected" class="btn btn-danger">
+            <i class="far fa-trash-alt"></i>
+            @T("Admin.Common.Delete.Selected")
+        </button>
+        <tvprog-action-confirmation asp-button-id="delete-selected" />
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+    <div class="cards-group">
+        <div class="card card-default">
+            <div class="card-body">
+                <p>
+                    @T("Admin.Catalog.Attributes.TvChannelAttributes.Description")
+                    <tvprog-doc-reference asp-string-resource="@T("Admin.Documentation.Reference.TvChannelAttributes", Docs.TvChannelAttributes + Utm.OnAdmin)" asp-add-wrapper="false"/>
+                </p>
+                @await Html.PartialAsync("Table", new DataTablesModel
+                {
+                    Name = "tvchannels-grid",
+                    UrlRead = new DataUrl("List", "TvChannelAttribute", null),
+                    Length = Model.PageSize,
+                    LengthMenu = Model.AvailablePageSizes,
+                    ColumnCollection = new List<ColumnProperty>
+                    {
+                         new ColumnProperty(nameof(TvChannelAttributeModel.Id))
+                        {
+                            IsMasterCheckBox = true,
+                            Render = new RenderCheckBox("checkbox_tvchannelattributes"),
+                            ClassName =  TvProgColumnClassDefaults.CenterAll,
+                            Width = "50"
+                        },
+                        new ColumnProperty(nameof(TvChannelAttributeModel.Name))
+                        {
+                            Title = T("Admin.Catalog.Attributes.TvChannelAttributes.Fields.Name").Text
+                        },
+                        new ColumnProperty(nameof(TvChannelAttributeModel.Id))
+                        {
+                            Title = T("Admin.Common.Edit").Text,
+                            Width = "100",
+                            ClassName =  TvProgColumnClassDefaults.Button,
+                            Render = new RenderButtonEdit(new DataUrl("Edit"))
+                        }
+                    }
+                })
+
+                <script>
+                    $(document).ready(function () {
+                        $('#delete-selected-action-confirmation-submit-button').bind('click', function () {
+                            var postData = {
+                                selectedIds: selectedIds
+                            };
+                            addAntiForgeryToken(postData);
+                            $.ajax({
+                                cache: false,
+                                type: "POST",
+                                url: "@(Url.Action("DeleteSelected", "TvChannelAttribute"))",
+                                data: postData,
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    showAlert('deleteSelectedFailed', errorThrown);
+                                },
+                                complete: function (jqXHR, textStatus) {
+                                    if (jqXHR.status === 204)
+                                    {
+                                        showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
+                                        return;
+                                    }
+                                    updateTable('#tvchannels-grid');
+                                }
+                            });
+                            $('#delete-selected-action-confirmation').modal('toggle');
+                            return false;
+                        });
+                    });
+                </script>
+                <tvprog-alert asp-alert-id="deleteSelectedFailed" />
+                <tvprog-alert asp-alert-id="nothingSelectedAlert" />
+            </div>
+        </div>
+    </div>
+</div>
+</section>

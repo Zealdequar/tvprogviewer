@@ -74,8 +74,8 @@ namespace TvProgViewer.WebUI.Factories
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductAttributeFormatter _productAttributeFormatter;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeFormatter _tvchannelAttributeFormatter;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IShippingService _shippingService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -125,8 +125,8 @@ namespace TvProgViewer.WebUI.Factories
             IPermissionService permissionService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            IProductAttributeFormatter productAttributeFormatter,
-            IProductService productService,
+            ITvChannelAttributeFormatter tvchannelAttributeFormatter,
+            ITvChannelService tvchannelService,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
@@ -172,8 +172,8 @@ namespace TvProgViewer.WebUI.Factories
             _permissionService = permissionService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _productAttributeFormatter = productAttributeFormatter;
-            _productService = productService;
+            _tvchannelAttributeFormatter = tvchannelAttributeFormatter;
+            _tvchannelService = tvchannelService;
             _shippingService = shippingService;
             _shoppingCartService = shoppingCartService;
             _stateProvinceService = stateProvinceService;
@@ -377,37 +377,37 @@ namespace TvProgViewer.WebUI.Factories
             if (sci == null)
                 throw new ArgumentNullException(nameof(sci));
 
-            var product = await _productService.GetProductByIdAsync(sci.ProductId);
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
             var cartItemModel = new ShoppingCartModel.ShoppingCartItemModel
             {
                 Id = sci.Id,
-                Sku = await _productService.FormatSkuAsync(product, sci.AttributesXml),
-                VendorName = _vendorSettings.ShowVendorOnOrderDetailsPage ? (await _vendorService.GetVendorByProductIdAsync(product.Id))?.Name : string.Empty,
-                ProductId = sci.ProductId,
-                ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                Sku = await _tvchannelService.FormatSkuAsync(tvchannel, sci.AttributesXml),
+                VendorName = _vendorSettings.ShowVendorOnOrderDetailsPage ? (await _vendorService.GetVendorByTvChannelIdAsync(tvchannel.Id))?.Name : string.Empty,
+                TvChannelId = sci.TvChannelId,
+                TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
+                TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
                 Quantity = sci.Quantity,
-                AttributeInfo = await _productAttributeFormatter.FormatAttributesAsync(product, sci.AttributesXml),
+                AttributeInfo = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, sci.AttributesXml),
             };
 
             //allow editing?
             //1. setting enabled?
-            //2. simple product?
+            //2. simple tvchannel?
             //3. has attribute or gift card?
             //4. visible individually?
             cartItemModel.AllowItemEditing = _shoppingCartSettings.AllowCartItemEditing &&
-                                             product.ProductType == ProductType.SimpleProduct &&
+                                             tvchannel.TvChannelType == TvChannelType.SimpleTvChannel &&
                                              (!string.IsNullOrEmpty(cartItemModel.AttributeInfo) ||
-                                              product.IsGiftCard) &&
-                                             product.VisibleIndividually;
+                                              tvchannel.IsGiftCard) &&
+                                             tvchannel.VisibleIndividually;
 
             //disable removal?
             //1. do other items require this one?
-            cartItemModel.DisableRemoval = (await _shoppingCartService.GetProductsRequiringProductAsync(cart, product)).Any();
+            cartItemModel.DisableRemoval = (await _shoppingCartService.GetTvChannelsRequiringTvChannelAsync(cart, tvchannel)).Any();
 
             //allowed quantities
-            var allowedQuantities = _productService.ParseAllowedQuantities(product);
+            var allowedQuantities = _tvchannelService.ParseAllowedQuantities(tvchannel);
             foreach (var qty in allowedQuantities)
             {
                 cartItemModel.AllowedQuantities.Add(new SelectListItem
@@ -419,18 +419,18 @@ namespace TvProgViewer.WebUI.Factories
             }
 
             //recurring info
-            if (product.IsRecurring)
+            if (tvchannel.IsRecurring)
                 cartItemModel.RecurringInfo = string.Format(await _localizationService.GetResourceAsync("ShoppingCart.RecurringPeriod"),
-                        product.RecurringCycleLength, await _localizationService.GetLocalizedEnumAsync(product.RecurringCyclePeriod));
+                        tvchannel.RecurringCycleLength, await _localizationService.GetLocalizedEnumAsync(tvchannel.RecurringCyclePeriod));
 
             //rental info
-            if (product.IsRental)
+            if (tvchannel.IsRental)
             {
                 var rentalStartDate = sci.RentalStartDateUtc.HasValue
-                    ? _productService.FormatRentalDate(product, sci.RentalStartDateUtc.Value)
+                    ? _tvchannelService.FormatRentalDate(tvchannel, sci.RentalStartDateUtc.Value)
                     : string.Empty;
                 var rentalEndDate = sci.RentalEndDateUtc.HasValue
-                    ? _productService.FormatRentalDate(product, sci.RentalEndDateUtc.Value)
+                    ? _tvchannelService.FormatRentalDate(tvchannel, sci.RentalEndDateUtc.Value)
                     : string.Empty;
                 cartItemModel.RentalInfo =
                     string.Format(await _localizationService.GetResourceAsync("ShoppingCart.Rental.FormattedDate"),
@@ -439,33 +439,33 @@ namespace TvProgViewer.WebUI.Factories
 
             //unit prices
             var currentCurrency = await _workContext.GetWorkingCurrencyAsync();
-            if (product.CallForPrice &&
+            if (tvchannel.CallForPrice &&
                 //also check whether the current user is impersonated
-                (!_orderSettings.AllowAdminsToBuyCallForPriceProducts || _workContext.OriginalUserIfImpersonated == null))
+                (!_orderSettings.AllowAdminsToBuyCallForPriceTvChannels || _workContext.OriginalUserIfImpersonated == null))
             {
-                cartItemModel.UnitPrice = await _localizationService.GetResourceAsync("Products.CallForPrice");
+                cartItemModel.UnitPrice = await _localizationService.GetResourceAsync("TvChannels.CallForPrice");
                 cartItemModel.UnitPriceValue = 0;
             }
             else
             {
-                var (shoppingCartUnitPriceWithDiscountBase, _) = await _taxService.GetProductPriceAsync(product, (await _shoppingCartService.GetUnitPriceAsync(sci, true)).unitPrice);
+                var (shoppingCartUnitPriceWithDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, (await _shoppingCartService.GetUnitPriceAsync(sci, true)).unitPrice);
                 var shoppingCartUnitPriceWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartUnitPriceWithDiscountBase, currentCurrency);
                 cartItemModel.UnitPrice = await _priceFormatter.FormatPriceAsync(shoppingCartUnitPriceWithDiscount);
                 cartItemModel.UnitPriceValue = shoppingCartUnitPriceWithDiscount;
             }
             //subtotal, discount
-            if (product.CallForPrice &&
+            if (tvchannel.CallForPrice &&
                 //also check whether the current user is impersonated
-                (!_orderSettings.AllowAdminsToBuyCallForPriceProducts || _workContext.OriginalUserIfImpersonated == null))
+                (!_orderSettings.AllowAdminsToBuyCallForPriceTvChannels || _workContext.OriginalUserIfImpersonated == null))
             {
-                cartItemModel.SubTotal = await _localizationService.GetResourceAsync("Products.CallForPrice");
+                cartItemModel.SubTotal = await _localizationService.GetResourceAsync("TvChannels.CallForPrice");
                 cartItemModel.SubTotalValue = 0;
             }
             else
             {
                 //sub total
                 var (subTotal, shoppingCartItemDiscountBase, _, maximumDiscountQty) = await _shoppingCartService.GetSubTotalAsync(sci, true);
-                var (shoppingCartItemSubTotalWithDiscountBase, _) = await _taxService.GetProductPriceAsync(product, subTotal);
+                var (shoppingCartItemSubTotalWithDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, subTotal);
                 var shoppingCartItemSubTotalWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartItemSubTotalWithDiscountBase, currentCurrency);
                 cartItemModel.SubTotal = await _priceFormatter.FormatPriceAsync(shoppingCartItemSubTotalWithDiscount);
                 cartItemModel.SubTotalValue = shoppingCartItemSubTotalWithDiscount;
@@ -474,7 +474,7 @@ namespace TvProgViewer.WebUI.Factories
                 //display an applied discount amount
                 if (shoppingCartItemDiscountBase > decimal.Zero)
                 {
-                    (shoppingCartItemDiscountBase, _) = await _taxService.GetProductPriceAsync(product, shoppingCartItemDiscountBase);
+                    (shoppingCartItemDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, shoppingCartItemDiscountBase);
                     if (shoppingCartItemDiscountBase > decimal.Zero)
                     {
                         var shoppingCartItemDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartItemDiscountBase, currentCurrency);
@@ -485,17 +485,17 @@ namespace TvProgViewer.WebUI.Factories
             }
 
             //picture
-            if (_shoppingCartSettings.ShowProductImagesOnShoppingCart)
+            if (_shoppingCartSettings.ShowTvChannelImagesOnShoppingCart)
             {
                 cartItemModel.Picture = await PrepareCartItemPictureModelAsync(sci,
-                    _mediaSettings.CartThumbPictureSize, true, cartItemModel.ProductName);
+                    _mediaSettings.CartThumbPictureSize, true, cartItemModel.TvChannelName);
             }
 
             //item warnings
             var itemWarnings = await _shoppingCartService.GetShoppingCartItemWarningsAsync(
                 await _workContext.GetCurrentUserAsync(),
                 sci.ShoppingCartType,
-                product,
+                tvchannel,
                 sci.StoreId,
                 sci.AttributesXml,
                 sci.UserEnteredPrice,
@@ -523,32 +523,32 @@ namespace TvProgViewer.WebUI.Factories
             if (sci == null)
                 throw new ArgumentNullException(nameof(sci));
 
-            var product = await _productService.GetProductByIdAsync(sci.ProductId);
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
             var cartItemModel = new WishlistModel.ShoppingCartItemModel
             {
                 Id = sci.Id,
-                Sku = await _productService.FormatSkuAsync(product, sci.AttributesXml),
-                ProductId = product.Id,
-                ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                Sku = await _tvchannelService.FormatSkuAsync(tvchannel, sci.AttributesXml),
+                TvChannelId = tvchannel.Id,
+                TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
+                TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
                 Quantity = sci.Quantity,
-                AttributeInfo = await _productAttributeFormatter.FormatAttributesAsync(product, sci.AttributesXml),
+                AttributeInfo = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, sci.AttributesXml),
             };
 
             //allow editing?
             //1. setting enabled?
-            //2. simple product?
+            //2. simple tvchannel?
             //3. has attribute or gift card?
             //4. visible individually?
             cartItemModel.AllowItemEditing = _shoppingCartSettings.AllowCartItemEditing &&
-                                             product.ProductType == ProductType.SimpleProduct &&
+                                             tvchannel.TvChannelType == TvChannelType.SimpleTvChannel &&
                                              (!string.IsNullOrEmpty(cartItemModel.AttributeInfo) ||
-                                              product.IsGiftCard) &&
-                                             product.VisibleIndividually;
+                                              tvchannel.IsGiftCard) &&
+                                             tvchannel.VisibleIndividually;
 
             //allowed quantities
-            var allowedQuantities = _productService.ParseAllowedQuantities(product);
+            var allowedQuantities = _tvchannelService.ParseAllowedQuantities(tvchannel);
             foreach (var qty in allowedQuantities)
             {
                 cartItemModel.AllowedQuantities.Add(new SelectListItem
@@ -560,18 +560,18 @@ namespace TvProgViewer.WebUI.Factories
             }
 
             //recurring info
-            if (product.IsRecurring)
+            if (tvchannel.IsRecurring)
                 cartItemModel.RecurringInfo = string.Format(await _localizationService.GetResourceAsync("ShoppingCart.RecurringPeriod"),
-                        product.RecurringCycleLength, await _localizationService.GetLocalizedEnumAsync(product.RecurringCyclePeriod));
+                        tvchannel.RecurringCycleLength, await _localizationService.GetLocalizedEnumAsync(tvchannel.RecurringCyclePeriod));
 
             //rental info
-            if (product.IsRental)
+            if (tvchannel.IsRental)
             {
                 var rentalStartDate = sci.RentalStartDateUtc.HasValue
-                    ? _productService.FormatRentalDate(product, sci.RentalStartDateUtc.Value)
+                    ? _tvchannelService.FormatRentalDate(tvchannel, sci.RentalStartDateUtc.Value)
                     : string.Empty;
                 var rentalEndDate = sci.RentalEndDateUtc.HasValue
-                    ? _productService.FormatRentalDate(product, sci.RentalEndDateUtc.Value)
+                    ? _tvchannelService.FormatRentalDate(tvchannel, sci.RentalEndDateUtc.Value)
                     : string.Empty;
                 cartItemModel.RentalInfo =
                     string.Format(await _localizationService.GetResourceAsync("ShoppingCart.Rental.FormattedDate"),
@@ -580,33 +580,33 @@ namespace TvProgViewer.WebUI.Factories
 
             //unit prices
             var currentCurrency = await _workContext.GetWorkingCurrencyAsync();
-            if (product.CallForPrice &&
+            if (tvchannel.CallForPrice &&
                 //also check whether the current user is impersonated
-                (!_orderSettings.AllowAdminsToBuyCallForPriceProducts || _workContext.OriginalUserIfImpersonated == null))
+                (!_orderSettings.AllowAdminsToBuyCallForPriceTvChannels || _workContext.OriginalUserIfImpersonated == null))
             {
-                cartItemModel.UnitPrice = await _localizationService.GetResourceAsync("Products.CallForPrice");
+                cartItemModel.UnitPrice = await _localizationService.GetResourceAsync("TvChannels.CallForPrice");
                 cartItemModel.UnitPriceValue = 0;
             }
             else
             {
-                var (shoppingCartUnitPriceWithDiscountBase, _) = await _taxService.GetProductPriceAsync(product, (await _shoppingCartService.GetUnitPriceAsync(sci, true)).unitPrice);
+                var (shoppingCartUnitPriceWithDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, (await _shoppingCartService.GetUnitPriceAsync(sci, true)).unitPrice);
                 var shoppingCartUnitPriceWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartUnitPriceWithDiscountBase, currentCurrency);
                 cartItemModel.UnitPrice = await _priceFormatter.FormatPriceAsync(shoppingCartUnitPriceWithDiscount);
                 cartItemModel.UnitPriceValue = shoppingCartUnitPriceWithDiscount;
             }
             //subtotal, discount
-            if (product.CallForPrice &&
+            if (tvchannel.CallForPrice &&
                 //also check whether the current user is impersonated
-                (!_orderSettings.AllowAdminsToBuyCallForPriceProducts || _workContext.OriginalUserIfImpersonated == null))
+                (!_orderSettings.AllowAdminsToBuyCallForPriceTvChannels || _workContext.OriginalUserIfImpersonated == null))
             {
-                cartItemModel.SubTotal = await _localizationService.GetResourceAsync("Products.CallForPrice");
+                cartItemModel.SubTotal = await _localizationService.GetResourceAsync("TvChannels.CallForPrice");
                 cartItemModel.SubTotalValue = 0;
             }
             else
             {
                 //sub total
                 var (subTotal, shoppingCartItemDiscountBase, _, maximumDiscountQty) = await _shoppingCartService.GetSubTotalAsync(sci, true);
-                var (shoppingCartItemSubTotalWithDiscountBase, _) = await _taxService.GetProductPriceAsync(product, subTotal);
+                var (shoppingCartItemSubTotalWithDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, subTotal);
                 var shoppingCartItemSubTotalWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartItemSubTotalWithDiscountBase, currentCurrency);
                 cartItemModel.SubTotal = await _priceFormatter.FormatPriceAsync(shoppingCartItemSubTotalWithDiscount);
                 cartItemModel.SubTotalValue = shoppingCartItemSubTotalWithDiscount;
@@ -615,7 +615,7 @@ namespace TvProgViewer.WebUI.Factories
                 //display an applied discount amount
                 if (shoppingCartItemDiscountBase > decimal.Zero)
                 {
-                    (shoppingCartItemDiscountBase, _) = await _taxService.GetProductPriceAsync(product, shoppingCartItemDiscountBase);
+                    (shoppingCartItemDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, shoppingCartItemDiscountBase);
                     if (shoppingCartItemDiscountBase > decimal.Zero)
                     {
                         var shoppingCartItemDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartItemDiscountBase, currentCurrency);
@@ -626,17 +626,17 @@ namespace TvProgViewer.WebUI.Factories
             }
 
             //picture
-            if (_shoppingCartSettings.ShowProductImagesOnWishList)
+            if (_shoppingCartSettings.ShowTvChannelImagesOnWishList)
             {
                 cartItemModel.Picture = await PrepareCartItemPictureModelAsync(sci,
-                    _mediaSettings.CartThumbPictureSize, true, cartItemModel.ProductName);
+                    _mediaSettings.CartThumbPictureSize, true, cartItemModel.TvChannelName);
             }
 
             //item warnings
             var itemWarnings = await _shoppingCartService.GetShoppingCartItemWarningsAsync(
                 await _workContext.GetCurrentUserAsync(),
                 sci.ShoppingCartType,
-                product,
+                tvchannel,
                 sci.StoreId,
                 sci.AttributesXml,
                 sci.UserEnteredPrice,
@@ -862,8 +862,8 @@ namespace TvProgViewer.WebUI.Factories
                 return model;
 
             model.IsEditable = isEditable;
-            model.ShowProductImages = _shoppingCartSettings.ShowProductImagesOnShoppingCart;
-            model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
+            model.ShowTvChannelImages = _shoppingCartSettings.ShowTvChannelImagesOnShoppingCart;
+            model.ShowSku = _catalogSettings.ShowSkuOnTvChannelDetailsPage;
             model.ShowVendorName = _vendorSettings.ShowVendorOnOrderDetailsPage;
             var user = await _workContext.GetCurrentUserAsync();
             var store = await _storeContext.GetCurrentStoreAsync();
@@ -980,8 +980,8 @@ namespace TvProgViewer.WebUI.Factories
 
             model.UserGuid = user.UserGuid;
             model.UserFullname = await _userService.GetUserFullNameAsync(user);
-            model.ShowProductImages = _shoppingCartSettings.ShowProductImagesOnWishList;
-            model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
+            model.ShowTvChannelImages = _shoppingCartSettings.ShowTvChannelImagesOnWishList;
+            model.ShowSku = _catalogSettings.ShowSkuOnTvChannelDetailsPage;
 
             //cart warnings
             var cartWarnings = await _shoppingCartService.GetShoppingCartWarningsAsync(cart, string.Empty, false);
@@ -1010,7 +1010,7 @@ namespace TvProgViewer.WebUI.Factories
             var user = await _workContext.GetCurrentUserAsync();
             var model = new MiniShoppingCartModel
             {
-                ShowProductImages = _shoppingCartSettings.ShowProductImagesInMiniShoppingCart,
+                ShowTvChannelImages = _shoppingCartSettings.ShowTvChannelImagesInMiniShoppingCart,
                 //let's always display it
                 DisplayShoppingCartButton = true,
                 CurrentUserIsGuest = await _userService.IsGuestAsync(user),
@@ -1025,7 +1025,7 @@ namespace TvProgViewer.WebUI.Factories
 
                 if (cart.Any())
                 {
-                    model.TotalProducts = cart.Sum(item => item.Quantity);
+                    model.TotalTvChannels = cart.Sum(item => item.Quantity);
 
                     //subtotal
                     var subTotalIncludingTax = await _workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax && !_taxSettings.ForceTaxExclusionFromOrderSubtotal;
@@ -1047,56 +1047,56 @@ namespace TvProgViewer.WebUI.Factories
 
                     var minOrderSubtotalAmountOk = await _orderProcessingService.ValidateMinOrderSubtotalAmountAsync(cart);
 
-                    var cartProductIds = cart.Select(ci => ci.ProductId).ToArray();
+                    var cartTvChannelIds = cart.Select(ci => ci.TvChannelId).ToArray();
 
-                    var downloadableProductsRequireRegistration =
-                        _userSettings.RequireRegistrationForDownloadableProducts && await _productService.HasAnyDownloadableProductAsync(cartProductIds);
+                    var downloadableTvChannelsRequireRegistration =
+                        _userSettings.RequireRegistrationForDownloadableTvChannels && await _tvchannelService.HasAnyDownloadableTvChannelAsync(cartTvChannelIds);
 
                     model.DisplayCheckoutButton = !_orderSettings.TermsOfServiceOnShoppingCartPage &&
                         minOrderSubtotalAmountOk &&
                         !checkoutAttributesExist &&
-                        !(downloadableProductsRequireRegistration
+                        !(downloadableTvChannelsRequireRegistration
                             && await _userService.IsGuestAsync(user));
 
-                    //products. sort descending (recently added products)
+                    //tvchannels. sort descending (recently added tvchannels)
                     foreach (var sci in cart
                         .OrderByDescending(x => x.Id)
-                        .Take(_shoppingCartSettings.MiniShoppingCartProductNumber)
+                        .Take(_shoppingCartSettings.MiniShoppingCartTvChannelNumber)
                         .ToList())
                     {
-                        var product = await _productService.GetProductByIdAsync(sci.ProductId);
+                        var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
                         var cartItemModel = new MiniShoppingCartModel.ShoppingCartItemModel
                         {
                             Id = sci.Id,
-                            ProductId = sci.ProductId,
-                            ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                            ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                            TvChannelId = sci.TvChannelId,
+                            TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
+                            TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
                             Quantity = sci.Quantity,
-                            AttributeInfo = await _productAttributeFormatter.FormatAttributesAsync(product, sci.AttributesXml)
+                            AttributeInfo = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, sci.AttributesXml)
                         };
 
                         //unit prices
-                        if (product.CallForPrice &&
+                        if (tvchannel.CallForPrice &&
                             //also check whether the current user is impersonated
-                            (!_orderSettings.AllowAdminsToBuyCallForPriceProducts || _workContext.OriginalUserIfImpersonated == null))
+                            (!_orderSettings.AllowAdminsToBuyCallForPriceTvChannels || _workContext.OriginalUserIfImpersonated == null))
                         {
-                            cartItemModel.UnitPrice = await _localizationService.GetResourceAsync("Products.CallForPrice");
+                            cartItemModel.UnitPrice = await _localizationService.GetResourceAsync("TvChannels.CallForPrice");
                             cartItemModel.UnitPriceValue = 0;
                         }
                         else
                         {
-                            var (shoppingCartUnitPriceWithDiscountBase, _) = await _taxService.GetProductPriceAsync(product, (await _shoppingCartService.GetUnitPriceAsync(sci, true)).unitPrice);
+                            var (shoppingCartUnitPriceWithDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, (await _shoppingCartService.GetUnitPriceAsync(sci, true)).unitPrice);
                             var shoppingCartUnitPriceWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(shoppingCartUnitPriceWithDiscountBase, currentCurrency);
                             cartItemModel.UnitPrice = await _priceFormatter.FormatPriceAsync(shoppingCartUnitPriceWithDiscount);
                             cartItemModel.UnitPriceValue = shoppingCartUnitPriceWithDiscount;
                         }
 
                         //picture
-                        if (_shoppingCartSettings.ShowProductImagesInMiniShoppingCart)
+                        if (_shoppingCartSettings.ShowTvChannelImagesInMiniShoppingCart)
                         {
                             cartItemModel.Picture = await PrepareCartItemPictureModelAsync(sci,
-                                _mediaSettings.MiniCartThumbPictureSize, true, cartItemModel.ProductName);
+                                _mediaSettings.MiniCartThumbPictureSize, true, cartItemModel.TvChannelName);
                         }
 
                         model.Items.Add(cartItemModel);
@@ -1478,28 +1478,28 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="sci">Shopping cart item</param>
         /// <param name="pictureSize">Picture size</param>
         /// <param name="showDefaultPicture">Whether to show the default picture</param>
-        /// <param name="productName">Product name</param>
+        /// <param name="tvchannelName">TvChannel name</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the picture model
         /// </returns>
-        public virtual async Task<PictureModel> PrepareCartItemPictureModelAsync(ShoppingCartItem sci, int pictureSize, bool showDefaultPicture, string productName)
+        public virtual async Task<PictureModel> PrepareCartItemPictureModelAsync(ShoppingCartItem sci, int pictureSize, bool showDefaultPicture, string tvchannelName)
         {
             var pictureCacheKey = _staticCacheManager.PrepareKeyForShortTermCache(TvProgModelCacheDefaults.CartPictureModelKey
                 , sci, pictureSize, true, await _workContext.GetWorkingLanguageAsync(), _webHelper.IsCurrentConnectionSecured(), await _storeContext.GetCurrentStoreAsync());
 
             var model = await _staticCacheManager.GetAsync(pictureCacheKey, async () =>
             {
-                var product = await _productService.GetProductByIdAsync(sci.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
                 //shopping cart item picture
-                var sciPicture = await _pictureService.GetProductPictureAsync(product, sci.AttributesXml);
+                var sciPicture = await _pictureService.GetTvChannelPictureAsync(tvchannel, sci.AttributesXml);
 
                 return new PictureModel
                 {
                     ImageUrl = (await _pictureService.GetPictureUrlAsync(sciPicture, pictureSize, showDefaultPicture)).Url,
-                    Title = string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageLinkTitleFormat"), productName),
-                    AlternateText = string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageAlternateTextFormat"), productName),
+                    Title = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageLinkTitleFormat"), tvchannelName),
+                    AlternateText = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageAlternateTextFormat"), tvchannelName),
                 };
             });
 

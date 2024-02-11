@@ -1,0 +1,7 @@
+﻿@model TvChannelDetailsModel
+@if (!string.IsNullOrWhiteSpace(Model.PageShareCode))
+{
+    <div class="tvchannel-share-button">
+        @Html.Raw(Model.PageShareCode)
+    </div>
+}

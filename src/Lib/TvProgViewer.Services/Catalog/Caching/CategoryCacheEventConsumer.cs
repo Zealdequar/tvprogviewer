@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Catalog.Caching
             await RemoveByPrefixAsync(TvProgCatalogDefaults.CategoriesChildIdsPrefix, entity.ParentCategoryId);
             await RemoveByPrefixAsync(TvProgCatalogDefaults.CategoriesHomepagePrefix);
             await RemoveByPrefixAsync(TvProgCatalogDefaults.CategoryBreadcrumbPrefix);
-            await RemoveByPrefixAsync(TvProgCatalogDefaults.CategoryProductsNumberPrefix);
+            await RemoveByPrefixAsync(TvProgCatalogDefaults.CategoryTvChannelsNumberPrefix);
             await RemoveByPrefixAsync(TvProgDiscountDefaults.CategoryIdsPrefix);
 
             if (entityEventType == EntityEventType.Delete)

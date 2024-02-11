@@ -1,0 +1,185 @@
+﻿@model CompareTvChannelsModel
+
+@using TvProgViewer.Core.Domain.Catalog
+
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    TvProgHtml.AddTitleParts(T("PageTitle.CompareTvChannels").Text);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-compare-tvchannels-page");
+}
+@{
+    var columnWidth = "";
+    if (Model.TvChannels.Count > 0)
+    {
+        columnWidth = Math.Round((decimal)(90M / Model.TvChannels.Count), 0).ToString() + "%";
+    }
+
+    var uniqueGroupes = new List<TvChannelSpecificationAttributeGroupModel>();
+    foreach (var group in Model.TvChannels.SelectMany(p => p.TvChannelSpecificationModel.Groups))
+    {
+        if (!uniqueGroupes.Any(g => g.Id == group.Id))
+            uniqueGroupes.Add(group);
+    }
+}
+<div class="page compare-tvchannels-page">
+    <div class="page-title">
+        <h1>@T("TvChannels.Compare.Title")</h1>
+    </div>
+    <div class="page-body">
+        @if (Model.TvChannels.Count > 0)
+        {
+            <a href="#" onclick="setLocation('@Url.RouteUrl("ClearCompareList")')" class="clear-list">@T("TvChannels.Compare.Clear")</a>
+            <div class="table-wrapper">
+                <table class="compare-tvchannels-table">
+                    <tbody>
+                        <tr class="remove-tvchannel">
+                            <td class="empty">&nbsp;</td>
+                            @foreach (var tvchannel in Model.TvChannels)
+                            {
+                                <td style="width: @columnWidth;">
+                                    <button type="button" class="button-2 remove-button" onclick="setLocation('@Url.RouteUrl("RemoveTvChannelFromCompareList", new { tvchannelId = tvchannel.Id })')">@T("Common.Remove")</button>
+                                </td>
+                            }
+                        </tr>
+                        <tr class="tvchannel-picture">
+                            <td class="empty">&nbsp;</td>
+                            @foreach (var tvchannel in Model.TvChannels)
+                            {
+                                var picture = tvchannel.PictureModels.FirstOrDefault();
+                                <td style="width: @columnWidth;">
+                                    <a class="picture" href="@(Url.RouteUrl<TvChannel>(new { SeName = tvchannel.SeName }))"><img alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" /></a>
+                                </td>
+                            }
+                        </tr>
+                        <tr class="tvchannel-name">
+                            <td>
+                                <label>@T("TvChannels.Compare.Name")</label>
+                            </td>
+                            @foreach (var tvchannel in Model.TvChannels)
+                            {
+                                <td style="width: @columnWidth;">
+                                    <a href="@(Url.RouteUrl<TvChannel>(new { SeName = tvchannel.SeName }))">@tvchannel.Name</a>
+                                </td>
+                            }
+                        </tr>
+                        <tr class="tvchannel-price">
+                            <td>
+                                <label>@T("TvChannels.Compare.Price")</label>
+                            </td>
+                            @foreach (var tvchannel in Model.TvChannels)
+                            {
+                                <td style="width: @columnWidth;">
+                                    @tvchannel.TvChannelPrice.Price
+                                </td>
+                            }
+                        </tr>
+                        @if (Model.IncludeShortDescriptionInCompareTvChannels)
+                        {
+                            <tr class="short-description">
+                                <td>
+                                    <label>@T("TvChannels.Compare.ShortDescription")</label>
+                                </td>
+                                @foreach (var tvchannel in Model.TvChannels)
+                                {
+                                    <td style="width: @columnWidth;">
+                                        @Html.Raw(tvchannel.ShortDescription)
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        @if (Model.IncludeFullDescriptionInCompareTvChannels)
+                        {
+                            <tr class="full-description">
+                                <td>
+                                    <label>@T("TvChannels.Compare.FullDescription")</label>
+                                </td>
+                                @foreach (var tvchannel in Model.TvChannels)
+                                {
+                                    <td style="width: @columnWidth;">
+                                        @Html.Raw(tvchannel.FullDescription)
+                                    </td>
+                                }
+                            </tr>
+                        }
+                        @foreach (var group in uniqueGroupes)
+                        {
+                            if (group.Attributes.Count > 0)
+                            {
+                                @if (group.Id > 0)
+                                {
+                                    <tr class="specification-group">
+                                        <td>
+                                            <label>@group.Name</label>
+                                        </td>
+                                    </tr>
+                                }
+
+                                var uniqueGroupAttributes = new List<TvChannelSpecificationAttributeModel>();
+                                foreach (var attribute in Model.TvChannels.SelectMany(p => p.TvChannelSpecificationModel.Groups.Where(g => g.Id == group.Id).SelectMany(g => g.Attributes)))
+                                {
+                                    if (!uniqueGroupAttributes.Any(sa => sa.Id == attribute.Id))
+                                        uniqueGroupAttributes.Add(attribute);
+                                }
+                                @foreach (var specificationAttribute in uniqueGroupAttributes)
+                                {
+                                    <tr class="specification">
+                                        <td>
+                                            <label>@specificationAttribute.Name</label>
+                                        </td>
+                                        @foreach (var tvchannel in Model.TvChannels)
+                                        {
+                                            var foundTvChannelSpec = tvchannel.TvChannelSpecificationModel.Groups
+                                                .Where(g => g.Id == group.Id)
+                                                .SelectMany(g => g.Attributes)
+                                                .FirstOrDefault(sa => sa.Id == specificationAttribute.Id);
+
+                                            <td style="width: @columnWidth;">
+                                                @if (foundTvChannelSpec != null)
+                                                {
+                                                    for (int i = 0; i < foundTvChannelSpec.Values.Count; i++)
+                                                    {
+                                                        var value = foundTvChannelSpec.Values[i];
+
+                                                        if (string.IsNullOrEmpty(value.ColorSquaresRgb))
+                                                        {
+                                                            @Html.Raw(value.ValueRaw)
+                                                            if (i != foundTvChannelSpec.Values.Count - 1)
+                                                            {
+                                                                <text>,&nbsp;</text>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="attribute-squares color-squares attribute-squares-padding">
+                                                                <span class="attribute-square-container" title="@Html.Raw(value.ValueRaw)">
+                                                                    <span class="attribute-square" style="background-color: @(value.ColorSquaresRgb);">&nbsp;</span>
+                                                                </span>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <text>&nbsp;</text>
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="no-data">
+                @T("TvChannels.Compare.NoItems")
+            </div>
+        }
+    </div>
+</div>

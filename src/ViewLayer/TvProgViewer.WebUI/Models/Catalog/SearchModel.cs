@@ -12,7 +12,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
             AvailableCategories = new List<SelectListItem>();
             AvailableManufacturers = new List<SelectListItem>();
             AvailableVendors = new List<SelectListItem>();
-            CatalogProductsModel = new CatalogProductsModel();
+            CatalogTvChannelsModel = new CatalogTvChannelsModel();
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
         /// </summary>
         public bool asv { get; set; }
 
-        public CatalogProductsModel CatalogProductsModel { get; set; }
+        public CatalogTvChannelsModel CatalogTvChannelsModel { get; set; }
 
         public IList<SelectListItem> AvailableCategories { get; set; }
         public IList<SelectListItem> AvailableManufacturers { get; set; }

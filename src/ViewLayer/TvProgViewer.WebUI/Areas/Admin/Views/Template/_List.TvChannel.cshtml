@@ -1,0 +1,150 @@
+@model TemplatesModel
+
+<div class="card-body">
+    @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelTemplateListButtons, additionalData = Model })
+
+    @await Html.PartialAsync("Table", new DataTablesModel
+    {
+        Name = "templates-tvchannel-grid",
+        UrlRead = new DataUrl("TvChannelTemplates", "Template", null),
+        UrlUpdate = new DataUrl("TvChannelTemplateUpdate", "Template", null),
+        UrlDelete = new DataUrl("TvChannelTemplateDelete", "Template", null),
+
+        Length = Model.TemplatesTvChannel.PageSize,
+        LengthMenu = Model.TemplatesTvChannel.AvailablePageSizes,
+        ColumnCollection = new List<ColumnProperty>
+        {
+            new ColumnProperty(nameof(TvChannelTemplateModel.Name))
+            {
+                Title = T("Admin.System.Templates.TvChannel.Name").Text,
+                Width = "300",
+                Editable = true,
+                EditType = EditType.String
+            },
+            new ColumnProperty(nameof(TvChannelTemplateModel.ViewPath))
+            {
+                Title = T("Admin.System.Templates.TvChannel.ViewPath").Text,
+                Width = "300",
+                Editable = true,
+                EditType = EditType.String
+            },
+            new ColumnProperty(nameof(TvChannelTemplateModel.DisplayOrder))
+            {
+                Title = T("Admin.System.Templates.TvChannel.DisplayOrder").Text,
+                Width = "100",
+                Editable = true,
+                EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(TvChannelTemplateModel.IgnoredTvChannelTypes))
+            {
+                Title = T("Admin.System.Templates.TvChannel.IgnoredTvChannelTypes").Text,
+                Width = "300",
+                Editable = true,
+                EditType = EditType.String
+            },
+            new ColumnProperty(nameof(TvChannelTemplateModel.Id))
+            {
+                Title = T("Admin.Common.Edit").Text,
+                Width = "200",
+                ClassName =  TvProgColumnClassDefaults.Button,
+                Render = new RenderButtonsInlineEdit()
+            },
+            new ColumnProperty(nameof(TvChannelTemplateModel.Id))
+            {
+                Title = T("Admin.Common.Delete").Text,
+                Width = "100",
+                ClassName =  TvProgColumnClassDefaults.Button,
+                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text)
+            }
+        }
+    })
+
+    <div class="card card-default">
+        <div class="card-header">
+            @T("Admin.Common.AddNewRecord")
+        </div>
+        <div class="card-body">
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddTvChannelTemplate.Name" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddTvChannelTemplate.Name" />
+                    <span asp-validation-for="@Model.AddTvChannelTemplate.Name"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddTvChannelTemplate.ViewPath" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddTvChannelTemplate.ViewPath" />
+                    <span asp-validation-for="@Model.AddTvChannelTemplate.ViewPath"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddTvChannelTemplate.DisplayOrder" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddTvChannelTemplate.DisplayOrder" />
+                    <span asp-validation-for="@Model.AddTvChannelTemplate.DisplayOrder"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="@Model.AddTvChannelTemplate.IgnoredTvChannelTypes" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="@Model.AddTvChannelTemplate.IgnoredTvChannelTypes" />
+                    <span asp-validation-for="@Model.AddTvChannelTemplate.IgnoredTvChannelTypes"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-9 offset-md-3">
+                    <button type="button" id="addTvChannelTemplate" class="btn btn-primary">@T("Admin.Common.AddNewRecord")</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#addTvChannelTemplate').click(function () {
+                    $('#addTvChannelTemplate').attr('disabled', true);
+                    var postData = {
+                        Name: $("#@Html.IdFor(model => model.AddTvChannelTemplate.Name)").val(),
+                        ViewPath: $("#@Html.IdFor(model => model.AddTvChannelTemplate.ViewPath)").val(),
+                        DisplayOrder: $("#@Html.IdFor(model => model.AddTvChannelTemplate.DisplayOrder)").val(),
+                        IgnoredTvChannelTypes: $("#@Html.IdFor(model => model.AddTvChannelTemplate.IgnoredTvChannelTypes)").val()
+                    };
+                    addAntiForgeryToken(postData);
+
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "@Html.Raw(Url.Action("TvChannelTemplateAdd", "Template", null))",
+                        data: postData,
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.Result) {
+                                //reload grid
+                                updateTable('#templates-tvchannel-grid');
+
+                                //clear input value
+                                $("#@Html.IdFor(model => model.AddTvChannelTemplate.Name)").val('');
+                                $("#@Html.IdFor(model => model.AddTvChannelTemplate.ViewPath)").val('');
+                                $("#@Html.IdFor(model => model.AddTvChannelTemplate.DisplayOrder)").data("kendoNumericTextBox").value(0);
+                                $("#@Html.IdFor(model => model.AddTvChannelTemplate.IgnoredTvChannelTypes)").val('');
+
+                            } else {
+                                //display errors if returned
+                                display_nop_error(data);
+                            }
+                        },
+                        complete: function (jqXHR, textStatus) {
+                            $('#addTvChannelTemplate').attr('disabled', false);
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</div>

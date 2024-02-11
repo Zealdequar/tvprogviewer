@@ -18,7 +18,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         private readonly ICategoryTemplateService _categoryTemplateService;
         private readonly IManufacturerTemplateService _manufacturerTemplateService;
-        private readonly IProductTemplateService _productTemplateService;
+        private readonly ITvChannelTemplateService _tvchannelTemplateService;
         private readonly ITopicTemplateService _topicTemplateService;
 
         #endregion
@@ -27,12 +27,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         public TemplateModelFactory(ICategoryTemplateService categoryTemplateService,
             IManufacturerTemplateService manufacturerTemplateService,
-            IProductTemplateService productTemplateService,
+            ITvChannelTemplateService tvchannelTemplateService,
             ITopicTemplateService topicTemplateService)
         {
             _categoryTemplateService = categoryTemplateService;
             _manufacturerTemplateService = manufacturerTemplateService;
-            _productTemplateService = productTemplateService;
+            _tvchannelTemplateService = tvchannelTemplateService;
             _topicTemplateService = topicTemplateService;
         }
 
@@ -56,7 +56,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //prepare nested search models
             await PrepareCategoryTemplateSearchModelAsync(model.TemplatesCategory);
             await PrepareManufacturerTemplateSearchModelAsync(model.TemplatesManufacturer);
-            await PrepareProductTemplateSearchModelAsync(model.TemplatesProduct);
+            await PrepareTvChannelTemplateSearchModelAsync(model.TemplatesTvChannel);
             await PrepareTopicTemplateSearchModelAsync(model.TemplatesTopic);
 
             return model;
@@ -109,24 +109,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
         
         /// <summary>
-        /// Prepare paged product template list model
+        /// Prepare paged tvchannel template list model
         /// </summary>
-        /// <param name="searchModel">Product template search model</param>
+        /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product template list model
+        /// The task result contains the tvchannel template list model
         /// </returns>
-        public virtual async Task<ProductTemplateListModel> PrepareProductTemplateListModelAsync(ProductTemplateSearchModel searchModel)
+        public virtual async Task<TvChannelTemplateListModel> PrepareTvChannelTemplateListModelAsync(TvChannelTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get product templates
-            var productTemplates = (await _productTemplateService.GetAllProductTemplatesAsync()).ToPagedList(searchModel);
+            //get tvchannel templates
+            var tvchannelTemplates = (await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
-            var model = new ProductTemplateListModel().PrepareToGrid(searchModel, productTemplates,
-                () => productTemplates.Select(template => template.ToModel<ProductTemplateModel>()));
+            var model = new TvChannelTemplateListModel().PrepareToGrid(searchModel, tvchannelTemplates,
+                () => tvchannelTemplates.Select(template => template.ToModel<TvChannelTemplateModel>()));
 
             return model;
         }
@@ -193,14 +193,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare product template search model
+        /// Prepare tvchannel template search model
         /// </summary>
-        /// <param name="searchModel">Product template search model</param>
+        /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product template search model
+        /// The task result contains the tvchannel template search model
         /// </returns>
-        public virtual Task<ProductTemplateSearchModel> PrepareProductTemplateSearchModelAsync(ProductTemplateSearchModel searchModel)
+        public virtual Task<TvChannelTemplateSearchModel> PrepareTvChannelTemplateSearchModelAsync(TvChannelTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));

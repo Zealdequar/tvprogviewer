@@ -13,7 +13,7 @@ namespace TvProgViewer.WebUI.Components
             _newsSettings = newsSettings;
         }
 
-        public IViewComponentResult Invoke(int currentCategoryId, int currentProductId)
+        public IViewComponentResult Invoke(int currentCategoryId, int currentTvChannelId)
         {
             if (!_newsSettings.Enabled || !_newsSettings.ShowHeaderRssUrl)
                 return Content("");

@@ -11,17 +11,17 @@ namespace TvProgViewer.Core.Domain.Discounts
         AssignedToOrderTotal = 1,
 
         /// <summary>
-        /// Assigned to products (SKUs)
+        /// Assigned to tvchannels (SKUs)
         /// </summary>
         AssignedToSkus = 2,
 
         /// <summary>
-        /// Assigned to categories (all products in a category)
+        /// Assigned to categories (all tvchannels in a category)
         /// </summary>
         AssignedToCategories = 5,
 
         /// <summary>
-        /// Assigned to manufacturers (all products of a manufacturer)
+        /// Assigned to manufacturers (all tvchannels of a manufacturer)
         /// </summary>
         AssignedToManufacturers = 6,
 

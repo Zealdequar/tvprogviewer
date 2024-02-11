@@ -16,13 +16,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool DisplayHomepageMenuItem { get; set; }
         public bool DisplayHomepageMenuItem_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayNewProductsMenuItem")]
-        public bool DisplayNewProductsMenuItem { get; set; }
-        public bool DisplayNewProductsMenuItem_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayNewTvChannelsMenuItem")]
+        public bool DisplayNewTvChannelsMenuItem { get; set; }
+        public bool DisplayNewTvChannelsMenuItem_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayProductSearchMenuItem")]
-        public bool DisplayProductSearchMenuItem { get; set; }
-        public bool DisplayProductSearchMenuItem_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayTvChannelSearchMenuItem")]
+        public bool DisplayTvChannelSearchMenuItem { get; set; }
+        public bool DisplayTvChannelSearchMenuItem_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultMenuItemSettings.DisplayUserInfoMenuItem")]
         public bool DisplayUserInfoMenuItem { get; set; }

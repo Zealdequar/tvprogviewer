@@ -53,47 +53,47 @@ namespace TvProgViewer.Services.Shipping.Date
 
         #endregion
 
-        #region Product availability ranges
+        #region TvChannel availability ranges
 
         /// <summary>
-        /// Get a product availability range
+        /// Get a tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRangeId">The product availability range identifier</param>
+        /// <param name="tvchannelAvailabilityRangeId">The tvchannel availability range identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability range
+        /// The task result contains the tvchannel availability range
         /// </returns>
-        Task<ProductAvailabilityRange> GetProductAvailabilityRangeByIdAsync(int productAvailabilityRangeId);
+        Task<TvChannelAvailabilityRange> GetTvChannelAvailabilityRangeByIdAsync(int tvchannelAvailabilityRangeId);
 
         /// <summary>
-        /// Get all product availability ranges
+        /// Get all tvchannel availability ranges
         /// </summary>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product availability ranges
+        /// The task result contains the tvchannel availability ranges
         /// </returns>
-        Task<IList<ProductAvailabilityRange>> GetAllProductAvailabilityRangesAsync();
+        Task<IList<TvChannelAvailabilityRange>> GetAllTvChannelAvailabilityRangesAsync();
 
         /// <summary>
-        /// Insert the product availability range
+        /// Insert the tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task InsertProductAvailabilityRangeAsync(ProductAvailabilityRange productAvailabilityRange);
+        Task InsertTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
 
         /// <summary>
-        /// Update the product availability range
+        /// Update the tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task UpdateProductAvailabilityRangeAsync(ProductAvailabilityRange productAvailabilityRange);
+        Task UpdateTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
 
         /// <summary>
-        /// Delete the product availability range
+        /// Delete the tvchannel availability range
         /// </summary>
-        /// <param name="productAvailabilityRange">Product availability range</param>
+        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task DeleteProductAvailabilityRangeAsync(ProductAvailabilityRange productAvailabilityRange);
+        Task DeleteTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
 
         #endregion
     }

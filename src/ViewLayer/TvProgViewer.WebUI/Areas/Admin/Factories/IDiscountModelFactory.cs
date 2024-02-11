@@ -68,35 +68,35 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             Discount discount);
 
         /// <summary>
-        /// Prepare paged discount product list model
+        /// Prepare paged discount tvchannel list model
         /// </summary>
-        /// <param name="searchModel">Discount product search model</param>
+        /// <param name="searchModel">Discount tvchannel search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the discount product list model
+        /// The task result contains the discount tvchannel list model
         /// </returns>
-        Task<DiscountProductListModel> PrepareDiscountProductListModelAsync(DiscountProductSearchModel searchModel, Discount discount);
+        Task<DiscountTvChannelListModel> PrepareDiscountTvChannelListModelAsync(DiscountTvChannelSearchModel searchModel, Discount discount);
 
         /// <summary>
-        /// Prepare product search model to add to the discount
+        /// Prepare tvchannel search model to add to the discount
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the discount</param>
+        /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product search model to add to the discount
+        /// The task result contains the tvchannel search model to add to the discount
         /// </returns>
-        Task<AddProductToDiscountSearchModel> PrepareAddProductToDiscountSearchModelAsync(AddProductToDiscountSearchModel searchModel);
+        Task<AddTvChannelToDiscountSearchModel> PrepareAddTvChannelToDiscountSearchModelAsync(AddTvChannelToDiscountSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged product list model to add to the discount
+        /// Prepare paged tvchannel list model to add to the discount
         /// </summary>
-        /// <param name="searchModel">Product search model to add to the discount</param>
+        /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product list model to add to the discount
+        /// The task result contains the tvchannel list model to add to the discount
         /// </returns>
-        Task<AddProductToDiscountListModel> PrepareAddProductToDiscountListModelAsync(AddProductToDiscountSearchModel searchModel);
+        Task<AddTvChannelToDiscountListModel> PrepareAddTvChannelToDiscountListModelAsync(AddTvChannelToDiscountSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged discount category list model

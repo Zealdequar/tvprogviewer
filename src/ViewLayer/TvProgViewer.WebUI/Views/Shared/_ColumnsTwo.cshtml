@@ -18,12 +18,12 @@
         currentManufacturerId = Convert.ToInt32(Url.ActionContext.RouteData.Values["manufacturerId"].ToString());
     }
 
-    //current product ID
-    var currentProductId = 0;
-    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("product", StringComparison.InvariantCultureIgnoreCase) &&
-        Url.ActionContext.RouteData.Values["action"].ToString().Equals("productdetails", StringComparison.InvariantCultureIgnoreCase))
+    //current tvchannel ID
+    var currentTvChannelId = 0;
+    if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("tvchannel", StringComparison.InvariantCultureIgnoreCase) &&
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("tvchanneldetails", StringComparison.InvariantCultureIgnoreCase))
     {
-        currentProductId = Convert.ToInt32(Url.ActionContext.RouteData.Values["productId"].ToString());
+        currentTvChannelId = Convert.ToInt32(Url.ActionContext.RouteData.Values["tvchannelId"].ToString());
     }
 }
 
@@ -40,12 +40,12 @@
     {
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LeftSideColumnBefore })
         @await RenderSectionAsync("CatalogFilters", false);
-        @await Component.InvokeAsync(typeof(CategoryNavigationViewComponent), new { currentCategoryId = currentCategoryId, currentProductId = currentProductId })
+        @await Component.InvokeAsync(typeof(CategoryNavigationViewComponent), new { currentCategoryId = currentCategoryId, currentTvChannelId = currentTvChannelId })
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LeftSideColumnAfterCategoryNavigation })
         @await Component.InvokeAsync(typeof(ManufacturerNavigationViewComponent), new { currentManufacturerId = currentManufacturerId })
         @await Component.InvokeAsync(typeof(VendorNavigationViewComponent))
-        @await Component.InvokeAsync(typeof(RecentlyViewedProductsBlockViewComponent), new { productThumbPictureSize = 64 })
-        @await Component.InvokeAsync(typeof(PopularProductTagsViewComponent))
+        @await Component.InvokeAsync(typeof(RecentlyViewedTvChannelsBlockViewComponent), new { tvchannelThumbPictureSize = 64 })
+        @await Component.InvokeAsync(typeof(PopularTvChannelTagsViewComponent))
         @await Component.InvokeAsync(typeof(PollBlockViewComponent), new { systemKeyword = "LeftColumnPoll" })
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.LeftSideColumnAfter })
     }

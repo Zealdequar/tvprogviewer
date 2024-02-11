@@ -26,7 +26,7 @@
             <form asp-route="ReturnRequest" method="post">
                 <div class="section">
                     <div class="title">
-                        <strong>@T("ReturnRequests.SelectProduct(s)")</strong>
+                        <strong>@T("ReturnRequests.SelectTvChannel(s)")</strong>
                     </div>
                     <div class="table-wrapper">
                         <table class="data-table">
@@ -37,14 +37,14 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th class="product">
-                                        @T("ReturnRequests.Products.Name")
+                                    <th class="tvchannel">
+                                        @T("ReturnRequests.TvChannels.Name")
                                     </th>
                                     <th class="unit-price">
-                                        @T("ReturnRequests.Products.Price")
+                                        @T("ReturnRequests.TvChannels.Price")
                                     </th>
                                     <th class="quantity">
-                                        @T("ReturnRequests.Products.Quantity")
+                                        @T("ReturnRequests.TvChannels.Quantity")
                                     </th>
                                 </tr>
                             </thead>
@@ -52,8 +52,8 @@
                                 @foreach (var item in Model.Items)
                                 {
                                     <tr>
-                                        <td class="product">
-                                            <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))">@item.ProductName</a>
+                                        <td class="tvchannel">
+                                            <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))">@item.TvChannelName</a>
                                             @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                             {
                                                 <div class="attributes">

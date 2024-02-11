@@ -34,8 +34,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly ILocalizationService _localizationService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductAttributeFormatter _productAttributeFormatter;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeFormatter _tvchannelAttributeFormatter;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStoreService _storeService;
         private readonly ITaxService _taxService;
@@ -51,8 +51,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IDateTimeHelper dateTimeHelper,
             ILocalizationService localizationService,
             IPriceFormatter priceFormatter,
-            IProductAttributeFormatter productAttributeFormatter,
-            IProductService productService,
+            ITvChannelAttributeFormatter tvchannelAttributeFormatter,
+            ITvChannelService tvchannelService,
             IShoppingCartService shoppingCartService,
             IStoreService storeService,
             ITaxService taxService)
@@ -64,8 +64,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _dateTimeHelper = dateTimeHelper;
             _localizationService = localizationService;
             _priceFormatter = priceFormatter;
-            _productAttributeFormatter = productAttributeFormatter;
-            _productService = productService;
+            _tvchannelAttributeFormatter = tvchannelAttributeFormatter;
+            _tvchannelService = tvchannelService;
             _shoppingCartService = shoppingCartService;
             _storeService = storeService;
             _taxService = taxService;
@@ -149,7 +149,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //get users with shopping carts
             var users = await _userService.GetUsersWithShoppingCartsAsync(searchModel.ShoppingCartType,
                 storeId: searchModel.StoreId,
-                productId: searchModel.ProductId,
+                tvchannelId: searchModel.TvChannelId,
                 createdFromUtc: searchModel.StartDate,
                 createdToUtc: searchModel.EndDate,
                 countryId: searchModel.BillingCountryId,
@@ -172,7 +172,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                         : await _localizationService.GetResourceAsync("Admin.Users.Guest");
                     shoppingCartModel.TotalItems = (await _shoppingCartService
                         .GetShoppingCartAsync(user, searchModel.ShoppingCartType,
-                            searchModel.StoreId, searchModel.ProductId, searchModel.StartDate, searchModel.EndDate))
+                            searchModel.StoreId, searchModel.TvChannelId, searchModel.StartDate, searchModel.EndDate))
                         .Sum(item => item.Quantity);
 
                     return shoppingCartModel;
@@ -201,15 +201,15 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
             //get shopping cart items
             var items = (await _shoppingCartService.GetShoppingCartAsync(user, searchModel.ShoppingCartType,
-                searchModel.StoreId, searchModel.ProductId, searchModel.StartDate, searchModel.EndDate)).ToPagedList(searchModel);
+                searchModel.StoreId, searchModel.TvChannelId, searchModel.StartDate, searchModel.EndDate)).ToPagedList(searchModel);
 
-            var isSearchProduct = searchModel.ProductId > 0;
+            var isSearchTvChannel = searchModel.TvChannelId > 0;
 
-            Product product = null;
+            TvChannel tvchannel = null;
 
-            if (isSearchProduct)
+            if (isSearchTvChannel)
             {
-                product = await _productService.GetProductByIdAsync(searchModel.ProductId) ?? throw new Exception("Product is not found");
+                tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId) ?? throw new Exception("TvChannel is not found");
             }
 
             var store = await _storeService.GetStoreByIdAsync(searchModel.StoreId);
@@ -223,24 +223,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     //fill in model values from the entity
                     var itemModel = item.ToModel<ShoppingCartItemModel>();
 
-                    if (!isSearchProduct)
-                        product = await _productService.GetProductByIdAsync(item.ProductId);
+                    if (!isSearchTvChannel)
+                        tvchannel = await _tvchannelService.GetTvChannelByIdAsync(item.TvChannelId);
 
                     //convert dates to the user time
                     itemModel.UpdatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(item.UpdatedOnUtc, DateTimeKind.Utc);
 
                     //fill in additional values (not existing in the entity)
                     itemModel.Store = (await _storeService.GetStoreByIdAsync(item.StoreId))?.Name ?? "Deleted";
-                    itemModel.AttributeInfo = await _productAttributeFormatter.FormatAttributesAsync(product, item.AttributesXml, user, store);
+                    itemModel.AttributeInfo = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, item.AttributesXml, user, store);
                     var (unitPrice, _, _) = await _shoppingCartService.GetUnitPriceAsync(item, true);
-                    itemModel.UnitPrice = await _priceFormatter.FormatPriceAsync((await _taxService.GetProductPriceAsync(product, unitPrice)).price);
-                    itemModel.UnitPriceValue = (await _taxService.GetProductPriceAsync(product, unitPrice)).price;
+                    itemModel.UnitPrice = await _priceFormatter.FormatPriceAsync((await _taxService.GetTvChannelPriceAsync(tvchannel, unitPrice)).price);
+                    itemModel.UnitPriceValue = (await _taxService.GetTvChannelPriceAsync(tvchannel, unitPrice)).price;
                     var (subTotal, _, _, _) = await _shoppingCartService.GetSubTotalAsync(item, true);
-                    itemModel.Total = await _priceFormatter.FormatPriceAsync((await _taxService.GetProductPriceAsync(product, subTotal)).price);
-                    itemModel.TotalValue = (await _taxService.GetProductPriceAsync(product, subTotal)).price;
+                    itemModel.Total = await _priceFormatter.FormatPriceAsync((await _taxService.GetTvChannelPriceAsync(tvchannel, subTotal)).price);
+                    itemModel.TotalValue = (await _taxService.GetTvChannelPriceAsync(tvchannel, subTotal)).price;
 
-                    //set product name since it does not survive mapping
-                    itemModel.ProductName = product.Name;
+                    //set tvchannel name since it does not survive mapping
+                    itemModel.TvChannelName = tvchannel.Name;
 
                     return itemModel;
                 });

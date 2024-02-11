@@ -20,7 +20,7 @@ namespace TvProgViewer.Data.Mapping.Builders.Catalog
         {
             table
                 .WithColumn(nameof(TierPrice.UserRoleId)).AsInt32().Nullable().ForeignKey<UserRole>()
-                .WithColumn(nameof(TierPrice.ProductId)).AsInt32().ForeignKey<Product>();
+                .WithColumn(nameof(TierPrice.TvChannelId)).AsInt32().ForeignKey<TvChannel>();
         }
 
         #endregion

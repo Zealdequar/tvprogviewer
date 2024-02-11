@@ -283,37 +283,37 @@
 
                     <div class="card card-default">
                         <div class="card-header">
-                            @T("Admin.Orders.Shipments.Products")
+                            @T("Admin.Orders.Shipments.TvChannels")
                         </div>
                         <div class="card-body">
                             <table class="table table-hover table-bordered">
                                 <thead>
                                     <tr>
                                         <th>
-                                            @T("Admin.Orders.Shipments.Products.ProductName")
+                                            @T("Admin.Orders.Shipments.TvChannels.TvChannelName")
                                         </th>
                                         <th>
-                                            @T("Admin.Orders.Shipments.Products.SKU")
+                                            @T("Admin.Orders.Shipments.TvChannels.SKU")
                                         </th>
                                         <th>
-                                            @T("Admin.Orders.Shipments.Products.Warehouse")
+                                            @T("Admin.Orders.Shipments.TvChannels.Warehouse")
                                         </th>
                                         <th>
-                                            @T("Admin.Orders.Shipments.Products.ItemWeight")
+                                            @T("Admin.Orders.Shipments.TvChannels.ItemWeight")
                                         </th>
                                         <th>
-                                            @T("Admin.Orders.Shipments.Products.ItemDimensions")
+                                            @T("Admin.Orders.Shipments.TvChannels.ItemDimensions")
                                         </th>
                                         @if (Model.PickupInStore)
                                         {
                                             <th>
-                                                @T("Admin.Orders.Shipments.Products.QtyReadyForPickup")
+                                                @T("Admin.Orders.Shipments.TvChannels.QtyReadyForPickup")
                                             </th>
                                         }
                                         else
                                         {
                                             <th>
-                                                @T("Admin.Orders.Shipments.Products.QtyShipped")
+                                                @T("Admin.Orders.Shipments.TvChannels.QtyShipped")
                                             </th>
                                         }
                                     </tr>
@@ -324,7 +324,7 @@
                                     <tr>
                                         <td style="width: 40%;" class="text-left">
                                             <div>
-                                                <em><a asp-controller="Product" asp-action="Edit" asp-route-id="@item.ProductId">@item.ProductName</a></em>
+                                                <em><a asp-controller="TvChannel" asp-action="Edit" asp-route-id="@item.TvChannelId">@item.TvChannelName</a></em>
                                                 @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                                     {
                                                     <p>

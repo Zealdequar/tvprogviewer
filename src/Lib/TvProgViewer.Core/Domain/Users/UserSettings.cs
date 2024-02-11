@@ -58,7 +58,7 @@ namespace TvProgViewer.Core.Domain.Users
         public PasswordFormat DefaultPasswordFormat { get; set; }
 
         /// <summary>
-        /// Gets or sets a user password format (SHA1, MD5) when passwords are hashed (DO NOT edit in production environment)
+        /// Gets or sets a user password format (SHA1, MD5) when passwords are hashed (DO NOT edit in tvchannelion environment)
         /// </summary>
         public string HashedPasswordFormat { get; set; }
 
@@ -153,9 +153,9 @@ namespace TvProgViewer.Core.Domain.Users
         public bool NotifyNewUserRegistration { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to hide 'Downloadable products' tab on 'My account' page
+        /// Gets or sets a value indicating whether to hide 'Downloadable tvchannels' tab on 'My account' page
         /// </summary>
-        public bool HideDownloadableProductsTab { get; set; }
+        public bool HideDownloadableTvChannelsTab { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to hide 'Back in stock subscriptions' tab on 'My account' page
@@ -163,9 +163,9 @@ namespace TvProgViewer.Core.Domain.Users
         public bool HideBackInStockSubscriptionsTab { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to validate user when downloading products
+        /// Gets or sets a value indicating whether to validate user when downloading tvchannels
         /// </summary>
-        public bool DownloadableProductsValidateUser { get; set; }
+        public bool DownloadableTvChannelsValidateUser { get; set; }
 
         /// <summary>
         /// User name formatting
@@ -223,9 +223,9 @@ namespace TvProgViewer.Core.Domain.Users
         public bool EnteringEmailTwice { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether registration is required for downloadable products
+        /// Gets or sets a value indicating whether registration is required for downloadable tvchannels
         /// </summary>
-        public bool RequireRegistrationForDownloadableProducts { get; set; }
+        public bool RequireRegistrationForDownloadableTvChannels { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to check gift card balance

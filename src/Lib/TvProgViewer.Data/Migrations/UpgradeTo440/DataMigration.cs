@@ -125,13 +125,13 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo440
             }
 
             //#3353
-            var productAttributeCombinationTableName = NameCompatibilityManager.GetTableName(typeof(ProductAttributeCombination));
+            var tvchannelAttributeCombinationTableName = NameCompatibilityManager.GetTableName(typeof(TvChannelAttributeCombination));
 
             //add column
-            if (!Schema.Table(productAttributeCombinationTableName).Column(nameof(ProductAttributeCombination.MinStockQuantity)).Exists())
+            if (!Schema.Table(tvchannelAttributeCombinationTableName).Column(nameof(TvChannelAttributeCombination.MinStockQuantity)).Exists())
             {
-                Alter.Table(productAttributeCombinationTableName)
-                    .AddColumn(nameof(ProductAttributeCombination.MinStockQuantity)).AsInt32().NotNullable().SetExistingRowsTo(0);
+                Alter.Table(tvchannelAttributeCombinationTableName)
+                    .AddColumn(nameof(TvChannelAttributeCombination.MinStockQuantity)).AsInt32().NotNullable().SetExistingRowsTo(0);
             }
 
             //#276 AJAX filters

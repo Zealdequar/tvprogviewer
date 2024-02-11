@@ -15,9 +15,9 @@ namespace TvProgViewer.Services.Tax
         public User User { get; set; }
 
         /// <summary>
-        /// Gets or sets a product
+        /// Gets or sets a tvchannel
         /// </summary>
-        public Product Product { get; set; }
+        public TvChannel TvChannel { get; set; }
 
         /// <summary>
         /// Gets or sets an address

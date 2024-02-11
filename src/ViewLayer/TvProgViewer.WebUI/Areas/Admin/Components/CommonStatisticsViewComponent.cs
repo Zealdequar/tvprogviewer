@@ -47,7 +47,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Components
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageUsers) ||
                 !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders) ||
                 !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageReturnRequests) ||
-                !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
+                !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
             {
                 return Content(string.Empty);
             }

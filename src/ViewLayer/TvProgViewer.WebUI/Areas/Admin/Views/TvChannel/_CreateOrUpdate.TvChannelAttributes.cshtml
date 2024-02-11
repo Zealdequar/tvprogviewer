@@ -1,0 +1,41 @@
+@model TvChannelModel
+
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.TvChannels.TvChannelAttributes.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        if (Model.TvChannelAttributesExist)
+        {
+
+            if (Model.CanCreateCombinations)
+            {
+				<tvprog-tabs id="tvchannelattribute-edit" asp-tab-name-to-select="tab-attributes" asp-render-selected-tab-input="false">
+					<tvprog-tab asp-name="tab-attributes" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes")" asp-default="true">@await Html.PartialAsync("_CreateOrUpdate.TvChannelAttributes.Info", Model)</tvprog-tab>
+					<tvprog-tab asp-name="tab-attribute-combinations" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations")">@await Html.PartialAsync("_CreateOrUpdate.TvChannelAttributes.Combinations", Model)</tvprog-tab>
+				</tvprog-tabs>
+            }
+            else
+            {
+                @await Html.PartialAsync("_CreateOrUpdate.TvChannelAttributes.Info", Model)
+            }
+        }
+        else
+        {
+            <div class="card card-default">
+                <div class="card-body">
+                    @T("Admin.Catalog.TvChannels.TvChannelAttributes.NoAttributesAvailable")
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.TvChannels.TvChannelAttributes.SaveBeforeEdit")
+            </div>
+        </div>
+    }    
+</div>

@@ -30,13 +30,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool SitemapIncludeNews { get; set; }
         public bool SitemapIncludeNews_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapIncludeProducts")]
-        public bool SitemapIncludeProducts { get; set; }
-        public bool SitemapIncludeProducts_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapIncludeTvChannels")]
+        public bool SitemapIncludeTvChannels { get; set; }
+        public bool SitemapIncludeTvChannels_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapIncludeProductTags")]
-        public bool SitemapIncludeProductTags { get; set; }
-        public bool SitemapIncludeProductTags_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapIncludeTvChannelTags")]
+        public bool SitemapIncludeTvChannelTags { get; set; }
+        public bool SitemapIncludeTvChannelTags_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.SitemapIncludeTopics")]
         public bool SitemapIncludeTopics { get; set; }

@@ -132,17 +132,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public string CustomOrderNumberMask { get; set; }
         public bool CustomOrderNumberMask_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.ExportWithProducts")]
-        public bool ExportWithProducts { get; set; }
-        public bool ExportWithProducts_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.ExportWithTvChannels")]
+        public bool ExportWithTvChannels { get; set; }
+        public bool ExportWithTvChannels_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.AllowAdminsToBuyCallForPriceProducts")]
-        public bool AllowAdminsToBuyCallForPriceProducts { get; set; }
-        public bool AllowAdminsToBuyCallForPriceProducts_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.AllowAdminsToBuyCallForPriceTvChannels")]
+        public bool AllowAdminsToBuyCallForPriceTvChannels { get; set; }
+        public bool AllowAdminsToBuyCallForPriceTvChannels_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.ShowProductThumbnailInOrderDetailsPage")]
-        public bool ShowProductThumbnailInOrderDetailsPage { get; set; }
-        public bool ShowProductThumbnailInOrderDetailsPage_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.ShowTvChannelThumbnailInOrderDetailsPage")]
+        public bool ShowTvChannelThumbnailInOrderDetailsPage { get; set; }
+        public bool ShowTvChannelThumbnailInOrderDetailsPage_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Order.DeleteGiftCardUsageHistory")]
         public bool DeleteGiftCardUsageHistory { get; set; }

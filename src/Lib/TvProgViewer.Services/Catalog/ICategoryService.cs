@@ -47,8 +47,8 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="overridePublished">
         /// null - process "Published" property according to "showHidden" parameter
-        /// true - load only "Published" products
-        /// false - load only "Unpublished" products
+        /// true - load only "Published" tvchannels
+        /// false - load only "Unpublished" tvchannels
         /// </param>
         /// <returns>
         /// A task that represents the asynchronous operation
@@ -147,11 +147,11 @@ namespace TvProgViewer.Services.Catalog
         Task DeleteCategoriesAsync(IList<Category> categories);
 
         /// <summary>
-        /// Deletes a product category mapping
+        /// Deletes a tvchannel category mapping
         /// </summary>
-        /// <param name="productCategory">Product category</param>
+        /// <param name="tvchannelCategory">TvChannel category</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task DeleteProductCategoryAsync(ProductCategory productCategory);
+        Task DeleteTvChannelCategoryAsync(TvChannelCategory tvchannelCategory);
 
         /// <summary>
         /// Get a discount-category mapping record
@@ -179,7 +179,7 @@ namespace TvProgViewer.Services.Catalog
         Task DeleteDiscountCategoryMappingAsync(DiscountCategoryMapping discountCategoryMapping);
 
         /// <summary>
-        /// Gets product category mapping collection
+        /// Gets tvchannel category mapping collection
         /// </summary>
         /// <param name="categoryId">Category identifier</param>
         /// <param name="pageIndex">Page index</param>
@@ -187,45 +187,45 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product a category mapping collection
+        /// The task result contains the tvchannel a category mapping collection
         /// </returns>
-        Task<IPagedList<ProductCategory>> GetProductCategoriesByCategoryIdAsync(int categoryId,
+        Task<IPagedList<TvChannelCategory>> GetTvChannelCategoriesByCategoryIdAsync(int categoryId,
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false);
 
         /// <summary>
-        /// Gets a product category mapping collection
+        /// Gets a tvchannel category mapping collection
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product category mapping collection
+        /// The task result contains the tvchannel category mapping collection
         /// </returns>
-        Task<IList<ProductCategory>> GetProductCategoriesByProductIdAsync(int productId, bool showHidden = false);
+        Task<IList<TvChannelCategory>> GetTvChannelCategoriesByTvChannelIdAsync(int tvchannelId, bool showHidden = false);
 
         /// <summary>
-        /// Gets a product category mapping 
+        /// Gets a tvchannel category mapping 
         /// </summary>
-        /// <param name="productCategoryId">Product category mapping identifier</param>
+        /// <param name="tvchannelCategoryId">TvChannel category mapping identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product category mapping
+        /// The task result contains the tvchannel category mapping
         /// </returns>
-        Task<ProductCategory> GetProductCategoryByIdAsync(int productCategoryId);
+        Task<TvChannelCategory> GetTvChannelCategoryByIdAsync(int tvchannelCategoryId);
 
         /// <summary>
-        /// Inserts a product category mapping
+        /// Inserts a tvchannel category mapping
         /// </summary>
-        /// <param name="productCategory">>Product category mapping</param>
+        /// <param name="tvchannelCategory">>TvChannel category mapping</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task InsertProductCategoryAsync(ProductCategory productCategory);
+        Task InsertTvChannelCategoryAsync(TvChannelCategory tvchannelCategory);
 
         /// <summary>
-        /// Updates the product category mapping 
+        /// Updates the tvchannel category mapping 
         /// </summary>
-        /// <param name="productCategory">>Product category mapping</param>
+        /// <param name="tvchannelCategory">>TvChannel category mapping</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        Task UpdateProductCategoryAsync(ProductCategory productCategory);
+        Task UpdateTvChannelCategoryAsync(TvChannelCategory tvchannelCategory);
 
         /// <summary>
         /// Returns a list of names of not existing categories
@@ -238,14 +238,14 @@ namespace TvProgViewer.Services.Catalog
         Task<string[]> GetNotExistingCategoriesAsync(string[] categoryIdsNames);
 
         /// <summary>
-        /// Get category IDs for products
+        /// Get category IDs for tvchannels
         /// </summary>
-        /// <param name="productIds">Products IDs</param>
+        /// <param name="tvchannelIds">TvChannels IDs</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the category IDs for products
+        /// The task result contains the category IDs for tvchannels
         /// </returns>
-        Task<IDictionary<int, int[]>> GetProductCategoryIdsAsync(int[] productIds);
+        Task<IDictionary<int, int[]>> GetTvChannelCategoryIdsAsync(int[] tvchannelIds);
 
         /// <summary>
         /// Gets categories by identifier
@@ -258,13 +258,13 @@ namespace TvProgViewer.Services.Catalog
         Task<IList<Category>> GetCategoriesByIdsAsync(int[] categoryIds);
 
         /// <summary>
-        /// Returns a ProductCategory that has the specified values
+        /// Returns a TvChannelCategory that has the specified values
         /// </summary>
         /// <param name="source">Source</param>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="categoryId">Category identifier</param>
-        /// <returns>A ProductCategory that has the specified values; otherwise null</returns>
-        ProductCategory FindProductCategory(IList<ProductCategory> source, int productId, int categoryId);
+        /// <returns>A TvChannelCategory that has the specified values; otherwise null</returns>
+        TvChannelCategory FindTvChannelCategory(IList<TvChannelCategory> source, int tvchannelId, int categoryId);
 
         /// <summary>
         /// Get formatted category breadcrumb 

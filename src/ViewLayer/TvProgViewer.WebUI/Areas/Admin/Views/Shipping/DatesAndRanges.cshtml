@@ -35,7 +35,7 @@
                 <div class="cards-group">
                     <tvprog-cards id="datesandranges-cards">
                         <tvprog-card asp-name="datesandranges-dates" asp-icon="far fa-calendar-alt" asp-title="@T("Admin.Configuration.Shipping.DeliveryDates")" asp-hide-block-attribute-name="@hideDatesBlockAttributeName" asp-hide="@hideDatesBlock" asp-advanced="false">@await Html.PartialAsync("_DatesAndRanges.Dates", Model)</tvprog-card>
-                        <tvprog-card asp-name="datesandranges-ranges" asp-icon="fas fa-arrows-alt-h" asp-title="@T("Admin.Configuration.Shipping.ProductAvailabilityRanges")" asp-hide-block-attribute-name="@hideRangesBlockAttributeName" asp-hide="@hideRangesBlock" asp-advanced="false">@await Html.PartialAsync("_DatesAndRanges.Ranges", Model)</tvprog-card>
+                        <tvprog-card asp-name="datesandranges-ranges" asp-icon="fas fa-arrows-alt-h" asp-title="@T("Admin.Configuration.Shipping.TvChannelAvailabilityRanges")" asp-hide-block-attribute-name="@hideRangesBlockAttributeName" asp-hide="@hideRangesBlock" asp-advanced="false">@await Html.PartialAsync("_DatesAndRanges.Ranges", Model)</tvprog-card>
 
                         @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.DatesAndRangesDetailsBlock, additionalData = Model })
                     </tvprog-cards>

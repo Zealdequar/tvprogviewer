@@ -66,9 +66,9 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductAttributeParser _productAttributeParser;
-        private readonly IProductAttributeService _productAttributeService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvchannelAttributeService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IShippingService _shippingService;
         private readonly IShoppingCartModelFactory _shoppingCartModelFactory;
         private readonly IShoppingCartService _shoppingCartService;
@@ -107,9 +107,9 @@ namespace TvProgViewer.WebUI.Controllers
             IPermissionService permissionService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            IProductAttributeParser productAttributeParser,
-            IProductAttributeService productAttributeService,
-            IProductService productService,
+            ITvChannelAttributeParser tvchannelAttributeParser,
+            ITvChannelAttributeService tvchannelAttributeService,
+            ITvChannelService tvchannelService,
             IShippingService shippingService,
             IShoppingCartModelFactory shoppingCartModelFactory,
             IShoppingCartService shoppingCartService,
@@ -144,9 +144,9 @@ namespace TvProgViewer.WebUI.Controllers
             _permissionService = permissionService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _productAttributeParser = productAttributeParser;
-            _productAttributeService = productAttributeService;
-            _productService = productService;
+            _tvchannelAttributeParser = tvchannelAttributeParser;
+            _tvchannelAttributeService = tvchannelAttributeService;
+            _tvchannelService = tvchannelService;
             _shippingService = shippingService;
             _shoppingCartModelFactory = shoppingCartModelFactory;
             _shoppingCartService = shoppingCartService;
@@ -294,7 +294,7 @@ namespace TvProgViewer.WebUI.Controllers
             await _genericAttributeService.SaveAttributeAsync(await _workContext.GetCurrentUserAsync(), TvProgUserDefaults.CheckoutAttributes, attributesXml, store.Id);
         }
 
-        protected virtual async Task SaveItemAsync(ShoppingCartItem updatecartitem, List<string> addToCartWarnings, Product product,
+        protected virtual async Task SaveItemAsync(ShoppingCartItem updatecartitem, List<string> addToCartWarnings, TvChannel tvchannel,
            ShoppingCartType cartType, string attributes, decimal userEnteredPriceConverted, DateTime? rentalStartDate,
            DateTime? rentalEndDate, int quantity)
         {
@@ -304,7 +304,7 @@ namespace TvProgViewer.WebUI.Controllers
             {
                 //add to the cart
                 addToCartWarnings.AddRange(await _shoppingCartService.AddToCartAsync(user,
-                    product, cartType, store.Id,
+                    tvchannel, cartType, store.Id,
                     attributes, userEnteredPriceConverted,
                     rentalStartDate, rentalEndDate, quantity, true));
             }
@@ -313,7 +313,7 @@ namespace TvProgViewer.WebUI.Controllers
                 var cart = await _shoppingCartService.GetShoppingCartAsync(user, updatecartitem.ShoppingCartType, store.Id);
 
                 var otherCartItemWithSameParameters = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(
-                    cart, updatecartitem.ShoppingCartType, product, attributes, userEnteredPriceConverted,
+                    cart, updatecartitem.ShoppingCartType, tvchannel, attributes, userEnteredPriceConverted,
                     rentalStartDate, rentalEndDate);
                 if (otherCartItemWithSameParameters != null &&
                     otherCartItemWithSameParameters.Id == updatecartitem.Id)
@@ -333,8 +333,8 @@ namespace TvProgViewer.WebUI.Controllers
             }
         }
 
-        protected virtual async Task<IActionResult> GetProductToCartDetailsAsync(List<string> addToCartWarnings, ShoppingCartType cartType,
-            Product product)
+        protected virtual async Task<IActionResult> GetTvChannelToCartDetailsAsync(List<string> addToCartWarnings, ShoppingCartType cartType,
+            TvChannel tvchannel)
         {
             if (addToCartWarnings.Any())
             {
@@ -356,9 +356,9 @@ namespace TvProgViewer.WebUI.Controllers
                     {
                         //activity log
                         await _userActivityService.InsertActivityAsync("PublicStore.AddToWishlist",
-                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToWishlist"), product.Name), product);
+                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToWishlist"), tvchannel.Name), tvchannel);
 
-                        if (_shoppingCartSettings.DisplayWishlistAfterAddingProduct)
+                        if (_shoppingCartSettings.DisplayWishlistAfterAddingTvChannel)
                         {
                             //redirect to the wishlist page
                             return Json(new
@@ -378,7 +378,7 @@ namespace TvProgViewer.WebUI.Controllers
                         {
                             success = true,
                             message = string.Format(
-                                await _localizationService.GetResourceAsync("Products.ProductHasBeenAddedToTheWishlist.Link"),
+                                await _localizationService.GetResourceAsync("TvChannels.TvChannelHasBeenAddedToTheWishlist.Link"),
                                 Url.RouteUrl("Wishlist")),
                             updatetopwishlistsectionhtml = updateTopWishlistSectionHtml
                         });
@@ -389,9 +389,9 @@ namespace TvProgViewer.WebUI.Controllers
                     {
                         //activity log
                         await _userActivityService.InsertActivityAsync("PublicStore.AddToShoppingCart",
-                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToShoppingCart"), product.Name), product);
+                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToShoppingCart"), tvchannel.Name), tvchannel);
 
-                        if (_shoppingCartSettings.DisplayCartAfterAddingProduct)
+                        if (_shoppingCartSettings.DisplayCartAfterAddingTvChannel)
                         {
                             //redirect to the shopping cart page
                             return Json(new
@@ -414,7 +414,7 @@ namespace TvProgViewer.WebUI.Controllers
                         return Json(new
                         {
                             success = true,
-                            message = string.Format(await _localizationService.GetResourceAsync("Products.ProductHasBeenAddedToTheCart.Link"),
+                            message = string.Format(await _localizationService.GetResourceAsync("TvChannels.TvChannelHasBeenAddedToTheCart.Link"),
                                 Url.RouteUrl("ShoppingCart")),
                             updatetopcartsectionhtml = updateTopCartSectionHtml,
                             updateflyoutcartsectionhtml = updateFlyoutCartSectionHtml
@@ -512,74 +512,74 @@ namespace TvProgViewer.WebUI.Controllers
             });
         }
 
-        //add product to cart using AJAX
+        //add tvchannel to cart using AJAX
         //currently we use this method on catalog pages (category/manufacturer/etc)
         [HttpPost]
-        public virtual async Task<IActionResult> AddProductToCart_Catalog(int productId, int shoppingCartTypeId,
+        public virtual async Task<IActionResult> AddTvChannelToCart_Catalog(int tvchannelId, int shoppingCartTypeId,
             int quantity, bool forceredirection = false)
         {
             var cartType = (ShoppingCartType)shoppingCartTypeId;
 
-            var product = await _productService.GetProductByIdAsync(productId);
-            if (product == null)
-                //no product found
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
+            if (tvchannel == null)
+                //no tvchannel found
                 return Json(new
                 {
                     success = false,
-                    message = "No product found with the specified ID"
+                    message = "No tvchannel found with the specified ID"
                 });
 
-            var redirectUrl = await _nopUrlHelper.RouteGenericUrlAsync<Product>(new { SeName = await _urlRecordService.GetSeNameAsync(product) });
+            var redirectUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = await _urlRecordService.GetSeNameAsync(tvchannel) });
 
-            //we can add only simple products
-            if (product.ProductType != ProductType.SimpleProduct)
+            //we can add only simple tvchannels
+            if (tvchannel.TvChannelType != TvChannelType.SimpleTvChannel)
                 return Json(new { redirect = redirectUrl });
 
-            //products with "minimum order quantity" more than a specified qty
-            if (product.OrderMinimumQuantity > quantity)
+            //tvchannels with "minimum order quantity" more than a specified qty
+            if (tvchannel.OrderMinimumQuantity > quantity)
             {
-                //we cannot add to the cart such products from category pages
-                //it can confuse users. That's why we redirect users to the product details page
+                //we cannot add to the cart such tvchannels from category pages
+                //it can confuse users. That's why we redirect users to the tvchannel details page
                 return Json(new { redirect = redirectUrl });
             }
 
-            if (product.UserEntersPrice)
+            if (tvchannel.UserEntersPrice)
             {
                 //cannot be added to the cart (requires a user to enter price)
                 return Json(new { redirect = redirectUrl });
             }
 
-            if (product.IsRental)
+            if (tvchannel.IsRental)
             {
-                //rental products require start/end dates to be entered
+                //rental tvchannels require start/end dates to be entered
                 return Json(new { redirect = redirectUrl });
             }
 
-            var allowedQuantities = _productService.ParseAllowedQuantities(product);
+            var allowedQuantities = _tvchannelService.ParseAllowedQuantities(tvchannel);
             if (allowedQuantities.Length > 0)
             {
                 //cannot be added to the cart (requires a user to select a quantity from dropdownlist)
                 return Json(new { redirect = redirectUrl });
             }
 
-            //allow a product to be added to the cart when all attributes are with "read-only checkboxes" type
-            var productAttributes = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
-            if (productAttributes.Any(pam => pam.AttributeControlType != AttributeControlType.ReadonlyCheckboxes))
+            //allow a tvchannel to be added to the cart when all attributes are with "read-only checkboxes" type
+            var tvchannelAttributes = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
+            if (tvchannelAttributes.Any(pam => pam.AttributeControlType != AttributeControlType.ReadonlyCheckboxes))
             {
-                //product has some attributes. let a user see them
+                //tvchannel has some attributes. let a user see them
                 return Json(new { redirect = redirectUrl });
             }
 
             //creating XML for "read-only checkboxes" attributes
-            var attXml = await productAttributes.AggregateAwaitAsync(string.Empty, async (attributesXml, attribute) =>
+            var attXml = await tvchannelAttributes.AggregateAwaitAsync(string.Empty, async (attributesXml, attribute) =>
             {
-                var attributeValues = await _productAttributeService.GetProductAttributeValuesAsync(attribute.Id);
+                var attributeValues = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(attribute.Id);
                 foreach (var selectedAttributeId in attributeValues
                     .Where(v => v.IsPreSelected)
                     .Select(v => v.Id)
                     .ToList())
                 {
-                    attributesXml = _productAttributeParser.AddProductAttribute(attributesXml,
+                    attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
                         attribute, selectedAttributeId.ToString());
                 }
 
@@ -591,12 +591,12 @@ namespace TvProgViewer.WebUI.Controllers
             var user = await _workContext.GetCurrentUserAsync();
             var store = await _storeContext.GetCurrentStoreAsync();
             var cart = await _shoppingCartService.GetShoppingCartAsync(user, cartType, store.Id);
-            var shoppingCartItem = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(cart, cartType, product);
-            //if we already have the same product in the cart, then use the total quantity to validate
+            var shoppingCartItem = await _shoppingCartService.FindShoppingCartItemInTheCartAsync(cart, cartType, tvchannel);
+            //if we already have the same tvchannel in the cart, then use the total quantity to validate
             var quantityToValidate = shoppingCartItem != null ? shoppingCartItem.Quantity + quantity : quantity;
             var addToCartWarnings = await _shoppingCartService
                 .GetShoppingCartItemWarningsAsync(user, cartType,
-                product, store.Id, string.Empty,
+                tvchannel, store.Id, string.Empty,
                 decimal.Zero, null, null, quantityToValidate, false, shoppingCartItem?.Id ?? 0, true, false, false, false);
             if (addToCartWarnings.Any())
             {
@@ -609,9 +609,9 @@ namespace TvProgViewer.WebUI.Controllers
                 });
             }
 
-            //now let's try adding product to the cart (now including product attribute validation, etc)
+            //now let's try adding tvchannel to the cart (now including tvchannel attribute validation, etc)
             addToCartWarnings = await _shoppingCartService.AddToCartAsync(user: user,
-                product: product,
+                tvchannel: tvchannel,
                 shoppingCartType: cartType,
                 storeId: store.Id,
                 attributesXml: attXml,
@@ -619,7 +619,7 @@ namespace TvProgViewer.WebUI.Controllers
             if (addToCartWarnings.Any())
             {
                 //cannot be added to the cart
-                //but we do not display attribute and gift card warnings here. let's do it on the product details page
+                //but we do not display attribute and gift card warnings here. let's do it on the tvchannel details page
                 return Json(new { redirect = redirectUrl });
             }
 
@@ -630,9 +630,9 @@ namespace TvProgViewer.WebUI.Controllers
                     {
                         //activity log
                         await _userActivityService.InsertActivityAsync("PublicStore.AddToWishlist",
-                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToWishlist"), product.Name), product);
+                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToWishlist"), tvchannel.Name), tvchannel);
 
-                        if (_shoppingCartSettings.DisplayWishlistAfterAddingProduct || forceredirection)
+                        if (_shoppingCartSettings.DisplayWishlistAfterAddingTvChannel || forceredirection)
                         {
                             //redirect to the wishlist page
                             return Json(new
@@ -649,7 +649,7 @@ namespace TvProgViewer.WebUI.Controllers
                         return Json(new
                         {
                             success = true,
-                            message = string.Format(await _localizationService.GetResourceAsync("Products.ProductHasBeenAddedToTheWishlist.Link"), Url.RouteUrl("Wishlist")),
+                            message = string.Format(await _localizationService.GetResourceAsync("TvChannels.TvChannelHasBeenAddedToTheWishlist.Link"), Url.RouteUrl("Wishlist")),
                             updatetopwishlistsectionhtml
                         });
                     }
@@ -659,9 +659,9 @@ namespace TvProgViewer.WebUI.Controllers
                     {
                         //activity log
                         await _userActivityService.InsertActivityAsync("PublicStore.AddToShoppingCart",
-                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToShoppingCart"), product.Name), product);
+                            string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToShoppingCart"), tvchannel.Name), tvchannel);
 
-                        if (_shoppingCartSettings.DisplayCartAfterAddingProduct || forceredirection)
+                        if (_shoppingCartSettings.DisplayCartAfterAddingTvChannel || forceredirection)
                         {
                             //redirect to the shopping cart page
                             return Json(new
@@ -683,7 +683,7 @@ namespace TvProgViewer.WebUI.Controllers
                         return Json(new
                         {
                             success = true,
-                            message = string.Format(await _localizationService.GetResourceAsync("Products.ProductHasBeenAddedToTheCart.Link"), Url.RouteUrl("ShoppingCart")),
+                            message = string.Format(await _localizationService.GetResourceAsync("TvChannels.TvChannelHasBeenAddedToTheCart.Link"), Url.RouteUrl("ShoppingCart")),
                             updatetopcartsectionhtml,
                             updateflyoutcartsectionhtml
                         });
@@ -691,13 +691,13 @@ namespace TvProgViewer.WebUI.Controllers
             }
         }
 
-        //add product to cart using AJAX
-        //currently we use this method on the product details pages
+        //add tvchannel to cart using AJAX
+        //currently we use this method on the tvchannel details pages
         [HttpPost]
-        public virtual async Task<IActionResult> AddProductToCart_Details(int productId, int shoppingCartTypeId, IFormCollection form)
+        public virtual async Task<IActionResult> AddTvChannelToCart_Details(int tvchannelId, int shoppingCartTypeId, IFormCollection form)
         {
-            var product = await _productService.GetProductByIdAsync(productId);
-            if (product == null)
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
+            if (tvchannel == null)
             {
                 return Json(new
                 {
@@ -705,20 +705,20 @@ namespace TvProgViewer.WebUI.Controllers
                 });
             }
 
-            //we can add only simple products
-            if (product.ProductType != ProductType.SimpleProduct)
+            //we can add only simple tvchannels
+            if (tvchannel.TvChannelType != TvChannelType.SimpleTvChannel)
             {
                 return Json(new
                 {
                     success = false,
-                    message = "Only simple products could be added to the cart"
+                    message = "Only simple tvchannels could be added to the cart"
                 });
             }
 
             //update existing shopping cart item
             var updatecartitemid = 0;
             foreach (var formKey in form.Keys)
-                if (formKey.Equals($"addtocart_{productId}.UpdatedShoppingCartItemId", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"addtocart_{tvchannelId}.UpdatedShoppingCartItemId", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _ = int.TryParse(form[formKey], out updatecartitemid);
                     break;
@@ -741,13 +741,13 @@ namespace TvProgViewer.WebUI.Controllers
                 //        message = "No shopping cart item found to update"
                 //    });
                 //}
-                //is it this product?
-                if (updatecartitem != null && product.Id != updatecartitem.ProductId)
+                //is it this tvchannel?
+                if (updatecartitem != null && tvchannel.Id != updatecartitem.TvChannelId)
                 {
                     return Json(new
                     {
                         success = false,
-                        message = "This product does not match a passed shopping cart item identifier"
+                        message = "This tvchannel does not match a passed shopping cart item identifier"
                     });
                 }
             }
@@ -755,56 +755,56 @@ namespace TvProgViewer.WebUI.Controllers
             var addToCartWarnings = new List<string>();
 
             //user entered price
-            var userEnteredPriceConverted = await _productAttributeParser.ParseUserEnteredPriceAsync(product, form);
+            var userEnteredPriceConverted = await _tvchannelAttributeParser.ParseUserEnteredPriceAsync(tvchannel, form);
 
             //entered quantity
-            var quantity = _productAttributeParser.ParseEnteredQuantity(product, form);
+            var quantity = _tvchannelAttributeParser.ParseEnteredQuantity(tvchannel, form);
 
-            //product and gift card attributes
-            var attributes = await _productAttributeParser.ParseProductAttributesAsync(product, form, addToCartWarnings);
+            //tvchannel and gift card attributes
+            var attributes = await _tvchannelAttributeParser.ParseTvChannelAttributesAsync(tvchannel, form, addToCartWarnings);
 
             //rental attributes
-            _productAttributeParser.ParseRentalDates(product, form, out var rentalStartDate, out var rentalEndDate);
+            _tvchannelAttributeParser.ParseRentalDates(tvchannel, form, out var rentalStartDate, out var rentalEndDate);
 
             var cartType = updatecartitem == null ? (ShoppingCartType)shoppingCartTypeId :
                 //if the item to update is found, then we ignore the specified "shoppingCartTypeId" parameter
                 updatecartitem.ShoppingCartType;
 
-            await SaveItemAsync(updatecartitem, addToCartWarnings, product, cartType, attributes, userEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
+            await SaveItemAsync(updatecartitem, addToCartWarnings, tvchannel, cartType, attributes, userEnteredPriceConverted, rentalStartDate, rentalEndDate, quantity);
 
             //return result
-            return await GetProductToCartDetailsAsync(addToCartWarnings, cartType, product);
+            return await GetTvChannelToCartDetailsAsync(addToCartWarnings, cartType, tvchannel);
         }
 
-        //handle product attribute selection event. this way we return new price, overridden gtin/sku/mpn
-        //currently we use this method on the product details pages
+        //handle tvchannel attribute selection event. this way we return new price, overridden gtin/sku/mpn
+        //currently we use this method on the tvchannel details pages
         [HttpPost]
-        public virtual async Task<IActionResult> ProductDetails_AttributeChange(int productId, bool validateAttributeConditions,
+        public virtual async Task<IActionResult> TvChannelDetails_AttributeChange(int tvchannelId, bool validateAttributeConditions,
             bool loadPicture, IFormCollection form)
         {
-            var product = await _productService.GetProductByIdAsync(productId);
-            if (product == null)
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
+            if (tvchannel == null)
                 return new NullJsonResult();
 
             var errors = new List<string>();
-            var attributeXml = await _productAttributeParser.ParseProductAttributesAsync(product, form, errors);
+            var attributeXml = await _tvchannelAttributeParser.ParseTvChannelAttributesAsync(tvchannel, form, errors);
 
             //rental attributes
             DateTime? rentalStartDate = null;
             DateTime? rentalEndDate = null;
-            if (product.IsRental)
+            if (tvchannel.IsRental)
             {
-                _productAttributeParser.ParseRentalDates(product, form, out rentalStartDate, out rentalEndDate);
+                _tvchannelAttributeParser.ParseRentalDates(tvchannel, form, out rentalStartDate, out rentalEndDate);
             }
 
             //sku, mpn, gtin
-            var sku = await _productService.FormatSkuAsync(product, attributeXml);
-            var mpn = await _productService.FormatMpnAsync(product, attributeXml);
-            var gtin = await _productService.FormatGtinAsync(product, attributeXml);
+            var sku = await _tvchannelService.FormatSkuAsync(tvchannel, attributeXml);
+            var mpn = await _tvchannelService.FormatMpnAsync(tvchannel, attributeXml);
+            var gtin = await _tvchannelService.FormatGtinAsync(tvchannel, attributeXml);
 
             // calculating weight adjustment
-            var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributeXml);
-            var totalWeight = product.BasepriceAmount;
+            var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributeXml);
+            var totalWeight = tvchannel.BasepriceAmount;
 
             foreach (var attributeValue in attributeValues)
             {
@@ -814,11 +814,11 @@ namespace TvProgViewer.WebUI.Controllers
                         //simple attribute
                         totalWeight += attributeValue.WeightAdjustment;
                         break;
-                    case AttributeValueType.AssociatedToProduct:
-                        //bundled product
-                        var associatedProduct = await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId);
-                        if (associatedProduct != null)
-                            totalWeight += associatedProduct.BasepriceAmount * attributeValue.Quantity;
+                    case AttributeValueType.AssociatedToTvChannel:
+                        //bundled tvchannel
+                        var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
+                        if (associatedTvChannel != null)
+                            totalWeight += associatedTvChannel.BasepriceAmount * attributeValue.Quantity;
                         break;
                 }
             }
@@ -827,36 +827,36 @@ namespace TvProgViewer.WebUI.Controllers
             var price = string.Empty;
             //base price
             var basepricepangv = string.Empty;
-            if (!product.UserEntersPrice && await _permissionService.AuthorizeAsync(StandardPermissionProvider.DisplayPrices))
+            if (!tvchannel.UserEntersPrice && await _permissionService.AuthorizeAsync(StandardPermissionProvider.DisplayPrices))
             {
                 var currentStore = await _storeContext.GetCurrentStoreAsync();
                 var currentUser = await _workContext.GetCurrentUserAsync();
                 
                 //we do not calculate price of "user enters price" option is enabled
-                var (finalPrice, _, _) = await _shoppingCartService.GetUnitPriceAsync(product,
+                var (finalPrice, _, _) = await _shoppingCartService.GetUnitPriceAsync(tvchannel,
                     currentUser,
                     currentStore,
                     ShoppingCartType.ShoppingCart,
                     1, attributeXml, 0,
                     rentalStartDate, rentalEndDate, true);
-                var (finalPriceWithDiscountBase, _) = await _taxService.GetProductPriceAsync(product, finalPrice);
+                var (finalPriceWithDiscountBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, finalPrice);
                 var finalPriceWithDiscount = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(finalPriceWithDiscountBase, await _workContext.GetWorkingCurrencyAsync());
                 price = await _priceFormatter.FormatPriceAsync(finalPriceWithDiscount);
-                basepricepangv = await _priceFormatter.FormatBasePriceAsync(product, finalPriceWithDiscountBase, totalWeight);
+                basepricepangv = await _priceFormatter.FormatBasePriceAsync(tvchannel, finalPriceWithDiscountBase, totalWeight);
             }
 
             //stock
-            var stockAvailability = await _productService.FormatStockMessageAsync(product, attributeXml);
+            var stockAvailability = await _tvchannelService.FormatStockMessageAsync(tvchannel, attributeXml);
 
             //conditional attributes
             var enabledAttributeMappingIds = new List<int>();
             var disabledAttributeMappingIds = new List<int>();
             if (validateAttributeConditions)
             {
-                var attributes = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
+                var attributes = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
                 foreach (var attribute in attributes)
                 {
-                    var conditionMet = await _productAttributeParser.IsConditionMetAsync(attribute, attributeXml);
+                    var conditionMet = await _tvchannelAttributeParser.IsConditionMetAsync(attribute, attributeXml);
                     if (conditionMet.HasValue)
                     {
                         if (conditionMet.Value)
@@ -867,32 +867,32 @@ namespace TvProgViewer.WebUI.Controllers
                 }
             }
 
-            //picture. used when we want to override a default product picture when some attribute is selected
+            //picture. used when we want to override a default tvchannel picture when some attribute is selected
             var pictureFullSizeUrl = string.Empty;
             var pictureDefaultSizeUrl = string.Empty;
             if (loadPicture)
             {
-                //first, try to get product attribute combination picture
-                var pictureId = (await _productAttributeParser.FindProductAttributeCombinationAsync(product, attributeXml))?.PictureId ?? 0;
+                //first, try to get tvchannel attribute combination picture
+                var pictureId = (await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributeXml))?.PictureId ?? 0;
 
                 //then, let's see whether we have attribute values with pictures
                 if (pictureId == 0)
                 {
-                    pictureId = (await _productAttributeParser.ParseProductAttributeValuesAsync(attributeXml))
+                    pictureId = (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributeXml))
                         .FirstOrDefault(attributeValue => attributeValue.PictureId > 0)?.PictureId ?? 0;
                 }
 
                 if (pictureId > 0)
                 {
-                    var productAttributePictureCacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgModelCacheDefaults.ProductAttributePictureModelKey,
+                    var tvchannelAttributePictureCacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgModelCacheDefaults.TvChannelAttributePictureModelKey,
                         pictureId, _webHelper.IsCurrentConnectionSecured(), await _storeContext.GetCurrentStoreAsync());
-                    var pictureModel = await _staticCacheManager.GetAsync(productAttributePictureCacheKey, async () =>
+                    var pictureModel = await _staticCacheManager.GetAsync(tvchannelAttributePictureCacheKey, async () =>
                     {
                         var picture = await _pictureService.GetPictureByIdAsync(pictureId);
                         string fullSizeImageUrl, imageUrl;
 
                         (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
-                        (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.ProductDetailsPictureSize);
+                        (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.TvChannelDetailsPictureSize);
 
                         return picture == null ? new PictureModel() : new PictureModel
                         {
@@ -905,18 +905,18 @@ namespace TvProgViewer.WebUI.Controllers
                 }
             }
 
-            var isFreeShipping = product.IsFreeShipping;
+            var isFreeShipping = tvchannel.IsFreeShipping;
             if (isFreeShipping && !string.IsNullOrEmpty(attributeXml))
             {
-                isFreeShipping = await (await _productAttributeParser.ParseProductAttributeValuesAsync(attributeXml))
-                    .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToProduct)
-                    .SelectAwait(async attributeValue => await _productService.GetProductByIdAsync(attributeValue.AssociatedProductId))
-                    .AllAsync(associatedProduct => associatedProduct == null || !associatedProduct.IsShipEnabled || associatedProduct.IsFreeShipping);
+                isFreeShipping = await (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributeXml))
+                    .Where(attributeValue => attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel)
+                    .SelectAwait(async attributeValue => await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId))
+                    .AllAsync(associatedTvChannel => associatedTvChannel == null || !associatedTvChannel.IsShipEnabled || associatedTvChannel.IsFreeShipping);
             }
 
             return Json(new
             {
-                productId,
+                tvchannelId,
                 gtin,
                 mpn,
                 sku,
@@ -976,9 +976,9 @@ namespace TvProgViewer.WebUI.Controllers
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual async Task<IActionResult> UploadFileProductAttribute(int attributeId)
+        public virtual async Task<IActionResult> UploadFileTvChannelAttribute(int attributeId)
         {
-            var attribute = await _productAttributeService.GetProductAttributeMappingByIdAsync(attributeId);
+            var attribute = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(attributeId);
             if (attribute == null || attribute.AttributeControlType != AttributeControlType.FileUpload)
             {
                 return Json(new
@@ -1167,7 +1167,7 @@ namespace TvProgViewer.WebUI.Controllers
                 .Select(idString => int.TryParse(idString, out var id) ? id : 0)
                 .Distinct().ToList();
 
-            var products = (await _productService.GetProductsByIdsAsync(cart.Select(item => item.ProductId).Distinct().ToArray()))
+            var tvchannels = (await _tvchannelService.GetTvChannelsByIdsAsync(cart.Select(item => item.TvChannelId).Distinct().ToArray()))
                 .ToDictionary(item => item.Id, item => item);
 
             //get order items with changed quantity
@@ -1176,17 +1176,17 @@ namespace TvProgViewer.WebUI.Controllers
                 //try to get a new quantity for the item, set 0 for items to remove
                 NewQuantity = itemIdsToRemove.Contains(item.Id) ? 0 : int.TryParse(form[$"itemquantity{item.Id}"], out var quantity) ? quantity : item.Quantity,
                 Item = item,
-                Product = products.ContainsKey(item.ProductId) ? products[item.ProductId] : null
+                TvChannel = tvchannels.ContainsKey(item.TvChannelId) ? tvchannels[item.TvChannelId] : null
             }).Where(item => item.NewQuantity != item.Item.Quantity);
 
             //order cart items
-            //first should be items with a reduced quantity and that require other products; or items with an increased quantity and are required for other products
+            //first should be items with a reduced quantity and that require other tvchannels; or items with an increased quantity and are required for other tvchannels
             var orderedCart = await itemsWithNewQuantity
                 .OrderByDescendingAwait(async cartItem =>
                     (cartItem.NewQuantity < cartItem.Item.Quantity &&
-                     (cartItem.Product?.RequireOtherProducts ?? false)) ||
-                    (cartItem.NewQuantity > cartItem.Item.Quantity && cartItem.Product != null && (await _shoppingCartService
-                         .GetProductsRequiringProductAsync(cart, cartItem.Product)).Any()))
+                     (cartItem.TvChannel?.RequireOtherTvChannels ?? false)) ||
+                    (cartItem.NewQuantity > cartItem.Item.Quantity && cartItem.TvChannel != null && (await _shoppingCartService
+                         .GetTvChannelsRequiringTvChannelAsync(cart, cartItem.TvChannel)).Any()))
                 .ToListAsync();
 
             //try to update cart items with new quantities and get warnings
@@ -1262,11 +1262,11 @@ namespace TvProgViewer.WebUI.Controllers
             if (anonymousPermissed || !await _userService.IsGuestAsync(user))
                 return RedirectToRoute("Checkout");
 
-            var cartProductIds = cart.Select(ci => ci.ProductId).ToArray();
-            var downloadableProductsRequireRegistration =
-                _userSettings.RequireRegistrationForDownloadableProducts && await _productService.HasAnyDownloadableProductAsync(cartProductIds);
+            var cartTvChannelIds = cart.Select(ci => ci.TvChannelId).ToArray();
+            var downloadableTvChannelsRequireRegistration =
+                _userSettings.RequireRegistrationForDownloadableTvChannels && await _tvchannelService.HasAnyDownloadableTvChannelAsync(cartTvChannelIds);
 
-            if (!_orderSettings.AnonymousCheckoutAllowed || downloadableProductsRequireRegistration)
+            if (!_orderSettings.AnonymousCheckoutAllowed || downloadableTvChannelsRequireRegistration)
             {
                 //verify user identity (it may be facebook login page, or google, or local)
                 return Challenge();
@@ -1382,7 +1382,7 @@ namespace TvProgViewer.WebUI.Controllers
             }
             else
             {
-                model.GiftCardBox.Message = await _localizationService.GetResourceAsync("ShoppingCart.GiftCardCouponCode.DontWorkWithAutoshipProducts");
+                model.GiftCardBox.Message = await _localizationService.GetResourceAsync("ShoppingCart.GiftCardCouponCode.DontWorkWithAutoshipTvChannels");
                 model.GiftCardBox.IsApplied = false;
             }
 
@@ -1586,10 +1586,10 @@ namespace TvProgViewer.WebUI.Controllers
             {
                 if (allIdsToAdd.Contains(sci.Id))
                 {
-                    var product = await _productService.GetProductByIdAsync(sci.ProductId);
+                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
                     var warnings = await _shoppingCartService.AddToCartAsync(user,
-                        product, ShoppingCartType.ShoppingCart,
+                        tvchannel, ShoppingCartType.ShoppingCart,
                         store.Id,
                         sci.AttributesXml, sci.UserEnteredPrice,
                         sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, true);

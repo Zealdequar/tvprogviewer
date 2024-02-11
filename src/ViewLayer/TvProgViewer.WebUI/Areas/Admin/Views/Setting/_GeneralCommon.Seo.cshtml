@@ -23,12 +23,12 @@
         </div>
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="SeoSettings.GenerateProductMetaDescription_OverrideForStore" asp-input="SeoSettings.GenerateProductMetaDescription" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="SeoSettings.GenerateProductMetaDescription" />
+                <tvprog-override-store-checkbox asp-for="SeoSettings.GenerateTvChannelMetaDescription_OverrideForStore" asp-input="SeoSettings.GenerateTvChannelMetaDescription" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="SeoSettings.GenerateTvChannelMetaDescription" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="SeoSettings.GenerateProductMetaDescription" />
-                <span asp-validation-for="SeoSettings.GenerateProductMetaDescription"></span>
+                <tvprog-editor asp-for="SeoSettings.GenerateTvChannelMetaDescription" />
+                <span asp-validation-for="SeoSettings.GenerateTvChannelMetaDescription"></span>
             </div>
         </div>
         <div class="form-group row advanced-setting">

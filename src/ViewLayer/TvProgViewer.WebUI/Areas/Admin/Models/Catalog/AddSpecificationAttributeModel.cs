@@ -16,7 +16,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
         {
             AvailableOptions = new List<SelectListItem>();
             AvailableAttributes = new List<SelectListItem>();
-            ShowOnProductPage = true;
+            ShowOnTvChannelPage = true;
             AttributeName = string.Empty;
             AttributeTypeName = string.Empty;
             Value = string.Empty;
@@ -32,34 +32,34 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 
         public int AttributeTypeId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.AttributeType")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.AttributeType")]
         public string AttributeTypeName { get; set; }
 
         public int AttributeId { get; set; }
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         public IList<SelectListItem> AvailableAttributes { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.SpecificationAttribute")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.SpecificationAttribute")]
         public string AttributeName { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.CustomValue")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.CustomValue")]
         public string ValueRaw { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.CustomValue")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.CustomValue")]
         public string Value { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.AllowFiltering")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.AllowFiltering")]
         public bool AllowFiltering { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.ShowOnProductPage")]
-        public bool ShowOnProductPage { get; set; }
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.ShowOnTvChannelPage")]
+        public bool ShowOnTvChannelPage { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.DisplayOrder")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.DisplayOrder")]
         public int DisplayOrder { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.SpecificationAttributes.Fields.SpecificationAttributeOption")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.SpecificationAttributes.Fields.SpecificationAttributeOption")]
         public int SpecificationAttributeOptionId { get; set; }
 
         public IList<SelectListItem> AvailableOptions { get; set; }

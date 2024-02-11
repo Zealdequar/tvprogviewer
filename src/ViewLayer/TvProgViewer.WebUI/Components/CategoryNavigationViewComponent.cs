@@ -14,9 +14,9 @@ namespace TvProgViewer.WebUI.Components
             _catalogModelFactory = catalogModelFactory;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int currentCategoryId, int currentProductId)
+        public async Task<IViewComponentResult> InvokeAsync(int currentCategoryId, int currentTvChannelId)
         {
-            var model = await _catalogModelFactory.PrepareCategoryNavigationModelAsync(currentCategoryId, currentProductId);
+            var model = await _catalogModelFactory.PrepareCategoryNavigationModelAsync(currentCategoryId, currentTvChannelId);
             return View(model);
         }
     }

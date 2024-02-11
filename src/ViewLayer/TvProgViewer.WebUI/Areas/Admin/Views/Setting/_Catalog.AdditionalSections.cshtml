@@ -3,12 +3,12 @@
 <div class="card-body">
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="RemoveRequiredProducts_OverrideForStore" asp-input="RemoveRequiredProducts" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="RemoveRequiredProducts" />
+            <tvprog-override-store-checkbox asp-for="RemoveRequiredTvChannels_OverrideForStore" asp-input="RemoveRequiredTvChannels" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="RemoveRequiredTvChannels" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="RemoveRequiredProducts" />
-            <span asp-validation-for="RemoveRequiredProducts"></span>
+            <tvprog-editor asp-for="RemoveRequiredTvChannels" />
+            <span asp-validation-for="RemoveRequiredTvChannels"></span>
         </div>
     </div>
     <div class="form-group row">
@@ -35,91 +35,91 @@
     </tvprog-nested-setting>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="ProductsAlsoPurchasedEnabled_OverrideForStore" asp-input="ProductsAlsoPurchasedEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="ProductsAlsoPurchasedEnabled" />
+            <tvprog-override-store-checkbox asp-for="TvChannelsAlsoPurchasedEnabled_OverrideForStore" asp-input="TvChannelsAlsoPurchasedEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelsAlsoPurchasedEnabled" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="ProductsAlsoPurchasedEnabled" />
-            <span asp-validation-for="ProductsAlsoPurchasedEnabled"></span>
+            <tvprog-editor asp-for="TvChannelsAlsoPurchasedEnabled" />
+            <span asp-validation-for="TvChannelsAlsoPurchasedEnabled"></span>
         </div>
     </div>
-    <tvprog-nested-setting asp-for="ProductsAlsoPurchasedEnabled">
+    <tvprog-nested-setting asp-for="TvChannelsAlsoPurchasedEnabled">
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="ProductsAlsoPurchasedNumber_OverrideForStore" asp-input="ProductsAlsoPurchasedNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="ProductsAlsoPurchasedNumber" />
+                <tvprog-override-store-checkbox asp-for="TvChannelsAlsoPurchasedNumber_OverrideForStore" asp-input="TvChannelsAlsoPurchasedNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="TvChannelsAlsoPurchasedNumber" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="ProductsAlsoPurchasedNumber" />
-                <span asp-validation-for="ProductsAlsoPurchasedNumber"></span>
+                <tvprog-editor asp-for="TvChannelsAlsoPurchasedNumber" />
+                <span asp-validation-for="TvChannelsAlsoPurchasedNumber"></span>
             </div>
         </div>
     </tvprog-nested-setting>
     <div class="form-group row advanced-setting">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="RecentlyViewedProductsEnabled_OverrideForStore" asp-input="RecentlyViewedProductsEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="RecentlyViewedProductsEnabled" />
+            <tvprog-override-store-checkbox asp-for="RecentlyViewedTvChannelsEnabled_OverrideForStore" asp-input="RecentlyViewedTvChannelsEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="RecentlyViewedTvChannelsEnabled" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="RecentlyViewedProductsEnabled" />
-            <span asp-validation-for="RecentlyViewedProductsEnabled"></span>
+            <tvprog-editor asp-for="RecentlyViewedTvChannelsEnabled" />
+            <span asp-validation-for="RecentlyViewedTvChannelsEnabled"></span>
         </div>
     </div>
-    <tvprog-nested-setting asp-for="RecentlyViewedProductsEnabled">
+    <tvprog-nested-setting asp-for="RecentlyViewedTvChannelsEnabled">
         <div class="form-group row advanced-setting">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="RecentlyViewedProductsNumber_OverrideForStore" asp-input="RecentlyViewedProductsNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="RecentlyViewedProductsNumber" />
+                <tvprog-override-store-checkbox asp-for="RecentlyViewedTvChannelsNumber_OverrideForStore" asp-input="RecentlyViewedTvChannelsNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="RecentlyViewedTvChannelsNumber" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="RecentlyViewedProductsNumber" />
-                <span asp-validation-for="RecentlyViewedProductsNumber"></span>
+                <tvprog-editor asp-for="RecentlyViewedTvChannelsNumber" />
+                <span asp-validation-for="RecentlyViewedTvChannelsNumber"></span>
             </div>
         </div>
     </tvprog-nested-setting>
     <div class="form-group row">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="NewProductsEnabled_OverrideForStore" asp-input="NewProductsEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="NewProductsEnabled" />
+            <tvprog-override-store-checkbox asp-for="NewTvChannelsEnabled_OverrideForStore" asp-input="NewTvChannelsEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="NewTvChannelsEnabled" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="NewProductsEnabled" />
-            <span asp-validation-for="NewProductsEnabled"></span>
+            <tvprog-editor asp-for="NewTvChannelsEnabled" />
+            <span asp-validation-for="NewTvChannelsEnabled"></span>
         </div>
     </div>
-    <tvprog-nested-setting asp-for="NewProductsEnabled" disable-auto-generation="true">
-        <div class="form-group row" id="pnlNewProductsAllowUsersToSelectPageSize">
+    <tvprog-nested-setting asp-for="NewTvChannelsEnabled" disable-auto-generation="true">
+        <div class="form-group row" id="pnlNewTvChannelsAllowUsersToSelectPageSize">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="NewProductsAllowUsersToSelectPageSize_OverrideForStore" asp-input="NewProductsAllowUsersToSelectPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="NewProductsAllowUsersToSelectPageSize" />
+                <tvprog-override-store-checkbox asp-for="NewTvChannelsAllowUsersToSelectPageSize_OverrideForStore" asp-input="NewTvChannelsAllowUsersToSelectPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="NewTvChannelsAllowUsersToSelectPageSize" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="NewProductsAllowUsersToSelectPageSize" />
-                <span asp-validation-for="NewProductsAllowUsersToSelectPageSize"></span>
+                <tvprog-editor asp-for="NewTvChannelsAllowUsersToSelectPageSize" />
+                <span asp-validation-for="NewTvChannelsAllowUsersToSelectPageSize"></span>
             </div>
         </div>
-        <tvprog-nested-setting asp-for="NewProductsAllowUsersToSelectPageSize" disable-auto-generation="true">
-            <div class="form-group row" id="pnlNewProductsPageSizeOptions">
+        <tvprog-nested-setting asp-for="NewTvChannelsAllowUsersToSelectPageSize" disable-auto-generation="true">
+            <div class="form-group row" id="pnlNewTvChannelsPageSizeOptions">
                 <div class="col-md-3">
-                    <tvprog-override-store-checkbox asp-for="NewProductsPageSizeOptions_OverrideForStore" asp-input="NewProductsPageSizeOptions" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                    <tvprog-label asp-for="NewProductsPageSizeOptions" />
+                    <tvprog-override-store-checkbox asp-for="NewTvChannelsPageSizeOptions_OverrideForStore" asp-input="NewTvChannelsPageSizeOptions" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                    <tvprog-label asp-for="NewTvChannelsPageSizeOptions" />
                 </div>
                 <div class="col-md-9">
-                    <tvprog-editor asp-for="NewProductsPageSizeOptions" />
-                    <span asp-validation-for="NewProductsPageSizeOptions"></span>
+                    <tvprog-editor asp-for="NewTvChannelsPageSizeOptions" />
+                    <span asp-validation-for="NewTvChannelsPageSizeOptions"></span>
                 </div>
             </div>
         </tvprog-nested-setting>
     </tvprog-nested-setting>
-    <tvprog-nested-setting asp-for="NewProductsEnabled" disable-auto-generation="true">
-        <div class="form-group row" id="pnlNewProductsPageProductsPerPage">
+    <tvprog-nested-setting asp-for="NewTvChannelsEnabled" disable-auto-generation="true">
+        <div class="form-group row" id="pnlNewTvChannelsPageTvChannelsPerPage">
             <div class="col-md-3">
-                <tvprog-override-store-checkbox asp-for="NewProductsPageSize_OverrideForStore" asp-input="NewProductsPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-                <tvprog-label asp-for="NewProductsPageSize" />
+                <tvprog-override-store-checkbox asp-for="NewTvChannelsPageSize_OverrideForStore" asp-input="NewTvChannelsPageSize" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="NewTvChannelsPageSize" />
             </div>
             <div class="col-md-9">
-                <tvprog-editor asp-for="NewProductsPageSize" />
-                <span asp-validation-for="NewProductsPageSize"></span>
+                <tvprog-editor asp-for="NewTvChannelsPageSize" />
+                <span asp-validation-for="NewTvChannelsPageSize"></span>
             </div>
         </div>
     </tvprog-nested-setting>
@@ -137,32 +137,32 @@
 
 <script>
     $(document).ready(function () {
-        $("#@Html.IdFor(model => model.NewProductsEnabled)").click(toggleNewProductsEnabled);
-        toggleNewProductsEnabled();
-        $("#@Html.IdFor(model => model.NewProductsAllowUsersToSelectPageSize)").click(toggleNewProductsPageSize);
-        toggleNewProductsPageSize();
+        $("#@Html.IdFor(model => model.NewTvChannelsEnabled)").click(toggleNewTvChannelsEnabled);
+        toggleNewTvChannelsEnabled();
+        $("#@Html.IdFor(model => model.NewTvChannelsAllowUsersToSelectPageSize)").click(toggleNewTvChannelsPageSize);
+        toggleNewTvChannelsPageSize();
     });
 
-    function toggleNewProductsEnabled() {
-        if ($('#@Html.IdFor(model => model.NewProductsEnabled)').is(':checked')) {
-            $('#pnlNewProductsAllowUsersToSelectPageSize').showElement();
-            toggleNewProductsPageSize();
+    function toggleNewTvChannelsEnabled() {
+        if ($('#@Html.IdFor(model => model.NewTvChannelsEnabled)').is(':checked')) {
+            $('#pnlNewTvChannelsAllowUsersToSelectPageSize').showElement();
+            toggleNewTvChannelsPageSize();
         } else {
-            $('#pnlNewProductsAllowUsersToSelectPageSize').hideElement();
-            $('#pnlNewProductsPageSizeOptions').hideElement();
-            $('#pnlNewProductsPageProductsPerPage').hideElement();
+            $('#pnlNewTvChannelsAllowUsersToSelectPageSize').hideElement();
+            $('#pnlNewTvChannelsPageSizeOptions').hideElement();
+            $('#pnlNewTvChannelsPageTvChannelsPerPage').hideElement();
         }
     }
 
-    function toggleNewProductsPageSize() {
-        if ($('#@Html.IdFor(model => model.NewProductsAllowUsersToSelectPageSize)').is(':checked')) {
-            $('#pnlNewProductsPageProductsPerPage').hideElement();
-            if ($('#@Html.IdFor(model => model.NewProductsEnabled)').is(':checked'))
-                $('#pnlNewProductsPageSizeOptions').showElement();
+    function toggleNewTvChannelsPageSize() {
+        if ($('#@Html.IdFor(model => model.NewTvChannelsAllowUsersToSelectPageSize)').is(':checked')) {
+            $('#pnlNewTvChannelsPageTvChannelsPerPage').hideElement();
+            if ($('#@Html.IdFor(model => model.NewTvChannelsEnabled)').is(':checked'))
+                $('#pnlNewTvChannelsPageSizeOptions').showElement();
         } else {
-            $('#pnlNewProductsPageSizeOptions').hideElement();
-            if ($('#@Html.IdFor(model => model.NewProductsEnabled)').is(':checked'))
-                $('#pnlNewProductsPageProductsPerPage').showElement();
+            $('#pnlNewTvChannelsPageSizeOptions').hideElement();
+            if ($('#@Html.IdFor(model => model.NewTvChannelsEnabled)').is(':checked'))
+                $('#pnlNewTvChannelsPageTvChannelsPerPage').showElement();
         }
     }
 </script>

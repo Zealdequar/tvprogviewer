@@ -15,8 +15,8 @@
     const string hideBillingAndShippingBlockAttributeName = "OrderPage.HideBillingAndShippingBlock";
     var hideBillingAndShippingBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideBillingAndShippingBlockAttributeName);
 
-    const string hideProductsBlockAttributeName = "OrderPage.HideProductsBlock";
-    var hideProductsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideProductsBlockAttributeName);
+    const string hideTvChannelsBlockAttributeName = "OrderPage.HideTvChannelsBlock";
+    var hideTvChannelsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTvChannelsBlockAttributeName);
 
     const string hideNotesBlockAttributeName = "OrderPage.HideNotesBlock";
     var hideNotesBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideNotesBlockAttributeName);
@@ -65,7 +65,7 @@
                     <tvprog-cards id="order-cards">
                         <tvprog-card asp-name="order-info" asp-icon="fas fa-info" asp-title="@T("Admin.Orders.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_OrderDetails.Info", Model)</tvprog-card>
                         <tvprog-card asp-name="order-billing-shipping" asp-icon="fas fa-truck" asp-title="@T("Admin.Orders.BillingShippingInfo")" asp-hide-block-attribute-name="@hideBillingAndShippingBlockAttributeName" asp-hide="@hideBillingAndShippingBlock" asp-advanced="false">@await Html.PartialAsync("_OrderDetails.BillingShipping", Model)</tvprog-card>
-                        <tvprog-card asp-name="order-products" asp-icon="fas fa-th-list" asp-title="@T("Admin.Orders.Products")" asp-hide-block-attribute-name="@hideProductsBlockAttributeName" asp-hide="@hideProductsBlock" asp-advanced="true">@await Html.PartialAsync("_OrderDetails.Products", Model)</tvprog-card>
+                        <tvprog-card asp-name="order-tvchannels" asp-icon="fas fa-th-list" asp-title="@T("Admin.Orders.TvChannels")" asp-hide-block-attribute-name="@hideTvChannelsBlockAttributeName" asp-hide="@hideTvChannelsBlock" asp-advanced="true">@await Html.PartialAsync("_OrderDetails.TvChannels", Model)</tvprog-card>
 
                         @if (!Model.IsLoggedInAsVendor)
                         {

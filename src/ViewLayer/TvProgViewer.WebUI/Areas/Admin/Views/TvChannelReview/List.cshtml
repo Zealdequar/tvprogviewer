@@ -1,0 +1,343 @@
+﻿@using TvProgViewer.Services.Stores
+@model TvChannelReviewSearchModel
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.TvChannelReviews").Text;
+    //active menu item (system name)
+    TvProgHtml.SetActiveMenuItemSystemName("TvChannel reviews");
+}
+
+@{
+    const string hideSearchBlockAttributeName = "TvChannelReviewsPage.HideSearchBlock";
+    var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideSearchBlockAttributeName);
+}
+@inject IStoreService storeService
+
+<div class="content-header clearfix">
+    <h1 class="float-left">
+        @T("Admin.Catalog.TvChannelReviews")
+    </h1>
+    <div class="float-right">
+        @if (!Model.IsLoggedInAsVendor)
+        {
+            //these buttons are not visible to vendors
+            <button type="button" id="approve-selected" class="btn btn-success">
+                <i class="fas fa-check-square"></i>
+                @T("Admin.Catalog.TvChannelReviews.ApproveSelected")
+            </button>
+            <button type="button" id="disapprove-selected" class="btn btn-secondary">
+                <i class="fas fa-minus-square"></i>
+                @T("Admin.Catalog.TvChannelReviews.DisapproveSelected")
+            </button>
+            <button type="button" id="delete-selected" class="btn btn-danger">
+                <i class="far fa-trash-alt"></i>
+                @T("Admin.Catalog.TvChannelReviews.DeleteSelected")
+            </button>
+            <tvprog-action-confirmation asp-button-id="delete-selected" />
+        }
+        @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelReviewListButtons, additionalData = Model })
+    </div>
+</div>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+        <div class="cards-group">
+            <div class="card card-default card-search">
+                <div class="card-body">
+                    <div class="row search-row @(!hideSearchBlock ? "opened" : "")" data-hideAttribute="@hideSearchBlockAttributeName">
+                        <div class="search-text">@T("Admin.Common.Search")</div>
+                        <div class="icon-search"><i class="fas fa-search" aria-hidden="true"></i></div>
+                        <div class="icon-collapse"><i class="far fa-angle-@(!hideSearchBlock ? "up" : "down")" aria-hidden="true"></i></div>
+                    </div>
+                    <div class="search-body @(hideSearchBlock ? "closed" : "")">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="CreatedOnFrom" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-editor asp-for="CreatedOnFrom" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="CreatedOnTo" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-editor asp-for="CreatedOnTo" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="SearchText" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-editor asp-for="SearchText" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="SearchApprovedId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-select asp-for="SearchApprovedId" asp-items="Model.AvailableApprovedOptions" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="SearchTvChannelId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" class="form-control" id="search-tvchannel-name" autocomplete="off" />
+                                        <script>
+                                        $(document).ready(function() {
+                                            $('#search-tvchannel-name').autocomplete({
+                                                delay: 500,
+                                                minLength: 3,
+                                                source: '@Url.Action("SearchAutoComplete", "SearchComplete")',
+                                                select: function(event, ui) {
+                                                    $('#@Html.IdFor(model => model.SearchTvChannelId)')
+                                                        .val(ui.item.tvchannelid);
+                                                    $('#search-tvchannel-friendly-name').text(ui.item.label);
+                                                    $('#search-tvchannel-clear').show();
+                                                    return false;
+                                                }
+                                            });
+                                        });
+                                        </script>
+
+                                        <span id="search-tvchannel-friendly-name"></span>
+                                        <button type="button" id="search-tvchannel-clear" class="btn bg-gray" style="display: none; margin-top: 5px;">@T("Admin.Common.Clear")</button>
+                                        <input asp-for="SearchTvChannelId" autocomplete="off" style="display: none;" />
+
+                                        <script>
+                                        //remove button
+                                        $('#search-tvchannel-clear').click(function() {
+                                            $('#@Html.IdFor(model => model.SearchTvChannelId)').val('0');
+                                            $('#search-tvchannel-friendly-name').text('');
+                                            $('#search-tvchannel-clear').hide();
+                                            return false;
+                                        });
+                                        </script>
+                                    </div>
+                                </div>
+                                <div class="form-group row" @(Model.HideStoresList ? Html.Raw("style=\"display:none\"") : null)>
+                                    <div class="col-md-4">
+                                        <tvprog-label asp-for="SearchStoreId" />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <tvprog-select asp-for="SearchStoreId" asp-items="Model.AvailableStores" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="text-center col-12">
+                                <button type="button" id="search-tvchannelreviews" class="btn btn-primary btn-search">
+                                    <i class="fas fa-search"></i>
+                                    @T("Admin.Common.Search")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-default">
+                <div class="card-body">
+                    <tvprog-doc-reference asp-string-resource="@T("Admin.Documentation.Reference.TvChannelReviews", Docs.TvChannelReviews + Utm.OnAdmin)" />
+
+                    @await Html.PartialAsync("Table", new DataTablesModel
+                    {
+                        Name = "tvchannelreviews-grid",
+                        UrlRead = new DataUrl("List", "TvChannelReview", null),
+                        SearchButtonId = "search-tvchannelreviews",
+                        Length = Model.PageSize,
+                        LengthMenu = Model.AvailablePageSizes,
+                        Filters = new List<FilterParameter>
+                        {
+                            new FilterParameter(nameof(Model.CreatedOnFrom)),
+                            new FilterParameter(nameof(Model.CreatedOnTo)),
+                            new FilterParameter(nameof(Model.SearchText)),
+                            new FilterParameter(nameof(Model.SearchStoreId)),
+                            new FilterParameter(nameof(Model.SearchTvChannelId)),
+                            new FilterParameter(nameof(Model.SearchApprovedId))
+                        },
+                        ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(TvChannelReviewModel.Id))
+                            {
+                                IsMasterCheckBox = true,
+                                Render = new RenderCheckBox("checkbox_tvchannel_reviews"),
+                                Visible = !Model.IsLoggedInAsVendor,
+                                ClassName =  TvProgColumnClassDefaults.CenterAll,
+                                Width = "50"
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.StoreName))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.Store").Text,
+                                Visible = (await storeService.GetAllStoresAsync()).Count > 1 ? true : false,
+                                Width = "150"
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.TvChannelName))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.TvChannel").Text,
+                                Width = "200",
+                                Render = new RenderLink(new DataUrl("~/Admin/TvChannel/Edit", nameof(TvChannelReviewModel.TvChannelId)))
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.UserInfo))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.User").Text,
+                                Width = "200",
+                                Render = new RenderLink(new DataUrl("~/Admin/User/Edit", nameof(TvChannelReviewModel.UserId)))
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.Title))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.Title").Text,
+                                Width = "200"
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.ReviewText))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.ReviewText").Text,
+                                Encode = false
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.ReplyText))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.ReplyText").Text,
+                                Encode = false
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.Rating))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.Rating").Text,
+                                Width = "50",
+                                ClassName =  TvProgColumnClassDefaults.CenterAll
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.IsApproved))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.IsApproved").Text,
+                                Width = "100",
+                                ClassName =  TvProgColumnClassDefaults.CenterAll,
+                                Render = new RenderBoolean()
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.CreatedOn))
+                            {
+                                Title = T("Admin.Catalog.TvChannelReviews.Fields.CreatedOn").Text,
+                                Width = "150",
+                                Render = new RenderDate()
+                            },
+                            new ColumnProperty(nameof(TvChannelReviewModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "100",
+                                ClassName =  TvProgColumnClassDefaults.Button,
+                                Render = new RenderButtonEdit(new DataUrl("Edit"))
+                            }
+                        }
+                    })
+
+                    <script>
+                        $(document).ready(function() {
+
+                            //"approve selected" button
+                            $('#approve-selected').click(function(e) {
+                                e.preventDefault();
+
+                                var postData = {
+                                    selectedIds: selectedIds
+                                };
+                                addAntiForgeryToken(postData);
+
+                                $.ajax({
+                                    cache: false,
+                                    type: "POST",
+                                    url: "@(Url.Action("ApproveSelected", "TvChannelReview"))",
+                                    data: postData,
+                                    traditional: true,
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        showAlert('approveSelectedFailed', errorThrown);
+                                    },
+                                    complete: function (jqXHR, textStatus) {
+                                        if (jqXHR.status === 204)
+                                        {
+                                            showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
+                                            return;
+                                        }
+                                        updateTable('#tvchannelreviews-grid');
+                                    }
+                                });
+                                return false;
+                            });
+
+                            //"disapprove selected" button
+                            $('#disapprove-selected').click(function(e) {
+                                e.preventDefault();
+
+                                var postData = {
+                                    selectedIds: selectedIds
+                                };
+                                addAntiForgeryToken(postData);
+
+                                $.ajax({
+                                    cache: false,
+                                    type: "POST",
+                                    url: "@(Url.Action("DisapproveSelected", "TvChannelReview"))",
+                                    data: postData,
+                                    traditional: true,
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        showAlert('disapproveSelectedFailed', errorThrown);
+                                    },
+                                    complete: function (jqXHR, textStatus) {
+                                        if (jqXHR.status === 204)
+                                        {
+                                            showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
+                                            return;
+                                        }
+                                        updateTable('#tvchannelreviews-grid');
+                                    }
+                                });
+                                return false;
+                            });
+
+                            //"delete selected" button
+                            $("#delete-selected-action-confirmation-submit-button").bind("click", function () {
+                                var postData = {
+                                    selectedIds: selectedIds
+                                };
+                                addAntiForgeryToken(postData);
+                                $.ajax({
+                                    cache: false,
+                                    type: "POST",
+                                    url: "@(Url.Action("DeleteSelected", "TvChannelReview"))",
+                                    data: postData,
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        showAlert('deleteSelectedFailed', errorThrown);
+                                    },
+                                    complete: function (jqXHR, textStatus) {
+                                        if (jqXHR.status === 204)
+                                        {
+                                            showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
+                                            return;
+                                        }
+                                        updateTable('#tvchannelreviews-grid');
+                                    }
+                                });
+                                $('#delete-selected-action-confirmation').modal('toggle');
+                                return false;
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</section>
+<tvprog-alert asp-alert-id="approveSelectedFailed" />
+<tvprog-alert asp-alert-id="disapproveSelectedFailed" />
+<tvprog-alert asp-alert-id="deleteSelectedFailed" />
+<tvprog-alert asp-alert-id="nothingSelectedAlert" />

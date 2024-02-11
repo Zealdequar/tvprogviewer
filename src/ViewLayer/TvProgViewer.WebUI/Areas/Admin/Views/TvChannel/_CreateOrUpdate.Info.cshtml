@@ -1,0 +1,690 @@
+﻿@model TvChannelModel
+
+@inject IStoreService storeService
+
+@using TvProgViewer.Core.Domain.Catalog;
+@using TvProgViewer.Services
+@using TvProgViewer.Services.Stores
+
+@{
+    var stores = await storeService.GetAllStoresAsync();
+}
+    @* resources for tvchannel tags input *@
+    <script src="~/lib_npm/jquery-tageditor/jquery.caret.min.js"></script>
+    <script src="~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js"></script>
+    <link rel="stylesheet" href="~/lib_npm/jquery-tageditor/jquery.tag-editor.css">
+
+
+    <script asp-location="Footer">
+    $(document).ready(function() {
+        @if (!Model.IsLoggedInAsVendor)
+        {
+            <text>
+            $("#@Html.IdFor(model => model.ShowOnHomepage)").click(toggleShowOnHomepage);
+            toggleShowOnHomepage();
+            </text>
+        }
+        $("#@Html.IdFor(model => model.TvChannelTypeId)").change(toggleTvChannelType);
+        toggleTvChannelType();
+    });
+
+    function toggleShowOnHomepage() {
+        if ($('#@Html.IdFor(model => model.ShowOnHomepage)').is(':checked')) {
+            $('#pnlDisplayOrder').showElement();
+        } else {
+            $('#pnlDisplayOrder').hideElement();
+        }
+    }
+
+    function toggleTvChannelType() {
+        var simpleTvChannelId = "@((int)TvChannelType.SimpleTvChannel)";
+        var groupedTvChannelId = "@((int)TvChannelType.GroupedTvChannel)";
+
+
+        var selectedTvChannelTypeId = $("#@Html.IdFor(model => model.TvChannelTypeId)").val();
+        if (!selectedTvChannelTypeId || selectedTvChannelTypeId == simpleTvChannelId) {
+            $('#group-required-other-tvchannels').showElement();
+            $('#group-visible-individually').showElement();
+            $('#group-associated-tvchannels').hideElement();
+
+            $('[data-card-name=tvchannel-price]').showElement();
+            $('[data-card-name=tvchannel-shipping]').showElement();
+            $('[data-card-name=tvchannel-inventory]').showElement();
+            $('[data-card-name=tvchannel-giftcard]').showElement();
+            $('[data-card-name=tvchannel-downloadable]').showElement();
+            $('[data-card-name=tvchannel-rental]').showElement();
+            $('[data-card-name=tvchannel-recurring]').showElement();
+        } else if (selectedTvChannelTypeId == groupedTvChannelId) {
+            $('#group-required-other-tvchannels').hideElement();
+            $('#group-visible-individually').hideElement();
+            $('#group-associated-tvchannels').showElement();
+            updateTableWidth('#associatedtvchannels-grid');
+
+            $('#@Html.IdFor(model => model.VisibleIndividually)').prop('checked', true);
+            
+
+            $('[data-card-name=tvchannel-price]').hideElement();
+            $('[data-card-name=tvchannel-shipping]').hideElement();
+            $('[data-card-name=tvchannel-inventory]').hideElement();
+            $('[data-card-name=tvchannel-giftcard]').hideElement();
+            $('[data-card-name=tvchannel-downloadable]').hideElement();
+            $('[data-card-name=tvchannel-rental]').hideElement();
+            $('[data-card-name=tvchannel-recurring]').hideElement();
+        }
+
+        //templates
+        var tvchannelTypeSupportedValues = {};
+        @foreach (var kvp in Model.TvChannelsTypesSupportedByTvChannelTemplates)
+        {
+            <text>tvchannelTypeSupportedValues['@(kvp.Key)'] = {};</text>
+            foreach (var item in kvp.Value)
+            {
+                <text>tvchannelTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
+            }
+        }
+        var tvchannelTemplateDropddown = $("#@Html.IdFor(model => model.TvChannelTemplateId)");
+        var tvchannelTemplateSelectedValue = tvchannelTemplateDropddown.val();
+        tvchannelTemplateDropddown.empty();
+        for (var name in tvchannelTypeSupportedValues[selectedTvChannelTypeId]) {
+            tvchannelTemplateDropddown.append($("<option></option>").attr("value", name).text(tvchannelTypeSupportedValues[selectedTvChannelTypeId][name]));
+        }
+        //previously selected value
+        $('#@Html.IdFor(model => model.TvChannelTemplateId) option').each(function(){
+            if (this.value == tvchannelTemplateSelectedValue) {
+                tvchannelTemplateDropddown.val(tvchannelTemplateSelectedValue);
+            }
+        });
+
+        if ($('#@Html.IdFor(model => model.TvChannelTemplateId) option').length > 1) {
+            $('#pnlTvChannelTemplateId').showElement();
+        } else {
+            $('#pnlTvChannelTemplateId').hideElement();
+        }
+    }
+
+    //tags
+    $(document).ready(function() {
+        @Html.Raw(Model.InitialTvChannelTags)
+        $("#@Html.IdFor(model => model.TvChannelTags)").tagEditor({
+            autocomplete: {
+                delay: 0,
+                position: { collision: 'flip' },
+                source: initialTvChannelTags
+            },
+            delimiter: ',',
+            placeholder: '@T("Admin.Catalog.TvChannels.Fields.TvChannelTags.Placeholder")'
+        });
+    });
+
+    //required tvchannel friendly names
+    $(document).ready(function() {
+        loadRequiredTvChannelFriendlyNames();
+    });
+
+    $(document).ready(function() {
+        $('#@Html.IdFor(model => model.RequiredTvChannelIds)')
+            .data('timeout', null)
+            .keyup(function() {
+                clearTimeout($(this).data('timeout'));
+                //one second timeout
+                $(this).data('timeout', setTimeout(loadRequiredTvChannelFriendlyNames, 1000));
+            });
+    });
+
+    function loadRequiredTvChannelFriendlyNames() {
+        var inputValue = $('#@Html.IdFor(model => model.RequiredTvChannelIds)').val();
+        if (inputValue) {
+            //load friendly names
+            $('#required-tvchannels-check-progress').show();
+
+            var postData = {
+                tvchannelIds: inputValue
+            };
+            addAntiForgeryToken(postData);
+
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "@Url.Action("LoadTvChannelFriendlyNames", "TvChannel")",
+                data: postData,
+                dataType: "json",
+                success: function (data, textStatus, jqXHR) {
+                    $('#required-tvchannel-names').text(data.Text);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    $('#required-tvchannel-names').text('');
+                },
+                complete: function (jqXHR, textStatus) {
+                    $('#required-tvchannels-check-progress').hide();
+                }
+            });
+        } else {
+            $('#required-tvchannel-names').text('');
+        }
+    }
+
+    $(document).ready(function () {
+        if ('@Model.Sku') {
+            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvchannelId: @Model.Id, sku: '@Model.Sku' });
+        }
+        $('#@Html.IdFor(model => model.Sku)').on('input change', function () {
+            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvchannelId: @Model.Id, sku: $(this).val() });
+        });
+    });
+    </script>
+
+
+<div class="card-body">
+    <div id="tvchannel-details-area">
+        @(await Html.LocalizedEditorAsync<TvChannelModel, TvChannelLocalizedModel>("tvchannel-info-localized",
+    @<div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <tvprog-label asp-for="@Model.Locales[item].Name" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="@Model.Locales[item].Name" />
+                <span asp-validation-for="@Model.Locales[item].Name"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <tvprog-label asp-for="@Model.Locales[item].ShortDescription" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-textarea asp-for="@Model.Locales[item].ShortDescription" />
+                <span asp-validation-for="@Model.Locales[item].ShortDescription"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <tvprog-label asp-for="@Model.Locales[item].FullDescription" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="@Model.Locales[item].FullDescription" asp-template="RichEditor" />
+                <span asp-validation-for="@Model.Locales[item].FullDescription"></span>
+            </div>
+        </div>
+        <input type="hidden" asp-for="@Model.Locales[item].LanguageId" />
+    </div>
+    ,
+    @<div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <tvprog-label asp-for="Name" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="Name" asp-required="true" />
+                <span asp-validation-for="Name"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <tvprog-label asp-for="ShortDescription" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-textarea asp-for="ShortDescription" />
+                <span asp-validation-for="ShortDescription"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <tvprog-label asp-for="FullDescription" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="FullDescription" asp-template="RichEditor" />
+                <span asp-validation-for="FullDescription"></span>
+            </div>
+        </div>
+        </div>))
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <tvprog-label asp-for="Sku" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="Sku" />
+                <span asp-validation-for="Sku"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-label asp-for="SelectedCategoryIds" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="SelectedCategoryIds" asp-items="Model.AvailableCategories" asp-multiple="true" />
+            <script>
+                $(document).ready(function() {
+					var categoryIdsInput = $('#@Html.IdFor(model => model.SelectedCategoryIds)').data("kendoMultiSelect");
+					categoryIdsInput.setOptions({
+                    autoClose: false,
+                    filter: "contains"
+                    });
+
+				@if (Model.AvailableCategories.Count == 0)
+                {
+                    <text>
+                        categoryIdsInput.setOptions({
+                            enable: false,
+                            placeholder: '@T("Admin.Catalog.TvChannels.Fields.Categories.NoCategoriesAvailable")'
+                        });
+                        categoryIdsInput._placeholder();
+                        categoryIdsInput._enable();
+                    </text>
+                }
+            });
+            </script>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.Manufacturers ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="SelectedManufacturerIds" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="SelectedManufacturerIds" asp-items="Model.AvailableManufacturers" asp-multiple="true" />
+            <script>
+                $(document).ready(function() {
+                var manufacturersIdsInput = $('#@Html.IdFor(model => model.SelectedManufacturerIds)').data("kendoMultiSelect");
+                manufacturersIdsInput.setOptions({
+                    autoClose: false,
+                    filter: "contains"
+                });
+
+				@if (Model.AvailableManufacturers.Count == 0)
+                {
+                    <text>
+                        manufacturersIdsInput.setOptions({
+                            enable: false,
+                            placeholder: '@T("Admin.Catalog.TvChannels.Fields.Manufacturers.NoManufacturersAvailable")'
+                        });
+                        manufacturersIdsInput._placeholder();
+                        manufacturersIdsInput._enable();
+                        </text>
+                }
+            });
+            </script>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.Published ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="Published" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="Published" />
+            <span asp-validation-for="Published"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.TvChannelTags ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="TvChannelTags" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelTags" />
+            <span asp-validation-for="TvChannelTags"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.GTIN ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="Gtin" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="Gtin" />
+            <span asp-validation-for="Gtin"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.ManufacturerPartNumber ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="ManufacturerPartNumber" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="ManufacturerPartNumber" />
+            <span asp-validation-for="ManufacturerPartNumber"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.ShowOnHomepage ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+        <div class="col-md-3">
+            <tvprog-label asp-for="ShowOnHomepage" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="ShowOnHomepage" />
+            <span asp-validation-for="ShowOnHomepage"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="ShowOnHomepage" disable-auto-generation="true">
+        <div class="form-group row @(Model.TvChannelEditorSettingsModel.ShowOnHomepage  ? null : "advanced-setting")" id="pnlDisplayOrder" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+            <div class="col-md-3">
+                <tvprog-label asp-for="DisplayOrder" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="DisplayOrder" />
+                <span asp-validation-for="DisplayOrder"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.TvChannelType ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="TvChannelTypeId" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="TvChannelTypeId" asp-items="@await (((TvChannelType)Model.TvChannelTypeId).ToSelectListAsync())" />
+            <span asp-validation-for="TvChannelTypeId"></span>
+        </div>
+    </div>
+    @if (Model.Id > 0 && Model.AssociatedToTvChannelId > 0)
+    {
+        <div class="form-group row @(Model.TvChannelEditorSettingsModel.TvChannelType ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <tvprog-label asp-for="AssociatedToTvChannelId" />
+            </div>
+            <div class="col-md-9">
+                <a asp-controller="TvChannel" asp-action="Edit" asp-route-id="@Model.AssociatedToTvChannelId">@Model.AssociatedToTvChannelName</a>
+            </div>
+        </div>
+    }
+    <div class="card card-default margin-bottom" id="group-associated-tvchannels">
+        <div class="card-header">
+            @T("Admin.Catalog.TvChannels.AssociatedTvChannels")
+        </div>
+        @if (Model.Id > 0)
+        {
+            <div class="card-body">                
+            <ul class="common-list">
+                <li>
+                    @T("Admin.Catalog.TvChannels.AssociatedTvChannels.Note1")
+                </li>
+                <li>
+                    @T("Admin.Catalog.TvChannels.AssociatedTvChannels.Note2")
+                </li>
+            </ul>
+
+            @await Html.PartialAsync("Table", new DataTablesModel
+            {
+                Name = "associatedtvchannels-grid",
+                UrlRead = new DataUrl("AssociatedTvChannelList", "TvChannel", new RouteValueDictionary { [nameof(Model.AssociatedTvChannelSearchModel.TvChannelId)] = Model.AssociatedTvChannelSearchModel.TvChannelId }),
+                UrlDelete = new DataUrl("AssociatedTvChannelDelete", "TvChannel", null),
+                UrlUpdate = new DataUrl("AssociatedTvChannelUpdate", "TvChannel", null),
+                Length = Model.AssociatedTvChannelSearchModel.PageSize,
+                LengthMenu = Model.AssociatedTvChannelSearchModel.AvailablePageSizes,
+                ColumnCollection = new List<ColumnProperty>
+                    {
+					new ColumnProperty(nameof(AssociatedTvChannelModel.TvChannelName))
+                        {
+                            Title = T("Admin.Catalog.TvChannels.AssociatedTvChannels.Fields.TvChannel").Text
+                        },
+                        new ColumnProperty(nameof(AssociatedTvChannelModel.DisplayOrder))
+                        {
+                            Title = T("Admin.Catalog.TvChannels.AssociatedTvChannels.Fields.DisplayOrder").Text,
+                            Width = "150",
+                            ClassName = TvProgColumnClassDefaults.CenterAll,
+                            Editable = true,
+                            EditType = EditType.Number
+                        },
+                        new ColumnProperty(nameof(AssociatedTvChannelModel.Id))
+                        {
+                            Title = T("Admin.Common.View").Text,
+                            Width = "150",
+                            ClassName = TvProgColumnClassDefaults.Button,
+                            Render = new RenderButtonView(new DataUrl("~/Admin/TvChannel/Edit/", nameof(AssociatedTvChannelModel.Id)))
+                        },
+                        new ColumnProperty(nameof(AssociatedTvChannelModel.Id))
+                        {
+                            Title = T("Admin.Common.Edit").Text,
+                            Width = "200",
+                            ClassName =  TvProgColumnClassDefaults.Button,
+                            Render = new RenderButtonsInlineEdit()
+                        },
+                        new ColumnProperty(nameof(AssociatedTvChannelModel.Id))
+                        {
+                            Title = T("Admin.Common.Delete").Text,
+                            Width = "100",
+                            Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                            ClassName = TvProgColumnClassDefaults.Button
+                        }                               
+                    }
+                })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewAssociatedTvChannel" onclick="javascript:OpenWindow('@(Url.Action("AssociatedTvChannelAddPopup", "TvChannel", new {tvchannelId = Model.Id, btnId = "btnRefreshAssociatedTvChannels", formId = "tvchannel-form"}))', 800, 800, true); return false;" class="btn btn-primary">
+                    @T("Admin.Catalog.TvChannels.AssociatedTvChannels.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshAssociatedTvChannels" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshAssociatedTvChannels').click(function () {
+                            //refresh grid
+                            updateTable('#associatedtvchannels-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        }
+        else
+        {
+            <div class="card-body">
+                @T("Admin.Catalog.TvChannels.AssociatedTvChannels.SaveBeforeEdit")
+            </div>
+        }
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.TvChannelTemplate ? null : "advanced-setting")" @(Model.AvailableTvChannelTemplates.SelectionIsNotPossible() ? Html.Raw("style=\"display:none\"") : null) id="nnpnlTvChannelTemplateId">
+        <div class="col-md-3">
+            <tvprog-label asp-for="TvChannelTemplateId" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="TvChannelTemplateId" asp-items="Model.AvailableTvChannelTemplates" />
+            <span asp-validation-for="TvChannelTemplateId"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.VisibleIndividually ? null : "advanced-setting")" id="group-visible-individually">
+        <div class="col-md-3">
+            <tvprog-label asp-for="VisibleIndividually" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="VisibleIndividually" />
+            <span asp-validation-for="VisibleIndividually"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.ACL ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="SelectedUserRoleIds" />
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-4">
+                    <tvprog-select asp-for="SelectedUserRoleIds" asp-items="Model.AvailableUserRoles" asp-multiple="true"/>
+                    <script>
+                    $(document).ready(function() {
+                        var rolesIdsInput = $('#@Html.IdFor(model => model.SelectedUserRoleIds)')
+                            .data("kendoMultiSelect");
+                        rolesIdsInput.setOptions({
+                            autoClose: false,
+                            filter: "contains"
+                        });
+
+                        @if (Model.AvailableUserRoles.Count == 0)
+                        {
+                            <text>
+                                rolesIdsInput.setOptions({
+                                    enable: false,
+                                    placeholder: 'No user roles available'
+                                });
+                                rolesIdsInput._placeholder();
+                                rolesIdsInput._enable();
+                            </text>
+                        }
+                    });
+                    </script>
+                </div>
+                <div class="col-md-8">
+                    @await Component.InvokeAsync(typeof(AclDisabledWarningViewComponent))
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.Stores ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="SelectedStoreIds" />
+        </div>
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-4">
+                    <tvprog-select asp-for="SelectedStoreIds" asp-items="Model.AvailableStores" asp-multiple="true" />
+                    <script>
+                    $(document).ready(function() {
+                        var storesIdsInput = $('#@Html.IdFor(model => model.SelectedStoreIds)').data("kendoMultiSelect");
+                        storesIdsInput.setOptions({
+                            autoClose: false,
+                            filter: "contains"
+                        });
+
+                        @if (Model.AvailableStores.Count == 0)
+                        {
+                            <text>
+                                storesIdsInput.setOptions({
+                                    enable: false,
+                                    placeholder: 'No stores available'
+                                });
+                                storesIdsInput._placeholder();
+                                storesIdsInput._enable();
+                            </text>
+                        }
+                    });
+                    </script>
+                </div>
+                <div class="col-md-8">
+                    @await Component.InvokeAsync(typeof(MultistoreDisabledWarningViewComponent))
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.Vendor ? null : "advanced-setting")" @(Model.IsLoggedInAsVendor ? Html.Raw("style='display: none;'") : null)>
+        <div class="col-md-3">
+            <tvprog-label asp-for="VendorId" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-select asp-for="VendorId" asp-items="Model.AvailableVendors" />
+            <span asp-validation-for="VendorId"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart ? null : "advanced-setting")" id="group-required-other-tvchannels">
+        <div class="col-md-3">
+            <tvprog-label asp-for="RequireOtherTvChannels" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="RequireOtherTvChannels" />
+            <span asp-validation-for="RequireOtherTvChannels"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="RequireOtherTvChannels">
+        <div class="form-group row @(Model.TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <tvprog-label asp-for="RequiredTvChannelIds" />
+                <span id="required-tvchannels-check-progress" style="display: none; float: right; clear: both" class="please-wait">
+                    @T("Common.Wait")
+                </span>
+            </div>
+            <div class="col-md-9">
+                <div class="input-group">
+                    <tvprog-editor asp-for="RequiredTvChannelIds" />
+                    <div class="input-group-append">
+                        <button type="submit" id="btnRefreshRequiredTvChannels" style="display: none"></button>
+                        <script>
+                            $(document).ready(function () {
+                                $('#btnRefreshRequiredTvChannels').click(function () {
+                                    //refresh tvchannel list
+                                    loadRequiredTvChannelFriendlyNames();
+
+                                    //return false to don't reload a page
+                                    return false;
+                                });
+                            });
+                        </script>
+                        <button type="submit" id="btnAddNewRequiredTvChannel" onclick="javascript:OpenWindow('@(Url.Action("RequiredTvChannelAddPopup", "TvChannel", new {btnId = "btnRefreshRequiredTvChannels", tvchannelIdsInput = "RequiredTvChannelIds"}))', 800, 850, true); return false;" class="btn btn-info">
+                            @T("Admin.Catalog.TvChannels.Fields.RequiredTvChannelIds.AddNew")
+                        </button>
+                    </div>
+                </div>
+                <span id="required-tvchannel-names"></span>
+                @Html.ValidationMessageFor(model => model.RequiredTvChannelIds)
+            </div>
+        </div>
+        <div class="form-group row @(Model.TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <tvprog-label asp-for="AutomaticallyAddRequiredTvChannels" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="AutomaticallyAddRequiredTvChannels" />
+                <span asp-validation-for="AutomaticallyAddRequiredTvChannels"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.AllowUserReviews ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="AllowUserReviews" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AllowUserReviews" />
+            <span asp-validation-for="AllowUserReviews"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.AvailableStartDate ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="AvailableStartDateTimeUtc" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AvailableStartDateTimeUtc" />
+            <span asp-validation-for="AvailableStartDateTimeUtc"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.AvailableEndDate ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="AvailableEndDateTimeUtc" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="AvailableEndDateTimeUtc" />
+            <span asp-validation-for="AvailableEndDateTimeUtc"></span>
+        </div>
+    </div>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.MarkAsNew ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="MarkAsNew" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="MarkAsNew" />
+            <span asp-validation-for="MarkAsNew"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="MarkAsNew">
+        <div class="form-group row @(Model.TvChannelEditorSettingsModel.MarkAsNew  ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <tvprog-label asp-for="MarkAsNewStartDateTimeUtc" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="MarkAsNewStartDateTimeUtc" />
+                <span asp-validation-for="MarkAsNewStartDateTimeUtc"></span>
+            </div>
+        </div>
+        <div class="form-group row @(Model.TvChannelEditorSettingsModel.MarkAsNew  ? null : "advanced-setting")">
+            <div class="col-md-3">
+                <tvprog-label asp-for="MarkAsNewEndDateTimeUtc" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="MarkAsNewEndDateTimeUtc" />
+                <span asp-validation-for="MarkAsNewEndDateTimeUtc"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.AdminComment ? null : "advanced-setting")">
+        <div class="col-md-3">
+            <tvprog-label asp-for="AdminComment" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-textarea asp-for="AdminComment" />
+            <span asp-validation-for="AdminComment"></span>
+        </div>
+    </div>
+</div>

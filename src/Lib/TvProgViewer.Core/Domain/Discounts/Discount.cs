@@ -78,8 +78,8 @@ namespace TvProgViewer.Core.Domain.Discounts
         public int LimitationTimes { get; set; }
 
         /// <summary>
-        /// Gets or sets the maximum product quantity which could be discounted
-        /// Used with "Assigned to products" or "Assigned to categories" type
+        /// Gets or sets the maximum tvchannel quantity which could be discounted
+        /// Used with "Assigned to tvchannels" or "Assigned to categories" type
         /// </summary>
         public int? MaximumDiscountedQuantity { get; set; }
 

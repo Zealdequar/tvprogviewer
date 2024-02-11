@@ -88,7 +88,7 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
         private readonly ITaxService _taxService;
@@ -139,7 +139,7 @@ namespace TvProgViewer.WebUI.Controllers
             IPermissionService permissionService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
             ITaxService taxService,
@@ -186,7 +186,7 @@ namespace TvProgViewer.WebUI.Controllers
             _permissionService = permissionService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
             _taxService = taxService;
@@ -1591,17 +1591,17 @@ namespace TvProgViewer.WebUI.Controllers
 
         #endregion
 
-        #region My account / Downloadable products
+        #region My account / Downloadable tvchannels
 
-        public virtual async Task<IActionResult> DownloadableProducts()
+        public virtual async Task<IActionResult> DownloadableTvChannels()
         {
             if (!await _userService.IsRegisteredAsync(await _workContext.GetCurrentUserAsync()))
                 return Challenge();
 
-            if (_userSettings.HideDownloadableProductsTab)
+            if (_userSettings.HideDownloadableTvChannelsTab)
                 return RedirectToRoute("UserInfo");
 
-            var model = await _userModelFactory.PrepareUserDownloadableProductsModelAsync();
+            var model = await _userModelFactory.PrepareUserDownloadableTvChannelsModelAsync();
 
             return View(model);
         }
@@ -1614,12 +1614,12 @@ namespace TvProgViewer.WebUI.Controllers
             if (orderItem == null)
                 return RedirectToRoute("Homepage");
 
-            var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-            if (product == null || !product.HasUserAgreement)
+            if (tvchannel == null || !tvchannel.HasUserAgreement)
                 return RedirectToRoute("Homepage");
 
-            var model = await _userModelFactory.PrepareUserAgreementModelAsync(orderItem, product);
+            var model = await _userModelFactory.PrepareUserAgreementModelAsync(orderItem, tvchannel);
 
             return View(model);
         }

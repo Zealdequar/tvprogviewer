@@ -30,7 +30,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedModelFactory _localizedModelFactory;
         private readonly IOrderService _orderService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IReturnRequestService _returnRequestService;
 
         #endregion
@@ -44,7 +44,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             ILocalizationService localizationService,
             ILocalizedModelFactory localizedModelFactory,
             IOrderService orderService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IReturnRequestService returnRequestService)
         {
             _baseAdminModelFactory = baseAdminModelFactory;
@@ -54,7 +54,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _localizationService = localizationService;
             _localizedModelFactory = localizedModelFactory;
             _orderService = orderService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _returnRequestService = returnRequestService;
         }
 
@@ -159,10 +159,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (orderItem != null)
             {
                 var order = await _orderService.GetOrderByIdAsync(orderItem.OrderId);
-                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                model.ProductId = product.Id;
-                model.ProductName = product.Name;
+                model.TvChannelId = tvchannel.Id;
+                model.TvChannelName = tvchannel.Name;
                 model.OrderId = order.Id;
                 model.AttributeInfo = orderItem.AttributeDescription;
                 model.CustomOrderNumber = order.CustomOrderNumber;

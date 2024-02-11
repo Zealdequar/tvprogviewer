@@ -32,14 +32,14 @@
                 public static string GenericCatalogUrlWithLanguageCode => "GenericCatalogUrlWithLanguageCode";
 
                 /// <summary>
-                /// Gets the generic product catalog route name
+                /// Gets the generic tvchannel catalog route name
                 /// </summary>
-                public static string ProductCatalog => "ProductCatalog";
+                public static string TvChannelCatalog => "TvChannelCatalog";
 
                 /// <summary>
-                /// Gets the generic product route name
+                /// Gets the generic tvchannel route name
                 /// </summary>
-                public static string Product => "ProductDetails";
+                public static string TvChannel => "TvChannelDetails";
 
                 /// <summary>
                 /// Gets the generic category route name
@@ -72,9 +72,9 @@
                 public static string Topic => "TopicDetails";
 
                 /// <summary>
-                /// Gets the generic product tag route name
+                /// Gets the generic tvchannel tag route name
                 /// </summary>
-                public static string ProductTag => "ProductsByTag";
+                public static string TvChannelTag => "TvChannelsByTag";
             }
         }
 
@@ -125,14 +125,14 @@
             public static string NewsItemId => "newsitemId";
 
             /// <summary>
-            /// Gets default key for product id route value
+            /// Gets default key for tvchannel id route value
             /// </summary>
-            public static string ProductId => "productid";
+            public static string TvChannelId => "tvchannelid";
 
             /// <summary>
-            /// Gets default key for product tag id route value
+            /// Gets default key for tvchannel tag id route value
             /// </summary>
-            public static string ProductTagId => "productTagId";
+            public static string TvChannelTagId => "tvchannelTagId";
 
             /// <summary>
             /// Gets default key for topic id route value

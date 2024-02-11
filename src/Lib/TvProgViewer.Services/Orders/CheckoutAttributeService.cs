@@ -93,8 +93,8 @@ namespace TvProgViewer.Services.Orders
                     checkoutAttributes = checkoutAttributes.WhereAwait(async ca => await _storeMappingService.AuthorizeAsync(ca, storeId));
 
                 if (excludeShippableAttributes)
-                    //remove attributes which require shippable products
-                    checkoutAttributes = checkoutAttributes.Where(x => !x.ShippableProductRequired);
+                    //remove attributes which require shippable tvchannels
+                    checkoutAttributes = checkoutAttributes.Where(x => !x.ShippableTvChannelRequired);
 
                 return await checkoutAttributes.ToListAsync();
             });

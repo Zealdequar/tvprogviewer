@@ -68,7 +68,7 @@ namespace TvProgViewer.Core.Domain.Tax
         public bool ForceTaxExclusionFromOrderSubtotal { get; set; }
 
         /// <summary>
-        /// Gets or sets a default tax category identifier for products
+        /// Gets or sets a default tax category identifier for tvchannels
         /// </summary>
         public int DefaultTaxCategoryId { get; set; }
 

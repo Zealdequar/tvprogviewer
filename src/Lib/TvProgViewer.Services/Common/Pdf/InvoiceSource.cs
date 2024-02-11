@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Common.Pdf
 
         public InvoiceSource()
         {
-            Products = new();
+            TvChannels = new();
             Totals = new();
             FooterTextColumn1 = new();
             FooterTextColumn2 = new();
@@ -48,7 +48,7 @@ namespace TvProgViewer.Services.Common.Pdf
         /// <summary>
         /// Gets or sets a collection of order items
         /// </summary>
-        public List<ProductItem> Products { get; set; }
+        public List<TvChannelItem> TvChannels { get; set; }
 
         /// <summary>
         /// Gets or sets the billing address
@@ -63,14 +63,14 @@ namespace TvProgViewer.Services.Common.Pdf
         public AddressItem ShippingAddress { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display product SKU in the invoice document
+        /// Gets or sets a value indicating whether to display tvchannel SKU in the invoice document
         /// </summary>
-        public bool ShowSkuInProductList { get; set; }
+        public bool ShowSkuInTvChannelList { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to display vendor name in the invoice document
         /// </summary>
-        public bool ShowVendorInProductList { get; set; }
+        public bool ShowVendorInTvChannelList { get; set; }
 
         /// <summary>
         /// Gets or sets the checkout attribute description

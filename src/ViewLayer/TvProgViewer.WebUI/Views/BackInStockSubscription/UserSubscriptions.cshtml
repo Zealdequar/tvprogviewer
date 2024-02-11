@@ -51,8 +51,8 @@
                                 <th class="select-boxes">
                                     <input type="checkbox" id="selectall" />
                                 </th>
-                                <th class="product">
-                                    @T("Account.BackInStockSubscriptions.ProductColumn")
+                                <th class="tvchannel">
+                                    @T("Account.BackInStockSubscriptions.TvChannelColumn")
                                 </th>
                             </tr>
                             </thead>
@@ -64,8 +64,8 @@
                                     <td class="select-boxes">
                                         <input type="checkbox" name="biss@(item.Id)" class="rowcheckbox" />
                                     </td>
-                                    <td class="product">
-                                        <a href="@(Url.RouteUrl<Product>(new { SeName = item.SeName }))">@item.ProductName</a>
+                                    <td class="tvchannel">
+                                        <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.SeName }))">@item.TvChannelName</a>
                                     </td>
                                 </tr>
                             }

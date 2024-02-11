@@ -14,11 +14,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.ShoppingCart
         [TvProgResourceDisplayName("Admin.CurrentCarts.Store")]
         public string Store { get; set; }
 
-        [TvProgResourceDisplayName("Admin.CurrentCarts.Product")]
-        public int ProductId { get; set; }
+        [TvProgResourceDisplayName("Admin.CurrentCarts.TvChannel")]
+        public int TvChannelId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.CurrentCarts.Product")]
-        public string ProductName { get; set; }
+        [TvProgResourceDisplayName("Admin.CurrentCarts.TvChannel")]
+        public string TvChannelName { get; set; }
 
         public string AttributeInfo { get; set; }
 

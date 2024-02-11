@@ -1,0 +1,39 @@
+﻿@model TvChannelAttributeModel
+
+@inject TvProgViewer.Services.Common.IGenericAttributeService genericAttributeService
+@inject IWorkContext workContext
+@{
+
+	const string hideInfoBlockAttributeName = "TvChannelAttributePage.HideInfoBlock";
+    var user = await workContext.GetCurrentUserAsync();
+	var hideInfoBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideInfoBlockAttributeName);
+
+	const string hideUsedByTvChannelsBlockAttributeName = "TvChannelAttributePage.HideUsedByTvChannelsBlock";
+	var hideUsedByTvChannelsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideUsedByTvChannelsBlockAttributeName, defaultValue: true);
+
+	const string hidePredefinedValuesBlockAttributeName = "TvChannelAttributePage.HidePredefinedValuesBlock";
+	var hidePredefinedValuesBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hidePredefinedValuesBlockAttributeName, defaultValue: true);
+
+}
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            <div id="tvchannel-attribute-edit">
+                <tvprog-cards id="tvchannel-attribute-cards">
+                    <tvprog-card asp-name="tvchannel-attribute-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>                   
+                    <tvprog-card asp-name="tvchannel-attribute-predefined-values" asp-icon="fas fa-check-square" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.PredefinedValues")" asp-hide-block-attribute-name="@hidePredefinedValuesBlockAttributeName" asp-hide="@hidePredefinedValuesBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.PredefinedValues", Model)</tvprog-card>
+                    @if (Model.Id > 0)
+                    {
+                        <tvprog-card asp-name="tvchannel-attribute-used-by-tvchannels" asp-icon="fas fa-object-group" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.UsedByTvChannels")" asp-hide-block-attribute-name="@hideUsedByTvChannelsBlockAttributeName" asp-hide="@hideUsedByTvChannelsBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.UsedByTvChannels", Model)</tvprog-card>
+                    }
+
+                    @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelAttributeDetailsBlock, additionalData = Model })
+                </tvprog-cards>
+            </div>
+        </div>
+    </div>
+</section>

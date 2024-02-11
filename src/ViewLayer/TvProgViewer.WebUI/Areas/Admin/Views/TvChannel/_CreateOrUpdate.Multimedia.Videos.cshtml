@@ -1,0 +1,120 @@
+﻿@model TvChannelModel
+
+<div class="card-body">
+    @await Html.PartialAsync("Table", new DataTablesModel
+    {
+        Name = "tvchannelvideos-grid",
+        UrlRead = new DataUrl("TvChannelVideoList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelVideoSearchModel.TvChannelId)] = Model.TvChannelVideoSearchModel.TvChannelId }),
+        UrlDelete = new DataUrl("TvChannelVideoDelete", "TvChannel", null),
+        UrlUpdate = new DataUrl("TvChannelVideoUpdate", "TvChannel", null),
+        Length = Model.TvChannelVideoSearchModel.PageSize,
+        LengthMenu = Model.TvChannelVideoSearchModel.AvailablePageSizes,
+        ColumnCollection = new List<ColumnProperty>
+        {
+            new ColumnProperty(nameof(TvChannelVideoModel.Id))
+            {
+                Title = T("Admin.Catalog.TvChannels.Multimedia.Videos.Fields.Preview").Text,
+                Render = new RenderCustom("renderVideosColumnTvChannelVideoUrl")
+            },
+            new ColumnProperty(nameof(TvChannelVideoModel.VideoUrl))
+            {
+                Title = T("Admin.Catalog.TvChannels.Multimedia.Videos.Fields.VideoUrl").Text,
+                Width = "400",
+                Editable = true,
+                EditType = EditType.String
+            },
+            new ColumnProperty(nameof(TvChannelVideoModel.DisplayOrder))
+            {
+                Title = T("Admin.Catalog.TvChannels.Multimedia.Videos.Fields.DisplayOrder").Text,
+                Width = "150",
+                ClassName = TvProgColumnClassDefaults.CenterAll,
+                Editable = true,
+                EditType = EditType.Number
+            },
+            new ColumnProperty(nameof(TvChannelVideoModel.Id))
+            {
+                Title = T("Admin.Common.Edit").Text,
+                Width = "200",
+                ClassName =  TvProgColumnClassDefaults.Button,
+                Render = new RenderButtonsInlineEdit()
+            },
+            new ColumnProperty(nameof(TvChannelVideoModel.Id))
+            {
+                Title = T("Admin.Common.Delete").Text,
+                Width = "100",
+                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                ClassName = TvProgColumnClassDefaults.Button
+            }
+        }
+    })
+    <script>
+        function renderVideosColumnTvChannelVideoUrl(data, type, row, meta) {
+            return '<iframe src="' + row.VideoUrl + '" width="300" /></iframe>';
+        }
+    </script>
+    <div class="card card-default">
+        <div class="card-header">
+            @T("Admin.Catalog.TvChannels.Multimedia.Videos.AddNew")
+        </div>
+        <div class="card-body">
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="AddVideoModel.VideoUrl" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="AddVideoModel.VideoUrl" />
+                    <span asp-validation-for="AddVideoModel.VideoUrl"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-3">
+                    <tvprog-label asp-for="AddVideoModel.DisplayOrder" />
+                </div>
+                <div class="col-md-9">
+                    <tvprog-editor asp-for="AddVideoModel.DisplayOrder" />
+                    <span asp-validation-for="AddVideoModel.DisplayOrder"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-9 offset-md-3">
+                    <button type="button" id="addTvChannelVideo" class="btn btn-primary">@T("Admin.Catalog.TvChannels.Multimedia.Videos.AddButton")</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#addTvChannelVideo').click(function () {
+                    $('#addTvChannelVideo').attr('disabled', true);
+                    var postData = {
+                        VideoUrl: $("#@Html.IdFor(model => model.AddVideoModel.VideoUrl)").val(),
+                        DisplayOrder: $("#@Html.IdFor(model => model.AddVideoModel.DisplayOrder)").val()
+                    };
+                    addAntiForgeryToken(postData);
+                    
+                    $.ajax({
+                        cache: false,
+                        type: "POST",
+                        url: "@Html.Raw(Url.Action("TvChannelVideoAdd", "TvChannel", new { TvChannelId = Model.Id}))",
+                        data: postData,
+                        success: function (data, textStatus, jqXHR) {
+                            if (data.success) {
+                                //reload grid
+                                updateTable('#tvchannelvideos-grid');
+
+                                //clear input value
+                                $("#@Html.IdFor(model => model.AddVideoModel.VideoUrl)").val('');
+                                $("#@Html.IdFor(model => model.AddVideoModel.DisplayOrder)").val('');
+                            } else {
+                                //display errors if returned
+                                display_nop_error(data);
+                            }
+                        },
+                        complete: function (jqXHR, textStatus) {
+                            $('#addTvChannelVideo').attr('disabled', false);
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</div>

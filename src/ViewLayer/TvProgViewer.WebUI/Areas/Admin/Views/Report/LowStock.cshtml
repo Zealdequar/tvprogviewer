@@ -1,4 +1,4 @@
-﻿@model LowStockProductSearchModel
+﻿@model LowStockTvChannelSearchModel
 
 @{
     //page title
@@ -49,7 +49,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-8 offset-md-4">
-                                    <button type="button" id="search-products" class="btn btn-primary btn-search">
+                                    <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
                                         <i class="fas fa-search"></i>
                                         @T("Admin.Common.Search")
                                     </button>
@@ -65,9 +65,9 @@
 
                         @await Html.PartialAsync("Table", new DataTablesModel
                         {
-                            Name = "products-grid",
+                            Name = "tvchannels-grid",
                             UrlRead = new DataUrl("LowStockList", "Report", null),
-                            SearchButtonId = "search-products",
+                            SearchButtonId = "search-tvchannels",
                             Length = Model.PageSize,
                             LengthMenu = Model.AvailablePageSizes,
                             Filters = new List<FilterParameter>
@@ -76,35 +76,35 @@
                             },
                             ColumnCollection = new List<ColumnProperty>
                             {
-                                new ColumnProperty(nameof(LowStockProductModel.Name))
+                                new ColumnProperty(nameof(LowStockTvChannelModel.Name))
                                 {
-                                    Title = T("Admin.Catalog.Products.Fields.Name").Text,
+                                    Title = T("Admin.Catalog.TvChannels.Fields.Name").Text,
                                     Width = "300",
                                     Render = new RenderCustom("renderColumnName")
                                 },
-                                new ColumnProperty(nameof(LowStockProductModel.ManageInventoryMethod))
+                                new ColumnProperty(nameof(LowStockTvChannelModel.ManageInventoryMethod))
                                 {
-                                    Title = T("Admin.Catalog.Products.Fields.ManageInventoryMethod").Text,
+                                    Title = T("Admin.Catalog.TvChannels.Fields.ManageInventoryMethod").Text,
                                     Width = "150"
                                 },
-                                new ColumnProperty(nameof(LowStockProductModel.StockQuantity))
+                                new ColumnProperty(nameof(LowStockTvChannelModel.StockQuantity))
                                 {
-                                    Title = T("Admin.Catalog.Products.Fields.StockQuantity").Text,
+                                    Title = T("Admin.Catalog.TvChannels.Fields.StockQuantity").Text,
                                     Width = "100"
                                 },
-                                new ColumnProperty(nameof(LowStockProductModel.Published))
+                                new ColumnProperty(nameof(LowStockTvChannelModel.Published))
                                 {
-                                    Title = T("Admin.Catalog.Products.Fields.Published").Text,
+                                    Title = T("Admin.Catalog.TvChannels.Fields.Published").Text,
                                     Width = "100",
                                     ClassName =  TvProgColumnClassDefaults.CenterAll,
                                     Render = new RenderBoolean()
                                 },
-                                new ColumnProperty(nameof(LowStockProductModel.Id))
+                                new ColumnProperty(nameof(LowStockTvChannelModel.Id))
                                 {
                                     Title = T("Admin.Common.View").Text,
                                     Width = "100",
                                     ClassName =  TvProgColumnClassDefaults.Button,
-                                    Render = new RenderButtonView(new DataUrl("~/Admin/Product/Edit/"))
+                                    Render = new RenderButtonView(new DataUrl("~/Admin/TvChannel/Edit/"))
                                 }
                             }
                         })

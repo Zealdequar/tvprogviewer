@@ -47,22 +47,22 @@
     </tvprog-nested-setting>
     <div class="form-group row advanced-setting">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="MaximumProductNumber_OverrideForStore" asp-input="MaximumProductNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="MaximumProductNumber" />
+            <tvprog-override-store-checkbox asp-for="MaximumTvChannelNumber_OverrideForStore" asp-input="MaximumTvChannelNumber" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="MaximumTvChannelNumber" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="MaximumProductNumber" />
-            <span asp-validation-for="MaximumProductNumber"></span>
+            <tvprog-editor asp-for="MaximumTvChannelNumber" />
+            <span asp-validation-for="MaximumTvChannelNumber"></span>
         </div>
     </div>
     <div class="form-group row advanced-setting">
         <div class="col-md-3">
-            <tvprog-override-store-checkbox asp-for="AllowVendorsToImportProducts_OverrideForStore" asp-input="AllowVendorsToImportProducts" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
-            <tvprog-label asp-for="AllowVendorsToImportProducts" />
+            <tvprog-override-store-checkbox asp-for="AllowVendorsToImportTvChannels_OverrideForStore" asp-input="AllowVendorsToImportTvChannels" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="AllowVendorsToImportTvChannels" />
         </div>
         <div class="col-md-9">
-            <tvprog-editor asp-for="AllowVendorsToImportProducts" />
-            <span asp-validation-for="AllowVendorsToImportProducts"></span>
+            <tvprog-editor asp-for="AllowVendorsToImportTvChannels" />
+            <span asp-validation-for="AllowVendorsToImportTvChannels"></span>
         </div>
     </div>
 </div>

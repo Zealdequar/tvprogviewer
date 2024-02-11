@@ -52,7 +52,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IManufacturerService _manufacturerService;
         private readonly IManufacturerTemplateService _manufacturerTemplateService;
         private readonly IPluginService _pluginService;
-        private readonly IProductTemplateService _productTemplateService;
+        private readonly ITvChannelTemplateService _tvchannelTemplateService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly IShippingService _shippingService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -80,7 +80,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IManufacturerService manufacturerService,
             IManufacturerTemplateService manufacturerTemplateService,
             IPluginService pluginService,
-            IProductTemplateService productTemplateService,
+            ITvChannelTemplateService tvchannelTemplateService,
             ISpecificationAttributeService specificationAttributeService,
             IShippingService shippingService,
             IStateProvinceService stateProvinceService,
@@ -104,7 +104,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _manufacturerService = manufacturerService;
             _manufacturerTemplateService = manufacturerTemplateService;
             _pluginService = pluginService;
-            _productTemplateService = productTemplateService;
+            _tvchannelTemplateService = tvchannelTemplateService;
             _specificationAttributeService = specificationAttributeService;
             _shippingService = shippingService;
             _stateProvinceService = stateProvinceService;
@@ -580,22 +580,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare available product types
+        /// Prepare available tvchannel types
         /// </summary>
-        /// <param name="items">Product type items</param>
+        /// <param name="items">TvChannel type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task PrepareProductTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
+        public virtual async Task PrepareTvChannelTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            //prepare available product types
-            var availableProductTypeItems = await ProductType.SimpleProduct.ToSelectListAsync(false);
-            foreach (var productTypeItem in availableProductTypeItems)
+            //prepare available tvchannel types
+            var availableTvChannelTypeItems = await TvChannelType.SimpleTvChannel.ToSelectListAsync(false);
+            foreach (var tvchannelTypeItem in availableTvChannelTypeItems)
             {
-                items.Add(productTypeItem);
+                items.Add(tvchannelTypeItem);
             }
 
             //insert special item for the default value
@@ -857,19 +857,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare available product templates
+        /// Prepare available tvchannel templates
         /// </summary>
-        /// <param name="items">Product template items</param>
+        /// <param name="items">TvChannel template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task PrepareProductTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
+        public virtual async Task PrepareTvChannelTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            //prepare available product templates
-            var availableTemplates = await _productTemplateService.GetAllProductTemplatesAsync();
+            //prepare available tvchannel templates
+            var availableTemplates = await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync();
             foreach (var template in availableTemplates)
             {
                 items.Add(new SelectListItem { Value = template.Id.ToString(), Text = template.Name });
@@ -949,21 +949,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare available product availability ranges
+        /// Prepare available tvchannel availability ranges
         /// </summary>
-        /// <param name="items">Product availability range items</param>
+        /// <param name="items">TvChannel availability range items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public virtual async Task PrepareProductAvailabilityRangesAsync(IList<SelectListItem> items,
+        public virtual async Task PrepareTvChannelAvailabilityRangesAsync(IList<SelectListItem> items,
             bool withSpecialDefaultItem = true, string defaultItemText = null)
         {
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            //prepare available product availability ranges
-            var availableProductAvailabilityRanges = await _dateRangeService.GetAllProductAvailabilityRangesAsync();
-            foreach (var range in availableProductAvailabilityRanges)
+            //prepare available tvchannel availability ranges
+            var availableTvChannelAvailabilityRanges = await _dateRangeService.GetAllTvChannelAvailabilityRangesAsync();
+            foreach (var range in availableTvChannelAvailabilityRanges)
             {
                 items.Add(new SelectListItem { Value = range.Id.ToString(), Text = range.Name });
             }

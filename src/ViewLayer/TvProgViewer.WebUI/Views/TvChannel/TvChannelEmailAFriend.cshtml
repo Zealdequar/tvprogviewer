@@ -1,0 +1,63 @@
+﻿@model TvChannelEmailAFriendModel
+
+@using TvProgViewer.Core.Domain.Catalog
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    TvProgHtml.AddTitleParts(Model.TvChannelName);
+    //page class
+    TvProgHtml.AddTitleParts(T("PageTitle.TvChannelEmailAFriend").Text);
+    TvProgHtml.AppendPageCssClassParts("html-email-a-friend-page");
+}
+<div class="page email-a-friend-page">
+    <div class="page-title">
+        <h1>@T("TvChannels.EmailAFriend.Title")</h1>
+    </div>
+    <div class="page-body">
+        <div class="title">
+            <h2><a href="@(Url.RouteUrl<TvChannel>(new { SeName = Model.TvChannelSeName }))" class="tvchannel">@Model.TvChannelName</a></h2>
+        </div>
+        @if (Model.SuccessfullySent)
+        {
+            <div class="result">
+                @Model.Result
+            </div>
+        }
+        else
+        {
+            <form asp-route="TvChannelEmailAFriend" method="post">
+                <div asp-validation-summary="ModelOnly" class="message-error"></div>
+                <div class="fieldset">
+                    <div class="form-fields">
+                        <div class="inputs">
+                            <label asp-for="FriendEmail" asp-postfix=":"></label>
+                            <input asp-for="FriendEmail" class="friend-email" placeholder="@T("TvChannels.EmailAFriend.FriendEmail.Hint")"/>
+                            <tvprog-required />
+                            <span asp-validation-for="FriendEmail"></span>
+                        </div>
+                        <div class="inputs">
+                            <label asp-for="YourEmailAddress" asp-postfix=":"></label>
+                            <input asp-for="YourEmailAddress" class="your-email" placeholder="@T("TvChannels.EmailAFriend.YourEmailAddress.Hint")"/>
+                            <tvprog-required />
+                            <span asp-validation-for="YourEmailAddress"></span>
+                        </div>
+                        <div class="inputs">
+                            <label asp-for="PersonalMessage" asp-postfix=":"></label>
+                            <textarea asp-for="PersonalMessage" class="your-email" placeholder="@T("TvChannels.EmailAFriend.PersonalMessage.Hint")"></textarea>
+                            <span asp-validation-for="PersonalMessage"></span>
+                        </div>
+                        @if (Model.DisplayCaptcha)
+                        {
+                            <tvprog-captcha />
+                        }
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button type="submit" name="send-email" class="button-1 send-email-a-friend-button">@T("TvChannels.EmailAFriend.Button")</button>
+                </div>
+            </form>
+        }
+    </div>
+</div>

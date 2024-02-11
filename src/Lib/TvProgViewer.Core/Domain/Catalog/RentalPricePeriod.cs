@@ -1,7 +1,7 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a rental product period (for prices)
+    /// Represents a rental tvchannel period (for prices)
     /// </summary>
     public enum RentalPricePeriod
     {

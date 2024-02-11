@@ -11,9 +11,9 @@
         NotSpecified = 1,
 
         /// <summary>
-        /// Product attribute
+        /// TvChannel attribute
         /// </summary>
-        ProductAttribute = 10,
+        TvChannelAttribute = 10,
 
         /// <summary>
         /// Specification attribute

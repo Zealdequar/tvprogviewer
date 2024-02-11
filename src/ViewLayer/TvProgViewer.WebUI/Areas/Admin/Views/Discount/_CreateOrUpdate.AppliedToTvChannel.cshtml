@@ -1,0 +1,59 @@
+@model DiscountModel
+
+@if (Model.Id > 0)
+{
+    <div class="card-body">
+        @await Html.PartialAsync("Table", new DataTablesModel
+        {
+            Name = "tvchannels-grid",
+            UrlRead = new DataUrl("TvChannelList", "Discount", new RouteValueDictionary { [nameof(Model.DiscountTvChannelSearchModel.DiscountId)] = Model.DiscountTvChannelSearchModel.DiscountId }),
+            UrlDelete = new DataUrl("TvChannelDelete", "Discount", new RouteValueDictionary { [nameof(Model.DiscountTvChannelSearchModel.DiscountId)] = Model.DiscountTvChannelSearchModel.DiscountId }),
+            BindColumnNameActionDelete = nameof(DiscountTvChannelModel.TvChannelId),
+            Length = Model.DiscountTvChannelSearchModel.PageSize,
+            LengthMenu = Model.DiscountTvChannelSearchModel.AvailablePageSizes,
+            ColumnCollection = new List<ColumnProperty>
+            {
+                new ColumnProperty(nameof(DiscountTvChannelModel.TvChannelName))
+                {
+                    Title = T("Admin.Promotions.Discounts.AppliedToTvChannels.TvChannel").Text
+                },
+                new ColumnProperty(nameof(DiscountTvChannelModel.TvChannelId))
+                {
+                    Title = T("Admin.Common.View").Text,
+                    Width = "150",
+                    ClassName =  TvProgColumnClassDefaults.Button,
+                    Render = new RenderButtonView(new DataUrl("~/Admin/TvChannel/Edit/"))
+                },
+                new ColumnProperty(nameof(DiscountTvChannelModel.TvChannelId))
+                {
+                    Title = T("Admin.Common.Delete").Text,
+                    Width = "150",
+                    Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                    ClassName =  TvProgColumnClassDefaults.Button
+                }
+            }
+        })
+    </div>
+    <div class="card-footer">
+        <button type="submit" id="btnAddNewTvChannel" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAddPopup", "Discount", new { discountId = Model.Id, btnId = "btnRefreshTvChannels", formId = "discount-form" }))', 800, 800, true); return false;" class="btn btn-primary">
+            @T("Admin.Promotions.Discounts.AppliedToTvChannels.AddNew")
+        </button>
+        <button type="submit" id="btnRefreshTvChannels" style="display: none"></button>
+        <script>
+            $(document).ready(function () {
+                $('#btnRefreshTvChannels').click(function () {
+                    //refresh grid
+                    updateTable('#tvchannels-grid');
+                    //return false to don't reload a page
+                    return false;
+                });
+            });
+        </script>
+    </div>
+}
+else
+{
+    <div class="card-body">
+        @T("Admin.Promotions.Discounts.AppliedToTvChannels.SaveBeforeEdit")
+    </div>
+}

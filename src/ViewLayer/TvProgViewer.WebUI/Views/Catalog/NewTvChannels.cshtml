@@ -1,0 +1,23 @@
+﻿@model NewTvChannelsModel
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    TvProgHtml.AddTitleParts(T("PageTitle.NewTvChannels").Text);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-recently-added-tvchannels-page");
+}
+<div class="page recently-added-tvchannels-page">
+    <div class="page-title">
+        <a href="@Url.RouteUrl("NewTvChannelsRSS")" class="link-rss" title="@T("TvChannels.NewTvChannels.RSS.Hint")">@T("TvChannels.NewTvChannels.RSS")</a>
+        <h1>@T("TvChannels.NewTvChannels")</h1>
+    </div>
+    <div class="page-body">
+        @await Html.PartialAsync("_CatalogSelectors", Model.CatalogTvChannelsModel)
+        @{ 
+            var newTvChannelsViewData = new ViewDataDictionary(ViewData);
+            newTvChannelsViewData["fetchUrl"] = Html.Raw(Url.Action("GetNewTvChannels", "Catalog"));
+        }
+        @await Html.PartialAsync("_CatalogTvChannels", Model.CatalogTvChannelsModel, newTvChannelsViewData)
+    </div>
+</div>

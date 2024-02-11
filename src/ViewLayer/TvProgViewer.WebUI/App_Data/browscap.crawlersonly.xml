@@ -6075,7 +6075,7 @@
   <browscapitem name="LMQueueBot/*">
     <item name="Crawler" value="true" />
   </browscapitem>
-  <browscapitem name="MetaProducts Download Express/*">
+  <browscapitem name="MetaTvChannels Download Express/*">
     <item name="Crawler" value="true" />
   </browscapitem>
   <browscapitem name="Mozilla/4.0 (compatible; Getleft*)">
@@ -11979,7 +11979,7 @@
   <browscapitem name="msnbot/0.1*">
     <item name="Crawler" value="true" />
   </browscapitem>
-  <browscapitem name="msnbot-Products/1.0*">
+  <browscapitem name="msnbot-TvChannels/1.0*">
     <item name="Crawler" value="true" />
   </browscapitem>
   <browscapitem name="msnbot/*">
@@ -12045,7 +12045,7 @@
   <browscapitem name="msnbot-NewsBlogs/2.* (+http://search.msn.com/msnbot.htm)">
     <item name="Crawler" value="true" />
   </browscapitem>
-  <browscapitem name="msnbot-products">
+  <browscapitem name="msnbot-tvchannels">
     <item name="Crawler" value="true" />
   </browscapitem>
   <browscapitem name="msnbot-webmaster/1.0 (*http://search.msn.com/msnbot.htm)">

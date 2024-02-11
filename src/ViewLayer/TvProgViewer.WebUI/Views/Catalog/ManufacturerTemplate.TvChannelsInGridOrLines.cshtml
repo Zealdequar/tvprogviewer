@@ -1,0 +1,74 @@
+﻿@model ManufacturerModel
+
+@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Core.Domain.Seo
+
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+
+@{
+    Layout = "_ColumnsTwo";
+
+    //title
+    TvProgHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-manufacturer-page");
+
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var manufacturerUrl = Url.RouteUrl<Manufacturer>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        TvProgHtml.AddCanonicalUrlParts(manufacturerUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+}
+
+@section CatalogFilters {
+    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ManufacturerDetailsBeforeFilters, additionalData = Model })
+    @await Html.PartialAsync("_CatalogFilters", Model.CatalogTvChannelsModel)
+}
+
+<div class="page manufacturer-page">
+    <div class="page-title">
+        <h1>@Model.Name</h1>
+    </div>
+    <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ManufacturerDetailsTop, additionalData = Model })
+        @*description*@
+        @if (!string.IsNullOrWhiteSpace(Model.Description))
+        {
+            <div class="manufacturer-description">
+                @Html.Raw(Model.Description)
+            </div>
+        }
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ManufacturerDetailsBeforeFeaturedTvChannels, additionalData = Model })
+        @*featured tvchannels*@
+        @if (Model.FeaturedTvChannels.Count > 0)
+        {
+            <div class="tvchannel-grid featured-tvchannel-grid">
+                <div class="title">
+                    <strong>@T("TvChannels.FeaturedTvChannels")</strong>
+                </div>
+                <div class="item-grid">
+                    @foreach (var tvchannel in Model.FeaturedTvChannels)
+                    {
+                        <div class="item-box">
+                            @await Html.PartialAsync("_TvChannelBox", tvchannel)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ManufacturerDetailsAfterFeaturedTvChannels, additionalData = Model })
+        @await Html.PartialAsync("_CatalogSelectors", Model.CatalogTvChannelsModel)
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ManufacturerDetailsBeforeTvChannelList, additionalData = Model })
+        @{
+            var catalogTvChannelsViewData = new ViewDataDictionary(ViewData);
+            catalogTvChannelsViewData["fetchUrl"] = Html.Raw(Url.Action("GetManufacturerTvChannels", "Catalog", new { manufacturerId = Model.Id }));
+        }
+        @await Html.PartialAsync("_CatalogTvChannels", Model.CatalogTvChannelsModel, catalogTvChannelsViewData)
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.ManufacturerDetailsBottom, additionalData = Model })
+    </div>
+</div>

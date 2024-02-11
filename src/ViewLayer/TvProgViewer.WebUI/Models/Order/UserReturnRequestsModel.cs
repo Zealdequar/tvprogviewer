@@ -19,9 +19,9 @@ namespace TvProgViewer.WebUI.Models.Order
         {
             public string CustomNumber { get; set; }
             public string ReturnRequestStatus { get; set; }
-            public int ProductId { get; set; }
-            public string ProductName { get; set; }
-            public string ProductSeName { get; set; }
+            public int TvChannelId { get; set; }
+            public string TvChannelName { get; set; }
+            public string TvChannelSeName { get; set; }
             public int Quantity { get; set; }
 
             public string ReturnReason { get; set; }

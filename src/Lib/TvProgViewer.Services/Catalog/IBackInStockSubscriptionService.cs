@@ -34,13 +34,13 @@ namespace TvProgViewer.Services.Catalog
         /// Gets all subscriptions
         /// </summary>
         /// <param name="userId">User id</param>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the subscriptions
         /// </returns>
-        Task<BackInStockSubscription> FindSubscriptionAsync(int userId, int productId, int storeId);
+        Task<BackInStockSubscription> FindSubscriptionAsync(int userId, int tvchannelId, int storeId);
 
         /// <summary>
         /// Gets a subscription
@@ -62,17 +62,17 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Send notification to subscribers
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the number of sent email
         /// </returns>
-        Task<int> SendNotificationsToSubscribersAsync(Product product);
+        Task<int> SendNotificationsToSubscribersAsync(TvChannel tvchannel);
         
         /// <summary>
         /// Gets all subscriptions
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
@@ -80,7 +80,7 @@ namespace TvProgViewer.Services.Catalog
         /// A task that represents the asynchronous operation
         /// The task result contains the subscriptions
         /// </returns>
-        Task<IPagedList<BackInStockSubscription>> GetAllSubscriptionsByProductIdAsync(int productId,
+        Task<IPagedList<BackInStockSubscription>> GetAllSubscriptionsByTvChannelIdAsync(int tvchannelId,
             int storeId = 0, int pageIndex = 0, int pageSize = int.MaxValue);
     }
 }

@@ -85,7 +85,7 @@ namespace TvProgViewer.WebUI.Models.Order
         public IList<OrderNote> OrderNotes { get; set; }
 
         public bool ShowVendorName { get; set; }
-        public bool ShowProductThumbnail { get; set; }
+        public bool ShowTvChannelThumbnail { get; set; }
 
 
         #region Nested Classes
@@ -99,9 +99,9 @@ namespace TvProgViewer.WebUI.Models.Order
 
             public Guid OrderItemGuid { get; set; }
             public string Sku { get; set; }
-            public int ProductId { get; set; }
-            public string ProductName { get; set; }
-            public string ProductSeName { get; set; }
+            public int TvChannelId { get; set; }
+            public string TvChannelName { get; set; }
+            public string TvChannelSeName { get; set; }
             public string UnitPrice { get; set; }
             public decimal UnitPriceValue { get; set; }
             public string SubTotal { get; set; }
@@ -113,7 +113,7 @@ namespace TvProgViewer.WebUI.Models.Order
 
             public string VendorName { get; set; }
 
-            //downloadable product properties
+            //downloadable tvchannel properties
             public int DownloadId { get; set; }
             public int LicenseId { get; set; }
         }

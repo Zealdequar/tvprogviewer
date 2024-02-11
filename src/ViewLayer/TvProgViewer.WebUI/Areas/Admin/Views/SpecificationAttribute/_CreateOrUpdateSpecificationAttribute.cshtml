@@ -8,8 +8,8 @@
     const string hideOptionsBlockAttributeName = "SpecificationAttributePage.HideOptionsBlock";
     var hideOptionsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideOptionsBlockAttributeName, defaultValue: true);
 
-    const string hideUsedByProductsBlockAttributeName = "SpecificationAttributePage.HideUsedByProductsBlock";
-    var hideUsedByProductsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideUsedByProductsBlockAttributeName, defaultValue: true);
+    const string hideUsedByTvChannelsBlockAttributeName = "SpecificationAttributePage.HideUsedByTvChannelsBlock";
+    var hideUsedByTvChannelsBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideUsedByTvChannelsBlockAttributeName, defaultValue: true);
 }
 
 <div asp-validation-summary="All"></div>
@@ -24,7 +24,7 @@
                 <tvprog-card asp-name="specification-attribute-options" asp-icon="fas fa-object-group" asp-title="@T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options")" asp-hide-block-attribute-name="@hideOptionsBlockAttributeName" asp-hide="@hideOptionsBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateSpecificationAttribute.Options", Model)</tvprog-card>
                 @if (Model.Id > 0)
                 {
-                    <tvprog-card asp-name="specification-attribute-usedbyproducts" asp-icon="fas fa-check-square" asp-title="@T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts")" asp-hide-block-attribute-name="@hideUsedByProductsBlockAttributeName" asp-hide="@hideUsedByProductsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdateSpecificationAttribute.UsedByProducts", Model)</tvprog-card>
+                    <tvprog-card asp-name="specification-attribute-usedbytvchannels" asp-icon="fas fa-check-square" asp-title="@T("Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByTvChannels")" asp-hide-block-attribute-name="@hideUsedByTvChannelsBlockAttributeName" asp-hide="@hideUsedByTvChannelsBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdateSpecificationAttribute.UsedByTvChannels", Model)</tvprog-card>
                 }
                 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.SpecificationAttributeDetailsBlock, additionalData = Model })
             </tvprog-cards>

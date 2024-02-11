@@ -18,7 +18,7 @@ namespace TvProgViewer.Data.Mapping.Builders.Catalog
         public override void MapEntity(CreateTableExpressionBuilder table)
         {
             table
-                .WithColumn(nameof(StockQuantityHistory.ProductId)).AsInt32().ForeignKey<Product>();
+                .WithColumn(nameof(StockQuantityHistory.TvChannelId)).AsInt32().ForeignKey<TvChannel>();
         }
 
         #endregion

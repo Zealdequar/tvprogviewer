@@ -13,6 +13,13 @@ namespace TvProgViewer.Services.TvProgMain
     public partial interface IChannelService
     {
         /// <summary>
+        /// Получение SEO имени 
+        /// </summary>
+        /// <param name="internalId">Внутренний идентификатор телеканала</param>
+        /// <returns></returns>
+        public Task<string> GetSeNameByInternalIdAsync(int? internalId);
+
+        /// <summary>
         /// Получение системных телеканалов
         /// </summary>
         /// <param name="tvProgProviderId">Идентификатор провайдера телеканалов</param>
@@ -35,5 +42,12 @@ namespace TvProgViewer.Services.TvProgMain
         /// Пересортировка телеканалов в соответствии с пользовательским рейтингом
         /// </summary>
         public Task ReorderChannelAsync();
+
+        /// <summary>
+        /// Получение идентификатора телеканала по внутреннему идентификатору
+        /// </summary>
+        /// <param name="internalId">Внутренний идентификатор</param>
+        /// <returns>Идентификатор телеканала</returns>
+        public Task<int?> GetChannelIdByInternalIdAsync(int internalId);
     }
 }

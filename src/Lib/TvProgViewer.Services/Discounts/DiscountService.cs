@@ -26,7 +26,7 @@ namespace TvProgViewer.Services.Discounts
         private readonly IUserService _userService;
         private readonly IDiscountPluginManager _discountPluginManager;
         private readonly ILocalizationService _localizationService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IRepository<Discount> _discountRepository;
         private readonly IRepository<DiscountRequirement> _discountRequirementRepository;
         private readonly IRepository<DiscountUsageHistory> _discountUsageHistoryRepository;
@@ -41,7 +41,7 @@ namespace TvProgViewer.Services.Discounts
         public DiscountService(IUserService userService,
             IDiscountPluginManager discountPluginManager,
             ILocalizationService localizationService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IRepository<Discount> discountRepository,
             IRepository<DiscountRequirement> discountRequirementRepository,
             IRepository<DiscountUsageHistory> discountUsageHistoryRepository,
@@ -52,7 +52,7 @@ namespace TvProgViewer.Services.Discounts
             _userService = userService;
             _discountPluginManager = discountPluginManager;
             _localizationService = localizationService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _discountRepository = discountRepository;
             _discountRequirementRepository = discountRequirementRepository;
             _discountUsageHistoryRepository = discountUsageHistoryRepository;
@@ -543,9 +543,9 @@ namespace TvProgViewer.Services.Discounts
                 var cart = await shoppingCartService.GetShoppingCartAsync(user,
                     ShoppingCartType.ShoppingCart, storeId: store.Id);
 
-                var cartProductIds = cart.Select(ci => ci.ProductId).ToArray();
+                var cartTvChannelIds = cart.Select(ci => ci.TvChannelId).ToArray();
                 
-                if (await _productService.HasAnyGiftCardProductAsync(cartProductIds))
+                if (await _tvchannelService.HasAnyGiftCardTvChannelAsync(cartTvChannelIds))
                 {
                     result.Errors = new List<string> {await _localizationService.GetResourceAsync("ShoppingCart.Discount.CannotBeUsedWithGiftCards") };
                     return result;

@@ -1,0 +1,133 @@
+@model TvChannelReviewModel
+@inject TvProgViewer.Services.Html.IHtmlFormatter htmlFormatter
+
+<div asp-validation-summary="All"></div>
+<input asp-for="Id" type="hidden" />
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="form-horizontal">
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelReviewDetailsTop, additionalData = Model })
+            <div class="cards-group">
+                <div class="card card-default">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="TvChannelName" />
+                            </div>
+                            <div class="col-md-9">
+                                <a asp-controller="TvChannel" asp-action="Edit" asp-route-id="@Model.TvChannelId">@Model.TvChannelName</a>
+                            </div>
+                        </div>
+                        @if (Model.ShowStoreName) 
+                        { 
+                            <div class="form-group row">
+                                <div class="col-md-3">
+                                    <tvprog-label asp-for="StoreName" />
+                                </div>
+                                <div class="col-md-9">
+                                    <div class="form-text-row">@Model.StoreName</div>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="UserInfo" />
+                            </div>
+                            <div class="col-md-9">
+                                <a asp-controller="User" asp-action="Edit" asp-route-id="@Model.UserId">@Model.UserInfo</a>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="Title" />
+                            </div>
+                            <div class="col-md-9">
+                                @if (Model.IsLoggedInAsVendor)
+                                {
+                                    <div class="form-text-row">@Model.Title</div>
+                                }
+                                else
+                                {
+                                    <tvprog-editor asp-for="Title" asp-required="true" />
+                                    <span asp-validation-for="Title"></span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="ReviewText" />
+                            </div>
+                            <div class="col-md-9">
+                                @if (Model.IsLoggedInAsVendor)
+                                {
+                                    @Html.Raw(htmlFormatter.FormatText(Model.ReviewText, false, true, false, false, false, false))
+                                }
+                                else
+                                {
+                                    <tvprog-textarea asp-for="ReviewText" asp-required="true" />
+                                    <span asp-validation-for="ReviewText"></span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="ReplyText" />
+                            </div>
+                            <div class="col-md-9">
+                                <tvprog-textarea asp-for="ReplyText" />
+                                <span asp-validation-for="ReplyText"></span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="Rating" />
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-text-row">@Model.Rating</div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="IsApproved" />
+                            </div>
+                            <div class="col-md-9">
+                                @if (Model.IsLoggedInAsVendor)
+                                {
+                                    <div class="form-text-row">
+                                        @if (Model.IsApproved)
+                                        {
+                                            <i class="fas fa-check true-icon"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-times false-icon"></i>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <tvprog-editor asp-for="IsApproved" />
+                                    <span asp-validation-for="IsApproved"></span>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <tvprog-label asp-for="CreatedOn" />
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-text-row">@Model.CreatedOn</div>
+                            </div>
+                        </div>
+                        @if (Model.TvChannelReviewReviewTypeMappingSearchModel.IsAnyReviewTypes)
+                        {
+                            @await Html.PartialAsync("_TvChannelReviewReviewTypeMappingList", Model.TvChannelReviewReviewTypeMappingSearchModel)
+                        }
+                    </div>
+                </div>
+            </div>
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelReviewDetailsBottom, additionalData = Model })
+        </div>
+    </div>
+</section>

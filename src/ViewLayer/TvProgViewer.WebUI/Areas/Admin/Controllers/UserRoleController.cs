@@ -27,7 +27,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IWorkContext _workContext;
 
         #endregion
@@ -40,7 +40,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             ILocalizationService localizationService,
             INotificationService notificationService,
             IPermissionService permissionService,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IWorkContext workContext)
         {
             _userActivityService = userActivityService;
@@ -49,7 +49,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _localizationService = localizationService;
             _notificationService = notificationService;
             _permissionService = permissionService;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _workContext = workContext;
         }
 
@@ -161,8 +161,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         throw new TvProgException(await _localizationService.GetResourceAsync("Admin.Users.UserRoles.Fields.SystemName.CantEditSystem"));
 
                     if (TvProgUserDefaults.RegisteredRoleName.Equals(userRole.SystemName, StringComparison.InvariantCultureIgnoreCase) &&
-                        model.PurchasedWithProductId > 0)
-                        throw new TvProgException(await _localizationService.GetResourceAsync("Admin.Users.UserRoles.Fields.PurchasedWithProduct.Registered"));
+                        model.PurchasedWithTvChannelId > 0)
+                        throw new TvProgException(await _localizationService.GetResourceAsync("Admin.Users.UserRoles.Fields.PurchasedWithTvChannel.Registered"));
 
                     userRole = model.ToEntity(userRole);
                     await _userService.UpdateUserRoleAsync(userRole);
@@ -219,51 +219,51 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        public virtual async Task<IActionResult> AssociateProductToUserRolePopup()
+        public virtual async Task<IActionResult> AssociateTvChannelToUserRolePopup()
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageUsers) || !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAcl))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _userRoleModelFactory.PrepareUserRoleProductSearchModelAsync(new UserRoleProductSearchModel());
+            var model = await _userRoleModelFactory.PrepareUserRoleTvChannelSearchModelAsync(new UserRoleTvChannelSearchModel());
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> AssociateProductToUserRolePopupList(UserRoleProductSearchModel searchModel)
+        public virtual async Task<IActionResult> AssociateTvChannelToUserRolePopupList(UserRoleTvChannelSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageUsers) || !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAcl))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _userRoleModelFactory.PrepareUserRoleProductListModelAsync(searchModel);
+            var model = await _userRoleModelFactory.PrepareUserRoleTvChannelListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
         [FormValueRequired("save")]
-        public virtual async Task<IActionResult> AssociateProductToUserRolePopup([Bind(Prefix = nameof(AddProductToUserRoleModel))] AddProductToUserRoleModel model)
+        public virtual async Task<IActionResult> AssociateTvChannelToUserRolePopup([Bind(Prefix = nameof(AddTvChannelToUserRoleModel))] AddTvChannelToUserRoleModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageUsers) || !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAcl))
                 return AccessDeniedView();
 
-            //try to get a product with the specified id
-            var associatedProduct = await _productService.GetProductByIdAsync(model.AssociatedToProductId);
-            if (associatedProduct == null)
-                return Content("Cannot load a product");
+            //try to get a tvchannel with the specified id
+            var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(model.AssociatedToTvChannelId);
+            if (associatedTvChannel == null)
+                return Content("Cannot load a tvchannel");
 
-            //a vendor should have access only to his products
+            //a vendor should have access only to his tvchannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && associatedProduct.VendorId != currentVendor.Id)
-                return Content("This is not your product");
+            if (currentVendor != null && associatedTvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvchannel");
 
             ViewBag.RefreshPage = true;
-            ViewBag.productId = associatedProduct.Id;
-            ViewBag.productName = associatedProduct.Name;
+            ViewBag.tvchannelId = associatedTvChannel.Id;
+            ViewBag.tvchannelName = associatedTvChannel.Name;
 
-            return View(new UserRoleProductSearchModel());
+            return View(new UserRoleTvChannelSearchModel());
         }
 
         #endregion

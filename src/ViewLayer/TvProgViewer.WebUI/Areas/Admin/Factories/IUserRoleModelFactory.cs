@@ -42,23 +42,23 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<UserRoleModel> PrepareUserRoleModelAsync(UserRoleModel model, UserRole userRole, bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare user role product search model
+        /// Prepare user role tvchannel search model
         /// </summary>
-        /// <param name="searchModel">User role product search model</param>
+        /// <param name="searchModel">User role tvchannel search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the user role product search model
+        /// The task result contains the user role tvchannel search model
         /// </returns>
-        Task<UserRoleProductSearchModel> PrepareUserRoleProductSearchModelAsync(UserRoleProductSearchModel searchModel);
+        Task<UserRoleTvChannelSearchModel> PrepareUserRoleTvChannelSearchModelAsync(UserRoleTvChannelSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged user role product list model
+        /// Prepare paged user role tvchannel list model
         /// </summary>
-        /// <param name="searchModel">User role product search model</param>
+        /// <param name="searchModel">User role tvchannel search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the user role product list model
+        /// The task result contains the user role tvchannel list model
         /// </returns>
-        Task<UserRoleProductListModel> PrepareUserRoleProductListModelAsync(UserRoleProductSearchModel searchModel);
+        Task<UserRoleTvChannelListModel> PrepareUserRoleTvChannelListModelAsync(UserRoleTvChannelSearchModel searchModel);
     }
 }

@@ -55,7 +55,7 @@ namespace TvProgViewer.WebUI.Factories
         private readonly IPaymentService _paymentService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvchannelService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShipmentService _shipmentService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -94,7 +94,7 @@ namespace TvProgViewer.WebUI.Factories
             IPaymentService paymentService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            IProductService productService,
+            ITvChannelService tvchannelService,
             IRewardPointService rewardPointService,
             IShipmentService shipmentService,
             IStateProvinceService stateProvinceService,
@@ -129,7 +129,7 @@ namespace TvProgViewer.WebUI.Factories
             _paymentService = paymentService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _productService = productService;
+            _tvchannelService = tvchannelService;
             _rewardPointService = rewardPointService;
             _shipmentService = shipmentService;
             _stateProvinceService = stateProvinceService;
@@ -158,12 +158,12 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="orderItem">Order item</param>
         /// <param name="pictureSize">Picture size</param>
         /// <param name="showDefaultPicture">Whether to show the default picture</param>
-        /// <param name="productName">Product name</param>
+        /// <param name="tvchannelName">TvChannel name</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the picture model
         /// </returns>
-        protected virtual async Task<PictureModel> PrepareOrderItemPictureModelAsync(OrderItem orderItem, int pictureSize, bool showDefaultPicture, string productName)
+        protected virtual async Task<PictureModel> PrepareOrderItemPictureModelAsync(OrderItem orderItem, int pictureSize, bool showDefaultPicture, string tvchannelName)
         {
             var language = await _workContext.GetWorkingLanguageAsync();
             var store = await _storeContext.GetCurrentStoreAsync();
@@ -172,16 +172,16 @@ namespace TvProgViewer.WebUI.Factories
 
             var model = await _staticCacheManager.GetAsync(pictureCacheKey, async () =>
             {
-                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 //order item picture
-                var orderItemPicture = await _pictureService.GetProductPictureAsync(product, orderItem.AttributesXml);
+                var orderItemPicture = await _pictureService.GetTvChannelPictureAsync(tvchannel, orderItem.AttributesXml);
 
                 return new PictureModel
                 {
                     ImageUrl = (await _pictureService.GetPictureUrlAsync(orderItemPicture, pictureSize, showDefaultPicture)).Url,
-                    Title = string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageLinkTitleFormat"), productName),
-                    AlternateText = string.Format(await _localizationService.GetResourceAsync("Media.Product.ImageAlternateTextFormat"), productName),
+                    Title = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageLinkTitleFormat"), tvchannelName),
+                    AlternateText = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageAlternateTextFormat"), tvchannelName),
                 };
             });
 
@@ -503,36 +503,36 @@ namespace TvProgViewer.WebUI.Factories
                 });
             }
 
-            //purchased products
-            model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
+            //purchased tvchannels
+            model.ShowSku = _catalogSettings.ShowSkuOnTvChannelDetailsPage;
             model.ShowVendorName = _vendorSettings.ShowVendorOnOrderDetailsPage;
-            model.ShowProductThumbnail = _orderSettings.ShowProductThumbnailInOrderDetailsPage;
+            model.ShowTvChannelThumbnail = _orderSettings.ShowTvChannelThumbnailInOrderDetailsPage;
 
             var orderItems = await _orderService.GetOrderItemsAsync(order.Id);
 
             foreach (var orderItem in orderItems)
             {
-                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 var orderItemModel = new OrderDetailsModel.OrderItemModel
                 {
                     Id = orderItem.Id,
                     OrderItemGuid = orderItem.OrderItemGuid,
-                    Sku = await _productService.FormatSkuAsync(product, orderItem.AttributesXml),
-                    VendorName = (await _vendorService.GetVendorByIdAsync(product.VendorId))?.Name ?? string.Empty,
-                    ProductId = product.Id,
-                    ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                    ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                    Sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml),
+                    VendorName = (await _vendorService.GetVendorByIdAsync(tvchannel.VendorId))?.Name ?? string.Empty,
+                    TvChannelId = tvchannel.Id,
+                    TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
+                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
                     Quantity = orderItem.Quantity,
                     AttributeInfo = orderItem.AttributeDescription,
                 };
                 //rental info
-                if (product.IsRental)
+                if (tvchannel.IsRental)
                 {
                     var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                        ? _productService.FormatRentalDate(product, orderItem.RentalStartDateUtc.Value) : "";
+                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : "";
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                        ? _productService.FormatRentalDate(product, orderItem.RentalEndDateUtc.Value) : "";
+                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : "";
                     orderItemModel.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                 }
@@ -562,15 +562,15 @@ namespace TvProgViewer.WebUI.Factories
                     orderItemModel.SubTotalValue = priceExclTaxInUserCurrency;
                 }
 
-                //downloadable products
+                //downloadable tvchannels
                 if (await _orderService.IsDownloadAllowedAsync(orderItem))
-                    orderItemModel.DownloadId = product.DownloadId;
+                    orderItemModel.DownloadId = tvchannel.DownloadId;
                 if (await _orderService.IsLicenseDownloadAllowedAsync(orderItem))
                     orderItemModel.LicenseId = orderItem.LicenseDownloadId ?? 0;
 
-                if (_orderSettings.ShowProductThumbnailInOrderDetailsPage)
+                if (_orderSettings.ShowTvChannelThumbnailInOrderDetailsPage)
                 {
-                    orderItemModel.Picture = await PrepareOrderItemPictureModelAsync(orderItem, _mediaSettings.OrderThumbPictureSize, true, orderItemModel.ProductName);
+                    orderItemModel.Picture = await PrepareOrderItemPictureModelAsync(orderItem, _mediaSettings.OrderThumbPictureSize, true, orderItemModel.TvChannelName);
                 }
             }
 
@@ -635,34 +635,34 @@ namespace TvProgViewer.WebUI.Factories
                 }
             }
 
-            //products in this shipment
-            model.ShowSku = _catalogSettings.ShowSkuOnProductDetailsPage;
+            //tvchannels in this shipment
+            model.ShowSku = _catalogSettings.ShowSkuOnTvChannelDetailsPage;
             foreach (var shipmentItem in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
             {
                 var orderItem = await _orderService.GetOrderItemByIdAsync(shipmentItem.OrderItemId);
                 if (orderItem == null)
                     continue;
 
-                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 var shipmentItemModel = new ShipmentDetailsModel.ShipmentItemModel
                 {
                     Id = shipmentItem.Id,
-                    Sku = await _productService.FormatSkuAsync(product, orderItem.AttributesXml),
-                    ProductId = product.Id,
-                    ProductName = await _localizationService.GetLocalizedAsync(product, x => x.Name),
-                    ProductSeName = await _urlRecordService.GetSeNameAsync(product),
+                    Sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml),
+                    TvChannelId = tvchannel.Id,
+                    TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
+                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
                     AttributeInfo = orderItem.AttributeDescription,
                     QuantityOrdered = orderItem.Quantity,
                     QuantityShipped = shipmentItem.Quantity,
                 };
                 //rental info
-                if (product.IsRental)
+                if (tvchannel.IsRental)
                 {
                     var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                        ? _productService.FormatRentalDate(product, orderItem.RentalStartDateUtc.Value) : "";
+                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : "";
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                        ? _productService.FormatRentalDate(product, orderItem.RentalEndDateUtc.Value) : "";
+                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : "";
                     shipmentItemModel.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                 }

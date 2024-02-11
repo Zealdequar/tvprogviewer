@@ -6,7 +6,7 @@ namespace TvProgViewer.Services.Common.Pdf
     /// <summary>
     /// Represents a PDF catalog entry
     /// </summary>
-    public partial class CatalogItem : ProductItem
+    public partial class CatalogItem : TvChannelItem
     {
         #region Ctor
 
@@ -27,13 +27,13 @@ namespace TvProgViewer.Services.Common.Pdf
         /// <summary>
         /// Gets or sets the stock quantity
         /// </summary>
-        [DisplayName("Pdf.Product.StockQuantity")]
+        [DisplayName("Pdf.TvChannel.StockQuantity")]
         public string Stock { get; set; }
 
         /// <summary>
         /// Gets or sets the entry weight
         /// </summary>
-        [DisplayName("Pdf.Product.Weight")]
+        [DisplayName("Pdf.TvChannel.Weight")]
         public string Weight { get; set; }
 
         /// <summary>

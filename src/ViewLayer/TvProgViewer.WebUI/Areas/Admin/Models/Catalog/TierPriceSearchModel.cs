@@ -9,7 +9,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
     {
         #region Properties
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         #endregion
     }

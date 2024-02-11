@@ -10,11 +10,11 @@ namespace TvProgViewer.Services.Catalog
     public interface ISearchProvider : IPlugin
     {
         /// <summary>
-        /// Get products identifiers by the specified keywords
+        /// Get tvchannels identifiers by the specified keywords
         /// </summary>
         /// <param name="keywords">Keywords</param>
         /// <param name="isLocalized">A value indicating whether to search in localized properties</param>
-        /// <returns>The task result contains product identifiers</returns>
-        Task<List<int>> SearchProductsAsync(string keywords, bool isLocalized);
+        /// <returns>The task result contains tvchannel identifiers</returns>
+        Task<List<int>> SearchTvChannelsAsync(string keywords, bool isLocalized);
     }
 }

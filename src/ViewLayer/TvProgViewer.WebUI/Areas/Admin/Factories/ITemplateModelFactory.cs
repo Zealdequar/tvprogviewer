@@ -39,14 +39,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<ManufacturerTemplateListModel> PrepareManufacturerTemplateListModelAsync(ManufacturerTemplateSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged product template list model
+        /// Prepare paged tvchannel template list model
         /// </summary>
-        /// <param name="searchModel">Product template search model</param>
+        /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product template list model
+        /// The task result contains the tvchannel template list model
         /// </returns>
-        Task<ProductTemplateListModel> PrepareProductTemplateListModelAsync(ProductTemplateSearchModel searchModel);
+        Task<TvChannelTemplateListModel> PrepareTvChannelTemplateListModelAsync(TvChannelTemplateSearchModel searchModel);
 
         /// <summary>
         /// Prepare paged topic template list model
@@ -79,14 +79,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<ManufacturerTemplateSearchModel> PrepareManufacturerTemplateSearchModelAsync(ManufacturerTemplateSearchModel searchModel);
 
         /// <summary>
-        /// Prepare product template search model
+        /// Prepare tvchannel template search model
         /// </summary>
-        /// <param name="searchModel">Product template search model</param>
+        /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the product template search model
+        /// The task result contains the tvchannel template search model
         /// </returns>
-        Task<ProductTemplateSearchModel> PrepareProductTemplateSearchModelAsync(ProductTemplateSearchModel searchModel);
+        Task<TvChannelTemplateSearchModel> PrepareTvChannelTemplateSearchModelAsync(TvChannelTemplateSearchModel searchModel);
 
         /// <summary>
         /// Prepare topic template search model

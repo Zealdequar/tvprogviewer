@@ -1,0 +1,101 @@
+@model TvChannelModel
+
+@using TvProgViewer.Core.Domain.Catalog
+
+@{
+    //page title
+    ViewBag.PageTitle = T("Admin.Catalog.TvChannels.EditTvChannelDetails").Text;
+    //active menu item (system name)
+    TvProgHtml.SetActiveMenuItemSystemName("TvChannels");
+}
+
+<form asp-controller="TvChannel" asp-action="Edit" method="post" id="tvchannel-form">
+    <div class="content-header clearfix">
+        <h1 class="float-left">
+            @T("Admin.Catalog.TvChannels.EditTvChannelDetails") - @Model.Name
+            <small>
+                <i class="fas fa-arrow-circle-left"></i>
+                <a asp-action="List">@T("Admin.Catalog.TvChannels.BackToList")</a>
+            </small>
+        </h1>
+        <div class="float-right">
+            <button type="button" onclick="javascript:OpenWindow('@(Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }))', 800, 600, true); return false;" class="btn btn-info">
+                <i class="far fa-eye"></i>
+                @T("Admin.Common.Preview")
+            </button>
+            <button type="submit" name="save" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.Save")
+            </button>
+            <button type="submit" name="save-continue" class="btn btn-primary">
+                <i class="far fa-save"></i>
+                @T("Admin.Common.SaveContinue")
+            </button>
+            <button type="button" name="copytvchannel" class="btn bg-olive" data-toggle="modal" data-target="#copytvchannel-window">
+                <i class="far fa-clone"></i>
+                @T("Admin.Catalog.TvChannels.Copy")
+            </button>
+            <span id="tvchannel-delete" class="btn btn-danger">
+                <i class="far fa-trash-alt"></i>
+                @T("Admin.Common.Delete")
+            </span>
+            @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelDetailsButtons, additionalData = Model })
+        </div>
+    </div>
+    @await Html.PartialAsync("_CreateOrUpdate", Model)
+</form>
+<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvchannel-delete" />
+
+@if (!Model.IsLoggedInAsVendor)
+{
+    //tvchannel editor settings modal
+    @await Html.PartialAsync("_TvChannelEditorSettingsModal", Model)
+}
+
+@*copy tvchannel form*@
+<div id="copytvchannel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="copytvchannel-window-title">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="copytvchannel-window-title">@T("Admin.Catalog.TvChannels.Copy")</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form asp-controller="TvChannel" asp-action="CopyTvChannel" method="post">
+                <div class="form-horizontal">
+                    <div class="modal-body">
+                        <input asp-for="CopyTvChannelModel.Id" type="hidden" />
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <tvprog-label asp-for="CopyTvChannelModel.Name" />
+                            </div>
+                            <div class="col-md-8">
+                                <tvprog-editor asp-for="CopyTvChannelModel.Name" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <tvprog-label asp-for="CopyTvChannelModel.Published" />
+                            </div>
+                            <div class="col-md-8">
+                                <tvprog-editor asp-for="CopyTvChannelModel.Published" />
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <tvprog-label asp-for="CopyTvChannelModel.CopyMultimedia" />
+                            </div>
+                            <div class="col-md-8">
+                                <tvprog-editor asp-for="CopyTvChannelModel.CopyMultimedia" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            @T("Admin.Catalog.TvChannels.Copy")
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

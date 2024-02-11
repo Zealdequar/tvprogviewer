@@ -67,9 +67,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool EstimateShippingCartPageEnabled { get; set; }
         public bool EstimateShippingCartPageEnabled_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.EstimateShippingProductPageEnabled")]
-        public bool EstimateShippingProductPageEnabled { get; set; }
-        public bool EstimateShippingProductPageEnabled_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.EstimateShippingTvChannelPageEnabled")]
+        public bool EstimateShippingTvChannelPageEnabled { get; set; }
+        public bool EstimateShippingTvChannelPageEnabled_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.EstimateShippingCityNameEnabled")]
         public bool EstimateShippingCityNameEnabled { get; set; }
@@ -91,9 +91,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool BypassShippingMethodSelectionIfOnlyOne { get; set; }
         public bool BypassShippingMethodSelectionIfOnlyOne_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.ConsiderAssociatedProductsDimensions")]
-        public bool ConsiderAssociatedProductsDimensions { get; set; }
-        public bool ConsiderAssociatedProductsDimensions_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.ConsiderAssociatedTvChannelsDimensions")]
+        public bool ConsiderAssociatedTvChannelsDimensions { get; set; }
+        public bool ConsiderAssociatedTvChannelsDimensions_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Shipping.ShippingSorting")]
         public int ShippingSorting { get; set; }

@@ -349,7 +349,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
-        /// <param name="product">Product instance</param>
+        /// <param name="tvchannel">TvChannel instance</param>
         /// <param name="userEmail">User's email</param>
         /// <param name="friendsEmail">Friend's email</param>
         /// <param name="personalMessage">Personal message</param>
@@ -357,8 +357,8 @@ namespace TvProgViewer.Services.Messages
         /// A task that represents the asynchronous operation
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendProductEmailAFriendMessageAsync(User user, int languageId,
-            Product product, string userEmail, string friendsEmail, string personalMessage);
+        Task<IList<int>> SendTvChannelEmailAFriendMessageAsync(User user, int languageId,
+            TvChannel tvchannel, string userEmail, string friendsEmail, string personalMessage);
 
         /// <summary>
         /// Sends wishlist "email a friend" message
@@ -488,26 +488,26 @@ namespace TvProgViewer.Services.Messages
         Task<IList<int>> SendVendorInformationChangeStoreOwnerNotificationAsync(Vendor vendor, int languageId);
 
         /// <summary>
-        /// Sends a product review notification message to a store owner
+        /// Sends a tvchannel review notification message to a store owner
         /// </summary>
-        /// <param name="productReview">Product review</param>
+        /// <param name="tvchannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendProductReviewStoreOwnerNotificationMessageAsync(ProductReview productReview, int languageId);
+        Task<IList<int>> SendTvChannelReviewStoreOwnerNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId);
 
         /// <summary>
-        /// Sends a product review reply notification message to a user
+        /// Sends a tvchannel review reply notification message to a user
         /// </summary>
-        /// <param name="productReview">Product review</param>
+        /// <param name="tvchannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendProductReviewReplyUserNotificationMessageAsync(ProductReview productReview, int languageId);
+        Task<IList<int>> SendTvChannelReviewReplyUserNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId);
 
         /// <summary>
         /// Sends a gift card notification
@@ -523,13 +523,13 @@ namespace TvProgViewer.Services.Messages
         /// <summary>
         /// Sends a "quantity below" notification to a store owner
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(Product product, int languageId);
+        Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannel tvchannel, int languageId);
 
         /// <summary>
         /// Sends a "quantity below" notification to a store owner
@@ -540,7 +540,7 @@ namespace TvProgViewer.Services.Messages
         /// A task that represents the asynchronous operation
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(ProductAttributeCombination combination, int languageId);
+        Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannelAttributeCombination combination, int languageId);
 
         /// <summary>
         /// Sends a "new VAT submitted" notification to a store owner

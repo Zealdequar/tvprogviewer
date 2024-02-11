@@ -34,7 +34,7 @@
                         {
                             <col width="1" />
                         }
-                        @if (Model.ShowProductImages)
+                        @if (Model.ShowTvChannelImages)
                         {
                             <col width="1" />
                         }
@@ -59,14 +59,14 @@
                                     @T("ShoppingCart.SKU")
                                 </th>
                             }
-                            @if (Model.ShowProductImages)
+                            @if (Model.ShowTvChannelImages)
                             {
-                                <th class="product-picture">
+                                <th class="tvchannel-picture">
                                     @T("ShoppingCart.Image")
                                 </th>
                             }
-                            <th class="product">
-                                @T("ShoppingCart.Product(s)")
+                            <th class="tvchannel">
+                                @T("ShoppingCart.TvChannel(s)")
                             </th>
                             @if (Model.ShowVendorName)
                             {
@@ -102,14 +102,14 @@
                                         <span class="sku-number">@item.Sku</span>
                                     </td>
                                 }
-                                @if (Model.ShowProductImages)
+                                @if (Model.ShowTvChannelImages)
                                 {
-                                    <td class="product-picture">
-                                        <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
+                                    <td class="tvchannel-picture">
+                                        <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
                                     </td>
                                 }
-                                <td class="product">
-                                    <a href="@(Url.RouteUrl<Product>(new { SeName = item.ProductSeName }))" class="product-name">@item.ProductName</a>
+                                <td class="tvchannel">
+                                    <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))" class="tvchannel-name">@item.TvChannelName</a>
                                     @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
@@ -130,7 +130,7 @@
                                     }
                                     @if (Model.IsEditable && item.AllowItemEditing)
                                     {
-                                        var editCartItemUrl = Url.RouteUrl<Product>(new { SeName = item.ProductSeName }, webHelper.GetCurrentRequestProtocol());
+                                        var editCartItemUrl = Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }, webHelper.GetCurrentRequestProtocol());
                                         editCartItemUrl = webHelper.ModifyQueryString(editCartItemUrl, "updatecartitemid", item.Id.ToString());
                                         <div class="edit-item">
                                             <a href="@editCartItemUrl">@T("Common.Edit")</a>
@@ -157,7 +157,7 @@
                                 }
                                 <td class="unit-price">
                                     <label class="td-title">@T("ShoppingCart.UnitPrice"):</label>
-                                    <span class="product-unit-price">@item.UnitPrice</span>
+                                    <span class="tvchannel-unit-price">@item.UnitPrice</span>
                                 </td>
                                 <td class="quantity">
                                     <label class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</label>
@@ -179,12 +179,12 @@
                                     }
                                     else
                                     {
-                                        <span class="product-quantity">@item.Quantity</span>
+                                        <span class="tvchannel-quantity">@item.Quantity</span>
                                     }
                                 </td>
                                 <td class="subtotal">
                                     <label class="td-title">@T("ShoppingCart.ItemTotal"):</label>
-                                    <span class="product-subtotal">@item.SubTotal</span>
+                                    <span class="tvchannel-subtotal">@item.SubTotal</span>
                                     @if (!string.IsNullOrEmpty(item.Discount))
                                     {
                                         <div class="discount">
@@ -344,7 +344,7 @@
             </div>
             @if (Model.IsEditable)
             {
-                @await Component.InvokeAsync(typeof(CrossSellProductsViewComponent))
+                @await Component.InvokeAsync(typeof(CrossSellTvChannelsViewComponent))
             }
         </form>
     }

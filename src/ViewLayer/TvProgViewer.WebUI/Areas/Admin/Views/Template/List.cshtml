@@ -17,8 +17,8 @@
     const string hideManufacturerBlockAttributeName = "Templates.HideManufacturerBlock";
     var hideManufacturerBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideManufacturerBlockAttributeName);
 
-    const string hideProductBlockAttributeName = "Templates.HideProductBlock";
-    var hideProductBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideProductBlockAttributeName);
+    const string hideTvChannelBlockAttributeName = "Templates.HideTvChannelBlock";
+    var hideTvChannelBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTvChannelBlockAttributeName);
 
     const string hideTopicBlockAttributeName = "Templates.HideTopicBlock";
     var hideTopicBlock = await genericAttributeService.GetAttributeAsync<bool>(user, hideTopicBlockAttributeName);
@@ -40,7 +40,7 @@
             <tvprog-cards id="templates-cards">
                 <tvprog-card asp-name="templates-category" asp-icon="fas fa-sitemap" asp-title="@T("Admin.System.Templates.Category")" asp-hide-block-attribute-name="@hideCategoryBlockAttributeName" asp-hide="@hideCategoryBlock">@await Html.PartialAsync("_List.Category", Model)</tvprog-card>
                 <tvprog-card asp-name="templates-manufacturer" asp-icon="fas fa-industry" asp-title="@T("Admin.System.Templates.Manufacturer")" asp-hide-block-attribute-name="@hideManufacturerBlockAttributeName" asp-hide="@hideManufacturerBlock">@await Html.PartialAsync("_List.Manufacturer", Model)</tvprog-card>
-                <tvprog-card asp-name="templates-product" asp-icon="fas fa-cube" asp-title="@T("Admin.System.Templates.Product")" asp-hide-block-attribute-name="@hideProductBlockAttributeName" asp-hide="@hideProductBlock">@await Html.PartialAsync("_List.Product", Model)</tvprog-card>
+                <tvprog-card asp-name="templates-tvchannel" asp-icon="fas fa-cube" asp-title="@T("Admin.System.Templates.TvChannel")" asp-hide-block-attribute-name="@hideTvChannelBlockAttributeName" asp-hide="@hideTvChannelBlock">@await Html.PartialAsync("_List.TvChannel", Model)</tvprog-card>
                 <tvprog-card asp-name="templates-topic" asp-icon="fas fa-book" asp-title="@T("Admin.System.Templates.Topic")" asp-hide-block-attribute-name="@hideTopicBlockAttributeName" asp-hide="@hideTopicBlock">@await Html.PartialAsync("_List.Topic", Model)</tvprog-card>
 
                 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TemplatesDetailsBlock, additionalData = Model })

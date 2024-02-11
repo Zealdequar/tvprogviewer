@@ -1,0 +1,36 @@
+@model CatalogSettingsModel
+
+<div class="card-body">
+    <div class="form-group row">
+        <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="CompareTvChannelsEnabled_OverrideForStore" asp-input="CompareTvChannelsEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="CompareTvChannelsEnabled" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="CompareTvChannelsEnabled" />
+            <span asp-validation-for="CompareTvChannelsEnabled"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="CompareTvChannelsEnabled">
+        <div class="form-group row advanced-setting">
+            <div class="col-md-3">
+                <tvprog-override-store-checkbox asp-for="IncludeShortDescriptionInCompareTvChannels_OverrideForStore" asp-input="IncludeShortDescriptionInCompareTvChannels" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="IncludeShortDescriptionInCompareTvChannels" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="IncludeShortDescriptionInCompareTvChannels" />
+                <span asp-validation-for="IncludeShortDescriptionInCompareTvChannels"></span>
+            </div>
+        </div>
+        <div class="form-group row advanced-setting" id="IncludeFullDescriptionInCompareTvChannels">
+            <div class="col-md-3">
+                <tvprog-override-store-checkbox asp-for="IncludeFullDescriptionInCompareTvChannels_OverrideForStore" asp-input="IncludeFullDescriptionInCompareTvChannels" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+                <tvprog-label asp-for="IncludeFullDescriptionInCompareTvChannels" />
+            </div>
+            <div class="col-md-9">
+                <tvprog-editor asp-for="IncludeFullDescriptionInCompareTvChannels" />
+                <span asp-validation-for="IncludeFullDescriptionInCompareTvChannels"></span>
+            </div>
+        </div>
+    </tvprog-nested-setting>
+</div>

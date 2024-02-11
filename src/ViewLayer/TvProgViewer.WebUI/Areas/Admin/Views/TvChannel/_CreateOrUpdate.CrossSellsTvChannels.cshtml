@@ -1,0 +1,68 @@
+﻿@model TvChannelModel
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.TvChannels.CrossSells.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+    <div class="card card-default">
+
+        <div class="card-body">
+            @await Html.PartialAsync("Table", new DataTablesModel
+            {
+                Name = "crossselltvchannels-grid",
+                UrlRead = new DataUrl("CrossSellTvChannelList", "TvChannel", new RouteValueDictionary { [nameof(Model.CrossSellTvChannelSearchModel.TvChannelId)] = Model.CrossSellTvChannelSearchModel.TvChannelId }),
+                UrlDelete = new DataUrl("CrossSellTvChannelDelete", "TvChannel", null),
+                Length = Model.CrossSellTvChannelSearchModel.PageSize,
+                LengthMenu = Model.CrossSellTvChannelSearchModel.AvailablePageSizes,
+                ColumnCollection = new List<ColumnProperty>
+                {
+                    new ColumnProperty(nameof(CrossSellTvChannelModel.TvChannel2Name))
+                    {
+                        Title = T("Admin.Catalog.TvChannels.CrossSells.Fields.TvChannel").Text,
+                        Render = new RenderCustom("renderColumnCrossSellTvChannelName")
+                    },
+                    new ColumnProperty(nameof(CrossSellTvChannelModel.Id))
+                    {
+                        Title = T("Admin.Common.Delete").Text,
+                        Width = "100",
+                        Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                        ClassName = TvProgColumnClassDefaults.Button
+                    }
+                }
+            })
+            <script asp-location="Footer">
+                function renderColumnCrossSellTvChannelName(data, type, row, meta) {
+                    var textRenderer = $.fn.dataTable.render.text().display;
+                    return '<a href="@Url.Content("~/Admin/TvChannel/Edit/")' + row.TvChannelId2 + '">' + textRenderer(row.TvChannel2Name) + '</a>';
+                }
+            </script>
+        </div>
+        <div class="card-footer">
+            <button type="submit" id="btnAddNewCrossSellTvChannel" onclick="javascript:OpenWindow('@(Url.Action("CrossSellTvChannelAddPopup", "TvChannel", new {tvchannelId = Model.Id, btnId = "btnRefreshCrossSellTvChannels", formId = "tvchannel-form"}))', 800, 800, true); return false;" class="btn btn-primary">
+                @T("Admin.Catalog.TvChannels.CrossSells.AddNew")
+            </button>
+            <button type="submit" id="btnRefreshCrossSellTvChannels" style="display: none"></button>
+            <script>
+                $(document).ready(function () {
+                    $('#btnRefreshCrossSellTvChannels').click(function () {
+                        //refresh grid
+                        updateTable('#crossselltvchannels-grid');
+
+                        //return false to don't reload a page
+                        return false;
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.TvChannels.CrossSells.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

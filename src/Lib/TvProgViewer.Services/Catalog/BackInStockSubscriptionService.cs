@@ -18,7 +18,7 @@ namespace TvProgViewer.Services.Catalog
 
         private readonly IRepository<BackInStockSubscription> _backInStockSubscriptionRepository;
         private readonly IRepository<User> _userRepository;
-        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<TvChannel> _tvchannelRepository;
         private readonly IWorkflowMessageService _workflowMessageService;
 
         #endregion
@@ -27,12 +27,12 @@ namespace TvProgViewer.Services.Catalog
 
         public BackInStockSubscriptionService(IRepository<BackInStockSubscription> backInStockSubscriptionRepository,
             IRepository<User> userRepository,
-            IRepository<Product> productRepository,
+            IRepository<TvChannel> tvchannelRepository,
             IWorkflowMessageService workflowMessageService)
         {
             _backInStockSubscriptionRepository = backInStockSubscriptionRepository;
             _userRepository = userRepository;
-            _productRepository = productRepository;
+            _tvchannelRepository = tvchannelRepository;
             _workflowMessageService = workflowMessageService;
         }
 
@@ -73,9 +73,9 @@ namespace TvProgViewer.Services.Catalog
                 if (storeId > 0)
                     query = query.Where(biss => biss.StoreId == storeId);
 
-                //product
+                //tvchannel
                 query = from q in query
-                    join p in _productRepository.Table on q.ProductId equals p.Id
+                    join p in _tvchannelRepository.Table on q.TvChannelId equals p.Id
                     where !p.Deleted
                     select q;
 
@@ -89,18 +89,18 @@ namespace TvProgViewer.Services.Catalog
         /// Gets all subscriptions
         /// </summary>
         /// <param name="userId">User id</param>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the subscriptions
         /// </returns>
-        public virtual async Task<BackInStockSubscription> FindSubscriptionAsync(int userId, int productId, int storeId)
+        public virtual async Task<BackInStockSubscription> FindSubscriptionAsync(int userId, int tvchannelId, int storeId)
         {
             var query = from biss in _backInStockSubscriptionRepository.Table
                         orderby biss.CreatedOnUtc descending
                         where biss.UserId == userId &&
-                              biss.ProductId == productId &&
+                              biss.TvChannelId == tvchannelId &&
                               biss.StoreId == storeId
                         select biss;
 
@@ -135,18 +135,18 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Send notification to subscribers
         /// </summary>
-        /// <param name="product">Product</param>
+        /// <param name="tvchannel">TvChannel</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the number of sent email
         /// </returns>
-        public virtual async Task<int> SendNotificationsToSubscribersAsync(Product product)
+        public virtual async Task<int> SendNotificationsToSubscribersAsync(TvChannel tvchannel)
         {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
+            if (tvchannel == null)
+                throw new ArgumentNullException(nameof(tvchannel));
 
             var result = 0;
-            var subscriptions = await GetAllSubscriptionsByProductIdAsync(product.Id);
+            var subscriptions = await GetAllSubscriptionsByTvChannelIdAsync(tvchannel.Id);
             foreach (var subscription in subscriptions)
             {
                 var user = await _userRepository.GetByIdAsync(subscription.UserId);
@@ -162,7 +162,7 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets all subscriptions
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
@@ -170,13 +170,13 @@ namespace TvProgViewer.Services.Catalog
         /// A task that represents the asynchronous operation
         /// The task result contains the subscriptions
         /// </returns>
-        public virtual async Task<IPagedList<BackInStockSubscription>> GetAllSubscriptionsByProductIdAsync(int productId,
+        public virtual async Task<IPagedList<BackInStockSubscription>> GetAllSubscriptionsByTvChannelIdAsync(int tvchannelId,
             int storeId = 0, int pageIndex = 0, int pageSize = int.MaxValue)
         {
             return await _backInStockSubscriptionRepository.GetAllPagedAsync(query =>
             {
-                //product
-                query = query.Where(biss => biss.ProductId == productId);
+                //tvchannel
+                query = query.Where(biss => biss.TvChannelId == tvchannelId);
                 //store
                 if (storeId > 0)
                     query = query.Where(biss => biss.StoreId == storeId);

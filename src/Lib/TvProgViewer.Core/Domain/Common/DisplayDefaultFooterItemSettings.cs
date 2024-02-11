@@ -18,9 +18,9 @@ namespace TvProgViewer.Core.Domain.Common
         public bool DisplayContactUsFooterItem { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display "product search" footer item
+        /// Gets or sets a value indicating whether to display "tvchannel search" footer item
         /// </summary>
-        public bool DisplayProductSearchFooterItem { get; set; }
+        public bool DisplayTvChannelSearchFooterItem { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to display "news" footer item
@@ -38,19 +38,19 @@ namespace TvProgViewer.Core.Domain.Common
         public bool DisplayForumsFooterItem { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display "recently viewed products" footer item
+        /// Gets or sets a value indicating whether to display "recently viewed tvchannels" footer item
         /// </summary>
-        public bool DisplayRecentlyViewedProductsFooterItem { get; set; }
+        public bool DisplayRecentlyViewedTvChannelsFooterItem { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display "compare products" footer item
+        /// Gets or sets a value indicating whether to display "compare tvchannels" footer item
         /// </summary>
-        public bool DisplayCompareProductsFooterItem { get; set; }
+        public bool DisplayCompareTvChannelsFooterItem { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display "new products" footer item
+        /// Gets or sets a value indicating whether to display "new tvchannels" footer item
         /// </summary>
-        public bool DisplayNewProductsFooterItem { get; set; }        
+        public bool DisplayNewTvChannelsFooterItem { get; set; }        
 
         /// <summary>
         /// Gets or sets a value indicating whether to display "user info" footer item

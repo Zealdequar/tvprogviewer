@@ -22,5 +22,11 @@
     "inputFiles": [
       "wwwroot/js/public.common.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/programme-viewer.min.js",
+    "inputFiles": [
+      "wwwroot/js/programme-viewer.js"
+    ]
   }
 ]

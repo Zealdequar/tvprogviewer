@@ -1,0 +1,84 @@
+﻿@model TvChannelModel
+<div class="card-body">
+    <p>
+        @T("Admin.Catalog.TvChannels.RelatedTvChannels.Hint")
+    </p>
+    @if (Model.Id > 0)
+    {
+        <div class="card card-default">
+            <div class="card-body">
+
+                @await Html.PartialAsync("Table", new DataTablesModel
+                {
+                    Name = "relatedtvchannels-grid",
+                    UrlRead = new DataUrl("RelatedTvChannelList", "TvChannel", new RouteValueDictionary { [nameof(Model.RelatedTvChannelSearchModel.TvChannelId)] = Model.RelatedTvChannelSearchModel.TvChannelId }),
+                    UrlDelete = new DataUrl("RelatedTvChannelDelete", "TvChannel", null),
+                    UrlUpdate = new DataUrl("RelatedTvChannelUpdate", "TvChannel", null),
+                    Length = Model.RelatedTvChannelSearchModel.PageSize,
+                    LengthMenu = Model.RelatedTvChannelSearchModel.AvailablePageSizes,
+                    ColumnCollection = new List<ColumnProperty>
+                        {
+                            new ColumnProperty(nameof(RelatedTvChannelModel.TvChannel2Name))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.RelatedTvChannels.Fields.TvChannel").Text
+                            },
+                            new ColumnProperty(nameof(RelatedTvChannelModel.DisplayOrder))
+                            {
+                                Title = T("Admin.Catalog.TvChannels.RelatedTvChannels.Fields.DisplayOrder").Text,
+                                Width = "150",
+                                ClassName = TvProgColumnClassDefaults.CenterAll,
+                                Editable = true,
+                                EditType = EditType.Number
+                            },
+                            new ColumnProperty(nameof(RelatedTvChannelModel.TvChannelId2))
+                            {
+                                Title = T("Admin.Common.View").Text,
+                                Width = "150",
+                                ClassName = TvProgColumnClassDefaults.Button,
+                                Render = new RenderButtonView(new DataUrl("~/Admin/TvChannel/Edit/", nameof(RelatedTvChannelModel.TvChannel2Name)))
+                            },
+                            new ColumnProperty(nameof(RelatedTvChannelModel.Id))
+                            {
+                                Title = T("Admin.Common.Edit").Text,
+                                Width = "200",
+                                ClassName =  TvProgColumnClassDefaults.Button,
+                                Render = new RenderButtonsInlineEdit()
+                            },
+                            new ColumnProperty(nameof(RelatedTvChannelModel.Id))
+                            {
+                                Title = T("Admin.Common.Delete").Text,
+                                Width = "100",
+                                Render = new RenderButtonRemove(T("Admin.Common.Delete").Text),
+                                ClassName = TvProgColumnClassDefaults.Button
+                            }
+                        }
+                })
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="btnAddNewRelatedTvChannel" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("RelatedTvChannelAddPopup", "TvChannel", new {tvchannelId = Model.Id, btnId = "btnRefreshRelatedTvChannels", formId = "tvchannel-form"}))', 800, 800, true); return false;">
+                    @T("Admin.Catalog.TvChannels.RelatedTvChannels.AddNew")
+                </button>
+                <button type="submit" id="btnRefreshRelatedTvChannels" style="display: none"></button>
+                <script>
+                    $(document).ready(function () {
+                        $('#btnRefreshRelatedTvChannels').click(function () {
+                            //refresh grid
+                            updateTable('#relatedtvchannels-grid');
+
+                            //return false to don't reload a page
+                            return false;
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card card-default">
+            <div class="card-body">
+                @T("Admin.Catalog.TvChannels.RelatedTvChannels.SaveBeforeEdit")
+            </div>
+        </div>
+    }
+</div>

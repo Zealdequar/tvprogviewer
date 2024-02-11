@@ -38,8 +38,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
         [TvProgResourceDisplayName("Admin.Catalog.Attributes.CheckoutAttributes.Fields.IsRequired")]
         public bool IsRequired { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Attributes.CheckoutAttributes.Fields.ShippableProductRequired")]
-        public bool ShippableProductRequired { get; set; }
+        [TvProgResourceDisplayName("Admin.Catalog.Attributes.CheckoutAttributes.Fields.ShippableTvChannelRequired")]
+        public bool ShippableTvChannelRequired { get; set; }
 
         [TvProgResourceDisplayName("Admin.Catalog.Attributes.CheckoutAttributes.Fields.IsTaxExempt")]
         public bool IsTaxExempt { get; set; }

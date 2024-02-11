@@ -20,9 +20,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool DisplayContactUsFooterItem { get; set; }
         public bool DisplayContactUsFooterItem_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayProductSearchFooterItem")]
-        public bool DisplayProductSearchFooterItem { get; set; }
-        public bool DisplayProductSearchFooterItem_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayTvChannelSearchFooterItem")]
+        public bool DisplayTvChannelSearchFooterItem { get; set; }
+        public bool DisplayTvChannelSearchFooterItem_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayNewsFooterItem")]
         public bool DisplayNewsFooterItem { get; set; }
@@ -36,17 +36,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool DisplayForumsFooterItem { get; set; }
         public bool DisplayForumsFooterItem_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayRecentlyViewedProductsFooterItem")]
-        public bool DisplayRecentlyViewedProductsFooterItem { get; set; }
-        public bool DisplayRecentlyViewedProductsFooterItem_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayRecentlyViewedTvChannelsFooterItem")]
+        public bool DisplayRecentlyViewedTvChannelsFooterItem { get; set; }
+        public bool DisplayRecentlyViewedTvChannelsFooterItem_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayCompareProductsFooterItem")]
-        public bool DisplayCompareProductsFooterItem { get; set; }
-        public bool DisplayCompareProductsFooterItem_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayCompareTvChannelsFooterItem")]
+        public bool DisplayCompareTvChannelsFooterItem { get; set; }
+        public bool DisplayCompareTvChannelsFooterItem_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayNewProductsFooterItem")]
-        public bool DisplayNewProductsFooterItem { get; set; }
-        public bool DisplayNewProductsFooterItem_OverrideForStore { get; set; }       
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayNewTvChannelsFooterItem")]
+        public bool DisplayNewTvChannelsFooterItem { get; set; }
+        public bool DisplayNewTvChannelsFooterItem_OverrideForStore { get; set; }       
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.DisplayDefaultFooterItemSettingsModel.DisplayUserInfoFooterItem")]
         public bool DisplayUserInfoFooterItem { get; set; }

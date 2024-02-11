@@ -1,0 +1,178 @@
+﻿@model TvChannelDetailsModel
+
+@using TvProgViewer.Core
+@using TvProgViewer.Core.Domain.Catalog
+@using TvProgViewer.Core.Domain.Seo
+@using TvProgViewer.Services.Html
+
+@inject IHtmlFormatter htmlFormatter
+@inject IWebHelper webHelper
+@inject SeoSettings seoSettings
+
+@{
+    Layout = "_ColumnsOne";
+
+    //title
+    TvProgHtml.AddTitleParts(!string.IsNullOrEmpty(Model.MetaTitle) ? Model.MetaTitle : Model.Name);
+    //meta
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    //page class
+    TvProgHtml.AppendPageCssClassParts("html-tvchannel-details-page");
+    TvProgHtml.AppendCssFileParts("~/css/jqGrid/ui.jqgrid.css");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/i18n/grid.locale-ru.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/jquery.jqgrid.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/programme-viewer.min.js");
+
+    //canonical URL
+    if (seoSettings.CanonicalUrlsEnabled)
+    {
+        var tvchannelUrl = Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        TvProgHtml.AddCanonicalUrlParts(tvchannelUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+    }
+
+    //open graph META tags
+    if (seoSettings.OpenGraphMetaTags)
+    {
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"tvchannel\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:image:url\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:site_name\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+    }
+
+    //Twitter META tags
+    if (seoSettings.TwitterMetaTags)
+    {
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:card\" content=\"summary\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:site\" content=\"" + Html.Encode(Model.CurrentStoreName) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
+    }
+}
+<!--tvchannel breadcrumb-->
+@section Breadcrumb
+{
+    @await Html.PartialAsync("_TvChannelBreadcrumb", Model.Breadcrumb)
+}
+@await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsAfterBreadcrumb, additionalData = Model })
+<div class="page tvchannel-details-page">
+    <div class="page-body">
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsTop, additionalData = Model })
+        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvchannel-details-form">
+            @if (seoSettings.MicrodataEnabled)
+            {
+                @await Html.PartialAsync("_Microdata", Model)
+            }
+            <div data-tvchannelid="@Model.Id">
+                <div class="tvchannel-essential">
+                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialTop, additionalData = Model })
+                    <div class="gallery">
+                        <!--tvchannel pictures-->
+                        @await Html.PartialAsync("_TvChannelDetailsPictures", Model)
+                        <!--tvchannel videos-->
+                        @await Html.PartialAsync("_TvChannelDetailsVideos", Model)
+                        @await Html.PartialAsync("_TvChannelDetailsDaysSelect", Model)
+                    </div>
+                    <div class="overview">
+                        @await Html.PartialAsync("_Discontinued", Model)
+                        <div class="tvchannel-name">
+                            <h1>
+                                @Model.Name
+                            </h1>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                        {
+                            <div class="short-description">
+                                @Html.Raw(Model.ShortDescription)
+                            </div>
+                        }
+                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewTop, additionalData = Model })
+                        <!--tvchannel reviews-->
+                        @await Html.PartialAsync("_TvChannelReviewOverview", Model.TvChannelReviewOverview)
+                        <!--manufacturers-->
+                        @await Html.PartialAsync("_TvChannelManufacturers", Model.TvChannelManufacturers)
+                        <!--availability-->
+                        @await Html.PartialAsync("_Availability", Model)
+                        <!--SKU, MAN, GTIN, vendor-->
+                        @await Html.PartialAsync("_SKU_Man_GTIN_Ven", Model)
+                        <!--delivery-->
+                        @await Html.PartialAsync("_DeliveryInfo", Model)
+                        <!--sample download-->
+                        @await Html.PartialAsync("_DownloadSample", Model)
+                        <!--attributes-->
+                        @{
+                            var dataDictAttributes = new ViewDataDictionary(ViewData);
+                            dataDictAttributes.TemplateInfo.HtmlFieldPrefix = $"attributes_{Model.Id}";
+                            @await Html.PartialAsync("_TvChannelAttributes", Model, dataDictAttributes)
+                        }
+                        <!--gift card-->
+                        @{
+                            var dataDictGiftCard = new ViewDataDictionary(ViewData);
+                            dataDictGiftCard.TemplateInfo.HtmlFieldPrefix = $"giftcard_{Model.Id}";
+                            @await Html.PartialAsync("_GiftCardInfo", Model.GiftCard, dataDictGiftCard)
+                        }
+                        <!--rental info-->
+                        @{
+                            var dataDictRental = new ViewDataDictionary(ViewData);
+                            dataDictRental.TemplateInfo.HtmlFieldPrefix = $"rental_{Model.Id}";
+                            @await Html.PartialAsync("_RentalInfo", Model, dataDictRental)
+                        }
+                        <!--price & add to cart & estimate shipping-->
+                        @{
+                            var dataDictPrice = new ViewDataDictionary(ViewData);
+                            dataDictPrice.TemplateInfo.HtmlFieldPrefix = $"price_{Model.Id}";
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelPriceTop, additionalData = Model })
+                            @await Html.PartialAsync("_TvChannelPrice", Model.TvChannelPrice, dataDictPrice)
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelPriceBottom, additionalData = Model })
+
+                            @await Html.PartialAsync("_TvChannelTierPrices", Model.TierPrices)
+
+                            var dataDictAddToCart = new ViewDataDictionary(ViewData);
+                            dataDictAddToCart.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                            @await Html.PartialAsync("_AddToCart", Model.AddToCart, dataDictAddToCart)
+
+                            @await Html.PartialAsync("_TvChannelEstimateShipping", Model.TvChannelEstimateShipping)
+                        }
+                        <!--wishlist, compare, email a friend-->
+                        <div class="overview-buttons">
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsInsideOverviewButtonsBefore, additionalData = Model })
+                            @{
+                                var dataDictAddToWishlist = new ViewDataDictionary(ViewData);
+                                dataDictAddToWishlist.TemplateInfo.HtmlFieldPrefix = $"addtocart_{Model.Id}";
+                                @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
+                            }
+                            @await Html.PartialAsync("_CompareTvChannelsButton", Model)
+                            @await Html.PartialAsync("_TvChannelEmailAFriendButton", Model)
+                            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsInsideOverviewButtonsAfter, additionalData = Model })
+                        </div>
+                        @await Html.PartialAsync("_ShareButton", Model)
+                        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewBottom, additionalData = Model })
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.FullDescription))
+                    {
+                        <div class="full-description">
+                            @Html.Raw(Model.FullDescription)
+                        </div>
+                    }
+                    @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialBottom, additionalData = Model })
+                </div>
+                @*
+                @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforeCollateral, additionalData = Model })
+                <div class="tvchannel-collateral">
+                    @await Html.PartialAsync("_TvChannelSpecifications", Model.TvChannelSpecificationModel)
+                    @await Html.PartialAsync("_TvChannelTags", Model.TvChannelTags)
+                </div>*@
+                @await Html.PartialAsync("_TvChannelDetailsProgrammeViewer", Model)
+                @await Component.InvokeAsync(typeof(TvChannelsAlsoPurchasedViewComponent), new { tvchannelId = Model.Id })
+                @await Component.InvokeAsync(typeof(RelatedTvChannelsViewComponent), new { tvchannelId = Model.Id })
+            </div>
+        </form>
+        @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBottom, additionalData = Model })
+    </div>
+</div>

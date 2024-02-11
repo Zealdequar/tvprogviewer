@@ -17,7 +17,7 @@ namespace TvProgViewer.WebUI.Components
             _blogModelFactory = blogModelFactory;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int currentCategoryId, int currentProductId)
+        public async Task<IViewComponentResult> InvokeAsync(int currentCategoryId, int currentTvChannelId)
         {
             if (!_blogSettings.Enabled)
                 return Content("");

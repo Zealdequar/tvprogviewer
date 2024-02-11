@@ -1,0 +1,10 @@
+﻿@model TvChannelDetailsModel
+@{
+    var addtocomparelink = Url.RouteUrl("AddTvChannelToCompare", new { tvchannelId = Model.Id });
+}
+@if (Model.CompareTvChannelsEnabled)
+{
+    <div class="compare-tvchannels">
+        <button type="button" class="button-2 add-to-compare-list-button" onclick="AjaxCart.addtvchanneltocomparelist('@addtocomparelink');return false;">@T("TvChannels.Compare.AddToCompareList")</button>
+    </div>
+}

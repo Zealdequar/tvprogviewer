@@ -19,11 +19,11 @@ namespace TvProgViewer.Services.Catalog.Caching
         {
             await RemoveAsync(TvProgCatalogDefaults.SpecificationAttributesWithOptionsCacheKey);
             await RemoveAsync(TvProgCatalogDefaults.SpecificationAttributeOptionsCacheKey, entity.SpecificationAttributeId);
-            await RemoveByPrefixAsync(TvProgCatalogDefaults.ProductSpecificationAttributeAllByProductPrefix);
+            await RemoveByPrefixAsync(TvProgCatalogDefaults.TvChannelSpecificationAttributeAllByTvChannelPrefix);
             await RemoveByPrefixAsync(TvProgCatalogDefaults.FilterableSpecificationAttributeOptionsPrefix);
 
             if (entityEventType == EntityEventType.Delete)
-                await RemoveByPrefixAsync(TvProgCatalogDefaults.SpecificationAttributeGroupByProductPrefix);
+                await RemoveByPrefixAsync(TvProgCatalogDefaults.SpecificationAttributeGroupByTvChannelPrefix);
 
             await base.ClearCacheAsync(entity, entityEventType);
         }

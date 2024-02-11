@@ -1,0 +1,39 @@
+﻿@model TvChannelReviewOverviewModel
+@{
+    var ratingPercent = 0;
+    if (Model.TotalReviews != 0)
+    {
+        ratingPercent = ((Model.RatingSum * 100) / Model.TotalReviews) / 5;
+    }
+}
+@if (Model.AllowUserReviews)
+{
+    <div class="tvchannel-reviews-overview">
+        <div class="tvchannel-review-box">
+            <div class="rating">
+                <div style="width: @(ratingPercent)%">
+                </div>
+            </div>
+        </div>
+
+        @if (Model.TotalReviews > 0)
+        {
+            <div class="tvchannel-review-links">
+                <a href="@Url.RouteUrl("TvChannelReviews", new { tvchannelId = Model.TvChannelId })">@Model.TotalReviews
+                    @T("Reviews.Overview.Reviews")</a>
+                
+                @if (Model.CanAddNewReview)
+                {
+                    <span class="separator">|</span> <a href="@Url.RouteUrl("TvChannelReviews", new { tvchannelId = Model.TvChannelId })">@T("Reviews.Overview.AddNew")</a>
+                }
+                
+            </div>            
+        }
+        else
+        {
+            <div class="tvchannel-no-reviews">
+                <a href="@Url.RouteUrl("TvChannelReviews", new { tvchannelId = Model.TvChannelId })">@T("Reviews.Overview.First")</a>
+            </div>
+        }
+    </div>
+}

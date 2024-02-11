@@ -44,14 +44,14 @@ namespace TvProgViewer.Core.Domain.Common
         public bool SitemapXmlIncludeNews { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include products to sitemap.xml
+        /// Gets or sets a value indicating whether to include tvchannels to sitemap.xml
         /// </summary>
-        public bool SitemapXmlIncludeProducts { get; set; }
+        public bool SitemapXmlIncludeTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include product tags to sitemap.xml
+        /// Gets or sets a value indicating whether to include tvchannel tags to sitemap.xml
         /// </summary>
-        public bool SitemapXmlIncludeProductTags { get; set; }
+        public bool SitemapXmlIncludeTvChannelTags { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to include topics to sitemap.xml

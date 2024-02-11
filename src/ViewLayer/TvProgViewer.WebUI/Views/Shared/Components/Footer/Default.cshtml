@@ -32,7 +32,7 @@
                 <strong>@T("Footer.UserService")</strong>
             </div>
             <ul class="list">
-                @if (Model.SearchEnabled && Model.DisplayProductSearchFooterItem)
+                @if (Model.SearchEnabled && Model.DisplayTvChannelSearchFooterItem)
                 {
                     <li><a href="@Url.RouteUrl("TvSearch")">@T("Search")</a> </li>
                 }
@@ -48,17 +48,17 @@
                 {
                     <li><a href="@Url.RouteUrl("Boards")">@T("Forum.Forums")</a></li>
                 }
-                @if (Model.RecentlyViewedProductsEnabled && Model.DisplayRecentlyViewedProductsFooterItem)
+                @if (Model.RecentlyViewedTvChannelsEnabled && Model.DisplayRecentlyViewedTvChannelsFooterItem)
                 {
-                    <li><a href="@Url.RouteUrl("RecentlyViewedProducts")">@T("Products.RecentlyViewedProducts")</a></li>
+                    <li><a href="@Url.RouteUrl("RecentlyViewedTvChannels")">@T("TvChannels.RecentlyViewedTvChannels")</a></li>
                 }
-                @if (Model.CompareProductsEnabled && Model.DisplayCompareProductsFooterItem)
+                @if (Model.CompareTvChannelsEnabled && Model.DisplayCompareTvChannelsFooterItem)
                 {
-                    <li><a href="@Url.RouteUrl("CompareProducts")">@T("Products.Compare.List")</a></li>
+                    <li><a href="@Url.RouteUrl("CompareTvChannels")">@T("TvChannels.Compare.List")</a></li>
                 }
-                @if (Model.NewProductsEnabled && Model.DisplayNewProductsFooterItem)
+                @if (Model.NewTvChannelsEnabled && Model.DisplayNewTvChannelsFooterItem)
                 {
-                    <li><a href="@Url.RouteUrl("NewProducts")">@T("Products.NewProducts")</a></li>
+                    <li><a href="@Url.RouteUrl("NewTvChannels")">@T("TvChannels.NewTvChannels")</a></li>
                 }
                 @foreach (var topic in Model.Topics.Where(x => x.IncludeInFooterColumn2).ToList())
                 {

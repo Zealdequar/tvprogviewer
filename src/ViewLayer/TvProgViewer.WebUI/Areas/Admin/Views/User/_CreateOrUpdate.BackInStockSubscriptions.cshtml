@@ -17,11 +17,11 @@
                 Width = "200",
                 Visible = (await storeService.GetAllStoresAsync()).Count > 1
             },
-            new ColumnProperty(nameof(UserBackInStockSubscriptionModel.ProductName))
+            new ColumnProperty(nameof(UserBackInStockSubscriptionModel.TvChannelName))
             {
-                Title = T("Admin.Users.Users.BackInStockSubscriptions.Product").Text,
+                Title = T("Admin.Users.Users.BackInStockSubscriptions.TvChannel").Text,
                 Width = "300",
-                Render = new RenderLink(new DataUrl("~/Admin/Product/Edit/", nameof(UserBackInStockSubscriptionModel.ProductId)))
+                Render = new RenderLink(new DataUrl("~/Admin/TvChannel/Edit/", nameof(UserBackInStockSubscriptionModel.TvChannelId)))
             },
             new ColumnProperty(nameof(UserBackInStockSubscriptionModel.CreatedOn))
             {

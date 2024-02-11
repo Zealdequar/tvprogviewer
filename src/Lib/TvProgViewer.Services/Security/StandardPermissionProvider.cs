@@ -12,11 +12,11 @@ namespace TvProgViewer.Services.Security
         //admin area permissions
         public static readonly PermissionRecord AccessAdminPanel = new() { Name = "Access admin area", SystemName = "AccessAdminPanel", Category = "Standard" };
         public static readonly PermissionRecord AllowUserImpersonation = new() { Name = "Admin area. Allow User Impersonation", SystemName = "AllowUserImpersonation", Category = "Users" };
-        public static readonly PermissionRecord ManageProducts = new() { Name = "Admin area. Manage Products", SystemName = "ManageProducts", Category = "Catalog" };
+        public static readonly PermissionRecord ManageTvChannels = new() { Name = "Admin area. Manage TvChannels", SystemName = "ManageTvChannels", Category = "Catalog" };
         public static readonly PermissionRecord ManageCategories = new() { Name = "Admin area. Manage Categories", SystemName = "ManageCategories", Category = "Catalog" };
         public static readonly PermissionRecord ManageManufacturers = new() { Name = "Admin area. Manage Manufacturers", SystemName = "ManageManufacturers", Category = "Catalog" };
-        public static readonly PermissionRecord ManageProductReviews = new() { Name = "Admin area. Manage Product Reviews", SystemName = "ManageProductReviews", Category = "Catalog" };
-        public static readonly PermissionRecord ManageProductTags = new() { Name = "Admin area. Manage Product Tags", SystemName = "ManageProductTags", Category = "Catalog" };
+        public static readonly PermissionRecord ManageTvChannelReviews = new() { Name = "Admin area. Manage TvChannel Reviews", SystemName = "ManageTvChannelReviews", Category = "Catalog" };
+        public static readonly PermissionRecord ManageTvChannelTags = new() { Name = "Admin area. Manage TvChannel Tags", SystemName = "ManageTvChannelTags", Category = "Catalog" };
         public static readonly PermissionRecord ManageAttributes = new() { Name = "Admin area. Manage Attributes", SystemName = "ManageAttributes", Category = "Catalog" };
         public static readonly PermissionRecord ManageUsers = new() { Name = "Admin area. Manage Users", SystemName = "ManageUsers", Category = "Users" };
         public static readonly PermissionRecord ManageVendors = new() { Name = "Admin area. Manage Vendors", SystemName = "ManageVendors", Category = "Users" };
@@ -80,11 +80,11 @@ namespace TvProgViewer.Services.Security
             {
                 AccessAdminPanel,
                 AllowUserImpersonation,
-                ManageProducts,
+                ManageTvChannels,
                 ManageCategories,
                 ManageManufacturers,
-                ManageProductReviews,
-                ManageProductTags,
+                ManageTvChannelReviews,
+                ManageTvChannelTags,
                 ManageAttributes,
                 ManageUsers,
                 ManageVendors,
@@ -150,11 +150,11 @@ namespace TvProgViewer.Services.Security
                     {
                         AccessAdminPanel,
                         AllowUserImpersonation,
-                        ManageProducts,
+                        ManageTvChannels,
                         ManageCategories,
                         ManageManufacturers,
-                        ManageProductReviews,
-                        ManageProductTags,
+                        ManageTvChannelReviews,
+                        ManageTvChannelTags,
                         ManageAttributes,
                         ManageUsers,
                         ManageVendors,
@@ -241,8 +241,8 @@ namespace TvProgViewer.Services.Security
                     new[]
                     {
                         AccessAdminPanel,
-                        ManageProducts,
-                        ManageProductReviews,
+                        ManageTvChannels,
+                        ManageTvChannelReviews,
                         ManageOrders
                     }
                 )

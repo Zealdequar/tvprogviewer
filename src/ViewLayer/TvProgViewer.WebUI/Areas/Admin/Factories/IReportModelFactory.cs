@@ -32,27 +32,27 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         #endregion
 
-        #region LowStockProduct
+        #region LowStockTvChannel
 
         /// <summary>
-        /// Prepare low stock product search model
+        /// Prepare low stock tvchannel search model
         /// </summary>
-        /// <param name="searchModel">Low stock product search model</param>
+        /// <param name="searchModel">Low stock tvchannel search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the low stock product search model
+        /// The task result contains the low stock tvchannel search model
         /// </returns>
-        Task<LowStockProductSearchModel> PrepareLowStockProductSearchModelAsync(LowStockProductSearchModel searchModel);
+        Task<LowStockTvChannelSearchModel> PrepareLowStockTvChannelSearchModelAsync(LowStockTvChannelSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged low stock product list model
+        /// Prepare paged low stock tvchannel list model
         /// </summary>
-        /// <param name="searchModel">Low stock product search model</param>
+        /// <param name="searchModel">Low stock tvchannel search model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the low stock product list model
+        /// The task result contains the low stock tvchannel list model
         /// </returns>
-        Task<LowStockProductListModel> PrepareLowStockProductListModelAsync(LowStockProductSearchModel searchModel);
+        Task<LowStockTvChannelListModel> PrepareLowStockTvChannelListModelAsync(LowStockTvChannelSearchModel searchModel);
 
         #endregion
 

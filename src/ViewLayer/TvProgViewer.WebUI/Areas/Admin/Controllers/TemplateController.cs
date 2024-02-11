@@ -23,7 +23,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IManufacturerTemplateService _manufacturerTemplateService;
         private readonly IPermissionService _permissionService;
-        private readonly IProductTemplateService _productTemplateService;
+        private readonly ITvChannelTemplateService _tvchannelTemplateService;
         private readonly ITemplateModelFactory _templateModelFactory;
         private readonly ITopicTemplateService _topicTemplateService;
 
@@ -35,7 +35,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             ILocalizationService localizationService,
             IManufacturerTemplateService manufacturerTemplateService,
             IPermissionService permissionService,
-            IProductTemplateService productTemplateService,
+            ITvChannelTemplateService tvchannelTemplateService,
             ITemplateModelFactory templateModelFactory,
             ITopicTemplateService topicTemplateService)
         {
@@ -43,7 +43,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _localizationService = localizationService;
             _manufacturerTemplateService = manufacturerTemplateService;
             _permissionService = permissionService;
-            _productTemplateService = productTemplateService;
+            _tvchannelTemplateService = tvchannelTemplateService;
             _templateModelFactory = templateModelFactory;
             _topicTemplateService = topicTemplateService;
         }
@@ -201,22 +201,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Product templates
+        #region TvChannel templates
                 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductTemplates(ProductTemplateSearchModel searchModel)
+        public virtual async Task<IActionResult> TvChannelTemplates(TvChannelTemplateSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageMaintenance))
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _templateModelFactory.PrepareProductTemplateListModelAsync(searchModel);
+            var model = await _templateModelFactory.PrepareTvChannelTemplateListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductTemplateUpdate(ProductTemplateModel model)
+        public virtual async Task<IActionResult> TvChannelTemplateUpdate(TvChannelTemplateModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageMaintenance))
                 return AccessDeniedView();
@@ -224,18 +224,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return ErrorJson(ModelState.SerializeErrors());
 
-            //try to get a product template with the specified id
-            var template = await _productTemplateService.GetProductTemplateByIdAsync(model.Id)
+            //try to get a tvchannel template with the specified id
+            var template = await _tvchannelTemplateService.GetTvChannelTemplateByIdAsync(model.Id)
                 ?? throw new ArgumentException("No template found with the specified id");
 
             template = model.ToEntity(template);
-            await _productTemplateService.UpdateProductTemplateAsync(template);
+            await _tvchannelTemplateService.UpdateTvChannelTemplateAsync(template);
 
             return new NullJsonResult();
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductTemplateAdd(ProductTemplateModel model)
+        public virtual async Task<IActionResult> TvChannelTemplateAdd(TvChannelTemplateModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageMaintenance))
                 return AccessDeniedView();
@@ -243,27 +243,27 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return ErrorJson(ModelState.SerializeErrors());
 
-            var template = new ProductTemplate();
+            var template = new TvChannelTemplate();
             template = model.ToEntity(template);
-            await _productTemplateService.InsertProductTemplateAsync(template);
+            await _tvchannelTemplateService.InsertTvChannelTemplateAsync(template);
 
             return Json(new { Result = true });
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> ProductTemplateDelete(int id)
+        public virtual async Task<IActionResult> TvChannelTemplateDelete(int id)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageMaintenance))
                 return AccessDeniedView();
 
-            if ((await _productTemplateService.GetAllProductTemplatesAsync()).Count == 1)
+            if ((await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync()).Count == 1)
                 return ErrorJson(await _localizationService.GetResourceAsync("Admin.System.Templates.NotDeleteOnlyOne"));
 
-            //try to get a product template with the specified id
-            var template = await _productTemplateService.GetProductTemplateByIdAsync(id)
+            //try to get a tvchannel template with the specified id
+            var template = await _tvchannelTemplateService.GetTvChannelTemplateByIdAsync(id)
                 ?? throw new ArgumentException("No template found with the specified id");
 
-            await _productTemplateService.DeleteProductTemplateAsync(template);
+            await _tvchannelTemplateService.DeleteTvChannelTemplateAsync(template);
 
             return new NullJsonResult();
         }

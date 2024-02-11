@@ -28,12 +28,12 @@ namespace TvProgViewer.Services.Common.Pdf
         {
             container.PaddingVertical(20).Column(column =>
             {
-                foreach (var item in Source.Products)
+                foreach (var item in Source.TvChannels)
                 {
                     column.Spacing(5);
-                    column.Item().Element(x => ComposeProductInfo(x, item));
-                    column.Item().Element(x => ComposeProductProperties(x, item));
-                    column.Item().Element(x => ComposeProductImages(x, item));
+                    column.Item().Element(x => ComposeTvChannelInfo(x, item));
+                    column.Item().Element(x => ComposeTvChannelProperties(x, item));
+                    column.Item().Element(x => ComposeTvChannelImages(x, item));
 
                     column.Item().PageBreak();
                 }
@@ -41,11 +41,11 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose a generic product info
+        /// Compose a generic tvchannel info
         /// </summary>
         /// <param name="container">Content placement container</param>
         /// <param name="catalogItem">Catalog item</param>
-        protected void ComposeProductInfo(IContainer container, CatalogItem catalogItem)
+        protected void ComposeTvChannelInfo(IContainer container, CatalogItem catalogItem)
         {
             container.PaddingBottom(15).Column(column =>
             {
@@ -56,11 +56,11 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose product properties
+        /// Compose tvchannel properties
         /// </summary>
         /// <param name="container">Content placement container</param>
         /// <param name="catalogItem">Catalog item</param>
-        protected void ComposeProductProperties(IContainer container, CatalogItem catalogItem)
+        protected void ComposeTvChannelProperties(IContainer container, CatalogItem catalogItem)
         {
             container.Column(column =>
             {
@@ -72,11 +72,11 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose product images
+        /// Compose tvchannel images
         /// </summary>
         /// <param name="container">Content placement container</param>
         /// <param name="catalogItem">Catalog item</param>
-        protected void ComposeProductImages(IContainer container, CatalogItem catalogItem)
+        protected void ComposeTvChannelImages(IContainer container, CatalogItem catalogItem)
         {
             container
                 .Padding(15)

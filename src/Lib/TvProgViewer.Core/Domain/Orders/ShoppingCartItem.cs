@@ -23,12 +23,12 @@ namespace TvProgViewer.Core.Domain.Orders
         public int UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets the product identifier
+        /// Gets or sets the tvchannel identifier
         /// </summary>
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         /// <summary>
-        /// Gets or sets the product attributes in XML format
+        /// Gets or sets the tvchannel attributes in XML format
         /// </summary>
         public string AttributesXml { get; set; }
 
@@ -43,12 +43,12 @@ namespace TvProgViewer.Core.Domain.Orders
         public int Quantity { get; set; }
 
         /// <summary>
-        /// Gets or sets the rental product start date (null if it's not a rental product)
+        /// Gets or sets the rental tvchannel start date (null if it's not a rental tvchannel)
         /// </summary>
         public DateTime? RentalStartDateUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the rental product end date (null if it's not a rental product)
+        /// Gets or sets the rental tvchannel end date (null if it's not a rental tvchannel)
         /// </summary>
         public DateTime? RentalEndDateUtc { get; set; }
 

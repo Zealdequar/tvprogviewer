@@ -52,14 +52,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.NotifyNewUserRegistration")]
         public bool NotifyNewUserRegistration { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.RequireRegistrationForDownloadableProducts")]
-        public bool RequireRegistrationForDownloadableProducts { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.RequireRegistrationForDownloadableTvChannels")]
+        public bool RequireRegistrationForDownloadableTvChannels { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.AllowUsersToCheckGiftCardBalance")]
         public bool AllowUsersToCheckGiftCardBalance { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.HideDownloadableProductsTab")]
-        public bool HideDownloadableProductsTab { get; set; }
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.HideDownloadableTvChannelsTab")]
+        public bool HideDownloadableTvChannelsTab { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.HideBackInStockSubscriptionsTab")]
         public bool HideBackInStockSubscriptionsTab { get; set; }

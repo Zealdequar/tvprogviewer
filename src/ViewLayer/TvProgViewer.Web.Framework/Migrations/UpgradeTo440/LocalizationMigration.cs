@@ -33,15 +33,15 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 "ActivityLog.DeleteWidget",
                 "ActivityLog.EditWidget",
                 "Admin.Address.Fields.StateProvince.Required",
-                "Admin.Catalog.AdditionalProductReviews.Fields.Description",
+                "Admin.Catalog.AdditionalTvChannelReviews.Fields.Description",
                 "Admin.Catalog.Categories.Breadcrumb",
                 "Admin.Catalog.Categories.Fields.CreatedOn",
                 "Admin.Catalog.Categories.SwitchToListView",
                 "Admin.Catalog.Manufacturers.Fields.CreatedOn",
-                "Admin.Catalog.Products.ProductAttributes.Attributes.ValidationRules.ViewLink",
-                "Admin.Catalog.Products.ProductAttributes.Attributes.Values.EditAttributeDetails",
-                "Admin.Catalog.Products.SpecificationAttributes.NoAttributeOptions",
-                "Admin.Catalog.Products.SpecificationAttributes.SelectOption",
+                "Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.ValidationRules.ViewLink",
+                "Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.EditAttributeDetails",
+                "Admin.Catalog.TvChannels.SpecificationAttributes.NoAttributeOptions",
+                "Admin.Catalog.TvChannels.SpecificationAttributes.SelectOption",
                 "Admin.Common.CancelChanges",
                 "Admin.Common.Check",
                 "Admin.Common.DeleteConfirmationParam",
@@ -58,8 +58,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 "Admin.Configuration.Settings.UserUser.BlockTitle.TimeZone",
                 "Admin.Configuration.Settings.UserUser.UserSettings",
                 "Admin.Configuration.Settings.Order.OrderSettings",
-                "Admin.Configuration.Settings.ProductEditor.BlockTitle.LinkedProducts",
-                "Admin.Configuration.Settings.ProductEditor.Id",
+                "Admin.Configuration.Settings.TvChannelEditor.BlockTitle.LinkedTvChannels",
+                "Admin.Configuration.Settings.TvChannelEditor.Id",
                 "Admin.Configuration.Shipping.Measures.Dimensions.Description",
                 "Admin.Configuration.Shipping.Measures.Weights.Description",
                 "Admin.Configuration.SMSProviders",
@@ -210,7 +210,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Configuration.AppSettings.Plugin.UsePluginsShadowCopy.Hint"] = "Enable this setting to copy plugins to the shadow directory (/Plugins/bin) on application startup.",
                 ["Admin.Configuration.AppSettings.Common"] = "Common configuration",
                 ["Admin.Configuration.AppSettings.Common.DisplayFullErrorStack"] = "Display full error",
-                ["Admin.Configuration.AppSettings.Common.DisplayFullErrorStack.Hint"] = "Enable this setting to display the full error in production environment. It's ignored (always enabled) in development environment.",
+                ["Admin.Configuration.AppSettings.Common.DisplayFullErrorStack.Hint"] = "Enable this setting to display the full error in tvchannelion environment. It's ignored (always enabled) in development environment.",
                 ["Admin.Configuration.AppSettings.Common.MiniProfilerEnabled"] = "Enable MiniProfiler",
                 ["Admin.Configuration.AppSettings.Common.MiniProfilerEnabled.Hint"] = "Enable this setting to display the performance indicator by MiniProfiler. By default, the performance indicator can see only Administrators, to change this behavior set ACL rules in the admin area.",
                 ["Admin.Configuration.AppSettings.Common.UserAgentStringsPath"] = "User agent strings path",
@@ -241,7 +241,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttributeGroup.Fields.Name.Required"] = "Please provide a name.",
                 ["Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttributeGroup.Info"] = "Attribute group info",
                 ["Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttributeGroup.Updated"] = "The attribute group has been updated successfully.",
-                ["Admin.Catalog.Products.SpecificationAttributes.NameFormat"] = "{0} >> {1}",
+                ["Admin.Catalog.TvChannels.SpecificationAttributes.NameFormat"] = "{0} >> {1}",
                 ["Admin.System.Warnings.PluginsOverrideSameService"] = "The \"{0}\" interface/class has been overridden in those assemblies: {1}. This situation may cause errors because there is only one of them will be used (Please contact the assembly(ies) developers to solve this problem.)",
 
                 //#475
@@ -274,9 +274,9 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Configuration.Plugins.OfficialFeed.Instructions"] = "Here you can find third-party extensions and themes which are developed by our community and partners. They are also available in our <a href=\"{0}\" target=\"_blank\">marketplace</a>",
                 ["Admin.Catalog.Attributes.CheckoutAttributes.Values.AddNew"] = "Add a new checkout attribute value",
 
-                ["Admin.Configuration.Settings.Catalog.OneReviewPerProductFromUser"] = "One review per product from user",
-                ["Admin.Configuration.Settings.Catalog.OneReviewPerProductFromUser.Hint"] = "Check to restrict user to add just 1 review per product.",
-                ["Reviews.AlreadyAddedProductReviews"] = "Product review is already added for this product",
+                ["Admin.Configuration.Settings.Catalog.OneReviewPerTvChannelFromUser"] = "One review per tvchannel from user",
+                ["Admin.Configuration.Settings.Catalog.OneReviewPerTvChannelFromUser.Hint"] = "Check to restrict user to add just 1 review per tvchannel.",
+                ["Reviews.AlreadyAddedTvChannelReviews"] = "TvChannel review is already added for this tvchannel",
                 ["Admin.Configuration.Plugins.ChangesApplyAfterReboot"] = "Changes will be applied after restart application",
                 ["Admin.Configuration.Plugins.Fields.IsEnabled"] = "Enabled",
                 ["Admin.Users.ActivityLog.Fields.IpAddress.Hint"] = "A user IP address.",
@@ -288,7 +288,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Configuration.Plugins.DiscardChanges.Progress"] = "Discarding changes on plugins...",
                 ["Admin.Configuration.Plugins.ApplyChanges"] = "Restart application to apply changes",
                 ["Admin.Configuration.Plugins.ApplyChanges.Progress"] = "Applying changes on plugins...",
-                ["Products.EstimateShipping.NoSelectedShippingOption"] = "Please select the address you want to ship to",
+                ["TvChannels.EstimateShipping.NoSelectedShippingOption"] = "Please select the address you want to ship to",
                 ["Admin.Configuration.Settings.UserUser.ForceMultifactorAuthentication"] = "Force multi-factor authentication",
                 ["Admin.Configuration.Settings.UserUser.ForceMultifactorAuthentication.Hint"] = "Force activation of multi-factor authentication for all users (at least one MFA provider must be active).",
                 ["Account.MultiFactorAuthentication.Warning.ForceActivation"] = "Enforce multi-factor authentication for all users is enabled.",
@@ -330,8 +330,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.ConfigurationSteps.SetUpPayments.Description"] = "Choose how your users will pay for their orders",
                 ["Admin.ConfigurationSteps.SetUpTaxes.Title"] = "Set up taxes",
                 ["Admin.ConfigurationSteps.SetUpTaxes.Description"] = "Configure rates manually or choose a tax service to automate all tax things",
-                ["Admin.ConfigurationSteps.CreateProducts.Title"] = "Create products",
-                ["Admin.ConfigurationSteps.CreateProducts.Description"] = "Build a catalog with attractive product descriptions and pictures",
+                ["Admin.ConfigurationSteps.CreateTvChannels.Title"] = "Create tvchannels",
+                ["Admin.ConfigurationSteps.CreateTvChannels.Description"] = "Build a catalog with attractive tvchannel descriptions and pictures",
                 ["Admin.ConfigurationSteps.CreateEmailAccounts.Title"] = "Set up email accounts",
                 ["Admin.ConfigurationSteps.CreateEmailAccounts.Description"] = "It allows you to send notifications to your users",
                 ["Admin.ConfigurationSteps.EditServicesInfo.Title"] = "Edit services info",
@@ -386,20 +386,20 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.ConfigurationSteps.PaymentMethods.PayPal.Text"] = "If you want to process payments online, we’d recommend you to set up the PayPal Smart Payment Buttons payment method. PayPal Checkout with Smart Payment Buttons gives your buyers a simplified and secure checkout experience. Read more about how to set this plugin <a href=\"{0}\" target=\"_blank\">here</a>.",
                 ["Admin.ConfigurationSteps.PaymentMethods.Configure.Title"] = "Configure a payment method",
                 ["Admin.ConfigurationSteps.PaymentMethods.Configure.Text"] = "You can configure each payment method by clicking the appropriate <b>Configure</b> button.",
-                ["Admin.ConfigurationSteps.Product.SettingsButton.Title"] = "“Settings” button",
-                ["Admin.ConfigurationSteps.Product.SettingsButton.Text"] = "This “Settings” button allows you to set up the basic mode to choose which fields you want to be shown exactly on the product edit page.",
-                ["Admin.ConfigurationSteps.Product.Details.Title"] = "Product details",
-                ["Admin.ConfigurationSteps.Product.Details.Text"] = "Enter the relevant product details in these fields. The screenshot below shows how they will be displayed on the product page with the default tvProgViewer theme: <div><img src=\"../../js/admintour/images/product-page.jpg\"/></div>",
-                ["Admin.ConfigurationSteps.Product.Price.Title"] = "Product price",
-                ["Admin.ConfigurationSteps.Product.Price.Text"] = "Enter the product price in a predefined currency here. Read more on how to manage currencies <a href=\"{0}\" target=\"_blank\">here</a>.",
-                ["Admin.ConfigurationSteps.Product.Tax.Title"] = "Product tax category",
-                ["Admin.ConfigurationSteps.Product.Tax.Text"] = "Select the product tax category or tick the <b>Tax exempt</b> if needed.",
-                ["Admin.ConfigurationSteps.Product.Shipping.Title"] = "Product shipping info",
-                ["Admin.ConfigurationSteps.Product.Shipping.Text"] = "Define product-specific shipping details in this panel.",
-                ["Admin.ConfigurationSteps.Product.Inventory.Title"] = "Product inventory",
-                ["Admin.ConfigurationSteps.Product.Inventory.Text"] = "Enter the product inventory info here. <br> <ul><li>The <b>Don’t track inventory</b> option allows you to opt for no tracking</li><li>The <b>Track inventory</b> option is for those who don’t have product variants and need to know just how many items are left</li><li>The <b>Track inventory by product attributes</b> option is best for you if you have different product attributes combinations and need to track their stock quantities</li></ul>",
-                ["Admin.ConfigurationSteps.Product.Pictures.Title"] = "Product pictures",
-                ["Admin.ConfigurationSteps.Product.Pictures.Text"] = "You can add pictures to your product after you save it for the first time. Click the <b>Save</b> button in the top right and then proceed to the pictures panel.",
+                ["Admin.ConfigurationSteps.TvChannel.SettingsButton.Title"] = "“Settings” button",
+                ["Admin.ConfigurationSteps.TvChannel.SettingsButton.Text"] = "This “Settings” button allows you to set up the basic mode to choose which fields you want to be shown exactly on the tvchannel edit page.",
+                ["Admin.ConfigurationSteps.TvChannel.Details.Title"] = "TvChannel details",
+                ["Admin.ConfigurationSteps.TvChannel.Details.Text"] = "Enter the relevant tvchannel details in these fields. The screenshot below shows how they will be displayed on the tvchannel page with the default tvProgViewer theme: <div><img src=\"../../js/admintour/images/tvchannel-page.jpg\"/></div>",
+                ["Admin.ConfigurationSteps.TvChannel.Price.Title"] = "TvChannel price",
+                ["Admin.ConfigurationSteps.TvChannel.Price.Text"] = "Enter the tvchannel price in a predefined currency here. Read more on how to manage currencies <a href=\"{0}\" target=\"_blank\">here</a>.",
+                ["Admin.ConfigurationSteps.TvChannel.Tax.Title"] = "TvChannel tax category",
+                ["Admin.ConfigurationSteps.TvChannel.Tax.Text"] = "Select the tvchannel tax category or tick the <b>Tax exempt</b> if needed.",
+                ["Admin.ConfigurationSteps.TvChannel.Shipping.Title"] = "TvChannel shipping info",
+                ["Admin.ConfigurationSteps.TvChannel.Shipping.Text"] = "Define tvchannel-specific shipping details in this panel.",
+                ["Admin.ConfigurationSteps.TvChannel.Inventory.Title"] = "TvChannel inventory",
+                ["Admin.ConfigurationSteps.TvChannel.Inventory.Text"] = "Enter the tvchannel inventory info here. <br> <ul><li>The <b>Don’t track inventory</b> option allows you to opt for no tracking</li><li>The <b>Track inventory</b> option is for those who don’t have tvchannel variants and need to know just how many items are left</li><li>The <b>Track inventory by tvchannel attributes</b> option is best for you if you have different tvchannel attributes combinations and need to track their stock quantities</li></ul>",
+                ["Admin.ConfigurationSteps.TvChannel.Pictures.Title"] = "TvChannel pictures",
+                ["Admin.ConfigurationSteps.TvChannel.Pictures.Text"] = "You can add pictures to your tvchannel after you save it for the first time. Click the <b>Save</b> button in the top right and then proceed to the pictures panel.",
                 ["Admin.ConfigurationSteps.ConfigureManual.Switch.Title"] = "“Fixed rate/By weight” switch",
                 ["Admin.ConfigurationSteps.ConfigureManual.Switch.Text"] = "The “Fixed rate/By weight” switch allows you to choose the type of shipping rates you’d like to use in your store.",
                 ["Admin.ConfigurationSteps.ConfigureManual.FixedRate.Title"] = "“Fixed rate” option",
@@ -484,8 +484,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Reports.SalesSummary.StartDate.Hint"] = "The start date for the search.",
                 ["Admin.Reports.SalesSummary.Store"] = "Store",
                 ["Admin.Reports.SalesSummary.Store.Hint"] = "Filter report by orders placed in a specific store.",
-                ["Admin.Reports.SalesSummary.Product"] = "Product",
-                ["Admin.Reports.SalesSummary.Product.Hint"] = "Search by a specific product.",
+                ["Admin.Reports.SalesSummary.TvChannel"] = "TvChannel",
+                ["Admin.Reports.SalesSummary.TvChannel.Hint"] = "Search by a specific tvchannel.",
                 ["Admin.Reports.SalesSummary.GroupBy"] = "Group by",
                 ["Admin.Reports.SalesSummary.GroupBy.Hint"] = "Grouping by time periods.",
                 ["Enums.TvProg.Services.Orders.GroupByOptions.Day"] = "Day",
@@ -516,18 +516,18 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Configuration.Settings.GeneralCommon.HomepageDescription.Hint"] = "The description for the home page in your store.",
 
                 //#5210
-                ["Admin.Documentation.Reference.Products"] = "Learn more about <a target=\"_blank\" href=\"{0}\">products</a>",
+                ["Admin.Documentation.Reference.TvChannels"] = "Learn more about <a target=\"_blank\" href=\"{0}\">tvchannels</a>",
                 ["Admin.Documentation.Reference.Categories"] = "Learn more about <a target=\"_blank\" href=\"{0}\">categories</a>",
                 ["Admin.Documentation.Reference.Manufacturers"] = "Learn more about <a target=\"_blank\" href=\"{0}\">manufacturers</a>",
-                ["Admin.Documentation.Reference.ProductReviews"] = "Learn more about <a target=\"_blank\" href=\"{0}\">product reviews</a>",
-                ["Admin.Documentation.Reference.ProductTags"] = "Learn more about <a target=\"_blank\" href=\"{0}\">product tags</a>",
-                ["Admin.Documentation.Reference.ProductAttributes"] = "Learn more about <a target=\"_blank\" href=\"{0}\">product attributes</a>",
+                ["Admin.Documentation.Reference.TvChannelReviews"] = "Learn more about <a target=\"_blank\" href=\"{0}\">tvchannel reviews</a>",
+                ["Admin.Documentation.Reference.TvChannelTags"] = "Learn more about <a target=\"_blank\" href=\"{0}\">tvchannel tags</a>",
+                ["Admin.Documentation.Reference.TvChannelAttributes"] = "Learn more about <a target=\"_blank\" href=\"{0}\">tvchannel attributes</a>",
                 ["Admin.Documentation.Reference.SpecificationAttributes"] = "Learn more about <a target=\"_blank\" href=\"{0}\">specification attributes</a>",
                 ["Admin.Documentation.Reference.CheckoutAttributes"] = "Learn more about <a target=\"_blank\" href=\"{0}\">checkout attributes</a>",
                 ["Admin.Documentation.Reference.Orders"] = "Learn more about <a target=\"_blank\" href=\"{0}\">orders</a>",
                 ["Admin.Documentation.Reference.ShippingManagement"] = "Learn more about <a target=\"_blank\" href=\"{0}\">shipping management</a>",
                 ["Admin.Documentation.Reference.ReturnRequests"] = "Learn more about <a target=\"_blank\" href=\"{0}\">return requests</a>",
-                ["Admin.Documentation.Reference.RecurringPayments"] = "Learn more about <a target=\"_blank\" href=\"{0}\">recurring products</a>",
+                ["Admin.Documentation.Reference.RecurringPayments"] = "Learn more about <a target=\"_blank\" href=\"{0}\">recurring tvchannels</a>",
                 ["Admin.Documentation.Reference.ShoppingCartsAndWishlists"] = "Learn more about <a target=\"_blank\" href=\"{0}\">shopping carts and wishlists</a>",
                 ["Admin.Documentation.Reference.GiftCards"] = "Learn more about <a target=\"_blank\" href=\"{0}\">gift cards</a>",
                 ["Admin.Documentation.Reference.Users"] = "Learn more about <a target=\"_blank\" href=\"{0}\">users</a>",
@@ -571,7 +571,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Documentation.Reference.TaxManagement"] = "Learn more about <a target=\"_blank\" href=\"{0}\">tax management</a>",
 
                 //#3950
-                ["Admin.Catalog.Products.ProductAttributes.Attributes.AlreadyExistsInCombination"] = "This attribute already exists in combination: '{0}'.",
+                ["Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AlreadyExistsInCombination"] = "This attribute already exists in combination: '{0}'.",
 
                 //#4564
                 ["Admin.Common.Validation.NotEmpty"] = "Please provide a {0}",
@@ -607,13 +607,13 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Plugins.Tax.FixedOrByCountryStateZip.Tax.Categories.Manage"] = "Manage tax categories",
 
                 //#3353
-                ["Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.MinStockQuantity"] = "Minimum stock qty",
-                ["Admin.Catalog.Products.ProductAttributes.AttributeCombinations.Fields.MinStockQuantity.Hint"] = "If you have enabled 'Manage stock by attributes' you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity (e.g. Low stock report).",
+                ["Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.MinStockQuantity"] = "Minimum stock qty",
+                ["Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.MinStockQuantity.Hint"] = "If you have enabled 'Manage stock by attributes' you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity (e.g. Low stock report).",
 
                 //#276
                 ["Filtering.ManufacturerFilter"] = "Filter by manufacturer",
-                ["Admin.Configuration.Settings.Catalog.UseAjaxCatalogProductsLoading"] = "Use AJAX products loading",
-                ["Admin.Configuration.Settings.Catalog.UseAjaxCatalogProductsLoading.Hint"] = "Check to load products asynchronously (applicable to 'paging', 'filtering', 'view modes') on catalog pages.",
+                ["Admin.Configuration.Settings.Catalog.UseAjaxCatalogTvChannelsLoading"] = "Use AJAX tvchannels loading",
+                ["Admin.Configuration.Settings.Catalog.UseAjaxCatalogTvChannelsLoading.Hint"] = "Check to load tvchannels asynchronously (applicable to 'paging', 'filtering', 'view modes') on catalog pages.",
                 ["Admin.Catalog.Categories.Fields.PriceRangeFiltering"] = "Price range filtering",
                 ["Admin.Catalog.Categories.Fields.PriceRangeFiltering.Hint"] = "Check to enable the price range filtering.",
                 ["Admin.Catalog.Manufacturers.Fields.PriceRangeFiltering"] = "Price range filtering",
@@ -622,8 +622,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Vendors.Fields.PriceRangeFiltering.Hint"] = "Check to enable the price range filtering.",
                 ["Admin.Configuration.Settings.Catalog.SearchPagePriceRangeFiltering"] = "Search page. Price range filtering",
                 ["Admin.Configuration.Settings.Catalog.SearchPagePriceRangeFiltering.Hint"] = "Check to enable the price range filtering on 'Search' page.",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceRangeFiltering"] = "'Products by tag' page. Price range filtering",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceRangeFiltering.Hint"] = "Check to enable the price range filtering on 'Products by tag' page.",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceRangeFiltering"] = "'TvChannels by tag' page. Price range filtering",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceRangeFiltering.Hint"] = "Check to enable the price range filtering on 'TvChannels by tag' page.",
                 ["Admin.Configuration.Settings.Catalog.EnableManufacturerFiltering"] = "Enable manufacturer filtering",
                 ["Admin.Configuration.Settings.Catalog.EnableManufacturerFiltering.Hint"] = "Check to enable the manufacturer filtering on catalog pages.",
                 ["Admin.Configuration.Settings.Catalog.EnablePriceRangeFiltering"] = "Enable price range filtering",
@@ -646,12 +646,12 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Configuration.Settings.Catalog.SearchPagePriceTo"] = "Search page. Price 'to'",
                 ["Admin.Configuration.Settings.Catalog.SearchPagePriceTo.Hint"] = "Enter the price 'to' on 'Search' page.",
                 ["Admin.Configuration.Settings.Catalog.SearchPagePriceTo.GreaterThanZeroOrPriceFrom"] = "The price 'to' should be greater than '{0}'.",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceFrom"] = "'Products by tag' page. Price 'from'",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceFrom.Hint"] = "Enter the price 'from' on 'Products by tag' page.",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceFrom.GreaterThanOrEqualZero"] = "The price 'from' should be greater than or equal '0'.",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceTo"] = "'Products by tag' page. Price 'to'",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceTo.Hint"] = "Enter the price 'to' on 'Products by tag' page.",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagPriceTo.GreaterThanZeroOrPriceFrom"] = "The price 'to' should be greater than '{0}'.",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceFrom"] = "'TvChannels by tag' page. Price 'from'",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceFrom.Hint"] = "Enter the price 'from' on 'TvChannels by tag' page.",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceFrom.GreaterThanOrEqualZero"] = "The price 'from' should be greater than or equal '0'.",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceTo"] = "'TvChannels by tag' page. Price 'to'",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceTo.Hint"] = "Enter the price 'to' on 'TvChannels by tag' page.",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagPriceTo.GreaterThanZeroOrPriceFrom"] = "The price 'to' should be greater than '{0}'.",
                 ["Admin.Vendors.Fields.PriceFrom"] = "Price 'from'",
                 ["Admin.Vendors.Fields.PriceFrom.Hint"] = "Enter the price 'from'.",
                 ["Admin.Vendors.Fields.PriceFrom.GreaterThanOrEqualZero"] = "The price 'from' should be greater than or equal '0'.",
@@ -660,8 +660,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Vendors.Fields.PriceTo.GreaterThanZeroOrPriceFrom"] = "The price 'to' should be greater than '{0}'.",
 
                 //#5209
-                ["Admin.ShoppingCartType.StartDate.Hint"] = "The start date for the search (when a product was added to the cart).",
-                ["Admin.ShoppingCartType.EndDate.Hint"] = "The end date for the search (when a product was added to the cart).",
+                ["Admin.ShoppingCartType.StartDate.Hint"] = "The start date for the search (when a tvchannel was added to the cart).",
+                ["Admin.ShoppingCartType.EndDate.Hint"] = "The end date for the search (when a tvchannel was added to the cart).",
 
                 //#5206
                 ["Admin.GiftCards.Fields.IsRecipientNotified.Hint"] = "Indicates whether the gift card recipient is notified by email. Click the \"Notify recipient\" button to send an email notification.",
@@ -672,9 +672,9 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
 
                 //#16 #2909
                 ["Admin.Configuration.Settings.Catalog.AttributeValueOutOfStockDisplayType"] = "Display type for attribute value when out of stock",
-                ["Admin.Configuration.Settings.Catalog.AttributeValueOutOfStockDisplayType.Hint"] = "Select the display type for attribute value when an attribute combination is out of stock. Please note that the 'Allow only existing attribute combinations'option should be enabled for a product.",
-                ["Products.ProductAttributes.DropdownList.DefaultItem"] = "Please select",
-                ["Products.ProductAttributes.NotAvailable"] = "Not available",
+                ["Admin.Configuration.Settings.Catalog.AttributeValueOutOfStockDisplayType.Hint"] = "Select the display type for attribute value when an attribute combination is out of stock. Please note that the 'Allow only existing attribute combinations'option should be enabled for a tvchannel.",
+                ["TvChannels.TvChannelAttributes.DropdownList.DefaultItem"] = "Please select",
+                ["TvChannels.TvChannelAttributes.NotAvailable"] = "Not available",
                 ["Enums.TvProg.Core.Domain.Catalog.AttributeValueOutOfStockDisplayType.Disable"] = "Disable",
                 ["Enums.TvProg.Core.Domain.Catalog.AttributeValueOutOfStockDisplayType.AlwaysDisplay"] = "Always display",
 
@@ -688,7 +688,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
 
                 //#5482
                 ["Plugins.Tax.Avalara.Fields.GetTaxRateByAddressOnly"] = "Tax rates by address only",
-                ["Plugins.Tax.Avalara.Fields.GetTaxRateByAddressOnly.Hint"] = "Determine whether to get tax rates by the address only. This may lead to not entirely accurate results (for example, when a user is exempt to tax, or the product belongs to a tax category that has a specific rate), but it will significantly reduce the number of GetTax API calls. This applies only to tax rates in the catalog, on the checkout full information is always used in requests.",
+                ["Plugins.Tax.Avalara.Fields.GetTaxRateByAddressOnly.Hint"] = "Determine whether to get tax rates by the address only. This may lead to not entirely accurate results (for example, when a user is exempt to tax, or the tvchannel belongs to a tax category that has a specific rate), but it will significantly reduce the number of GetTax API calls. This applies only to tax rates in the catalog, on the checkout full information is always used in requests.",
 
                 //#5349
                 ["Admin.Configuration.Settings.Shipping.EstimateShippingCityNameEnabled"] = "Use a city name for estimate shipping",
@@ -698,15 +698,15 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
 
                 //#5496
                 ["Admin.Catalog.Categories.Fields.ManuallyPriceRange"] = "Enter price range manually",
-                ["Admin.Catalog.Categories.Fields.ManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled (based on prices of available products). Set price range manually if you have complex discount rules.",
+                ["Admin.Catalog.Categories.Fields.ManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled (based on prices of available tvchannels). Set price range manually if you have complex discount rules.",
                 ["Admin.Catalog.Manufacturers.Fields.ManuallyPriceRange"] = "Enter price range manually",
-                ["Admin.Catalog.Manufacturers.Fields.ManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled (based on prices of available products). Set price range manually if you have complex discount rules.",
+                ["Admin.Catalog.Manufacturers.Fields.ManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled (based on prices of available tvchannels). Set price range manually if you have complex discount rules.",
                 ["Admin.Vendors.Fields.ManuallyPriceRange"] = "Enter price range manually",
-                ["Admin.Vendors.Fields.ManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled (based on prices of available products). Set price range manually if you have complex discount rules.",
+                ["Admin.Vendors.Fields.ManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled (based on prices of available tvchannels). Set price range manually if you have complex discount rules.",
                 ["Admin.Configuration.Settings.Catalog.SearchPageManuallyPriceRange"] = "Search page. Enter price range manually",
-                ["Admin.Configuration.Settings.Catalog.SearchPageManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled on the 'Search' page (based on prices of available products). Set price range manually if you have complex discount rules.",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagManuallyPriceRange"] = "'Products by tag' page. Enter price range manually",
-                ["Admin.Configuration.Settings.Catalog.ProductsByTagManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled on the 'Products by tag' page (based on prices of available products). Set price range manually if you have complex discount rules.",
+                ["Admin.Configuration.Settings.Catalog.SearchPageManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled on the 'Search' page (based on prices of available tvchannels). Set price range manually if you have complex discount rules.",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagManuallyPriceRange"] = "'TvChannels by tag' page. Enter price range manually",
+                ["Admin.Configuration.Settings.Catalog.TvChannelsByTagManuallyPriceRange.Hint"] = "Check to enter price range manually, otherwise the automatic calculation of price range is enabled on the 'TvChannels by tag' page (based on prices of available tvchannels). Set price range manually if you have complex discount rules.",
             }, languageId);
             
             // rename locales
@@ -735,12 +735,12 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Admin.Catalog.Attributes.SpecificationAttributes.Options.Fields.Name"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.Name",
                 ["Admin.Catalog.Attributes.SpecificationAttributes.Options.Fields.Name.Hint"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.Name.Hint",
                 ["Admin.Catalog.Attributes.SpecificationAttributes.Options.Fields.Name.Required"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.Name.Required",
-                ["Admin.Catalog.Attributes.SpecificationAttributes.Options.Fields.NumberOfAssociatedProducts"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.NumberOfAssociatedProducts",
+                ["Admin.Catalog.Attributes.SpecificationAttributes.Options.Fields.NumberOfAssociatedTvChannels"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.Fields.NumberOfAssociatedTvChannels",
                 ["Admin.Catalog.Attributes.SpecificationAttributes.Options.SaveBeforeEdit"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Options.SaveBeforeEdit",
                 ["Admin.Catalog.Attributes.SpecificationAttributes.Updated"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.Updated",
-                ["Admin.Catalog.Attributes.SpecificationAttributes.UsedByProducts"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts",
-                ["Admin.Catalog.Attributes.SpecificationAttributes.UsedByProducts.Product"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.Product",
-                ["Admin.Catalog.Attributes.SpecificationAttributes.UsedByProducts.Published"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByProducts.Published",
+                ["Admin.Catalog.Attributes.SpecificationAttributes.UsedByTvChannels"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByTvChannels",
+                ["Admin.Catalog.Attributes.SpecificationAttributes.UsedByTvChannels.TvChannel"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByTvChannels.TvChannel",
+                ["Admin.Catalog.Attributes.SpecificationAttributes.UsedByTvChannels.Published"] = "Admin.Catalog.Attributes.SpecificationAttributes.SpecificationAttribute.UsedByTvChannels.Published",
                 
                 //#475
                 ["Admin.Configuration.ExternalAuthenticationMethods.Fields.DisplayOrder"] = "Admin.Configuration.Authentication.ExternalMethods.Fields.DisplayOrder",
@@ -759,7 +759,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo440
                 ["Common.Wait..."] = "Common.Wait",
 
                 //#5429
-                ["Search.NoResultsText"] = "Catalog.Products.NoResult"
+                ["Search.NoResultsText"] = "Catalog.TvChannels.NoResult"
             }, languages, localizationService);
         }
 

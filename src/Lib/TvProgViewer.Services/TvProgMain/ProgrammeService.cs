@@ -10,6 +10,8 @@ using System.Globalization;
 using LinqToDB;
 using TvProgViewer.Data.TvProgMain;
 using System.Threading;
+using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.Extensions.Azure;
 
 namespace TvProgViewer.Services.TvProgMain
 {
@@ -19,6 +21,9 @@ namespace TvProgViewer.Services.TvProgMain
     public class ProgrammeService: IProgrammeService
     {
         #region Поля
+        private const string GRAY_COLOR = "grayColor";
+        private const string BLACK_COLOR = "blackColor";
+        private const string GREEN_COLOR = "greenColor";
 
         private readonly IRepository<TvProgProviders> _providerTypeRepository;
         private readonly IRepository<TypeProg> _typeProgRespository;
@@ -31,6 +36,16 @@ namespace TvProgViewer.Services.TvProgMain
         private readonly IRepository<Genres> _genresRepository;
         private readonly IStaticCacheManager _cacheManager;
         private static readonly char[] separator = new[] { ';' };
+        private readonly Dictionary<string, string> dictWeek = new Dictionary<string, string>()
+                                                       {
+                                                           {"monday", "Mon"},
+                                                           {"tuesday", "Tue"},
+                                                           {"wednesday", "Wen"},
+                                                           {"thursday", "Ths" },
+                                                           {"friday", "Fri" },
+                                                           {"saturday", "Sat"},
+                                                           {"sunday", "Sun"}
+                                                       };
 
         #endregion
 
@@ -148,6 +163,35 @@ namespace TvProgViewer.Services.TvProgMain
             return progPeriod;
         }
 
+        /// <summary>
+        /// Получение дней доступной программы
+        /// </summary>
+        /// <param name="typeProg">Идентификатор типа программы</param>
+        /// <returns>Список дней</returns>
+        public virtual async Task<List<DaysItem>> GetDaysAsync(int typeProg)
+        {
+            ProgPeriod periodMinMax = await GetSystemProgrammePeriodAsync(typeProg);
+            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : new DateTime();
+            tsMin = new DateTime(tsMin.Year, tsMin.Month, tsMin.Day, 5, 45, 0);
+            DateTime tsMiddle = tsMin.AddDays(6);
+            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : new DateTime();
+            tsMax = new DateTime(tsMax.AddDays(-1).Year, tsMax.AddDays(-1).Month, tsMax.AddDays(-1).Day, 5, 45, 0);
+            List<DaysItem> daysList = [];
+            for (DateTime tsCurDate = tsMiddle.AddDays(1); tsCurDate <= tsMax; tsCurDate = tsCurDate.AddDays(1))
+            {
+                string strKey = dictWeek[tsCurDate.DayOfWeek.ToString().ToLower()];
+                DaysItem dayItem = new()
+                {
+                    Name = tsCurDate.ToString("dd.MM.yyyy"),
+                    DayOfWeek = tsCurDate.DayOfWeek.ToString(),
+                    IconSrc = $"./images/i/{strKey}.png",
+                    Color = (tsCurDate.Date < DateTime.Now.Date) ? GRAY_COLOR : (tsCurDate.Date == DateTime.Now.Date) ? BLACK_COLOR : GREEN_COLOR
+                };
+                daysList.Add(dayItem);
+            }
+
+            return await daysList.ToListAsync();
+        }
         /// <summary>
         /// Получение категорий телепередач
         /// </summary>

@@ -6,17 +6,17 @@ namespace TvProgViewer.Core.Domain.Catalog
     public enum ManageInventoryMethod
     {
         /// <summary>
-        /// Don't track inventory for product
+        /// Don't track inventory for tvchannel
         /// </summary>
         DontManageStock = 0,
 
         /// <summary>
-        /// Track inventory for product
+        /// Track inventory for tvchannel
         /// </summary>
         ManageStock = 1,
 
         /// <summary>
-        /// Track inventory for product by product attributes
+        /// Track inventory for tvchannel by tvchannel attributes
         /// </summary>
         ManageStockByAttributes = 2,
     }
