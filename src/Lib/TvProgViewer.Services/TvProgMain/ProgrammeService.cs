@@ -282,9 +282,8 @@ namespace TvProgViewer.Services.TvProgMain
         {
             if (string.IsNullOrWhiteSpace(genres))
                 return systemProgramme;
-            long Gid;
             return await systemProgramme.Where(x => genres.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                                .Any(g => long.TryParse(g, out Gid) && long.Parse(g) == x.GenreId)).ToListAsync();
+                                .Any(g => long.TryParse(g, out long Gid) && long.Parse(g) == x.GenreId)).ToListAsync();
         }
 
         /// <summary>
@@ -296,16 +295,16 @@ namespace TvProgViewer.Services.TvProgMain
         {
             if (string.IsNullOrWhiteSpace(channels))
                 return systemProgramme;
-            long Cid;
             return await systemProgramme.Where(x => channels.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                                    .Any(c => long.TryParse(c, out Cid) && long.Parse(c) == x.Cid)).ToListAsync();
+                                    .Any(c => long.TryParse(c, out long Cid) && long.Parse(c) == x.Cid)).ToListAsync();
         }
 
 
         private async Task<List<SystemProgramme>> FilterExcludeDates (List<SystemProgramme> systemProgramme, List<DateTime> rawDates)
         {
-            DateTime minDateTime = rawDates.Min();
-            DateTime maxDateTime = rawDates.Max().AddDays(1);
+            DateTime minDateTime = await rawDates.AsQueryable().MinAsync(CancellationToken.None);
+            DateTime maxDateTime = await rawDates.AsQueryable().MaxAsync(CancellationToken.None);
+            maxDateTime = maxDateTime.AddDays(1);
             rawDates.Add(maxDateTime);
             return await systemProgramme.Where(x => rawDates.Contains(x.TsStartMo.Date)).ToListAsync(); 
         }
@@ -323,7 +322,7 @@ namespace TvProgViewer.Services.TvProgMain
 
             return await (from g in _genresRepository.Table
                     where g.Id == id && g.UserId == Uid && g.Visible && g.DeleteDate == null
-                    select g.GenreName).FirstAsync(CancellationToken.None);
+                    select g.GenreName).FirstOrDefaultAsync(CancellationToken.None);
         }
 
         /// <summary>
@@ -367,16 +366,24 @@ namespace TvProgViewer.Services.TvProgMain
         public virtual async Task<KeyValuePair<int, List<SystemProgramme>>> GetSystemProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string channels)
         {
-            List<SystemProgramme> systemProgramme = new List<SystemProgramme>();
+            var spRows = new List<SystemProgramme>();
             DateTime minDate = new DateTime(1800, 1, 1);
             DateTime dateTime = dateTimeOffset.DateTime;
-            int count = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? new List<int>() : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
+            int spCount = 0;
+            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries)
+                .Select(int.Parse).ToListAsync();
             switch (mode)
             {
                 case 1:
+                     spCount = await (from pr in _programmesRepository.Table
+                                         where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
+                                         dateTime < pr.TsStopMo && pr.Category != "Для взрослых" &&
+                                         !pr.Title.Contains("(18+)") &&
+                                         (category == null || pr.Category == category) &&
+                                         ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+                                         select pr.Id).CountAsync(CancellationToken.None);
 
-                    var sp = await (from pr in _programmesRepository.Table
+                     spRows = await (from pr in _programmesRepository.Table
                                     where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
                                     dateTime < pr.TsStopMo && pr.Category != "Для взрослых" &&
                                     !pr.Title.Contains("(18+)") &&
@@ -400,15 +407,14 @@ namespace TvProgViewer.Services.TvProgMain
                                         Category = pr.Category,
                                         Remain = (int?)(Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, dateTime) * 1.0 / (Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, pr.TsStartMo) * 1.0) * 100.0),
                                         OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                    }).OrderBy(o => o.OrderCol).ThenBy(o => o.InternalChanId).ToListAsync();
-                    SetGenres(sp, null);
-                    sp = await ChannelIconJoinAsync(sp, TypeProgId, intListChannels);
-                    sp = await FilterGenresAsync(sp, genres);
-                    sp = await FilterChannelsAsync(sp, channels);
-                    count = sp.Count();
-                    systemProgramme = await sp.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
+                                    }).OrderBy(o => o.OrderCol).ThenBy(o => o.InternalChanId)
+                                    .AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
                                         .Skip((page - 1) * rows).Take(rows)
-                                        .ToListAsync<SystemProgramme>();
+                                        .ToListAsync();
+                    SetGenres(spRows, null);
+                    spRows = await ChannelIconJoinAsync(spRows, TypeProgId, intListChannels);
+                    spRows = await FilterGenresAsync(spRows, genres);
+                    spRows = await FilterChannelsAsync(spRows, channels);
                     break;
                 case 2:
                     if (dateTime == minDate)
@@ -423,6 +429,7 @@ namespace TvProgViewer.Services.TvProgMain
                                                                      Cid = pr2.ChannelId
                                                                  }).ToListAsync();
                         DateTime afterTwoDays = DateTime.Now.AddDays(2);
+                        
                         var sp2 = await (from pr3 in _programmesRepository.Table
                                          where pr3.TypeProgId == TypeProgId
                                          && pr3.TsStartMo >= DateTime.Now && afterTwoDays > pr3.TsStopMo
@@ -452,7 +459,13 @@ namespace TvProgViewer.Services.TvProgMain
 
                         sp2 = await ChannelIconJoinAsync(sp2, TypeProgId, intListChannels);
 
-                        var sp3 = await (from pr in sp2.ToList()
+                        spCount = await (from pr in await sp2.ToListAsync()
+                                         join prin in stopAfter on pr.Cid equals prin.Cid
+                                         where pr.TsStartMo <= prin.TsStopMoAfter && prin.TsStopMoAfter < pr.TsStopMo
+                                         select pr.ProgrammesId
+                                         ).AsQueryable().CountAsync(CancellationToken.None);
+
+                        spRows = await (from pr in await sp2.ToListAsync()
                                          join prin in stopAfter on pr.Cid equals prin.Cid
                                          where pr.TsStartMo <= prin.TsStopMoAfter && prin.TsStopMoAfter < pr.TsStopMo
                                          select new SystemProgramme()
@@ -472,19 +485,17 @@ namespace TvProgViewer.Services.TvProgMain
                                              Category = pr.Category,
                                              Remain = pr.Remain,
                                              OrderCol = pr.OrderCol
-                                         }).OrderBy(o => o.OrderCol).ThenBy(o => o.OrderCol).ToListAsync();
-                        SetGenres(sp3, null);
-                        sp3 = await FilterGenresAsync(sp3, genres);
-                        sp3 = await FilterChannelsAsync(sp3, channels);
-                        count = sp3.Count();
-
-                        systemProgramme = await sp3.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
-                                        .Skip((page - 1) * rows).Take(rows)
-                                        .ToListAsync();
+                                         }).OrderBy(o => o.OrderCol).ThenBy(o => o.OrderCol)
+                                         .AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
+                                         .Skip((page - 1) * rows).Take(rows)
+                                         .ToListAsync();
+                        SetGenres(spRows, null);
+                        spRows = await FilterGenresAsync(spRows, genres);
+                        spRows = await FilterChannelsAsync(spRows, channels);
                     }
                     else if (dateTime > minDate)
                     {
-                        var sp4 = await (from pr in _programmesRepository.Table
+                        spCount = await (from pr in _programmesRepository.Table
                                          where pr.TypeProgId == TypeProgId && DateTime.Now < pr.TsStartMo && pr.TsStartMo <= dateTime
                                          && pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
                                          && (category == null || pr.Category == category)
@@ -508,20 +519,42 @@ namespace TvProgViewer.Services.TvProgMain
                                              Category = pr.Category,
                                              Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo),
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                         }).ToListAsync();
-                        sp4 = await ChannelIconJoinAsync(sp4, TypeProgId, intListChannels);
-                        SetGenres(sp4, null);
-                        sp4 = await FilterGenresAsync(sp4, genres);
-                        sp4 = await FilterChannelsAsync(sp4, channels);
-                        count = sp4.Count();
-
-                        systemProgramme = await sp4.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
-                                        .Skip((page - 1) * rows).Take(rows)
-                                        .ToListAsync<SystemProgramme>();
+                                         }).CountAsync(CancellationToken.None);
+                        spRows = await (from pr in _programmesRepository.Table
+                                         where pr.TypeProgId == TypeProgId && DateTime.Now < pr.TsStartMo && pr.TsStartMo <= dateTime
+                                         && pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
+                                         && (category == null || pr.Category == category)
+                                         && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+                                         orderby pr.InternalChanId, pr.TsStart
+                                         select new SystemProgramme
+                                         {
+                                             ProgrammesId = pr.Id,
+                                             Cid = pr.ChannelId,
+                                             InternalChanId = pr.InternalChanId ?? 0,
+                                             Start = pr.TsStart,
+                                             Stop = pr.TsStop,
+                                             TsStartMo = pr.TsStartMo,
+                                             TsStopMo = pr.TsStopMo,
+                                             TelecastTitle = pr.Title,
+                                             TelecastDescr = pr.Descr,
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
+                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName :
+                                             null,
+                                             Category = pr.Category,
+                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo),
+                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
+                                         }).AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "OrderCol", sord)
+                                            .Skip((page - 1) * rows).Take(rows)
+                                            .ToListAsync();
+                        spRows = await ChannelIconJoinAsync(spRows, TypeProgId, intListChannels);
+                        SetGenres(spRows, null);
+                        spRows = await FilterGenresAsync(spRows, genres);
+                        spRows = await FilterChannelsAsync(spRows, channels);
                     }
                     break;
             }
-            return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme);
+            return new KeyValuePair<int, List<SystemProgramme>>(spCount, spRows);
         }
 
         /// <summary>
@@ -533,19 +566,29 @@ namespace TvProgViewer.Services.TvProgMain
                                                                , string sidx, string sord, int page, int rows, string genres, string dates, string channels)
 
         {
-            int count = 0;
+            int spCount = 0;
             var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : 
                 await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
             if (string.IsNullOrWhiteSpace(dates))
                 return new KeyValuePair<int, List<SystemProgramme>>();
             DateTime date;
             CultureInfo ci = new("Ru-ru");
-            var rawDates = dates.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+            var rawDates = await dates.Split(separator, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => DateTime.TryParseExact(x, "yyyyMMdd", ci, DateTimeStyles.None, out date) ? 
                 DateTime.ParseExact(x, "yyyyMMdd", ci) : 
-                new DateTime()).ToList();
-            DateTime minDateTime = rawDates.Min();
-            DateTime maxDateTime = rawDates.Max().AddDays(1);
+                new DateTime()).ToListAsync();
+            var minDateTime = await rawDates.AsQueryable().MinAsync(CancellationToken.None);
+            var maxDateTime = await rawDates.AsQueryable().MaxAsync(CancellationToken.None);
+            maxDateTime = maxDateTime.AddDays(1);
+
+            spCount = await (from pr in _programmesRepository.Table
+                             where pr.TypeProgId == typeProgId
+                                    && pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
+                                    && (category == null || pr.Category == category)
+                                    && pr.Title.Contains(findTitle)
+                                    && minDateTime <= pr.TsStartMo && pr.TsStartMo <= maxDateTime
+                                    && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+                             select pr.Id).CountAsync(CancellationToken.None);
 
             var systemProgramme = await (from pr in _programmesRepository.Table
                                          where pr.TypeProgId == typeProgId
@@ -571,7 +614,9 @@ namespace TvProgViewer.Services.TvProgMain
                                                 _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName : null),
                                              Category = pr.Category,
                                              Remain = 1
-                                         }).ToListAsync();
+                                         }).AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMo", sord)
+                                         .Skip((page - 1) * rows).Take(rows)
+                                         .ToListAsync();
             systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
             Parallel.ForEach(systemProgramme, pr =>
             {
@@ -582,61 +627,63 @@ namespace TvProgViewer.Services.TvProgMain
             systemProgramme = await FilterGenresAsync(systemProgramme, genres);
             systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
             systemProgramme = await FilterExcludeDates(systemProgramme, rawDates);
-            count = systemProgramme.Count;
-
-            systemProgramme = await systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMo", sord)
-                                         .Skip((page - 1) * rows).Take(rows)
-                                         .ToListAsync<SystemProgramme>();
-            return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme);
+                        
+            return new KeyValuePair<int, List<SystemProgramme>>(spCount, systemProgramme);
         }
 
         public async Task<KeyValuePair<int, List<SystemProgramme>>> SearchGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string channels)
         {
-            int count = 0;
+            int spCount = 0;
             var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : 
                 await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
             CultureInfo ci = new("Ru-ru");
-            
-            var systemProgramme = await(from pr in _programmesRepository.Table
-                                        where pr.TypeProgId == typeProgId
-                                   && pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
-                                   && (category == null || pr.Category == category)
-                                   && pr.Title.Contains(findTitle)
-                                   && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                        orderby pr.TsStartMo, pr.TsStopMo
-                                        select new SystemProgramme
-                                        {
-                                            ProgrammesId = pr.Id,
-                                            Cid = pr.ChannelId,
-                                            InternalChanId = pr.InternalChanId ?? 0,
-                                            Start = pr.TsStart,
-                                            Stop = pr.TsStop,
-                                            TsStartMo = pr.TsStartMo,
-                                            TsStopMo = pr.TsStopMo,
-                                            TelecastTitle = pr.Title,
-                                            TelecastDescr = pr.Descr,
-                                            AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                               _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
-                                               _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName : null),
-                                            Category = pr.Category,
-                                            Remain = 1
-                                        }).ToListAsync();
+
+            spCount = await (from pr in _programmesRepository.Table
+                             where pr.TypeProgId == typeProgId
+                        && pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
+                        && (category == null || pr.Category == category)
+                        && pr.Title.Contains(findTitle)
+                        && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+                             select pr.Id).CountAsync(CancellationToken.None);
+
+            var systemProgramme = await (from pr in _programmesRepository.Table
+                                         where pr.TypeProgId == typeProgId
+                                    && pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
+                                    && (category == null || pr.Category == category)
+                                    && pr.Title.Contains(findTitle)
+                                    && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+                                         orderby pr.TsStartMo, pr.TsStopMo
+                                         select new SystemProgramme
+                                         {
+                                             ProgrammesId = pr.Id,
+                                             Cid = pr.ChannelId,
+                                             InternalChanId = pr.InternalChanId ?? 0,
+                                             Start = pr.TsStart,
+                                             Stop = pr.TsStop,
+                                             TsStartMo = pr.TsStartMo,
+                                             TsStopMo = pr.TsStopMo,
+                                             TelecastTitle = pr.Title,
+                                             TelecastDescr = pr.Descr,
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
+                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").Path25 +
+                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == "GreenAnons.png").FileName : null,
+                                             Category = pr.Category,
+                                             Remain = 1
+                                         }).AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMo", sord)
+                                         .Skip((page - 1) * rows).Take(rows)
+                                         .ToListAsync();
+
             systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
             _ = Parallel.ForEach(systemProgramme, pr =>
             {
-                pr.DayMonth = pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru")) +
-           string.Format("({0:D2}.{1:D2})", pr.TsStartMo.Day, pr.TsStartMo.Month);
+                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru"))}{string.Format("({0:D2}.{1:D2})", pr.TsStartMo.Day, pr.TsStartMo.Month)}";
             });
             SetGenres(systemProgramme, null);
             systemProgramme = await FilterGenresAsync(systemProgramme, genres);
             systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
-            count = systemProgramme.Count;
-
-            systemProgramme = await systemProgramme.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "TsStartMo", sord)
-                                         .Skip((page - 1) * rows).Take(rows)
-                                         .ToListAsync();
-            return new KeyValuePair<int, List<SystemProgramme>>(count, systemProgramme);
+                       
+            return new KeyValuePair<int, List<SystemProgramme>>(spCount, systemProgramme);
         }
 
         /// <summary>
@@ -650,7 +697,20 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="category">Категория</param>
         public virtual async Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(long? uid, int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category)
         {
-            List<SystemProgramme> systemProgrammes = new List<SystemProgramme>();
+            List<SystemProgramme> systemProgrammes = [];
+            /*int spCount = 0;
+            spCount = await (from pr in _programmesRepository.Table
+                             join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
+                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                             from mp in chmp.DefaultIfEmpty()
+                             where pr.TypeProgId == typeProgId &&
+                             ch.Id == channelId &&
+                             pr.TsStartMo >= tsStart &&
+                             pr.TsStopMo <= tsEnd &&
+                             pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
+                             && ch.Deleted == null
+                             select pr.Id).CountAsync(CancellationToken.None);*/
+
             systemProgrammes = await (from pr in _programmesRepository.Table
                                       join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
                                       join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp

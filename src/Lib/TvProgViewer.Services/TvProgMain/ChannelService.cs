@@ -76,10 +76,15 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="tvProgProviderId">Идентификатор провайдера телеканалов</param>
         public virtual async Task<KeyValuePair<int, List<SystemChannel>>> GetSystemChannelsAsync(int tvProgProviderId, string filtData, string sidx, string sord, int page, int rows)
         {
-            KeyValuePair<int, List<SystemChannel>> listSystemChannels = new KeyValuePair<int, List<SystemChannel>>();
+            var scCount = await (from ch in _channelsRepository.Table
+                            join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                            from mp in chmp.DefaultIfEmpty()
+                            where ch.TvProgProviderId == tvProgProviderId && ch.Deleted == null &&
+                                        (filtData == null || ch.TitleChannel.Contains(filtData)) &&
+                                        (from pr in _programmesRepository.Table select pr.ChannelId).Contains(ch.Id)
+                            select ch.Id).CountAsync(CancellationToken.None);
 
-            List<SystemChannel> systemChannel = new List<SystemChannel>();
-            var sc = await (from ch in _channelsRepository.Table
+            var scRows = await (from ch in _channelsRepository.Table
                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
                             from mp in chmp.DefaultIfEmpty()
                             where ch.TvProgProviderId == tvProgProviderId && ch.Deleted == null &&
@@ -97,15 +102,11 @@ namespace TvProgViewer.Services.TvProgMain
                                 SysOrderCol = ch.SysOrderCol
                             }).Where(ch => (from pr in _programmesRepository.Table select pr.ChannelId).Contains(ch.ChannelId))
                               .OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId)
-                              .ToListAsync();
-            SetUrls(sc);
+                              .AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "SysOrderCol", sord)
+                                        .Skip((page - 1) * rows).Take(rows).ToListAsync<SystemChannel>();
+            SetUrls(scRows);
             
-            int count = sc.Count();
-            
-            systemChannel = await sc.AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "SysOrderCol", sord)
-                                        .Skip((page - 1) * rows).Take(rows)
-                                        .ToListAsync<SystemChannel>();
-            return new KeyValuePair<int, List<SystemChannel>>(count, systemChannel);
+            return new KeyValuePair<int, List<SystemChannel>>(scCount, scRows);
         }
 
         private void SetUrls(List<SystemChannel> systemChannel)
