@@ -73,12 +73,15 @@
                 <div class="tvchannel-essential">
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialTop, additionalData = Model })
                     <div class="gallery">
+                        <!--tvchannel selectpicker days-->
+                        @await Html.PartialAsync("_TvChannelDetailsDaysSelect", Model)
                         <!--tvchannel pictures-->
                         @await Html.PartialAsync("_TvChannelDetailsPictures", Model)
                         <!--tvchannel videos-->
                         @await Html.PartialAsync("_TvChannelDetailsVideos", Model)
-                        @await Html.PartialAsync("_TvChannelDetailsDaysSelect", Model)
+                        
                     </div>
+                   
                     <div class="overview">
                         @await Html.PartialAsync("_Discontinued", Model)
                         <div class="tvchannel-name">

@@ -2341,51 +2341,54 @@
         }
 
     .gallery {
-        margin: 0 auto 50px;
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        margin: 0 auto 5px;
     }
 
         .gallery .picture-wrapper {
-            margin: 0 0 10px;
+            margin: 0 0 0px;
         }
 
         .gallery .picture {
+            display: table-cell;
             position: relative;
-            max-width: 100%;
-            margin: 0 auto 10px;
+            max-width: 50px;
+            height: 45px;
+            width: 100%;
             overflow: hidden;
+            float: right;
+            right: 18px;
+            top: -3px;
         }
 
             .gallery .picture:before {
                 content: "";
                 display: block;
-                padding-top: 27.7%;
             }
 
             .gallery .picture img, .picture-gallery .picture-thumbs img, .video-gallery .video-thumbs iframe, .variant-picture img {
-                position: absolute;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                max-width: 100%;
-                max-height: 100%;
+                max-width: 45px;
+                max-height: 45px;
                 margin: auto;
             }
 
-    .picture-gallery .picture-thumbs {
+.picture-gallery .picture-thumbs {
+    overflow: hidden;
+    font-size: 0;
+}
+
+    .picture-gallery .picture-thumbs .thumb-item {
+        display: inline-block;
+        position: relative;
+        width: 50px;
+        height: 50px;
+        margin: 0 5px 10px;
         overflow: hidden;
         font-size: 0;
+        cursor: pointer;
     }
-
-        .picture-gallery .picture-thumbs .thumb-item {
-            display: inline-block;
-            position: relative;
-            width: 50px;
-            height: 50px;
-            margin: 0 5px 10px;
-            overflow: hidden;
-            cursor: pointer;
-        }
 
     .video-gallery .video-thumbs .thumb-item {
         display: inline-block;
@@ -6992,6 +6995,7 @@
         .item-box {
             width: 32.33333%;
             margin: 0 0.5% 50px;
+            text-align: center;
         }
 
             .item-box:nth-child(2n+1) {
@@ -8013,10 +8017,10 @@
             .home-page .tvchannel-grid .item-box:nth-child(4n+1), .tvchannel-details-page .tvchannel-grid .item-box:nth-child(4n+1), .shopping-cart-page .tvchannel-grid .item-box:nth-child(4n+1) {
                 clear: both;
             }
-        /*** PRODUCT PAGE ***/
+        /*** TVCHANNEL PAGE ***/
         .gallery {
             float: left;
-            width: 46%;
+            width: 45%;
         }
 
         .picture-gallery .picture {
@@ -8494,3 +8498,15 @@
     button, input, optgroup, select, textarea {
         font-size: 12pt !important;
     }
+.days-select {
+    display: table-cell;
+    float: left;
+    width: auto;
+    left: 0;
+}
+
+.btn.dropdown-toggle.btn-light.bs-placeholder {
+    margin: 0 0 0;
+    left: 0;
+    top: 0; 
+}
