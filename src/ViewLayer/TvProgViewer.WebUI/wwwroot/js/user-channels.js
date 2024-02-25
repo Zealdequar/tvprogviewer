@@ -122,7 +122,8 @@ function UploadImage(response, postData) {
 
 function linkformatter(cellvalue, options, rowObject) {
     if (cellvalue)
-        return '<a href="~/' + cellvalue + '" target="_blank" ><img src="/images/i/channel-prog-25.png" alt="Детальная информация"</img></a>';
+        return '<a href="~/' + cellvalue + '" target="_blank" title="Детальная информация о телеканале ' + rowObject.SystemTitle +
+            '..."><img src="/images/i/channel-prog-25.png" alt="Детальная информация о телеканале ' + rowObject.SystemTitle + '" class="ahover"></img></a>';
     else
         return ""
 }
@@ -204,6 +205,14 @@ function setGrid()
         autoResizing: { minColWidth: 80 },
         viewrecords: true,
         multiselect: true,
+        beforeSelectRow: function (rowid, e) {
+            var $link = $('a', e.target);
+            if (e.target.tagName.toUpperCase() === "A" || e.target.tagName.toUpperCase() === "IMG" || $link.length > 0) {
+                // link exist in the item which is clicked
+                return false;
+            }
+            return true;
+        },
         onSelectRow: function (rowId, status) {
             // Данные выбранной строки:
             let rowData = $('#tblSystemChannelsGrid').jqGrid('getRowData', rowId);
