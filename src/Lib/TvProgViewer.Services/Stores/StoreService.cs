@@ -62,7 +62,7 @@ namespace TvProgViewer.Services.Stores
         /// Deletes a store
         /// </summary>
         /// <param name="store">Store</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteStoreAsync(Store store)
         {
             if (store == null)
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Stores
         /// Gets all stores
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the stores
         /// </returns>
         public virtual async Task<IList<Store>> GetAllStoresAsync()
@@ -109,7 +109,7 @@ namespace TvProgViewer.Services.Stores
         /// </summary>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store
         /// </returns>
         public virtual async Task<Store> GetStoreByIdAsync(int storeId)
@@ -121,7 +121,7 @@ namespace TvProgViewer.Services.Stores
         /// Inserts a store
         /// </summary>
         /// <param name="store">Store</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertStoreAsync(Store store)
         {
             await _storeRepository.InsertAsync(store);
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Stores
         /// Updates the store
         /// </summary>
         /// <param name="store">Store</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateStoreAsync(Store store)
         {
             await _storeRepository.UpdateAsync(store);
@@ -170,7 +170,7 @@ namespace TvProgViewer.Services.Stores
         /// </summary>
         /// <param name="storeIdsNames">The names and/or IDs of the store to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of names and/or IDs not existing stores
         /// </returns>
         public async Task<string[]> GetNotExistingStoresAsync(string[] storeIdsNames)

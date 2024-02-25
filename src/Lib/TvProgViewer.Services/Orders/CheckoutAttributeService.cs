@@ -46,7 +46,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes a checkout attribute
         /// </summary>
         /// <param name="checkoutAttribute">Checkout attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteCheckoutAttributeAsync(CheckoutAttribute checkoutAttribute)
         {
             await _checkoutAttributeRepository.DeleteAsync(checkoutAttribute);
@@ -56,7 +56,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes checkout attributes
         /// </summary>
         /// <param name="checkoutAttributes">Checkout attributes</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteCheckoutAttributesAsync(IList<CheckoutAttribute> checkoutAttributes)
         {
             if (checkoutAttributes == null)
@@ -72,7 +72,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="storeId">Store identifier</param>
         /// <param name="excludeShippableAttributes">A value indicating whether we should exclude shippable attributes</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the checkout attributes
         /// </returns>
         public virtual async Task<IList<CheckoutAttribute>> GetAllCheckoutAttributesAsync(int storeId = 0, bool excludeShippableAttributes = false)
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="checkoutAttributeId">Checkout attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the checkout attribute
         /// </returns>
         public virtual async Task<CheckoutAttribute> GetCheckoutAttributeByIdAsync(int checkoutAttributeId)
@@ -118,7 +118,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="checkoutAttributeIds">Checkout attribute identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the checkout attributes
         /// </returns>
         public virtual async Task<IList<CheckoutAttribute>> GetCheckoutAttributeByIdsAsync(int[] checkoutAttributeIds)
@@ -130,7 +130,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a checkout attribute
         /// </summary>
         /// <param name="checkoutAttribute">Checkout attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertCheckoutAttributeAsync(CheckoutAttribute checkoutAttribute)
         {
             await _checkoutAttributeRepository.InsertAsync(checkoutAttribute);
@@ -140,7 +140,7 @@ namespace TvProgViewer.Services.Orders
         /// Updates the checkout attribute
         /// </summary>
         /// <param name="checkoutAttribute">Checkout attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateCheckoutAttributeAsync(CheckoutAttribute checkoutAttribute)
         {
             await _checkoutAttributeRepository.UpdateAsync(checkoutAttribute);
@@ -154,7 +154,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes a checkout attribute value
         /// </summary>
         /// <param name="checkoutAttributeValue">Checkout attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteCheckoutAttributeValueAsync(CheckoutAttributeValue checkoutAttributeValue)
         {
             await _checkoutAttributeValueRepository.DeleteAsync(checkoutAttributeValue);
@@ -165,7 +165,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="checkoutAttributeId">The checkout attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the checkout attribute values
         /// </returns>
         public virtual async Task<IList<CheckoutAttributeValue>> GetCheckoutAttributeValuesAsync(int checkoutAttributeId)
@@ -187,7 +187,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="checkoutAttributeValueId">Checkout attribute value identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the checkout attribute value
         /// </returns>
         public virtual async Task<CheckoutAttributeValue> GetCheckoutAttributeValueByIdAsync(int checkoutAttributeValueId)
@@ -199,7 +199,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a checkout attribute value
         /// </summary>
         /// <param name="checkoutAttributeValue">Checkout attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertCheckoutAttributeValueAsync(CheckoutAttributeValue checkoutAttributeValue)
         {
             await _checkoutAttributeValueRepository.InsertAsync(checkoutAttributeValue);
@@ -209,7 +209,7 @@ namespace TvProgViewer.Services.Orders
         /// Updates the checkout attribute value
         /// </summary>
         /// <param name="checkoutAttributeValue">Checkout attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateCheckoutAttributeValueAsync(CheckoutAttributeValue checkoutAttributeValue)
         {
             await _checkoutAttributeValueRepository.UpdateAsync(checkoutAttributeValue);

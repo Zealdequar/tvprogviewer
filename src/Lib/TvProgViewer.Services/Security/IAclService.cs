@@ -19,7 +19,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="query">Query to filter</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the filtered query
         /// </returns>
         Task<IQueryable<TEntity>> ApplyAcl<TEntity>(IQueryable<TEntity> query, User user) where TEntity : BaseEntity, IAclSupported;
@@ -31,7 +31,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="query">Query to filter</param>
         /// <param name="userRoleIds">Identifiers of user's roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the filtered query
         /// </returns>
         Task<IQueryable<TEntity>> ApplyAcl<TEntity>(IQueryable<TEntity> query, int[] userRoleIds) where TEntity : BaseEntity, IAclSupported;
@@ -40,7 +40,7 @@ namespace TvProgViewer.Services.Security
         /// Deletes an ACL record
         /// </summary>
         /// <param name="aclRecord">ACL record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteAclRecordAsync(AclRecord aclRecord);
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the aCL records
         /// </returns>
         Task<IList<AclRecord>> GetAclRecordsAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported;
@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <param name="userRoleId">User role id</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertAclRecordAsync<TEntity>(TEntity entity, int userRoleId) where TEntity : BaseEntity, IAclSupported;
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role identifiers
         /// </returns>
         Task<int[]> GetUserRoleIdsWithAccessAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported;
@@ -80,7 +80,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         Task<bool> AuthorizeAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported;
@@ -92,7 +92,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="entity">Entity</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         Task<bool> AuthorizeAsync<TEntity>(TEntity entity, User user) where TEntity : BaseEntity, IAclSupported;

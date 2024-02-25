@@ -17,7 +17,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="prePopulateNewAddressWithUserFields">Pre populate new address with user fields</param>
         /// <param name="overrideAttributesXml">Override attributes xml</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the billing address model
         /// </returns>
         Task<CheckoutBillingAddressModel> PrepareBillingAddressModelAsync(IList<ShoppingCartItem> cart,
@@ -33,7 +33,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="prePopulateNewAddressWithUserFields">Pre populate new address with user fields</param>
         /// <param name="overrideAttributesXml">Override attributes xml</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping address model
         /// </returns>
         Task<CheckoutShippingAddressModel> PrepareShippingAddressModelAsync(IList<ShoppingCartItem> cart, int? selectedCountryId = null,
@@ -45,7 +45,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="cart">Cart</param>
         /// <param name="shippingAddress">Shipping address</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping method model
         /// </returns>
         Task<CheckoutShippingMethodModel> PrepareShippingMethodModelAsync(IList<ShoppingCartItem> cart, Address shippingAddress);
@@ -56,7 +56,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="cart">Cart</param>
         /// <param name="filterByCountryId">Filter by country identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the payment method model
         /// </returns>
         Task<CheckoutPaymentMethodModel> PreparePaymentMethodModelAsync(IList<ShoppingCartItem> cart, int filterByCountryId);
@@ -66,7 +66,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="paymentMethod">Payment method</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the payment info model
         /// </returns>
         Task<CheckoutPaymentInfoModel> PreparePaymentInfoModelAsync(IPaymentMethod paymentMethod);
@@ -76,7 +76,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the confirm order model
         /// </returns>
         Task<CheckoutConfirmModel> PrepareConfirmOrderModelAsync(IList<ShoppingCartItem> cart);
@@ -86,7 +86,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the checkout completed model
         /// </returns>
         Task<CheckoutCompletedModel> PrepareCheckoutCompletedModelAsync(Order order);
@@ -96,7 +96,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="step">Step</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the checkout progress model
         /// </returns>
         Task<CheckoutProgressModel> PrepareCheckoutProgressModelAsync(CheckoutProgressStep step);
@@ -106,7 +106,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the one page checkout model
         /// </returns>
         Task<OnePageCheckoutModel> PrepareOnePageCheckoutModelAsync(IList<ShoppingCartItem> cart);

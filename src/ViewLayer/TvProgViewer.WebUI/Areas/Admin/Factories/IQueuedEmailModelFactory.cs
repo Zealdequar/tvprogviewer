@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Queued email search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email search model
         /// </returns>
         Task<QueuedEmailSearchModel> PrepareQueuedEmailSearchModelAsync(QueuedEmailSearchModel searchModel);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Queued email search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email list model
         /// </returns>
         Task<QueuedEmailListModel> PrepareQueuedEmailListModelAsync(QueuedEmailSearchModel searchModel);
@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="queuedEmail">Queued email</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email model
         /// </returns>
         Task<QueuedEmailModel> PrepareQueuedEmailModelAsync(QueuedEmailModel model, QueuedEmail queuedEmail, bool excludeProperties = false);

@@ -35,7 +35,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="downloadId">Download identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the download
         /// </returns>
         public virtual async Task<Download> GetDownloadByIdAsync(int downloadId)
@@ -48,7 +48,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="downloadGuid">Download GUID</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the download
         /// </returns>
         public virtual async Task<Download> GetDownloadByGuidAsync(Guid downloadGuid)
@@ -67,7 +67,7 @@ namespace TvProgViewer.Services.Media
         /// Deletes a download
         /// </summary>
         /// <param name="download">Download</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteDownloadAsync(Download download)
         {
             await _downloadRepository.DeleteAsync(download);
@@ -77,7 +77,7 @@ namespace TvProgViewer.Services.Media
         /// Inserts a download
         /// </summary>
         /// <param name="download">Download</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertDownloadAsync(Download download)
         {
             await _downloadRepository.InsertAsync(download);
@@ -88,7 +88,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="file">File</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the download binary array
         /// </returns>
         public virtual async Task<byte[]> GetDownloadBitsAsync(IFormFile file)

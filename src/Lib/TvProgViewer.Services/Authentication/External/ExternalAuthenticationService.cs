@@ -93,7 +93,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// <param name="currentLoggedInUser">Current logged-in user</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result of an authentication
         /// </returns>
         protected virtual async Task<IActionResult> AuthenticateExistingUserAsync(User associatedUser, User currentLoggedInUser, string returnUrl)
@@ -117,7 +117,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// <param name="parameters">Authentication parameters received from external authentication method</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result of an authentication
         /// </returns>
         protected virtual async Task<IActionResult> AuthenticateNewUserAsync(User currentLoggedInUser, ExternalAuthenticationParameters parameters, string returnUrl)
@@ -144,7 +144,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// <param name="parameters">Authentication parameters received from external authentication method</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result of an authentication
         /// </returns>
         protected virtual async Task<IActionResult> RegisterNewUserAsync(ExternalAuthenticationParameters parameters, string returnUrl)
@@ -268,7 +268,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// <param name="parameters">External authentication parameters</param>
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result of an authentication
         /// </returns>
         public virtual async Task<IActionResult> AuthenticateAsync(ExternalAuthenticationParameters parameters, string returnUrl = null)
@@ -300,7 +300,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// </summary>
         /// <param name="externalAuthenticationRecordId">External authentication record identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<ExternalAuthenticationRecord> GetExternalAuthenticationRecordByIdAsync(int externalAuthenticationRecordId)
@@ -313,7 +313,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<IList<ExternalAuthenticationRecord>> GetUserExternalAuthenticationRecordsAsync(User user)
@@ -330,7 +330,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// Delete the external authentication record
         /// </summary>
         /// <param name="externalAuthenticationRecord">External authentication record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteExternalAuthenticationRecordAsync(ExternalAuthenticationRecord externalAuthenticationRecord)
         {
             if (externalAuthenticationRecord == null)
@@ -344,7 +344,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// </summary>
         /// <param name="parameters">External authentication parameters</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<ExternalAuthenticationRecord> GetExternalAuthenticationRecordByExternalAuthenticationParametersAsync(ExternalAuthenticationParameters parameters)
@@ -363,7 +363,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="parameters">External authentication parameters</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AssociateExternalAccountWithUserAsync(User user, ExternalAuthenticationParameters parameters)
         {
             if (user == null)
@@ -387,7 +387,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// </summary>
         /// <param name="parameters">External authentication parameters</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user
         /// </returns>
         public virtual async Task<User> GetUserByExternalAuthenticationParametersAsync(ExternalAuthenticationParameters parameters)
@@ -407,7 +407,7 @@ namespace TvProgViewer.Services.Authentication.External
         /// Remove the association
         /// </summary>
         /// <param name="parameters">External authentication parameters</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task RemoveAssociationAsync(ExternalAuthenticationParameters parameters)
         {
             if (parameters == null)

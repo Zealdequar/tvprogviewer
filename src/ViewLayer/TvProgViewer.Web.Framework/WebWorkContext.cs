@@ -173,7 +173,7 @@ namespace TvProgViewer.Web.Framework
         /// Get language from the request
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found language
         /// </returns>
         protected virtual async Task<Language> GetLanguageFromRequestAsync()
@@ -208,7 +208,7 @@ namespace TvProgViewer.Web.Framework
         /// <summary>
         /// Gets the current user
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<User> GetCurrentUserAsync()
         {
             //whether there is a cached value
@@ -224,7 +224,7 @@ namespace TvProgViewer.Web.Framework
         /// Sets the current user
         /// </summary>
         /// <param name="user">Current user</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SetCurrentUserAsync(User user = null)
         {
             if (user == null)
@@ -308,7 +308,7 @@ namespace TvProgViewer.Web.Framework
         /// <summary>
         /// Gets the current vendor (logged-in manager)
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<Vendor> GetCurrentVendorAsync()
         {
             //whether there is a cached value
@@ -334,7 +334,7 @@ namespace TvProgViewer.Web.Framework
         /// Sets current user working language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SetWorkingLanguageAsync(Language language)
         {
             //save passed language identifier
@@ -352,7 +352,7 @@ namespace TvProgViewer.Web.Framework
         /// <summary>
         /// Gets current user working language
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<Language> GetWorkingLanguageAsync()
         {
             //whether there is a cached value
@@ -403,7 +403,7 @@ namespace TvProgViewer.Web.Framework
         /// <summary>
         /// Gets current user working currency
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<Currency> GetWorkingCurrencyAsync()
         {
             //whether there is a cached value
@@ -464,7 +464,7 @@ namespace TvProgViewer.Web.Framework
         /// Sets current user working currency
         /// </summary>
         /// <param name="currency">Currency</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SetWorkingCurrencyAsync(Currency currency)
         {
             //save passed currency identifier
@@ -668,7 +668,7 @@ namespace TvProgViewer.Web.Framework
         /// <summary>
         /// Gets or sets current tax display type
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<TaxDisplayType> GetTaxDisplayTypeAsync()
         {
             //whether there is a cached value
@@ -712,7 +712,7 @@ namespace TvProgViewer.Web.Framework
             return _cachedTaxDisplayType.Value;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SetTaxDisplayTypeAsync(TaxDisplayType taxDisplayType)
         {
             //whether users are allowed to select tax display type

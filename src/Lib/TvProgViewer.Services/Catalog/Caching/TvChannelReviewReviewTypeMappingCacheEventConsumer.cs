@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Catalog.Caching
         /// Clear cache data
         /// </summary>
         /// <param name="entity">Entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(TvChannelReviewReviewTypeMapping entity)
         {
             await RemoveAsync(TvProgCatalogDefaults.TvChannelReviewTypeMappingByReviewTypeCacheKey, entity.TvChannelReviewId);

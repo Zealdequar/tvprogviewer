@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="price">Price</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPriceAsync(decimal price);
@@ -26,7 +26,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showCurrency">A value indicating whether to show a currency</param>
         /// <param name="targetCurrency">Target currency</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPriceAsync(decimal price, bool showCurrency, Currency targetCurrency);
@@ -38,7 +38,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showCurrency">A value indicating whether to show a currency</param>
         /// <param name="showTax">A value indicating whether to show tax suffix</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPriceAsync(decimal price, bool showCurrency, bool showTax);
@@ -52,7 +52,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showTax">A value indicating whether to show tax suffix</param>
         /// <param name="languageId">Language</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPriceAsync(decimal price, bool showCurrency,
@@ -70,7 +70,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <param name="showTax">A value indicating whether to show tax suffix</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatOrderPriceAsync(decimal price, 
@@ -86,7 +86,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="languageId">Language</param>
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPriceAsync(decimal price, bool showCurrency,
@@ -101,7 +101,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="languageId">Language</param>
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPriceAsync(decimal price, bool showCurrency,
@@ -117,7 +117,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <param name="showTax">A value indicating whether to show tax suffix</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPriceAsync(decimal price, bool showCurrency,
@@ -129,7 +129,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rental tvchannel price with period
         /// </returns>
         Task<string> FormatRentalTvChannelPeriodAsync(TvChannel tvchannel, string price);
@@ -140,7 +140,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="price">Price</param>
         /// <param name="showCurrency">A value indicating whether to show a currency</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatShippingPriceAsync(decimal price, bool showCurrency);
@@ -154,7 +154,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="languageId">Language</param>
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatShippingPriceAsync(decimal price, bool showCurrency,
@@ -169,7 +169,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="languageId">Language</param>
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatShippingPriceAsync(decimal price, bool showCurrency,
@@ -181,7 +181,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="price">Price</param>
         /// <param name="showCurrency">A value indicating whether to show a currency</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPaymentMethodAdditionalFeeAsync(decimal price, bool showCurrency);
@@ -195,7 +195,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="languageId">Language</param>
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPaymentMethodAdditionalFeeAsync(decimal price, bool showCurrency,
@@ -210,7 +210,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="languageId">Language</param>
         /// <param name="priceIncludesTax">A value indicating whether price includes tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price
         /// </returns>
         Task<string> FormatPaymentMethodAdditionalFeeAsync(decimal price, bool showCurrency,
@@ -230,7 +230,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelPrice">TvChannel price (in primary currency). Pass null if you want to use a default produce price</param>
         /// <param name="totalWeight">Total weight of tvchannel (with attribute weight adjustment). Pass null if you want to use a default produce weight</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the base price
         /// </returns>
         Task<string> FormatBasePriceAsync(TvChannel tvchannel, decimal? tvchannelPrice, decimal? totalWeight = null);

@@ -120,7 +120,7 @@ namespace TvProgViewer.Services.Media
         /// <summary>
         /// Create cloud Blob container
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CreateCloudBlobContainer()
         {
             await _blobContainerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="thumbFileName">Filename</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the local picture thumb path
         /// </returns>
         protected override Task<string> GetThumbLocalPathAsync(string thumbFileName)
@@ -147,7 +147,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="thumbFileName">Filename</param>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the local picture thumb path
         /// </returns>
         protected override async Task<string> GetThumbUrlAsync(string thumbFileName, string storeLocation = null)
@@ -159,7 +159,7 @@ namespace TvProgViewer.Services.Media
         /// Initiates an asynchronous operation to delete picture thumbs
         /// </summary>
         /// <param name="picture">Picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task DeletePictureThumbsAsync(Picture picture)
         {
             //create a string containing the Blob name prefix
@@ -181,7 +181,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="thumbFilePath">Thumb file path</param>
         /// <param name="thumbFileName">Thumb file name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         protected override async Task<bool> GeneratedThumbExistsAsync(string thumbFilePath, string thumbFileName)
@@ -208,7 +208,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="thumbFileName">Thumb file name</param>
         /// <param name="mimeType">MIME type</param>
         /// <param name="binary">Picture binary</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task SaveThumbAsync(string thumbFilePath, string thumbFileName, string mimeType, byte[] binary)
         {
             var blobClient = _blobContainerClient.GetBlobClient(thumbFileName);

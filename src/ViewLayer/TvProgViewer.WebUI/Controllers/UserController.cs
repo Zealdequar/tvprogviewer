@@ -515,7 +515,7 @@ namespace TvProgViewer.WebUI.Controllers
         /// The entry point for injecting a plugin component of type "MultiFactorAuth"
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user verification page for Multi-factor authentication. Served by an authentication provider.
         /// </returns>
         public virtual async Task<IActionResult> MultiFactorVerification()

@@ -32,7 +32,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Components
         /// </summary>
         /// <param name="modeName">Setting mode name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the view component result
         /// </returns>
         public async Task<IViewComponentResult> InvokeAsync(string modeName = "settings-advanced-mode")

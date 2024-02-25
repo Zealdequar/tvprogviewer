@@ -160,7 +160,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="showDefaultPicture">Whether to show the default picture</param>
         /// <param name="tvchannelName">TvChannel name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture model
         /// </returns>
         protected virtual async Task<PictureModel> PrepareOrderItemPictureModelAsync(OrderItem orderItem, int pictureSize, bool showDefaultPicture, string tvchannelName)
@@ -196,7 +196,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the user order list model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user order list model
         /// </returns>
         public virtual async Task<UserOrderListModel> PrepareUserOrderListModelAsync()
@@ -256,7 +256,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order details model
         /// </returns>
         public virtual async Task<OrderDetailsModel> PrepareOrderDetailsModelAsync(Order order)
@@ -582,7 +582,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="shipment">Shipment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment details model
         /// </returns>
         public virtual async Task<ShipmentDetailsModel> PrepareShipmentDetailsModelAsync(Shipment shipment)
@@ -680,7 +680,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="page">Number of items page; pass null to load the first page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user reward points model
         /// </returns>
         public virtual async Task<UserRewardPointsModel> PrepareUserRewardPointsAsync(int? page)

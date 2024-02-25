@@ -20,7 +20,7 @@ namespace TvProgViewer.Services.ExportImport.Help
         /// <param name="propertyName">Property name</param>
         /// <param name="func">Feature property access</param>
         /// <param name="ignore">Specifies whether the property should be exported</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public PropertyByName(string propertyName, Func<T, L, Task<object>> func, bool ignore = false)
         {
             PropertyName = propertyName;
@@ -54,7 +54,7 @@ namespace TvProgViewer.Services.ExportImport.Help
         /// <summary>
         /// Feature property access
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public Func<T, L, Task<object>> GetProperty { get; }
 
         /// <summary>

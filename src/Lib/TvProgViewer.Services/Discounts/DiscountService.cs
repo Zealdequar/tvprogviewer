@@ -73,7 +73,7 @@ namespace TvProgViewer.Services.Discounts
         /// <param name="user">User</param>
         /// <param name="errors">Errors</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if result is valid; otherwise false
         /// </returns>
         protected async Task<bool> GetValidationResultAsync(IEnumerable<DiscountRequirement> requirements,
@@ -140,7 +140,7 @@ namespace TvProgViewer.Services.Discounts
         /// Delete discount
         /// </summary>
         /// <param name="discount">Discount</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteDiscountAsync(Discount discount)
         {
             //first, delete related discount requirements
@@ -155,7 +155,7 @@ namespace TvProgViewer.Services.Discounts
         /// </summary>
         /// <param name="discountId">Discount identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount
         /// </returns>
         public virtual async Task<Discount> GetDiscountByIdAsync(int discountId)
@@ -174,7 +174,7 @@ namespace TvProgViewer.Services.Discounts
         /// <param name="endDateUtc">Discount end date; pass null to load all records</param>
         /// <param name="isActive">A value indicating whether to get active discounts; "null" to load all discounts; "false" to load only inactive discounts; "true" to load only active discounts</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discounts
         /// </returns>
         public virtual async Task<IList<Discount>> GetAllDiscountsAsync(DiscountType? discountType = null,
@@ -232,7 +232,7 @@ namespace TvProgViewer.Services.Discounts
         /// <typeparam name="T">Type based on <see cref="DiscountMapping" /></typeparam>
         /// <param name="entity">Entity which supports discounts (<see cref="IDiscountSupported{T}" />)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of discounts
         /// </returns>
         public virtual async Task<IList<Discount>> GetAppliedDiscountsAsync<T>(IDiscountSupported<T> entity) where T : DiscountMapping
@@ -257,7 +257,7 @@ namespace TvProgViewer.Services.Discounts
         /// Inserts a discount
         /// </summary>
         /// <param name="discount">Discount</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertDiscountAsync(Discount discount)
         {
             await _discountRepository.InsertAsync(discount);
@@ -267,7 +267,7 @@ namespace TvProgViewer.Services.Discounts
         /// Updates the discount
         /// </summary>
         /// <param name="discount">Discount</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateDiscountAsync(Discount discount)
         {
             await _discountRepository.UpdateAsync(discount);
@@ -383,7 +383,7 @@ namespace TvProgViewer.Services.Discounts
         /// <param name="discountId">Discount identifier</param>
         /// <param name="topLevelOnly">Whether to load top-level requirements only (without parent identifier)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the requirements
         /// </returns>
         public virtual async Task<IList<DiscountRequirement>> GetAllDiscountRequirementsAsync(int discountId = 0, bool topLevelOnly = false)
@@ -408,7 +408,7 @@ namespace TvProgViewer.Services.Discounts
         /// Get a discount requirement
         /// </summary>
         /// <param name="discountRequirementId">Discount requirement identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<DiscountRequirement> GetDiscountRequirementByIdAsync(int discountRequirementId)
         {
             return await _discountRequirementRepository.GetByIdAsync(discountRequirementId, cache => default);
@@ -418,7 +418,7 @@ namespace TvProgViewer.Services.Discounts
         /// Gets child discount requirements
         /// </summary>
         /// <param name="discountRequirement">Parent discount requirement</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<IList<DiscountRequirement>> GetDiscountRequirementsByParentAsync(DiscountRequirement discountRequirement)
         {
             if (discountRequirement is null)
@@ -434,7 +434,7 @@ namespace TvProgViewer.Services.Discounts
         /// </summary>
         /// <param name="discountRequirement">Discount requirement</param>
         /// <param name="recursive">A value indicating whether to recursively delete child requirements</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteDiscountRequirementAsync(DiscountRequirement discountRequirement, bool recursive = false)
         {
             if (discountRequirement == null)
@@ -451,7 +451,7 @@ namespace TvProgViewer.Services.Discounts
         /// Inserts a discount requirement
         /// </summary>
         /// <param name="discountRequirement">Discount requirement</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertDiscountRequirementAsync(DiscountRequirement discountRequirement)
         {
             await _discountRequirementRepository.InsertAsync(discountRequirement);
@@ -461,7 +461,7 @@ namespace TvProgViewer.Services.Discounts
         /// Updates a discount requirement
         /// </summary>
         /// <param name="discountRequirement">Discount requirement</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateDiscountRequirementAsync(DiscountRequirement discountRequirement)
         {
             await _discountRequirementRepository.UpdateAsync(discountRequirement);
@@ -477,7 +477,7 @@ namespace TvProgViewer.Services.Discounts
         /// <param name="discount">Discount</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount validation result
         /// </returns>
         public virtual async Task<DiscountValidationResult> ValidateDiscountAsync(Discount discount, User user)
@@ -500,7 +500,7 @@ namespace TvProgViewer.Services.Discounts
         /// <param name="user">User</param>
         /// <param name="couponCodesToValidate">Coupon codes to validate</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount validation result
         /// </returns>
         public virtual async Task<DiscountValidationResult> ValidateDiscountAsync(Discount discount, User user, string[] couponCodesToValidate)
@@ -641,7 +641,7 @@ namespace TvProgViewer.Services.Discounts
         /// </summary>
         /// <param name="discountUsageHistoryId">Discount usage history record identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount usage history
         /// </returns>
         public virtual async Task<DiscountUsageHistory> GetDiscountUsageHistoryByIdAsync(int discountUsageHistoryId)
@@ -659,7 +659,7 @@ namespace TvProgViewer.Services.Discounts
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount usage history records
         /// </returns>
         public virtual async Task<IPagedList<DiscountUsageHistory>> GetAllDiscountUsageHistoryAsync(int? discountId = null,
@@ -700,7 +700,7 @@ namespace TvProgViewer.Services.Discounts
         /// Insert discount usage history record
         /// </summary>
         /// <param name="discountUsageHistory">Discount usage history record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertDiscountUsageHistoryAsync(DiscountUsageHistory discountUsageHistory)
         {
             await _discountUsageHistoryRepository.InsertAsync(discountUsageHistory);
@@ -710,7 +710,7 @@ namespace TvProgViewer.Services.Discounts
         /// Delete discount usage history record
         /// </summary>
         /// <param name="discountUsageHistory">Discount usage history record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteDiscountUsageHistoryAsync(DiscountUsageHistory discountUsageHistory)
         {
             await _discountUsageHistoryRepository.DeleteAsync(discountUsageHistory);

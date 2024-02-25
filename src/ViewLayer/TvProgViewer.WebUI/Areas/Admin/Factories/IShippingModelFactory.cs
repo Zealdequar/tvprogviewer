@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shipping provider search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping provider search model
         /// </returns>
         Task<ShippingProviderSearchModel> PrepareShippingProviderSearchModelAsync(ShippingProviderSearchModel searchModel);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shipping provider search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping provider list model
         /// </returns>
         Task<ShippingProviderListModel> PrepareShippingProviderListModelAsync(ShippingProviderSearchModel searchModel);
@@ -34,7 +34,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Pickup point provider search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the pickup point provider search model
         /// </returns>
         Task<PickupPointProviderSearchModel> PreparePickupPointProviderSearchModelAsync(PickupPointProviderSearchModel searchModel);
@@ -44,7 +44,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Pickup point provider search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the pickup point provider list model
         /// </returns>
         Task<PickupPointProviderListModel> PreparePickupPointProviderListModelAsync(PickupPointProviderSearchModel searchModel);
@@ -54,7 +54,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shipping method search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping method search model
         /// </returns>
         Task<ShippingMethodSearchModel> PrepareShippingMethodSearchModelAsync(ShippingMethodSearchModel searchModel);
@@ -64,7 +64,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shipping method search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping method list model
         /// </returns>
         Task<ShippingMethodListModel> PrepareShippingMethodListModelAsync(ShippingMethodSearchModel searchModel);
@@ -76,7 +76,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="shippingMethod">Shipping method</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping method model
         /// </returns>
         Task<ShippingMethodModel> PrepareShippingMethodModelAsync(ShippingMethodModel model,
@@ -87,7 +87,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Dates and ranges search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the dates and ranges search model
         /// </returns>
         Task<DatesRangesSearchModel> PrepareDatesRangesSearchModelAsync(DatesRangesSearchModel searchModel);
@@ -97,7 +97,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Delivery date search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the delivery date list model
         /// </returns>
         Task<DeliveryDateListModel> PrepareDeliveryDateListModelAsync(DeliveryDateSearchModel searchModel);
@@ -109,7 +109,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="deliveryDate">Delivery date</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the delivery date model
         /// </returns>
         Task<DeliveryDateModel> PrepareDeliveryDateModelAsync(DeliveryDateModel model, DeliveryDate deliveryDate, bool excludeProperties = false);
@@ -119,7 +119,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">TvChannel availability range search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel availability range list model
         /// </returns>
         Task<TvChannelAvailabilityRangeListModel> PrepareTvChannelAvailabilityRangeListModelAsync(TvChannelAvailabilityRangeSearchModel searchModel);
@@ -131,7 +131,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel availability range model
         /// </returns>
         Task<TvChannelAvailabilityRangeModel> PrepareTvChannelAvailabilityRangeModelAsync(TvChannelAvailabilityRangeModel model,
@@ -142,7 +142,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Warehouse search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warehouse search model
         /// </returns>
         Task<WarehouseSearchModel> PrepareWarehouseSearchModelAsync(WarehouseSearchModel searchModel);
@@ -152,7 +152,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Warehouse search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warehouse list model
         /// </returns>
         Task<WarehouseListModel> PrepareWarehouseListModelAsync(WarehouseSearchModel searchModel);
@@ -164,7 +164,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="warehouse">Warehouse</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warehouse model
         /// </returns>
         Task<WarehouseModel> PrepareWarehouseModelAsync(WarehouseModel model, Warehouse warehouse, bool excludeProperties = false);
@@ -174,7 +174,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Shipping method restriction model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping method restriction model
         /// </returns>
         Task<ShippingMethodRestrictionModel> PrepareShippingMethodRestrictionModelAsync(ShippingMethodRestrictionModel model);

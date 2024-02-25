@@ -30,7 +30,7 @@ namespace TvProgViewer.Services.Common
         /// <summary>
         /// Executes a task
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task ExecuteAsync()
         {
             await _settingService.SetSettingAsync($"{nameof(AdminAreaSettings)}.{nameof(AdminAreaSettings.CheckLicense)}", true);

@@ -11,7 +11,7 @@ namespace TvProgViewer.Core
         /// <summary>
         /// Gets the current store
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<Store> GetCurrentStoreAsync();
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace TvProgViewer.Core
         /// <summary>
         /// Gets active store scope configuration
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<int> GetActiveStoreScopeConfigurationAsync();
     }
 }

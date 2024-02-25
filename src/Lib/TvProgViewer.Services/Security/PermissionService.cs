@@ -54,7 +54,7 @@ namespace TvProgViewer.Services.Security
         /// </summary>
         /// <param name="userRoleId">User role identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the permissions
         /// </returns>
         protected virtual async Task<IList<PermissionRecord>> GetPermissionRecordsByUserRoleIdAsync(int userRoleId)
@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Security
         /// </summary>
         /// <param name="systemName">Permission system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the permission
         /// </returns>
         protected virtual async Task<PermissionRecord> GetPermissionRecordBySystemNameAsync(string systemName)
@@ -101,7 +101,7 @@ namespace TvProgViewer.Services.Security
         /// Gets all permissions
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the permissions
         /// </returns>
         public virtual async Task<IList<PermissionRecord>> GetAllPermissionRecordsAsync()
@@ -120,7 +120,7 @@ namespace TvProgViewer.Services.Security
         /// Inserts a permission
         /// </summary>
         /// <param name="permission">Permission</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertPermissionRecordAsync(PermissionRecord permission)
         {
             await _permissionRecordRepository.InsertAsync(permission);
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Security
         /// </summary>
         /// <param name="permission">Permission</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a permission record
         /// </returns>
         public virtual async Task<PermissionRecord> GetPermissionRecordByIdAsync(int permissionId)
@@ -143,7 +143,7 @@ namespace TvProgViewer.Services.Security
         /// Updates the permission
         /// </summary>
         /// <param name="permission">Permission</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdatePermissionRecordAsync(PermissionRecord permission)
         {
             await _permissionRecordRepository.UpdateAsync(permission);
@@ -153,7 +153,7 @@ namespace TvProgViewer.Services.Security
         /// Delete a permission
         /// </summary>
         /// <param name="permission">Permission</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeletePermissionRecordAsync(PermissionRecord permission)
         {
             await _permissionRecordRepository.DeleteAsync(permission);
@@ -163,7 +163,7 @@ namespace TvProgViewer.Services.Security
         /// Install permissions
         /// </summary>
         /// <param name="permissionProvider">Permission provider</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InstallPermissionsAsync(IPermissionProvider permissionProvider)
         {
             //install new permissions
@@ -220,7 +220,7 @@ namespace TvProgViewer.Services.Security
         /// Install permissions
         /// </summary>
         /// <param name="permissionProvider">Permission provider</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UninstallPermissionsAsync(IPermissionProvider permissionProvider)
         {
             //default user role mappings
@@ -254,7 +254,7 @@ namespace TvProgViewer.Services.Security
         /// </summary>
         /// <param name="permission">Permission record</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync(PermissionRecord permission)
@@ -268,7 +268,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="permission">Permission record</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync(PermissionRecord permission, User user)
@@ -287,7 +287,7 @@ namespace TvProgViewer.Services.Security
         /// </summary>
         /// <param name="permissionRecordSystemName">Permission record system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync(string permissionRecordSystemName)
@@ -301,7 +301,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="permissionRecordSystemName">Permission record system name</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync(string permissionRecordSystemName, User user)
@@ -325,7 +325,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="permissionRecordSystemName">Permission record system name</param>
         /// <param name="userRoleId">User role identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync(string permissionRecordSystemName, int userRoleId)
@@ -350,7 +350,7 @@ namespace TvProgViewer.Services.Security
         /// Gets a permission record-user role mapping
         /// </summary>
         /// <param name="permissionId">Permission identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<IList<PermissionRecordUserRoleMapping>> GetMappingByPermissionRecordIdAsync(int permissionId)
         {
             var query = _permissionRecordUserRoleMappingRepository.Table;
@@ -365,7 +365,7 @@ namespace TvProgViewer.Services.Security
         /// </summary>
         /// <param name="permissionId">Permission identifier</param>
         /// <param name="userRoleId">User role identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeletePermissionRecordUserRoleMappingAsync(int permissionId, int userRoleId)
         {
             var mapping = _permissionRecordUserRoleMappingRepository.Table
@@ -380,7 +380,7 @@ namespace TvProgViewer.Services.Security
         /// Inserts a permission record-user role mapping
         /// </summary>
         /// <param name="permissionRecordUserRoleMapping">Permission record-user role mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertPermissionRecordUserRoleMappingAsync(PermissionRecordUserRoleMapping permissionRecordUserRoleMapping)
         {
             await _permissionRecordUserRoleMappingRepository.InsertAsync(permissionRecordUserRoleMapping);

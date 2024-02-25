@@ -39,7 +39,7 @@ namespace TvProgViewer.Web.Framework.Mvc
         /// Execute result async
         /// </summary>
         /// <param name="context">ActionContext</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public override Task ExecuteResultAsync(ActionContext context)
         {
             Content = Feed.GetContent();

@@ -20,7 +20,7 @@ namespace TvProgViewer.Services.Shipping.Pickup
         /// <param name="cart">Shopping Cart</param>
         /// <param name="address">Address</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the represents a response of getting pickup points
         /// </returns>
         Task<GetPickupPointsResponse> GetPickupPointsAsync(IList<ShoppingCartItem> cart, Address address);
@@ -29,7 +29,7 @@ namespace TvProgViewer.Services.Shipping.Pickup
         /// Get associated shipment tracker
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment tracker
         /// </returns>
         Task<IShipmentTracker> GetShipmentTrackerAsync();

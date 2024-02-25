@@ -87,7 +87,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Gift card search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift card search model
         /// </returns>
         public virtual async Task<GiftCardSearchModel> PrepareGiftCardSearchModelAsync(GiftCardSearchModel searchModel)
@@ -123,7 +123,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Gift card search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift card list model
         /// </returns>
         public virtual async Task<GiftCardListModel> PrepareGiftCardListModelAsync(GiftCardSearchModel searchModel)
@@ -170,7 +170,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="giftCard">Gift card</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift card model
         /// </returns>
         public virtual async Task<GiftCardModel> PrepareGiftCardModelAsync(GiftCardModel model, GiftCard giftCard, bool excludeProperties = false)
@@ -203,7 +203,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Gift card usage history search model</param>
         /// <param name="giftCard">Gift card</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift card usage history list model
         /// </returns>
         public virtual async Task<GiftCardUsageHistoryListModel> PrepareGiftCardUsageHistoryListModelAsync(GiftCardUsageHistorySearchModel searchModel,

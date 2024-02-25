@@ -39,7 +39,7 @@ namespace TvProgViewer.Services.Common
         /// Deletes an address attribute
         /// </summary>
         /// <param name="addressAttribute">Address attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAddressAttributeAsync(AddressAttribute addressAttribute)
         {
             await _addressAttributeRepository.DeleteAsync(addressAttribute);
@@ -49,7 +49,7 @@ namespace TvProgViewer.Services.Common
         /// Gets all address attributes
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attributes
         /// </returns>
         public virtual async Task<IList<AddressAttribute>> GetAllAddressAttributesAsync()
@@ -67,7 +67,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="addressAttributeId">Address attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute
         /// </returns>
         public virtual async Task<AddressAttribute> GetAddressAttributeByIdAsync(int addressAttributeId)
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Common
         /// Inserts an address attribute
         /// </summary>
         /// <param name="addressAttribute">Address attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertAddressAttributeAsync(AddressAttribute addressAttribute)
         {
             await _addressAttributeRepository.InsertAsync(addressAttribute);
@@ -89,7 +89,7 @@ namespace TvProgViewer.Services.Common
         /// Updates the address attribute
         /// </summary>
         /// <param name="addressAttribute">Address attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateAddressAttributeAsync(AddressAttribute addressAttribute)
         {
             await _addressAttributeRepository.UpdateAsync(addressAttribute);
@@ -99,7 +99,7 @@ namespace TvProgViewer.Services.Common
         /// Deletes an address attribute value
         /// </summary>
         /// <param name="addressAttributeValue">Address attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAddressAttributeValueAsync(AddressAttributeValue addressAttributeValue)
         {
             await _addressAttributeValueRepository.DeleteAsync(addressAttributeValue);
@@ -110,7 +110,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="addressAttributeId">The address attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute values
         /// </returns>
         public virtual async Task<IList<AddressAttributeValue>> GetAddressAttributeValuesAsync(int addressAttributeId)
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="addressAttributeValueId">Address attribute value identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute value
         /// </returns>
         public virtual async Task<AddressAttributeValue> GetAddressAttributeValueByIdAsync(int addressAttributeValueId)
@@ -143,7 +143,7 @@ namespace TvProgViewer.Services.Common
         /// Inserts an address attribute value
         /// </summary>
         /// <param name="addressAttributeValue">Address attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertAddressAttributeValueAsync(AddressAttributeValue addressAttributeValue)
         {
             await _addressAttributeValueRepository.InsertAsync(addressAttributeValue);
@@ -153,7 +153,7 @@ namespace TvProgViewer.Services.Common
         /// Updates the address attribute value
         /// </summary>
         /// <param name="addressAttributeValue">Address attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateAddressAttributeValueAsync(AddressAttributeValue addressAttributeValue)
         {
             await _addressAttributeValueRepository.UpdateAsync(addressAttributeValue);

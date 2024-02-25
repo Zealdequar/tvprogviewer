@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Country search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country search model
         /// </returns>
         Task<CountrySearchModel> PrepareCountrySearchModelAsync(CountrySearchModel searchModel);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Country search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country list model
         /// </returns>
         Task<CountryListModel> PrepareCountryListModelAsync(CountrySearchModel searchModel);
@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="country">Country</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country model
         /// </returns>
         Task<CountryModel> PrepareCountryModelAsync(CountryModel model, Country country, bool excludeProperties = false);
@@ -47,7 +47,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">State and province search model</param>
         /// <param name="country">Country</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the state and province list model
         /// </returns>
         Task<StateProvinceListModel> PrepareStateProvinceListModelAsync(StateProvinceSearchModel searchModel, Country country);
@@ -60,7 +60,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="state">State or province</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the state and province model
         /// </returns>
         Task<StateProvinceModel> PrepareStateProvinceModelAsync(StateProvinceModel model,

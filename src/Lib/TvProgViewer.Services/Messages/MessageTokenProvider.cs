@@ -474,7 +474,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="languageId">Language identifier</param>
         /// <param name="vendorId">Vendor identifier (used to limit tvchannels by vendor</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the hTML table of tvchannels
         /// </returns>
         protected virtual async Task<string> TvChannelListToHtmlTableAsync(Order order, int languageId, int vendorId)
@@ -617,7 +617,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order">Order</param>
         /// <param name="language">Language</param>
         /// <param name="sb">StringBuilder</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task WriteTotalsAsync(Order order, Language language, StringBuilder sb)
         {
             //subtotal
@@ -810,7 +810,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="shipment">Shipment</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the hTML table of tvchannels
         /// </returns>
         protected virtual async Task<string> TvChannelListToHtmlTableAsync(Shipment shipment, int languageId)
@@ -893,7 +893,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="routeName">The name of the route that is used to generate URL</param>
         /// <param name="routeValues">An object that contains route values</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the generated URL
         /// </returns>
         protected virtual async Task<string> RouteUrlAsync(int storeId = 0, string routeName = null, object routeValues = null)
@@ -924,7 +924,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="store">Store</param>
         /// <param name="emailAccount">Email account</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddStoreTokensAsync(IList<Token> tokens, Store store, EmailAccount emailAccount)
         {
             if (emailAccount == null)
@@ -954,7 +954,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order"></param>
         /// <param name="languageId">Language identifier</param>
         /// <param name="vendorId">Vendor identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddOrderTokensAsync(IList<Token> tokens, Order order, int languageId, int vendorId = 0)
         {
             //lambda expression for choosing correct order address
@@ -1050,7 +1050,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="order">Order</param>
         /// <param name="refundedAmount">Refunded amount of order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddOrderRefundedTokensAsync(IList<Token> tokens, Order order, decimal refundedAmount)
         {
             //should we convert it to user currency?
@@ -1073,7 +1073,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="shipment">Shipment item</param>
         /// <param name="languageId">Language identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddShipmentTokensAsync(IList<Token> tokens, Shipment shipment, int languageId)
         {
             tokens.Add(new Token("Shipment.ShipmentNumber", shipment.Id));
@@ -1101,7 +1101,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="orderNote">Order note</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddOrderNoteTokensAsync(IList<Token> tokens, OrderNote orderNote)
         {
             var order = await _orderService.GetOrderByIdAsync(orderNote.OrderId);
@@ -1119,7 +1119,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="recurringPayment">Recurring payment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddRecurringPaymentTokensAsync(IList<Token> tokens, RecurringPayment recurringPayment)
         {
             tokens.Add(new Token("RecurringPayment.ID", recurringPayment.Id));
@@ -1139,7 +1139,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="returnRequest">Return request</param>
         /// <param name="orderItem">Order item</param>
         /// <param name="languageId">Language identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddReturnRequestTokensAsync(IList<Token> tokens, ReturnRequest returnRequest, OrderItem orderItem, int languageId)
         {
             var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
@@ -1164,7 +1164,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="giftCard">Gift card</param>
         /// <param name="languageId">Language identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddGiftCardTokensAsync(IList<Token> tokens, GiftCard giftCard, int languageId)
         {
             tokens.Add(new Token("GiftCard.SenderName", giftCard.SenderName));
@@ -1190,7 +1190,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="userId">User identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddUserTokensAsync(IList<Token> tokens, int userId)
         {
             if (userId <= 0)
@@ -1206,7 +1206,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddUserTokensAsync(IList<Token> tokens, User user)
         {
             tokens.Add(new Token("User.Email", user.Email));
@@ -1240,7 +1240,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="vendor">Vendor</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddVendorTokensAsync(IList<Token> tokens, Vendor vendor)
         {
             tokens.Add(new Token("Vendor.Name", vendor.Name));
@@ -1258,7 +1258,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="subscription">Newsletter subscription</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddNewsLetterSubscriptionTokensAsync(IList<Token> tokens, NewsLetterSubscription subscription)
         {
             tokens.Add(new Token("NewsLetterSubscription.Email", subscription.Email));
@@ -1278,7 +1278,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="tvchannelReview">TvChannel review</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddTvChannelReviewTokensAsync(IList<Token> tokens, TvChannelReview tvchannelReview)
         {
             tokens.Add(new Token("TvChannelReview.TvChannelName", (await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId))?.Name));
@@ -1296,7 +1296,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="blogComment">Blog post comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddBlogCommentTokensAsync(IList<Token> tokens, BlogComment blogComment)
         {
             var blogPost = await _blogService.GetBlogPostByIdAsync(blogComment.BlogPostId);
@@ -1312,7 +1312,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="newsComment">News comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddNewsCommentTokensAsync(IList<Token> tokens, NewsComment newsComment)
         {
             var newsItem = await _newsService.GetNewsByIdAsync(newsComment.NewsItemId);
@@ -1329,7 +1329,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="languageId">Language identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddTvChannelTokensAsync(IList<Token> tokens, TvChannel tvchannel, int languageId)
         {
             tokens.Add(new Token("TvChannel.ID", tvchannel.Id));
@@ -1351,7 +1351,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="combination">TvChannel attribute combination</param>
         /// <param name="languageId">Language identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddAttributeCombinationTokensAsync(IList<Token> tokens, TvChannelAttributeCombination combination, int languageId)
         {
             //attributes
@@ -1384,7 +1384,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="forumTopic">Forum topic</param>
         /// <param name="friendlyForumTopicPageIndex">Friendly (starts with 1) forum topic page to use for URL generation</param>
         /// <param name="appendedPostIdentifierAnchor">Forum post identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddForumTopicTokensAsync(IList<Token> tokens, ForumTopic forumTopic,
             int? friendlyForumTopicPageIndex = null, int? appendedPostIdentifierAnchor = null)
         {
@@ -1412,7 +1412,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="forumPost">Forum post</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddForumPostTokensAsync(IList<Token> tokens, ForumPost forumPost)
         {
             //attributes
@@ -1434,7 +1434,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="forum">Forum</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddForumTokensAsync(IList<Token> tokens, Forum forum)
         {
             //attributes
@@ -1455,7 +1455,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="privateMessage">Private message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddPrivateMessageTokensAsync(IList<Token> tokens, PrivateMessage privateMessage)
         {
             //attributes
@@ -1475,7 +1475,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="subscription">BackInStock subscription</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddBackInStockTokensAsync(IList<Token> tokens, BackInStockSubscription subscription)
         {
             var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(subscription.TvChannelId);
@@ -1492,7 +1492,7 @@ namespace TvProgViewer.Services.Messages
         /// Get collection of allowed (supported) message tokens for campaigns
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the collection of allowed (supported) message tokens for campaigns
         /// </returns>
         public virtual async Task<IEnumerable<string>> GetListOfCampaignAllowedTokensAsync()
@@ -1511,7 +1511,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="tokenGroups">Collection of token groups; pass null to get all available tokens</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the collection of allowed message tokens
         /// </returns>
         public virtual async Task<IEnumerable<string>> GetListOfAllowedTokensAsync(IEnumerable<string> tokenGroups = null)

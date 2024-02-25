@@ -23,7 +23,7 @@ namespace TvProgViewer.Web.Framework.Security.Captcha
         /// </summary>
         /// <param name="captchaSettings">Captcha settings</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the language code
         /// </returns>
         private static async Task<string> GetReCaptchaLanguageAsync(CaptchaSettings captchaSettings)
@@ -81,7 +81,7 @@ namespace TvProgViewer.Web.Framework.Security.Captcha
         /// <param name="helper">HTML helper</param>
         /// <param name="captchaSettings">Captcha settings</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public static async Task<IHtmlContent> GenerateCheckBoxReCaptchaV2Async(this IHtmlHelper helper, CaptchaSettings captchaSettings)
@@ -123,7 +123,7 @@ namespace TvProgViewer.Web.Framework.Security.Captcha
         /// <param name="helper">HTML helper</param>
         /// <param name="captchaSettings">Captcha settings</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public static async Task<IHtmlContent> GenerateReCaptchaV3Async(this IHtmlHelper helper, CaptchaSettings captchaSettings)

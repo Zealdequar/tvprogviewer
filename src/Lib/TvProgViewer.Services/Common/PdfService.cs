@@ -625,7 +625,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="store">Store</param>
         /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// </returns>
         public virtual async Task PrintOrderToPdfAsync(Stream stream, Order order, Language language = null, Store store = null, Vendor vendor = null)
         {
@@ -718,7 +718,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="orders">Orders</param>
         /// <param name="language">Language; null to use a language used when placing an order</param>
         /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrintOrdersToPdfAsync(Stream stream, IList<Order> orders, Language language = null, Vendor vendor = null)
         {
             if (stream == null)
@@ -749,7 +749,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="stream">Stream</param>
         /// <param name="shipments">Shipments</param>
         /// <param name="language">Language; null to use a language used when placing an order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrintPackagingSlipsToPdfAsync(Stream stream, IList<Shipment> shipments, Language language = null)
         {
             if (stream == null)
@@ -779,7 +779,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="stream">Stream</param>
         /// <param name="shipment">Shipment</param>
         /// <param name="language">Language; null to use a language used when placing an order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrintPackagingSlipToPdfAsync(Stream stream, Shipment shipment, Language language = null)
         {
             if (stream == null)
@@ -836,7 +836,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <param name="tvchannels">TvChannels</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrintTvChannelsToPdfAsync(Stream stream, IList<TvChannel> tvchannels)
         {
             if (stream == null)
@@ -921,7 +921,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="language">Language identifier; null to use a language used when placing an order</param>
         /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a path of generated file
         /// </returns>
         public virtual async Task<string> SaveOrderPdfToDiskAsync(Order order, Language language = null, Vendor vendor = null)

@@ -78,7 +78,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="newsContentModel">News content model</param>
         /// <param name="filterByNewsItemId">Filter by news item ID</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news content model
         /// </returns>
         public virtual async Task<NewsContentModel> PrepareNewsContentModelAsync(NewsContentModel newsContentModel, int? filterByNewsItemId)
@@ -99,7 +99,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">News item search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news item list model
         /// </returns>
         public virtual async Task<NewsItemListModel> PrepareNewsItemListModelAsync(NewsItemSearchModel searchModel)
@@ -151,7 +151,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="newsItem">News item</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news item model
         /// </returns>
         public virtual async Task<NewsItemModel> PrepareNewsItemModelAsync(NewsItemModel model, NewsItem newsItem, bool excludeProperties = false)
@@ -191,7 +191,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">News comment search model</param>
         /// <param name="newsItem">News item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news comment search model
         /// </returns>
         public virtual async Task<NewsCommentSearchModel> PrepareNewsCommentSearchModelAsync(NewsCommentSearchModel searchModel, NewsItem newsItem)
@@ -230,7 +230,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">News comment search model</param>
         /// <param name="newsItemId">News item Id; pass null to prepare comment models for all news items</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news comment list model
         /// </returns>
         public virtual async Task<NewsCommentListModel> PrepareNewsCommentListModelAsync(NewsCommentSearchModel searchModel, int? newsItemId)
@@ -292,7 +292,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">News item search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news item search model
         /// </returns>
         public virtual async Task<NewsItemSearchModel> PrepareNewsItemSearchModelAsync(NewsItemSearchModel searchModel)

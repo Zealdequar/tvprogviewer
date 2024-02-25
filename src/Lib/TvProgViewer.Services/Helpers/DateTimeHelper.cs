@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Helpers
         /// </summary>
         /// <param name="dt">The date and time (represents local system time or UTC time) to convert.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a DateTime value that represents time that corresponds to the dateTime parameter in user time zone.
         /// </returns>
         public virtual async Task<DateTime> ConvertToUserTimeAsync(DateTime dt)
@@ -74,7 +74,7 @@ namespace TvProgViewer.Services.Helpers
         /// <param name="dt">The date and time (represents local system time or UTC time) to convert.</param>
         /// <param name="sourceDateTimeKind">The source datetimekind</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a DateTime value that represents time that corresponds to the dateTime parameter in user time zone.
         /// </returns>
         public virtual async Task<DateTime> ConvertToUserTimeAsync(DateTime dt, DateTimeKind sourceDateTimeKind)
@@ -149,7 +149,7 @@ namespace TvProgViewer.Services.Helpers
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user time zone; if user is null, then default store time zone
         /// </returns>
         public virtual Task<TimeZoneInfo> GetUserTimeZoneAsync(User user)
@@ -180,7 +180,7 @@ namespace TvProgViewer.Services.Helpers
         /// Gets the current user time zone
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the current user time zone
         /// </returns>
         public virtual async Task<TimeZoneInfo> GetCurrentTimeZoneAsync()

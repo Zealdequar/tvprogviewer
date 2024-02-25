@@ -18,7 +18,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// <param name="host">The host name for the URL</param>
         /// <param name="fragment">The fragment for the URL</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the generated URL
         /// </returns>
         Task<string> RouteGenericUrlAsync<TEntity>(object values = null, string protocol = null, string host = null, string fragment = null)
@@ -32,7 +32,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// <param name="host">The host name for the URL</param>
         /// <param name="fragment">The fragment for the URL</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the generated URL
         /// </returns>
         Task<string> RouteTopicUrlAsync(string systemName, string protocol = null, string host = null, string fragment = null);

@@ -17,7 +17,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="category">Category</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category model
         /// </returns>
         Task<CategoryModel> PrepareCategoryModelAsync(Category category, CatalogTvChannelsCommand command);
@@ -27,7 +27,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="templateId">Template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category template view path
         /// </returns>
         Task<string> PrepareCategoryTemplateViewPathAsync(int templateId);
@@ -38,7 +38,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="currentCategoryId">Current category identifier</param>
         /// <param name="currentTvChannelId">Current tvchannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category navigation model
         /// </returns>
         Task<CategoryNavigationModel> PrepareCategoryNavigationModelAsync(int currentCategoryId,
@@ -48,7 +48,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare top menu model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the op menu model
         /// </returns>
         Task<TopMenuModel> PrepareTopMenuModelAsync();
@@ -57,7 +57,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare homepage category models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of homepage category models
         /// </returns>
         Task<List<CategoryModel>> PrepareHomepageCategoryModelsAsync();
@@ -66,7 +66,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare root categories for menu
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of category (simple) models
         /// </returns>
         Task<List<CategorySimpleModel>> PrepareRootCategoriesAsync();
@@ -76,7 +76,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="id">Id of category to get subcategory</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         Task<List<CategorySimpleModel>> PrepareSubCategoriesAsync(int id);
@@ -87,7 +87,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="category">Category</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category tvchannels model
         /// </returns>
         Task<CatalogTvChannelsModel> PrepareCategoryTvChannelsModelAsync(Category category, CatalogTvChannelsCommand command);
@@ -96,7 +96,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare category (simple) models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of category (simple) models
         /// </returns>
         Task<List<CategorySimpleModel>> PrepareCategorySimpleModelsAsync();
@@ -107,7 +107,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="rootCategoryId">Root category identifier</param>
         /// <param name="loadSubCategories">A value indicating whether subcategories should be loaded</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of category (simple) models
         /// </returns>
         Task<List<CategorySimpleModel>> PrepareCategorySimpleModelsAsync(int rootCategoryId, bool loadSubCategories = true);
@@ -116,7 +116,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare category (simple) xml document
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the xml document of category (simple) models
         /// </returns>
         Task<XDocument> PrepareCategoryXmlDocumentAsync();
@@ -131,7 +131,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="manufacturer">Manufacturer identifier</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer model
         /// </returns>
         Task<ManufacturerModel> PrepareManufacturerModelAsync(Manufacturer manufacturer, CatalogTvChannelsCommand command);
@@ -142,7 +142,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="manufacturer">Manufacturer</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer tvchannels model
         /// </returns>
         Task<CatalogTvChannelsModel> PrepareManufacturerTvChannelsModelAsync(Manufacturer manufacturer, CatalogTvChannelsCommand command);
@@ -152,7 +152,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="templateId">Template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer template view path
         /// </returns>
         Task<string> PrepareManufacturerTemplateViewPathAsync(int templateId);
@@ -161,7 +161,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare manufacturer all models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of manufacturer models
         /// </returns>
         Task<List<ManufacturerModel>> PrepareManufacturerAllModelsAsync();
@@ -171,7 +171,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="currentManufacturerId">Current manufacturer identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer navigation model
         /// </returns>
         Task<ManufacturerNavigationModel> PrepareManufacturerNavigationModelAsync(int currentManufacturerId);
@@ -186,7 +186,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="vendor">Vendor</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor model
         /// </returns>
         Task<VendorModel> PrepareVendorModelAsync(Vendor vendor, CatalogTvChannelsCommand command);
@@ -197,7 +197,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="vendor">Vendor</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor tvchannels model
         /// </returns>
         Task<CatalogTvChannelsModel> PrepareVendorTvChannelsModelAsync(Vendor vendor, CatalogTvChannelsCommand command);
@@ -206,7 +206,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare vendor all models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of vendor models
         /// </returns>
         Task<List<VendorModel>> PrepareVendorAllModelsAsync();
@@ -215,7 +215,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare vendor navigation model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor navigation model
         /// </returns>
         Task<VendorNavigationModel> PrepareVendorNavigationModelAsync();
@@ -229,7 +229,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="numberTagsToReturn">The number of tags to be returned; pass 0 to get all tags</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel tags model
         /// </returns>
         Task<PopularTvChannelTagsModel> PreparePopularTvChannelTagsModelAsync(int numberTagsToReturn = 0);
@@ -240,7 +240,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannelTag">TvChannel tag</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels by tag model
         /// </returns>
         Task<TvChannelsByTagModel> PrepareTvChannelsByTagModelAsync(TvChannelTag tvchannelTag, CatalogTvChannelsCommand command);
@@ -251,7 +251,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannelTag">TvChannel tag</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ag tvchannels model
         /// </returns>
         Task<CatalogTvChannelsModel> PrepareTagTvChannelsModelAsync(TvChannelTag tvchannelTag, CatalogTvChannelsCommand command);
@@ -265,7 +265,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the new tvchannels model
         /// </returns>
         Task<CatalogTvChannelsModel> PrepareNewTvChannelsModelAsync(CatalogTvChannelsCommand command);
@@ -280,7 +280,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">Search model</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search model
         /// </returns>
         Task<SearchModel> PrepareSearchModelAsync(SearchModel model, CatalogTvChannelsCommand command);
@@ -291,7 +291,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">Search model</param>
         /// <param name="command">Model to get the catalog tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search tvchannels model
         /// </returns>
         Task<CatalogTvChannelsModel> PrepareSearchTvChannelsModelAsync(SearchModel searchModel, CatalogTvChannelsCommand command);
@@ -300,7 +300,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare search box model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search box model
         /// </returns>
         Task<SearchBoxModel> PrepareSearchBoxModelAsync();
@@ -314,7 +314,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pagingFilteringModel">Catalog paging filtering model</param>
         /// <param name="command">Catalog paging filtering command</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareSortingOptionsAsync(CatalogTvChannelsModel pagingFilteringModel, CatalogTvChannelsCommand command);
 
         /// <summary>
@@ -322,7 +322,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pagingFilteringModel">Catalog paging filtering model</param>
         /// <param name="command">Catalog paging filtering command</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareViewModesAsync(CatalogTvChannelsModel pagingFilteringModel, CatalogTvChannelsCommand command);
 
         /// <summary>
@@ -333,7 +333,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="allowUsersToSelectPageSize">Are users allowed to select page size?</param>
         /// <param name="pageSizeOptions">Page size options</param>
         /// <param name="fixedPageSize">Fixed page size</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PreparePageSizeOptionsAsync(CatalogTvChannelsModel pagingFilteringModel, CatalogTvChannelsCommand command,
             bool allowUsersToSelectPageSize, string pageSizeOptions, int fixedPageSize);
 

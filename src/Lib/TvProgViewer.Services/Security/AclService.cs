@@ -50,7 +50,7 @@ namespace TvProgViewer.Services.Security
         /// Inserts an ACL record
         /// </summary>
         /// <param name="aclRecord">ACL record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task InsertAclRecordAsync(AclRecord aclRecord)
         {
             await _aclRecordRepository.InsertAsync(aclRecord);
@@ -61,7 +61,7 @@ namespace TvProgViewer.Services.Security
         /// </summary>
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if exist; otherwise false
         /// </returns>
         protected virtual async Task<bool> IsEntityAclMappingExistAsync<TEntity>() where TEntity : BaseEntity, IAclSupported
@@ -87,7 +87,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="query">Query to filter</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the filtered query
         /// </returns>
         public virtual async Task<IQueryable<TEntity>> ApplyAcl<TEntity>(IQueryable<TEntity> query, User user)
@@ -110,7 +110,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="query">Query to filter</param>
         /// <param name="userRoleIds">Identifiers of user's roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the filtered query
         /// </returns>
         public virtual async Task<IQueryable<TEntity>> ApplyAcl<TEntity>(IQueryable<TEntity> query, int[] userRoleIds)
@@ -135,7 +135,7 @@ namespace TvProgViewer.Services.Security
         /// Deletes an ACL record
         /// </summary>
         /// <param name="aclRecord">ACL record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAclRecordAsync(AclRecord aclRecord)
         {
             await _aclRecordRepository.DeleteAsync(aclRecord);
@@ -147,7 +147,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the aCL records
         /// </returns>
         public virtual async Task<IList<AclRecord>> GetAclRecordsAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported
@@ -173,7 +173,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <param name="userRoleId">User role id</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertAclRecordAsync<TEntity>(TEntity entity, int userRoleId) where TEntity : BaseEntity, IAclSupported
         {
             if (entity == null)
@@ -201,7 +201,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role identifiers
         /// </returns>
         public virtual async Task<int[]> GetUserRoleIdsWithAccessAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported
@@ -228,7 +228,7 @@ namespace TvProgViewer.Services.Security
         /// <typeparam name="TEntity">Type of entity that supports the ACL</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IAclSupported
@@ -243,7 +243,7 @@ namespace TvProgViewer.Services.Security
         /// <param name="entity">Entity</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync<TEntity>(TEntity entity, User user) where TEntity : BaseEntity, IAclSupported

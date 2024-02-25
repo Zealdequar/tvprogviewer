@@ -39,7 +39,7 @@ namespace TvProgViewer.Services.Caching
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <param name="entityEventType">Entity event type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task ClearCacheAsync(TEntity entity, EntityEventType entityEventType)
         {
             await RemoveByPrefixAsync(TvProgEntityCacheDefaults<TEntity>.ByIdsPrefix);
@@ -55,7 +55,7 @@ namespace TvProgViewer.Services.Caching
         /// Clear cache data
         /// </summary>
         /// <param name="entity">Entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual Task ClearCacheAsync(TEntity entity)
         {
             return Task.CompletedTask;
@@ -66,7 +66,7 @@ namespace TvProgViewer.Services.Caching
         /// </summary>
         /// <param name="prefix">Cache key prefix</param>
         /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task RemoveByPrefixAsync(string prefix, params object[] prefixParameters)
         {
             await _staticCacheManager.RemoveByPrefixAsync(prefix, prefixParameters);
@@ -77,7 +77,7 @@ namespace TvProgViewer.Services.Caching
         /// </summary>
         /// <param name="cacheKey">Cache key</param>
         /// <param name="cacheKeyParameters">Parameters to create cache key</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task RemoveAsync(CacheKey cacheKey, params object[] cacheKeyParameters)
         {
             await _staticCacheManager.RemoveAsync(cacheKey, cacheKeyParameters);
@@ -91,7 +91,7 @@ namespace TvProgViewer.Services.Caching
         /// Handle entity inserted event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task HandleEventAsync(EntityInsertedEvent<TEntity> eventMessage)
         {
             await ClearCacheAsync(eventMessage.Entity, EntityEventType.Insert);
@@ -101,7 +101,7 @@ namespace TvProgViewer.Services.Caching
         /// Handle entity updated event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task HandleEventAsync(EntityUpdatedEvent<TEntity> eventMessage)
         {
             await ClearCacheAsync(eventMessage.Entity, EntityEventType.Update);
@@ -111,7 +111,7 @@ namespace TvProgViewer.Services.Caching
         /// Handle entity deleted event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task HandleEventAsync(EntityDeletedEvent<TEntity> eventMessage)
         {
             await ClearCacheAsync(eventMessage.Entity, EntityEventType.Delete);

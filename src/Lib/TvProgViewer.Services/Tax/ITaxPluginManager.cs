@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax provider
         /// </returns>
         Task<ITaxProvider> LoadPrimaryPluginAsync(User user = null, int storeId = 0);
@@ -34,7 +34,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0);

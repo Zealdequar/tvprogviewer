@@ -25,7 +25,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Helpers
     /// Get tinyMCE language name for current language 
     /// </summary>
     /// <returns>
-    /// A task that represents the asynchronous operation
+    /// Задача представляет асинхронную операцию
     /// The task result contains the inyMCE language name
     /// </returns>
     public async Task<string> GetTinyMceLanguageAsync()

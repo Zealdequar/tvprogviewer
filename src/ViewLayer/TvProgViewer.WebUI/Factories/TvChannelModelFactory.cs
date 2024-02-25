@@ -185,7 +185,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="group">Specification attribute group</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of tvchannel specification model
         /// </returns>
         protected virtual async Task<IList<TvChannelSpecificationAttributeModel>> PrepareTvChannelSpecificationAttributeModelAsync(TvChannel tvchannel, SpecificationAttributeGroup group)
@@ -239,7 +239,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel review overview model
         /// </returns>
         protected virtual async Task<TvChannelReviewOverviewModel> PrepareTvChannelReviewOverviewModelAsync(TvChannel tvchannel)
@@ -287,7 +287,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="forceRedirectionAfterAddingToCart">Whether to force redirection after adding to cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel overview price model
         /// </returns>
         protected virtual async Task<TvChannelOverviewModel.TvChannelPriceModel> PrepareTvChannelOverviewPriceModelAsync(TvChannel tvchannel, bool forceRedirectionAfterAddingToCart = false)
@@ -318,7 +318,7 @@ namespace TvProgViewer.WebUI.Factories
             return priceModel;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareSimpleTvChannelOverviewPriceModelAsync(TvChannel tvchannel, TvChannelOverviewModel.TvChannelPriceModel priceModel)
         {
             //add to cart button
@@ -527,7 +527,7 @@ namespace TvProgViewer.WebUI.Factories
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareGroupedTvChannelOverviewPriceModelAsync(TvChannel tvchannel, TvChannelOverviewModel.TvChannelPriceModel priceModel)
         {
             var store = await _storeContext.GetCurrentStoreAsync();
@@ -618,7 +618,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelThumbPictureSize">TvChannel thumb picture size (longest side); pass null to use the default value of media settings</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains picture models
         /// </returns>
         protected virtual async Task<IList<PictureModel>> PrepareTvChannelOverviewPicturesModelAsync(TvChannel tvchannel, int? tvchannelThumbPictureSize = null)
@@ -683,7 +683,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel breadcrumb model
         /// </returns>
         protected virtual async Task<TvChannelDetailsModel.TvChannelBreadcrumbModel> PrepareTvChannelBreadcrumbModelAsync(TvChannel tvchannel)
@@ -725,7 +725,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of tvchannel tag model
         /// </returns>
         protected virtual async Task<IList<TvChannelTagModel>> PrepareTvChannelTagModelsAsync(TvChannel tvchannel)
@@ -755,7 +755,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel price model
         /// </returns>
         protected virtual async Task<TvChannelDetailsModel.TvChannelPriceModel> PrepareTvChannelPriceModelAsync(TvChannel tvchannel)
@@ -855,7 +855,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="updatecartitem">Updated shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel add to cart model
         /// </returns>
         protected virtual async Task<TvChannelDetailsModel.AddToCartModel> PrepareTvChannelAddToCartModelAsync(TvChannel tvchannel, ShoppingCartItem updatecartitem)
@@ -942,7 +942,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="updatecartitem">Updated shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of tvchannel attribute model
         /// </returns>
         protected virtual async Task<IList<TvChannelDetailsModel.TvChannelAttributeModel>> PrepareTvChannelAttributeModelsAsync(TvChannel tvchannel, ShoppingCartItem updatecartitem)
@@ -1164,7 +1164,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of tier price model
         /// </returns>
         protected virtual async Task<IList<TvChannelDetailsModel.TierPriceModel>> PrepareTvChannelTierPriceModelsAsync(TvChannel tvchannel)
@@ -1199,7 +1199,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of manufacturer brief info model
         /// </returns>
         protected virtual async Task<IList<ManufacturerBriefInfoModel>> PrepareTvChannelManufacturerModelsAsync(TvChannel tvchannel)
@@ -1230,7 +1230,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="isAssociatedTvChannel">Whether the tvchannel is associated</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture model for the default picture; All picture models
         /// </returns>
         protected virtual async Task<(PictureModel pictureModel, IList<PictureModel> allPictureModels, IList<VideoModel> allVideoModels)> PrepareTvChannelDetailsPictureModelAsync(TvChannel tvchannel, bool isAssociatedTvChannel)
@@ -1338,7 +1338,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the view path
         /// </returns>
         public virtual async Task<string> PrepareTvChannelTemplateViewPathAsync(TvChannel tvchannel)
@@ -1365,7 +1365,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="prepareSpecificationAttributes">Whether to prepare the specification attribute models</param>
         /// <param name="forceRedirectionAfterAddingToCart">Whether to force redirection after adding to cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the collection of tvchannel overview model
         /// </returns>
         public virtual async Task<IEnumerable<TvChannelOverviewModel>> PrepareTvChannelOverviewModelsAsync(IEnumerable<TvChannel> tvchannels,
@@ -1425,7 +1425,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel combination models
         /// </returns>
         public virtual async Task<IList<TvChannelCombinationModel>> PrepareTvChannelCombinationModelsAsync(TvChannel tvchannel)
@@ -1483,7 +1483,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="updatecartitem">Updated shopping cart item</param>
         /// <param name="isAssociatedTvChannel">Whether the tvchannel is associated</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel details model
         /// </returns>
         public virtual async Task<TvChannelDetailsModel> PrepareTvChannelDetailsModelAsync(TvChannel tvchannel,
@@ -1739,7 +1739,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">TvChannel reviews model</param>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel reviews model
         /// </returns>
         public virtual async Task<TvChannelReviewsModel> PrepareTvChannelReviewsModelAsync(TvChannelReviewsModel model, TvChannel tvchannel)
@@ -1871,7 +1871,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="page">Number of items page; pass null to load the first page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user tvchannel reviews model
         /// </returns>
         public virtual async Task<UserTvChannelReviewsModel> PrepareUserTvChannelReviewsModelAsync(int? page)
@@ -1962,7 +1962,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel email a friend model
         /// </returns>
         public virtual async Task<TvChannelEmailAFriendModel> PrepareTvChannelEmailAFriendModelAsync(TvChannelEmailAFriendModel model, TvChannel tvchannel, bool excludeProperties)
@@ -1991,7 +1991,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel specification model
         /// </returns>
         public virtual async Task<TvChannelSpecificationModel> PrepareTvChannelSpecificationModelAsync(TvChannel tvchannel)

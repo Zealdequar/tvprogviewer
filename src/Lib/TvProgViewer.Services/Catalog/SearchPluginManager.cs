@@ -37,7 +37,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search provider
         /// </returns>
         public virtual async Task<ISearchProvider> LoadPrimaryPluginAsync(User user = null, int storeId = 0)
@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0)

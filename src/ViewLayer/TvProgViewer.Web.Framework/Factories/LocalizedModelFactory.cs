@@ -35,7 +35,7 @@ namespace TvProgViewer.Web.Framework.Factories
         /// <typeparam name="T">Localized model type</typeparam>
         /// <param name="configure">Model configuration action</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of localized model
         /// </returns>
         public virtual async Task<IList<T>> PrepareLocalizedModelsAsync<T>(Func<T, int, Task> configure = null) where T : ILocalizedLocaleModel

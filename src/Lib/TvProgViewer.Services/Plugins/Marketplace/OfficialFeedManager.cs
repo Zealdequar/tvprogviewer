@@ -53,7 +53,7 @@ namespace TvProgViewer.Services.Plugins.Marketplace
         /// Get available categories of marketplace extensions
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<IList<OfficialFeedCategory>> GetCategoriesAsync()
@@ -82,7 +82,7 @@ namespace TvProgViewer.Services.Plugins.Marketplace
         /// Get available versions of marketplace extensions
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<IList<OfficialFeedVersion>> GetVersionsAsync()
@@ -116,7 +116,7 @@ namespace TvProgViewer.Services.Plugins.Marketplace
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the plugins
         /// </returns>
         public virtual async Task<IPagedList<OfficialFeedPlugin>> GetAllPluginsAsync(int categoryId = 0,

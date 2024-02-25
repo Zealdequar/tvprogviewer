@@ -16,7 +16,7 @@ namespace TvProgViewer.Services.Forums
         /// Deletes a forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteForumGroupAsync(ForumGroup forumGroup);
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumGroupId">The forum group identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum group
         /// </returns>
         Task<ForumGroup> GetForumGroupByIdAsync(int forumGroupId);
@@ -33,7 +33,7 @@ namespace TvProgViewer.Services.Forums
         /// Gets all forum groups
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum groups
         /// </returns>
         Task<IList<ForumGroup>> GetAllForumGroupsAsync();
@@ -42,21 +42,21 @@ namespace TvProgViewer.Services.Forums
         /// Inserts a forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertForumGroupAsync(ForumGroup forumGroup);
 
         /// <summary>
         /// Updates the forum group
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateForumGroupAsync(ForumGroup forumGroup);
 
         /// <summary>
         /// Deletes a forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteForumAsync(Forum forum);
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumId">The forum identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum
         /// </returns>
         Task<Forum> GetForumByIdAsync(int forumId);
@@ -74,7 +74,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumGroupId">The forum group identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forums
         /// </returns>
         Task<IList<Forum>> GetAllForumsByGroupIdAsync(int forumGroupId);
@@ -83,21 +83,21 @@ namespace TvProgViewer.Services.Forums
         /// Inserts a forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertForumAsync(Forum forum);
 
         /// <summary>
         /// Updates the forum
         /// </summary>
         /// <param name="forum">Forum</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateForumAsync(Forum forum);
 
         /// <summary>
         /// Deletes a forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTopicAsync(ForumTopic forumTopic);
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumTopicId">The forum topic identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum Topic
         /// </returns>
         Task<ForumTopic> GetTopicByIdAsync(int forumTopicId);
@@ -121,7 +121,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum Topics
         /// </returns>
         Task<IPagedList<ForumTopic>> GetAllTopicsAsync(int forumId = 0,
@@ -135,7 +135,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum Topics
         /// </returns>
         Task<IPagedList<ForumTopic>> GetActiveTopicsAsync(int forumId = 0,
@@ -146,14 +146,14 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
         /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed users</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTopicAsync(ForumTopic forumTopic, bool sendNotifications);
 
         /// <summary>
         /// Updates the forum topic
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTopicAsync(ForumTopic forumTopic);
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="forumTopicId">The forum topic identifier</param>
         /// <param name="newForumId">New forum identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the moved forum topic
         /// </returns>
         Task<ForumTopic> MoveTopicAsync(int forumTopicId, int newForumId);
@@ -171,7 +171,7 @@ namespace TvProgViewer.Services.Forums
         /// Deletes a forum post
         /// </summary>
         /// <param name="forumPost">Forum post</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeletePostAsync(ForumPost forumPost);
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumPostId">The forum post identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum Post
         /// </returns>
         Task<ForumPost> GetPostByIdAsync(int forumPostId);
@@ -193,7 +193,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the posts
         /// </returns>
         Task<IPagedList<ForumPost>> GetAllPostsAsync(int forumTopicId = 0,
@@ -210,7 +210,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum Posts
         /// </returns>
         Task<IPagedList<ForumPost>> GetAllPostsAsync(int forumTopicId = 0, int userId = 0,
@@ -222,21 +222,21 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumPost">The forum post</param>
         /// <param name="sendNotifications">A value indicating whether to send notifications to subscribed users</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertPostAsync(ForumPost forumPost, bool sendNotifications);
 
         /// <summary>
         /// Updates the forum post
         /// </summary>
         /// <param name="forumPost">Forum post</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdatePostAsync(ForumPost forumPost);
 
         /// <summary>
         /// Deletes a private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeletePrivateMessageAsync(PrivateMessage privateMessage);
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="privateMessageId">The private message identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message
         /// </returns>
         Task<PrivateMessage> GetPrivateMessageByIdAsync(int privateMessageId);
@@ -262,7 +262,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private messages
         /// </returns>
         Task<IPagedList<PrivateMessage>> GetAllPrivateMessagesAsync(int storeId, int fromUserId,
@@ -273,21 +273,21 @@ namespace TvProgViewer.Services.Forums
         /// Inserts a private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertPrivateMessageAsync(PrivateMessage privateMessage);
 
         /// <summary>
         /// Updates the private message
         /// </summary>
         /// <param name="privateMessage">Private message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdatePrivateMessageAsync(PrivateMessage privateMessage);
 
         /// <summary>
         /// Deletes a forum subscription
         /// </summary>
         /// <param name="forumSubscription">Forum subscription</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteSubscriptionAsync(ForumSubscription forumSubscription);
 
         /// <summary>
@@ -295,7 +295,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumSubscriptionId">The forum subscription identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum subscription
         /// </returns>
         Task<ForumSubscription> GetSubscriptionByIdAsync(int forumSubscriptionId);
@@ -309,7 +309,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum subscriptions
         /// </returns>
         Task<IPagedList<ForumSubscription>> GetAllSubscriptionsAsync(int userId = 0, int forumId = 0,
@@ -319,7 +319,7 @@ namespace TvProgViewer.Services.Forums
         /// Inserts a forum subscription
         /// </summary>
         /// <param name="forumSubscription">Forum subscription</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertSubscriptionAsync(ForumSubscription forumSubscription);
 
         /// <summary>
@@ -328,7 +328,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="forum">Forum</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToCreateTopicAsync(User user, Forum forum);
@@ -339,7 +339,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToEditTopicAsync(User user, ForumTopic topic);
@@ -350,7 +350,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToMoveTopicAsync(User user, ForumTopic topic);
@@ -361,7 +361,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToDeleteTopicAsync(User user, ForumTopic topic);
@@ -372,7 +372,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="topic">Topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToCreatePostAsync(User user, ForumTopic topic);
@@ -383,7 +383,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="post">Topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToEditPostAsync(User user, ForumPost post);
@@ -394,7 +394,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="post">Topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToDeletePostAsync(User user, ForumPost post);
@@ -404,7 +404,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToSetTopicPriorityAsync(User user);
@@ -414,7 +414,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if allowed, otherwise false
         /// </returns>
         Task<bool> IsUserAllowedToSubscribeAsync(User user);
@@ -426,7 +426,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="pageSize">Page size</param>
         /// <param name="postId">Post identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the page index
         /// </returns>
         Task<int> CalculateTopicPageIndexAsync(int forumTopicId, int pageSize, int postId);
@@ -437,7 +437,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="postId">Post identifier</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the post vote
         /// </returns>
         Task<ForumPostVote> GetPostVoteAsync(int postId, User user);
@@ -448,7 +448,7 @@ namespace TvProgViewer.Services.Forums
         /// <param name="user">User</param>
         /// <param name="createdFromUtc">Date</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the post votes count
         /// </returns>
         Task<int> GetNumberOfPostVotesAsync(User user, DateTime createdFromUtc);
@@ -457,14 +457,14 @@ namespace TvProgViewer.Services.Forums
         /// Insert a post vote
         /// </summary>
         /// <param name="postVote">Post vote</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertPostVoteAsync(ForumPostVote postVote);
 
         /// <summary>
         /// Delete a post vote
         /// </summary>
         /// <param name="postVote">Post vote</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeletePostVoteAsync(ForumPostVote postVote);
 
         /// <summary>
@@ -500,7 +500,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum post
         /// </returns>
         Task<ForumPost> GetFirstPostAsync(ForumTopic forumTopic);
@@ -510,7 +510,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumGroup">ForumGroup</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forumGroup SE (search engine) name
         /// </returns>
         Task<string> GetForumGroupSeNameAsync(ForumGroup forumGroup);
@@ -520,7 +520,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forum">Forum</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum SE (search engine) name
         /// </returns>
         Task<string> GetForumSeNameAsync(Forum forum);
@@ -530,7 +530,7 @@ namespace TvProgViewer.Services.Forums
         /// </summary>
         /// <param name="forumTopic">ForumTopic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forumTopic SE (search engine) name
         /// </returns>
         Task<string> GetTopicSeNameAsync(ForumTopic forumTopic);

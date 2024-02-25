@@ -40,7 +40,7 @@ namespace TvProgViewer.Web.Framework.Controllers
         /// <param name="componentType">Component type</param>
         /// <param name="arguments">Arguments</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         protected virtual async Task<string> RenderViewComponentToStringAsync(Type componentType, object arguments = null)
@@ -67,7 +67,7 @@ namespace TvProgViewer.Web.Framework.Controllers
         /// <param name="viewName">View name</param>
         /// <param name="model">Model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         protected virtual async Task<string> RenderPartialViewToStringAsync(string viewName, object model)
@@ -200,7 +200,7 @@ namespace TvProgViewer.Web.Framework.Controllers
         /// Access denied JSON data for DataTables
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the access denied JSON data
         /// </returns>
         protected async Task<JsonResult> AccessDeniedDataTablesJson()

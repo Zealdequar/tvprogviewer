@@ -210,6 +210,30 @@ namespace TvProgViewer.Services.TvProgMain
 
             // Обновление телеканалов:
             await _channelsRepository.UpdateAsync(channels);
+
+            // Установка рейтинга:
+            Dictionary<int, int> idsDict = [];
+            foreach (var channel in channels)
+            {
+                var tvChannel = (await _tvChannelService.GetTvChannelsBySkuAsync([channel.InternalId.Value.ToString()])).FirstOrDefault();
+                if (tvChannel != null)
+                {
+                    idsDict[tvChannel.Id] = channel.SysOrderCol;
+                }
+            }
+
+            // Добавление в обновляемые:
+            List<TvChannel> tvChannelList = [];
+            foreach (var tvChannel in (await _tvChannelService.GetAllTvChannelsAsync())
+                                                              .Where(q => !_firstMultiplex.Contains(q.Name)))
+            {
+                tvChannel.DisplayOrder = idsDict.TryGetValue(tvChannel.Id, out int value) ? value : 1000000000;
+                tvChannel.UpdatedOnUtc = DateTime.UtcNow;
+                tvChannelList.Add(tvChannel);
+            }
+
+            // Обновление телеканалов деталей:
+            await _tvChannelService.UpdateTvChannelListAsync(tvChannelList);
         }
         #endregion
     }

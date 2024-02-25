@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="videoId">Video identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the video
         /// </returns>
         Task<Video> GetVideoByIdAsync(int videoId);
@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the videos
         /// </returns>
         Task<IList<Video>> GetVideosByTvChannelIdAsync(int tvchannelId);
@@ -34,7 +34,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="video">Video</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the video
         /// </returns>
         Task<Video> InsertVideoAsync(Video video);
@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="video">Video</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the video
         /// </returns>
         Task<Video> UpdateVideoAsync(Video video);
@@ -53,7 +53,7 @@ namespace TvProgViewer.Services.Media
         /// Deletes a video
         /// </summary>
         /// <param name="video">Video</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteVideoAsync(Video video);
     }
 }

@@ -23,21 +23,21 @@ namespace TvProgViewer.Services.Logging
         /// Deletes a log item
         /// </summary>
         /// <param name="log">Log item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteLogAsync(Log log);
 
         /// <summary>
         /// Deletes a log items
         /// </summary>
         /// <param name="logs">Log items</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteLogsAsync(IList<Log> logs);
 
         /// <summary>
         /// Clears a log
         /// </summary>
         /// <param name="olderThan">The date that sets the restriction on deleting records. Leave null to remove all records</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ClearLogAsync(DateTime? olderThan = null);
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the log item items
         /// </returns>
         Task<IPagedList<Log>> GetAllLogsAsync(DateTime? fromUtc = null, DateTime? toUtc = null,
@@ -62,7 +62,7 @@ namespace TvProgViewer.Services.Logging
         /// </summary>
         /// <param name="logId">Log item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the log item
         /// </returns>
         Task<Log> GetLogByIdAsync(int logId);
@@ -72,7 +72,7 @@ namespace TvProgViewer.Services.Logging
         /// </summary>
         /// <param name="logIds">Log item identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the log items
         /// </returns>
         Task<IList<Log>> GetLogByIdsAsync(int[] logIds);
@@ -85,7 +85,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="fullMessage">The full message</param>
         /// <param name="user">The user to associate log record with</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a log item
         /// </returns>
         Task<Log> InsertLogAsync(LogLevel logLevel, string shortMessage, string fullMessage = "", User user = null);
@@ -108,7 +108,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InformationAsync(string message, Exception exception = null, User user = null);
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task WarningAsync(string message, Exception exception = null, User user = null);
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="message">Message</param>
         /// <param name="exception">Exception</param>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ErrorAsync(string message, Exception exception = null, User user = null);
 
         /// <summary>

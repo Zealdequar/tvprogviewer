@@ -32,7 +32,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete tvchannel template
         /// </summary>
         /// <param name="tvchannelTemplate">TvChannel template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate)
         {
             await _tvchannelTemplateRepository.DeleteAsync(tvchannelTemplate);
@@ -42,7 +42,7 @@ namespace TvProgViewer.Services.Catalog
         /// Gets all tvchannel templates
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel templates
         /// </returns>
         public virtual async Task<IList<TvChannelTemplate>> GetAllTvChannelTemplatesAsync()
@@ -62,7 +62,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelTemplateId">TvChannel template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel template
         /// </returns>
         public virtual async Task<TvChannelTemplate> GetTvChannelTemplateByIdAsync(int tvchannelTemplateId)
@@ -74,7 +74,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts tvchannel template
         /// </summary>
         /// <param name="tvchannelTemplate">TvChannel template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate)
         {
             await _tvchannelTemplateRepository.InsertAsync(tvchannelTemplate);
@@ -84,7 +84,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the tvchannel template
         /// </summary>
         /// <param name="tvchannelTemplate">TvChannel template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate)
         {
             await _tvchannelTemplateRepository.UpdateAsync(tvchannelTemplate);

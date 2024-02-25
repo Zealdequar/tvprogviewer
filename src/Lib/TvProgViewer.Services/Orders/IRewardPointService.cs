@@ -21,7 +21,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the reward point history records
         /// </returns>
         Task<IPagedList<RewardPointsHistory>> GetRewardPointsHistoryAsync(int userId = 0, int? storeId = null,
@@ -33,7 +33,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="userId">User identifier</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the balance
         /// </returns>
         Task<int> GetRewardPointsBalanceAsync(int userId, int storeId);
@@ -50,7 +50,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="activatingDate">Date and time of activating reward points; pass null to immediately activating</param>
         /// <param name="endDate">Date and time when the reward points will no longer be valid; pass null to add date termless points</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the reward points history entry identifier
         /// </returns>
         Task<int> AddRewardPointsHistoryEntryAsync(User user, int points, int storeId, string message = "",
@@ -61,7 +61,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="rewardPointsHistoryId">Reward point history entry identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the reward point history entry
         /// </returns>
         Task<RewardPointsHistory> GetRewardPointsHistoryEntryByIdAsync(int rewardPointsHistoryId);
@@ -70,14 +70,14 @@ namespace TvProgViewer.Services.Orders
         /// Updates the reward point history entry
         /// </summary>
         /// <param name="rewardPointsHistory">Reward point history entry</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateRewardPointsHistoryEntryAsync(RewardPointsHistory rewardPointsHistory);
 
         /// <summary>
         /// Delete the reward point history entry
         /// </summary>
         /// <param name="rewardPointsHistory">Reward point history entry</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteRewardPointsHistoryEntryAsync(RewardPointsHistory rewardPointsHistory);
     }
 }

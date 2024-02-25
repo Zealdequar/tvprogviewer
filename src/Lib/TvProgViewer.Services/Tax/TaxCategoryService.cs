@@ -32,7 +32,7 @@ namespace TvProgViewer.Services.Tax
         /// Deletes a tax category
         /// </summary>
         /// <param name="taxCategory">Tax category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTaxCategoryAsync(TaxCategory taxCategory)
         {
             await _taxCategoryRepository.DeleteAsync(taxCategory);
@@ -42,7 +42,7 @@ namespace TvProgViewer.Services.Tax
         /// Gets all tax categories
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax categories
         /// </returns>
         public virtual async Task<IList<TaxCategory>> GetAllTaxCategoriesAsync()
@@ -62,7 +62,7 @@ namespace TvProgViewer.Services.Tax
         /// </summary>
         /// <param name="taxCategoryId">Tax category identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax category
         /// </returns>
         public virtual async Task<TaxCategory> GetTaxCategoryByIdAsync(int taxCategoryId)
@@ -74,7 +74,7 @@ namespace TvProgViewer.Services.Tax
         /// Inserts a tax category
         /// </summary>
         /// <param name="taxCategory">Tax category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTaxCategoryAsync(TaxCategory taxCategory)
         {
             await _taxCategoryRepository.InsertAsync(taxCategory);
@@ -84,7 +84,7 @@ namespace TvProgViewer.Services.Tax
         /// Updates the tax category
         /// </summary>
         /// <param name="taxCategory">Tax category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTaxCategoryAsync(TaxCategory taxCategory)
         {
             await _taxCategoryRepository.UpdateAsync(taxCategory);

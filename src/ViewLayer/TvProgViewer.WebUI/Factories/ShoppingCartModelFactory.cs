@@ -203,7 +203,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="cart">List of the shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of the checkout attribute model
         /// </returns>
         protected virtual async Task<IList<ShoppingCartModel.CheckoutAttributeModel>> PrepareCheckoutAttributeModelsAsync(
@@ -366,7 +366,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="cart">List of the shopping cart item</param>
         /// <param name="sci">Shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart item model
         /// </returns>
         protected virtual async Task<ShoppingCartModel.ShoppingCartItemModel> PrepareShoppingCartItemModelAsync(IList<ShoppingCartItem> cart, ShoppingCartItem sci)
@@ -515,7 +515,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="sci">Shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart item model
         /// </returns>
         protected virtual async Task<WishlistModel.ShoppingCartItemModel> PrepareWishlistItemModelAsync(ShoppingCartItem sci)
@@ -656,7 +656,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="cart">List of the shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order review data model
         /// </returns>
         protected virtual async Task<ShoppingCartModel.OrderReviewDataModel> PrepareOrderReviewDataModelAsync(IList<ShoppingCartItem> cart)
@@ -748,7 +748,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="cart">List of the shopping cart item</param>
         /// <param name="setEstimateShippingDefaultAddress">Whether to use user default shipping address for estimating</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the estimate shipping model
         /// </returns>
         public virtual async Task<EstimateShippingModel> PrepareEstimateShippingModelAsync(IList<ShoppingCartItem> cart, bool setEstimateShippingDefaultAddress = true)
@@ -841,7 +841,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="validateCheckoutAttributes">Whether to validate checkout attributes</param>
         /// <param name="prepareAndDisplayOrderReviewData">Whether to prepare and display order review data</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart model
         /// </returns>
         public virtual async Task<ShoppingCartModel> PrepareShoppingCartModelAsync(ShoppingCartModel model,
@@ -956,7 +956,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="cart">List of the shopping cart item</param>
         /// <param name="isEditable">Whether model is editable</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the wishlist model
         /// </returns>
         public virtual async Task<WishlistModel> PrepareWishlistModelAsync(WishlistModel model, IList<ShoppingCartItem> cart, bool isEditable = true)
@@ -1002,7 +1002,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the mini shopping cart model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the mini shopping cart model
         /// </returns>
         public virtual async Task<MiniShoppingCartModel> PrepareMiniShoppingCartModelAsync()
@@ -1111,7 +1111,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare selected checkout attributes
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the formatted attributes
         /// </returns>
         public virtual async Task<string> FormatSelectedCheckoutAttributesAsync()
@@ -1130,7 +1130,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="cart">List of the shopping cart item</param>
         /// <param name="isEditable">Whether model is editable</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order totals model
         /// </returns>
         public virtual async Task<OrderTotalsModel> PrepareOrderTotalsModelAsync(IList<ShoppingCartItem> cart, bool isEditable)
@@ -1297,7 +1297,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="request">Request to get shipping options</param>
         /// <param name="cacheShippingOptions">Indicates whether to cache offered shipping options</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the estimate shipping result model
         /// </returns>
         public virtual async Task<EstimateShippingResultModel> PrepareEstimateShippingResultModelAsync(IList<ShoppingCartItem> cart, EstimateShippingModel request, bool cacheShippingOptions)
@@ -1454,7 +1454,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">Wishlist email a friend model</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the wishlist email a friend model
         /// </returns>
         public virtual async Task<WishlistEmailAFriendModel> PrepareWishlistEmailAFriendModelAsync(WishlistEmailAFriendModel model, bool excludeProperties)
@@ -1480,7 +1480,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="showDefaultPicture">Whether to show the default picture</param>
         /// <param name="tvchannelName">TvChannel name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture model
         /// </returns>
         public virtual async Task<PictureModel> PrepareCartItemPictureModelAsync(ShoppingCartItem sci, int pictureSize, bool showDefaultPicture, string tvchannelName)

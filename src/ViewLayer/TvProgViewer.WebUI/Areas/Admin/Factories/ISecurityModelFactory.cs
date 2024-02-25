@@ -13,7 +13,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Permission mapping model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the permission mapping model
         /// </returns>
         Task<PermissionMappingModel> PreparePermissionMappingModelAsync(PermissionMappingModel model);

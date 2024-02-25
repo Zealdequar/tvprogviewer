@@ -47,7 +47,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// </summary>
         /// <param name="context">Action context</param>
         /// <param name="result">Redirect result</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public override Task ExecuteAsync(ActionContext context, RedirectResult result)
         {
             if (result == null)

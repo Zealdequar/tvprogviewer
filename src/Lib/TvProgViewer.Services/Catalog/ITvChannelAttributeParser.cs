@@ -18,7 +18,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the selected tvchannel attribute mappings
         /// </returns>
         Task<IList<TvChannelAttributeMapping>> ParseTvChannelAttributeMappingsAsync(string attributesXml);
@@ -29,7 +29,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="tvchannelAttributeMappingId">TvChannel attribute mapping identifier; pass 0 to load all values</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel attribute values
         /// </returns>
         Task<IList<TvChannelAttributeValue>> ParseTvChannelAttributeValuesAsync(string attributesXml, int tvchannelAttributeMappingId = 0);
@@ -68,7 +68,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <param name="ignoreQuantity">A value indicating whether we should ignore the quantity of attribute value entered by the user</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> AreTvChannelAttributesEqualAsync(string attributesXml1, string attributesXml2, bool ignoreNonCombinableAttributes, bool ignoreQuantity = true);
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pam">TvChannel attribute</param>
         /// <param name="selectedAttributesXml">Selected attributes (XML format)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool?> IsConditionMetAsync(TvChannelAttributeMapping pam, string selectedAttributesXml);
@@ -91,7 +91,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found tvchannel attribute combination
         /// </returns>
         Task<TvChannelAttributeCombination> FindTvChannelAttributeCombinationAsync(TvChannel tvchannel,
@@ -104,7 +104,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <param name="allowedAttributeIds">List of allowed attribute identifiers. If null or empty then all attributes would be used.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attribute combinations in XML format
         /// </returns>
         Task<IList<string>> GenerateAllCombinationsAsync(TvChannel tvchannel, bool ignoreNonCombinableAttributes = false, IList<int> allowedAttributeIds = null);
@@ -115,7 +115,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="form">Form</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user entered price of the tvchannel
         /// </returns>
         Task<decimal> ParseUserEnteredPriceAsync(TvChannel tvchannel, IFormCollection form);
@@ -144,7 +144,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="form">Form values</param>
         /// <param name="errors">Errors</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attributes in XML format
         /// </returns>
         Task<string> ParseTvChannelAttributesAsync(TvChannel tvchannel, IFormCollection form, List<string> errors);

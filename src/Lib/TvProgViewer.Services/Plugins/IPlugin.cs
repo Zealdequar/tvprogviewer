@@ -21,13 +21,13 @@ namespace TvProgViewer.Services.Plugins
         /// <summary>
         /// Install plugin
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InstallAsync();
 
         /// <summary>
         /// Uninstall plugin
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UninstallAsync();
 
         /// <summary>
@@ -35,13 +35,13 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="currentVersion">Current version of plugin</param>
         /// <param name="targetVersion">New version of plugin</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateAsync(string currentVersion, string targetVersion);
 
         /// <summary>
         /// Prepare plugin to the uninstallation
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PreparePluginToUninstallAsync();
     }
 }

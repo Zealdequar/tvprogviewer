@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Authentication
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="isPersistent">Whether the authentication session is persisted across multiple requests</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SignInAsync(User user, bool isPersistent)
         {
             if (user == null)
@@ -80,7 +80,7 @@ namespace TvProgViewer.Services.Authentication
         /// <summary>
         /// Sign out
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SignOutAsync()
         {
             //reset cached user
@@ -94,7 +94,7 @@ namespace TvProgViewer.Services.Authentication
         /// Get authenticated user
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user
         /// </returns>
         public virtual async Task<User> GetAuthenticatedUserAsync()

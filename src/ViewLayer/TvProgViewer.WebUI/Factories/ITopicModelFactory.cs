@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="topic">Topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the topic model
         /// </returns>
         Task<TopicModel> PrepareTopicModelAsync(Topic topic);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="systemName">Topic system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opic model
         /// </returns>
         Task<TopicModel> PrepareTopicModelBySystemNameAsync(string systemName);
@@ -34,7 +34,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="topicTemplateId">Topic template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the view path
         /// </returns>
         Task<string> PrepareTemplateViewPathAsync(int topicTemplateId);

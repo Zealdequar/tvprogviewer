@@ -77,7 +77,7 @@ namespace TvProgViewer.Services.Catalog
         /// Clean up manufacturer references for a specified discount
         /// </summary>
         /// <param name="discount">Discount</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ClearDiscountManufacturerMappingAsync(Discount discount)
         {
             if (discount is null)
@@ -92,7 +92,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a manufacturer
         /// </summary>
         /// <param name="manufacturer">Manufacturer</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteManufacturerAsync(Manufacturer manufacturer)
         {
             await _manufacturerRepository.DeleteAsync(manufacturer);
@@ -102,7 +102,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete manufacturers
         /// </summary>
         /// <param name="manufacturers">Manufacturers</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteManufacturersAsync(IList<Manufacturer> manufacturers)
         {
             await _manufacturerRepository.DeleteAsync(manufacturers);
@@ -122,7 +122,7 @@ namespace TvProgViewer.Services.Catalog
         /// false - load only "Unpublished" tvchannels
         /// </param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturers
         /// </returns>
         public virtual async Task<IPagedList<Manufacturer>> GetAllManufacturersAsync(string manufacturerName = "",
@@ -164,7 +164,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="discount">Discount</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer identifiers
         /// </returns>
         public virtual async Task<IList<int>> GetAppliedManufacturerIdsAsync(Discount discount, User user)
@@ -190,7 +190,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer
         /// </returns>
         public virtual async Task<Manufacturer> GetManufacturerByIdAsync(int manufacturerId)
@@ -206,7 +206,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of manufacturers
         /// </returns>
         public virtual async Task<IPagedList<Manufacturer>> GetManufacturersWithAppliedDiscountAsync(int? discountId = null,
@@ -233,7 +233,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="categoryId">Cateogry identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturers
         /// </returns>
         public virtual async Task<IList<Manufacturer>> GetManufacturersByCategoryIdAsync(int categoryId)
@@ -291,7 +291,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="manufacturerIds">manufacturer identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturers
         /// </returns>
         public virtual async Task<IList<Manufacturer>> GetManufacturersByIdsAsync(int[] manufacturerIds)
@@ -303,7 +303,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a manufacturer
         /// </summary>
         /// <param name="manufacturer">Manufacturer</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertManufacturerAsync(Manufacturer manufacturer)
         {
             await _manufacturerRepository.InsertAsync(manufacturer);
@@ -313,7 +313,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the manufacturer
         /// </summary>
         /// <param name="manufacturer">Manufacturer</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateManufacturerAsync(Manufacturer manufacturer)
         {
             await _manufacturerRepository.UpdateAsync(manufacturer);
@@ -323,7 +323,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a tvchannel manufacturer mapping
         /// </summary>
         /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer)
         {
             await _tvchannelManufacturerRepository.DeleteAsync(tvchannelManufacturer);
@@ -337,7 +337,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel manufacturer collection
         /// </returns>
         public virtual async Task<IPagedList<TvChannelManufacturer>> GetTvChannelManufacturersByManufacturerIdAsync(int manufacturerId,
@@ -376,7 +376,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel manufacturer mapping collection
         /// </returns>
         public virtual async Task<IList<TvChannelManufacturer>> GetTvChannelManufacturersByTvChannelIdAsync(int tvchannelId,
@@ -418,7 +418,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelManufacturerId">TvChannel manufacturer mapping identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel manufacturer mapping
         /// </returns>
         public virtual async Task<TvChannelManufacturer> GetTvChannelManufacturerByIdAsync(int tvchannelManufacturerId)
@@ -430,7 +430,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel manufacturer mapping
         /// </summary>
         /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer)
         {
             await _tvchannelManufacturerRepository.InsertAsync(tvchannelManufacturer);
@@ -440,7 +440,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the tvchannel manufacturer mapping
         /// </summary>
         /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer)
         {
             await _tvchannelManufacturerRepository.UpdateAsync(tvchannelManufacturer);
@@ -451,7 +451,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelIds">TvChannels IDs</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer IDs for tvchannels
         /// </returns>
         public virtual async Task<IDictionary<int, int[]>> GetTvChannelManufacturerIdsAsync(int[] tvchannelIds)
@@ -470,7 +470,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="manufacturerIdsNames">The names and/or IDs of the manufacturers to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of names and/or IDs not existing manufacturers
         /// </returns>
         public virtual async Task<string[]> GetNotExistingManufacturersAsync(string[] manufacturerIdsNames)
@@ -518,7 +518,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <param name="discountId">Discount identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public async Task<DiscountManufacturerMapping> GetDiscountAppliedToManufacturerAsync(int manufacturerId, int discountId)
@@ -531,7 +531,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a discount-manufacturer mapping record
         /// </summary>
         /// <param name="discountManufacturerMapping">Discount-manufacturer mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task InsertDiscountManufacturerMappingAsync(DiscountManufacturerMapping discountManufacturerMapping)
         {
             await _discountManufacturerMappingRepository.InsertAsync(discountManufacturerMapping);
@@ -541,7 +541,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a discount-manufacturer mapping record
         /// </summary>
         /// <param name="discountManufacturerMapping">Discount-manufacturer mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task DeleteDiscountManufacturerMappingAsync(DiscountManufacturerMapping discountManufacturerMapping)
         {
             await _discountManufacturerMappingRepository.DeleteAsync(discountManufacturerMapping);

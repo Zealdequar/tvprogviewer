@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Localization.Caching
         /// Clear cache by entity event type
         /// </summary>
         /// <param name="entity">Entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(LocaleStringResource entity)
         {
             await RemoveAsync(TvProgLocalizationDefaults.LocaleStringResourcesAllPublicCacheKey, entity.LanguageId);

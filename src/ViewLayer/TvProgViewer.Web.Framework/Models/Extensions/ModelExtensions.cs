@@ -30,7 +30,7 @@ namespace TvProgViewer.Web.Framework.Models.Extensions
         /// <param name="collection">Async-enumerable sequence of objects</param>
         /// <param name="pagingRequestModel">Paging request model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the paged list
         /// </returns>
         public static async Task<IPagedList<T>> ToPagedListAsync<T>(this IAsyncEnumerable<T> collection, IPagingRequestModel pagingRequestModel)
@@ -77,7 +77,7 @@ namespace TvProgViewer.Web.Framework.Models.Extensions
         /// <param name="objectList">Paged list of objects</param>
         /// <param name="dataFillFunction">Function to populate model data</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list model
         /// </returns>
         public static async Task<TListModel> PrepareToGridAsync<TListModel, TModel, TObject>(this TListModel listModel,

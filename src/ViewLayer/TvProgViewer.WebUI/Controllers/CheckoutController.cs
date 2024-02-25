@@ -225,7 +225,7 @@ namespace TvProgViewer.WebUI.Controllers
         /// <param name="fullVatNumber">The full VAT number</param>
         /// <param name="user">The user</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the Vat number error if exists
         /// </returns>
         protected virtual async Task<string> SaveUserVatNumberAsync(string fullVatNumber, User user)

@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Discounts.Caching
         /// Clear cache data
         /// </summary>
         /// <param name="entity">Entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(Discount entity)
         {
             await RemoveAsync(TvProgDiscountDefaults.DiscountRequirementsByDiscountCacheKey, entity);

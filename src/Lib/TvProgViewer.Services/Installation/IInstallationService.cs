@@ -16,7 +16,7 @@ namespace TvProgViewer.Services.Installation
         /// <param name="languagePackInfo">Language pack info</param>
         /// <param name="regionInfo">RegionInfo</param>
         /// <param name="cultureInfo">CultureInfo</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InstallRequiredDataAsync(string defaultUserEmail, string defaultUserPassword,
             (string languagePackDownloadLink, int languagePackProgress) languagePackInfo, RegionInfo regionInfo, CultureInfo cultureInfo);
 
@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Installation
         /// Install sample data
         /// </summary>
         /// <param name="defaultUserEmail">Default user email</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InstallSampleDataAsync(string defaultUserEmail);
     }
 }

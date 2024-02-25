@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Vendors
         /// Gets all vendor attributes
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attributes
         /// </returns>
         Task<IList<VendorAttribute>> GetAllVendorAttributesAsync();
@@ -25,7 +25,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorAttributeId">Vendor attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute
         /// </returns>
         Task<VendorAttribute> GetVendorAttributeByIdAsync(int vendorAttributeId);
@@ -34,21 +34,21 @@ namespace TvProgViewer.Services.Vendors
         /// Inserts a vendor attribute
         /// </summary>
         /// <param name="vendorAttribute">Vendor attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertVendorAttributeAsync(VendorAttribute vendorAttribute);
 
         /// <summary>
         /// Updates a vendor attribute
         /// </summary>
         /// <param name="vendorAttribute">Vendor attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateVendorAttributeAsync(VendorAttribute vendorAttribute);
 
         /// <summary>
         /// Deletes a vendor attribute
         /// </summary>
         /// <param name="vendorAttribute">Vendor attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteVendorAttributeAsync(VendorAttribute vendorAttribute);
 
         #endregion
@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorAttributeId">The vendor attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute values
         /// </returns>
         Task<IList<VendorAttributeValue>> GetVendorAttributeValuesAsync(int vendorAttributeId);
@@ -70,7 +70,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorAttributeValueId">Vendor attribute value identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute value
         /// </returns>
         Task<VendorAttributeValue> GetVendorAttributeValueByIdAsync(int vendorAttributeValueId);
@@ -79,21 +79,21 @@ namespace TvProgViewer.Services.Vendors
         /// Inserts a vendor attribute value
         /// </summary>
         /// <param name="vendorAttributeValue">Vendor attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertVendorAttributeValueAsync(VendorAttributeValue vendorAttributeValue);
 
         /// <summary>
         /// Updates a vendor attribute value
         /// </summary>
         /// <param name="vendorAttributeValue">Vendor attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateVendorAttributeValueAsync(VendorAttributeValue vendorAttributeValue);
 
         /// <summary>
         /// Deletes a vendor attribute value
         /// </summary>
         /// <param name="vendorAttributeValue">Vendor attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteVendorAttributeValueAsync(VendorAttributeValue vendorAttributeValue);
 
         #endregion

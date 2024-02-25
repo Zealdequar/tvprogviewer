@@ -113,7 +113,7 @@ namespace TvProgViewer.Services.Catalog
         /// Gets a "compare tvchannels" list
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the "Compare tvchannels" list
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetComparedTvChannelsAsync()
@@ -130,7 +130,7 @@ namespace TvProgViewer.Services.Catalog
         /// Removes a tvchannel from a "compare tvchannels" list
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task RemoveTvChannelFromCompareListAsync(int tvchannelId)
         {
             if (_httpContextAccessor.HttpContext?.Response == null)
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Catalog
         /// Adds a tvchannel to a "compare tvchannels" list
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task AddTvChannelToCompareListAsync(int tvchannelId)
         {
             if (_httpContextAccessor.HttpContext?.Response == null)

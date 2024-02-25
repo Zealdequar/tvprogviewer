@@ -42,7 +42,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="storeId">Store identifier</param>
         /// <param name="systemName">Plugin system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the key
         /// </returns>
         protected virtual async Task<string> GetKeyAsync(User user, int storeId, string systemName = null)
@@ -57,7 +57,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the plugin
         /// </returns>
         protected virtual async Task<TPlugin> LoadPrimaryPluginAsync(string systemName, User user = null, int storeId = 0)
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of plugins
         /// </returns>
         public virtual async Task<IList<TPlugin>> LoadAllPluginsAsync(User user = null, int storeId = 0)
@@ -99,7 +99,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the plugin
         /// </returns>
         public virtual async Task<TPlugin> LoadPluginBySystemNameAsync(string systemName, User user = null, int storeId = 0)
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of active plugins
         /// </returns>
         public virtual async Task<IList<TPlugin>> LoadActivePluginsAsync(List<string> systemNames, User user = null, int storeId = 0)
@@ -166,7 +166,7 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="plugin">Plugin</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the logo URL
         /// </returns>
         public virtual async Task<string> GetPluginLogoUrlAsync(TPlugin plugin)

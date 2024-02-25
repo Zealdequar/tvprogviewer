@@ -13,14 +13,14 @@ namespace TvProgViewer.Services.Topics
         /// Delete topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTopicTemplateAsync(TopicTemplate topicTemplate);
 
         /// <summary>
         /// Gets all topic templates
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opic templates
         /// </returns>
         Task<IList<TopicTemplate>> GetAllTopicTemplatesAsync();
@@ -30,7 +30,7 @@ namespace TvProgViewer.Services.Topics
         /// </summary>
         /// <param name="topicTemplateId">Topic template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opic template
         /// </returns>
         Task<TopicTemplate> GetTopicTemplateByIdAsync(int topicTemplateId);
@@ -39,14 +39,14 @@ namespace TvProgViewer.Services.Topics
         /// Inserts topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTopicTemplateAsync(TopicTemplate topicTemplate);
 
         /// <summary>
         /// Updates the topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTopicTemplateAsync(TopicTemplate topicTemplate);
     }
 }

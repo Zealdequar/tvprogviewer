@@ -286,7 +286,7 @@ namespace TvProgViewer.Core.Infrastructure
         /// </summary>
         /// <param name="filePath">The file for reading</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a byte array containing the contents of the file
         /// </returns>
         Task<byte[]> ReadAllBytesAsync(string filePath);
@@ -297,7 +297,7 @@ namespace TvProgViewer.Core.Infrastructure
         /// <param name="path">The file to open for reading</param>
         /// <param name="encoding">The encoding applied to the contents of the file</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a string containing all lines of the file
         /// </returns>
         Task<string> ReadAllTextAsync(string path, Encoding encoding);
@@ -315,7 +315,7 @@ namespace TvProgViewer.Core.Infrastructure
         /// </summary>
         /// <param name="filePath">The file to write to</param>
         /// <param name="bytes">The bytes to write to the file</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task WriteAllBytesAsync(string filePath, byte[] bytes);
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace TvProgViewer.Core.Infrastructure
         /// <param name="path">The file to write to</param>
         /// <param name="contents">The string to write to the file</param>
         /// <param name="encoding">The encoding to apply to the string</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task WriteAllTextAsync(string path, string contents, Encoding encoding);
 
         /// <summary>

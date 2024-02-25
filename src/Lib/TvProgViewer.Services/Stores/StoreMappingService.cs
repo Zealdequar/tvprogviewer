@@ -45,7 +45,7 @@ namespace TvProgViewer.Services.Stores
         /// Inserts a store mapping record
         /// </summary>
         /// <param name="storeMapping">Store mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task InsertStoreMappingAsync(StoreMapping storeMapping)
         {
             await _storeMappingRepository.InsertAsync(storeMapping);
@@ -56,7 +56,7 @@ namespace TvProgViewer.Services.Stores
         /// </summary>
         /// <typeparam name="TEntity">Type of entity that supports store mapping</typeparam>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if exists; otherwise false
         /// </returns>
         protected virtual async Task<bool> IsEntityMappingExistsAsync<TEntity>() where TEntity : BaseEntity, IStoreMappingSupported
@@ -82,7 +82,7 @@ namespace TvProgViewer.Services.Stores
         /// <param name="query">Query to filter</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the filtered query
         /// </returns>
         public virtual async Task<IQueryable<TEntity>> ApplyStoreMapping<TEntity>(IQueryable<TEntity> query, int storeId)
@@ -104,7 +104,7 @@ namespace TvProgViewer.Services.Stores
         /// Deletes a store mapping record
         /// </summary>
         /// <param name="storeMapping">Store mapping record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteStoreMappingAsync(StoreMapping storeMapping)
         {
             await _storeMappingRepository.DeleteAsync(storeMapping);
@@ -116,7 +116,7 @@ namespace TvProgViewer.Services.Stores
         /// <typeparam name="TEntity">Type of entity that supports store mapping</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store mapping records
         /// </returns>
         public virtual async Task<IList<StoreMapping>> GetStoreMappingsAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IStoreMappingSupported
@@ -145,7 +145,7 @@ namespace TvProgViewer.Services.Stores
         /// <typeparam name="TEntity">Type of entity that supports store mapping</typeparam>
         /// <param name="entity">Entity</param>
         /// <param name="storeId">Store id</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertStoreMappingAsync<TEntity>(TEntity entity, int storeId) where TEntity : BaseEntity, IStoreMappingSupported
         {
             if (entity == null)
@@ -173,7 +173,7 @@ namespace TvProgViewer.Services.Stores
         /// <typeparam name="TEntity">Type of entity that supports store mapping</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store identifiers
         /// </returns>
         public virtual async Task<int[]> GetStoresIdsWithAccessAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IStoreMappingSupported
@@ -226,7 +226,7 @@ namespace TvProgViewer.Services.Stores
         /// <typeparam name="TEntity">Type of entity that supports store mapping</typeparam>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync<TEntity>(TEntity entity) where TEntity : BaseEntity, IStoreMappingSupported
@@ -243,7 +243,7 @@ namespace TvProgViewer.Services.Stores
         /// <param name="entity">Entity</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - authorized; otherwise, false
         /// </returns>
         public virtual async Task<bool> AuthorizeAsync<TEntity>(TEntity entity, int storeId) where TEntity : BaseEntity, IStoreMappingSupported

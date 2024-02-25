@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="eventPublisher">The event publisher.</param>
         /// <param name="shipment">The shipment.</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public static async Task PublishShipmentSentAsync(this IEventPublisher eventPublisher, Shipment shipment)
         {
             await eventPublisher.PublishAsync(new ShipmentSentEvent(shipment));
@@ -25,7 +25,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="eventPublisher">The event publisher.</param>
         /// <param name="shipment">The shipment.</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public static async Task PublishShipmentReadyForPickupAsync(this IEventPublisher eventPublisher, Shipment shipment)
         {
             await eventPublisher.PublishAsync(new ShipmentReadyForPickupEvent(shipment));
@@ -36,7 +36,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="eventPublisher">The event publisher.</param>
         /// <param name="shipment">The shipment.</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public static async Task PublishShipmentDeliveredAsync(this IEventPublisher eventPublisher, Shipment shipment)
         {
             await eventPublisher.PublishAsync(new ShipmentDeliveredEvent(shipment));

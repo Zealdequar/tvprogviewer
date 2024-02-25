@@ -176,7 +176,7 @@ namespace TvProgViewer.Data.DataProviders
         /// Checks if the specified database exists, returns true if database exists
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the returns true if the database exists.
         /// </returns>
         public async Task<bool> DatabaseExistsAsync()
@@ -201,7 +201,7 @@ namespace TvProgViewer.Data.DataProviders
         /// </summary>
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the integer identity; null if cannot get the result
         /// </returns>
         public virtual Task<int?> GetTableIdentAsync<TEntity>() where TEntity : BaseEntity
@@ -221,7 +221,7 @@ namespace TvProgViewer.Data.DataProviders
         /// </summary>
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <param name="ident">Identity value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SetTableIdentAsync<TEntity>(int ident) where TEntity : BaseEntity
         {
             var currentIdent = await GetTableIdentAsync<TEntity>();
@@ -238,7 +238,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <summary>
         /// Creates a backup of the database
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task BackupDatabaseAsync(string fileName)
         {
             throw new DataException("This database provider does not support backup");
@@ -272,7 +272,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <param name="entity"></param>
         /// <typeparam name="TEntity"></typeparam>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the inserted entity
         /// </returns>
         public override async Task<TEntity> InsertEntityAsync<TEntity>(TEntity entity)
@@ -295,7 +295,7 @@ namespace TvProgViewer.Data.DataProviders
         /// Restores the database from a backup
         /// </summary>
         /// <param name="backupFileName">The name of the backup file</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task RestoreDatabaseAsync(string backupFileName)
         {
             throw new DataException("This database provider does not support backup");
@@ -304,7 +304,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <summary>
         /// Re-index database tables
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ReIndexTablesAsync()
         {
             using var currentConnection = CreateDataConnection();

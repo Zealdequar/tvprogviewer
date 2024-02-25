@@ -66,7 +66,7 @@ namespace TvProgViewer.Services.Common
         /// Check whether the site is available
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result determines that request is completed
         /// </returns>
         public virtual async Task PingAsync()
@@ -78,7 +78,7 @@ namespace TvProgViewer.Services.Common
         /// Check the current store for license compliance
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains the license check details
         /// </returns>
         public virtual async Task<string> GetLicenseCheckDetailsAsync()
@@ -106,7 +106,7 @@ namespace TvProgViewer.Services.Common
         /// Get official news RSS
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains news RSS feed
         /// </returns>
         public virtual async Task<RssFeed> GetNewsRssAsync()
@@ -132,7 +132,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="languageCode">Language code</param>
         /// <param name="culture">Culture name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains the result string
         /// </returns>
         public virtual async Task<string> InstallationCompletedAsync(string email, string languageCode, string culture)
@@ -157,7 +157,7 @@ namespace TvProgViewer.Services.Common
         /// Get a response regarding available categories of marketplace extensions
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains the result string
         /// </returns>
         public virtual async Task<string> GetExtensionsCategoriesAsync()
@@ -174,7 +174,7 @@ namespace TvProgViewer.Services.Common
         /// Get a response regarding available versions of marketplace extensions
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains the result string
         /// </returns>
         public virtual async Task<string> GetExtensionsVersionsAsync()
@@ -197,7 +197,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains the result string
         /// </returns>
         public virtual async Task<string> GetExtensionsAsync(int categoryId = 0,

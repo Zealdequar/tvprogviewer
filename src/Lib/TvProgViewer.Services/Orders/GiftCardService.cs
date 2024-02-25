@@ -48,7 +48,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes a gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteGiftCardAsync(GiftCard giftCard)
         {
             await _giftCardRepository.DeleteAsync(giftCard);
@@ -59,7 +59,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="giftCardId">Gift card identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift card entry
         /// </returns>
         public virtual async Task<GiftCard> GetGiftCardByIdAsync(int giftCardId)
@@ -80,7 +80,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift cards
         /// </returns>
         public virtual async Task<IPagedList<GiftCard>> GetAllGiftCardsAsync(int? purchasedWithOrderId = null, int? usedWithOrderId = null,
@@ -127,7 +127,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertGiftCardAsync(GiftCard giftCard)
         {
             await _giftCardRepository.InsertAsync(giftCard);
@@ -137,7 +137,7 @@ namespace TvProgViewer.Services.Orders
         /// Updates the gift card
         /// </summary>
         /// <param name="giftCard">Gift card</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateGiftCardAsync(GiftCard giftCard)
         {
             await _giftCardRepository.UpdateAsync(giftCard);
@@ -148,7 +148,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="purchasedWithOrderItemId">Purchased with order item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift card entries
         /// </returns>
         public virtual async Task<IList<GiftCard>> GetGiftCardsByPurchasedWithOrderItemIdAsync(int purchasedWithOrderItemId)
@@ -170,7 +170,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the active gift cards
         /// </returns>
         public virtual async Task<IList<GiftCard>> GetActiveGiftCardsAppliedByUserAsync(User user)
@@ -208,7 +208,7 @@ namespace TvProgViewer.Services.Orders
         /// Delete gift card usage history
         /// </summary>
         /// <param name="order">Order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteGiftCardUsageHistoryAsync(Order order)
         {
             var giftCardUsageHistory = await GetGiftCardUsageHistoryAsync(order);
@@ -229,7 +229,7 @@ namespace TvProgViewer.Services.Orders
         /// Gets a gift card remaining amount
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gift card remaining amount
         /// </returns>
         public virtual async Task<decimal> GetGiftCardRemainingAmountAsync(GiftCard giftCard)
@@ -253,7 +253,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="giftCard">Gift card</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<IList<GiftCardUsageHistory>> GetGiftCardUsageHistoryAsync(GiftCard giftCard)
@@ -271,7 +271,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<IList<GiftCardUsageHistory>> GetGiftCardUsageHistoryAsync(Order order)
@@ -288,7 +288,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a gift card usage history entry
         /// </summary>
         /// <param name="giftCardUsageHistory">Gift card usage history entry</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertGiftCardUsageHistoryAsync(GiftCardUsageHistory giftCardUsageHistory)
         {
             await _giftCardUsageHistoryRepository.InsertAsync(giftCardUsageHistory);
@@ -299,7 +299,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="giftCard">Gift card</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<bool> IsGiftCardValidAsync(GiftCard giftCard)

@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Common
         /// Keep the current store site alive
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result determines that request completed
         /// </returns>
         public virtual async Task KeepAliveAsync()

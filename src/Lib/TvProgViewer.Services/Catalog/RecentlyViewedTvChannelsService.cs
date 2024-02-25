@@ -80,7 +80,7 @@ namespace TvProgViewer.Services.Catalog
         /// Add cookie value for the recently viewed tvchannels
         /// </summary>
         /// <param name="recentlyViewedTvChannelIds">Collection of the recently viewed tvchannels identifiers</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual Task AddRecentlyViewedTvChannelsCookieAsync(IEnumerable<int> recentlyViewedTvChannelIds)
         {
             //delete current cookie if exists
@@ -114,7 +114,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="number">Number of tvchannels to load</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the "recently viewed tvchannels" list
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetRecentlyViewedTvChannelsAsync(int number)
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Catalog
         /// Adds a tvchannel to a recently viewed tvchannels list
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddTvChannelToRecentlyViewedListAsync(int tvchannelId)
         {
             if (_httpContextAccessor.HttpContext?.Response == null)

@@ -13,14 +13,14 @@ namespace TvProgViewer.Services.Tax
         /// Deletes a tax category
         /// </summary>
         /// <param name="taxCategory">Tax category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTaxCategoryAsync(TaxCategory taxCategory);
 
         /// <summary>
         /// Gets all tax categories
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax categories
         /// </returns>
         Task<IList<TaxCategory>> GetAllTaxCategoriesAsync();
@@ -30,7 +30,7 @@ namespace TvProgViewer.Services.Tax
         /// </summary>
         /// <param name="taxCategoryId">Tax category identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax category
         /// </returns>
         Task<TaxCategory> GetTaxCategoryByIdAsync(int taxCategoryId);
@@ -39,14 +39,14 @@ namespace TvProgViewer.Services.Tax
         /// Inserts a tax category
         /// </summary>
         /// <param name="taxCategory">Tax category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTaxCategoryAsync(TaxCategory taxCategory);
 
         /// <summary>
         /// Updates the tax category
         /// </summary>
         /// <param name="taxCategory">Tax category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTaxCategoryAsync(TaxCategory taxCategory);
     }
 }

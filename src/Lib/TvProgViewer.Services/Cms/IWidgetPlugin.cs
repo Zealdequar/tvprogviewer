@@ -19,7 +19,7 @@ namespace TvProgViewer.Services.Cms
         /// Gets widget zones where this widget should be rendered
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the widget zones
         /// </returns>
         Task<IList<string>> GetWidgetZonesAsync();

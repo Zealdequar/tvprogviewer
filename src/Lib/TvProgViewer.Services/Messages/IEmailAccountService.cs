@@ -13,21 +13,21 @@ namespace TvProgViewer.Services.Messages
         /// Inserts an email account
         /// </summary>
         /// <param name="emailAccount">Email account</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertEmailAccountAsync(EmailAccount emailAccount);
 
         /// <summary>
         /// Updates an email account
         /// </summary>
         /// <param name="emailAccount">Email account</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateEmailAccountAsync(EmailAccount emailAccount);
 
         /// <summary>
         /// Deletes an email account
         /// </summary>
         /// <param name="emailAccount">Email account</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteEmailAccountAsync(EmailAccount emailAccount);
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="emailAccountId">The email account identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the email account
         /// </returns>
         Task<EmailAccount> GetEmailAccountByIdAsync(int emailAccountId);
@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Messages
         /// Gets all email accounts
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the email accounts list
         /// </returns>
         Task<IList<EmailAccount>> GetAllEmailAccountsAsync();

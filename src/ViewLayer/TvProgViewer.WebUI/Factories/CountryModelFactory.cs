@@ -46,7 +46,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="countryId">Country identifier</param>
         /// <param name="addSelectStateItem">Whether to add "Select state" item to list of states</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of identifiers and names of states and provinces
         /// </returns>
         public virtual async Task<IList<StateProvinceModel>> GetStatesByCountryIdAsync(string countryId, bool addSelectStateItem)

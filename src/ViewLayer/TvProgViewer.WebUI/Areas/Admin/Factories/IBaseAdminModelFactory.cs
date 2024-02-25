@@ -15,7 +15,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Activity log type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareActivityLogTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Order status items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareOrderStatusesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Payment status items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PreparePaymentStatusesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Shipping status items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareShippingStatusesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Country items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareCountriesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="countryId">Country identifier; pass null to don't load states and provinces</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareStatesAndProvincesAsync(IList<SelectListItem> items, int? countryId,
             bool withSpecialDefaultItem = true, string defaultItemText = null);
 
@@ -71,7 +71,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Language items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareLanguagesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Store items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareStoresAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">User role items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareUserRolesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Email account items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareEmailAccountsAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Tax category items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareTaxCategoriesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Category items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareCategoriesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Manufacturer items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareManufacturersAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Vendor items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareVendorsAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">TvChannel type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareTvChannelTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Category template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareCategoryTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Time zone items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareTimeZonesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Shopping cart type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareShoppingCartTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Tax display type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareTaxDisplayTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Currency items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareCurrenciesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Discount type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareDiscountTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Log level items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareLogLevelsAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Manufacturer template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareManufacturerTemplatesAsync(IList<SelectListItem> items,
             bool withSpecialDefaultItem = true, string defaultItemText = null);
 
@@ -225,7 +225,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Load plugin mode items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareLoadPluginModesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Plugin group items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PreparePluginGroupsAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -243,7 +243,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Return request status items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareReturnRequestStatusesAsync(IList<SelectListItem> items,
             bool withSpecialDefaultItem = true, string defaultItemText = null);
 
@@ -253,7 +253,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">TvChannel template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareTvChannelTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Topic template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareTopicTemplatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Warehouse items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareWarehousesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Delivery date items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareDeliveryDatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">TvChannel availability range items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareTvChannelAvailabilityRangesAsync(IList<SelectListItem> items,
             bool withSpecialDefaultItem = true, string defaultItemText = null);
 
@@ -299,7 +299,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Request type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareGdprRequestTypesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="items">Specification attributes</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
         /// <param name="defaultItemText">Default item text; pass null to use default value of the default item text</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrepareSpecificationAttributeGroupsAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
     }
 }

@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Return request search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request search model
         /// </returns>
         Task<ReturnRequestSearchModel> PrepareReturnRequestSearchModelAsync(ReturnRequestSearchModel searchModel);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Return request search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request list model
         /// </returns>
         Task<ReturnRequestListModel> PrepareReturnRequestListModelAsync(ReturnRequestSearchModel searchModel);
@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="returnRequest">Return request</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request model
         /// </returns>
         Task<ReturnRequestModel> PrepareReturnRequestModelAsync(ReturnRequestModel model,
@@ -47,7 +47,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Return request reason search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request reason search model
         /// </returns>
         Task<ReturnRequestReasonSearchModel> PrepareReturnRequestReasonSearchModelAsync(ReturnRequestReasonSearchModel searchModel);
@@ -57,7 +57,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Return request reason search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request reason list model
         /// </returns>
         Task<ReturnRequestReasonListModel> PrepareReturnRequestReasonListModelAsync(ReturnRequestReasonSearchModel searchModel);
@@ -69,7 +69,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="returnRequestReason">Return request reason</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request reason model
         /// </returns>
         Task<ReturnRequestReasonModel> PrepareReturnRequestReasonModelAsync(ReturnRequestReasonModel model,
@@ -80,7 +80,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Return request action search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request action search model
         /// </returns>
         Task<ReturnRequestActionSearchModel> PrepareReturnRequestActionSearchModelAsync(ReturnRequestActionSearchModel searchModel);
@@ -90,7 +90,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Return request action search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request action list model
         /// </returns>
         Task<ReturnRequestActionListModel> PrepareReturnRequestActionListModelAsync(ReturnRequestActionSearchModel searchModel);
@@ -102,7 +102,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="returnRequestAction">Return request action</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request action model
         /// </returns>
         Task<ReturnRequestActionModel> PrepareReturnRequestActionModelAsync(ReturnRequestActionModel model,

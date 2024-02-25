@@ -74,7 +74,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         #region Utilities
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<IPagedList<SalesSummaryReportLine>> GetSalesSummaryReportAsync(SalesSummarySearchModel searchModel)
         {
             //get parameters to filter orders
@@ -106,7 +106,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             return salesSummary;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<IPagedList<BestsellersReportLine>> GetBestsellersReportAsync(BestsellerSearchModel searchModel)
         {
             //get parameters to filter bestsellers
@@ -148,7 +148,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Sales summary search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sales summary search model
         /// </returns>
         public virtual async Task<SalesSummarySearchModel> PrepareSalesSummarySearchModelAsync(SalesSummarySearchModel searchModel)
@@ -195,7 +195,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Sales summary search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sales summary list model
         /// </returns>
         public virtual async Task<SalesSummaryListModel> PrepareSalesSummaryListModelAsync(SalesSummarySearchModel searchModel)
@@ -237,7 +237,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Low stock tvchannel search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the low stock tvchannel search model
         /// </returns>
         public virtual async Task<LowStockTvChannelSearchModel> PrepareLowStockTvChannelSearchModelAsync(LowStockTvChannelSearchModel searchModel)
@@ -273,7 +273,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Low stock tvchannel search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the low stock tvchannel list model
         /// </returns>
         public virtual async Task<LowStockTvChannelListModel> PrepareLowStockTvChannelListModelAsync(LowStockTvChannelSearchModel searchModel)
@@ -340,7 +340,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Bestseller search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the bestseller search model
         /// </returns>
         public virtual async Task<BestsellerSearchModel> PrepareBestsellerSearchModelAsync(BestsellerSearchModel searchModel)
@@ -384,7 +384,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Bestseller search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the bestseller list model
         /// </returns>
         public virtual async Task<BestsellerListModel> PrepareBestsellerListModelAsync(BestsellerSearchModel searchModel)
@@ -422,7 +422,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Bestseller search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the bestseller total amount
         /// </returns>
         public virtual async Task<string> GetBestsellerTotalAmountAsync(BestsellerSearchModel searchModel)
@@ -466,7 +466,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Never sold report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the never sold report search model
         /// </returns>
         public virtual async Task<NeverSoldReportSearchModel> PrepareNeverSoldSearchModelAsync(NeverSoldReportSearchModel searchModel)
@@ -499,7 +499,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Never sold report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the never sold report list model
         /// </returns>
         public virtual async Task<NeverSoldReportListModel> PrepareNeverSoldListModelAsync(NeverSoldReportSearchModel searchModel)
@@ -549,7 +549,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Country report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country report search model
         /// </returns>
         public virtual async Task<CountryReportSearchModel> PrepareCountrySalesSearchModelAsync(CountryReportSearchModel searchModel)
@@ -574,7 +574,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Country report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country report list model
         /// </returns>
         public virtual async Task<CountryReportListModel> PrepareCountrySalesListModelAsync(CountryReportSearchModel searchModel)
@@ -627,7 +627,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User reports search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user reports search model
         /// </returns>
         public virtual async Task<UserReportsSearchModel> PrepareUserReportsSearchModelAsync(UserReportsSearchModel searchModel)
@@ -648,7 +648,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Best users report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the best users report search model
         /// </returns>
         protected virtual async Task<BestUsersReportSearchModel> PrepareBestUsersReportSearchModelAsync(BestUsersReportSearchModel searchModel)
@@ -672,7 +672,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Best users report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the best users report search model
         /// </returns>
         protected virtual async Task<BestUsersReportSearchModel> PrepareBestUsersReportByOrderTotalSearchModelAsync(BestUsersReportSearchModel searchModel)
@@ -697,7 +697,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Registered users report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the registered users report search model
         /// </returns>
         protected virtual Task<RegisteredUsersReportSearchModel> PrepareRegisteredUsersReportSearchModelAsync(RegisteredUsersReportSearchModel searchModel)
@@ -716,7 +716,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Best users report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the best users report list model
         /// </returns>
         public virtual async Task<BestUsersReportListModel> PrepareBestUsersReportListModelAsync(BestUsersReportSearchModel searchModel)
@@ -777,7 +777,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Registered users report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the registered users report list model
         /// </returns>
         public virtual async Task<RegisteredUsersReportListModel> PrepareRegisteredUsersReportListModelAsync(RegisteredUsersReportSearchModel searchModel)

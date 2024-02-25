@@ -142,7 +142,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <param name="query">Query to get records to populate created storage with initial data</param>
         /// <typeparam name="TItem">Storage record mapping class</typeparam>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the iQueryable instance of temporary storage
         /// </returns>
         public virtual Task<ITempDataStorage<TItem>> CreateTempDataStorageAsync<TItem>(string storeKey, IQueryable<TItem> query)
@@ -259,7 +259,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <param name="entity"></param>
         /// <typeparam name="TEntity"></typeparam>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the inserted entity
         /// </returns>
         public virtual async Task<TEntity> InsertEntityAsync<TEntity>(TEntity entity) where TEntity : BaseEntity
@@ -288,7 +288,7 @@ namespace TvProgViewer.Data.DataProviders
         /// </summary>
         /// <param name="entity">Entity with data to update</param>
         /// <typeparam name="TEntity">Entity type</typeparam>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateEntityAsync<TEntity>(TEntity entity) where TEntity : BaseEntity
         {
             using var dataContext = CreateDataConnection();
@@ -313,7 +313,7 @@ namespace TvProgViewer.Data.DataProviders
         /// </summary>
         /// <param name="entities">Entities with data to update</param>
         /// <typeparam name="TEntity">Entity type</typeparam>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateEntitiesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : BaseEntity
         {
             //we don't use the Merge API on this level, because this API not support all databases.
@@ -342,7 +342,7 @@ namespace TvProgViewer.Data.DataProviders
         /// </summary>
         /// <param name="entity">Entity for delete operation</param>
         /// <typeparam name="TEntity">Entity type</typeparam>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteEntityAsync<TEntity>(TEntity entity) where TEntity : BaseEntity
         {
             using var dataContext = CreateDataConnection();
@@ -366,7 +366,7 @@ namespace TvProgViewer.Data.DataProviders
         /// </summary>
         /// <param name="entities">Entities for delete operation</param>
         /// <typeparam name="TEntity">Entity type</typeparam>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task BulkDeleteEntitiesAsync<TEntity>(IList<TEntity> entities) where TEntity : BaseEntity
         {
             using var dataContext = CreateDataConnection();
@@ -406,7 +406,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <param name="predicate">A function to test each element for a condition.</param>
         /// <typeparam name="TEntity">Entity type</typeparam>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of deleted records
         /// </returns>
         public virtual async Task<int> BulkDeleteEntitiesAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : BaseEntity
@@ -438,7 +438,7 @@ namespace TvProgViewer.Data.DataProviders
         /// </summary>
         /// <param name="entities">Entities for insert operation</param>
         /// <typeparam name="TEntity">Entity type</typeparam>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task BulkInsertEntitiesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : BaseEntity
         {
             using var dataContext = CreateDataConnection(LinqToDbDataProvider);
@@ -462,7 +462,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <param name="sql">Command text</param>
         /// <param name="dataParameters">Command parameters</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of records, affected by command execution.
         /// </returns>
         public virtual async Task<int> ExecuteNonQueryAsync(string sql, params DataParameter[] dataParameters)
@@ -480,7 +480,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <param name="procedureName">Procedure name</param>
         /// <param name="parameters">Command parameters</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the returns collection of query result records
         /// </returns>
         public virtual Task<IList<T>> QueryProcAsync<T>(string procedureName, params DataParameter[] parameters)
@@ -497,7 +497,7 @@ namespace TvProgViewer.Data.DataProviders
         /// <param name="sql">SQL command text</param>
         /// <param name="parameters">Parameters to execute the SQL command</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the collection of values of specified type
         /// </returns>
         public virtual Task<IList<T>> QueryAsync<T>(string sql, params DataParameter[] parameters)

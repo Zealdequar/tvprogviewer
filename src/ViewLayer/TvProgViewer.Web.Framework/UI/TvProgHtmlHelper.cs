@@ -205,7 +205,7 @@ namespace TvProgViewer.Web.Framework.UI
         /// </summary>
         /// <param name="addDefaultTitle">A value indicating whether to insert a default title</param>
         /// <param name="part">Title part</param>
-        /// <returns>A task that represents the asynchronous operation
+        /// <returns>Задача представляет асинхронную операцию
         /// The task result contains generated HTML string</returns>
         public virtual async Task<IHtmlContent> GenerateTitleAsync(bool addDefaultTitle = true, string part = "")
         {
@@ -272,7 +272,7 @@ namespace TvProgViewer.Web.Framework.UI
         /// Generate all description parts
         /// </summary>
         /// <param name="part">Meta description part</param>
-        /// <returns>A task that represents the asynchronous operation
+        /// <returns>Задача представляет асинхронную операцию
         /// The task result contains generated HTML string</returns>
         public virtual async Task<IHtmlContent> GenerateMetaDescriptionAsync(string part = "")
         {
@@ -315,7 +315,7 @@ namespace TvProgViewer.Web.Framework.UI
         /// Generate all keyword parts
         /// </summary>
         /// <param name="part">Meta keyword part</param>
-        /// <returns>A task that represents the asynchronous operation
+        /// <returns>Задача представляет асинхронную операцию
         /// The task result contains generated HTML string</returns>
         public virtual async Task<IHtmlContent> GenerateMetaKeywordsAsync(string part = "")
         {

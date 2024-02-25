@@ -100,7 +100,7 @@ namespace TvProgViewer.Services.Themes
         /// Get all themes
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of the theme descriptor
         /// </returns>
         public Task<IList<ThemeDescriptor>> GetThemesAsync()
@@ -113,7 +113,7 @@ namespace TvProgViewer.Services.Themes
         /// </summary>
         /// <param name="systemName">Theme system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the me descriptor
         /// </returns>
         public Task<ThemeDescriptor> GetThemeBySystemNameAsync(string systemName)
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Themes
         /// </summary>
         /// <param name="systemName">Theme system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if the theme exists; otherwise false
         /// </returns>
         public Task<bool> ThemeExistsAsync(string systemName)

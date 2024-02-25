@@ -32,7 +32,7 @@ namespace TvProgViewer.Services.Plugins
         /// Get system names of installed plugins from obsolete file
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of plugin system names
         /// </returns>
         protected virtual IList<string> GetObsoleteInstalledPluginNames()
@@ -295,7 +295,7 @@ namespace TvProgViewer.Services.Plugins
         /// <summary>
         /// Save plugins info to the file
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SaveAsync()
         {
             //save the file

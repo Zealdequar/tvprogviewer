@@ -85,7 +85,7 @@ namespace TvProgViewer.Core.Rss
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains the RSS feed
         /// </returns>
         public static async Task<RssFeed> LoadAsync(Stream stream)

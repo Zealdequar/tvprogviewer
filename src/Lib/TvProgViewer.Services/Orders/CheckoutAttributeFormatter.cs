@@ -73,7 +73,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="renderPrices">A value indicating whether to render prices</param>
         /// <param name="allowHyperlinks">A value indicating whether to HTML hyperlink tags could be rendered (if required)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attributes
         /// </returns>
         public virtual async Task<string> FormatAttributesAsync(string attributesXml,

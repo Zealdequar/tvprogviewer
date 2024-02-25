@@ -41,7 +41,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the users
         /// </returns>
         Task<IPagedList<User>> GetAllUsersAsync(DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the users
         /// </returns>
         Task<IPagedList<User>> GetOnlineUsersAsync(DateTime lastActivityFromUtc,
@@ -78,7 +78,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the users
         /// </returns>
         Task<IPagedList<User>> GetUsersWithShoppingCartsAsync(ShoppingCartType? shoppingCartType = null,
@@ -91,7 +91,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<User> GetShoppingCartUserAsync(IList<ShoppingCartItem> shoppingCart);
@@ -100,14 +100,14 @@ namespace TvProgViewer.Services.Users
         /// Delete a user
         /// </summary>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteUserAsync(User user);
 
         /// <summary>
         /// Gets built-in system record used for background tasks
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a user object
         /// </returns>
         Task<User> GetOrCreateBackgroundTaskUserAsync();
@@ -116,7 +116,7 @@ namespace TvProgViewer.Services.Users
         /// Gets built-in system guest record used for requests from search engines
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a user object
         /// </returns>
         Task<User> GetOrCreateSearchEngineUserAsync();
@@ -126,7 +126,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userId">User identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a user
         /// </returns>
         Task<User> GetUserByIdAsync(int userId);
@@ -136,7 +136,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userIds">User identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the users
         /// </returns>
         Task<IList<User>> GetUsersByIdsAsync(int[] userIds);
@@ -146,7 +146,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userGuids">User guids</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the users
         /// </returns>
         Task<IList<User>> GetUsersByGuidsAsync(Guid[] userGuids);
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userGuid">User GUID</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a user
         /// </returns>
         Task<User> GetUserByGuidAsync(Guid userGuid);
@@ -166,7 +166,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="email">Email</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user
         /// </returns>
         Task<User> GetUserByEmailAsync(string email);
@@ -176,7 +176,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="systemName">System name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user
         /// </returns>
         Task<User> GetUserBySystemNameAsync(string systemName);
@@ -186,7 +186,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="username">Username</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user
         /// </returns>
         Task<User> GetUserByUsernameAsync(string username);
@@ -195,7 +195,7 @@ namespace TvProgViewer.Services.Users
         /// Insert a guest user
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user
         /// </returns>
         Task<User> InsertGuestUserAsync();
@@ -215,14 +215,14 @@ namespace TvProgViewer.Services.Users
         /// Insert a user
         /// </summary>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertUserAsync(User user);
 
         /// <summary>
         /// Updates the user
         /// </summary>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateUserAsync(User user);
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="clearRewardPoints">A value indicating whether to clear "Use reward points" flag</param>
         /// <param name="clearShippingMethod">A value indicating whether to clear selected shipping method</param>
         /// <param name="clearPaymentMethod">A value indicating whether to clear selected payment method</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ResetCheckoutDataAsync(User user, int storeId,
             bool clearCouponCodes = false, bool clearCheckoutAttributes = false,
             bool clearRewardPoints = true, bool clearShippingMethod = true,
@@ -248,7 +248,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
         /// <param name="onlyWithoutShoppingCart">A value indicating whether to delete users only without shopping cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of deleted users
         /// </returns>
         Task<int> DeleteGuestUsersAsync(DateTime? createdFromUtc, DateTime? createdToUtc, bool onlyWithoutShoppingCart);
@@ -258,7 +258,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<TaxDisplayType?> GetUserDefaultTaxDisplayTypeAsync(User user);
@@ -268,7 +268,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user full name
         /// </returns>
         Task<string> GetUserFullNameAsync(User user);
@@ -280,7 +280,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="stripTooLong">Strip too long user name</param>
         /// <param name="maxLength">Maximum user name length</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the formatted text
         /// </returns>
         Task<string> FormatUsernameAsync(User user, bool stripTooLong = false, int maxLength = 0);
@@ -290,7 +290,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the coupon codes
         /// </returns>
         Task<string[]> ParseAppliedDiscountCouponCodesAsync(User user);
@@ -301,7 +301,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the new coupon codes document
         /// </returns>
         Task ApplyDiscountCouponCodeAsync(User user, string couponCode);
@@ -312,7 +312,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code to remove</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the new coupon codes document
         /// </returns>
         Task RemoveDiscountCouponCodeAsync(User user, string couponCode);
@@ -322,7 +322,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the coupon codes
         /// </returns>
         Task<string[]> ParseAppliedGiftCardCouponCodesAsync(User user);
@@ -333,7 +333,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the new coupon codes document
         /// </returns>
         Task ApplyGiftCardCouponCodeAsync(User user, string couponCode);
@@ -344,7 +344,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="couponCode">Coupon code to remove</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the new coupon codes document
         /// </returns>
         Task RemoveGiftCardCouponCodeAsync(User user, string couponCode);
@@ -354,7 +354,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="guids">The guids of the users to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of guids not existing users
         /// </returns>
         Task<Guid[]> GetNotExistingUsersAsync(Guid[] guids);
@@ -367,7 +367,7 @@ namespace TvProgViewer.Services.Users
         /// Add a user-user role mapping
         /// </summary>
         /// <param name="roleMapping">User-user role mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task AddUserRoleMappingAsync(UserUserRoleMapping roleMapping);
 
         /// <summary>
@@ -389,7 +389,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="role">User role</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task RemoveUserRoleMappingAsync(User user, UserRole role);
 
         /// <summary>
@@ -402,7 +402,7 @@ namespace TvProgViewer.Services.Users
         /// Delete a user role
         /// </summary>
         /// <param name="userRole">User role</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteUserRoleAsync(UserRole userRole);
 
         /// <summary>
@@ -410,7 +410,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userRoleId">User role identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role
         /// </returns>
         Task<UserRole> GetUserRoleByIdAsync(int userRoleId);
@@ -420,7 +420,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="systemName">User role system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role
         /// </returns>
         Task<UserRole> GetUserRoleBySystemNameAsync(string systemName);
@@ -431,7 +431,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="showHidden">A value indicating whether to load hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role identifiers
         /// </returns>
         Task<int[]> GetUserRoleIdsAsync(User user, bool showHidden = false);
@@ -442,7 +442,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="showHidden">A value indicating whether to load hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IList<UserRole>> GetUserRolesAsync(User user, bool showHidden = false);
@@ -452,7 +452,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user roles
         /// </returns>
         Task<IList<UserRole>> GetAllUserRolesAsync(bool showHidden = false);
@@ -461,7 +461,7 @@ namespace TvProgViewer.Services.Users
         /// Inserts a user role
         /// </summary>
         /// <param name="userRole">User role</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertUserRoleAsync(UserRole userRole);
 
         /// <summary>
@@ -471,7 +471,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="userRoleSystemName">User role system name</param>
         /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsInUserRoleAsync(User user, string userRoleSystemName, bool onlyActiveUserRoles = true);
@@ -482,7 +482,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsAdminAsync(User user, bool onlyActiveUserRoles = true);
@@ -493,7 +493,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsForumModeratorAsync(User user, bool onlyActiveUserRoles = true);
@@ -504,7 +504,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsRegisteredAsync(User user, bool onlyActiveUserRoles = true);
@@ -515,7 +515,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsGuestAsync(User user, bool onlyActiveUserRoles = true);
@@ -526,7 +526,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="onlyActiveUserRoles">A value indicating whether we should look only in active user roles</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsVendorAsync(User user, bool onlyActiveUserRoles = true);
@@ -535,7 +535,7 @@ namespace TvProgViewer.Services.Users
         /// Updates the user role
         /// </summary>
         /// <param name="userRole">User role</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateUserRoleAsync(UserRole userRole);
 
         #endregion
@@ -549,7 +549,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="passwordFormat">Password format; pass null to load all records</param>
         /// <param name="passwordsToReturn">Number of returning passwords; pass null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of user passwords
         /// </returns>
         Task<IList<UserPassword>> GetUserPasswordsAsync(int? userId = null,
@@ -560,7 +560,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userId">User identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user password
         /// </returns>
         Task<UserPassword> GetCurrentPasswordAsync(int userId);
@@ -569,14 +569,14 @@ namespace TvProgViewer.Services.Users
         /// Insert a user password
         /// </summary>
         /// <param name="userPassword">User password</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertUserPasswordAsync(UserPassword userPassword);
 
         /// <summary>
         /// Update a user password
         /// </summary>
         /// <param name="userPassword">User password</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateUserPasswordAsync(UserPassword userPassword);
 
         /// <summary>
@@ -585,7 +585,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="token">Token to validate</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsPasswordRecoveryTokenValidAsync(User user, string token);
@@ -595,7 +595,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsPasswordRecoveryLinkExpiredAsync(User user);
@@ -605,7 +605,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if password is expired; otherwise false
         /// </returns>
         Task<bool> IsPasswordExpiredAsync(User user);
@@ -619,7 +619,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userId">User identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         Task<IList<Address>> GetAddressesByUserIdAsync(int userId);
@@ -630,7 +630,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="userId">User identifier</param>
         /// <param name="addressId">Address identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<Address> GetUserAddressAsync(int userId, int addressId);
@@ -640,7 +640,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<Address> GetUserBillingAddressAsync(User user);
@@ -650,7 +650,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<Address> GetUserShippingAddressAsync(User user);
@@ -660,7 +660,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task RemoveUserAddressAsync(User user, Address address);
 
         /// <summary>
@@ -668,7 +668,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertUserAddressAsync(User user, Address address);
 
         #endregion

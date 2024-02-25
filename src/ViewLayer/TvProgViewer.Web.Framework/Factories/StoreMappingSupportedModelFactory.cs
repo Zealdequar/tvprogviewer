@@ -39,7 +39,7 @@ namespace TvProgViewer.Web.Framework.Factories
         /// </summary>
         /// <typeparam name="TModel">Store mapping supported model type</typeparam>
         /// <param name="model">Model</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareModelStoresAsync<TModel>(TModel model) where TModel : IStoreMappingSupportedModel
         {
             if (model == null)
@@ -63,7 +63,7 @@ namespace TvProgViewer.Web.Framework.Factories
         /// <param name="model">Model</param>
         /// <param name="entity">Entity</param>
         /// <param name="ignoreStoreMappings">Whether to ignore existing store mappings</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareModelStoresAsync<TModel, TEntity>(TModel model, TEntity entity, bool ignoreStoreMappings)
             where TModel : IStoreMappingSupportedModel where TEntity : BaseEntity, IStoreMappingSupported
         {

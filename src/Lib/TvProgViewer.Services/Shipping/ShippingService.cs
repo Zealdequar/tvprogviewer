@@ -101,7 +101,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="items">Package items</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if there are multiple items; otherwise false
         /// </returns>
         protected async Task<bool> AreMultipleItemsAsync(IList<GetShippingOptionRequest.PackageItem> items)
@@ -140,7 +140,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="shoppingCartItem">Shopping cart item</param>
         /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the width. Length. Height
         /// </returns>
         protected virtual async Task<(decimal width, decimal length, decimal height)> GetAssociatedTvChannelDimensionsAsync(ShoppingCartItem shoppingCartItem,
@@ -190,7 +190,7 @@ namespace TvProgViewer.Services.Shipping
         /// Deletes a shipping method
         /// </summary>
         /// <param name="shippingMethod">The shipping method</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteShippingMethodAsync(ShippingMethod shippingMethod)
         {
             await _shippingMethodRepository.DeleteAsync(shippingMethod);
@@ -201,7 +201,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shippingMethodId">The shipping method identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping method
         /// </returns>
         public virtual async Task<ShippingMethod> GetShippingMethodByIdAsync(int shippingMethodId)
@@ -214,7 +214,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="filterByCountryId">The country identifier to filter by</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping methods
         /// </returns>
         public virtual async Task<IList<ShippingMethod>> GetAllShippingMethodsAsync(int? filterByCountryId = null)
@@ -251,7 +251,7 @@ namespace TvProgViewer.Services.Shipping
         /// Inserts a shipping method
         /// </summary>
         /// <param name="shippingMethod">Shipping method</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertShippingMethodAsync(ShippingMethod shippingMethod)
         {
             await _shippingMethodRepository.InsertAsync(shippingMethod);
@@ -261,7 +261,7 @@ namespace TvProgViewer.Services.Shipping
         /// Updates the shipping method
         /// </summary>
         /// <param name="shippingMethod">Shipping method</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateShippingMethodAsync(ShippingMethod shippingMethod)
         {
             await _shippingMethodRepository.UpdateAsync(shippingMethod);
@@ -273,7 +273,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="shippingMethod">Shipping method</param>
         /// <param name="countryId">Country identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<bool> CountryRestrictionExistsAsync(ShippingMethod shippingMethod, int countryId)
@@ -293,7 +293,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="shippingMethodId">The shipping method identifier</param>
         /// <param name="countryId">Country identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping country mappings
         /// </returns>
         public virtual async Task<IList<ShippingMethodCountryMapping>> GetShippingMethodCountryMappingAsync(int shippingMethodId,
@@ -309,7 +309,7 @@ namespace TvProgViewer.Services.Shipping
         /// Inserts a shipping country mapping
         /// </summary>
         /// <param name="shippingMethodCountryMapping">Shipping country mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertShippingMethodCountryMappingAsync(ShippingMethodCountryMapping shippingMethodCountryMapping)
         {
             await _shippingMethodCountryMappingRepository.InsertAsync(shippingMethodCountryMapping);
@@ -319,7 +319,7 @@ namespace TvProgViewer.Services.Shipping
         /// Delete the shipping country mapping
         /// </summary>
         /// <param name="shippingMethodCountryMapping">Shipping country mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteShippingMethodCountryMappingAsync(ShippingMethodCountryMapping shippingMethodCountryMapping)
         {
             await _shippingMethodCountryMappingRepository.DeleteAsync(shippingMethodCountryMapping);
@@ -333,7 +333,7 @@ namespace TvProgViewer.Services.Shipping
         /// Deletes a warehouse
         /// </summary>
         /// <param name="warehouse">The warehouse</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteWarehouseAsync(Warehouse warehouse)
         {
             await _warehouseRepository.DeleteAsync(warehouse);
@@ -344,7 +344,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="warehouseId">The warehouse identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warehouse
         /// </returns>
         public virtual async Task<Warehouse> GetWarehouseByIdAsync(int warehouseId)
@@ -357,7 +357,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="name">Warehouse name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warehouses
         /// </returns>
         public virtual async Task<IList<Warehouse>> GetAllWarehousesAsync(string name = null)
@@ -379,7 +379,7 @@ namespace TvProgViewer.Services.Shipping
         /// Inserts a warehouse
         /// </summary>
         /// <param name="warehouse">Warehouse</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertWarehouseAsync(Warehouse warehouse)
         {
             await _warehouseRepository.InsertAsync(warehouse);
@@ -389,7 +389,7 @@ namespace TvProgViewer.Services.Shipping
         /// Updates the warehouse
         /// </summary>
         /// <param name="warehouse">Warehouse</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateWarehouseAsync(Warehouse warehouse)
         {
             await _warehouseRepository.UpdateAsync(warehouse);
@@ -401,7 +401,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="address">Address</param>
         /// <param name="warehouses">List of warehouses, if null all warehouses are used.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         public virtual async Task<Warehouse> GetNearestWarehouseAsync(Address address, IList<Warehouse> warehouses = null)
@@ -460,7 +460,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="shoppingCartItem">Shopping cart item</param>
         /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart item weight
         /// </returns>
         public virtual async Task<decimal> GetShoppingCartItemWeightAsync(ShoppingCartItem shoppingCartItem, bool ignoreFreeShippedItems = false)
@@ -480,7 +480,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="attributesXml">Selected tvchannel attributes in XML</param>
         /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the item weight
         /// </returns>
         public virtual async Task<decimal> GetShoppingCartItemWeightAsync(TvChannel tvchannel, string attributesXml, bool ignoreFreeShippedItems = false)
@@ -525,7 +525,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="includeCheckoutAttributes">A value indicating whether we should calculate weights of selected checkotu attributes</param>
         /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the otal weight
         /// </returns>
         public virtual async Task<decimal> GetTotalWeightAsync(GetShippingOptionRequest request,
@@ -560,7 +560,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="packageItems">Package items</param>
         /// <param name="ignoreFreeShippedItems">Whether to ignore the weight of the tvchannels marked as "Free shipping"</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the width. Length. Height
         /// </returns>
         public virtual async Task<(decimal width, decimal length, decimal height)> GetDimensionsAsync(IList<GetShippingOptionRequest.PackageItem> packageItems, bool ignoreFreeShippedItems = false)
@@ -659,7 +659,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="shippingAddress">Shipping address</param>
         /// <param name="storeId">Load records allowed only in a specified store; pass 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment packages (requests). Value indicating whether shipping is done from multiple locations (warehouses)
         /// </returns>
         public virtual async Task<(IList<GetShippingOptionRequest> shipmentPackages, bool shippingFromMultipleLocations)> CreateShippingOptionRequestsAsync(IList<ShoppingCartItem> cart,
@@ -815,7 +815,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="allowedShippingRateComputationMethodSystemName">Filter by shipping rate computation method identifier; null to load shipping options of all shipping rate computation methods</param>
         /// <param name="storeId">Load records allowed only in a specified store; pass 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping options
         /// </returns>
         public virtual async Task<GetShippingOptionResponse> GetShippingOptionsAsync(IList<ShoppingCartItem> cart,
@@ -922,7 +922,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="providerSystemName">Filter by provider identifier; null to load pickup points of all providers</param>
         /// <param name="storeId">Load records allowed only in a specified store; pass 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the pickup points
         /// </returns>
         public virtual async Task<GetPickupPointsResponse> GetPickupPointsAsync(IList<ShoppingCartItem> cart, Address address,
@@ -965,7 +965,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shoppingCartItem">Shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if the shopping cart item requires shipping; otherwise false
         /// </returns>
         public virtual async Task<bool> IsShipEnabledAsync(ShoppingCartItem shoppingCartItem)
@@ -988,7 +988,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shoppingCartItem">Shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if the shopping cart item is free shipping; otherwise false
         /// </returns>
         public virtual async Task<bool> IsFreeShippingAsync(ShoppingCartItem shoppingCartItem)
@@ -1015,7 +1015,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary> 
         /// <param name="shoppingCartItem">Shopping cart item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the additional shipping charge of the shopping cart item
         /// </returns>
         public virtual async Task<decimal> GetAdditionalShippingChargeAsync(ShoppingCartItem shoppingCartItem)

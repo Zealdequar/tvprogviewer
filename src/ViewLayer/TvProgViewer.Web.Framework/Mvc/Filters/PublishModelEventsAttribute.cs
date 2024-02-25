@@ -89,7 +89,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// Publish model prepared event
             /// </summary>
             /// <param name="model">Model</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             protected virtual async Task PublishModelPreparedEventAsync(object model)
             {
                 //we publish the ModelPrepared event for all models as the BaseTvProgModel, 
@@ -107,7 +107,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             private async Task PublishModelReceivedEventAsync(ActionExecutingContext context)
             {
                 if (context == null)
@@ -133,7 +133,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             private async Task PublishModelPreparedEventAsync(ActionExecutingContext context)
             {
                 if (context == null)
@@ -156,7 +156,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// </summary>
             /// <param name="context">A context for action filters</param>
             /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 await PublishModelReceivedEventAsync(context);
@@ -168,7 +168,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// <summary>Called asynchronously before the action result.</summary>
             /// <param name="context">A context for action filters</param>
             /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
             {
                 if (context == null)

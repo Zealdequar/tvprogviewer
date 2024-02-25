@@ -49,7 +49,7 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="archivePath">Path to the archive</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of uploaded items
         /// </returns>
         protected virtual async Task<IList<UploadedItem>> GetUploadedItemsAsync(string archivePath)
@@ -75,7 +75,7 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="archivePath">Path to the archive</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the item descriptor
         /// </returns>
         protected virtual async Task<IDescriptor> UploadSingleItemAsync(string archivePath)
@@ -172,7 +172,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="archivePath">Path to the archive</param>
         /// <param name="uploadedItems">Uploaded items</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of item descriptors
         /// </returns>
         protected virtual async Task<IList<IDescriptor>> UploadMultipleItemsAsync(string archivePath, IList<UploadedItem> uploadedItems)
@@ -313,7 +313,7 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="archivefile">Archive file</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of uploaded items descriptor
         /// </returns>
         public virtual async Task<IList<IDescriptor>> UploadPluginsAndThemesAsync(IFormFile archivefile)
@@ -363,7 +363,7 @@ namespace TvProgViewer.Services.Plugins
         /// Upload favicon and app icons
         /// </summary>
         /// <param name="archivefile">Archive file which contains a set of special icons for different OS and devices</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UploadIconsArchiveAsync(IFormFile archivefile)
         {
             if (archivefile == null)
@@ -399,7 +399,7 @@ namespace TvProgViewer.Services.Plugins
         /// Upload single favicon
         /// </summary>
         /// <param name="favicon">Favicon</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UploadFaviconAsync(IFormFile favicon)
         {
             if (favicon == null)
@@ -423,7 +423,7 @@ namespace TvProgViewer.Services.Plugins
         /// Upload locale pattern for current culture
         /// </summary>
         /// <param name="cultureInfo">CultureInfo</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task UploadLocalePatternAsync(CultureInfo cultureInfo = null)
         {
             string getPath(string dirPath, string dirName)

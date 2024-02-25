@@ -47,7 +47,7 @@ namespace TvProgViewer.Data
         /// <param name="getAllAsync">Function to select entries</param>
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the entity entries
         /// </returns>
         protected virtual async Task<IList<TEntity>> GetEntitiesAsync(Func<Task<IList<TEntity>>> getAllAsync, Func<IStaticCacheManager, CacheKey> getCacheKey)
@@ -85,7 +85,7 @@ namespace TvProgViewer.Data
         /// <param name="getAllAsync">Function to select entries</param>
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the entity entries
         /// </returns>
         protected virtual async Task<IList<TEntity>> GetEntitiesAsync(Func<Task<IList<TEntity>>> getAllAsync, Func<IStaticCacheManager, Task<CacheKey>> getCacheKey)
@@ -127,7 +127,7 @@ namespace TvProgViewer.Data
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="ISoftDeletedEntity"/> entities)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the entity entry
         /// </returns>
         public virtual async Task<TEntity> GetByIdAsync(int? id, Func<IStaticCacheManager, CacheKey> getCacheKey = null, bool includeDeleted = true)
@@ -186,7 +186,7 @@ namespace TvProgViewer.Data
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="TvProg.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the entity entries
         /// </returns>
         public virtual async Task<IList<TEntity>> GetByIdsAsync(IList<int> ids, Func<IStaticCacheManager, CacheKey> getCacheKey = null, bool includeDeleted = true)
@@ -229,7 +229,7 @@ namespace TvProgViewer.Data
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="TvProg.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the entity entries
         /// </returns>
         public virtual async Task<IList<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
@@ -274,7 +274,7 @@ namespace TvProgViewer.Data
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="TvProg.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the entity entries
         /// </returns>
         public virtual async Task<IList<TEntity>> GetAllAsync(
@@ -299,7 +299,7 @@ namespace TvProgViewer.Data
         /// <param name="getCacheKey">Function to get a cache key; pass null to don't cache; return null from this function to use the default key</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="TvProg.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the entity entries
         /// </returns>
         public virtual async Task<IList<TEntity>> GetAllAsync(
@@ -326,7 +326,7 @@ namespace TvProgViewer.Data
         /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="TvProg.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the paged list of entity entries
         /// </returns>
         public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
@@ -348,7 +348,7 @@ namespace TvProgViewer.Data
         /// <param name="getOnlyTotalCount">Whether to get only the total number of entries without actually loading data</param>
         /// <param name="includeDeleted">Whether to include deleted items (applies only to <see cref="TvProg.Core.Domain.Common.ISoftDeletedEntity"/> entities)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the paged list of entity entries
         /// </returns>
         public virtual async Task<IPagedList<TEntity>> GetAllPagedAsync(Func<IQueryable<TEntity>, Task<IQueryable<TEntity>>> func = null,
@@ -366,7 +366,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="entity">Entity entry</param>
         /// <param name="publishEvent">Whether to publish event notification</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertAsync(TEntity entity, bool publishEvent = true)
         {
             if (entity == null)
@@ -401,7 +401,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="entities">Entity entries</param>
         /// <param name="publishEvent">Whether to publish event notification</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertAsync(IList<TEntity> entities, bool publishEvent = true)
         {
             if (entities == null)
@@ -446,7 +446,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the copy of the passed entity
         /// </returns>
         public virtual async Task<TEntity> LoadOriginalCopyAsync(TEntity entity)
@@ -460,7 +460,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="entity">Entity entry</param>
         /// <param name="publishEvent">Whether to publish event notification</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateAsync(TEntity entity, bool publishEvent = true)
         {
             if (entity == null)
@@ -495,7 +495,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="entities">Entity entries</param>
         /// <param name="publishEvent">Whether to publish event notification</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateAsync(IList<TEntity> entities, bool publishEvent = true)
         {
             if (entities == null)
@@ -542,7 +542,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="entity">Entity entry</param>
         /// <param name="publishEvent">Whether to publish event notification</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAsync(TEntity entity, bool publishEvent = true)
         {
             switch (entity)
@@ -634,7 +634,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="entities">Entity entries</param>
         /// <param name="publishEvent">Whether to publish event notification</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAsync(IList<TEntity> entities, bool publishEvent = true)
         {
             if (entities == null)
@@ -671,7 +671,7 @@ namespace TvProgViewer.Data
         /// </summary>
         /// <param name="predicate">A function to test each element for a condition</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of deleted records
         /// </returns>
         public virtual async Task<int> DeleteAsync(Expression<Func<TEntity, bool>> predicate)
@@ -709,7 +709,7 @@ namespace TvProgViewer.Data
         /// Truncates database table
         /// </summary>
         /// <param name="resetIdentity">Performs reset identity column</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task TruncateAsync(bool resetIdentity = false)
         {
             await _dataProvider.TruncateAsync<TEntity>(resetIdentity);

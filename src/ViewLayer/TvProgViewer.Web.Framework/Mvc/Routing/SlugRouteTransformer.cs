@@ -71,7 +71,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// <param name="values">The route values associated with the current match</param>
         /// <param name="urlRecord">Record found by the URL slug</param>
         /// <param name="catalogPath">URL catalog path</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task SingleSlugRoutingAsync(HttpContext httpContext, RouteValueDictionary values, UrlRecord urlRecord, string catalogPath)
         {
             //if URL record is not active let's find the latest one
@@ -154,7 +154,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// <param name="urlRecord">Record found by the URL slug</param>
         /// <param name="catalogPath">URL catalog path</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a value whether the route values were processed
         /// </returns>
         protected virtual async Task<bool> TryTvChannelCatalogRoutingAsync(HttpContext httpContext, RouteValueDictionary values, UrlRecord urlRecord, string catalogPath)
@@ -287,7 +287,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// <param name="httpContext">HTTP context</param>
         /// <param name="routeValues">The route values associated with the current match</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the set of values
         /// </returns>
         public override async ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary routeValues)

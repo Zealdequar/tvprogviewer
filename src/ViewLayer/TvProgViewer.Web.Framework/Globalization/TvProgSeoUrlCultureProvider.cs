@@ -17,7 +17,7 @@ namespace TvProgViewer.Web.Framework.Globalization
         /// </summary>
         /// <param name="httpContext">HttpContext for the request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains ProviderCultureResult
         /// </returns>
         public override async Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)

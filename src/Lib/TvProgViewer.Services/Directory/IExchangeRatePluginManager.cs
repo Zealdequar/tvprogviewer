@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the exchange rate provider
         /// </returns>
         Task<IExchangeRateProvider> LoadPrimaryPluginAsync(User user = null, int storeId = 0);

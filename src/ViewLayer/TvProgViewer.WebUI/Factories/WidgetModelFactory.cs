@@ -55,7 +55,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="widgetZone">Name of widget zone</param>
         /// <param name="additionalData">Additional data object</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of the render widget models
         /// </returns>
         public virtual async Task<List<RenderWidgetModel>> PrepareRenderWidgetModelAsync(string widgetZone, object additionalData = null)

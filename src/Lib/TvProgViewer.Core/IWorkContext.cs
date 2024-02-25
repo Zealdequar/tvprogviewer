@@ -16,14 +16,14 @@ namespace TvProgViewer.Core
         /// <summary>
         /// Gets the current user
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<User> GetCurrentUserAsync();
 
         /// <summary>
         /// Sets the current user
         /// </summary>
         /// <param name="user">Current user</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetCurrentUserAsync(User user = null);
 
         /// <summary>
@@ -34,27 +34,27 @@ namespace TvProgViewer.Core
         /// <summary>
         /// Gets the current vendor (logged-in manager)
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<Vendor> GetCurrentVendorAsync();
 
         /// <summary>
         /// Gets current user working language
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<Language> GetWorkingLanguageAsync();
 
         /// <summary>
         /// Sets current user working language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetWorkingLanguageAsync(Language language);
 
         
         /// <summary>
         /// Gets or sets current user working currency
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<Currency> GetWorkingCurrencyAsync();
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace TvProgViewer.Core
         /// Sets current user working currency
         /// </summary>
         /// <param name="currency">Currency</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
 
         /// <summary>
         /// Установка пользователького типа ТВ-программы 
@@ -105,13 +105,13 @@ namespace TvProgViewer.Core
         /// <summary>
         /// Gets or sets current tax display type
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<TaxDisplayType> GetTaxDisplayTypeAsync();
 
         /// <summary>
         /// Sets current tax display type
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetTaxDisplayTypeAsync(TaxDisplayType taxDisplayType);        
     }
 }

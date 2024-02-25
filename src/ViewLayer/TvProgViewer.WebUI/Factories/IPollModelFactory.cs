@@ -16,7 +16,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="poll">Poll</param>
         /// <param name="setAlreadyVotedProperty">Whether to load a value indicating that user already voted for this poll</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the poll model
         /// </returns>
         Task<PollModel> PreparePollModelAsync(Poll poll, bool setAlreadyVotedProperty);
@@ -26,7 +26,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="systemKeyword">Poll system keyword</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the poll model
         /// </returns>
         Task<PollModel> PreparePollModelBySystemNameAsync(string systemKeyword);
@@ -35,7 +35,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the home page poll models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of the poll model
         /// </returns>
         Task<List<PollModel>> PrepareHomepagePollModelsAsync();

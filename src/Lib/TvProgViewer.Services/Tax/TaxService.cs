@@ -92,7 +92,7 @@ namespace TvProgViewer.Services.Tax
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         protected virtual async Task<bool> IsEuConsumerAsync(User user)
@@ -139,7 +139,7 @@ namespace TvProgViewer.Services.Tax
         /// Gets a default tax address
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address
         /// </returns>
         protected virtual async Task<Address> LoadDefaultTaxAddressAsync()
@@ -154,7 +154,7 @@ namespace TvProgViewer.Services.Tax
         /// </summary>
         /// <param name="pickupPoint">Pickup point</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address
         /// </returns>
         protected virtual async Task<Address> LoadPickupPointTaxAddressAsync(PickupPoint pickupPoint)
@@ -184,7 +184,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="user">User</param>
         /// <param name="price">Price</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the package for tax calculation
         /// </returns>
         protected virtual async Task<TaxRateRequest> PrepareTaxRateRequestAsync(TvChannel tvchannel, int taxCategoryId, User user, decimal price)
@@ -285,7 +285,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="user">User</param>
         /// <param name="price">Price (taxable value)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the calculated tax rate. A value indicating whether a request is taxable
         /// </returns>
         protected virtual async Task<(decimal taxRate, bool isTaxable)> GetTaxRateAsync(TvChannel tvchannel, int taxCategoryId,
@@ -340,7 +340,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
         /// <param name="vatNumber">VAT number</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vAT Number status. Name (if received). Address (if received)
         /// </returns>
         protected virtual async Task<(VatNumberStatus vatNumberStatus, string name, string address)> GetVatNumberStatusAsync(string twoLetterIsoCode, string vatNumber)
@@ -371,7 +371,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="twoLetterIsoCode">Two letter ISO code of a country</param>
         /// <param name="vatNumber">VAT number</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vAT number status. Company name. Address. Exception
         /// </returns>
         protected virtual async Task<(VatNumberStatus vatNumberStatus, string name, string address, Exception exception)> DoVatCheckAsync(string twoLetterIsoCode, string vatNumber)
@@ -419,7 +419,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="address">Address</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         protected virtual async Task<bool> IsVatExemptAsync(Address address, User user)
@@ -459,7 +459,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price)
@@ -476,7 +476,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="price">Price</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price,
@@ -494,7 +494,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, decimal price,
@@ -515,7 +515,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="user">User</param>
         /// <param name="priceIncludesTax">A value indicating whether price already includes tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetTvChannelPriceAsync(TvChannel tvchannel, int taxCategoryId,
@@ -584,7 +584,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a value indicating whether a tvchannel is tax exempt
         /// </returns>
         public virtual async Task<bool> IsTaxExemptAsync(TvChannel tvchannel, User user)
@@ -617,7 +617,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="price">Price</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetShippingPriceAsync(decimal price, User user)
@@ -634,7 +634,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetShippingPriceAsync(decimal price, bool includingTax, User user)
@@ -662,7 +662,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="price">Price</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetPaymentMethodAdditionalFeeAsync(decimal price, User user)
@@ -679,7 +679,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetPaymentMethodAdditionalFeeAsync(decimal price, bool includingTax, User user)
@@ -706,7 +706,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="ca">Checkout attribute</param>
         /// <param name="cav">Checkout attribute value</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetCheckoutAttributePriceAsync(CheckoutAttribute ca, CheckoutAttributeValue cav)
@@ -723,7 +723,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="cav">Checkout attribute value</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetCheckoutAttributePriceAsync(CheckoutAttribute ca, CheckoutAttributeValue cav, User user)
@@ -741,7 +741,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price. Tax rate
         /// </returns>
         public virtual async Task<(decimal price, decimal taxRate)> GetCheckoutAttributePriceAsync(CheckoutAttribute ca, CheckoutAttributeValue cav,
@@ -771,7 +771,7 @@ namespace TvProgViewer.Services.Tax
         /// </summary>
         /// <param name="fullVatNumber">Two letter ISO code of a country and VAT number (e.g. GB 111 1111 111)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vAT Number status. Name (if received). Address (if received)
         /// </returns>
         public virtual async Task<(VatNumberStatus vatNumberStatus, string name, string address)> GetVatNumberStatusAsync(string fullVatNumber)
@@ -806,7 +806,7 @@ namespace TvProgViewer.Services.Tax
         /// <param name="cart">Shopping cart</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<TaxTotalResult> GetTaxTotalAsync(IList<ShoppingCartItem> cart, bool usePaymentMethodAdditionalFee = true)

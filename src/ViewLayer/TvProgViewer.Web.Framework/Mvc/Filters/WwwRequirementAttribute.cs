@@ -129,7 +129,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// Called early in the filter pipeline to confirm request is authorized
             /// </summary>
             /// <param name="context">Authorization filter context</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             public Task OnAuthorizationAsync(AuthorizationFilterContext context)
             {
                 CheckWwwRequirement(context);

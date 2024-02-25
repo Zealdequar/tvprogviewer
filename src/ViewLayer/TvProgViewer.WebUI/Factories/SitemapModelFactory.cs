@@ -147,7 +147,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get HTTP protocol
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the protocol name as string
         /// </returns>
         protected virtual async Task<string> GetHttpProtocolAsync()
@@ -161,7 +161,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Generate URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of sitemap URLs
         /// </returns>
         protected virtual async Task<IList<SitemapUrlModel>> GenerateUrlsAsync()
@@ -232,7 +232,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get news item URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URLs
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetNewsItemUrlsAsync()
@@ -249,7 +249,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get category URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URLs
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetCategoryUrlsAsync()
@@ -264,7 +264,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get manufacturer URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URLs
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetManufacturerUrlsAsync()
@@ -279,7 +279,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get tvchannel URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URLs
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetTvChannelUrlsAsync()
@@ -295,7 +295,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get tvchannel tag URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URLs
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetTvChannelTagUrlsAsync()
@@ -308,7 +308,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get topic URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URLs
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetTopicUrlsAsync()
@@ -323,7 +323,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get blog post URLs for the sitemap
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URLs
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetBlogPostUrlsAsync()
@@ -355,7 +355,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <typeparam name="T">Model type</typeparam>
         /// <param name="model">Model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the lambda for route params
         /// </returns>
         protected virtual Func<int?, Task<object>> GetSeoRouteParamsAwait<T>(T model)
@@ -369,7 +369,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <param name="sitemapNumber">The number of sitemaps</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task WriteSitemapIndexAsync(MemoryStream stream, int sitemapNumber)
         {
             await using var writer = XmlWriter.Create(stream, new XmlWriterSettings
@@ -405,7 +405,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <param name="sitemapUrls">List of sitemap URLs</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task WriteSitemapAsync(MemoryStream stream, IList<SitemapUrlModel> sitemapUrls)
         {
             await using var writer = XmlWriter.Create(stream, new XmlWriterSettings
@@ -445,7 +445,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="writer">XML stream writer</param>
         /// <param name="sitemapUrl">Sitemap URL</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task WriteSitemapUrlAsync(XmlWriter writer, SitemapUrlModel sitemapUrl)
         {
             if (string.IsNullOrEmpty(sitemapUrl.Location))
@@ -488,7 +488,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="fullPath">The path and name of the sitemap file</param>
         /// <param name="id">Sitemap identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task GenerateAsync(string fullPath, int id = 0)
         {
             //generate all URLs for the sitemap
@@ -551,7 +551,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pageModel">Sitemap page model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap model
         /// </returns>
         public virtual async Task<SitemapModel> PrepareSitemapModelAsync(SitemapPageModel pageModel)
@@ -758,7 +758,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="id">Sitemap identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap model with sitemap.xml as string
         /// </returns>
         public virtual async Task<SitemapXmlModel> PrepareSitemapXmlModelAsync(int id = 0)
@@ -793,7 +793,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="getRouteParamsAwait">Lambda for route params object</param>
         /// <param name="dateTimeUpdatedOn">A time when URL was updated last time</param>
         /// <param name="updateFreq">How often to update url</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<SitemapUrlModel> PrepareLocalizedSitemapUrlAsync(string routeName,
             Func<int?, Task<object>> getRouteParamsAwait = null,
             DateTime? dateTimeUpdatedOn = null,

@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="archivefile">Archive file</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of uploaded items descriptor
         /// </returns>
         Task<IList<IDescriptor>> UploadPluginsAndThemesAsync(IFormFile archivefile);
@@ -24,21 +24,21 @@ namespace TvProgViewer.Services.Plugins
         /// Upload favicon and app icons
         /// </summary>
         /// <param name="archivefile">Archive file which contains a set of special icons for different OS and devices</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UploadIconsArchiveAsync(IFormFile archivefile);
 
         /// <summary>
         /// Upload single favicon
         /// </summary>
         /// <param name="favicon">Favicon</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UploadFaviconAsync(IFormFile favicon);
 
         /// <summary>
         /// Upload locale pattern for current culture
         /// </summary>
         /// <param name="cultureInfo">CultureInfo</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UploadLocalePatternAsync(CultureInfo cultureInfo = null);
     }
 }

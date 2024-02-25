@@ -10,7 +10,7 @@ namespace TvProgViewer.Services.ScheduleTasks
         /// <summary>
         /// Executes a task
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ExecuteAsync();
     }
 }

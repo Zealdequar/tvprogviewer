@@ -62,7 +62,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="page">Number of items page; pass null to disable paging</param>
         /// <param name="tab">Tab name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message index model
         /// </returns>
         public virtual Task<PrivateMessageIndexModel> PreparePrivateMessageIndexModelAsync(int? page, string tab)
@@ -109,7 +109,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="page">Number of items page</param>
         /// <param name="tab">Tab name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message list model
         /// </returns>
         public virtual async Task<PrivateMessageListModel> PrepareInboxModelAsync(int page, string tab)
@@ -156,7 +156,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="page">Number of items page</param>
         /// <param name="tab">Tab name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message list model
         /// </returns>
         public virtual async Task<PrivateMessageListModel> PrepareSentModelAsync(int page, string tab)
@@ -202,7 +202,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="userTo">User, recipient of the message</param>
         /// <param name="replyToPM">Private message, pass if reply to a previous message is need</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the send private message model
         /// </returns>
         public virtual async Task<SendPrivateMessageModel> PrepareSendPrivateMessageModelAsync(User userTo, PrivateMessage replyToPM)
@@ -236,7 +236,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pm">Private message</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message model
         /// </returns>
         public virtual async Task<PrivateMessageModel> PreparePrivateMessageModelAsync(PrivateMessage pm)

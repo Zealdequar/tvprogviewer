@@ -17,7 +17,7 @@ namespace TvProgViewer.Services.Configuration
         /// </summary>
         /// <param name="settingId">Setting identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the setting
         /// </returns>
         Task<Setting> GetSettingByIdAsync(int settingId);
@@ -35,7 +35,7 @@ namespace TvProgViewer.Services.Configuration
         /// Deletes a setting
         /// </summary>
         /// <param name="setting">Setting</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteSettingAsync(Setting setting);
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace TvProgViewer.Services.Configuration
         /// Deletes settings
         /// </summary>
         /// <param name="settings">Settings</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteSettingsAsync(IList<Setting> settings);
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace TvProgViewer.Services.Configuration
         /// <param name="storeId">Store identifier</param>
         /// <param name="loadSharedValueIfNotFound">A value indicating whether a shared (for all stores) value should be loaded if a value specific for a certain is not found</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the setting
         /// </returns>
         Task<Setting> GetSettingAsync(string key, int storeId = 0, bool loadSharedValueIfNotFound = false);
@@ -83,7 +83,7 @@ namespace TvProgViewer.Services.Configuration
         /// <param name="defaultValue">Default value</param>
         /// <param name="loadSharedValueIfNotFound">A value indicating whether a shared (for all stores) value should be loaded if a value specific for a certain is not found</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the setting value
         /// </returns>
         Task<T> GetSettingByKeyAsync<T>(string key, T defaultValue = default,
@@ -111,7 +111,7 @@ namespace TvProgViewer.Services.Configuration
         /// <param name="value">Value</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="clearCache">A value indicating whether to clear cache after setting update</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetSettingAsync<T>(string key, T value, int storeId = 0, bool clearCache = true);
 
         /// <summary>
@@ -128,7 +128,7 @@ namespace TvProgViewer.Services.Configuration
         /// Gets all settings
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the settings
         /// </returns>
         Task<IList<Setting>> GetAllSettingsAsync();
@@ -150,7 +150,7 @@ namespace TvProgViewer.Services.Configuration
         /// <param name="keySelector">Key selector</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the true -setting exists; false - does not exist
         /// </returns>
         Task<bool> SettingExistsAsync<T, TPropType>(T settings,
@@ -177,7 +177,7 @@ namespace TvProgViewer.Services.Configuration
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
         /// <param name="storeId">Store identifier for which settings should be loaded</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<T> LoadSettingAsync<T>(int storeId = 0) where T : ISettings, new();
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace TvProgViewer.Services.Configuration
         /// </summary>
         /// <param name="type">Type</param>
         /// <param name="storeId">Store identifier for which settings should be loaded</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<ISettings> LoadSettingAsync(Type type, int storeId = 0);
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace TvProgViewer.Services.Configuration
         /// <typeparam name="T">Type</typeparam>
         /// <param name="storeId">Store identifier</param>
         /// <param name="settings">Setting instance</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveSettingAsync<T>(T settings, int storeId = 0) where T : ISettings, new();
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace TvProgViewer.Services.Configuration
         /// <param name="keySelector">Key selector</param>
         /// <param name="storeId">Store ID</param>
         /// <param name="clearCache">A value indicating whether to clear cache after setting update</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveSettingAsync<T, TPropType>(T settings,
             Expression<Func<T, TPropType>> keySelector,
             int storeId = 0, bool clearCache = true) where T : ISettings, new();
@@ -258,7 +258,7 @@ namespace TvProgViewer.Services.Configuration
         /// <param name="overrideForStore">A value indicating whether to setting is overridden in some store</param>
         /// <param name="storeId">Store ID</param>
         /// <param name="clearCache">A value indicating whether to clear cache after setting update</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveSettingOverridablePerStoreAsync<T, TPropType>(T settings,
             Expression<Func<T, TPropType>> keySelector,
             bool overrideForStore, int storeId = 0, bool clearCache = true) where T : ISettings, new();
@@ -268,7 +268,7 @@ namespace TvProgViewer.Services.Configuration
         /// </summary>
         /// <param name="setting">Setting</param>
         /// <param name="clearCache">A value indicating whether to clear cache after setting update</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertSettingAsync(Setting setting, bool clearCache = true);
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace TvProgViewer.Services.Configuration
         /// </summary>
         /// <param name="setting">Setting</param>
         /// <param name="clearCache">A value indicating whether to clear cache after setting update</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateSettingAsync(Setting setting, bool clearCache = true);
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace TvProgViewer.Services.Configuration
         /// Delete all settings
         /// </summary>
         /// <typeparam name="T">Type</typeparam>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteSettingAsync<T>() where T : ISettings, new();
 
         /// <summary>
@@ -308,14 +308,14 @@ namespace TvProgViewer.Services.Configuration
         /// <param name="settings">Settings</param>
         /// <param name="keySelector">Key selector</param>
         /// <param name="storeId">Store ID</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteSettingAsync<T, TPropType>(T settings,
             Expression<Func<T, TPropType>> keySelector, int storeId = 0) where T : ISettings, new();
 
         /// <summary>
         /// Clear cache
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ClearCacheAsync();
 
         /// <summary>

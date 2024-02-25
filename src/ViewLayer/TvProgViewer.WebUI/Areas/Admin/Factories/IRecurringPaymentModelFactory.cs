@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Recurring payment search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the recurring payment search model
         /// </returns>
         Task<RecurringPaymentSearchModel> PrepareRecurringPaymentSearchModelAsync(RecurringPaymentSearchModel searchModel);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Recurring payment search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the recurring payment list model
         /// </returns>
         Task<RecurringPaymentListModel> PrepareRecurringPaymentListModelAsync(RecurringPaymentSearchModel searchModel);
@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="recurringPayment">Recurring payment</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the recurring payment model
         /// </returns>
         Task<RecurringPaymentModel> PrepareRecurringPaymentModelAsync(RecurringPaymentModel model,
@@ -48,7 +48,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Recurring payment history search model</param>
         /// <param name="recurringPayment">Recurring payment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the recurring payment history list model
         /// </returns>
         Task<RecurringPaymentHistoryListModel> PrepareRecurringPaymentHistoryListModelAsync(RecurringPaymentHistorySearchModel searchModel,

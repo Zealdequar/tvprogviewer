@@ -70,7 +70,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// </summary>
             /// <param name="affiliate">Affiliate</param>
             /// <param name="user">User</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             private async Task SetUserAffiliateIdAsync(Affiliate affiliate, User user)
             {
                 if (affiliate == null || affiliate.Deleted || !affiliate.Active)
@@ -92,7 +92,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// Called asynchronously before the action, after model binding is complete.
             /// </summary>
             /// <param name="context">A context for action filters</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             private async Task CheckAffiliateAsync(ActionExecutingContext context)
             {
                 if (context == null)
@@ -136,7 +136,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// </summary>
             /// <param name="context">A context for action filters</param>
             /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 await CheckAffiliateAsync(context);

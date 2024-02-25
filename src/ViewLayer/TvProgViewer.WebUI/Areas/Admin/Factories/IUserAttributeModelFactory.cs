@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute search model
         /// </returns>
         Task<UserAttributeSearchModel> PrepareUserAttributeSearchModelAsync(UserAttributeSearchModel searchModel);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute list model
         /// </returns>
         Task<UserAttributeListModel> PrepareUserAttributeListModelAsync(UserAttributeSearchModel searchModel);
@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="userAttribute">User attribute</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute model
         /// </returns>
         Task<UserAttributeModel> PrepareUserAttributeModelAsync(UserAttributeModel model,
@@ -48,7 +48,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User attribute value search model</param>
         /// <param name="userAttribute">User attribute</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute value list model
         /// </returns>
         Task<UserAttributeValueListModel> PrepareUserAttributeValueListModelAsync(UserAttributeValueSearchModel searchModel,
@@ -62,7 +62,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="userAttributeValue">User attribute value</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute value model
         /// </returns>
         Task<UserAttributeValueModel> PrepareUserAttributeValueModelAsync(UserAttributeValueModel model,

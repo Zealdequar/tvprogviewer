@@ -1125,7 +1125,7 @@ namespace TvProgViewer.Services.Seo
         /// Deletes an URL records
         /// </summary>
         /// <param name="urlRecords">URL records</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteUrlRecordsAsync(IList<UrlRecord> urlRecords)
         {
             await _urlRecordRepository.DeleteAsync(urlRecords);
@@ -1136,7 +1136,7 @@ namespace TvProgViewer.Services.Seo
         /// </summary>
         /// <param name="urlRecordIds">URL record identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the uRL record
         /// </returns>
         public virtual async Task<IList<UrlRecord>> GetUrlRecordsByIdsAsync(int[] urlRecordIds)
@@ -1148,7 +1148,7 @@ namespace TvProgViewer.Services.Seo
         /// Inserts an URL record
         /// </summary>
         /// <param name="urlRecord">URL record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertUrlRecordAsync(UrlRecord urlRecord)
         {
             await _urlRecordRepository.InsertAsync(urlRecord);
@@ -1158,7 +1158,7 @@ namespace TvProgViewer.Services.Seo
         /// Updates the URL record
         /// </summary>
         /// <param name="urlRecord">URL record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateUrlRecordAsync(UrlRecord urlRecord)
         {
             await _urlRecordRepository.UpdateAsync(urlRecord);
@@ -1169,7 +1169,7 @@ namespace TvProgViewer.Services.Seo
         /// </summary>
         /// <param name="slug">Slug</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found URL record
         /// </returns>
         public virtual async Task<UrlRecord> GetBySlugAsync(string slug)
@@ -1217,7 +1217,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the uRL records
         /// </returns>
         public virtual async Task<IPagedList<UrlRecord>> GetAllUrlRecordsAsync(
@@ -1252,7 +1252,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="entityName">Entity name</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found slug
         /// </returns>
         public virtual async Task<string> GetActiveSlugAsync(int entityId, string entityName, int languageId)
@@ -1301,7 +1301,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="entity">Entity</param>
         /// <param name="slug">Slug</param>
         /// <param name="languageId">Language ID</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SaveSlugAsync<T>(T entity, string slug, int languageId) where T : BaseEntity, ISlugSupported
         {
             if (entity == null)
@@ -1404,7 +1404,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="returnDefaultValue">A value indicating whether to return default value (if language specified one is not found)</param>
         /// <param name="ensureTwoPublishedLanguages">A value indicating whether to ensure that we have at least two published languages; otherwise, load only default value</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search engine  name (slug)
         /// </returns>
         public virtual async Task<string> GetSeNameAsync<T>(T entity, int? languageId = null, bool returnDefaultValue = true,
@@ -1427,7 +1427,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="returnDefaultValue">A value indicating whether to return default value (if language specified one is not found)</param>
         /// <param name="ensureTwoPublishedLanguages">A value indicating whether to ensure that we have at least two published languages; otherwise, load only default value</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search engine  name (slug)
         /// </returns>
         public virtual async Task<string> GetSeNameAsync(int entityId, string entityName, int? languageId = null,
@@ -1465,7 +1465,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="convertNonWesternChars">A value indicating whether non western chars should be converted</param>
         /// <param name="allowUnicodeCharsInUrls">A value indicating whether Unicode chars are allowed</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual Task<string> GetSeNameAsync(string name, bool convertNonWesternChars, bool allowUnicodeCharsInUrls)
@@ -1518,7 +1518,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="name">User-friendly name used to generate seName</param>
         /// <param name="ensureNotEmpty">Ensure that seName is not empty</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the valid seName
         /// </returns>
         public virtual async Task<string> ValidateSeNameAsync<T>(T entity, string seName, string name, bool ensureNotEmpty) where T : BaseEntity, ISlugSupported
@@ -1540,7 +1540,7 @@ namespace TvProgViewer.Services.Seo
         /// <param name="name">User-friendly name used to generate seName</param>
         /// <param name="ensureNotEmpty">Ensure that seName is not empty</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the valid seName
         /// </returns>
         public virtual async Task<string> ValidateSeNameAsync(int entityId, string entityName, string seName, string name, bool ensureNotEmpty)

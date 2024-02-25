@@ -52,7 +52,7 @@ namespace TvProgViewer.Services.Messages
         /// Delete a message template
         /// </summary>
         /// <param name="messageTemplate">Message template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteMessageTemplateAsync(MessageTemplate messageTemplate)
         {
             await _messageTemplateRepository.DeleteAsync(messageTemplate);
@@ -62,7 +62,7 @@ namespace TvProgViewer.Services.Messages
         /// Inserts a message template
         /// </summary>
         /// <param name="messageTemplate">Message template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertMessageTemplateAsync(MessageTemplate messageTemplate)
         {
             await _messageTemplateRepository.InsertAsync(messageTemplate);
@@ -72,7 +72,7 @@ namespace TvProgViewer.Services.Messages
         /// Updates a message template
         /// </summary>
         /// <param name="messageTemplate">Message template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateMessageTemplateAsync(MessageTemplate messageTemplate)
         {
             await _messageTemplateRepository.UpdateAsync(messageTemplate);
@@ -83,7 +83,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="messageTemplateId">Message template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the message template
         /// </returns>
         public virtual async Task<MessageTemplate> GetMessageTemplateByIdAsync(int messageTemplateId)
@@ -97,7 +97,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="messageTemplateName">Message template name</param>
         /// <param name="storeId">Store identifier; pass null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of message templates
         /// </returns>
         public virtual async Task<IList<MessageTemplate>> GetMessageTemplatesByNameAsync(string messageTemplateName, int? storeId = null)
@@ -130,7 +130,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="keywords">Keywords to search by name, body, or subject</param>
         /// <param name="isActive">A value indicating whether to get active records; "null" to load all records; "false" to load only inactive records; "true" to load only active records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the message template list
         /// </returns>
         public virtual async Task<IList<MessageTemplate>> GetAllMessageTemplatesAsync(int storeId, string keywords = null, bool? isActive = null)
@@ -161,7 +161,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="messageTemplate">Message template</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the message template copy
         /// </returns>
         public virtual async Task<MessageTemplate> CopyMessageTemplateAsync(MessageTemplate messageTemplate)

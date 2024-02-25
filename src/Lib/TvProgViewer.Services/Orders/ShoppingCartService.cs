@@ -141,7 +141,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart item is equal
         /// </returns>
         protected virtual async Task<bool> ShoppingCartItemIsEqualAsync(ShoppingCartItem shoppingCartItem,
@@ -211,7 +211,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="addRequiredTvChannels">Whether to add required tvchannels</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         protected virtual async Task<IList<string>> GetRequiredTvChannelWarningsAsync(User user, ShoppingCartType shoppingCartType, TvChannel tvchannel,
@@ -313,7 +313,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         protected virtual async Task<IList<string>> GetStandardWarningsAsync(User user, ShoppingCartType shoppingCartType, TvChannel tvchannel,
@@ -547,7 +547,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="quantity">Quantity</param>
         /// <param name="maximumQuantityCanBeAdded">The maximum quantity a tvchannel can be added</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings 
         /// </returns>
         protected virtual async Task<IList<string>> GetQuantityTvChannelWarningsAsync(TvChannel tvchannel, int quantity, int maximumQuantityCanBeAdded)
@@ -584,7 +584,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="shoppingCartItem">Shopping cart item</param>
         /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
         /// <param name="ensureOnlyActiveCheckoutAttributes">A value indicating whether to ensure that only active checkout attributes are attached to the current user</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteShoppingCartItemAsync(ShoppingCartItem shoppingCartItem, bool resetCheckoutData = true,
             bool ensureOnlyActiveCheckoutAttributes = false)
         {
@@ -652,7 +652,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="shoppingCartItemId">Shopping cart item ID</param>
         /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
         /// <param name="ensureOnlyActiveCheckoutAttributes">A value indicating whether to ensure that only active checkout attributes are attached to the current user</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteShoppingCartItemAsync(int shoppingCartItemId, bool resetCheckoutData = true,
             bool ensureOnlyActiveCheckoutAttributes = false)
         {
@@ -666,7 +666,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="olderThanUtc">Older than date and time</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of deleted items
         /// </returns>
         public virtual async Task<int> DeleteExpiredShoppingCartItemsAsync(DateTime olderThanUtc)
@@ -689,7 +689,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="cart">Shopping cart </param>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetTvChannelsRequiringTvChannelAsync(IList<ShoppingCartItem> cart, TvChannel tvchannel)
@@ -722,7 +722,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="createdFromUtc">Created date from (UTC); pass null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); pass null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping Cart
         /// </returns>
         public virtual async Task<IList<ShoppingCartItem>> GetShoppingCartAsync(User user, ShoppingCartType? shoppingCartType = null,
@@ -769,7 +769,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="ignoreBundledTvChannels">A value indicating whether we should ignore bundled (associated) tvchannels</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetShoppingCartItemAttributeWarningsAsync(User user,
@@ -977,7 +977,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetShoppingCartItemGiftCardWarningsAsync(ShoppingCartType shoppingCartType,
@@ -1024,7 +1024,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetRentalTvChannelWarningsAsync(TvChannel tvchannel,
@@ -1095,7 +1095,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="getRequiredTvChannelWarnings">A value indicating whether we should validate required tvchannels (tvchannels which require other tvchannels to be added to the cart)</param>
         /// <param name="getRentalWarnings">A value indicating whether we should validate rental properties</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetShoppingCartItemWarningsAsync(User user, ShoppingCartType shoppingCartType,
@@ -1142,7 +1142,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="checkoutAttributesXml">Checkout attributes in XML format</param>
         /// <param name="validateCheckoutAttributes">A value indicating whether to validate checkout attributes</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetShoppingCartWarningsAsync(IList<ShoppingCartItem> shoppingCart,
@@ -1342,7 +1342,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="shoppingCartItem">The shopping cart item</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart unit price (one item). Applied discount amount. Applied discounts
         /// </returns>
         public virtual async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(ShoppingCartItem shoppingCartItem,
@@ -1381,7 +1381,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="rentalEndDate">Rental end date (null for not rental tvchannels)</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart unit price (one item). Applied discount amount. Applied discounts
         /// </returns>
         public virtual async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(TvChannel tvchannel,
@@ -1490,7 +1490,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found shopping cart item
         /// </returns>
         public virtual async Task<ShoppingCartItem> FindShoppingCartItemInTheCartAsync(IList<ShoppingCartItem> shoppingCart,
@@ -1525,7 +1525,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="quantity">Quantity</param>
         /// <param name="addRequiredTvChannels">Whether to add required tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> AddToCartAsync(User user, TvChannel tvchannel,
@@ -1712,7 +1712,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="quantity">New shopping cart item quantity</param>
         /// <param name="resetCheckoutData">A value indicating whether to reset checkout data</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> UpdateShoppingCartItemAsync(User user,
@@ -1781,7 +1781,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="fromUser">From user</param>
         /// <param name="toUser">To user</param>
         /// <param name="includeCouponCodes">A value indicating whether to coupon codes (discount and gift card) should be also re-applied</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task MigrateShoppingCartAsync(User fromUser, User toUser, bool includeCouponCodes)
         {
             if (fromUser == null)
@@ -1837,7 +1837,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue if the shopping cart requires shipping; otherwise, false.
         /// </returns>
         public virtual async Task<bool> ShoppingCartRequiresShippingAsync(IList<ShoppingCartItem> shoppingCart)
@@ -1850,7 +1850,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<bool> ShoppingCartIsRecurringAsync(IList<ShoppingCartItem> shoppingCart)
@@ -1869,7 +1869,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the error (if exists); otherwise, empty string. Cycle length. Cycle period. Total cycles
         /// </returns>
         public virtual async Task<(string error, int cycleLength, RecurringTvChannelCyclePeriod cyclePeriod, int totalCycles)> GetRecurringCycleInfoAsync(IList<ShoppingCartItem> shoppingCart)

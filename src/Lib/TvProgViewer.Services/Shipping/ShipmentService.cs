@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Shipping
         /// Deletes a shipment
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteShipmentAsync(Shipment shipment)
         {
             await _shipmentRepository.DeleteAsync(shipment);
@@ -85,7 +85,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipments
         /// </returns>
         public virtual async Task<IPagedList<Shipment>> GetAllShipmentsAsync(int vendorId = 0, int warehouseId = 0,
@@ -207,7 +207,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentIds">Shipment identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipments
         /// </returns>
         public virtual async Task<IList<Shipment>> GetShipmentsByIdsAsync(int[] shipmentIds)
@@ -220,7 +220,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentId">Shipment identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment
         /// </returns>
         public virtual async Task<Shipment> GetShipmentByIdAsync(int shipmentId)
@@ -236,7 +236,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="readyForPickup">A value indicating whether to load only ready for pickup shipments; pass null to ignore</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<IList<Shipment>> GetShipmentsByOrderIdAsync(int orderId, bool? shipped = null, bool? readyForPickup = null, int vendorId = 0)
@@ -259,7 +259,7 @@ namespace TvProgViewer.Services.Shipping
         /// Inserts a shipment
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertShipmentAsync(Shipment shipment)
         {
             await _shipmentRepository.InsertAsync(shipment);
@@ -269,7 +269,7 @@ namespace TvProgViewer.Services.Shipping
         /// Updates the shipment
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateShipmentAsync(Shipment shipment)
         {
             await _shipmentRepository.UpdateAsync(shipment);
@@ -280,7 +280,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentId">Shipment identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment items
         /// </returns>
         public virtual async Task<IList<ShipmentItem>> GetShipmentItemsByShipmentIdAsync(int shipmentId)
@@ -295,7 +295,7 @@ namespace TvProgViewer.Services.Shipping
         /// Inserts a shipment item
         /// </summary>
         /// <param name="shipmentItem">Shipment item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertShipmentItemAsync(ShipmentItem shipmentItem)
         {
             await _siRepository.InsertAsync(shipmentItem);
@@ -305,7 +305,7 @@ namespace TvProgViewer.Services.Shipping
         /// Deletes a shipment item
         /// </summary>
         /// <param name="shipmentItem">Shipment Item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteShipmentItemAsync(ShipmentItem shipmentItem)
         {
             await _siRepository.DeleteAsync(shipmentItem);
@@ -315,7 +315,7 @@ namespace TvProgViewer.Services.Shipping
         /// Updates a shipment item
         /// </summary>
         /// <param name="shipmentItem">Shipment item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateShipmentItemAsync(ShipmentItem shipmentItem)
         {
             await _siRepository.UpdateAsync(shipmentItem);
@@ -326,7 +326,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentItemId">Shipment item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment item
         /// </returns>
         public virtual async Task<ShipmentItem> GetShipmentItemByIdAsync(int shipmentItemId)
@@ -342,7 +342,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="ignoreShipped">Ignore already shipped shipments</param>
         /// <param name="ignoreDelivered">Ignore already delivered shipments</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the quantity
         /// </returns>
         public virtual async Task<int> GetQuantityInShipmentsAsync(TvChannel tvchannel, int warehouseId,
@@ -404,7 +404,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipment">Shipment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment tracker
         /// </returns>
         public virtual async Task<IShipmentTracker> GetShipmentTrackerAsync(Shipment shipment)

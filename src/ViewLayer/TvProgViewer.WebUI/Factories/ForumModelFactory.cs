@@ -84,7 +84,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get the list of forum topic types
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the collection of the select list item
         /// </returns>
         protected virtual async Task<IEnumerable<SelectListItem>> ForumTopicTypesListAsync()
@@ -117,7 +117,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get the list of forum groups
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the collection of the select list item
         /// </returns>
         protected virtual async Task<IEnumerable<SelectListItem>> ForumGroupsForumsListAsync()
@@ -150,7 +150,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="forumGroup">Forum group</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum group model
         /// </returns>
         public virtual async Task<ForumGroupModel> PrepareForumGroupModelAsync(ForumGroup forumGroup)
@@ -178,7 +178,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the boards index model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the boards index model
         /// </returns>
         public virtual async Task<BoardsIndexModel> PrepareBoardsIndexModelAsync()
@@ -198,7 +198,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the active discussions model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the active discussions model
         /// </returns>
         public virtual async Task<ActiveDiscussionsModel> PrepareActiveDiscussionsModelAsync()
@@ -227,7 +227,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="forumId">Forum identifier</param>
         /// <param name="page">Number of forum topics page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the active discussions model
         /// </returns>
         public virtual async Task<ActiveDiscussionsModel> PrepareActiveDiscussionsModelAsync(int forumId, int page)
@@ -261,7 +261,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="forum">Forum</param>
         /// <param name="page">Number of forum topics page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum page model
         /// </returns>
         public virtual async Task<ForumPageModel> PrepareForumPageModelAsync(Forum forum, int page)
@@ -315,7 +315,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="forumTopic">Forum topic</param>
         /// <param name="page">Number of forum posts page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum topic page model
         /// </returns>
         public virtual async Task<ForumTopicPageModel> PrepareForumTopicPageModelAsync(ForumTopic forumTopic, int page)
@@ -431,7 +431,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="forumTopic">Forum topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opic move model
         /// </returns>
         public virtual async Task<TopicMoveModel> PrepareTopicMoveAsync(ForumTopic forumTopic)
@@ -455,7 +455,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="forum">Forum</param>
         /// <param name="model">Edit forum topic model</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareTopicCreateModelAsync(Forum forum, EditForumTopicModel model)
         {
             if (forum == null)
@@ -482,7 +482,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="forumTopic">Forum topic</param>
         /// <param name="model">Edit forum topic model</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareTopicEditModelAsync(ForumTopic forumTopic, EditForumTopicModel model, bool excludeProperties)
         {
             if (forumTopic == null)
@@ -529,7 +529,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="quote">Identifier of the quoted post; pass null to load the empty text</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the edit forum post model
         /// </returns>
         public virtual async Task<EditForumPostModel> PreparePostCreateModelAsync(ForumTopic forumTopic, int? quote, bool excludeProperties)
@@ -599,7 +599,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="forumPost">Forum post</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the edit forum post model
         /// </returns>
         public virtual async Task<EditForumPostModel> PreparePostEditModelAsync(ForumPost forumPost, bool excludeProperties)
@@ -653,7 +653,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="limitDays">Limit by the last number days; 0 to load all topics</param>
         /// <param name="page">Number of items page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search model
         /// </returns>
         public virtual async Task<SearchModel> PrepareSearchModelAsync(string searchterms, bool? advs, string forumId,
@@ -842,7 +842,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="forumPost">Forum post</param>
         /// <param name="showTopic">Whether to show topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the last post model
         /// </returns>
         public virtual async Task<LastPostModel> PrepareLastPostModelAsync(ForumPost forumPost, bool showTopic)
@@ -890,7 +890,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="forumId">Forum identifier; pass null to load breadcrumbs up to forum group</param>
         /// <param name="forumTopicId">Forum topic identifier; pass null to load breadcrumbs up to forum</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum breadcrumb model
         /// </returns>
         public virtual async Task<ForumBreadcrumbModel> PrepareForumBreadcrumbModelAsync(int? forumGroupId, int? forumId, int? forumTopicId)
@@ -933,7 +933,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="page">Number of items page; pass null to load the first page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user forum subscriptions model
         /// </returns>
         public virtual async Task<UserForumSubscriptionsModel> PrepareUserForumSubscriptionsModelAsync(int? page)
@@ -1010,7 +1010,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="topic">Forum topic</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum topic row model
         /// </returns>
         public virtual async Task<ForumTopicRowModel> PrepareForumTopicRowModelAsync(ForumTopic topic)
@@ -1049,7 +1049,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="forum">Forum</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum row model
         /// </returns>
         public virtual async Task<ForumRowModel> PrepareForumRowModelAsync(Forum forum)

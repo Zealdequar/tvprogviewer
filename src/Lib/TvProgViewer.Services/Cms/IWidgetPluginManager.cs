@@ -17,7 +17,7 @@ namespace TvProgViewer.Services.Cms
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <param name="widgetZone">Widget zone; pass null to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of active widget
         /// </returns>
         Task<IList<IWidgetPlugin>> LoadActivePluginsAsync(User user = null, int storeId = 0, string widgetZone = null);
@@ -36,7 +36,7 @@ namespace TvProgViewer.Services.Cms
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0);

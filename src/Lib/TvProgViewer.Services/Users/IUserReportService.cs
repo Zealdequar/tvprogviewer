@@ -26,7 +26,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the report
         /// </returns>
         Task<IPagedList<BestUserReportLine>> GetBestUsersReportAsync(DateTime? createdFromUtc,
@@ -38,7 +38,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="days">Users registered in the last days</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of registered users
         /// </returns>
         Task<int> GetRegisteredUsersReportAsync(int days);

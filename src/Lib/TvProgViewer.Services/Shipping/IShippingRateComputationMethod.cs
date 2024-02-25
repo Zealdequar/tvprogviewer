@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="getShippingOptionRequest">A request for getting shipping options</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the represents a response of getting shipping rate options
         /// </returns>
         Task<GetShippingOptionResponse> GetShippingOptionsAsync(GetShippingOptionRequest getShippingOptionRequest);
@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="getShippingOptionRequest">A request for getting shipping options</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the fixed shipping rate; or null in case there's no fixed shipping rate
         /// </returns>
         Task<decimal?> GetFixedRateAsync(GetShippingOptionRequest getShippingOptionRequest);
@@ -33,7 +33,7 @@ namespace TvProgViewer.Services.Shipping
         /// Get associated shipment tracker
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment tracker
         /// </returns>
         Task<IShipmentTracker> GetShipmentTrackerAsync();

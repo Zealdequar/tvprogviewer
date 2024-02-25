@@ -279,7 +279,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// </summary>
         /// <param name="pathBase">The base path for the store</param>
         /// <param name="lang">Two-letter language code</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<RoxyFilemanConfig> GetOrCreateConfigurationAsync(string pathBase, string lang)
         {
             //check whether the path base has changed, otherwise there is no need to overwrite the configuration file
@@ -476,7 +476,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// </summary>
         /// <param name="sourcePath">Path to the source directory</param>
         /// <param name="newName">New name of the directory</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual void RenameDirectory(string sourcePath, string newName)
         {
             try
@@ -495,7 +495,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// </summary>
         /// <param name="sourcePath">Path to the source file</param>
         /// <param name="newName">New name of the file</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual void RenameFile(string sourcePath, string newName)
         {
             try
@@ -513,7 +513,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// Delete the file
         /// </summary>
         /// <param name="path">Path to the file</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual void DeleteFile(string path)
         {
             var fileToDelete = GetFileInfo(path);
@@ -536,7 +536,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// </summary>
         /// <param name="sourcePath">Path to the source file</param>
         /// <param name="destinationPath">Path to the destination file</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual void CopyFile(string sourcePath, string destinationPath)
         {
             var sourceFile = GetFileInfo(sourcePath);
@@ -565,7 +565,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// </summary>
         /// <param name="parentDirectoryPath">Path to the parent directory</param>
         /// <param name="name">Name of the new directory</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual void CreateDirectory(string parentDirectoryPath, string name)
         {
             //validate path and get absolute form
@@ -609,7 +609,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// <param name="fileName">The file name and extension</param>
         /// <param name="contentType">Mime type</param>
         /// <param name="fileStream">The stream to read</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SaveFileAsync(string directoryPath, string fileName, string contentType, Stream fileStream)
         {
             var uniqueFileName = GetUniqueFileName(directoryPath, Path.GetFileName(fileName));

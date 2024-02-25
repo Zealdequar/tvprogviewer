@@ -20,7 +20,7 @@ namespace TvProgViewer.Core
         /// </summary>
         /// <param name="str">String</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the encoded string
         /// </returns>
         public static async Task<string> XmlEncodeAsync(string str)
@@ -37,7 +37,7 @@ namespace TvProgViewer.Core
         /// </summary>
         /// <param name="str">String</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the encoded string
         /// </returns>
         public static async Task<string> XmlEncodeAsIsAsync(string str)
@@ -78,7 +78,7 @@ namespace TvProgViewer.Core
         /// </summary>
         /// <param name="dateTime">Datetime</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the serialized datetime
         /// </returns>
         public static async Task<string> SerializeDateTimeAsync(DateTime dateTime)

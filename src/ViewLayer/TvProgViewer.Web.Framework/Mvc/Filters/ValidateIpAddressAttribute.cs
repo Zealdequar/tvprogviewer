@@ -109,7 +109,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// </summary>
             /// <param name="context">A context for action filters</param>
             /// <param name="next">A delegate invoked to execute the next action filter or the action itself</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
             {
                 ValidateIpAddress(context);

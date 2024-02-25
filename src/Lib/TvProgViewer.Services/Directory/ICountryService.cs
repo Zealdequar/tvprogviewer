@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Directory
         /// Deletes a country
         /// </summary>
         /// <param name="country">Country</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteCountryAsync(Country country);
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="languageId">Language identifier. It's used to sort countries by localized names (if specified); pass 0 to skip it</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the countries
         /// </returns>
         Task<IList<Country>> GetAllCountriesAsync(int languageId = 0, bool showHidden = false);
@@ -34,7 +34,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="languageId">Language identifier. It's used to sort countries by localized names (if specified); pass 0 to skip it</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the countries
         /// </returns>
         Task<IList<Country>> GetAllCountriesForBillingAsync(int languageId = 0, bool showHidden = false);
@@ -45,7 +45,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="languageId">Language identifier. It's used to sort countries by localized names (if specified); pass 0 to skip it</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the countries
         /// </returns>
         Task<IList<Country>> GetAllCountriesForShippingAsync(int languageId = 0, bool showHidden = false);
@@ -55,7 +55,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="address">Address</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country
         /// </returns>
         Task<Country> GetCountryByAddressAsync(Address address);
@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="countryId">Country identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country
         /// </returns>
         Task<Country> GetCountryByIdAsync(int countryId);
@@ -75,7 +75,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="countryIds">Country identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the countries
         /// </returns>
         Task<IList<Country>> GetCountriesByIdsAsync(int[] countryIds);
@@ -85,7 +85,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="twoLetterIsoCode">Country two letter ISO code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country
         /// </returns>
         Task<Country> GetCountryByTwoLetterIsoCodeAsync(string twoLetterIsoCode);
@@ -95,7 +95,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="threeLetterIsoCode">Country three letter ISO code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country
         /// </returns>
         Task<Country> GetCountryByThreeLetterIsoCodeAsync(string threeLetterIsoCode);
@@ -104,14 +104,14 @@ namespace TvProgViewer.Services.Directory
         /// Inserts a country
         /// </summary>
         /// <param name="country">Country</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertCountryAsync(Country country);
 
         /// <summary>
         /// Updates the country
         /// </summary>
         /// <param name="country">Country</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateCountryAsync(Country country);
     }
 }

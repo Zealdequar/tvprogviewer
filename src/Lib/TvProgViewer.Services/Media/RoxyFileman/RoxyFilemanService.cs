@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// Initial service configuration
         /// </summary>
         /// <param name="pathBase">The base path for the current request</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task ConfigureAsync(string pathBase)
         {
             var currentLanguage = await _workContext.GetWorkingLanguageAsync();
@@ -193,7 +193,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// </summary>
         /// <param name="directoryPath">Path to directory to upload files</param>
         /// <param name="files">Files sent with the HttpRequest</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task UploadFilesAsync(string directoryPath, IEnumerable<IFormFile> files)
         {
             foreach (var formFile in files)

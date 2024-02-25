@@ -34,7 +34,7 @@ namespace TvProgViewer.Services.Messages
         /// Inserts an email account
         /// </summary>
         /// <param name="emailAccount">Email account</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertEmailAccountAsync(EmailAccount emailAccount)
         {
             if (emailAccount == null)
@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Messages
         /// Updates an email account
         /// </summary>
         /// <param name="emailAccount">Email account</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateEmailAccountAsync(EmailAccount emailAccount)
         {
             if (emailAccount == null)
@@ -96,7 +96,7 @@ namespace TvProgViewer.Services.Messages
         /// Deletes an email account
         /// </summary>
         /// <param name="emailAccount">Email account</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteEmailAccountAsync(EmailAccount emailAccount)
         {
             if (emailAccount == null)
@@ -113,7 +113,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="emailAccountId">The email account identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the email account
         /// </returns>
         public virtual async Task<EmailAccount> GetEmailAccountByIdAsync(int emailAccountId)
@@ -125,7 +125,7 @@ namespace TvProgViewer.Services.Messages
         /// Gets all email accounts
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the email accounts list
         /// </returns>
         public virtual async Task<IList<EmailAccount>> GetAllEmailAccountsAsync()

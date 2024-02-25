@@ -19,7 +19,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="localeKeyGroup">Locale key group</param>
         /// <param name="localeKey">Locale key</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found localized properties
         /// </returns>
         Task<IList<LocalizedProperty>> GetEntityLocalizedPropertiesAsync(int entityId, string localeKeyGroup, string localeKey);
@@ -32,7 +32,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="localeKeyGroup">Locale key group</param>
         /// <param name="localeKey">Locale key</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found localized value
         /// </returns>
         Task<string> GetLocalizedValueAsync(int languageId, int entityId, string localeKeyGroup, string localeKey);
@@ -45,7 +45,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="keySelector">Key selector</param>
         /// <param name="localeValue">Locale value</param>
         /// <param name="languageId">Language ID</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveLocalizedValueAsync<T>(T entity,
             Expression<Func<T, string>> keySelector,
             string localeValue,
@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="keySelector">Key selector</param>
         /// <param name="localeValue">Locale value</param>
         /// <param name="languageId">Language ID</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveLocalizedValueAsync<T, TPropType>(T entity,
            Expression<Func<T, TPropType>> keySelector,
            TPropType localeValue,

@@ -41,7 +41,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Widget search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the widget search model
         /// </returns>
         public virtual Task<WidgetSearchModel> PrepareWidgetSearchModelAsync(WidgetSearchModel searchModel)
@@ -60,7 +60,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Widget search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the widget list model
         /// </returns>
         public virtual async Task<WidgetListModel> PrepareWidgetListModelAsync(WidgetSearchModel searchModel)
@@ -98,7 +98,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="widgetZone">Widget zone name</param>
         /// <param name="additionalData">Additional data</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of render widget models
         /// </returns>
         public virtual async Task<IList<RenderWidgetModel>> PrepareRenderWidgetModelsAsync(string widgetZone, object additionalData = null)

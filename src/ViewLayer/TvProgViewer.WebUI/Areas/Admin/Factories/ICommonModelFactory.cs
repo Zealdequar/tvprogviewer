@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">System info model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the system info model
         /// </returns>
         Task<SystemInfoModel> PrepareSystemInfoModelAsync(SystemInfoModel model);
@@ -23,7 +23,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare system warning models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of system warning models
         /// </returns>
         Task<IList<SystemWarningModel>> PrepareSystemWarningModelsAsync();
@@ -33,7 +33,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Maintenance model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the maintenance model
         /// </returns>
         Task<MaintenanceModel> PrepareMaintenanceModelAsync(MaintenanceModel model);
@@ -43,7 +43,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Backup file search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the backup file list model
         /// </returns>
         Task<BackupFileListModel> PrepareBackupFileListModelAsync(BackupFileSearchModel searchModel);
@@ -53,7 +53,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">URL record search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the uRL record search model
         /// </returns>
         Task<UrlRecordSearchModel> PrepareUrlRecordSearchModelAsync(UrlRecordSearchModel searchModel);
@@ -63,7 +63,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">URL record search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the uRL record list model
         /// </returns>
         Task<UrlRecordListModel> PrepareUrlRecordListModelAsync(UrlRecordSearchModel searchModel);
@@ -72,7 +72,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare language selector model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the language selector model
         /// </returns>
         Task<LanguageSelectorModel> PrepareLanguageSelectorModelAsync();
@@ -82,7 +82,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Popular search term search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the popular search term search model
         /// </returns>
         Task<PopularSearchTermSearchModel> PreparePopularSearchTermSearchModelAsync(PopularSearchTermSearchModel searchModel);
@@ -92,7 +92,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Popular search term search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the popular search term list model
         /// </returns>
         Task<PopularSearchTermListModel> PreparePopularSearchTermListModelAsync(PopularSearchTermSearchModel searchModel);
@@ -101,7 +101,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare common statistics model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the common statistics model
         /// </returns>
         Task<CommonStatisticsModel> PrepareCommonStatisticsModelAsync();

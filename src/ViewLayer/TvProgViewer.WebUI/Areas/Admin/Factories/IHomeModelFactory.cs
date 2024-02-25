@@ -13,7 +13,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Dashboard model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the dashboard model
         /// </returns>
         Task<DashboardModel> PrepareDashboardModelAsync(DashboardModel model);
@@ -22,7 +22,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare tvProgViewer news model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvProgViewer news model
         /// </returns>
         Task<TvProgViewerNewsModel> PrepareTvProgViewerNewsModelAsync();

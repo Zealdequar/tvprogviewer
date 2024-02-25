@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="usernameOrEmail">Username or email</param>
         /// <param name="password">Password</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<UserLoginResults> ValidateUserAsync(string usernameOrEmail, string password);
@@ -25,7 +25,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<UserRegistrationResult> RegisterUserAsync(UserRegistrationRequest request);
@@ -35,7 +35,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="request">Request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<ChangePasswordResult> ChangePasswordAsync(ChangePasswordRequest request);
@@ -47,7 +47,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="returnUrl">URL to which the user will return after authentication</param>
         /// <param name="isPersist">Is remember me</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result of an authentication
         /// </returns>
         Task<IActionResult> SignInUserAsync(User user, string returnUrl, bool isPersist = false);
@@ -58,7 +58,7 @@ namespace TvProgViewer.Services.Users
         /// <param name="user">User</param>
         /// <param name="newEmail">New email</param>
         /// <param name="requireValidation">Require validation of new email address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetEmailAsync(User user, string newEmail, bool requireValidation);
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="newUsername">New Username</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetUsernameAsync(User user, string newUsername);
     }
 }

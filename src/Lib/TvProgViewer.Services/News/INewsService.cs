@@ -17,7 +17,7 @@ namespace TvProgViewer.Services.News
         /// Deletes a news
         /// </summary>
         /// <param name="newsItem">News item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteNewsAsync(NewsItem newsItem);
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace TvProgViewer.Services.News
         /// </summary>
         /// <param name="newsId">The news identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news
         /// </returns>
         Task<NewsItem> GetNewsByIdAsync(int newsId);
@@ -40,7 +40,7 @@ namespace TvProgViewer.Services.News
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="title">Filter by news item title</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news items
         /// </returns>
         Task<IPagedList<NewsItem>> GetAllNewsAsync(int languageId = 0, int storeId = 0,
@@ -50,14 +50,14 @@ namespace TvProgViewer.Services.News
         /// Inserts a news item
         /// </summary>
         /// <param name="news">News item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertNewsAsync(NewsItem news);
 
         /// <summary>
         /// Updates the news item
         /// </summary>
         /// <param name="news">News item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateNewsAsync(NewsItem news);
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace TvProgViewer.Services.News
         /// <param name="toUtc">Item creation to; null to load all records</param>
         /// <param name="commentText">Search comment text; null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the comments
         /// </returns>
         Task<IList<NewsComment>> GetAllCommentsAsync(int userId = 0, int storeId = 0, int? newsItemId = null,
@@ -94,7 +94,7 @@ namespace TvProgViewer.Services.News
         /// </summary>
         /// <param name="newsCommentId">News comment identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news comment
         /// </returns>
         Task<NewsComment> GetNewsCommentByIdAsync(int newsCommentId);
@@ -104,7 +104,7 @@ namespace TvProgViewer.Services.News
         /// </summary>
         /// <param name="commentIds">News comment identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news comments
         /// </returns>
         Task<IList<NewsComment>> GetNewsCommentsByIdsAsync(int[] commentIds);
@@ -116,7 +116,7 @@ namespace TvProgViewer.Services.News
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
         /// <param name="isApproved">A value indicating whether to count only approved or not approved comments; pass null to get number of all comments</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of news comments
         /// </returns>
         Task<int> GetNewsCommentsCountAsync(NewsItem newsItem, int storeId = 0, bool? isApproved = null);
@@ -125,28 +125,28 @@ namespace TvProgViewer.Services.News
         /// Deletes a news comment
         /// </summary>
         /// <param name="newsComment">News comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteNewsCommentAsync(NewsComment newsComment);
 
         /// <summary>
         /// Deletes a news comments
         /// </summary>
         /// <param name="newsComments">News comments</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteNewsCommentsAsync(IList<NewsComment> newsComments);
 
         /// <summary>
         /// Inserts a news comment
         /// </summary>
         /// <param name="comment">News comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertNewsCommentAsync(NewsComment comment);
 
         /// <summary>
         /// Update a news comment
         /// </summary>
         /// <param name="comment">News comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateNewsCommentAsync(NewsComment comment);
 
         #endregion

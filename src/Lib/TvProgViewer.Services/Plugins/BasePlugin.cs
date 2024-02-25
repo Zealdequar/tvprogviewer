@@ -23,7 +23,7 @@ namespace TvProgViewer.Services.Plugins
         /// <summary>
         /// Install plugin
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task InstallAsync() 
         {
             return Task.CompletedTask;
@@ -32,7 +32,7 @@ namespace TvProgViewer.Services.Plugins
         /// <summary>
         /// Uninstall plugin
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task UninstallAsync() 
         {
             return Task.CompletedTask;
@@ -43,7 +43,7 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="currentVersion">Current version of plugin</param>
         /// <param name="targetVersion">New version of plugin</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task UpdateAsync(string currentVersion, string targetVersion)
         {
             return Task.CompletedTask;
@@ -52,7 +52,7 @@ namespace TvProgViewer.Services.Plugins
         /// <summary>
         /// Prepare plugin to the uninstallation
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual Task PreparePluginToUninstallAsync()
         {
             //any can put any custom validation logic here

@@ -35,7 +35,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="keyword">Search term keyword</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the search term
         /// </returns>
         public virtual async Task<SearchTerm> GetSearchTermByKeywordAsync(string keyword, int storeId)
@@ -58,7 +58,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a list search term report lines
         /// </returns>
         public virtual async Task<IPagedList<SearchTermReportLine>> GetStatsAsync(int pageIndex = 0, int pageSize = int.MaxValue)
@@ -86,7 +86,7 @@ namespace TvProgViewer.Services.Common
         /// Inserts a search term record
         /// </summary>
         /// <param name="searchTerm">Search term</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertSearchTermAsync(SearchTerm searchTerm)
         {
             await _searchTermRepository.InsertAsync(searchTerm);
@@ -96,7 +96,7 @@ namespace TvProgViewer.Services.Common
         /// Updates the search term record
         /// </summary>
         /// <param name="searchTerm">Search term</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateSearchTermAsync(SearchTerm searchTerm)
         {
             await _searchTermRepository.UpdateAsync(searchTerm);

@@ -16,7 +16,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="page">Number of items page; pass null to disable paging</param>
         /// <param name="tab">Tab name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message index model
         /// </returns>
         Task<PrivateMessageIndexModel> PreparePrivateMessageIndexModelAsync(int? page, string tab);
@@ -27,7 +27,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="page">Number of items page</param>
         /// <param name="tab">Tab name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message list model
         /// </returns>
         Task<PrivateMessageListModel> PrepareInboxModelAsync(int page, string tab);
@@ -38,7 +38,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="page">Number of items page</param>
         /// <param name="tab">Tab name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message list model
         /// </returns>
         Task<PrivateMessageListModel> PrepareSentModelAsync(int page, string tab);
@@ -49,7 +49,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="userTo">User, recipient of the message</param>
         /// <param name="replyToPM">Private message, pass if reply to a previous message is need</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the send private message model
         /// </returns>
         Task<SendPrivateMessageModel> PrepareSendPrivateMessageModelAsync(User userTo,
@@ -60,7 +60,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pm">Private message</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the private message model
         /// </returns>
         Task<PrivateMessageModel> PreparePrivateMessageModelAsync(PrivateMessage pm);

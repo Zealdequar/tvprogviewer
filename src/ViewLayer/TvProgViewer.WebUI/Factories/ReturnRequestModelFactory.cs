@@ -77,7 +77,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">Submit return request model</param>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the submit return request model
         /// </returns>
         public virtual async Task<SubmitReturnRequestModel> PrepareSubmitReturnRequestModelAsync(SubmitReturnRequestModel model,
@@ -120,7 +120,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the user return requests model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user return requests model
         /// </returns>
         public virtual async Task<UserReturnRequestsModel> PrepareUserReturnRequestsModelAsync()

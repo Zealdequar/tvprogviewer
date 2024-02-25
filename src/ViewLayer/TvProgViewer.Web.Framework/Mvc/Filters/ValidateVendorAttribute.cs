@@ -69,7 +69,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// Called early in the filter pipeline to confirm request is authorized
             /// </summary>
             /// <param name="context">Authorization filter context</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             private async Task ValidateVendorAsync(AuthorizationFilterContext context)
             {
                 if (context == null)
@@ -108,7 +108,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Filters
             /// Called early in the filter pipeline to confirm request is authorized
             /// </summary>
             /// <param name="context">Authorization filter context</param>
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
             {
                 await ValidateVendorAsync(context);

@@ -39,7 +39,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="emailAccount">Email account to use. If null, then would be used EmailAccount by default</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the an SMTP client that can be used to send email messages
         /// </returns>
         public virtual async Task<SmtpClient> BuildAsync(EmailAccount emailAccount = null)

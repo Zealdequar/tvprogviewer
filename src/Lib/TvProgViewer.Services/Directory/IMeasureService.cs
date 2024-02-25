@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Directory
         /// Deletes measure dimension
         /// </summary>
         /// <param name="measureDimension">Measure dimension</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteMeasureDimensionAsync(MeasureDimension measureDimension);
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="measureDimensionId">Measure dimension identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the measure dimension
         /// </returns>
         Task<MeasureDimension> GetMeasureDimensionByIdAsync(int measureDimensionId);
@@ -31,7 +31,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="systemKeyword">The system keyword</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the measure dimension
         /// </returns>
         Task<MeasureDimension> GetMeasureDimensionBySystemKeywordAsync(string systemKeyword);
@@ -40,7 +40,7 @@ namespace TvProgViewer.Services.Directory
         /// Gets all measure dimensions
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the measure dimensions
         /// </returns>
         Task<IList<MeasureDimension>> GetAllMeasureDimensionsAsync();
@@ -49,14 +49,14 @@ namespace TvProgViewer.Services.Directory
         /// Inserts a measure dimension
         /// </summary>
         /// <param name="measure">Measure dimension</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertMeasureDimensionAsync(MeasureDimension measure);
 
         /// <summary>
         /// Updates the measure dimension
         /// </summary>
         /// <param name="measure">Measure dimension</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateMeasureDimensionAsync(MeasureDimension measure);
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="targetMeasureDimension">Target dimension</param>
         /// <param name="round">A value indicating whether a result should be rounded</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertDimensionAsync(decimal value,
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="value">Value to convert</param>
         /// <param name="targetMeasureDimension">Target dimension</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertFromPrimaryMeasureDimensionAsync(decimal value,
@@ -89,7 +89,7 @@ namespace TvProgViewer.Services.Directory
         /// Deletes measure weight
         /// </summary>
         /// <param name="measureWeight">Measure weight</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteMeasureWeightAsync(MeasureWeight measureWeight);
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="measureWeightId">Measure weight identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the measure weight
         /// </returns>
         Task<MeasureWeight> GetMeasureWeightByIdAsync(int measureWeightId);
@@ -107,7 +107,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="systemKeyword">The system keyword</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the measure weight
         /// </returns>
         Task<MeasureWeight> GetMeasureWeightBySystemKeywordAsync(string systemKeyword);
@@ -116,7 +116,7 @@ namespace TvProgViewer.Services.Directory
         /// Gets all measure weights
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the measure weights
         /// </returns>
         Task<IList<MeasureWeight>> GetAllMeasureWeightsAsync();
@@ -125,14 +125,14 @@ namespace TvProgViewer.Services.Directory
         /// Inserts a measure weight
         /// </summary>
         /// <param name="measure">Measure weight</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertMeasureWeightAsync(MeasureWeight measure);
 
         /// <summary>
         /// Updates the measure weight
         /// </summary>
         /// <param name="measure">Measure weight</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateMeasureWeightAsync(MeasureWeight measure);
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="targetMeasureWeight">Target weight</param>
         /// <param name="round">A value indicating whether a result should be rounded</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertWeightAsync(decimal value,
@@ -155,7 +155,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="value">Value to convert</param>
         /// <param name="targetMeasureWeight">Target weight</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertFromPrimaryMeasureWeightAsync(decimal value,
@@ -167,7 +167,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="value">Value to convert</param>
         /// <param name="sourceMeasureDimension">Source dimension</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertToPrimaryMeasureDimensionAsync(decimal value,
@@ -179,7 +179,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="value">Value to convert</param>
         /// <param name="sourceMeasureWeight">Source weight</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertToPrimaryMeasureWeightAsync(decimal value, MeasureWeight sourceMeasureWeight);

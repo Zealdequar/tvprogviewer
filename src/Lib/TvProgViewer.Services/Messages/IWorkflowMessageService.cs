@@ -25,7 +25,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendUserRegisteredStoreOwnerNotificationMessageAsync(User user, int languageId);
@@ -36,7 +36,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendUserWelcomeMessageAsync(User user, int languageId);
@@ -47,7 +47,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendUserEmailValidationMessageAsync(User user, int languageId);
@@ -58,7 +58,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendUserEmailRevalidationMessageAsync(User user, int languageId);
@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendUserPasswordRecoveryMessageAsync(User user, int languageId);
@@ -85,7 +85,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="vendor">Vendor instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPlacedVendorNotificationAsync(Order order, Vendor vendor, int languageId);
@@ -96,7 +96,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order">Order instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPlacedStoreOwnerNotificationAsync(Order order, int languageId);
@@ -107,7 +107,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order">Order instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPlacedAffiliateNotificationAsync(Order order, int languageId);
@@ -118,7 +118,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order">Order instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPaidStoreOwnerNotificationAsync(Order order, int languageId);
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="attachmentFilePath">Attachment file path</param>
         /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPaidUserNotificationAsync(Order order, int languageId,
@@ -144,7 +144,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="vendor">Vendor instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPaidVendorNotificationAsync(Order order, Vendor vendor, int languageId);
@@ -155,7 +155,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order">Order instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPaidAffiliateNotificationAsync(Order order, int languageId);
@@ -168,7 +168,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="attachmentFilePath">Attachment file path</param>
         /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderPlacedUserNotificationAsync(Order order, int languageId,
@@ -180,7 +180,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="shipment">Shipment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendShipmentSentUserNotificationAsync(Shipment shipment, int languageId);
@@ -191,7 +191,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="shipment">Shipment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendShipmentReadyForPickupNotificationAsync(Shipment shipment, int languageId);
@@ -202,7 +202,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="shipment">Shipment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendShipmentDeliveredUserNotificationAsync(Shipment shipment, int languageId);
@@ -215,7 +215,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="attachmentFilePath">Attachment file path</param>
         /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderProcessingUserNotificationAsync(Order order, int languageId,
@@ -229,7 +229,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="attachmentFilePath">Attachment file path</param>
         /// <param name="attachmentFileName">Attachment file name. If specified, then this file name will be sent to a recipient. Otherwise, "AttachmentFilePath" name will be used.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderCompletedUserNotificationAsync(Order order, int languageId,
@@ -241,7 +241,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order">Order instance</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderCancelledUserNotificationAsync(Order order, int languageId);
@@ -253,7 +253,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="refundedAmount">Amount refunded</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderRefundedStoreOwnerNotificationAsync(Order order, decimal refundedAmount, int languageId);
@@ -265,7 +265,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="refundedAmount">Amount refunded</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendOrderRefundedUserNotificationAsync(Order order, decimal refundedAmount, int languageId);
@@ -276,7 +276,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="orderNote">Order note</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewOrderNoteAddedUserNotificationAsync(OrderNote orderNote, int languageId);
@@ -287,7 +287,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="recurringPayment">Recurring payment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendRecurringPaymentCancelledStoreOwnerNotificationAsync(RecurringPayment recurringPayment, int languageId);
@@ -298,7 +298,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="recurringPayment">Recurring payment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendRecurringPaymentCancelledUserNotificationAsync(RecurringPayment recurringPayment, int languageId);
@@ -309,7 +309,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="recurringPayment">Recurring payment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendRecurringPaymentFailedUserNotificationAsync(RecurringPayment recurringPayment, int languageId);
@@ -324,7 +324,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="subscription">Newsletter subscription</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewsLetterSubscriptionActivationMessageAsync(NewsLetterSubscription subscription, int languageId);
@@ -335,7 +335,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="subscription">Newsletter subscription</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewsLetterSubscriptionDeactivationMessageAsync(NewsLetterSubscription subscription, int languageId);
@@ -354,7 +354,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="friendsEmail">Friend's email</param>
         /// <param name="personalMessage">Personal message</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendTvChannelEmailAFriendMessageAsync(User user, int languageId,
@@ -369,7 +369,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="friendsEmail">Friend's email</param>
         /// <param name="personalMessage">Personal message</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendWishlistEmailAFriendMessageAsync(User user, int languageId,
@@ -387,7 +387,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="order">Order</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewReturnRequestStoreOwnerNotificationAsync(ReturnRequest returnRequest, OrderItem orderItem, Order order, int languageId);
@@ -399,7 +399,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="orderItem">Order item</param>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewReturnRequestUserNotificationAsync(ReturnRequest returnRequest, OrderItem orderItem, Order order);
@@ -411,7 +411,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="orderItem">Order item</param>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendReturnRequestStatusChangedUserNotificationAsync(ReturnRequest returnRequest, OrderItem orderItem, Order order);
@@ -428,7 +428,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="forum">Forum</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewForumTopicMessageAsync(User user, ForumTopic forumTopic, Forum forum, int languageId);
@@ -443,7 +443,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="friendlyForumTopicPageIndex">Friendly (starts with 1) forum topic page to use for URL generation</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewForumPostMessageAsync(User user, ForumPost forumPost,
@@ -455,7 +455,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="privateMessage">Private message</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendPrivateMessageNotificationAsync(PrivateMessage privateMessage, int languageId);
@@ -471,7 +471,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="vendor">Vendor</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewVendorAccountApplyStoreOwnerNotificationAsync(User user, Vendor vendor, int languageId);
@@ -482,7 +482,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="vendor">Vendor</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendVendorInformationChangeStoreOwnerNotificationAsync(Vendor vendor, int languageId);
@@ -493,7 +493,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tvchannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendTvChannelReviewStoreOwnerNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId);
@@ -504,7 +504,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tvchannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendTvChannelReviewReplyUserNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId);
@@ -515,7 +515,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="giftCard">Gift card</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendGiftCardNotificationAsync(GiftCard giftCard, int languageId);
@@ -526,7 +526,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannel tvchannel, int languageId);
@@ -537,7 +537,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="combination">Attribute combination</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannelAttributeCombination combination, int languageId);
@@ -550,7 +550,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="vatAddress">Received VAT address</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewVatSubmittedStoreOwnerNotificationAsync(User user, string vatName, string vatAddress, int languageId);
@@ -561,7 +561,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="blogComment">Blog comment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendBlogCommentStoreOwnerNotificationMessageAsync(BlogComment blogComment, int languageId);
@@ -572,7 +572,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="newsComment">News comment</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendNewsCommentStoreOwnerNotificationMessageAsync(NewsComment newsComment, int languageId);
@@ -583,7 +583,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="subscription">Subscription</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendBackInStockNotificationAsync(BackInStockSubscription subscription, int languageId);
@@ -597,7 +597,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="subject">Email subject. Pass null if you want a message template subject to be used.</param>
         /// <param name="body">Email body</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendContactUsMessageAsync(int languageId, string senderEmail, string senderName, string subject, string body);
@@ -612,7 +612,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="subject">Email subject. Pass null if you want a message template subject to be used.</param>
         /// <param name="body">Email body</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendContactVendorMessageAsync(Vendor vendor, int languageId, string senderEmail, string senderName, string subject, string body);
@@ -625,7 +625,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="tokens">Tokens</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<int> SendTestEmailAsync(int messageTemplateId, string sendToEmail, List<Token> tokens, int languageId);
@@ -651,7 +651,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="fromName">Sender name. If specified, then it overrides passed "emailAccount" details</param>
         /// <param name="subject">Subject. If specified, then it overrides subject of a message template</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
         Task<int> SendNotificationAsync(MessageTemplate messageTemplate,

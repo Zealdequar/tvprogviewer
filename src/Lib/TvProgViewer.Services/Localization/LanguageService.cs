@@ -49,7 +49,7 @@ namespace TvProgViewer.Services.Localization
         /// Deletes a language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteLanguageAsync(Language language)
         {
             if (language == null)
@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="storeId">Load records allowed only in a specified store; pass 0 to load all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the languages
         /// </returns>
         public virtual async Task<IList<Language>> GetAllLanguagesAsync(bool showHidden = false, int storeId = 0)
@@ -148,7 +148,7 @@ namespace TvProgViewer.Services.Localization
         /// </summary>
         /// <param name="languageId">Language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the language
         /// </returns>
         public virtual async Task<Language> GetLanguageByIdAsync(int languageId)
@@ -160,7 +160,7 @@ namespace TvProgViewer.Services.Localization
         /// Inserts a language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertLanguageAsync(Language language)
         {
             await _languageRepository.InsertAsync(language);
@@ -170,7 +170,7 @@ namespace TvProgViewer.Services.Localization
         /// Updates a language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateLanguageAsync(Language language)
         {
             //update language

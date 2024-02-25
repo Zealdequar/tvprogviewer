@@ -16,7 +16,7 @@ namespace TvProgViewer.Web.Framework.Menu
         /// Load sitemap
         /// </summary>
         /// <param name="physicalPath">Filepath to load a sitemap</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task LoadFromAsync(string physicalPath);
     }
 }

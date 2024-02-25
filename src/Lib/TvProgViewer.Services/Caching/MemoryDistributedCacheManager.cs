@@ -47,7 +47,7 @@ namespace TvProgViewer.Services.Caching
         /// </summary>
         /// <param name="prefix">Cache key prefix</param>
         /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public override async Task RemoveByPrefixAsync(string prefix, params object[] prefixParameters)
         {
             using (var _ = _locker.Lock())
@@ -92,7 +92,7 @@ namespace TvProgViewer.Services.Caching
         /// <summary>
         /// Clear all cache data
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public override async Task ClearAsync()
         {
             using (var _ = _locker.Lock())

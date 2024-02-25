@@ -50,7 +50,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="subscription">The newsletter subscription.</param>
         /// <param name="isSubscribe">if set to <c>true</c> [is subscribe].</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task PublishSubscriptionEventAsync(NewsLetterSubscription subscription, bool isSubscribe, bool publishSubscriptionEvents)
         {
             if (!publishSubscriptionEvents) 
@@ -75,7 +75,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscription">NewsLetter subscription</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertNewsLetterSubscriptionAsync(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
         {
             if (newsLetterSubscription == null)
@@ -99,7 +99,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscription">NewsLetter subscription</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateNewsLetterSubscriptionAsync(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
         {
             if (newsLetterSubscription == null)
@@ -141,7 +141,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscription">NewsLetter subscription</param>
         /// <param name="publishSubscriptionEvents">if set to <c>true</c> [publish subscription events].</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteNewsLetterSubscriptionAsync(NewsLetterSubscription newsLetterSubscription, bool publishSubscriptionEvents = true)
         {
             if (newsLetterSubscription == null) 
@@ -158,7 +158,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscriptionId">The newsletter subscription identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the newsLetter subscription
         /// </returns>
         public virtual async Task<NewsLetterSubscription> GetNewsLetterSubscriptionByIdAsync(int newsLetterSubscriptionId)
@@ -171,7 +171,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="newsLetterSubscriptionGuid">The newsletter subscription GUID</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the newsLetter subscription
         /// </returns>
         public virtual async Task<NewsLetterSubscription> GetNewsLetterSubscriptionByGuidAsync(Guid newsLetterSubscriptionGuid)
@@ -192,7 +192,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="email">The newsletter subscription email</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the newsLetter subscription
         /// </returns>
         public virtual async Task<NewsLetterSubscription> GetNewsLetterSubscriptionByEmailAndStoreIdAsync(string email, int storeId)
@@ -222,7 +222,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the newsLetterSubscription entities
         /// </returns>
         public virtual async Task<IPagedList<NewsLetterSubscription>> GetAllNewsLetterSubscriptionsAsync(string email = null,

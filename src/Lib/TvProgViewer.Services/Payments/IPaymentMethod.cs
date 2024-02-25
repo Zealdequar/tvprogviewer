@@ -19,7 +19,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="processPaymentRequest">Payment info required for an order processing</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the process payment result
         /// </returns>
         Task<ProcessPaymentResult> ProcessPaymentAsync(ProcessPaymentRequest processPaymentRequest);
@@ -28,7 +28,7 @@ namespace TvProgViewer.Services.Payments
         /// Post process payment (used by payment gateways that require redirecting to a third-party URL)
         /// </summary>
         /// <param name="postProcessPaymentRequest">Payment info required for an order processing</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PostProcessPaymentAsync(PostProcessPaymentRequest postProcessPaymentRequest);
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="cart">Shopping cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rue - hide; false - display.
         /// </returns>
         Task<bool> HidePaymentMethodAsync(IList<ShoppingCartItem> cart);
@@ -46,7 +46,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="cart">Shopping cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the additional handling fee
         /// </returns>
         Task<decimal> GetAdditionalHandlingFeeAsync(IList<ShoppingCartItem> cart);
@@ -56,7 +56,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="capturePaymentRequest">Capture payment request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the capture payment result
         /// </returns>
         Task<CapturePaymentResult> CaptureAsync(CapturePaymentRequest capturePaymentRequest);
@@ -66,7 +66,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="refundPaymentRequest">Request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<RefundPaymentResult> RefundAsync(RefundPaymentRequest refundPaymentRequest);
@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="voidPaymentRequest">Request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<VoidPaymentResult> VoidAsync(VoidPaymentRequest voidPaymentRequest);
@@ -86,7 +86,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="processPaymentRequest">Payment info required for an order processing</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the process payment result
         /// </returns>
         Task<ProcessPaymentResult> ProcessRecurringPaymentAsync(ProcessPaymentRequest processPaymentRequest);
@@ -96,7 +96,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="cancelPaymentRequest">Request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<CancelRecurringPaymentResult> CancelRecurringPaymentAsync(CancelRecurringPaymentRequest cancelPaymentRequest);
@@ -106,7 +106,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> CanRePostProcessPaymentAsync(Order order);
@@ -116,7 +116,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="form">The parsed form values</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of validating errors
         /// </returns>
         Task<IList<string>> ValidatePaymentFormAsync(IFormCollection form);
@@ -126,7 +126,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="form">The parsed form values</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the payment info holder
         /// </returns>
         Task<ProcessPaymentRequest> GetPaymentInfoAsync(IFormCollection form);
@@ -140,7 +140,7 @@ namespace TvProgViewer.Services.Payments
         /// <summary>
         /// Gets a payment method description that will be displayed on checkout pages in the public store
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<string> GetPaymentMethodDescriptionAsync();
 
         #endregion

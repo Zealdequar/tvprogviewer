@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Catalog.Caching
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <param name="entityEventType">Entity event type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(TvChannelTag entity, EntityEventType entityEventType)
         {
             await RemoveByPrefixAsync(TvProgEntityCacheDefaults<TvChannelTag>.Prefix);

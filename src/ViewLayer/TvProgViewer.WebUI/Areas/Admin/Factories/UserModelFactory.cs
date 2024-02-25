@@ -175,7 +175,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare the reward points model to add to the user
         /// </summary>
         /// <param name="model">Reward points model to add to the user</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareAddRewardPointsToUserModelAsync(AddRewardPointsToUserModel model)
         {
             if (model == null)
@@ -196,7 +196,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="models">List of user associated external authorization models</param>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareAssociatedExternalAuthModelsAsync(IList<UserAssociatedExternalAuthModel> models, User user)
         {
             if (models == null)
@@ -227,7 +227,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="models">List of user attribute models</param>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareUserAttributeModelsAsync(IList<UserModel.UserAttributeModel> models, User user)
         {
             if (models == null)
@@ -322,7 +322,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Address model</param>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareModelAddressHtmlAsync(AddressModel model, Address address)
         {
             if (model == null)
@@ -438,7 +438,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User shopping cart search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user shopping cart search model
         /// </returns>
         protected virtual async Task<UserShoppingCartSearchModel> PrepareUserShoppingCartSearchModelAsync(UserShoppingCartSearchModel searchModel,
@@ -513,7 +513,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User back in stock subscriptions search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user back in stock subscriptions search model
         /// </returns>
         protected virtual async Task<UserAssociatedExternalAuthRecordsSearchModel> PrepareUserAssociatedExternalAuthRecordsSearchModelAsync(
@@ -544,7 +544,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user search model
         /// </returns>
         public virtual async Task<UserSearchModel> PrepareUserSearchModelAsync(UserSearchModel searchModel)
@@ -581,7 +581,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user list model
         /// </returns>
         public virtual async Task<UserListModel> PrepareUserListModelAsync(UserSearchModel searchModel)
@@ -681,7 +681,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="user">User</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user model
         /// </returns>
         public virtual async Task<UserModel> PrepareUserModelAsync(UserModel model, User user, bool excludeProperties = false)
@@ -846,7 +846,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Reward points search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the reward points list model
         /// </returns>
         public virtual async Task<UserRewardPointsListModel> PrepareRewardPointsListModelAsync(UserRewardPointsSearchModel searchModel, User user)
@@ -897,7 +897,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User address search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user address list model
         /// </returns>
         public virtual async Task<UserAddressListModel> PrepareUserAddressListModelAsync(UserAddressSearchModel searchModel, User user)
@@ -942,7 +942,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="address">Address</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user address model
         /// </returns>
         public virtual async Task<UserAddressModel> PrepareUserAddressModelAsync(UserAddressModel model,
@@ -986,7 +986,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User order search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user order list model
         /// </returns>
         public virtual async Task<UserOrderListModel> PrepareUserOrderListModelAsync(UserOrderSearchModel searchModel, User user)
@@ -1032,7 +1032,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User shopping cart search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user shopping cart list model
         /// </returns>
         public virtual async Task<UserShoppingCartListModel> PrepareUserShoppingCartListModelAsync(UserShoppingCartSearchModel searchModel,
@@ -1085,7 +1085,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User activity log search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user activity log list model
         /// </returns>
         public virtual async Task<UserActivityLogListModel> PrepareUserActivityLogListModelAsync(UserActivityLogSearchModel searchModel, User user)
@@ -1127,7 +1127,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">User back in stock subscriptions search model</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user back in stock subscriptions list model
         /// </returns>
         public virtual async Task<UserBackInStockSubscriptionListModel> PrepareUserBackInStockSubscriptionListModelAsync(
@@ -1171,7 +1171,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Online user search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the online user search model
         /// </returns>
         public virtual Task<OnlineUserSearchModel> PrepareOnlineUserSearchModelAsync(OnlineUserSearchModel searchModel)
@@ -1190,7 +1190,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Online user search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the online user list model
         /// </returns>
         public virtual async Task<OnlineUserListModel> PrepareOnlineUserListModelAsync(OnlineUserSearchModel searchModel)
@@ -1241,7 +1241,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">GDPR request search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR request search model
         /// </returns>
         public virtual async Task<GdprLogSearchModel> PrepareGdprLogSearchModelAsync(GdprLogSearchModel searchModel)
@@ -1263,7 +1263,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">GDPR request search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR request list model
         /// </returns>
         public virtual async Task<GdprLogListModel> PrepareGdprLogListModelAsync(GdprLogSearchModel searchModel)

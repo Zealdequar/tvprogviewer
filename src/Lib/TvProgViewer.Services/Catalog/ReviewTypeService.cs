@@ -41,7 +41,7 @@ namespace TvProgViewer.Services.Catalog
         /// Gets all review types
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the review types
         /// </returns>
         public virtual async Task<IList<ReviewType>> GetAllReviewTypesAsync()
@@ -56,7 +56,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="reviewTypeId">Review type identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the review type
         /// </returns>
         public virtual async Task<ReviewType> GetReviewTypeByIdAsync(int reviewTypeId)
@@ -68,7 +68,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a review type
         /// </summary>
         /// <param name="reviewType">Review type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertReviewTypeAsync(ReviewType reviewType)
         {
             await _reviewTypeRepository.InsertAsync(reviewType);
@@ -78,7 +78,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates a review type
         /// </summary>
         /// <param name="reviewType">Review type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateReviewTypeAsync(ReviewType reviewType)
         {
             await _reviewTypeRepository.UpdateAsync(reviewType);
@@ -88,7 +88,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete review type
         /// </summary>
         /// <param name="reviewType">Review type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteReviewTypeAsync(ReviewType reviewType)
         {
             await _reviewTypeRepository.DeleteAsync(reviewType);
@@ -103,7 +103,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelReviewId">The tvchannel review identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel review and review type mapping collection
         /// </returns>
         public async Task<IList<TvChannelReviewReviewTypeMapping>> GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(
@@ -125,7 +125,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel review and review type mapping
         /// </summary>
         /// <param name="tvchannelReviewReviewType">TvChannel review and review type mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelReviewReviewTypeMappingsAsync(TvChannelReviewReviewTypeMapping tvchannelReviewReviewType)
         {
             await _tvchannelReviewReviewTypeMappingRepository.InsertAsync(tvchannelReviewReviewType);

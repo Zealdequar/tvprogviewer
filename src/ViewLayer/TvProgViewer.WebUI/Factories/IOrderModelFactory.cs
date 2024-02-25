@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the user order list model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user order list model
         /// </returns>
         Task<UserOrderListModel> PrepareUserOrderListModelAsync();
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order details model
         /// </returns>
         Task<OrderDetailsModel> PrepareOrderDetailsModelAsync(Order order);
@@ -34,7 +34,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="shipment">Shipment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment details model
         /// </returns>
         Task<ShipmentDetailsModel> PrepareShipmentDetailsModelAsync(Shipment shipment);
@@ -44,7 +44,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="page">Number of items page; pass null to load the first page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user reward points model
         /// </returns>
         Task<UserRewardPointsModel> PrepareUserRewardPointsAsync(int? page);

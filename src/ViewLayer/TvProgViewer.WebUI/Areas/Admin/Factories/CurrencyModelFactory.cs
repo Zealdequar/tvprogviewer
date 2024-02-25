@@ -59,7 +59,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Currency exchange rate provider model</param>
         /// <param name="prepareExchangeRates">Whether to prepare exchange rate models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareExchangeRateProviderModelAsync(CurrencyExchangeRateProviderModel model, bool prepareExchangeRates)
         {
             if (model == null)
@@ -86,7 +86,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare exchange rate models
         /// </summary>
         /// <param name="models">List of currency exchange rate model</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareExchangeRateModelsAsync(IList<CurrencyExchangeRateModel> models)
         {
             if (models == null)
@@ -118,7 +118,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Currency search model</param>
         /// <param name="prepareExchangeRates">Whether to prepare exchange rate models</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the currency search model
         /// </returns>
         public virtual async Task<CurrencySearchModel> PrepareCurrencySearchModelAsync(CurrencySearchModel searchModel, bool prepareExchangeRates = false)
@@ -140,7 +140,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Currency search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the currency list model
         /// </returns>
         public virtual async Task<CurrencyListModel> PrepareCurrencyListModelAsync(CurrencySearchModel searchModel)
@@ -177,7 +177,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="currency">Currency</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the currency model
         /// </returns>
         public virtual async Task<CurrencyModel> PrepareCurrencyModelAsync(CurrencyModel model, Currency currency, bool excludeProperties = false)

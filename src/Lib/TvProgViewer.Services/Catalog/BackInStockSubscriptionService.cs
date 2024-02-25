@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete a back in stock subscription
         /// </summary>
         /// <param name="subscription">Subscription</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteSubscriptionAsync(BackInStockSubscription subscription)
         {
             await _backInStockSubscriptionRepository.DeleteAsync(subscription);
@@ -58,7 +58,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the subscriptions
         /// </returns>
         public virtual async Task<IPagedList<BackInStockSubscription>> GetAllSubscriptionsByUserIdAsync(int userId,
@@ -92,7 +92,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the subscriptions
         /// </returns>
         public virtual async Task<BackInStockSubscription> FindSubscriptionAsync(int userId, int tvchannelId, int storeId)
@@ -114,7 +114,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="subscriptionId">Subscription identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the subscription
         /// </returns>
         public virtual async Task<BackInStockSubscription> GetSubscriptionByIdAsync(int subscriptionId)
@@ -126,7 +126,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts subscription
         /// </summary>
         /// <param name="subscription">Subscription</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertSubscriptionAsync(BackInStockSubscription subscription)
         {
             await _backInStockSubscriptionRepository.InsertAsync(subscription);
@@ -137,7 +137,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of sent email
         /// </returns>
         public virtual async Task<int> SendNotificationsToSubscribersAsync(TvChannel tvchannel)
@@ -167,7 +167,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the subscriptions
         /// </returns>
         public virtual async Task<IPagedList<BackInStockSubscription>> GetAllSubscriptionsByTvChannelIdAsync(int tvchannelId,

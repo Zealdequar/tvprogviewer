@@ -31,7 +31,7 @@ namespace TvProgViewer.Services.Authentication.MultiFactor
         /// <summary>
         /// Gets a multi-factor authentication method description that will be displayed on user info pages in the public store
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<string> GetDescriptionAsync();
 
         #endregion

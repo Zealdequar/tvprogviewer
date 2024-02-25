@@ -168,7 +168,7 @@ namespace TvProgViewer.WebUI.Factories
 
         #region Utilities
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<GdprConsentModel> PrepareGdprConsentModelAsync(GdprConsent consent, bool accepted)
         {
             if (consent == null)
@@ -197,7 +197,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <param name="overrideCustomUserAttributesXml">Overridden user attributes in XML format; pass null to use CustomUserAttributes of user</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user info model
         /// </returns>
         public virtual async Task<UserInfoModel> PrepareUserInfoModelAsync(UserInfoModel model, User user,
@@ -386,7 +386,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="overrideCustomUserAttributesXml">Overridden user attributes in XML format; pass null to use CustomUserAttributes of user</param>
         /// <param name="setDefaultValues">Whether to populate model properties by default values</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user register model
         /// </returns>
         public virtual async Task<RegisterModel> PrepareRegisterModelAsync(RegisterModel model, bool excludeProperties,
@@ -516,7 +516,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="checkoutAsGuest">Whether to checkout as guest is enabled</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the login model
         /// </returns>
         public virtual Task<LoginModel> PrepareLoginModelAsync(bool? checkoutAsGuest)
@@ -537,7 +537,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="model">Password recovery model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the password recovery model
         /// </returns>
         public virtual Task<PasswordRecoveryModel> PreparePasswordRecoveryModelAsync(PasswordRecoveryModel model)
@@ -556,7 +556,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="resultId">Value of UserRegistrationType enum</param>
         /// <param name="returnUrl">URL to redirect</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the register result model
         /// </returns>
         public virtual async Task<RegisterResultModel> PrepareRegisterResultModelAsync(int resultId, string returnUrl)
@@ -584,7 +584,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="selectedTabId">Identifier of the selected tab</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user navigation model
         /// </returns>
         public virtual async Task<UserNavigationModel> PrepareUserNavigationModelAsync(int selectedTabId = 0)
@@ -756,7 +756,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the user address list model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user address list model
         /// </returns>
         public virtual async Task<UserAddressListModel> PrepareUserAddressListModelAsync()
@@ -786,7 +786,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the user downloadable tvchannels model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user downloadable tvchannels model
         /// </returns>
         public virtual async Task<UserDownloadableTvChannelsModel> PrepareUserDownloadableTvChannelsModelAsync()
@@ -828,7 +828,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="orderItem">Order item</param>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user agreement model
         /// </returns>
         public virtual Task<UserAgreementModel> PrepareUserAgreementModelAsync(OrderItem orderItem, TvChannel tvchannel)
@@ -852,7 +852,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the change password model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the change password model
         /// </returns>
         public virtual Task<ChangePasswordModel> PrepareChangePasswordModelAsync()
@@ -867,7 +867,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="model">User avatar model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user avatar model
         /// </returns>
         public virtual async Task<UserAvatarModel> PrepareUserAvatarModelAsync(UserAvatarModel model)
@@ -887,7 +887,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the GDPR tools model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR tools model
         /// </returns>
         public virtual Task<GdprToolsModel> PrepareGdprToolsModelAsync()
@@ -901,7 +901,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the check gift card balance madel
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the check gift card balance madel
         /// </returns>
         public virtual Task<CheckGiftCardBalanceModel> PrepareCheckGiftCardBalanceModelAsync()
@@ -916,7 +916,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="model">Multi-factor authentication model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the multi-factor authentication model
         /// </returns>
         public virtual async Task<MultiFactorAuthenticationModel> PrepareMultiFactorAuthenticationModelAsync(MultiFactorAuthenticationModel model)
@@ -945,7 +945,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="providerModel">Multi-factor authentication provider model</param>
         /// <param name="sysName">Multi-factor authentication provider system name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the multi-factor authentication model
         /// </returns>
         public virtual async Task<MultiFactorAuthenticationProviderModel> PrepareMultiFactorAuthenticationProviderModelAsync(MultiFactorAuthenticationProviderModel providerModel, string sysName, bool isLogin = false)
@@ -976,7 +976,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="user">User</param>
         /// <param name="overrideAttributesXml">Overridden user attributes in XML format; pass null to use CustomUserAttributes of user</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of the user attribute model
         /// </returns>
         public virtual async Task<IList<UserAttributeModel>> PrepareCustomUserAttributesAsync(User user, string overrideAttributesXml = "")

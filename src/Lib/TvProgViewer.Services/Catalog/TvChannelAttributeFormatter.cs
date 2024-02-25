@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attributes
         /// </returns>
         public virtual async Task<string> FormatAttributesAsync(TvChannel tvchannel, string attributesXml)
@@ -104,7 +104,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="renderGiftCardAttributes">A value indicating whether to render gift card attributes</param>
         /// <param name="allowHyperlinks">A value indicating whether to HTML hyperink tags could be rendered (if required)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attributes
         /// </returns>
         public virtual async Task<string> FormatAttributesAsync(TvChannel tvchannel, string attributesXml,

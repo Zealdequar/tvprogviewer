@@ -15,7 +15,7 @@ namespace TvProgViewer.Core.Caching
         /// <param name="key">Cache key</param>
         /// <param name="acquire">Function to load item if it's not in the cache yet</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the cached value associated with the specified key
         /// </returns>
         Task<T> GetAsync<T>(CacheKey key, Func<Task<T>> acquire);
@@ -27,7 +27,7 @@ namespace TvProgViewer.Core.Caching
         /// <param name="key">Cache key</param>
         /// <param name="acquire">Function to load item if it's not in the cache yet</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the cached value associated with the specified key
         /// </returns>
         Task<T> GetAsync<T>(CacheKey key, Func<T> acquire);
@@ -46,7 +46,7 @@ namespace TvProgViewer.Core.Caching
         /// </summary>
         /// <param name="cacheKey">Cache key</param>
         /// <param name="cacheKeyParameters">Parameters to create cache key</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task RemoveAsync(CacheKey cacheKey, params object[] cacheKeyParameters);
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace TvProgViewer.Core.Caching
         /// </summary>
         /// <param name="key">Key of cached item</param>
         /// <param name="data">Value for caching</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetAsync(CacheKey key, object data);
         
         /// <summary>
@@ -62,7 +62,7 @@ namespace TvProgViewer.Core.Caching
         /// </summary>
         /// <param name="prefix">Cache key prefix</param>
         /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task RemoveByPrefixAsync(string prefix, params object[] prefixParameters);
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace TvProgViewer.Core.Caching
         /// <summary>
         /// Clear all cache data
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ClearAsync();
 
         #region Cache key

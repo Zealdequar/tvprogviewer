@@ -81,7 +81,7 @@ namespace TvProgViewer.Services.ExportImport.Help
         /// <typeparam name="T">Type of object</typeparam>
         /// <param name="itemsToExport">The objects to export</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         public virtual async Task<byte[]> ExportToXlsxAsync(IEnumerable<T> itemsToExport)
@@ -174,7 +174,7 @@ namespace TvProgViewer.Services.ExportImport.Help
         /// <param name="row">Row index</param>
         /// <param name="cellOffset">Cell offset</param>
         /// <param name="fWorksheet">Filters worksheet</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task WriteDefaultToXlsxAsync(IXLWorksheet worksheet, int row, int cellOffset = 0, IXLWorksheet fWorksheet = null)
         {
             if (CurrentObject == null)
@@ -255,7 +255,7 @@ namespace TvProgViewer.Services.ExportImport.Help
         /// <param name="row">Row index</param>
         /// <param name="cellOffset">Cell offset</param>
         /// <param name="fWorksheet">Filters worksheet</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task WriteLocalizedToXlsxAsync(IXLWorksheet worksheet, int row, int cellOffset = 0, IXLWorksheet fWorksheet = null)
         {
             if (CurrentObject == null)

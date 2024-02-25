@@ -17,7 +17,7 @@ namespace TvProgViewer.Services.Shipping
         /// Deletes a shipment
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteShipmentAsync(Shipment shipment);
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipments
         /// </returns>
         Task<IPagedList<Shipment>> GetAllShipmentsAsync(int vendorId = 0, int warehouseId = 0,
@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentIds">Shipment identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipments
         /// </returns>
         Task<IList<Shipment>> GetShipmentsByIdsAsync(int[] shipmentIds);
@@ -70,7 +70,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentId">Shipment identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment
         /// </returns>
         Task<Shipment> GetShipmentByIdAsync(int shipmentId);
@@ -83,7 +83,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="readyForPickup">A value indicating whether to load only ready for pickup shipments; pass null to ignore</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IList<Shipment>> GetShipmentsByOrderIdAsync(int orderId, bool? shipped = null, bool? readyForPickup = null, int vendorId = 0);
@@ -92,14 +92,14 @@ namespace TvProgViewer.Services.Shipping
         /// Inserts a shipment
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertShipmentAsync(Shipment shipment);
 
         /// <summary>
         /// Updates the shipment
         /// </summary>
         /// <param name="shipment">Shipment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateShipmentAsync(Shipment shipment);
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentId">Shipment identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment items
         /// </returns>
         Task<IList<ShipmentItem>> GetShipmentItemsByShipmentIdAsync(int shipmentId);
@@ -116,21 +116,21 @@ namespace TvProgViewer.Services.Shipping
         /// Inserts a shipment item
         /// </summary>
         /// <param name="shipmentItem">Shipment item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertShipmentItemAsync(ShipmentItem shipmentItem);
 
         /// <summary>
         /// Deletes a shipment item
         /// </summary>
         /// <param name="shipmentItem">Shipment Item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteShipmentItemAsync(ShipmentItem shipmentItem);
 
         /// <summary>
         /// Updates a shipment item
         /// </summary>
         /// <param name="shipmentItem">Shipment item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateShipmentItemAsync(ShipmentItem shipmentItem);
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipmentItemId">Shipment item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment item
         /// </returns>
         Task<ShipmentItem> GetShipmentItemByIdAsync(int shipmentItemId);
@@ -151,7 +151,7 @@ namespace TvProgViewer.Services.Shipping
         /// <param name="ignoreShipped">Ignore already shipped shipments</param>
         /// <param name="ignoreDelivered">Ignore already delivered shipments</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the quantity
         /// </returns>
         Task<int> GetQuantityInShipmentsAsync(TvChannel tvchannel, int warehouseId,
@@ -162,7 +162,7 @@ namespace TvProgViewer.Services.Shipping
         /// </summary>
         /// <param name="shipment">Shipment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment tracker
         /// </returns>
         Task<IShipmentTracker> GetShipmentTrackerAsync(Shipment shipment);

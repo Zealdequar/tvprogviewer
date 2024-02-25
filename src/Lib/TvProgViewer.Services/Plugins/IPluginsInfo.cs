@@ -12,7 +12,7 @@ namespace TvProgViewer.Services.Plugins
         /// <summary>
         /// Save plugins info to the file
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveAsync();
 
         /// <summary>

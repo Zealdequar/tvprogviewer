@@ -73,7 +73,7 @@ namespace TvProgViewer.Services.Catalog
 
         #region Utilities
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<IQueryable<TvChannel>> GetAvailableTvChannelsQueryAsync()
         {
             var tvchannelsQuery = 
@@ -107,7 +107,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeGroupId">The specification attribute group identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute group
         /// </returns>
         public virtual async Task<SpecificationAttributeGroup> GetSpecificationAttributeGroupByIdAsync(int specificationAttributeGroupId)
@@ -121,7 +121,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute groups
         /// </returns>
         public virtual async Task<IPagedList<SpecificationAttributeGroup>> GetSpecificationAttributeGroupsAsync(int pageIndex = 0, int pageSize = int.MaxValue)
@@ -138,7 +138,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute groups
         /// </returns>
         public virtual async Task<IList<SpecificationAttributeGroup>> GetTvChannelSpecificationAttributeGroupsAsync(int tvchannelId)
@@ -166,7 +166,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a specification attribute group
         /// </summary>
         /// <param name="specificationAttributeGroup">The specification attribute group</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteSpecificationAttributeGroupAsync(SpecificationAttributeGroup specificationAttributeGroup)
         {
             await _specificationAttributeGroupRepository.DeleteAsync(specificationAttributeGroup);
@@ -176,7 +176,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a specification attribute group
         /// </summary>
         /// <param name="specificationAttributeGroup">The specification attribute group</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertSpecificationAttributeGroupAsync(SpecificationAttributeGroup specificationAttributeGroup)
         {
             await _specificationAttributeGroupRepository.InsertAsync(specificationAttributeGroup);
@@ -186,7 +186,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the specification attribute group
         /// </summary>
         /// <param name="specificationAttributeGroup">The specification attribute group</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateSpecificationAttributeGroupAsync(SpecificationAttributeGroup specificationAttributeGroup)
         {
             await _specificationAttributeGroupRepository.UpdateAsync(specificationAttributeGroup);
@@ -201,7 +201,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeId">The specification attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute
         /// </returns>
         public virtual async Task<SpecificationAttribute> GetSpecificationAttributeByIdAsync(int specificationAttributeId)
@@ -214,7 +214,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeIds">The specification attribute identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attributes
         /// </returns>
         public virtual async Task<IList<SpecificationAttribute>> GetSpecificationAttributeByIdsAsync(int[] specificationAttributeIds)
@@ -228,7 +228,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attributes
         /// </returns>
         public virtual async Task<IPagedList<SpecificationAttribute>> GetSpecificationAttributesAsync(int pageIndex = 0, int pageSize = int.MaxValue)
@@ -244,7 +244,7 @@ namespace TvProgViewer.Services.Catalog
         /// Gets specification attributes that have options
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attributes that have available options
         /// </returns>
         public virtual async Task<IList<SpecificationAttribute>> GetSpecificationAttributesWithOptionsAsync()
@@ -262,7 +262,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeGroupId">The specification attribute group identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attributes
         /// </returns>
         public virtual async Task<IList<SpecificationAttribute>> GetSpecificationAttributesByGroupIdAsync(int? specificationAttributeGroupId = null)
@@ -280,7 +280,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a specification attribute
         /// </summary>
         /// <param name="specificationAttribute">The specification attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteSpecificationAttributeAsync(SpecificationAttribute specificationAttribute)
         {
             await _specificationAttributeRepository.DeleteAsync(specificationAttribute);
@@ -290,7 +290,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes specifications attributes
         /// </summary>
         /// <param name="specificationAttributes">Specification attributes</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteSpecificationAttributesAsync(IList<SpecificationAttribute> specificationAttributes)
         {
             if (specificationAttributes == null)
@@ -304,7 +304,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a specification attribute
         /// </summary>
         /// <param name="specificationAttribute">The specification attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertSpecificationAttributeAsync(SpecificationAttribute specificationAttribute)
         {
             await _specificationAttributeRepository.InsertAsync(specificationAttribute);
@@ -314,7 +314,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the specification attribute
         /// </summary>
         /// <param name="specificationAttribute">The specification attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateSpecificationAttributeAsync(SpecificationAttribute specificationAttribute)
         {
             await _specificationAttributeRepository.UpdateAsync(specificationAttribute);
@@ -329,7 +329,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeOptionId">The specification attribute option identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute option
         /// </returns>
         public virtual async Task<SpecificationAttributeOption> GetSpecificationAttributeOptionByIdAsync(int specificationAttributeOptionId)
@@ -342,7 +342,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeOptionIds">Identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute options
         /// </returns>
         public virtual async Task<IList<SpecificationAttributeOption>> GetSpecificationAttributeOptionsByIdsAsync(int[] specificationAttributeOptionIds)
@@ -355,7 +355,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="specificationAttributeId">The specification attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute option
         /// </returns>
         public virtual async Task<IList<SpecificationAttributeOption>> GetSpecificationAttributeOptionsBySpecificationAttributeAsync(int specificationAttributeId)
@@ -374,7 +374,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a specification attribute option
         /// </summary>
         /// <param name="specificationAttributeOption">The specification attribute option</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteSpecificationAttributeOptionAsync(SpecificationAttributeOption specificationAttributeOption)
         {
             await _specificationAttributeOptionRepository.DeleteAsync(specificationAttributeOption);
@@ -384,7 +384,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a specification attribute option
         /// </summary>
         /// <param name="specificationAttributeOption">The specification attribute option</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertSpecificationAttributeOptionAsync(SpecificationAttributeOption specificationAttributeOption)
         {
             await _specificationAttributeOptionRepository.InsertAsync(specificationAttributeOption);
@@ -394,7 +394,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the specification attribute
         /// </summary>
         /// <param name="specificationAttributeOption">The specification attribute option</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateSpecificationAttributeOptionAsync(SpecificationAttributeOption specificationAttributeOption)
         {
             await _specificationAttributeOptionRepository.UpdateAsync(specificationAttributeOption);
@@ -405,7 +405,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="attributeOptionIds">The IDs of the attribute options to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of IDs not existing specification attribute options
         /// </returns>
         public virtual async Task<int[]> GetNotExistingSpecificationAttributeOptionsAsync(int[] attributeOptionIds)
@@ -426,7 +426,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="categoryId">The category id</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute options
         /// </returns>
         public virtual async Task<IList<SpecificationAttributeOption>> GetFiltrableSpecificationAttributeOptionsByCategoryIdAsync(int categoryId)
@@ -475,7 +475,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="manufacturerId">The manufacturer id</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute options
         /// </returns>
         public virtual async Task<IList<SpecificationAttributeOption>> GetFiltrableSpecificationAttributeOptionsByManufacturerIdAsync(int manufacturerId)
@@ -519,7 +519,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a tvchannel specification attribute mapping
         /// </summary>
         /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute)
         {
             await _tvchannelSpecificationAttributeRepository.DeleteAsync(tvchannelSpecificationAttribute);
@@ -534,7 +534,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showOnTvChannelPage">0 to load attributes with ShowOnTvChannelPage set to false, 1 to load attributes with ShowOnTvChannelPage set to true, null to load all attributes</param>
         /// <param name="specificationAttributeGroupId">Specification attribute group identifier; 0 to load all records; null to load attributes without group</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel specification attribute mapping collection
         /// </returns>
         public virtual async Task<IList<TvChannelSpecificationAttribute>> GetTvChannelSpecificationAttributesAsync(int tvchannelId = 0,
@@ -578,7 +578,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelSpecificationAttributeId">TvChannel specification attribute mapping identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel specification attribute mapping
         /// </returns>
         public virtual async Task<TvChannelSpecificationAttribute> GetTvChannelSpecificationAttributeByIdAsync(int tvchannelSpecificationAttributeId)
@@ -590,7 +590,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel specification attribute mapping
         /// </summary>
         /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute)
         {
             await _tvchannelSpecificationAttributeRepository.InsertAsync(tvchannelSpecificationAttribute);
@@ -600,7 +600,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the tvchannel specification attribute mapping
         /// </summary>
         /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute)
         {
             await _tvchannelSpecificationAttributeRepository.UpdateAsync(tvchannelSpecificationAttribute);
@@ -612,7 +612,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId">TvChannel identifier; 0 to load all records</param>
         /// <param name="specificationAttributeOptionId">The specification attribute option identifier; 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the count
         /// </returns>
         public virtual async Task<int> GetTvChannelSpecificationAttributeCountAsync(int tvchannelId = 0, int specificationAttributeOptionId = 0)
@@ -633,7 +633,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         public virtual async Task<IPagedList<TvChannel>> GetTvChannelsBySpecificationAttributeIdAsync(int specificationAttributeId, int pageIndex, int pageSize)

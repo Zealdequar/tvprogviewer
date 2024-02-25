@@ -108,7 +108,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Languages
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Language> eventMessage)
         {
             //clear all localizable models
@@ -117,7 +117,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Language> eventMessage)
         {
             //clear all localizable models
@@ -126,7 +126,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryXmlAllPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Language> eventMessage)
         {
             //clear all localizable models
@@ -139,7 +139,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Setting
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Setting> eventMessage)
         {
             //clear models which depend on settings
@@ -160,20 +160,20 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Vendors
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Vendor> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Vendor> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey);
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.VendorPicturePrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Vendor> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorNavigationModelKey);
@@ -183,14 +183,14 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region  Manufacturers
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Manufacturer> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Manufacturer> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
@@ -198,7 +198,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.ManufacturerPicturePrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Manufacturer> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.ManufacturerNavigationPrefixCacheKey);
@@ -209,7 +209,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Categories
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Category> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
@@ -218,7 +218,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Category> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
@@ -228,7 +228,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.CategoryPicturePrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Category> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CategoryAllPrefixCacheKey);
@@ -241,7 +241,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region TvChannel categories
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<TvChannelCategory> eventMessage)
         {
             if (_catalogSettings.ShowCategoryTvChannelNumber)
@@ -253,7 +253,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<TvChannelCategory> eventMessage)
         {
             if (_catalogSettings.ShowCategoryTvChannelNumber)
@@ -269,13 +269,13 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region TvChannels
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<TvChannel> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<TvChannel> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
@@ -284,7 +284,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelReviewsPrefixCacheKeyById, eventMessage.Entity.Id));
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<TvChannel> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
@@ -296,19 +296,19 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region TvChannel tags
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<TvChannelTag> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelTag> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<TvChannelTag> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
@@ -318,7 +318,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region TvChannel attributes
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelAttributeValue> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
@@ -329,19 +329,19 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Topics
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Topic> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Topic> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Topic> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
@@ -351,21 +351,21 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Orders
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Order> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Order> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelsAlsoPurchasedIdsPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Order> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.HomepageBestsellersIdsPrefixCacheKey);
@@ -376,7 +376,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Pictures
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Picture> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
@@ -384,7 +384,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Picture> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
@@ -397,7 +397,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.VendorPicturePrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Picture> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.TvChannelAttributePicturePrefixCacheKey);
@@ -414,7 +414,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region TvChannel picture mappings
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<TvChannelPicture> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
@@ -424,7 +424,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelPicture> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
@@ -434,7 +434,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.OrderPicturePrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<TvChannelPicture> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelOverviewPicturesPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
@@ -448,19 +448,19 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Polls
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Poll> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.PollsPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Poll> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.PollsPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Poll> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.PollsPrefixCacheKey);
@@ -470,21 +470,21 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Blog posts
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<BlogPost> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<BlogPost> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<BlogPost> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.BlogPrefixCacheKey);
@@ -495,21 +495,21 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region News items
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<NewsItem> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<NewsItem> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey);
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.SitemapPrefixCacheKey);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<NewsItem> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.NewsPrefixCacheKey);
@@ -520,7 +520,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region Shopping cart items
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<ShoppingCartItem> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgModelCacheDefaults.CartPicturePrefixCacheKey);
@@ -530,7 +530,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
 
         #region TvChannel reviews
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<TvChannelReview> eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(string.Format(TvProgModelCacheDefaults.TvChannelReviewsPrefixCacheKeyById, eventMessage.Entity.TvChannelId));
@@ -544,7 +544,7 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// Handle plugin updated event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(PluginUpdatedEvent eventMessage)
         {
             if (eventMessage?.Plugin?.Instance<IWidgetPlugin>() != null)

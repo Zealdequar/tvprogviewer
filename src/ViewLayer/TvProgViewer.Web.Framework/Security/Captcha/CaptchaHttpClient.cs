@@ -49,7 +49,7 @@ namespace TvProgViewer.Web.Framework.Security.Captcha
         /// </summary>
         /// <param name="responseValue">Response value</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the asynchronous task whose result contains response from the reCAPTCHA service
         /// </returns>
         public virtual async Task<CaptchaResponse> ValidateCaptchaAsync(string responseValue)

@@ -12,7 +12,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Import tvchannels from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ImportTvChannelsFromXlsxAsync(Stream stream);
 
         /// <summary>
@@ -20,7 +20,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of imported subscribers
         /// </returns>
         Task<int> ImportNewsletterSubscribersFromTxtAsync(Stream stream);
@@ -31,7 +31,7 @@ namespace TvProgViewer.Services.ExportImport
         /// <param name="stream">Stream</param>
         /// <param name="writeLog">Indicates whether to add logging</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of imported states
         /// </returns>
         Task<int> ImportStatesFromTxtAsync(Stream stream, bool writeLog = true);
@@ -40,21 +40,21 @@ namespace TvProgViewer.Services.ExportImport
         /// Import manufacturers from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ImportManufacturersFromXlsxAsync(Stream stream);
 
         /// <summary>
         /// Import categories from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ImportCategoriesFromXlsxAsync(Stream stream);
 
         /// <summary>
         /// Import orders from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ImportOrdersFromXlsxAsync(Stream stream);
     }
 }

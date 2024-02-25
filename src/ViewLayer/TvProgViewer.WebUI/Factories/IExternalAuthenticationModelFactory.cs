@@ -13,7 +13,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the external authentication method model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of the external authentication method model
         /// </returns>
         Task<List<ExternalAuthenticationMethodModel>> PrepareExternalMethodsModelAsync();

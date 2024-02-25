@@ -57,7 +57,7 @@ namespace TvProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="affiliateId">Affiliate identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the affiliate
         /// </returns>
         public virtual async Task<Affiliate> GetAffiliateByIdAsync(int affiliateId)
@@ -70,7 +70,7 @@ namespace TvProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="friendlyUrlName">Friendly URL name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the affiliate
         /// </returns>
         public virtual async Task<Affiliate> GetAffiliateByFriendlyUrlNameAsync(string friendlyUrlName)
@@ -91,7 +91,7 @@ namespace TvProgViewer.Services.Affiliates
         /// Marks affiliate as deleted 
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAffiliateAsync(Affiliate affiliate)
         {
             await _affiliateRepository.DeleteAsync(affiliate);
@@ -110,7 +110,7 @@ namespace TvProgViewer.Services.Affiliates
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the affiliates
         /// </returns>
         public virtual async Task<IPagedList<Affiliate>> GetAllAffiliatesAsync(string friendlyUrlName = null,
@@ -171,7 +171,7 @@ namespace TvProgViewer.Services.Affiliates
         /// Inserts an affiliate
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertAffiliateAsync(Affiliate affiliate)
         {
             await _affiliateRepository.InsertAsync(affiliate);
@@ -181,7 +181,7 @@ namespace TvProgViewer.Services.Affiliates
         /// Updates the affiliate
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateAffiliateAsync(Affiliate affiliate)
         {
             await _affiliateRepository.UpdateAsync(affiliate);
@@ -192,7 +192,7 @@ namespace TvProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the affiliate full name
         /// </returns>
         public virtual async Task<string> GetAffiliateFullNameAsync(Affiliate affiliate)
@@ -215,7 +215,7 @@ namespace TvProgViewer.Services.Affiliates
         /// </summary>
         /// <param name="affiliate">Affiliate</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the generated affiliate URL
         /// </returns>
         public virtual Task<string> GenerateUrlAsync(Affiliate affiliate)
@@ -239,7 +239,7 @@ namespace TvProgViewer.Services.Affiliates
         /// <param name="affiliate">Affiliate</param>
         /// <param name="friendlyUrlName">Friendly URL name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the valid friendly name
         /// </returns>
         public virtual async Task<string> ValidateFriendlyUrlNameAsync(Affiliate affiliate, string friendlyUrlName)

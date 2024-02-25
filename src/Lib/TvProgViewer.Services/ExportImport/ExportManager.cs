@@ -192,7 +192,7 @@ namespace TvProgViewer.Services.ExportImport
 
         #region Utilities
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<int> WriteCategoriesAsync(XmlWriter xmlWriter, int parentCategoryId, int totalCategories)
         {
             var categories = await _categoryService.GetAllCategoriesByParentCategoryIdAsync(parentCategoryId, true);
@@ -266,7 +266,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="pictureId">Picture ID</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the path to the image file
         /// </returns>
         protected virtual async Task<string> GetPicturesAsync(int pictureId)
@@ -281,7 +281,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of categories
         /// </returns>
         protected virtual async Task<object> GetCategoriesAsync(TvChannel tvchannel)
@@ -312,7 +312,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of manufacturer
         /// </returns>
         protected virtual async Task<object> GetManufacturersAsync(TvChannel tvchannel)
@@ -341,7 +341,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of store
         /// </returns>
         protected virtual async Task<object> GetLimitedToStoresAsync(TvChannel tvchannel)
@@ -364,7 +364,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of tvchannel tag
         /// </returns>
         protected virtual async Task<object> GetTvChannelTagsAsync(TvChannel tvchannel)
@@ -394,7 +394,7 @@ namespace TvProgViewer.Services.ExportImport
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="pictureIndex">Picture index to get</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the image thumb local path
         /// </returns>
         protected virtual async Task<string> GetPictureAsync(TvChannel tvchannel, short pictureIndex)
@@ -406,7 +406,7 @@ namespace TvProgViewer.Services.ExportImport
             return pictures.Count > pictureIndex ? await _pictureService.GetThumbLocalPathAsync(pictures[pictureIndex]) : null;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<bool> IgnoreExportTvChannelPropertyAsync(Func<TvChannelEditorSettings, bool> func)
         {
             var tvchannelAdvancedMode = true;
@@ -421,7 +421,7 @@ namespace TvProgViewer.Services.ExportImport
             return !tvchannelAdvancedMode && !func(_tvchannelEditorSettings);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<bool> IgnoreExportCategoryPropertyAsync()
         {
             try
@@ -434,7 +434,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<bool> IgnoreExportManufacturerPropertyAsync()
         {
             try
@@ -447,7 +447,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<bool> IgnoreExportLimitedToStoreAsync()
         {
             return _catalogSettings.IgnoreStoreLimitations ||
@@ -455,7 +455,7 @@ namespace TvProgViewer.Services.ExportImport
                    (await _storeService.GetAllStoresAsync()).Count == 1;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<TProperty> GetLocalizedAsync<TEntity, TProperty>(TEntity entity, Expression<Func<TEntity, TProperty>> keySelector,
             Language language) where TEntity : BaseEntity, ILocalizedEntity
         {
@@ -465,7 +465,7 @@ namespace TvProgViewer.Services.ExportImport
             return await _localizationService.GetLocalizedAsync(entity, keySelector, language.Id, false);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<PropertyManager<ExportTvChannelAttribute, Language>> GetTvChannelAttributeManagerAsync(IList<Language> languages)
         {
             var attributeProperties = new[]
@@ -517,7 +517,7 @@ namespace TvProgViewer.Services.ExportImport
             return new PropertyManager<ExportTvChannelAttribute, Language>(attributeProperties, _catalogSettings, localizedProperties, languages);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<PropertyManager<ExportSpecificationAttribute, Language>> GetSpecificationAttributeManagerAsync(IList<Language> languages)
         {
             var attributeProperties = new[]
@@ -546,7 +546,7 @@ namespace TvProgViewer.Services.ExportImport
             return new PropertyManager<ExportSpecificationAttribute, Language>(attributeProperties, _catalogSettings, localizedProperties, languages);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<byte[]> ExportTvChannelsToXlsxWithAttributesAsync(PropertyByName<TvChannel, Language>[] properties, PropertyByName<TvChannel, Language>[] localizedProperties, IEnumerable<TvChannel> itemsToExport, IList<Language> languages)
         {
             var tvchannelAttributeManager = await GetTvChannelAttributeManagerAsync(languages);
@@ -610,7 +610,7 @@ namespace TvProgViewer.Services.ExportImport
             return stream.ToArray();
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<int> ExportTvChannelAttributesAsync(TvChannel item, PropertyManager<ExportTvChannelAttribute, Language> attributeManager,
             IXLWorksheet worksheet, IList<(Language Language, IXLWorksheet Worksheet)> localizedWorksheets, int row, IXLWorksheet faWorksheet)
         {
@@ -708,7 +708,7 @@ namespace TvProgViewer.Services.ExportImport
             return row + 1;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<int> ExportSpecificationAttributesAsync(TvChannel item, PropertyManager<ExportSpecificationAttribute, Language> attributeManager,
             IXLWorksheet worksheet, IList<(Language Language, IXLWorksheet Worksheet)> localizedWorksheets, int row, IXLWorksheet faWorksheet)
         {
@@ -750,7 +750,7 @@ namespace TvProgViewer.Services.ExportImport
             return row + 1;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<byte[]> ExportOrderToXlsxWithTvChannelsAsync(PropertyByName<Order, Language>[] properties, IEnumerable<Order> itemsToExport)
         {
             var orderItemProperties = new[]
@@ -821,13 +821,13 @@ namespace TvProgViewer.Services.ExportImport
             return stream.ToArray();
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<object> GetCustomUserAttributesAsync(User user)
         {
             return await _userAttributeFormatter.FormatAttributesAsync(user.CustomUserAttributesXML, ";");
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task WriteLocalizedPropertyXmlAsync<TEntity, TPropType>(TEntity entity, Expression<Func<TEntity, TPropType>> keySelector,
             XmlWriter xmlWriter, IList<Language> languages, bool ignore = false, string overriddenNodeName = null)
             where TEntity : BaseEntity, ILocalizedEntity
@@ -869,7 +869,7 @@ namespace TvProgViewer.Services.ExportImport
             await xmlWriter.WriteEndElementAsync();
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task WriteLocalizedSeNameXmlAsync<TEntity>(TEntity entity, XmlWriter xmlWriter, IList<Language> languages,
             bool ignore = false, string overriddenNodeName = null)
             where TEntity : BaseEntity, ISlugSupported
@@ -910,7 +910,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="manufacturers">Manufacturers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         public virtual async Task<string> ExportManufacturersToXmlAsync(IList<Manufacturer> manufacturers)
@@ -995,7 +995,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export manufacturers to XLSX
         /// </summary>
         /// <param name="manufacturers">Manufactures</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<byte[]> ExportManufacturersToXlsxAsync(IEnumerable<Manufacturer> manufacturers)
         {
             var languages = await _languageService.GetAllLanguagesAsync(showHidden: true);
@@ -1044,7 +1044,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export category list to XML
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         public virtual async Task<string> ExportCategoriesToXmlAsync()
@@ -1077,7 +1077,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export categories to XLSX
         /// </summary>
         /// <param name="categories">Categories</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<byte[]> ExportCategoriesToXlsxAsync(IList<Category> categories)
         {
             var parentCategories = new List<Category>();
@@ -1141,7 +1141,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="tvchannels">TvChannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         public virtual async Task<string> ExportTvChannelsToXmlAsync(IList<TvChannel> tvchannels)
@@ -1480,7 +1480,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export tvchannels to XLSX
         /// </summary>
         /// <param name="tvchannels">TvChannels</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<byte[]> ExportTvChannelsToXlsxAsync(IEnumerable<TvChannel> tvchannels)
         {
             var currentVendor = await _workContext.GetCurrentVendorAsync();
@@ -1685,7 +1685,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="orders">Orders</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         public virtual async Task<string> ExportOrdersToXmlAsync(IList<Order> orders)
@@ -1829,7 +1829,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export orders to XLSX
         /// </summary>
         /// <param name="orders">Orders</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<byte[]> ExportOrdersToXlsxAsync(IList<Order> orders)
         {
             //a vendor should have access only to part of order information
@@ -1929,7 +1929,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export user list to XLSX
         /// </summary>
         /// <param name="users">Users</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<byte[]> ExportUsersToXlsxAsync(IList<User> users)
         {
             var vendors = await _vendorService.GetVendorsByUserIdsAsync(users.Select(c => c.Id).ToArray());
@@ -2025,7 +2025,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="users">Users</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         public virtual async Task<string> ExportUsersToXmlAsync(IList<User> users)
@@ -2118,7 +2118,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="subscriptions">Subscriptions</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in TXT (string) format
         /// </returns>
         public virtual async Task<string> ExportNewsletterSubscribersToTxtAsync(IList<NewsLetterSubscription> subscriptions)
@@ -2158,7 +2158,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="states">States</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in TXT (string) format
         /// </returns>
         public virtual async Task<string> ExportStatesToTxtAsync(IList<StateProvince> states)
@@ -2195,7 +2195,7 @@ namespace TvProgViewer.Services.ExportImport
         /// <param name="user">User</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user GDPR info
         /// </returns>
         public virtual async Task<byte[]> ExportUserGdprInfoToXlsxAsync(User user, int storeId)

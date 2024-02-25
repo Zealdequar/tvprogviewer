@@ -203,7 +203,7 @@ namespace TvProgViewer.Services.ExportImport
             return ExportedAttributeType.NotSpecified;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private static async Task SetOutLineForSpecificationAttributeRowAsync(object cellValue, IXLWorksheet worksheet, int endRow)
         {
             var attributeType = (cellValue ?? string.Empty).ToString();
@@ -277,7 +277,7 @@ namespace TvProgViewer.Services.ExportImport
         /// <param name="name">The name of the object</param>
         /// <param name="picId">Image identifier, may be null</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the image or null if the image has not changed
         /// </returns>
         protected virtual async Task<Picture> LoadPictureAsync(string picturePath, string name, int? picId = null)
@@ -315,7 +315,7 @@ namespace TvProgViewer.Services.ExportImport
             return newPicture;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task LogPictureInsertErrorAsync(string picturePath, Exception ex)
         {
             var extension = _fileProvider.GetFileExtension(picturePath);
@@ -327,7 +327,7 @@ namespace TvProgViewer.Services.ExportImport
             await _logger.ErrorAsync($"Insert picture failed (file name: {fileName})", ex);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task ImportTvChannelImagesUsingServicesAsync(IList<TvChannelPictureMetadata> tvchannelPictureMetadata)
         {
             foreach (var tvchannel in tvchannelPictureMetadata)
@@ -386,7 +386,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task ImportTvChannelImagesUsingHashAsync(IList<TvChannelPictureMetadata> tvchannelPictureMetadata, IList<TvChannel> allTvChannelsBySku)
         {
             //performance optimization, load all pictures hashes
@@ -463,7 +463,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<(string seName, bool isParentCategoryExists)> UpdateCategoryByXlsxAsync(Category category, PropertyManager<Category, Language> manager, Dictionary<string, ValueTask<Category>> allCategories, bool isNew)
         {
             var seName = string.Empty;
@@ -577,7 +577,7 @@ namespace TvProgViewer.Services.ExportImport
             return (seName, isParentCategoryExists);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<(Category category, bool isNew, string curentCategoryBreadCrumb)> GetCategoryFromXlsxAsync(PropertyManager<Category, Language> manager, IXLWorksheet worksheet, int iRow, Dictionary<string, ValueTask<Category>> allCategories)
         {
             manager.ReadDefaultFromXlsx(worksheet, iRow);
@@ -620,7 +620,7 @@ namespace TvProgViewer.Services.ExportImport
             return (category, isNew, curentCategoryBreadCrumb);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task SaveCategoryAsync(bool isNew, Category category, Dictionary<string, ValueTask<Category>> allCategories, string curentCategoryBreadCrumb, bool setSeName, string seName)
         {
             if (isNew)
@@ -640,7 +640,7 @@ namespace TvProgViewer.Services.ExportImport
                 await _urlRecordService.SaveSlugAsync(category, await _urlRecordService.ValidateSeNameAsync(category, seName, category.Name, true), 0);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected async Task ImportCategoryLocalizedAsync(Category category, WorkbookMetadata<Category> metadata, PropertyManager<Category, Language> manager, int iRow, IList<Language> languages)
         {
             if (!metadata.LocalizedWorksheets.Any())
@@ -691,7 +691,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected async Task ImportManufaturerLocalizedAsync(Manufacturer manufacturer, WorkbookMetadata<Manufacturer> metadata, PropertyManager<Manufacturer, Language> manager, int iRow, IList<Language> languages)
         {
             if (!metadata.LocalizedWorksheets.Any())
@@ -742,7 +742,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task SetOutLineForTvChannelAttributeRowAsync(object cellValue, IXLWorksheet worksheet, int endRow)
         {
             try
@@ -761,7 +761,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task ImportTvChannelAttributeAsync(ImportTvChannelMetadata metadata, TvChannel lastLoadedTvChannel, IList<Language> languages, int iRow)
         {
             var tvchannelAttributeManager = metadata.TvChannelAttributeManager;
@@ -921,7 +921,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task ImportSpecificationAttributeAsync(ImportTvChannelMetadata metadata, TvChannel lastLoadedTvChannel, IList<Language> languages, int iRow)
         {
             var specificationAttributeManager = metadata.SpecificationAttributeManager;
@@ -993,7 +993,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<string> DownloadFileAsync(string urlString, IList<string> downloadedFiles)
         {
             if (string.IsNullOrEmpty(urlString))
@@ -1032,7 +1032,7 @@ namespace TvProgViewer.Services.ExportImport
             return string.Empty;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<ImportTvChannelMetadata> PrepareImportTvChannelDataAsync(IXLWorkbook workbook, IList<Language> languages)
         {
             //the columns
@@ -1325,7 +1325,7 @@ namespace TvProgViewer.Services.ExportImport
             };
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task ImportTvChannelsFromSplitedXlsxAsync(IXLWorksheet worksheet, ImportTvChannelMetadata metadata)
         {
             foreach (var path in SplitTvChannelFile(worksheet, metadata))
@@ -1380,7 +1380,7 @@ namespace TvProgViewer.Services.ExportImport
             return filePaths;
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<(ImportOrderMetadata, IXLWorksheet)> PrepareImportOrderDataAsync(IXLWorkbook workbook)
         {
             var languages = await _languageService.GetAllLanguagesAsync(showHidden: true);
@@ -1497,7 +1497,7 @@ namespace TvProgViewer.Services.ExportImport
             }, worksheet);
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task ImportOrderItemAsync(PropertyManager<OrderItem, Language> orderItemManager, Order lastLoadedOrder)
         {
             if (lastLoadedOrder == null || orderItemManager.IsCaption)
@@ -1550,7 +1550,7 @@ namespace TvProgViewer.Services.ExportImport
             }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected async Task ImportTvChannelLocalizedAsync(TvChannel tvchannel, ImportTvChannelMetadata metadata, int iRow, IList<Language> languages)
         {
             if (metadata.LocalizedWorksheets.Any())
@@ -1684,7 +1684,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Import tvchannels from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ImportTvChannelsFromXlsxAsync(Stream stream)
         {
             var languages = await _languageService.GetAllLanguagesAsync(showHidden: true);
@@ -2312,7 +2312,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of imported subscribers
         /// </returns>
         public virtual async Task<int> ImportNewsletterSubscribersFromTxtAsync(Stream stream)
@@ -2384,7 +2384,7 @@ namespace TvProgViewer.Services.ExportImport
         /// <param name="stream">Stream</param>
         /// <param name="writeLog">Indicates whether to add logging</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of imported states
         /// </returns>
         public virtual async Task<int> ImportStatesFromTxtAsync(Stream stream, bool writeLog = true)
@@ -2458,7 +2458,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Import manufacturers from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ImportManufacturersFromXlsxAsync(Stream stream)
         {
             using var workbook = new XLWorkbook(stream);
@@ -2594,7 +2594,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Import categories from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ImportCategoriesFromXlsxAsync(Stream stream)
         {
             using var workbook = new XLWorkbook(stream);
@@ -2705,7 +2705,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Import orders from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ImportOrdersFromXlsxAsync(Stream stream)
         {
             using var workbook = new XLWorkbook(stream);
@@ -3045,7 +3045,7 @@ namespace TvProgViewer.Services.ExportImport
 
         public partial class CategoryKey
         {
-            /// <returns>A task that represents the asynchronous operation</returns>
+            /// <returns>Задача представляет асинхронную операцию</returns>
             public static async Task<CategoryKey> CreateCategoryKeyAsync(Category category, ICategoryService categoryService, IList<Category> allCategories, IStoreMappingService storeMappingService)
             {
                 return new CategoryKey(await categoryService.GetFormattedBreadCrumbAsync(category, allCategories), category.LimitedToStores ? (await storeMappingService.GetStoresIdsWithAccessAsync(category)).ToList() : new List<int>())

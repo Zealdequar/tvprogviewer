@@ -271,7 +271,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="models">List of order item models</param>
         /// <param name="order">Order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareOrderItemModelsAsync(IList<OrderItemModel> models, Order order)
         {
             if (models == null)
@@ -385,7 +385,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="models">List of return request brief models</param>
         /// <param name="orderItem">Order item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareReturnRequestBriefModelsAsync(IList<OrderItemModel.ReturnRequestBriefModel> models, OrderItem orderItem)
         {
             if (models == null)
@@ -410,7 +410,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Order model</param>
         /// <param name="order">Order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareOrderModelTotalsAsync(OrderModel model, Order order)
         {
             if (model == null)
@@ -562,7 +562,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Order model</param>
         /// <param name="order">Order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareOrderModelPaymentInfoAsync(OrderModel model, Order order)
         {
             if (model == null)
@@ -642,7 +642,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Order model</param>
         /// <param name="order">Order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareOrderModelShippingInfoAsync(OrderModel model, Order order)
         {
             if (model == null)
@@ -693,7 +693,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="models">List of tvchannel attribute models</param>
         /// <param name="order">Order</param>
         /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareTvChannelAttributeModelsAsync(IList<AddTvChannelToOrderModel.TvChannelAttributeModel> models, Order order, TvChannel tvchannel)
         {
             if (models == null)
@@ -775,7 +775,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="model">Shipment item model</param>
         /// <param name="orderItem">Order item</param>
         /// <param name="tvchannel">TvChannel item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareShipmentItemModelAsync(ShipmentItemModel model, OrderItem orderItem, TvChannel tvchannel)
         {
             if (model == null)
@@ -823,7 +823,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="models">List of shipment status event models</param>
         /// <param name="shipment">Shipment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareShipmentStatusEventModelsAsync(IList<ShipmentStatusEventModel> models, Shipment shipment)
         {
             if (models == null)
@@ -922,7 +922,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Order search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order search model
         /// </returns>
         public virtual async Task<OrderSearchModel> PrepareOrderSearchModelAsync(OrderSearchModel searchModel)
@@ -1028,7 +1028,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Order search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order list model
         /// </returns>
         public virtual async Task<OrderListModel> PrepareOrderListModelAsync(OrderSearchModel searchModel)
@@ -1112,7 +1112,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Order search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order aggregator model
         /// </returns>
         public virtual async Task<OrderAggreratorModel> PrepareOrderAggregatorModelAsync(OrderSearchModel searchModel)
@@ -1196,7 +1196,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="order">Order</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order model
         /// </returns>
         public virtual async Task<OrderModel> PrepareOrderModelAsync(OrderModel model, Order order, bool excludeProperties = false)
@@ -1263,7 +1263,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="order">Order</param>
         /// <param name="orderItem">Order item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the upload license model
         /// </returns>
         public virtual Task<UploadLicenseModel> PrepareUploadLicenseModelAsync(UploadLicenseModel model, Order order, OrderItem orderItem)
@@ -1290,7 +1290,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel search model to add to the order
         /// </returns>
         public virtual async Task<AddTvChannelToOrderSearchModel> PrepareAddTvChannelToOrderSearchModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order)
@@ -1324,7 +1324,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel search model to add to the order
         /// </returns>
         public virtual async Task<AddTvChannelToOrderListModel> PrepareAddTvChannelToOrderListModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order)
@@ -1364,7 +1364,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="order">Order</param>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel model to add to the order
         /// </returns>
         public virtual async Task<AddTvChannelToOrderModel> PrepareAddTvChannelToOrderModelAsync(AddTvChannelToOrderModel model, Order order, TvChannel tvchannel)
@@ -1418,7 +1418,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="order">Order</param>
         /// <param name="address">Address</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order address model
         /// </returns>
         public virtual async Task<OrderAddressModel> PrepareOrderAddressModelAsync(OrderAddressModel model, Order order, Address address)
@@ -1447,7 +1447,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shipment search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment search model
         /// </returns>
         public virtual async Task<ShipmentSearchModel> PrepareShipmentSearchModelAsync(ShipmentSearchModel searchModel)
@@ -1478,7 +1478,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Shipment search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment list model
         /// </returns>
         public virtual async Task<ShipmentListModel> PrepareShipmentListModelAsync(ShipmentSearchModel searchModel)
@@ -1529,7 +1529,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="order">Order</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment model
         /// </returns>
         public virtual async Task<ShipmentModel> PrepareShipmentModelAsync(ShipmentModel model, Shipment shipment, Order order,
@@ -1645,7 +1645,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Order shipment search model</param>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order shipment list model
         /// </returns>
         public virtual async Task<OrderShipmentListModel> PrepareOrderShipmentListModelAsync(OrderShipmentSearchModel searchModel, Order order)
@@ -1683,7 +1683,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Shipment item search model</param>
         /// <param name="shipment">Shipment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipment item list model
         /// </returns>
         public virtual async Task<ShipmentItemListModel> PrepareShipmentItemListModelAsync(ShipmentItemSearchModel searchModel, Shipment shipment)
@@ -1745,7 +1745,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Order note search model</param>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order note list model
         /// </returns>
         public virtual async Task<OrderNoteListModel> PrepareOrderNoteListModelAsync(OrderNoteSearchModel searchModel, Order order)
@@ -1788,7 +1788,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Bestseller brief search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the bestseller brief search model
         /// </returns>
         public virtual Task<BestsellerBriefSearchModel> PrepareBestsellerBriefSearchModelAsync(BestsellerBriefSearchModel searchModel)
@@ -1807,7 +1807,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Bestseller brief search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the bestseller brief list model
         /// </returns>
         public virtual async Task<BestsellerBriefListModel> PrepareBestsellerBriefListModelAsync(BestsellerBriefSearchModel searchModel)
@@ -1851,7 +1851,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Order average line summary report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order average line summary report list model
         /// </returns>
         public virtual async Task<OrderAverageReportListModel> PrepareOrderAverageReportListModelAsync(OrderAverageReportSearchModel searchModel)
@@ -1890,7 +1890,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Incomplete order report search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the incomplete order report list model
         /// </returns>
         public virtual async Task<OrderIncompleteReportListModel> PrepareOrderIncompleteReportListModelAsync(OrderIncompleteReportSearchModel searchModel)

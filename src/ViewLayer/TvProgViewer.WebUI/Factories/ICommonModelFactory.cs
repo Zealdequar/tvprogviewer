@@ -13,7 +13,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the logo model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the logo model
         /// </returns>
         Task<LogoModel> PrepareLogoModelAsync();
@@ -22,7 +22,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the language selector model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the language selector model
         /// </returns>
         Task<LanguageSelectorModel> PrepareLanguageSelectorModelAsync();
@@ -49,7 +49,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the currency selector model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the currency selector model
         /// </returns>
         Task<CurrencySelectorModel> PrepareCurrencySelectorModelAsync();
@@ -58,7 +58,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the tax type selector model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax type selector model
         /// </returns>
         Task<TaxTypeSelectorModel> PrepareTaxTypeSelectorModelAsync();
@@ -67,7 +67,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the header links model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the header links model
         /// </returns>
         Task<HeaderLinksModel> PrepareHeaderLinksModelAsync();
@@ -76,7 +76,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the admin header links model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the admin header links model
         /// </returns>
         Task<AdminHeaderLinksModel> PrepareAdminHeaderLinksModelAsync();
@@ -85,7 +85,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the social model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the social model
         /// </returns>
         Task<SocialModel> PrepareSocialModelAsync();
@@ -94,7 +94,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the footer model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the footer model
         /// </returns>
         Task<FooterModel> PrepareFooterModelAsync();
@@ -105,7 +105,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">Contact us model</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the contact us model
         /// </returns>
         Task<ContactUsModel> PrepareContactUsModelAsync(ContactUsModel model, bool excludeProperties);
@@ -117,7 +117,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="vendor">Vendor</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the contact vendor model
         /// </returns>
         Task<ContactVendorModel> PrepareContactVendorModelAsync(ContactVendorModel model, Vendor vendor,
@@ -127,7 +127,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the store theme selector model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store theme selector model
         /// </returns>
         Task<StoreThemeSelectorModel> PrepareStoreThemeSelectorModelAsync();
@@ -136,7 +136,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the favicon model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the favicon model
         /// </returns>
         Task<FaviconAndAppIconsModel> PrepareFaviconAndAppIconsModelAsync();
@@ -145,7 +145,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Get robots.txt file
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the robots.txt file as string
         /// </returns>
         Task<string> PrepareRobotsTextFileAsync();

@@ -35,7 +35,7 @@ namespace TvProgViewer.Web.Framework.Extensions
         /// <param name="ignoreIfSeveralStores">A value indicating whether to ignore localization if we have multiple stores</param>
         /// <param name="cssClass">CSS class for localizedTemplate</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the localized editor
         /// </returns>
         public static async Task<IHtmlContent> LocalizedEditorAsync<TModel, TLocalizedModelLocal>(this IHtmlHelper<TModel> helper,
@@ -242,7 +242,7 @@ namespace TvProgViewer.Web.Framework.Extensions
         /// <param name="helper">HTML helper</param>
         /// <param name="value">TexHint text</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public static async Task<IHtmlContent> HintAsync(this IHtmlHelper helper, string value)
@@ -271,7 +271,7 @@ namespace TvProgViewer.Web.Framework.Extensions
         /// </summary>
         /// <param name="htmlContent">HTML content</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public static async Task<string> RenderHtmlContentAsync(this IHtmlContent htmlContent)

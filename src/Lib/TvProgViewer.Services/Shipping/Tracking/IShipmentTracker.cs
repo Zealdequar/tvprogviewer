@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Shipping.Tracking
         /// <param name="trackingNumber">The tracking number to track</param>
         /// <param name="shipment">Shipment; pass null if the tracking number is not associated with a specific shipment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the URL of a tracking page
         /// </returns>
         Task<string> GetUrlAsync(string trackingNumber, Shipment shipment = null);
@@ -26,7 +26,7 @@ namespace TvProgViewer.Services.Shipping.Tracking
         /// <param name="trackingNumber">The tracking number to track</param>
         /// <param name="shipment">Shipment; pass null if the tracking number is not associated with a specific shipment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of shipment events
         /// </returns>
         Task<IList<ShipmentStatusEvent>> GetShipmentEventsAsync(string trackingNumber, Shipment shipment = null);

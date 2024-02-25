@@ -14,28 +14,28 @@ namespace TvProgViewer.Services.Common
         /// Deletes an attribute
         /// </summary>
         /// <param name="attribute">Attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteAttributeAsync(GenericAttribute attribute);
 
         /// <summary>
         /// Deletes an attributes
         /// </summary>
         /// <param name="attributes">Attributes</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteAttributesAsync(IList<GenericAttribute> attributes);
 
         /// <summary>
         /// Inserts an attribute
         /// </summary>
         /// <param name="attribute">attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertAttributeAsync(GenericAttribute attribute);
 
         /// <summary>
         /// Updates the attribute
         /// </summary>
         /// <param name="attribute">Attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateAttributeAsync(GenericAttribute attribute);
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="entityId">Entity identifier</param>
         /// <param name="keyGroup">Key group</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the get attributes
         /// </returns>
         Task<IList<GenericAttribute>> GetAttributesForEntityAsync(int entityId, string keyGroup);
@@ -57,7 +57,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="key">Key</param>
         /// <param name="value">Value</param>
         /// <param name="storeId">Store identifier; pass 0 if this attribute will be available for all stores</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveAttributeAsync<TPropType>(BaseEntity entity, string key, TPropType value, int storeId = 0);
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="storeId">Load a value specific for a certain store; pass 0 to load a value shared for all stores</param>
         /// <param name="defaultValue">Default value</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attribute
         /// </returns>
         Task<TPropType> GetAttributeAsync<TPropType>(BaseEntity entity, string key, int storeId = 0, TPropType defaultValue = default);
@@ -84,7 +84,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="storeId">Load a value specific for a certain store; pass 0 to load a value shared for all stores</param>
         /// <param name="defaultValue">Default value</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attribute
         /// </returns>
         Task<TPropType> GetAttributeAsync<TEntity, TPropType>(int entityId, string key, int storeId = 0, TPropType defaultValue = default)

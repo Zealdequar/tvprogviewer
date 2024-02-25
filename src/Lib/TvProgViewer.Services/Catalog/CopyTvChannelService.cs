@@ -86,7 +86,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyDiscountsMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             foreach (var discountMapping in await _tvchannelService.GetAllDiscountsAppliedToTvChannelAsync(tvchannel.Id))
@@ -104,7 +104,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="copyMultimedia">A value indicating whether to copy images and videos</param>
         /// <param name="copyAssociatedTvChannels">A value indicating whether to copy associated tvchannels</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyAssociatedTvChannelsAsync(TvChannel tvchannel, bool isPublished, bool copyMultimedia, bool copyAssociatedTvChannels, TvChannel tvchannelCopy)
         {
             if (!copyAssociatedTvChannels)
@@ -126,7 +126,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyTierPricesAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             foreach (var tierPrice in await _tvchannelService.GetTierPricesByTvChannelAsync(tvchannel.Id))
@@ -148,7 +148,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
         /// <param name="originalNewPictureIdentifiers">Identifiers of pictures</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyAttributesMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy, Dictionary<int, int> originalNewPictureIdentifiers)
         {
             var associatedAttributes = new Dictionary<int, int>();
@@ -365,7 +365,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyTvChannelSpecificationsAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             var allLanguages = await _languageService.GetAllLanguagesAsync();
@@ -399,7 +399,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyCrossSellsMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             foreach (var csTvChannel in await _tvchannelService.GetCrossSellTvChannelsByTvChannelId1Async(tvchannel.Id, true))
@@ -416,7 +416,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyRelatedTvChannelsMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             foreach (var relatedTvChannel in await _tvchannelService.GetRelatedTvChannelsByTvChannelId1Async(tvchannel.Id, true))
@@ -434,7 +434,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyManufacturersMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             foreach (var tvchannelManufacturers in await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvchannel.Id, true))
@@ -456,7 +456,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyCategoriesMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             foreach (var tvchannelCategory in await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvchannel.Id, showHidden: true))
@@ -478,7 +478,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyWarehousesMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             foreach (var pwi in await _tvchannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(tvchannel.Id))
@@ -508,7 +508,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="copyMultimedia"></param>
         /// <param name="tvchannelCopy">New tvchannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the identifiers of old and new pictures
         /// </returns>
         protected virtual async Task<Dictionary<int, int>> CopyTvChannelPicturesAsync(TvChannel tvchannel, string newName, bool copyMultimedia, TvChannel tvchannelCopy)
@@ -545,7 +545,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="copyVideos"></param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyTvChannelVideosAsync(TvChannel tvchannel, bool copyVideos, TvChannel tvchannelCopy)
         {
             if (copyVideos)
@@ -569,7 +569,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelCopy">New tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task CopyLocalizationDataAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
         {
             var languages = await _languageService.GetAllLanguagesAsync(true);
@@ -613,7 +613,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="newName">New tvchannel name</param>
         /// <param name="isPublished">A value indicating whether a new tvchannel is published</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         protected virtual async Task<TvChannel> CopyBaseTvChannelDataAsync(TvChannel tvchannel, string newName, bool isPublished)
@@ -790,7 +790,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="copyMultimedia">A value indicating whether the tvchannel images and videos should be copied</param>
         /// <param name="copyAssociatedTvChannels">A value indicating whether the copy associated tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel copy
         /// </returns>
         public virtual async Task<TvChannel> CopyTvChannelAsync(TvChannel tvchannel, string newName,

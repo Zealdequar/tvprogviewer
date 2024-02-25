@@ -46,7 +46,7 @@ namespace TvProgViewer.Web.Framework.Menu
 
         #region Utilities
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task IterateAsync(SiteMapNode siteMapNode, XmlNode xmlNode)
         {
             await PopulateNodeAsync(siteMapNode, xmlNode);
@@ -61,7 +61,7 @@ namespace TvProgViewer.Web.Framework.Menu
                 }
         }
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PopulateNodeAsync(SiteMapNode siteMapNode, XmlNode xmlNode)
         {
             //system name
@@ -126,7 +126,7 @@ namespace TvProgViewer.Web.Framework.Menu
         /// Load sitemap
         /// </summary>
         /// <param name="physicalPath">Filepath to load a sitemap</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task LoadFromAsync(string physicalPath)
         {
             var filePath = _fileProvider.MapPath(physicalPath);

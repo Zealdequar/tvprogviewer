@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="number">Number of tvchannels to load</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the "recently viewed tvchannels" list
         /// </returns>
         Task<IList<TvChannel>> GetRecentlyViewedTvChannelsAsync(int number);
@@ -23,7 +23,7 @@ namespace TvProgViewer.Services.Catalog
         /// Adds a tvchannel to a recently viewed tvchannels list
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task AddTvChannelToRecentlyViewedListAsync(int tvchannelId);
     }
 }

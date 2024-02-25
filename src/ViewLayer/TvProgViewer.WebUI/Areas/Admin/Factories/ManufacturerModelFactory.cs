@@ -109,7 +109,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Manufacturer search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer search model
         /// </returns>
         public virtual async Task<ManufacturerSearchModel> PrepareManufacturerSearchModelAsync(ManufacturerSearchModel searchModel)
@@ -150,7 +150,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Manufacturer search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer list model
         /// </returns>
         public virtual async Task<ManufacturerListModel> PrepareManufacturerListModelAsync(ManufacturerSearchModel searchModel)
@@ -189,7 +189,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="manufacturer">Manufacturer</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer model
         /// </returns>
         public virtual async Task<ManufacturerModel> PrepareManufacturerModelAsync(ManufacturerModel model,
@@ -262,7 +262,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Manufacturer tvchannel search model</param>
         /// <param name="manufacturer">Manufacturer</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer tvchannel list model
         /// </returns>
         public virtual async Task<ManufacturerTvChannelListModel> PrepareManufacturerTvChannelListModelAsync(ManufacturerTvChannelSearchModel searchModel,
@@ -302,7 +302,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel search model to add to the manufacturer
         /// </returns>
         public virtual async Task<AddTvChannelToManufacturerSearchModel> PrepareAddTvChannelToManufacturerSearchModelAsync(AddTvChannelToManufacturerSearchModel searchModel)
@@ -336,7 +336,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel list model to add to the manufacturer
         /// </returns>
         public virtual async Task<AddTvChannelToManufacturerListModel> PrepareAddTvChannelToManufacturerListModelAsync(AddTvChannelToManufacturerSearchModel searchModel)

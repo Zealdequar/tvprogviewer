@@ -39,7 +39,7 @@ namespace TvProgViewer.Services.Users
         /// Deletes a user attribute
         /// </summary>
         /// <param name="userAttribute">User attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteUserAttributeAsync(UserAttribute userAttribute)
         {
             await _userAttributeRepository.DeleteAsync(userAttribute);
@@ -49,7 +49,7 @@ namespace TvProgViewer.Services.Users
         /// Gets all user attributes
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attributes
         /// </returns>
         public virtual async Task<IList<UserAttribute>> GetAllUserAttributesAsync()
@@ -67,7 +67,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userAttributeId">User attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute
         /// </returns>
         public virtual async Task<UserAttribute> GetUserAttributeByIdAsync(int userAttributeId)
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Users
         /// Inserts a user attribute
         /// </summary>
         /// <param name="userAttribute">User attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertUserAttributeAsync(UserAttribute userAttribute)
         {
             await _userAttributeRepository.InsertAsync(userAttribute);
@@ -89,7 +89,7 @@ namespace TvProgViewer.Services.Users
         /// Updates the user attribute
         /// </summary>
         /// <param name="userAttribute">User attribute</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateUserAttributeAsync(UserAttribute userAttribute)
         {
             await _userAttributeRepository.UpdateAsync(userAttribute);
@@ -99,7 +99,7 @@ namespace TvProgViewer.Services.Users
         /// Deletes a user attribute value
         /// </summary>
         /// <param name="userAttributeValue">User attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteUserAttributeValueAsync(UserAttributeValue userAttributeValue)
         {
             await _userAttributeValueRepository.DeleteAsync(userAttributeValue);
@@ -110,7 +110,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userAttributeId">The user attribute identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute values
         /// </returns>
         public virtual async Task<IList<UserAttributeValue>> GetUserAttributeValuesAsync(int userAttributeId)
@@ -132,7 +132,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="userAttributeValueId">User attribute value identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute value
         /// </returns>
         public virtual async Task<UserAttributeValue> GetUserAttributeValueByIdAsync(int userAttributeValueId)
@@ -144,7 +144,7 @@ namespace TvProgViewer.Services.Users
         /// Inserts a user attribute value
         /// </summary>
         /// <param name="userAttributeValue">User attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertUserAttributeValueAsync(UserAttributeValue userAttributeValue)
         {
             await _userAttributeValueRepository.InsertAsync(userAttributeValue);
@@ -154,7 +154,7 @@ namespace TvProgViewer.Services.Users
         /// Updates the user attribute value
         /// </summary>
         /// <param name="userAttributeValue">User attribute value</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateUserAttributeValueAsync(UserAttributeValue userAttributeValue)
         {
             await _userAttributeValueRepository.UpdateAsync(userAttributeValue);

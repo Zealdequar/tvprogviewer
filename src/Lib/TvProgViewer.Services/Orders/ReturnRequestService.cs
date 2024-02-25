@@ -47,7 +47,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes a return request
         /// </summary>
         /// <param name="returnRequest">Return request</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteReturnRequestAsync(ReturnRequest returnRequest)
         {
             await _returnRequestRepository.DeleteAsync(returnRequest);
@@ -58,7 +58,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="returnRequestId">Return request identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request
         /// </returns>
         public virtual async Task<ReturnRequest> GetReturnRequestByIdAsync(int returnRequestId)
@@ -80,7 +80,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return requests
         /// </returns>
         public virtual async Task<IPagedList<ReturnRequest>> SearchReturnRequestsAsync(int storeId = 0, int userId = 0,
@@ -168,7 +168,7 @@ namespace TvProgViewer.Services.Orders
         /// Delete a return request action
         /// </summary>
         /// <param name="returnRequestAction">Return request action</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteReturnRequestActionAsync(ReturnRequestAction returnRequestAction)
         {
             await _returnRequestActionRepository.DeleteAsync(returnRequestAction);
@@ -178,7 +178,7 @@ namespace TvProgViewer.Services.Orders
         /// Gets all return request actions
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request actions
         /// </returns>
         public virtual async Task<IList<ReturnRequestAction>> GetAllReturnRequestActionsAsync()
@@ -196,7 +196,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="returnRequestActionId">Return request action identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request action
         /// </returns>
         public virtual async Task<ReturnRequestAction> GetReturnRequestActionByIdAsync(int returnRequestActionId)
@@ -208,7 +208,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a return request
         /// </summary>
         /// <param name="returnRequest">Return request</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertReturnRequestAsync(ReturnRequest returnRequest)
         {
             await _returnRequestRepository.InsertAsync(returnRequest);
@@ -218,7 +218,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a return request action
         /// </summary>
         /// <param name="returnRequestAction">Return request action</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertReturnRequestActionAsync(ReturnRequestAction returnRequestAction)
         {
             await _returnRequestActionRepository.InsertAsync(returnRequestAction);
@@ -228,7 +228,7 @@ namespace TvProgViewer.Services.Orders
         /// Updates the return request
         /// </summary>
         /// <param name="returnRequest">Return request</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateReturnRequestAsync(ReturnRequest returnRequest)
         {
             await _returnRequestRepository.UpdateAsync(returnRequest);
@@ -238,7 +238,7 @@ namespace TvProgViewer.Services.Orders
         /// Updates the return request action
         /// </summary>
         /// <param name="returnRequestAction">Return request action</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateReturnRequestActionAsync(ReturnRequestAction returnRequestAction)
         {
             await _returnRequestActionRepository.UpdateAsync(returnRequestAction);
@@ -248,7 +248,7 @@ namespace TvProgViewer.Services.Orders
         /// Delete a return request reason
         /// </summary>
         /// <param name="returnRequestReason">Return request reason</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteReturnRequestReasonAsync(ReturnRequestReason returnRequestReason)
         {
             await _returnRequestReasonRepository.DeleteAsync(returnRequestReason);
@@ -258,7 +258,7 @@ namespace TvProgViewer.Services.Orders
         /// Gets all return request reasons
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request reasons
         /// </returns>
         public virtual async Task<IList<ReturnRequestReason>> GetAllReturnRequestReasonsAsync()
@@ -276,7 +276,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="returnRequestReasonId">Return request reason identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the return request reason
         /// </returns>
         public virtual async Task<ReturnRequestReason> GetReturnRequestReasonByIdAsync(int returnRequestReasonId)
@@ -288,7 +288,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a return request reason
         /// </summary>
         /// <param name="returnRequestReason">Return request reason</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertReturnRequestReasonAsync(ReturnRequestReason returnRequestReason)
         {
             await _returnRequestReasonRepository.InsertAsync(returnRequestReason);
@@ -298,7 +298,7 @@ namespace TvProgViewer.Services.Orders
         /// Updates the  return request reason
         /// </summary>
         /// <param name="returnRequestReason">Return request reason</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateReturnRequestReasonAsync(ReturnRequestReason returnRequestReason)
         {
             await _returnRequestReasonRepository.UpdateAsync(returnRequestReason);

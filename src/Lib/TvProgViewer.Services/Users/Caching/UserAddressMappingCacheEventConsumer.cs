@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Users.Caching
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <param name="entityEventType">Entity event type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(UserAddressMapping entity, EntityEventType entityEventType)
         {
             await RemoveAsync(TvProgUserServicesDefaults.UserAddressesCacheKey, entity.UserId);

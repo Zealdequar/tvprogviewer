@@ -82,7 +82,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="pictureId">Picture identifier</param>
         /// <param name="mimeType">MIME type</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture binary
         /// </returns>
         protected virtual async Task<byte[]> LoadPictureFromFileAsync(int pictureId, string mimeType)
@@ -100,7 +100,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="pictureId">Picture identifier</param>
         /// <param name="pictureBinary">Picture binary</param>
         /// <param name="mimeType">MIME type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task SavePictureInFileAsync(int pictureId, byte[] pictureBinary, string mimeType)
         {
             var lastPart = await GetFileExtensionFromMimeTypeAsync(mimeType);
@@ -112,7 +112,7 @@ namespace TvProgViewer.Services.Media
         /// Delete a picture on file system
         /// </summary>
         /// <param name="picture">Picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task DeletePictureOnFileSystemAsync(Picture picture)
         {
             if (picture == null)
@@ -128,7 +128,7 @@ namespace TvProgViewer.Services.Media
         /// Delete picture thumbs
         /// </summary>
         /// <param name="picture">Picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task DeletePictureThumbsAsync(Picture picture)
         {
             var filter = $"{picture.Id:0000000}*.*";
@@ -145,7 +145,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="thumbFileName">Filename</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the local picture thumb path
         /// </returns>
         protected virtual Task<string> GetThumbLocalPathAsync(string thumbFileName)
@@ -173,7 +173,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         protected virtual Task<string> GetImagesPathUrlAsync(string storeLocation = null)
@@ -192,7 +192,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="thumbFileName">Filename</param>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the local picture thumb path
         /// </returns>
         protected virtual async Task<string> GetThumbUrlAsync(string thumbFileName, string storeLocation = null)
@@ -219,7 +219,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="fileName">Filename</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the local picture path
         /// </returns>
         protected virtual Task<string> GetPictureLocalPathAsync(string fileName)
@@ -233,7 +233,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="picture">Picture</param>
         /// <param name="fromDb">Load from database; otherwise, from file system</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture binary
         /// </returns>
         protected virtual async Task<byte[]> LoadPictureBinaryAsync(Picture picture, bool fromDb)
@@ -254,7 +254,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="thumbFilePath">Thumb file path</param>
         /// <param name="thumbFileName">Thumb file name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         protected virtual Task<bool> GeneratedThumbExistsAsync(string thumbFilePath, string thumbFileName)
@@ -269,7 +269,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="thumbFileName">Thumb file name</param>
         /// <param name="mimeType">MIME type</param>
         /// <param name="binary">Picture binary</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task SaveThumbAsync(string thumbFilePath, string thumbFileName, string mimeType, byte[] binary)
         {
             //ensure \thumb directory exists
@@ -286,7 +286,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="picture">The picture object</param>
         /// <param name="binaryData">The picture binary data</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture binary
         /// </returns>
         protected virtual async Task<PictureBinary> UpdatePictureBinaryAsync(Picture picture, byte[] binaryData)
@@ -416,7 +416,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="mimeType">Mime type</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the file extension
         /// </returns>
         public virtual Task<string> GetFileExtensionFromMimeTypeAsync(string mimeType)
@@ -447,7 +447,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="picture">Picture</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture binary
         /// </returns>
         public virtual async Task<byte[]> LoadPictureBinaryAsync(Picture picture)
@@ -460,7 +460,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="name">Name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<string> GetPictureSeNameAsync(string name)
@@ -475,7 +475,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="defaultPictureType">Default picture type</param>
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture URL
         /// </returns>
         public virtual async Task<string> GetDefaultPictureUrlAsync(int targetSize = 0,
@@ -538,7 +538,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <param name="defaultPictureType">Default picture type</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture URL
         /// </returns>
         public virtual async Task<string> GetPictureUrlAsync(int pictureId,
@@ -560,7 +560,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="storeLocation">Store location URL; null to use determine the current store location automatically</param>
         /// <param name="defaultPictureType">Default picture type</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture URL
         /// </returns>
         public virtual async Task<(string Url, Picture Picture)> GetPictureUrlAsync(Picture picture,
@@ -677,7 +677,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="targetSize">The target picture size (longest side)</param>
         /// <param name="showDefaultPicture">A value indicating whether the default picture is shown</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         public virtual async Task<string> GetThumbLocalPathAsync(Picture picture, int targetSize = 0, bool showDefaultPicture = true)
@@ -697,7 +697,7 @@ namespace TvProgViewer.Services.Media
         /// Convert image from SVG format to PNG
         /// </summary>
         /// <param name="filePath">SVG file path</param>
-        /// <returns>A task that represents the asynchronous operation
+        /// <returns>Задача представляет асинхронную операцию
         /// The task result contains the byte array</returns>
         public virtual Task<byte[]> ConvertSvgToPngAsync(string filePath)
         {
@@ -738,7 +738,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="pictureId">Picture identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
         public virtual async Task<Picture> GetPictureByIdAsync(int pictureId)
@@ -750,7 +750,7 @@ namespace TvProgViewer.Services.Media
         /// Deletes a picture
         /// </summary>
         /// <param name="picture">Picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeletePictureAsync(Picture picture)
         {
             if (picture == null)
@@ -774,7 +774,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="pageIndex">Current page</param>
         /// <param name="pageSize">Items on each page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the paged list of pictures
         /// </returns>
         public virtual async Task<IPagedList<Picture>> GetPicturesAsync(string virtualPath = "", int pageIndex = 0, int pageSize = int.MaxValue)
@@ -795,7 +795,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="recordsToReturn">Number of records to return. 0 if you want to get all items</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the pictures
         /// </returns>
         public virtual async Task<IList<Picture>> GetPicturesByTvChannelIdAsync(int tvchannelId, int recordsToReturn = 0)
@@ -828,7 +828,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="isNew">A value indicating whether the picture is new</param>
         /// <param name="validateBinary">A value indicating whether to validated provided picture binary</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
         public virtual async Task<Picture> InsertPictureAsync(byte[] pictureBinary, string mimeType, string seoFilename,
@@ -867,7 +867,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="defaultFileName">File name which will be use if IFormFile.FileName not present</param>
         /// <param name="virtualPath">Virtual path</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
         public virtual async Task<Picture> InsertPictureAsync(IFormFile formFile, string defaultFileName = "", string virtualPath = "")
@@ -937,7 +937,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="isNew">A value indicating whether the picture is new</param>
         /// <param name="validateBinary">A value indicating whether to validated provided picture binary</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
         public virtual async Task<Picture> UpdatePictureAsync(int pictureId, byte[] pictureBinary, string mimeType,
@@ -980,7 +980,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="picture">The picture to update</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
         public virtual async Task<Picture> UpdatePictureAsync(Picture picture)
@@ -1009,7 +1009,7 @@ namespace TvProgViewer.Services.Media
         /// </summary>
         /// <param name="pictureId">The picture identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture binary
         /// </returns>
         public virtual async Task<PictureBinary> GetPictureBinaryByPictureIdAsync(int pictureId)
@@ -1024,7 +1024,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="pictureId">The picture identifier</param>
         /// <param name="seoFilename">The SEO filename</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
         public virtual async Task<Picture> SetSeoFilenameAsync(int pictureId, string seoFilename)
@@ -1057,7 +1057,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="mimeType">MIME type</param>
         /// <param name="fileName">Name of file</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture binary or throws an exception
         /// </returns>
         public virtual async Task<byte[]> ValidatePictureAsync(byte[] pictureBinary, string mimeType, string fileName)
@@ -1087,7 +1087,7 @@ namespace TvProgViewer.Services.Media
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Attributes (in XML format)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
         public virtual async Task<Picture> GetTvChannelPictureAsync(TvChannel tvchannel, string attributesXml)
@@ -1124,7 +1124,7 @@ namespace TvProgViewer.Services.Media
         /// <summary>
         /// Gets a value indicating whether the images should be stored in data base.
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<bool> IsStoreInDbAsync()
         {
             return await _settingService.GetSettingByKeyAsync("Media.Images.StoreInDB", true);
@@ -1134,7 +1134,7 @@ namespace TvProgViewer.Services.Media
         /// Sets a value indicating whether the images should be stored in data base
         /// </summary>
         /// <param name="isStoreInDb">A value indicating whether the images should be stored in data base</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SetIsStoreInDbAsync(bool isStoreInDb)
         {
             //check whether it's a new value

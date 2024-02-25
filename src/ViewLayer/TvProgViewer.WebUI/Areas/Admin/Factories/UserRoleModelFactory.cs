@@ -54,7 +54,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User role search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role search model
         /// </returns>
         public virtual Task<UserRoleSearchModel> PrepareUserRoleSearchModelAsync(UserRoleSearchModel searchModel)
@@ -73,7 +73,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User role search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role list model
         /// </returns>
         public virtual async Task<UserRoleListModel> PrepareUserRoleListModelAsync(UserRoleSearchModel searchModel)
@@ -109,7 +109,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="userRole">User role</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role model
         /// </returns>
         public virtual async Task<UserRoleModel> PrepareUserRoleModelAsync(UserRoleModel model, UserRole userRole, bool excludeProperties = false)
@@ -136,7 +136,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User role tvchannel search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role tvchannel search model
         /// </returns>
         public virtual async Task<UserRoleTvChannelSearchModel> PrepareUserRoleTvChannelSearchModelAsync(UserRoleTvChannelSearchModel searchModel)
@@ -173,7 +173,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">User role tvchannel search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user role tvchannel list model
         /// </returns>
         public virtual async Task<UserRoleTvChannelListModel> PrepareUserRoleTvChannelListModelAsync(UserRoleTvChannelSearchModel searchModel)

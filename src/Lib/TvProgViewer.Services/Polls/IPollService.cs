@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Polls
         /// </summary>
         /// <param name="pollId">The poll identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the poll
         /// </returns>
         Task<Poll> GetPollByIdAsync(int pollId);
@@ -30,7 +30,7 @@ namespace TvProgViewer.Services.Polls
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the polls
         /// </returns>
         Task<IPagedList<Poll>> GetPollsAsync(int storeId, int languageId = 0, bool showHidden = false,
@@ -41,21 +41,21 @@ namespace TvProgViewer.Services.Polls
         /// Deletes a poll
         /// </summary>
         /// <param name="poll">The poll</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeletePollAsync(Poll poll);
 
         /// <summary>
         /// Inserts a poll
         /// </summary>
         /// <param name="poll">Poll</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertPollAsync(Poll poll);
 
         /// <summary>
         /// Updates the poll
         /// </summary>
         /// <param name="poll">Poll</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdatePollAsync(Poll poll);
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace TvProgViewer.Services.Polls
         /// </summary>
         /// <param name="pollAnswerId">Poll answer identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the poll answer
         /// </returns>
         Task<PollAnswer> GetPollAnswerByIdAsync(int pollAnswerId);
@@ -75,28 +75,28 @@ namespace TvProgViewer.Services.Polls
         /// <returns>Poll answer</returns>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<IPagedList<PollAnswer>> GetPollAnswerByPollAsync(int pollId, int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
         /// Deletes a poll answer
         /// </summary>
         /// <param name="pollAnswer">Poll answer</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeletePollAnswerAsync(PollAnswer pollAnswer);
 
         /// <summary>
         /// Inserts a poll answer
         /// </summary>
         /// <param name="pollAnswer">Poll answer</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertPollAnswerAsync(PollAnswer pollAnswer);
 
         /// <summary>
         /// Updates the poll answer
         /// </summary>
         /// <param name="pollAnswer">Poll answer</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdatePollAnswerAsync(PollAnswer pollAnswer);
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Polls
         /// <param name="pollId">Poll identifier</param>
         /// <param name="userId">User identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> AlreadyVotedAsync(int pollId, int userId);
@@ -114,7 +114,7 @@ namespace TvProgViewer.Services.Polls
         /// Inserts a poll voting record
         /// </summary>
         /// <param name="pollVotingRecord">Voting record</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertPollVotingRecordAsync(PollVotingRecord pollVotingRecord);
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace TvProgViewer.Services.Polls
         /// <returns>Poll answer</returns>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<IPagedList<PollVotingRecord>> GetPollVotingRecordsByPollAnswerAsync(int pollAnswerId, int pageIndex = 0, int pageSize = int.MaxValue);
     }
 }

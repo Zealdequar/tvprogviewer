@@ -54,7 +54,7 @@ namespace TvProgViewer.Services.Topics
         /// Deletes a topic
         /// </summary>
         /// <param name="topic">Topic</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTopicAsync(Topic topic)
         {
             await _topicRepository.DeleteAsync(topic);
@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Topics
         /// </summary>
         /// <param name="topicId">The topic identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opic
         /// </returns>
         public virtual async Task<Topic> GetTopicByIdAsync(int topicId)
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Topics
         /// <param name="systemName">The topic system name</param>
         /// <param name="storeId">Store identifier; pass 0 to ignore filtering by store and load the first one</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the topic
         /// </returns>
         public virtual async Task<Topic> GetTopicBySystemNameAsync(string systemName, int storeId = 0)
@@ -117,7 +117,7 @@ namespace TvProgViewer.Services.Topics
         /// <param name="showHidden">A value indicating whether to show hidden topics</param>
         /// <param name="onlyIncludedInTopMenu">A value indicating whether to show only topics which include on the top menu</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the topics
         /// </returns>
         public virtual async Task<IList<Topic>> GetAllTopicsAsync(int storeId,
@@ -161,7 +161,7 @@ namespace TvProgViewer.Services.Topics
         /// <param name="showHidden">A value indicating whether to show hidden topics</param>
         /// <param name="onlyIncludedInTopMenu">A value indicating whether to show only topics which include on the top menu</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opics
         /// </returns>
         public virtual async Task<IList<Topic>> GetAllTopicsAsync(int storeId, string keywords,
@@ -187,7 +187,7 @@ namespace TvProgViewer.Services.Topics
         /// Inserts a topic
         /// </summary>
         /// <param name="topic">Topic</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTopicAsync(Topic topic)
         {
             await _topicRepository.InsertAsync(topic);
@@ -197,7 +197,7 @@ namespace TvProgViewer.Services.Topics
         /// Updates the topic
         /// </summary>
         /// <param name="topic">Topic</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTopicAsync(Topic topic)
         {
             await _topicRepository.UpdateAsync(topic);

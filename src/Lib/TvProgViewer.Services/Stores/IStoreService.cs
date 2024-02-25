@@ -13,14 +13,14 @@ namespace TvProgViewer.Services.Stores
         /// Deletes a store
         /// </summary>
         /// <param name="store">Store</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteStoreAsync(Store store);
 
         /// <summary>
         /// Gets all stores
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the stores
         /// </returns>
         Task<IList<Store>> GetAllStoresAsync();
@@ -38,7 +38,7 @@ namespace TvProgViewer.Services.Stores
         /// </summary>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store
         /// </returns>
         Task<Store> GetStoreByIdAsync(int storeId);
@@ -47,14 +47,14 @@ namespace TvProgViewer.Services.Stores
         /// Inserts a store
         /// </summary>
         /// <param name="store">Store</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertStoreAsync(Store store);
 
         /// <summary>
         /// Updates the store
         /// </summary>
         /// <param name="store">Store</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateStoreAsync(Store store);
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Stores
         /// </summary>
         /// <param name="storeIdsNames">The names and/or IDs of the store to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of names and/or IDs not existing stores
         /// </returns>
         Task<string[]> GetNotExistingStoresAsync(string[] storeIdsNames);

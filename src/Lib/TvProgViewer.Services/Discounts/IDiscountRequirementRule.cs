@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Discounts
         /// </summary>
         /// <param name="request">Object that contains all information required to check the requirement (Current user, discount, etc)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<DiscountRequirementValidationResult> CheckRequirementAsync(DiscountRequirementValidationRequest request);

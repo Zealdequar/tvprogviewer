@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Directory
         /// Deletes currency
         /// </summary>
         /// <param name="currency">Currency</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteCurrencyAsync(Currency currency);
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="currencyId">Currency identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the currency
         /// </returns>
         Task<Currency> GetCurrencyByIdAsync(int currencyId);
@@ -33,7 +33,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="currencyCode">Currency code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the currency
         /// </returns>
         Task<Currency> GetCurrencyByCodeAsync(string currencyCode);
@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="storeId">Load records allowed only in a specified store; pass 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the currencies
         /// </returns>
         Task<IList<Currency>> GetAllCurrenciesAsync(bool showHidden = false, int storeId = 0);
@@ -53,14 +53,14 @@ namespace TvProgViewer.Services.Directory
         /// Inserts a currency
         /// </summary>
         /// <param name="currency">Currency</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertCurrencyAsync(Currency currency);
 
         /// <summary>
         /// Updates the currency
         /// </summary>
         /// <param name="currency">Currency</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateCurrencyAsync(Currency currency);
 
         #endregion
@@ -72,7 +72,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="currencyCode">Currency code; pass null to use primary exchange rate currency</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the exchange rates
         /// </returns>
         Task<IList<ExchangeRate>> GetCurrencyLiveRatesAsync(string currencyCode = null);
@@ -91,7 +91,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="amount">Amount</param>
         /// <param name="sourceCurrencyCode">Source currency code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertToPrimaryStoreCurrencyAsync(decimal amount, Currency sourceCurrencyCode);
@@ -102,7 +102,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="amount">Amount</param>
         /// <param name="targetCurrencyCode">Target currency code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertFromPrimaryStoreCurrencyAsync(decimal amount, Currency targetCurrencyCode);
@@ -114,7 +114,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="sourceCurrencyCode">Source currency code</param>
         /// <param name="targetCurrencyCode">Target currency code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertCurrencyAsync(decimal amount, Currency sourceCurrencyCode, Currency targetCurrencyCode);
@@ -125,7 +125,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="amount">Amount</param>
         /// <param name="sourceCurrencyCode">Source currency code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertToPrimaryExchangeRateCurrencyAsync(decimal amount, Currency sourceCurrencyCode);
@@ -136,7 +136,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="amount">Amount</param>
         /// <param name="targetCurrencyCode">Target currency code</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         Task<decimal> ConvertFromPrimaryExchangeRateCurrencyAsync(decimal amount, Currency targetCurrencyCode);

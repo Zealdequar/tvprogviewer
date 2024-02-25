@@ -16,7 +16,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <param name="vendorAttributesXml">Vendor attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the apply vendor model
         /// </returns>
         Task<ApplyVendorModel> PrepareApplyVendorModelAsync(ApplyVendorModel model, bool validateVendor, bool excludeProperties, string vendorAttributesXml);
@@ -28,7 +28,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <param name="overriddenVendorAttributesXml">Overridden vendor attributes in XML format; pass null to use VendorAttributes of vendor</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor info model
         /// </returns>
         Task<VendorInfoModel> PrepareVendorInfoModelAsync(VendorInfoModel model, bool excludeProperties, string overriddenVendorAttributesXml = "");

@@ -21,7 +21,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Multi-factor authentication method search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the multi-factor authentication method list model
         /// </returns>
         Task<MultiFactorAuthenticationMethodListModel> PrepareMultiFactorAuthenticationMethodListModelAsync(

@@ -183,7 +183,7 @@ namespace TvProgViewer.WebUI.Models.Common
         /// <summary>
         /// Gets the first button text
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task<string> GetFirstButtonTextAsync()
         {
             return await _localizationService.GetResourceAsync("Pager.First");
@@ -192,7 +192,7 @@ namespace TvProgViewer.WebUI.Models.Common
         /// <summary>
         /// Gets the last button text
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task<string> GetLastButtonTextAsync()
         {
             return await _localizationService.GetResourceAsync("Pager.Last");
@@ -201,7 +201,7 @@ namespace TvProgViewer.WebUI.Models.Common
         /// <summary>
         /// Gets the next button text
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task<string> GetNextButtonTextAsync()
         {
             return await _localizationService.GetResourceAsync("Pager.Next");
@@ -210,7 +210,7 @@ namespace TvProgViewer.WebUI.Models.Common
         /// <summary>
         /// Gets the previous button text
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task<string> GetPreviousButtonTextAsync()
         {
             return await _localizationService.GetResourceAsync("Pager.Previous");
@@ -219,7 +219,7 @@ namespace TvProgViewer.WebUI.Models.Common
         /// <summary>
         /// Gets or sets the current page text
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task<string> GetCurrentPageTextAsync()
         {
             return await _localizationService.GetResourceAsync("Pager.CurrentPage");

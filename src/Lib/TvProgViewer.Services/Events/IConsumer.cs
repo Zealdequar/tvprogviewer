@@ -12,7 +12,7 @@ namespace TvProgViewer.Services.Events
         /// Handle event
         /// </summary>
         /// <param name="eventMessage">Event</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task HandleEventAsync(T eventMessage);
     }
 }

@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="tvchannelTagId">TvChannel tag identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task DeleteTvChannelTvChannelTagMappingAsync(int tvchannelId, int tvchannelTagId)
         {
             var mappingRecord = await _tvchannelTvChannelTagMappingRepository.Table
@@ -83,7 +83,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="tvchannelTagId">TvChannel tag identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         protected virtual async Task<bool> TvChannelTagExistsAsync(TvChannel tvchannel, int tvchannelTagId)
@@ -100,7 +100,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="name">TvChannel tag name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel tag
         /// </returns>
         protected virtual async Task<TvChannelTag> GetTvChannelTagByNameAsync(string name)
@@ -117,7 +117,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel tag
         /// </summary>
         /// <param name="tvchannelTag">TvChannel tag</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task InsertTvChannelTagAsync(TvChannelTag tvchannelTag)
         {
             await _tvchannelTagRepository.InsertAsync(tvchannelTag);
@@ -131,7 +131,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete a tvchannel tag
         /// </summary>
         /// <param name="tvchannelTag">TvChannel tag</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelTagAsync(TvChannelTag tvchannelTag)
         {
             await _tvchannelTagRepository.DeleteAsync(tvchannelTag);
@@ -141,7 +141,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete tvchannel tags
         /// </summary>
         /// <param name="tvchannelTags">TvChannel tags</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelTagsAsync(IList<TvChannelTag> tvchannelTags)
         {
             if (tvchannelTags == null)
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tagName">Tag name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel tags
         /// </returns>
         public virtual async Task<IList<TvChannelTag>> GetAllTvChannelTagsAsync(string tagName = null)
@@ -174,7 +174,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel tags
         /// </returns>
         public virtual async Task<IList<TvChannelTag>> GetAllTvChannelTagsByTvChannelIdAsync(int tvchannelId)
@@ -198,7 +198,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelTagId">TvChannel tag identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel tag
         /// </returns>
         public virtual async Task<TvChannelTag> GetTvChannelTagByIdAsync(int tvchannelTagId)
@@ -211,7 +211,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelTagIds">TvChannel tags identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel tags
         /// </returns>
         public virtual async Task<IList<TvChannelTag>> GetTvChannelTagsByIdsAsync(int[] tvchannelTagIds)
@@ -223,7 +223,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel-tvchannel tag mapping
         /// </summary>
         /// <param name="tagMapping">TvChannel-tvchannel tag mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelTvChannelTagMappingAsync(TvChannelTvChannelTagMapping tagMapping)
         {
             await _tvchannelTvChannelTagMappingRepository.InsertAsync(tagMapping);
@@ -233,7 +233,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the tvchannel tag
         /// </summary>
         /// <param name="tvchannelTag">TvChannel tag</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelTagAsync(TvChannelTag tvchannelTag)
         {
             if (tvchannelTag == null)
@@ -252,7 +252,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="storeId">Store identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of tvchannels
         /// </returns>
         public virtual async Task<int> GetTvChannelCountByTvChannelTagIdAsync(int tvchannelTagId, int storeId, bool showHidden = false)
@@ -270,7 +270,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="storeId">Store identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the dictionary of "tvchannel tag ID : tvchannel count"
         /// </returns>
         public virtual async Task<Dictionary<int, int>> GetTvChannelCountAsync(int storeId, bool showHidden = false)
@@ -315,7 +315,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel for update</param>
         /// <param name="tvchannelTags">TvChannel tags</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelTagsAsync(TvChannel tvchannel, string[] tvchannelTags)
         {
             if (tvchannel == null)

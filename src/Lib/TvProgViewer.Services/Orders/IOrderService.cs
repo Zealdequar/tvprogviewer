@@ -19,7 +19,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderId">The order identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order
         /// </returns>
         Task<Order> GetOrderByIdAsync(int orderId);
@@ -29,7 +29,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="customOrderNumber">The custom order number</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order
         /// </returns>
         Task<Order> GetOrderByCustomOrderNumberAsync(string customOrderNumber);
@@ -39,7 +39,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItemId">The order item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order
         /// </returns>
         Task<Order> GetOrderByOrderItemAsync(int orderItemId);
@@ -49,7 +49,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderIds">Order identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order
         /// </returns>
         Task<IList<Order>> GetOrdersByIdsAsync(int[] orderIds);
@@ -59,7 +59,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderGuids">Order guids</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the orders
         /// </returns>
         Task<IList<Order>> GetOrdersByGuidsAsync(Guid[] orderGuids);
@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderGuid">The order identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order
         /// </returns>
         Task<Order> GetOrderByGuidAsync(Guid orderGuid);
@@ -78,7 +78,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes an order
         /// </summary>
         /// <param name="order">The order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteOrderAsync(Order order);
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the orders
         /// </returns>
         Task<IPagedList<Order>> SearchOrdersAsync(int storeId = 0,
@@ -121,14 +121,14 @@ namespace TvProgViewer.Services.Orders
         /// Inserts an order
         /// </summary>
         /// <param name="order">Order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertOrderAsync(Order order);
 
         /// <summary>
         /// Updates the order
         /// </summary>
         /// <param name="order">The order</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateOrderAsync(Order order);
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a value indicating whether an order has items to be added to a shipment
         /// </returns>
         Task<bool> HasItemsToAddToShipmentAsync(Order order);
@@ -154,7 +154,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a value indicating whether an order has items to ship
         /// </returns>
         Task<bool> HasItemsToShipAsync(Order order);
@@ -164,7 +164,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a value indicating whether there are shipment items to mark as 'ready for pickup' in order shipments.
         /// </returns>
         Task<bool> HasItemsToReadyForPickupAsync(Order order);
@@ -174,7 +174,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a value indicating whether an order has items to deliver
         /// </returns>
         Task<bool> HasItemsToDeliverAsync(Order order);
@@ -188,7 +188,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItemId">Order item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order item
         /// </returns>
         Task<OrderItem> GetOrderItemByIdAsync(int orderItemId);
@@ -198,7 +198,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItemId">Order item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel
         /// </returns>
         Task<TvChannel> GetTvChannelByOrderItemIdAsync(int orderItemId);
@@ -211,7 +211,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="isShipEnabled">Value indicating whether the entity is ship enabled; pass null to ignore</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IList<OrderItem>> GetOrderItemsAsync(int orderId, bool? isNotReturnable = null, bool? isShipEnabled = null, int vendorId = 0);
@@ -221,7 +221,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItemGuid">Order item identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order item
         /// </returns>
         Task<OrderItem> GetOrderItemByGuidAsync(Guid orderItemGuid);
@@ -231,7 +231,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="userId">User identifier; null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order items
         /// </returns>
         Task<IList<OrderItem>> GetDownloadableOrderItemsAsync(int userId);
@@ -240,7 +240,7 @@ namespace TvProgViewer.Services.Orders
         /// Delete an order item
         /// </summary>
         /// <param name="orderItem">The order item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteOrderItemAsync(OrderItem orderItem);
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItem">Order item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the total number of items in all shipments
         /// </returns>
         Task<int> GetTotalNumberOfItemsInAllShipmentsAsync(OrderItem orderItem);
@@ -258,7 +258,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItem">Order item</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the total number of already delivered items which can be added to new shipments
         /// </returns>
         Task<int> GetTotalNumberOfItemsCanBeAddedToShipmentAsync(OrderItem orderItem);
@@ -268,7 +268,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItem">Order item to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the true if download is allowed; otherwise, false.
         /// </returns>
         Task<bool> IsDownloadAllowedAsync(OrderItem orderItem);
@@ -278,7 +278,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderItem">Order item to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the true if license download is allowed; otherwise, false.
         /// </returns>
         Task<bool> IsLicenseDownloadAllowedAsync(OrderItem orderItem);
@@ -287,14 +287,14 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a order item
         /// </summary>
         /// <param name="orderItem">Order item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertOrderItemAsync(OrderItem orderItem);
 
         /// <summary>
         /// Updates a order item
         /// </summary>
         /// <param name="orderItem">Order item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateOrderItemAsync(OrderItem orderItem);
 
         #endregion
@@ -306,7 +306,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="orderNoteId">The order note identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order note
         /// </returns>
         Task<OrderNote> GetOrderNoteByIdAsync(int orderNoteId);
@@ -317,7 +317,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="orderId">Order identifier</param>
         /// <param name="displayToUser">Value indicating whether a user can see a note; pass null to ignore</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IList<OrderNote>> GetOrderNotesByOrderIdAsync(int orderId, bool? displayToUser = null);
@@ -326,7 +326,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes an order note
         /// </summary>
         /// <param name="orderNote">The order note</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteOrderNoteAsync(OrderNote orderNote);
 
         /// <summary>
@@ -340,7 +340,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts an order note
         /// </summary>
         /// <param name="orderNote">The order note</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertOrderNoteAsync(OrderNote orderNote);
 
         #endregion
@@ -351,7 +351,7 @@ namespace TvProgViewer.Services.Orders
         /// Deletes a recurring payment
         /// </summary>
         /// <param name="recurringPayment">Recurring payment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteRecurringPaymentAsync(RecurringPayment recurringPayment);
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="recurringPaymentId">The recurring payment identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the recurring payment
         /// </returns>
         Task<RecurringPayment> GetRecurringPaymentByIdAsync(int recurringPaymentId);
@@ -368,14 +368,14 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a recurring payment
         /// </summary>
         /// <param name="recurringPayment">Recurring payment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertRecurringPaymentAsync(RecurringPayment recurringPayment);
 
         /// <summary>
         /// Updates the recurring payment
         /// </summary>
         /// <param name="recurringPayment">Recurring payment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateRecurringPaymentAsync(RecurringPayment recurringPayment);
 
         /// <summary>
@@ -389,7 +389,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the recurring payments
         /// </returns>
         Task<IPagedList<RecurringPayment>> SearchRecurringPaymentsAsync(int storeId = 0,
@@ -404,7 +404,7 @@ namespace TvProgViewer.Services.Orders
         /// Inserts a recurring payment history entry
         /// </summary>
         /// <param name="recurringPaymentHistory">Recurring payment history entry</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertRecurringPaymentHistoryAsync(RecurringPaymentHistory recurringPaymentHistory);
 
         /// <summary>
@@ -412,7 +412,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="recurringPayment">The recurring payment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IList<RecurringPaymentHistory>> GetRecurringPaymentHistoryAsync(RecurringPayment recurringPayment);

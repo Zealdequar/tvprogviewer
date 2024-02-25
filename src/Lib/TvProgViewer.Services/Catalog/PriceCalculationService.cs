@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discounts
         /// </returns>
         protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToTvChannelAsync(TvChannel tvchannel, User user)
@@ -96,7 +96,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discounts
         /// </returns>
         protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToCategoriesAsync(TvChannel tvchannel, User user)
@@ -141,7 +141,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discounts
         /// </returns>
         protected virtual async Task<IList<Discount>> GetAllowedDiscountsAppliedToManufacturersAsync(TvChannel tvchannel, User user)
@@ -186,7 +186,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discounts
         /// </returns>
         protected virtual async Task<IList<Discount>> GetAllowedDiscountsAsync(TvChannel tvchannel, User user)
@@ -220,7 +220,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="user">The user</param>
         /// <param name="tvchannelPriceWithoutDiscount">Already calculated tvchannel price without discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount amount, Applied discounts
         /// </returns>
         protected virtual async Task<(decimal, List<Discount>)> GetDiscountAmountAsync(TvChannel tvchannel,
@@ -266,7 +266,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for final price computation</param>
         /// <param name="quantity">Shopping cart item quantity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
         public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
@@ -293,7 +293,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
         /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
         public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
@@ -322,7 +322,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
         /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
         public virtual async Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
@@ -412,7 +412,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Shopping cart item attributes in XML</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel cost (one item)
         /// </returns>
         public virtual async Task<decimal> GetTvChannelCostAsync(TvChannel tvchannel, string attributesXml)
@@ -454,7 +454,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelPrice">TvChannel price (null for using the base tvchannel price)</param>
         /// <param name="quantity">Shopping cart item quantity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price adjustment
         /// </returns>
         public virtual async Task<decimal> GetTvChannelAttributeValuePriceAdjustmentAsync(TvChannel tvchannel,
@@ -505,7 +505,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="value">Value to round</param>
         /// <param name="currency">Currency; pass null to use the primary store currency</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rounded value
         /// </returns>
         public virtual async Task<decimal> RoundPriceAsync(decimal value, Currency currency = null)

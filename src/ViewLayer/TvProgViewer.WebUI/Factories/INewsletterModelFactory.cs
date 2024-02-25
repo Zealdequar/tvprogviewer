@@ -12,7 +12,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the newsletter box model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the newsletter box model
         /// </returns>
         Task<NewsletterBoxModel> PrepareNewsletterBoxModelAsync();
@@ -22,7 +22,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="active">Whether the subscription has been activated</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the subscription activation model
         /// </returns>
         Task<SubscriptionActivationModel> PrepareSubscriptionActivationModelAsync(bool active);

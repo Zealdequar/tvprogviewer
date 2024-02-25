@@ -47,7 +47,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Store search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store search model
         /// </returns>
         public virtual Task<StoreSearchModel> PrepareStoreSearchModelAsync(StoreSearchModel searchModel)
@@ -66,7 +66,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Store search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store list model
         /// </returns>
         public virtual async Task<StoreListModel> PrepareStoreListModelAsync(StoreSearchModel searchModel)
@@ -94,7 +94,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="store">Store</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store model
         /// </returns>
         public virtual async Task<StoreModel> PrepareStoreModelAsync(StoreModel model, Store store, bool excludeProperties = false)

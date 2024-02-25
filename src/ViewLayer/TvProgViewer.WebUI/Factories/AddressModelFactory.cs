@@ -64,7 +64,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">Address model</param>
         /// <param name="address">Address entity</param>
         /// <param name="overrideAttributesXml">Overridden address attributes in XML format; pass null to use CustomAttributes of address entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareCustomAddressAttributesAsync(AddressModel model,
             Address address, string overrideAttributesXml = "")
         {
@@ -166,7 +166,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="prePopulateWithUserFields">Whether to populate model properties with the user fields (used with the user entity)</param>
         /// <param name="user">User entity; required if prePopulateWithUserFields is true</param>
         /// <param name="overrideAttributesXml">Overridden address attributes in XML format; pass null to use CustomAttributes of the address entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareAddressModelAsync(AddressModel model,
             Address address, bool excludeProperties,
             AddressSettings addressSettings,

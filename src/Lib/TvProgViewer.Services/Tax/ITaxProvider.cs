@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Tax
         /// </summary>
         /// <param name="taxRateRequest">Tax rate request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax
         /// </returns>
         Task<TaxRateResult> GetTaxRateAsync(TaxRateRequest taxRateRequest);
@@ -23,7 +23,7 @@ namespace TvProgViewer.Services.Tax
         /// </summary>
         /// <param name="taxTotalRequest">Tax total request</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax total
         /// </returns>
         Task<TaxTotalResult> GetTaxTotalAsync(TaxTotalRequest taxTotalRequest);

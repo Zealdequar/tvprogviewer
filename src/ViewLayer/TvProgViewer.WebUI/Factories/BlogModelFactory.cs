@@ -83,7 +83,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">Blog post model</param>
         /// <param name="blogPost">Blog post entity</param>
         /// <param name="prepareComments">Whether to prepare blog comments</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareBlogPostModelAsync(BlogPostModel model, BlogPost blogPost, bool prepareComments)
         {
             if (model == null)
@@ -136,7 +136,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="command">Blog paging filtering model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog post list model
         /// </returns>
         public virtual async Task<BlogPostListModel> PrepareBlogPostListModelAsync(BlogPagingFilteringModel command)
@@ -178,7 +178,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare blog post tag list model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog post tag list model
         /// </returns>
         public virtual async Task<BlogPostTagListModel> PrepareBlogPostTagListModelAsync()
@@ -206,7 +206,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare blog post year models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of blog post year model
         /// </returns>
         public virtual async Task<List<BlogPostYearModel>> PrepareBlogPostYearModelAsync()
@@ -277,7 +277,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="blogComment">Blog comment entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog comment model
         /// </returns>
         public virtual async Task<BlogCommentModel> PrepareBlogPostCommentModelAsync(BlogComment blogComment)

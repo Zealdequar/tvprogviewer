@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Shipping.Date
         /// Delete a delivery date
         /// </summary>
         /// <param name="deliveryDate">The delivery date</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteDeliveryDateAsync(DeliveryDate deliveryDate);
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace TvProgViewer.Services.Shipping.Date
         /// </summary>
         /// <param name="deliveryDateId">The delivery date identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the delivery date
         /// </returns>
         Task<DeliveryDate> GetDeliveryDateByIdAsync(int deliveryDateId);
@@ -32,7 +32,7 @@ namespace TvProgViewer.Services.Shipping.Date
         /// Get all delivery dates
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the delivery dates
         /// </returns>
         Task<IList<DeliveryDate>> GetAllDeliveryDatesAsync();
@@ -41,14 +41,14 @@ namespace TvProgViewer.Services.Shipping.Date
         /// Insert a delivery date
         /// </summary>
         /// <param name="deliveryDate">Delivery date</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertDeliveryDateAsync(DeliveryDate deliveryDate);
 
         /// <summary>
         /// Update the delivery date
         /// </summary>
         /// <param name="deliveryDate">Delivery date</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateDeliveryDateAsync(DeliveryDate deliveryDate);
 
         #endregion
@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Shipping.Date
         /// </summary>
         /// <param name="tvchannelAvailabilityRangeId">The tvchannel availability range identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel availability range
         /// </returns>
         Task<TvChannelAvailabilityRange> GetTvChannelAvailabilityRangeByIdAsync(int tvchannelAvailabilityRangeId);
@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Shipping.Date
         /// Get all tvchannel availability ranges
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel availability ranges
         /// </returns>
         Task<IList<TvChannelAvailabilityRange>> GetAllTvChannelAvailabilityRangesAsync();
@@ -78,21 +78,21 @@ namespace TvProgViewer.Services.Shipping.Date
         /// Insert the tvchannel availability range
         /// </summary>
         /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
 
         /// <summary>
         /// Update the tvchannel availability range
         /// </summary>
         /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
 
         /// <summary>
         /// Delete the tvchannel availability range
         /// </summary>
         /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
 
         #endregion

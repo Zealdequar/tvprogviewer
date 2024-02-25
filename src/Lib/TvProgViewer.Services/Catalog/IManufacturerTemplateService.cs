@@ -13,14 +13,14 @@ namespace TvProgViewer.Services.Catalog
         /// Delete manufacturer template
         /// </summary>
         /// <param name="manufacturerTemplate">Manufacturer template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteManufacturerTemplateAsync(ManufacturerTemplate manufacturerTemplate);
 
         /// <summary>
         /// Gets all manufacturer templates
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer templates
         /// </returns>
         Task<IList<ManufacturerTemplate>> GetAllManufacturerTemplatesAsync();
@@ -30,7 +30,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="manufacturerTemplateId">Manufacturer template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer template
         /// </returns>
         Task<ManufacturerTemplate> GetManufacturerTemplateByIdAsync(int manufacturerTemplateId);
@@ -39,14 +39,14 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts manufacturer template
         /// </summary>
         /// <param name="manufacturerTemplate">Manufacturer template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertManufacturerTemplateAsync(ManufacturerTemplate manufacturerTemplate);
 
         /// <summary>
         /// Updates the manufacturer template
         /// </summary>
         /// <param name="manufacturerTemplate">Manufacturer template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateManufacturerTemplateAsync(ManufacturerTemplate manufacturerTemplate);
     }
 }

@@ -83,7 +83,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="newsItem">News item</param>
         /// <param name="prepareComments">Whether to prepare news comment models</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news item model
         /// </returns>
         public virtual async Task<NewsItemModel> PrepareNewsItemModelAsync(NewsItemModel model, NewsItem newsItem, bool prepareComments)
@@ -138,7 +138,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the home page news items model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the home page news items model
         /// </returns>
         public virtual async Task<HomepageNewsItemsModel> PrepareHomepageNewsItemsModelAsync()
@@ -177,7 +177,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="command">News paging filtering model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news item list model
         /// </returns>
         public virtual async Task<NewsItemListModel> PrepareNewsItemListModelAsync(NewsPagingFilteringModel command)
@@ -211,7 +211,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="newsComment">News comment</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news comment model
         /// </returns>
         public virtual async Task<NewsCommentModel> PrepareNewsCommentModelAsync(NewsComment newsComment)

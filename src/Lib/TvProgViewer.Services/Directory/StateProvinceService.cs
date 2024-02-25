@@ -40,7 +40,7 @@ namespace TvProgViewer.Services.Directory
         /// Deletes a state/province
         /// </summary>
         /// <param name="stateProvince">The state/province</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteStateProvinceAsync(StateProvince stateProvince)
         {
             await _stateProvinceRepository.DeleteAsync(stateProvince);
@@ -51,7 +51,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="stateProvinceId">The state/province identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the state/province
         /// </returns>
         public virtual async Task<StateProvince> GetStateProvinceByIdAsync(int stateProvinceId)
@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="abbreviation">The state/province abbreviation</param>
         /// <param name="countryId">Country identifier; pass null to load the state regardless of a country</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the state/province
         /// </returns>
         public virtual async Task<StateProvince> GetStateProvinceByAbbreviationAsync(string abbreviation, int? countryId = null)
@@ -90,7 +90,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="address">Address</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the country
         /// </returns>
         public virtual async Task<StateProvince> GetStateProvinceByAddressAsync(Address address)
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Directory
         /// <param name="languageId">Language identifier. It's used to sort states by localized names (if specified); pass 0 to skip it</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the states
         /// </returns>
         public virtual async Task<IList<StateProvince>> GetStateProvincesByCountryIdAsync(int countryId, int languageId = 0, bool showHidden = false)
@@ -137,7 +137,7 @@ namespace TvProgViewer.Services.Directory
         /// </summary>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the states
         /// </returns>
         public virtual async Task<IList<StateProvince>> GetStateProvincesAsync(bool showHidden = false)
@@ -157,7 +157,7 @@ namespace TvProgViewer.Services.Directory
         /// Inserts a state/province
         /// </summary>
         /// <param name="stateProvince">State/province</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertStateProvinceAsync(StateProvince stateProvince)
         {
             await _stateProvinceRepository.InsertAsync(stateProvince);
@@ -167,7 +167,7 @@ namespace TvProgViewer.Services.Directory
         /// Updates a state/province
         /// </summary>
         /// <param name="stateProvince">State/province</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateStateProvinceAsync(StateProvince stateProvince)
         {
             await _stateProvinceRepository.UpdateAsync(stateProvince);

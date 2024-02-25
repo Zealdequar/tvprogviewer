@@ -17,7 +17,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the view path
         /// </returns>
         Task<string> PrepareTvChannelTemplateViewPathAsync(TvChannel tvchannel);
@@ -32,7 +32,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="prepareSpecificationAttributes">Whether to prepare the specification attribute models</param>
         /// <param name="forceRedirectionAfterAddingToCart">Whether to force redirection after adding to cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the collection of tvchannel overview model
         /// </returns>
         Task<IEnumerable<TvChannelOverviewModel>> PrepareTvChannelOverviewModelsAsync(IEnumerable<TvChannel> tvchannels,
@@ -45,7 +45,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel combination models
         /// </returns>
         Task<IList<TvChannelCombinationModel>> PrepareTvChannelCombinationModelsAsync(TvChannel tvchannel);
@@ -57,7 +57,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="updatecartitem">Updated shopping cart item</param>
         /// <param name="isAssociatedTvChannel">Whether the tvchannel is associated</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel details model
         /// </returns>
         Task<TvChannelDetailsModel> PrepareTvChannelDetailsModelAsync(TvChannel tvchannel, ShoppingCartItem updatecartitem = null, bool isAssociatedTvChannel = false);
@@ -68,7 +68,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="model">TvChannel reviews model</param>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel reviews model
         /// </returns>
         Task<TvChannelReviewsModel> PrepareTvChannelReviewsModelAsync(TvChannelReviewsModel model, TvChannel tvchannel);
@@ -78,7 +78,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="page">Number of items page; pass null to load the first page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user tvchannel reviews model
         /// </returns>
         Task<UserTvChannelReviewsModel> PrepareUserTvChannelReviewsModelAsync(int? page);
@@ -90,7 +90,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="excludeProperties">Whether to exclude populating of model properties from the entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel email a friend model
         /// </returns>
         Task<TvChannelEmailAFriendModel> PrepareTvChannelEmailAFriendModelAsync(TvChannelEmailAFriendModel model, TvChannel tvchannel, bool excludeProperties);
@@ -100,7 +100,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel specification model
         /// </returns>
         Task<TvChannelSpecificationModel> PrepareTvChannelSpecificationModelAsync(TvChannel tvchannel);

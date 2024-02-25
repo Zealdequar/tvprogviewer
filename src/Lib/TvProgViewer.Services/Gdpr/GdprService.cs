@@ -88,7 +88,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Insert a GDPR log
         /// </summary>
         /// <param name="gdprLog">GDPR log</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task InsertLogAsync(GdprLog gdprLog)
         {
             await _gdprLogRepository.InsertAsync(gdprLog);
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Gdpr
         /// </summary>
         /// <param name="gdprConsentId">The GDPR consent identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR consent
         /// </returns>
         public virtual async Task<GdprConsent> GetConsentByIdAsync(int gdprConsentId)
@@ -117,7 +117,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Get all GDPR consents
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR consent
         /// </returns>
         public virtual async Task<IList<GdprConsent>> GetAllConsentsAsync()
@@ -136,7 +136,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Insert a GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertConsentAsync(GdprConsent gdprConsent)
         {
             await _gdprConsentRepository.InsertAsync(gdprConsent);
@@ -146,7 +146,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Update the GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateConsentAsync(GdprConsent gdprConsent)
         {
             await _gdprConsentRepository.UpdateAsync(gdprConsent);
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Delete a GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteConsentAsync(GdprConsent gdprConsent)
         {
             await _gdprConsentRepository.DeleteAsync(gdprConsent);
@@ -168,7 +168,7 @@ namespace TvProgViewer.Services.Gdpr
         /// <param name="consentId">Consent identifier</param>
         /// <param name="userId">User identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result; null if previous a user hasn't been asked
         /// </returns>
         public virtual async Task<bool?> IsConsentAcceptedAsync(int consentId, int userId)
@@ -200,7 +200,7 @@ namespace TvProgViewer.Services.Gdpr
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR log records
         /// </returns>
         public virtual async Task<IPagedList<GdprLog>> GetAllLogAsync(int userId = 0, int consentId = 0,
@@ -237,7 +237,7 @@ namespace TvProgViewer.Services.Gdpr
         /// <param name="consentId">Consent identifier</param>
         /// <param name="requestType">Request type</param>
         /// <param name="requestDetails">Request details</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertLogAsync(User user, int consentId, GdprRequestType requestType, string requestDetails)
         {
             if (user == null)
@@ -264,7 +264,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Permanent delete of user
         /// </summary>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PermanentDeleteUserAsync(User user)
         {
             if (user == null)

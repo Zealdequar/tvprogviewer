@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Common.Caching
         /// Clear cache data
         /// </summary>
         /// <param name="entity">Entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(GenericAttribute entity)
         {
             await RemoveAsync(TvProgCommonDefaults.GenericAttributeCacheKey, entity.EntityId, entity.KeyGroup);

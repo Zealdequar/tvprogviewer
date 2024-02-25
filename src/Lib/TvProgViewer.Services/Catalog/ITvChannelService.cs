@@ -22,21 +22,27 @@ namespace TvProgViewer.Services.Catalog
         /// Delete a tvchannel
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelAsync(TvChannel tvchannel);
 
         /// <summary>
         /// Delete tvchannels
         /// </summary>
         /// <param name="tvchannels">TvChannels</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelsAsync(IList<TvChannel> tvchannels);
+
+        /// <summary>
+        /// Получение всех телеканалов деталей
+        /// </summary>
+        /// <returns>Список телеканалов</returns>
+        Task<IList<TvChannel>> GetAllTvChannelsAsync();
 
         /// <summary>
         /// Gets all tvchannels displayed on the home page
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IList<TvChannel>> GetAllTvChannelsDisplayedOnHomepageAsync();
@@ -47,7 +53,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="categoryId">Category identifier</param>
         /// <param name="storeId">Store identifier; 0 if you want to get all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of featured tvchannels
         /// </returns>
         Task<IList<TvChannel>> GetCategoryFeaturedTvChannelsAsync(int categoryId, int storeId = 0);
@@ -58,7 +64,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <param name="storeId">Store identifier; 0 if you want to get all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of featured tvchannels
         /// </returns>
         Task<IList<TvChannel>> GetManufacturerFeaturedTvChannelsAsync(int manufacturerId, int storeId = 0);
@@ -70,7 +76,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of new tvchannels
         /// </returns>
         Task<IPagedList<TvChannel>> GetTvChannelsMarkedAsNewAsync(int storeId = 0, int pageIndex = 0, int pageSize = int.MaxValue);
@@ -80,7 +86,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel
         /// </returns>
         Task<TvChannel> GetTvChannelByIdAsync(int tvchannelId);
@@ -90,7 +96,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelIds">TvChannel identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IList<TvChannel>> GetTvChannelsByIdsAsync(int[] tvchannelIds);
@@ -99,15 +105,22 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelAsync(TvChannel tvchannel);
 
         /// <summary>
-        /// Updates the tvchannel
+        /// Обновление телеканала деталей
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <param name="tvchannel">Телеканал деталей</param>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelAsync(TvChannel tvchannel);
+
+        /// <summary>
+        /// Обновление телеканалов деталей
+        /// </summary>
+        /// <param name="tvChannels">Список телеканалов деталей</param>
+        /// <returns>Задача представляет асинхронную операцию</returns>
+        Task UpdateTvChannelListAsync(IList<TvChannel> tvChannels);
 
         /// <summary>
         /// Get number of tvchannel (published and visible) in certain category
@@ -115,7 +128,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="categoryIds">Category identifiers</param>
         /// <param name="storeId">Store identifier; 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of tvchannels
         /// </returns>
         Task<int> GetNumberOfTvChannelsInCategoryAsync(IList<int> categoryIds = null, int storeId = 0);
@@ -151,7 +164,7 @@ namespace TvProgViewer.Services.Catalog
         /// false - load only "Unpublished" tvchannels
         /// </param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IPagedList<TvChannel>> SearchTvChannelsAsync(
@@ -186,7 +199,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IPagedList<TvChannel>> GetTvChannelsByTvChannelAttributeIdAsync(int tvchannelAttributeId,
@@ -200,7 +213,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IList<TvChannel>> GetAssociatedTvChannelsAsync(int parentGroupedTvChannelId,
@@ -210,7 +223,7 @@ namespace TvProgViewer.Services.Catalog
         /// Update tvchannel review totals
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelReviewTotalsAsync(TvChannel tvchannel);
 
         /// <summary>
@@ -222,7 +235,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IPagedList<TvChannel>> GetLowStockTvChannelsAsync(int? vendorId = null, bool? loadPublishedOnly = true,
@@ -237,7 +250,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel combinations
         /// </returns>
         Task<IPagedList<TvChannelAttributeCombination>> GetLowStockTvChannelCombinationsAsync(int? vendorId = null, bool? loadPublishedOnly = true,
@@ -248,7 +261,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="sku">SKU</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel
         /// </returns>
         Task<TvChannel> GetTvChannelBySkuAsync(string sku);
@@ -259,7 +272,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="skuArray">SKU array</param>
         /// <param name="vendorId">Vendor ID; 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IList<TvChannel>> GetTvChannelsBySkuAsync(string[] skuArray, int vendorId = 0);
@@ -268,14 +281,14 @@ namespace TvProgViewer.Services.Catalog
         /// Update HasTierPrices property (used for performance optimization)
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateHasTierPricesPropertyAsync(TvChannel tvchannel);
 
         /// <summary>
         /// Update HasDiscountsApplied property (used for performance optimization)
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateHasDiscountsAppliedAsync(TvChannel tvchannel);
 
         /// <summary>
@@ -283,7 +296,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="vendorId">Vendor identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of tvchannels
         /// </returns>
         Task<int> GetNumberOfTvChannelsByVendorIdAsync(int vendorId);
@@ -323,7 +336,7 @@ namespace TvProgViewer.Services.Catalog
         /// Used only with "multiple warehouses" enabled.
         /// </param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<int> GetTotalStockQuantityAsync(TvChannel tvchannel, bool useReservedQuantity = true, int warehouseId = 0);
@@ -343,7 +356,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Selected tvchannel attributes in XML format (if specified)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the stock message
         /// </returns>
         Task<string> FormatStockMessageAsync(TvChannel tvchannel, string attributesXml);
@@ -354,7 +367,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sKU
         /// </returns>
         Task<string> FormatSkuAsync(TvChannel tvchannel, string attributesXml = null);
@@ -365,7 +378,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer part number
         /// </returns>
         Task<string> FormatMpnAsync(TvChannel tvchannel, string attributesXml = null);
@@ -376,7 +389,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gTIN
         /// </returns>
         Task<string> FormatGtinAsync(TvChannel tvchannel, string attributesXml = null);
@@ -394,7 +407,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="limitedToStoresIds">A list of store ids for mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelStoreMappingsAsync(TvChannel tvchannel, IList<int> limitedToStoresIds);
 
         /// <summary>
@@ -402,7 +415,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelIds">TvChannel identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> HasAnyDownloadableTvChannelAsync(int[] tvchannelIds);
@@ -412,7 +425,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelIds">TvChannel identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> HasAnyGiftCardTvChannelAsync(int[] tvchannelIds);
@@ -422,7 +435,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelIds">TvChannel identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<bool> HasAnyRecurringTvChannelAsync(int[] tvchannelIds);
@@ -432,7 +445,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelSku">The sku of the tvchannels to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of sku not existing tvchannels
         /// </returns>
         Task<string[]> GetNotExistingTvChannelsAsync(string[] tvchannelSku);
@@ -448,7 +461,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="quantityToChange">Quantity to increase or decrease</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="message">Message for the stock quantity history</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task AdjustInventoryAsync(TvChannel tvchannel, int quantityToChange, string attributesXml = "", string message = "");
 
         /// <summary>
@@ -458,7 +471,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="warehouseId">Warehouse identifier</param>
         /// <param name="quantity">Quantity, must be negative</param>
         /// <param name="message">Message for the stock quantity history</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task BookReservedInventoryAsync(TvChannel tvchannel, int warehouseId, int quantity, string message = "");
 
         /// <summary>
@@ -468,7 +481,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="shipmentItem">Shipment item</param>
         /// <returns>Quantity reversed</returns>
         /// <param name="message">Message for the stock quantity history</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<int> ReverseBookedInventoryAsync(TvChannel tvchannel, ShipmentItem shipmentItem, string message = "");
 
         #endregion
@@ -479,7 +492,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a related tvchannel
         /// </summary>
         /// <param name="relatedTvChannel">Related tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteRelatedTvChannelAsync(RelatedTvChannel relatedTvChannel);
 
         /// <summary>
@@ -488,7 +501,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId1">The first tvchannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the related tvchannels
         /// </returns>
         Task<IList<RelatedTvChannel>> GetRelatedTvChannelsByTvChannelId1Async(int tvchannelId1, bool showHidden = false);
@@ -498,7 +511,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="relatedTvChannelId">Related tvchannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the related tvchannel
         /// </returns>
         Task<RelatedTvChannel> GetRelatedTvChannelByIdAsync(int relatedTvChannelId);
@@ -507,14 +520,14 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a related tvchannel
         /// </summary>
         /// <param name="relatedTvChannel">Related tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertRelatedTvChannelAsync(RelatedTvChannel relatedTvChannel);
 
         /// <summary>
         /// Updates a related tvchannel
         /// </summary>
         /// <param name="relatedTvChannel">Related tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateRelatedTvChannelAsync(RelatedTvChannel relatedTvChannel);
 
         /// <summary>
@@ -534,7 +547,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a cross-sell tvchannel
         /// </summary>
         /// <param name="crossSellTvChannel">Cross-sell</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteCrossSellTvChannelAsync(CrossSellTvChannel crossSellTvChannel);
 
         /// <summary>
@@ -543,7 +556,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId1">The first tvchannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the cross-sell tvchannels
         /// </returns>
         Task<IList<CrossSellTvChannel>> GetCrossSellTvChannelsByTvChannelId1Async(int tvchannelId1, bool showHidden = false);
@@ -553,7 +566,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="crossSellTvChannelId">Cross-sell tvchannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the cross-sell tvchannel
         /// </returns>
         Task<CrossSellTvChannel> GetCrossSellTvChannelByIdAsync(int crossSellTvChannelId);
@@ -562,7 +575,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a cross-sell tvchannel
         /// </summary>
         /// <param name="crossSellTvChannel">Cross-sell tvchannel</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertCrossSellTvChannelAsync(CrossSellTvChannel crossSellTvChannel);
 
         /// <summary>
@@ -571,7 +584,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="cart">Shopping cart</param>
         /// <param name="numberOfTvChannels">Number of tvchannels to return</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the cross-sells
         /// </returns>
         Task<IList<TvChannel>> GetCrossSellTvChannelsByShoppingCartAsync(IList<ShoppingCartItem> cart, int numberOfTvChannels);
@@ -595,21 +608,21 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <param name="store">Store</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<IList<TierPrice>> GetTierPricesAsync(TvChannel tvchannel, User user, Store store);
 
         /// <summary>
         /// Gets a tier prices by tvchannel identifier
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<IList<TierPrice>> GetTierPricesByTvChannelAsync(int tvchannelId);
 
         /// <summary>
         /// Deletes a tier price
         /// </summary>
         /// <param name="tierPrice">Tier price</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTierPriceAsync(TierPrice tierPrice);
 
         /// <summary>
@@ -617,7 +630,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tierPriceId">Tier price identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ier price
         /// </returns>
         Task<TierPrice> GetTierPriceByIdAsync(int tierPriceId);
@@ -626,14 +639,14 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tier price
         /// </summary>
         /// <param name="tierPrice">Tier price</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTierPriceAsync(TierPrice tierPrice);
 
         /// <summary>
         /// Updates the tier price
         /// </summary>
         /// <param name="tierPrice">Tier price</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTierPriceAsync(TierPrice tierPrice);
 
         /// <summary>
@@ -644,7 +657,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="store">Store</param>
         /// <param name="quantity">Quantity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ier price
         /// </returns>
         Task<TierPrice> GetPreferredTierPriceAsync(TvChannel tvchannel, User user, Store store, int quantity);
@@ -657,7 +670,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a tvchannel picture
         /// </summary>
         /// <param name="tvchannelPicture">TvChannel picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelPictureAsync(TvChannelPicture tvchannelPicture);
 
         /// <summary>
@@ -665,7 +678,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelId">The tvchannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel pictures
         /// </returns>
         Task<IList<TvChannelPicture>> GetTvChannelPicturesByTvChannelIdAsync(int tvchannelId);
@@ -675,7 +688,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelPictureId">TvChannel picture identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel picture
         /// </returns>
         Task<TvChannelPicture> GetTvChannelPictureByIdAsync(int tvchannelPictureId);
@@ -684,14 +697,14 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel picture
         /// </summary>
         /// <param name="tvchannelPicture">TvChannel picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelPictureAsync(TvChannelPicture tvchannelPicture);
 
         /// <summary>
         /// Updates a tvchannel picture
         /// </summary>
         /// <param name="tvchannelPicture">TvChannel picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelPictureAsync(TvChannelPicture tvchannelPicture);
 
         /// <summary>
@@ -699,7 +712,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelsIds">TvChannels IDs</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the all picture identifiers grouped by tvchannel ID
         /// </returns>
         Task<IDictionary<int, int[]>> GetTvChannelsImagesIdsAsync(int[] tvchannelsIds);
@@ -712,7 +725,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of tvchannels
         /// </returns>
         Task<IPagedList<TvChannel>> GetTvChannelsWithAppliedDiscountAsync(int? discountId = null,
@@ -726,7 +739,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a tvchannel video
         /// </summary>
         /// <param name="tvchannelVideo">TvChannel video</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelVideoAsync(TvChannelVideo tvchannelVideo);
 
         /// <summary>
@@ -734,7 +747,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelId">The tvchannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel videos
         /// </returns>
         Task<IList<TvChannelVideo>> GetTvChannelVideosByTvChannelIdAsync(int tvchannelId);
@@ -744,7 +757,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelPictureId">TvChannel video identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel video
         /// </returns>
         Task<TvChannelVideo> GetTvChannelVideoByIdAsync(int tvchannelVideoId);
@@ -753,14 +766,14 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel video
         /// </summary>
         /// <param name="tvchannelVideo">TvChannel picture</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelVideoAsync(TvChannelVideo tvchannelVideo);
 
         /// <summary>
         /// Updates a tvchannel video
         /// </summary>
         /// <param name="tvchannelVideo">TvChannel video</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelVideoAsync(TvChannelVideo tvchannelVideo);
 
         #endregion
@@ -782,7 +795,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the reviews
         /// </returns>
         Task<IPagedList<TvChannelReview>> GetAllTvChannelReviewsAsync(int userId = 0, bool? approved = null,
@@ -795,7 +808,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelReviewId">TvChannel review identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel review
         /// </returns>
         Task<TvChannelReview> GetTvChannelReviewByIdAsync(int tvchannelReviewId);
@@ -805,7 +818,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelReviewIds">TvChannel review identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel reviews
         /// </returns>
         Task<IList<TvChannelReview>> GetTvChannelReviewsByIdsAsync(int[] tvchannelReviewIds);
@@ -814,21 +827,21 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel review
         /// </summary>
         /// <param name="tvchannelReview">TvChannel review</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelReviewAsync(TvChannelReview tvchannelReview);
 
         /// <summary>
         /// Deletes a tvchannel review
         /// </summary>
         /// <param name="tvchannelReview">TvChannel review</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelReviewAsync(TvChannelReview tvchannelReview);
 
         /// <summary>
         /// Deletes tvchannel reviews
         /// </summary>
         /// <param name="tvchannelReviews">TvChannel reviews</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelReviewsAsync(IList<TvChannelReview> tvchannelReviews);
 
         /// <summary>
@@ -836,7 +849,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelReview">TvChannel reviews</param>
         /// <param name="helpfulness">Value indicating whether a review a helpful</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SetTvChannelReviewHelpfulnessAsync(TvChannelReview tvchannelReview, bool helpfulness);
 
         /// <summary>
@@ -844,7 +857,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelReview">TvChannel review</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task UpdateTvChannelReviewHelpfulnessTotalsAsync(TvChannelReview tvchannelReview);
@@ -853,7 +866,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates a tvchannel review
         /// </summary>
         /// <param name="tvchannelReview">TvChannel review</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelReviewAsync(TvChannelReview tvchannelReview);
 
         /// <summary>
@@ -862,7 +875,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId">Current tvchannel</param>
         /// <param name="storeId">The store identifier; pass 0 to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
         Task<bool> CanAddReviewAsync(int tvchannelId, int storeId = 0);
@@ -875,28 +888,28 @@ namespace TvProgViewer.Services.Catalog
         /// Get a tvchannel warehouse-inventory records by tvchannel identifier
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<IList<TvChannelWarehouseInventory>> GetAllTvChannelWarehouseInventoryRecordsAsync(int tvchannelId);
 
         /// <summary>
         /// Deletes a TvChannelWarehouseInventory
         /// </summary>
         /// <param name="pwi">TvChannelWarehouseInventory</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelWarehouseInventoryAsync(TvChannelWarehouseInventory pwi);
 
         /// <summary>
         /// Inserts a TvChannelWarehouseInventory
         /// </summary>
         /// <param name="pwi">TvChannelWarehouseInventory</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelWarehouseInventoryAsync(TvChannelWarehouseInventory pwi);
 
         /// <summary>
         /// Updates a record to manage tvchannel inventory per warehouse
         /// </summary>
         /// <param name="pwi">Record to manage tvchannel inventory per warehouse</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateTvChannelWarehouseInventoryAsync(TvChannelWarehouseInventory pwi);
 
         #endregion
@@ -912,7 +925,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="warehouseId">Warehouse identifier</param>
         /// <param name="message">Message</param>
         /// <param name="combinationId">TvChannel attribute combination identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task AddStockQuantityHistoryEntryAsync(TvChannel tvchannel, int quantityAdjustment, int stockQuantity,
             int warehouseId = 0, string message = "", int? combinationId = null);
 
@@ -925,7 +938,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of stock quantity change entries
         /// </returns>
         Task<IPagedList<StockQuantityHistory>> GetStockQuantityHistoryAsync(TvChannel tvchannel, int warehouseId = 0, int combinationId = 0,
@@ -939,14 +952,14 @@ namespace TvProgViewer.Services.Catalog
         /// Clean up tvchannel references for a specified discount
         /// </summary>
         /// <param name="discount">Discount</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task ClearDiscountTvChannelMappingAsync(Discount discount);
 
         /// <summary>
         /// Get a discount-tvchannel mapping records by tvchannel identifier
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<IList<DiscountTvChannelMapping>> GetAllDiscountsAppliedToTvChannelAsync(int tvchannelId);
 
         /// <summary>
@@ -955,7 +968,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="discountId">Discount identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<DiscountTvChannelMapping> GetDiscountAppliedToTvChannelAsync(int tvchannelId, int discountId);
@@ -964,14 +977,14 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a discount-tvchannel mapping record
         /// </summary>
         /// <param name="discountTvChannelMapping">Discount-tvchannel mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertDiscountTvChannelMappingAsync(DiscountTvChannelMapping discountTvChannelMapping);
 
         /// <summary>
         /// Deletes a discount-tvchannel mapping record
         /// </summary>
         /// <param name="discountTvChannelMapping">Discount-tvchannel mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteDiscountTvChannelMappingAsync(DiscountTvChannelMapping discountTvChannelMapping);
 
         #endregion

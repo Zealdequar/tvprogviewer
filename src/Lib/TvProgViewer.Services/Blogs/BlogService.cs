@@ -48,7 +48,7 @@ namespace TvProgViewer.Services.Blogs
         /// Deletes a blog post
         /// </summary>
         /// <param name="blogPost">Blog post</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteBlogPostAsync(BlogPost blogPost)
         {
             await _blogPostRepository.DeleteAsync(blogPost);
@@ -59,7 +59,7 @@ namespace TvProgViewer.Services.Blogs
         /// </summary>
         /// <param name="blogPostId">Blog post identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog post
         /// </returns>
         public virtual async Task<BlogPost> GetBlogPostByIdAsync(int blogPostId)
@@ -79,7 +79,7 @@ namespace TvProgViewer.Services.Blogs
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="title">Filter by blog post title</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog posts
         /// </returns>
         public virtual async Task<IPagedList<BlogPost>> GetAllBlogPostsAsync(int storeId = 0, int languageId = 0,
@@ -125,7 +125,7 @@ namespace TvProgViewer.Services.Blogs
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog posts
         /// </returns>
         public virtual async Task<IPagedList<BlogPost>> GetAllBlogPostsByTagAsync(int storeId = 0,
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Blogs
         /// <param name="languageId">Language identifier. 0 if you want to get all blog posts</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog post tags
         /// </returns>
         public virtual async Task<IList<BlogPostTag>> GetAllBlogPostTagsAsync(int storeId, int languageId, bool showHidden = false)
@@ -200,7 +200,7 @@ namespace TvProgViewer.Services.Blogs
         /// Inserts a blog post
         /// </summary>
         /// <param name="blogPost">Blog post</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertBlogPostAsync(BlogPost blogPost)
         {
             await _blogPostRepository.InsertAsync(blogPost);
@@ -210,7 +210,7 @@ namespace TvProgViewer.Services.Blogs
         /// Updates the blog post
         /// </summary>
         /// <param name="blogPost">Blog post</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateBlogPostAsync(BlogPost blogPost)
         {
             await _blogPostRepository.UpdateAsync(blogPost);
@@ -223,7 +223,7 @@ namespace TvProgViewer.Services.Blogs
         /// <param name="dateFrom">Date from</param>
         /// <param name="dateTo">Date to</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the filtered posts
         /// </returns>
         public virtual async Task<IList<BlogPost>> GetPostsByDateAsync(IList<BlogPost> blogPosts, DateTime dateFrom, DateTime dateTo)
@@ -243,7 +243,7 @@ namespace TvProgViewer.Services.Blogs
         /// </summary>
         /// <param name="blogPost">Blog post</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ags
         /// </returns>
         public virtual async Task<IList<string>> ParseTagsAsync(BlogPost blogPost)
@@ -297,7 +297,7 @@ namespace TvProgViewer.Services.Blogs
         /// <param name="toUtc">Item creation to; null to load all records</param>
         /// <param name="commentText">Search comment text; null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the comments
         /// </returns>
         public virtual async Task<IList<BlogComment>> GetAllCommentsAsync(int userId = 0, int storeId = 0, int? blogPostId = null,
@@ -337,7 +337,7 @@ namespace TvProgViewer.Services.Blogs
         /// </summary>
         /// <param name="blogCommentId">Blog comment identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog comment
         /// </returns>
         public virtual async Task<BlogComment> GetBlogCommentByIdAsync(int blogCommentId)
@@ -350,7 +350,7 @@ namespace TvProgViewer.Services.Blogs
         /// </summary>
         /// <param name="commentIds">Blog comment identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog comments
         /// </returns>
         public virtual async Task<IList<BlogComment>> GetBlogCommentsByIdsAsync(int[] commentIds)
@@ -365,7 +365,7 @@ namespace TvProgViewer.Services.Blogs
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
         /// <param name="isApproved">A value indicating whether to count only approved or not approved comments; pass null to get number of all comments</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of blog comments
         /// </returns>
         public virtual async Task<int> GetBlogCommentsCountAsync(BlogPost blogPost, int storeId = 0, bool? isApproved = null)
@@ -387,7 +387,7 @@ namespace TvProgViewer.Services.Blogs
         /// Deletes a blog comment
         /// </summary>
         /// <param name="blogComment">Blog comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteBlogCommentAsync(BlogComment blogComment)
         {
             await _blogCommentRepository.DeleteAsync(blogComment);
@@ -397,7 +397,7 @@ namespace TvProgViewer.Services.Blogs
         /// Deletes blog comments
         /// </summary>
         /// <param name="blogComments">Blog comments</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteBlogCommentsAsync(IList<BlogComment> blogComments)
         {
             await _blogCommentRepository.DeleteAsync(blogComments);
@@ -407,7 +407,7 @@ namespace TvProgViewer.Services.Blogs
         /// Inserts a blog comment
         /// </summary>
         /// <param name="blogComment">Blog comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertBlogCommentAsync(BlogComment blogComment)
         {
             await _blogCommentRepository.InsertAsync(blogComment);
@@ -417,7 +417,7 @@ namespace TvProgViewer.Services.Blogs
         /// Update a blog comment
         /// </summary>
         /// <param name="blogComment">Blog comment</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateBlogCommentAsync(BlogComment blogComment)
         {
             await _blogCommentRepository.UpdateAsync(blogComment);

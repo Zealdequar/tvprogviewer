@@ -35,7 +35,7 @@ namespace TvProgViewer.Services.Messages
         /// Inserts a queued email
         /// </summary>
         /// <param name="queuedEmail">Queued email</param>        
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertQueuedEmailAsync(QueuedEmail queuedEmail)
         {
             await _queuedEmailRepository.InsertAsync(queuedEmail);
@@ -45,7 +45,7 @@ namespace TvProgViewer.Services.Messages
         /// Updates a queued email
         /// </summary>
         /// <param name="queuedEmail">Queued email</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateQueuedEmailAsync(QueuedEmail queuedEmail)
         {
             await _queuedEmailRepository.UpdateAsync(queuedEmail);
@@ -55,7 +55,7 @@ namespace TvProgViewer.Services.Messages
         /// Deleted a queued email
         /// </summary>
         /// <param name="queuedEmail">Queued email</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteQueuedEmailAsync(QueuedEmail queuedEmail)
         {
             await _queuedEmailRepository.DeleteAsync(queuedEmail);
@@ -65,7 +65,7 @@ namespace TvProgViewer.Services.Messages
         /// Deleted a queued emails
         /// </summary>
         /// <param name="queuedEmails">Queued emails</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteQueuedEmailsAsync(IList<QueuedEmail> queuedEmails)
         {
             await _queuedEmailRepository.DeleteAsync(queuedEmails);
@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="queuedEmailId">Queued email identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued email
         /// </returns>
         public virtual async Task<QueuedEmail> GetQueuedEmailByIdAsync(int queuedEmailId)
@@ -89,7 +89,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="queuedEmailIds">queued email identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the queued emails
         /// </returns>
         public virtual async Task<IList<QueuedEmail>> GetQueuedEmailsByIdsAsync(int[] queuedEmailIds)
@@ -111,7 +111,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the email item list
         /// </returns>
         public virtual async Task<IPagedList<QueuedEmail>> SearchEmailsAsync(string fromEmail,
@@ -157,7 +157,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of deleted emails
         /// </returns>
         public virtual async Task<int> DeleteAlreadySentEmailsAsync(DateTime? createdFromUtc, DateTime? createdToUtc)
@@ -182,7 +182,7 @@ namespace TvProgViewer.Services.Messages
         /// <summary>
         /// Delete all queued emails
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAllEmailsAsync()
         {
             await _queuedEmailRepository.TruncateAsync();

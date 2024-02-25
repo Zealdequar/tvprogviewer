@@ -15,7 +15,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Discount search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount search model
         /// </returns>
         Task<DiscountSearchModel> PrepareDiscountSearchModelAsync(DiscountSearchModel searchModel);
@@ -25,7 +25,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Discount search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount list model
         /// </returns>
         Task<DiscountListModel> PrepareDiscountListModelAsync(DiscountSearchModel searchModel);
@@ -37,7 +37,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="discount">Discount</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount model
         /// </returns>
         Task<DiscountModel> PrepareDiscountModelAsync(DiscountModel model, Discount discount, bool excludeProperties = false);
@@ -49,7 +49,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="discount">Discount</param>
         /// <param name="groupInteractionType">Interaction type within the group of requirements</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of discount requirement rule models
         /// </returns>
         Task<IList<DiscountRequirementRuleModel>> PrepareDiscountRequirementRuleModelsAsync(ICollection<DiscountRequirement> requirements,
@@ -61,7 +61,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Discount usage history search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount usage history list model
         /// </returns>
         Task<DiscountUsageHistoryListModel> PrepareDiscountUsageHistoryListModelAsync(DiscountUsageHistorySearchModel searchModel,
@@ -73,7 +73,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Discount tvchannel search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount tvchannel list model
         /// </returns>
         Task<DiscountTvChannelListModel> PrepareDiscountTvChannelListModelAsync(DiscountTvChannelSearchModel searchModel, Discount discount);
@@ -83,7 +83,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel search model to add to the discount
         /// </returns>
         Task<AddTvChannelToDiscountSearchModel> PrepareAddTvChannelToDiscountSearchModelAsync(AddTvChannelToDiscountSearchModel searchModel);
@@ -93,7 +93,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel list model to add to the discount
         /// </returns>
         Task<AddTvChannelToDiscountListModel> PrepareAddTvChannelToDiscountListModelAsync(AddTvChannelToDiscountSearchModel searchModel);
@@ -104,7 +104,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Discount category search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount category list model
         /// </returns>
         Task<DiscountCategoryListModel> PrepareDiscountCategoryListModelAsync(DiscountCategorySearchModel searchModel, Discount discount);
@@ -114,7 +114,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Category search model to add to the discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category search model to add to the discount
         /// </returns>
         Task<AddCategoryToDiscountSearchModel> PrepareAddCategoryToDiscountSearchModelAsync(AddCategoryToDiscountSearchModel searchModel);
@@ -124,7 +124,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Category search model to add to the discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category list model to add to the discount
         /// </returns>
         Task<AddCategoryToDiscountListModel> PrepareAddCategoryToDiscountListModelAsync(AddCategoryToDiscountSearchModel searchModel);
@@ -135,7 +135,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Discount manufacturer search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the discount manufacturer list model
         /// </returns>
         Task<DiscountManufacturerListModel> PrepareDiscountManufacturerListModelAsync(DiscountManufacturerSearchModel searchModel,
@@ -146,7 +146,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Manufacturer search model to add to the discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer search model to add to the discount
         /// </returns>
         Task<AddManufacturerToDiscountSearchModel> PrepareAddManufacturerToDiscountSearchModelAsync(AddManufacturerToDiscountSearchModel searchModel);
@@ -156,7 +156,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Manufacturer search model to add to the discount</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer list model to add to the discount
         /// </returns>
         Task<AddManufacturerToDiscountListModel> PrepareAddManufacturerToDiscountListModelAsync(AddManufacturerToDiscountSearchModel searchModel);

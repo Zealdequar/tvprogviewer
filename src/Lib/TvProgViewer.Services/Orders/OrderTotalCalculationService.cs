@@ -112,7 +112,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="user">User</param>
         /// <param name="orderSubTotal">Order subtotal</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order discount, Applied discounts
         /// </returns>
         protected virtual async Task<(decimal orderDiscount, List<Discount> appliedDiscounts)> GetOrderSubtotalDiscountAsync(User user,
@@ -149,7 +149,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="user">User</param>
         /// <param name="shippingTotal">Shipping total</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping discount. Applied discounts
         /// </returns>
         protected virtual async Task<(decimal shippingDiscount, List<Discount> appliedDiscounts)> GetShippingDiscountAsync(User user, decimal shippingTotal)
@@ -186,7 +186,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="user">User</param>
         /// <param name="orderTotal">Order total</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order discount. Applied discounts
         /// </returns>
         protected virtual async Task<(decimal orderDiscount, List<Discount> appliedDiscounts)> GetOrderTotalDiscountAsync(User user, decimal orderTotal)
@@ -225,7 +225,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="discountAmountExclTax">Discount amount (excl tax)</param>
         /// <param name="shippingTotalExclTax">Shipping (excl tax)</param>
         /// <param name="taxTotal">Tax</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task UpdateTotalAsync(UpdateOrderParameters updateOrderParameters, decimal subTotalExclTax,
             decimal discountAmountExclTax, decimal shippingTotalExclTax, decimal taxTotal)
         {
@@ -302,7 +302,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="shippingTaxRate">Shipping tax rates</param>
         /// <param name="updatedOrder">Order</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax total
         /// </returns>
         protected virtual async Task<decimal> UpdateTaxRatesAsync(SortedDictionary<decimal, decimal> subTotalTaxRates, decimal shippingTotalInclTax,
@@ -390,7 +390,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="subTotalInclTax">Subtotal (incl tax)</param>
         /// <param name="subTotalExclTax">Subtotal (excl tax)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping total. Shipping (incl tax). Shipping tax rate
         /// </returns>
         protected virtual async Task<(decimal shippingTotal, decimal shippingTotalInclTax, decimal shippingTaxRate)> UpdateShippingAsync(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart,
@@ -555,7 +555,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="updateOrderParameters">UpdateOrderParameters</param>
         /// <param name="restoredCart">Cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the subtotal. Subtotal (incl tax). Subtotal tax rates. Discount amount (excl tax)
         /// </returns>
         protected virtual async Task<(decimal subtotal, decimal subTotalInclTax, SortedDictionary<decimal, decimal> subTotalTaxRates, decimal discountAmountExclTax)> UpdateSubTotalAsync(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart)
@@ -666,7 +666,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="useRewardPoints">A value indicating whether to use reward points</param>
         /// <param name="user">User</param>
         /// <param name="orderTotal">Order total</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<(int redeemedRewardPoints, decimal redeemedRewardPointsAmount)> SetRewardPointsAsync(int redeemedRewardPoints, decimal redeemedRewardPointsAmount,
             bool? useRewardPoints, User user, decimal orderTotal)
         {
@@ -720,7 +720,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="appliedGiftCards">Applied gift cards</param>
         /// <param name="user">User</param>
         /// <param name="resultTemp"></param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<decimal> AppliedGiftCardsAsync(IList<ShoppingCartItem> cart, List<AppliedGiftCard> appliedGiftCards,
             User user, decimal resultTemp)
         {
@@ -759,7 +759,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the additional shipping charge
         /// </returns>
         protected virtual async Task<decimal> GetShoppingCartAdditionalShippingChargeAsync(IList<ShoppingCartItem> cart)
@@ -793,7 +793,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="cart">Cart</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the applied discount amount. Applied discounts. Sub total (without discount). Sub total (with discount). Tax rates (of order sub total)
         /// </returns>
         public virtual async Task<(decimal discountAmount, List<Discount> appliedDiscounts, decimal subTotalWithoutDiscount, decimal subTotalWithDiscount, SortedDictionary<decimal, decimal> taxRates)> GetShoppingCartSubTotalAsync(IList<ShoppingCartItem> cart,
@@ -811,7 +811,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the applied discount amount. Applied discounts. Sub total (without discount). Sub total (with discount). Tax rates (of order sub total)
         /// </returns>
         public virtual async Task<(decimal discountAmountInclTax, decimal discountAmountExclTax, List<Discount>
@@ -964,7 +964,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="updateOrderParameters">Parameters for the updating order</param>
         /// <param name="restoredCart">Shopping cart</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateOrderTotalsAsync(UpdateOrderParameters updateOrderParameters, IList<ShoppingCartItem> restoredCart)
         {
             //sub total
@@ -986,7 +986,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="cart">Cart</param>
         /// <param name="subTotal">Subtotal amount; pass null to calculate subtotal</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains a value indicating whether shipping is free
         /// </returns>
         public virtual async Task<bool> IsFreeShippingAsync(IList<ShoppingCartItem> cart, decimal? subTotal = null)
@@ -1025,7 +1025,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="cart">Cart</param>
         /// <param name="applyToPickupInStore">Adjust shipping rate to pickup in store shipping option rate</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the adjusted shipping rate. Applied discounts
         /// </returns>
         public virtual async Task<(decimal adjustedShippingRate, List<Discount> appliedDiscounts)> AdjustShippingRateAsync(decimal shippingRate, IList<ShoppingCartItem> cart, 
@@ -1065,7 +1065,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping total
         /// </returns>
         public virtual async Task<decimal?> GetShoppingCartShippingTotalAsync(IList<ShoppingCartItem> cart)
@@ -1081,7 +1081,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="cart">Cart</param>
         /// <param name="includingTax">A value indicating whether calculated price should include tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping total. Applied tax rate. Applied discounts
         /// </returns>
         public virtual async Task<(decimal? shippingTotal, decimal taxRate, List<Discount> appliedDiscounts)> GetShoppingCartShippingTotalAsync(IList<ShoppingCartItem> cart, bool includingTax)
@@ -1175,7 +1175,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="cart">Cart</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping total. Applied tax rate. Applied discounts
         /// </returns>
         public virtual async Task<(decimal? shippingTotalInclTax, decimal? shippingTotaExclTax, decimal taxRate, List<Discount> appliedDiscounts)> GetShoppingCartShippingTotalsAsync(IList<ShoppingCartItem> cart)
@@ -1277,7 +1277,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="cart">Shopping cart</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating tax</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax total, Tax rates
         /// </returns>
         public virtual async Task<(decimal taxTotal, SortedDictionary<decimal, decimal> taxRates)> GetTaxTotalAsync(IList<ShoppingCartItem> cart, bool usePaymentMethodAdditionalFee = true)
@@ -1302,7 +1302,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="useRewardPoints">A value indicating reward points should be used; null to detect current choice of the user</param>
         /// <param name="usePaymentMethodAdditionalFee">A value indicating whether we should use payment method additional fee when calculating order total</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart total;Null if shopping cart total couldn't be calculated now. Applied gift cards. Applied discount amount. Applied discounts. Reward points to redeem. Reward points amount in primary store currency to redeem
         /// </returns>
         public virtual async Task<(decimal? shoppingCartTotal, decimal discountAmount, List<Discount> appliedDiscounts, List<AppliedGiftCard> appliedGiftCards, int redeemedRewardPoints, decimal redeemedRewardPointsAmount)> GetShoppingCartTotalAsync(IList<ShoppingCartItem> cart,
@@ -1405,7 +1405,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="fee">Fee value</param>
         /// <param name="usePercentage">Is fee amount specified as percentage or fixed value?</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<decimal> CalculatePaymentAdditionalFeeAsync(IList<ShoppingCartItem> cart, decimal fee, bool usePercentage)
@@ -1424,7 +1424,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="rewardPoints">Reward points</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the converted value
         /// </returns>
         public virtual async Task<decimal> ConvertRewardPointsToAmountAsync(int rewardPoints)
@@ -1477,7 +1477,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="user">User</param>
         /// <param name="amount">Amount (in primary store currency)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of reward points
         /// </returns>
         public virtual async Task<int> CalculateRewardPointsAsync(User user, decimal amount)

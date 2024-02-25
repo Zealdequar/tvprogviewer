@@ -50,7 +50,7 @@ namespace TvProgViewer.Services.Common
         /// Deletes an address
         /// </summary>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteAddressAsync(Address address)
         {
             await _addressRepository.DeleteAsync(address);
@@ -61,7 +61,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="countryId">Country identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of addresses
         /// </returns>
         public virtual async Task<int> GetAddressTotalByCountryIdAsync(int countryId)
@@ -81,7 +81,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="stateProvinceId">State/province identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the number of addresses
         /// </returns>
         public virtual async Task<int> GetAddressTotalByStateProvinceIdAsync(int stateProvinceId)
@@ -101,7 +101,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="addressId">Address identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address
         /// </returns>
         public virtual async Task<Address> GetAddressByIdAsync(int addressId)
@@ -114,7 +114,7 @@ namespace TvProgViewer.Services.Common
         /// Inserts an address
         /// </summary>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertAddressAsync(Address address)
         {
             if (address == null)
@@ -135,7 +135,7 @@ namespace TvProgViewer.Services.Common
         /// Updates the address
         /// </summary>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateAddressAsync(Address address)
         {
             if (address == null)
@@ -155,7 +155,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="address">Address to validate</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<bool> IsAddressValidAsync(Address address)

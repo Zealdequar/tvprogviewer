@@ -37,7 +37,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the selected checkout attributes
         /// </returns>
         public virtual async Task<IList<CheckoutAttribute>> ParseCheckoutAttributesAsync(string attributesXml)
@@ -216,7 +216,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="cart">Shopping cart items</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the updated attributes in XML format
         /// </returns>
         public virtual async Task<string> EnsureOnlyActiveAttributesAsync(string attributesXml, IList<ShoppingCartItem> cart)
@@ -279,7 +279,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="attribute">Checkout attribute</param>
         /// <param name="selectedAttributesXml">Selected attributes (XML format)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<bool?> IsConditionMetAsync(CheckoutAttribute attribute, string selectedAttributesXml)

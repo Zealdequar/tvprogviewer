@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="pageModel">Sitemap page model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap model
         /// </returns>
         Task<SitemapModel> PrepareSitemapModelAsync(SitemapPageModel pageModel);
@@ -26,7 +26,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="id">Sitemap identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap model with sitemap.xml as string
         /// </returns>
         Task<SitemapXmlModel> PrepareSitemapXmlModelAsync(int id = 0);
@@ -39,7 +39,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="dateTimeUpdatedOn">A time when URL was updated last time</param>
         /// <param name="updateFreq">How often to update url</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sitemap URL model
         /// </returns>
         Task<SitemapUrlModel> PrepareLocalizedSitemapUrlAsync(string routeName,

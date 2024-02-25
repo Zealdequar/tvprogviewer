@@ -17,7 +17,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="copyMultimedia">A value indicating whether the tvchannel images and videos should be copied</param>
         /// <param name="copyAssociatedTvChannels">A value indicating whether the copy associated tvchannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel copy
         /// </returns>
         Task<TvChannel> CopyTvChannelAsync(TvChannel tvchannel, string newName,

@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Logging
         /// Updates an activity log type item
         /// </summary>
         /// <param name="activityLogType">Activity log type item</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateActivityTypeAsync(ActivityLogType activityLogType)
         {
             await _activityLogTypeRepository.UpdateAsync(activityLogType);
@@ -54,7 +54,7 @@ namespace TvProgViewer.Services.Logging
         /// Gets all activity log type items
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the activity log type items
         /// </returns>
         public virtual async Task<IList<ActivityLogType>> GetAllActivityTypesAsync()
@@ -74,7 +74,7 @@ namespace TvProgViewer.Services.Logging
         /// </summary>
         /// <param name="activityLogTypeId">Activity log type identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the activity log type item
         /// </returns>
         public virtual async Task<ActivityLogType> GetActivityTypeByIdAsync(int activityLogTypeId)
@@ -89,7 +89,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="comment">Comment</param>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the activity log item
         /// </returns>
         public virtual async Task<ActivityLog> InsertActivityAsync(string systemKeyword, string comment, BaseEntity entity = null)
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="comment">Comment</param>
         /// <param name="entity">Entity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the activity log item
         /// </returns>
         public virtual async Task<ActivityLog> InsertActivityAsync(User user, string systemKeyword, string comment, BaseEntity entity = null)
@@ -138,7 +138,7 @@ namespace TvProgViewer.Services.Logging
         /// Deletes an activity log item
         /// </summary>
         /// <param name="activityLog">Activity log type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteActivityAsync(ActivityLog activityLog)
         {
             await _activityLogRepository.DeleteAsync(activityLog);
@@ -157,7 +157,7 @@ namespace TvProgViewer.Services.Logging
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the activity log items
         /// </returns>
         public virtual async Task<IPagedList<ActivityLog>> GetAllActivitiesAsync(DateTime? createdOnFrom = null, DateTime? createdOnTo = null,
@@ -201,7 +201,7 @@ namespace TvProgViewer.Services.Logging
         /// </summary>
         /// <param name="activityLogId">Activity log identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the activity log item
         /// </returns>
         public virtual async Task<ActivityLog> GetActivityByIdAsync(int activityLogId)
@@ -212,7 +212,7 @@ namespace TvProgViewer.Services.Logging
         /// <summary>
         /// Clears activity log
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ClearAllActivitiesAsync()
         {
             await _activityLogRepository.TruncateAsync();

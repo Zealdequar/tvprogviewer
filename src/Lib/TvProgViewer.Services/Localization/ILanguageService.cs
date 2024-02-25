@@ -13,7 +13,7 @@ namespace TvProgViewer.Services.Localization
         /// Deletes a language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteLanguageAsync(Language language);
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="storeId">Load records allowed only in a specified store; pass 0 to load all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the languages
         /// </returns>
         Task<IList<Language>> GetAllLanguagesAsync(bool showHidden = false, int storeId = 0);
@@ -42,7 +42,7 @@ namespace TvProgViewer.Services.Localization
         /// </summary>
         /// <param name="languageId">Language identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the language
         /// </returns>
         Task<Language> GetLanguageByIdAsync(int languageId);
@@ -51,14 +51,14 @@ namespace TvProgViewer.Services.Localization
         /// Inserts a language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertLanguageAsync(Language language);
 
         /// <summary>
         /// Updates a language
         /// </summary>
         /// <param name="language">Language</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateLanguageAsync(Language language);
 
         /// <summary>

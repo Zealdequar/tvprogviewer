@@ -22,7 +22,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="author">Filter by plugin author; pass null to load all records</param>
         /// <param name="dependsOnSystemName">System name of the plugin to define dependencies</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the plugin descriptors
         /// </returns>
         Task<IList<PluginDescriptor>> GetPluginDescriptorsAsync<TPlugin>(LoadPluginsMode loadMode = LoadPluginsMode.InstalledOnly,
@@ -38,7 +38,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="storeId">Filter by store; pass 0 to load all records</param>
         /// <param name="group">Filter by plugin group; pass null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the >Plugin descriptor
         /// </returns>
         Task<PluginDescriptor> GetPluginDescriptorBySystemNameAsync<TPlugin>(string systemName,
@@ -54,7 +54,7 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="storeId">Filter by store; pass 0 to load all records</param>
         /// <param name="group">Filter by plugin group; pass null to load all records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the plugins
         /// </returns>
         Task<IList<TPlugin>> GetPluginsAsync<TPlugin>(LoadPluginsMode loadMode = LoadPluginsMode.InstalledOnly,
@@ -72,7 +72,7 @@ namespace TvProgViewer.Services.Plugins
         /// </summary>
         /// <param name="pluginDescriptor">Plugin descriptor</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the logo URL
         /// </returns>
         Task<string> GetPluginLogoUrlAsync(PluginDescriptor pluginDescriptor);
@@ -83,21 +83,21 @@ namespace TvProgViewer.Services.Plugins
         /// <param name="systemName">Plugin system name</param>
         /// <param name="user">User</param>
         /// <param name="checkDependencies">Specifies whether to check plugin dependencies</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PreparePluginToInstallAsync(string systemName, User user = null, bool checkDependencies = true);
 
         /// <summary>
         /// Prepare plugin to the uninstallation
         /// </summary>
         /// <param name="systemName">Plugin system name</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PreparePluginToUninstallAsync(string systemName);
 
         /// <summary>
         /// Prepare plugin to the removing
         /// </summary>
         /// <param name="systemName">Plugin system name</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PreparePluginToDeleteAsync(string systemName);
 
         /// <summary>
@@ -113,25 +113,25 @@ namespace TvProgViewer.Services.Plugins
         /// <summary>
         /// Install plugins
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InstallPluginsAsync();
 
         /// <summary>
         /// Uninstall plugins
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UninstallPluginsAsync();
 
         /// <summary>
         /// Delete plugins
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeletePluginsAsync();
 
         /// <summary>
         /// Update plugins
         /// </summary>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdatePluginsAsync();
 
         /// <summary>

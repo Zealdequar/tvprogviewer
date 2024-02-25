@@ -20,7 +20,7 @@ namespace TvProgViewer.Services.ScheduleTasks
         /// </summary>
         /// <param name="taskId">Task identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the schedule task
         /// </returns>
         Task<ScheduleTask> GetTaskByIdAsync(int taskId);
@@ -30,7 +30,7 @@ namespace TvProgViewer.Services.ScheduleTasks
         /// </summary>
         /// <param name="type">Task type</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the schedule task
         /// </returns>
         Task<ScheduleTask> GetTaskByTypeAsync(string type);
@@ -40,7 +40,7 @@ namespace TvProgViewer.Services.ScheduleTasks
         /// </summary>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of schedule task
         /// </returns>
         Task<IList<ScheduleTask>> GetAllTasksAsync(bool showHidden = false);

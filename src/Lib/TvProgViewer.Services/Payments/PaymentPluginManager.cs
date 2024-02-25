@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Payments
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <param name="countryId">Filter by country; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of active payment methods
         /// </returns>
         public virtual async Task<IList<IPaymentMethod>> LoadActivePluginsAsync(User user = null, int storeId = 0,
@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Payments
         /// <param name="user">Filter by user; pass null to load all plugins</param>
         /// <param name="storeId">Filter by store; pass 0 to load all plugins</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<bool> IsPluginActiveAsync(string systemName, User user = null, int storeId = 0)
@@ -90,7 +90,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="paymentMethod">Payment method</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of country identifiers
         /// </returns>
         public virtual async Task<IList<int>> GetRestrictedCountryIdsAsync(IPaymentMethod paymentMethod)
@@ -108,7 +108,7 @@ namespace TvProgViewer.Services.Payments
         /// </summary>
         /// <param name="paymentMethod">Payment method</param>
         /// <param name="countryIds">List of country identifiers</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SaveRestrictedCountriesAsync(IPaymentMethod paymentMethod, IList<int> countryIds)
         {
             if (paymentMethod == null)

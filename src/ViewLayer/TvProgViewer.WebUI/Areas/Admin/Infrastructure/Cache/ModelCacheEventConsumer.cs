@@ -47,7 +47,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Cache
 
         #region Methods
 
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Setting> eventMessage)
         {
             //clear models which depend on settings
@@ -55,51 +55,51 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Cache
         }
 
         //categories
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Category> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.CategoriesListKey);
         }
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Category> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.CategoriesListKey);
         }
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Category> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.CategoriesListKey);
         }
 
         //manufacturers
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Manufacturer> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.ManufacturersListKey);
         }
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Manufacturer> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.ManufacturersListKey);
         }
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Manufacturer> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.ManufacturersListKey);
         }
 
         //vendors
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityInsertedEvent<Vendor> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorsListKey);
         }
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityUpdatedEvent<Vendor> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorsListKey);
         }
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(EntityDeletedEvent<Vendor> eventMessage)
         {
             await _staticCacheManager.RemoveAsync(TvProgModelCacheDefaults.VendorsListKey);
@@ -109,7 +109,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Cache
         /// Handle plugin updated event
         /// </summary>
         /// <param name="eventMessage">Event</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(PluginUpdatedEvent eventMessage)
         {
             await _staticCacheManager.RemoveByPrefixAsync(TvProgPluginDefaults.AdminNavigationPluginsPrefix);

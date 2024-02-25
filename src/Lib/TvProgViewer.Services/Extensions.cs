@@ -23,7 +23,7 @@ namespace TvProgViewer.Services
         /// <param name="valuesToExclude">Values to exclude</param>
         /// <param name="useLocalization">Localize</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the selectList
         /// </returns>
         public static async Task<SelectList> ToSelectListAsync<TEnum>(this TEnum enumObj,

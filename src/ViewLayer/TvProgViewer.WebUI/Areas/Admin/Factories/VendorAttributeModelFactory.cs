@@ -71,7 +71,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Vendor attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute search model
         /// </returns>
         public virtual Task<VendorAttributeSearchModel> PrepareVendorAttributeSearchModelAsync(VendorAttributeSearchModel searchModel)
@@ -90,7 +90,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Vendor attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute list model
         /// </returns>
         public virtual async Task<VendorAttributeListModel> PrepareVendorAttributeListModelAsync(VendorAttributeSearchModel searchModel)
@@ -126,7 +126,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="vendorAttribute">Vendor attribute</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute model
         /// </returns>
         public virtual async Task<VendorAttributeModel> PrepareVendorAttributeModelAsync(VendorAttributeModel model,
@@ -162,7 +162,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Vendor attribute value search model</param>
         /// <param name="vendorAttribute">Vendor attribute</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute value list model
         /// </returns>
         public virtual async Task<VendorAttributeValueListModel> PrepareVendorAttributeValueListModelAsync(VendorAttributeValueSearchModel searchModel,
@@ -195,7 +195,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="vendorAttributeValue">Vendor attribute value</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor attribute value model
         /// </returns>
         public virtual async Task<VendorAttributeValueModel> PrepareVendorAttributeValueModelAsync(VendorAttributeValueModel model,

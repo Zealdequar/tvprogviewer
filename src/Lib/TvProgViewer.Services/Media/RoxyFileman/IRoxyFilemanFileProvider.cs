@@ -15,7 +15,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// </summary>
         /// <param name="pathBase"></param>
         /// <param name="lang"></param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<RoxyFilemanConfig> GetOrCreateConfigurationAsync(string pathBase, string lang);
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace TvProgViewer.Services.Media.RoxyFileman
         /// <param name="fileName">The file name and extension</param>
         /// <param name="contentType">Mime type</param>
         /// <param name="fileStream">The stream to read</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task SaveFileAsync(string directoryPath, string fileName, string contentType, Stream fileStream);
 
         /// <summary>

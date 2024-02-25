@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Specification attribute group search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute group search model
         /// </returns>
         Task<SpecificationAttributeGroupSearchModel> PrepareSpecificationAttributeGroupSearchModelAsync(SpecificationAttributeGroupSearchModel searchModel);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Specification attribute group search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute group list model
         /// </returns>
         Task<SpecificationAttributeGroupListModel> PrepareSpecificationAttributeGroupListModelAsync(SpecificationAttributeGroupSearchModel searchModel);
@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="specificationAttributeGroup">Specification attribute group</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute group model
         /// </returns>
         Task<SpecificationAttributeGroupModel> PrepareSpecificationAttributeGroupModelAsync(SpecificationAttributeGroupModel model,
@@ -48,7 +48,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Specification attribute search model</param>
         /// <param name="group">Specification attribute group</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute list model
         /// </returns>
         Task<SpecificationAttributeListModel> PrepareSpecificationAttributeListModelAsync(SpecificationAttributeSearchModel searchModel, SpecificationAttributeGroup group);
@@ -60,7 +60,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="specificationAttribute">Specification attribute</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute model
         /// </returns>
         Task<SpecificationAttributeModel> PrepareSpecificationAttributeModelAsync(SpecificationAttributeModel model,
@@ -72,7 +72,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Specification attribute option search model</param>
         /// <param name="specificationAttribute">Specification attribute</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute option list model
         /// </returns>
         Task<SpecificationAttributeOptionListModel> PrepareSpecificationAttributeOptionListModelAsync(
@@ -86,7 +86,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="specificationAttributeOption">Specification attribute option</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute option model
         /// </returns>
         Task<SpecificationAttributeOptionModel> PrepareSpecificationAttributeOptionModelAsync(SpecificationAttributeOptionModel model,
@@ -99,7 +99,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Search model of tvchannels that use the specification attribute</param>
         /// <param name="specificationAttribute">Specification attribute</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list model of tvchannels that use the specification attribute
         /// </returns>
         Task<SpecificationAttributeTvChannelListModel> PrepareSpecificationAttributeTvChannelListModelAsync(

@@ -18,7 +18,7 @@ namespace TvProgViewer.Services.Gdpr
         /// </summary>
         /// <param name="gdprConsentId">The GDPR consent identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR consent
         /// </returns>
         Task<GdprConsent> GetConsentByIdAsync(int gdprConsentId);
@@ -27,7 +27,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Get all GDPR consents
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR consent
         /// </returns>
         Task<IList<GdprConsent>> GetAllConsentsAsync();
@@ -36,21 +36,21 @@ namespace TvProgViewer.Services.Gdpr
         /// Insert a GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertConsentAsync(GdprConsent gdprConsent);
 
         /// <summary>
         /// Update the GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdateConsentAsync(GdprConsent gdprConsent);
 
         /// <summary>
         /// Delete a GDPR consent
         /// </summary>
         /// <param name="gdprConsent">GDPR consent</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteConsentAsync(GdprConsent gdprConsent);
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace TvProgViewer.Services.Gdpr
         /// <param name="consentId">Consent identifier</param>
         /// <param name="userId">User identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result; null if previous a user hasn't been asked
         /// </returns>
         Task<bool?> IsConsentAcceptedAsync(int consentId, int userId);
@@ -78,7 +78,7 @@ namespace TvProgViewer.Services.Gdpr
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR log records
         /// </returns>
         Task<IPagedList<GdprLog>> GetAllLogAsync(int userId = 0, int consentId = 0,
@@ -92,7 +92,7 @@ namespace TvProgViewer.Services.Gdpr
         /// <param name="consentId">Consent identifier</param>
         /// <param name="requestType">Request type</param>
         /// <param name="requestDetails">Request details</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertLogAsync(User user, int consentId, GdprRequestType requestType, string requestDetails);
 
         #endregion
@@ -103,7 +103,7 @@ namespace TvProgViewer.Services.Gdpr
         /// Permanent delete of user
         /// </summary>
         /// <param name="user">User</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task PermanentDeleteUserAsync(User user);
 
         #endregion

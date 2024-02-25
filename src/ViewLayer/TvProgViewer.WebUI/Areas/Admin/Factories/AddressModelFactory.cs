@@ -39,7 +39,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Address model</param>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareAddressModelAsync(AddressModel model, Address address = null)
         {
             if (model == null)

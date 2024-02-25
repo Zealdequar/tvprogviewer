@@ -46,7 +46,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="entityId">Entity identifier</param>
         /// <param name="localeKeyGroup">Locale key group</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the localized properties
         /// </returns>
         protected virtual async Task<IList<LocalizedProperty>> GetLocalizedPropertiesAsync(int entityId, string localeKeyGroup)
@@ -69,7 +69,7 @@ namespace TvProgViewer.Services.Localization
         /// Gets all cached localized properties
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the cached localized properties
         /// </returns>
         protected virtual async Task<IList<LocalizedProperty>> GetAllLocalizedPropertiesAsync()
@@ -85,7 +85,7 @@ namespace TvProgViewer.Services.Localization
         /// Deletes a localized property
         /// </summary>
         /// <param name="localizedProperty">Localized property</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task DeleteLocalizedPropertyAsync(LocalizedProperty localizedProperty)
         {
             await _localizedPropertyRepository.DeleteAsync(localizedProperty);
@@ -95,7 +95,7 @@ namespace TvProgViewer.Services.Localization
         /// Inserts a localized property
         /// </summary>
         /// <param name="localizedProperty">Localized property</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task InsertLocalizedPropertyAsync(LocalizedProperty localizedProperty)
         {
             await _localizedPropertyRepository.InsertAsync(localizedProperty);
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Localization
         /// Updates the localized property
         /// </summary>
         /// <param name="localizedProperty">Localized property</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task UpdateLocalizedPropertyAsync(LocalizedProperty localizedProperty)
         {
             await _localizedPropertyRepository.UpdateAsync(localizedProperty);
@@ -122,7 +122,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="localeKeyGroup">Locale key group</param>
         /// <param name="localeKey">Locale key</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found localized properties
         /// </returns>
         public virtual async Task<IList<LocalizedProperty>> GetEntityLocalizedPropertiesAsync(int entityId, string localeKeyGroup, string localeKey)
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="localeKeyGroup">Locale key group</param>
         /// <param name="localeKey">Locale key</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the found localized value
         /// </returns>
         public virtual async Task<string> GetLocalizedValueAsync(int languageId, int entityId, string localeKeyGroup, string localeKey)
@@ -194,7 +194,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="keySelector">Key selector</param>
         /// <param name="localeValue">Locale value</param>
         /// <param name="languageId">Language ID</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SaveLocalizedValueAsync<T>(T entity,
             Expression<Func<T, string>> keySelector,
             string localeValue,
@@ -212,7 +212,7 @@ namespace TvProgViewer.Services.Localization
         /// <param name="keySelector">Key selector</param>
         /// <param name="localeValue">Locale value</param>
         /// <param name="languageId">Language ID</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task SaveLocalizedValueAsync<T, TPropType>(T entity,
             Expression<Func<T, TPropType>> keySelector,
             TPropType localeValue,

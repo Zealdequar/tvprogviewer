@@ -14,7 +14,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">AppSettings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the app settings model
         /// </returns>
         Task<AppSettingsModel> PrepareAppSettingsModel(AppSettingsModel model = null);
@@ -24,7 +24,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Blog settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the blog settings model
         /// </returns>
         Task<BlogSettingsModel> PrepareBlogSettingsModelAsync(BlogSettingsModel model = null);
@@ -34,7 +34,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Vendor settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor settings model
         /// </returns>
         Task<VendorSettingsModel> PrepareVendorSettingsModelAsync(VendorSettingsModel model = null);
@@ -44,7 +44,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Forum settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the forum settings model
         /// </returns>
         Task<ForumSettingsModel> PrepareForumSettingsModelAsync(ForumSettingsModel model = null);
@@ -54,7 +54,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">News settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the news settings model
         /// </returns>
         Task<NewsSettingsModel> PrepareNewsSettingsModelAsync(NewsSettingsModel model = null);
@@ -64,7 +64,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Shipping settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shipping settings model
         /// </returns>
         Task<ShippingSettingsModel> PrepareShippingSettingsModelAsync(ShippingSettingsModel model = null);
@@ -74,7 +74,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Tax settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the ax settings model
         /// </returns>
         Task<TaxSettingsModel> PrepareTaxSettingsModelAsync(TaxSettingsModel model = null);
@@ -84,7 +84,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Catalog settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the catalog settings model
         /// </returns>
         Task<CatalogSettingsModel> PrepareCatalogSettingsModelAsync(CatalogSettingsModel model = null);
@@ -94,7 +94,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Sort option search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sort option list model
         /// </returns>
         Task<SortOptionListModel> PrepareSortOptionListModelAsync(SortOptionSearchModel searchModel);
@@ -104,7 +104,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         ///<param name="model">Reward points settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the reward points settings model
         /// </returns>
         Task<RewardPointsSettingsModel> PrepareRewardPointsSettingsModelAsync(RewardPointsSettingsModel model = null);
@@ -114,7 +114,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Order settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the order settings model
         /// </returns>
         Task<OrderSettingsModel> PrepareOrderSettingsModelAsync(OrderSettingsModel model = null);
@@ -124,7 +124,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Shopping cart settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart settings model
         /// </returns>
         Task<ShoppingCartSettingsModel> PrepareShoppingCartSettingsModelAsync(ShoppingCartSettingsModel model = null);
@@ -134,7 +134,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Media settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the media settings model
         /// </returns>
         Task<MediaSettingsModel> PrepareMediaSettingsModelAsync(MediaSettingsModel model = null);
@@ -144,7 +144,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">User user settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user user settings model
         /// </returns>
         Task<UserUserSettingsModel> PrepareUserUserSettingsModelAsync(UserUserSettingsModel model = null);
@@ -154,7 +154,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Gdpr settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR settings model
         /// </returns>
         Task<GdprSettingsModel> PrepareGdprSettingsModelAsync(GdprSettingsModel model = null);
@@ -164,7 +164,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">GDPR search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR consent list model
         /// </returns>
         Task<GdprConsentListModel> PrepareGdprConsentListModelAsync(GdprConsentSearchModel searchModel);
@@ -176,7 +176,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="gdprConsent">GDPR consent</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the gDPR consent model
         /// </returns>
         Task<GdprConsentModel> PrepareGdprConsentModelAsync(GdprConsentModel model, GdprConsent gdprConsent, bool excludeProperties = false);
@@ -186,7 +186,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">General common settings model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the general and common settings model
         /// </returns>
         Task<GeneralCommonSettingsModel> PrepareGeneralCommonSettingsModelAsync(GeneralCommonSettingsModel model = null);
@@ -195,7 +195,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare tvchannel editor settings model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel editor settings model
         /// </returns>
         Task<TvChannelEditorSettingsModel> PrepareTvChannelEditorSettingsModelAsync();
@@ -205,7 +205,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Setting search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the setting search model
         /// </returns>
         Task<SettingSearchModel> PrepareSettingSearchModelAsync(SettingSearchModel searchModel);
@@ -215,7 +215,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Setting search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the setting list model
         /// </returns>
         Task<SettingListModel> PrepareSettingListModelAsync(SettingSearchModel searchModel);
@@ -225,7 +225,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="modeName">Mode name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the setting mode model
         /// </returns>
         Task<SettingModeModel> PrepareSettingModeModelAsync(string modeName);
@@ -234,7 +234,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare store scope configuration model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the store scope configuration model
         /// </returns>
         Task<StoreScopeConfigurationModel> PrepareStoreScopeConfigurationModelAsync();

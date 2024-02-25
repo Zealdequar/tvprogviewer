@@ -365,7 +365,7 @@ namespace TvProgViewer.Web.Framework.UI.Paging
         /// Is pager empty (only one page)?
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
 	    public virtual async Task<bool> IsEmpty()
@@ -381,7 +381,7 @@ namespace TvProgViewer.Web.Framework.UI.Paging
         /// Generate HTML control
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the hTML control
         /// </returns>
         protected virtual async Task<string> GenerateHtmlStringAsync()
@@ -495,7 +495,7 @@ namespace TvProgViewer.Web.Framework.UI.Paging
         /// <param name="text">Text</param>
         /// <param name="cssClass">CSS class</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the link
         /// </returns>
 		protected virtual async Task<string> CreatePageLinkAsync(int pageNumber, string text, string cssClass)

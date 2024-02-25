@@ -97,7 +97,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">TvChannel attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel attribute search model
         /// </returns>
         public virtual Task<TvChannelAttributeSearchModel> PrepareTvChannelAttributeSearchModelAsync(TvChannelAttributeSearchModel searchModel)
@@ -116,7 +116,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">TvChannel attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel attribute list model
         /// </returns>
         public virtual async Task<TvChannelAttributeListModel> PrepareTvChannelAttributeListModelAsync(TvChannelAttributeSearchModel searchModel)
@@ -146,7 +146,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="tvchannelAttribute">TvChannel attribute</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel attribute model
         /// </returns>
         public virtual async Task<TvChannelAttributeModel> PrepareTvChannelAttributeModelAsync(TvChannelAttributeModel model,
@@ -184,7 +184,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Predefined tvchannel attribute value search model</param>
         /// <param name="tvchannelAttribute">TvChannel attribute</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the predefined tvchannel attribute value list model
         /// </returns>
         public virtual async Task<PredefinedTvChannelAttributeValueListModel> PreparePredefinedTvChannelAttributeValueListModelAsync(
@@ -227,7 +227,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="tvchannelAttributeValue">Predefined tvchannel attribute value</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the predefined tvchannel attribute value model
         /// </returns>
         public virtual async Task<PredefinedTvChannelAttributeValueModel> PreparePredefinedTvChannelAttributeValueModelAsync(PredefinedTvChannelAttributeValueModel model,
@@ -268,7 +268,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Search model of tvchannels that use the tvchannel attribute</param>
         /// <param name="tvchannelAttribute">TvChannel attribute</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list model of tvchannels that use the tvchannel attribute
         /// </returns>
         public virtual async Task<TvChannelAttributeTvChannelListModel> PrepareTvChannelAttributeTvChannelListModelAsync(TvChannelAttributeTvChannelSearchModel searchModel,

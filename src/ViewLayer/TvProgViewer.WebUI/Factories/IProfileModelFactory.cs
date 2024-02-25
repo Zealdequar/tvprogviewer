@@ -15,7 +15,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="user">User</param>
         /// <param name="page">Number of posts page; pass null to disable paging</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the profile index model
         /// </returns>
         Task<ProfileIndexModel> PrepareProfileIndexModelAsync(User user, int? page);
@@ -25,7 +25,7 @@ namespace TvProgViewer.WebUI.Factories
         /// </summary>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the profile info model
         /// </returns>
         Task<ProfileInfoModel> PrepareProfileInfoModelAsync(User user);
@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="user">User</param>
         /// <param name="page">Number of posts page</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the profile posts model  
         /// </returns>
         Task<ProfilePostsModel> PrepareProfilePostsModelAsync(User user, int page);

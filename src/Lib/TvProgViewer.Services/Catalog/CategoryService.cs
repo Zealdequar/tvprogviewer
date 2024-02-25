@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="storeId">Store identifier (used in multi-store environment). "showHidden" parameter should also be "true"</param>
         /// <param name="showHidden"> A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel category mapping collection
         /// </returns>
         protected virtual async Task<IList<TvChannelCategory>> GetTvChannelCategoriesByTvChannelIdAsync(int tvchannelId, int storeId,
@@ -118,7 +118,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="parentId">Parent category identifier</param>
         /// <param name="ignoreCategoriesWithoutExistingParent">A value indicating whether categories without parent category in provided category list (source) should be ignored</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the sorted categories
         /// </returns>
         protected virtual async Task<IList<Category>> SortCategoriesForTreeAsync(IList<Category> source, int parentId = 0,
@@ -154,7 +154,7 @@ namespace TvProgViewer.Services.Catalog
         /// Clean up category references for a  specified discount
         /// </summary>
         /// <param name="discount">Discount</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ClearDiscountCategoryMappingAsync(Discount discount)
         {
             if (discount is null)
@@ -169,7 +169,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete category
         /// </summary>
         /// <param name="category">Category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteCategoryAsync(Category category)
         {
             await _categoryRepository.DeleteAsync(category);
@@ -187,7 +187,7 @@ namespace TvProgViewer.Services.Catalog
         /// Delete Categories
         /// </summary>
         /// <param name="categories">Categories</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteCategoriesAsync(IList<Category> categories)
         {
             if (categories == null)
@@ -203,7 +203,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="storeId">Store identifier; 0 if you want to get all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the categories
         /// </returns>
         public virtual async Task<IList<Category>> GetAllCategoriesAsync(int storeId = 0, bool showHidden = false)
@@ -233,7 +233,7 @@ namespace TvProgViewer.Services.Catalog
         /// false - load only "Unpublished" tvchannels
         /// </param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the categories
         /// </returns>
         public virtual async Task<IPagedList<Category>> GetAllCategoriesAsync(string categoryName, int storeId = 0,
@@ -277,7 +277,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="parentCategoryId">Parent category identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the categories
         /// </returns>
         public virtual async Task<IList<Category>> GetAllCategoriesByParentCategoryIdAsync(int parentCategoryId,
@@ -312,7 +312,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the categories
         /// </returns>
         public virtual async Task<IList<Category>> GetAllCategoriesDisplayedOnHomepageAsync(bool showHidden = false)
@@ -349,7 +349,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="discount">Discount</param>
         /// <param name="user">User</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category identifiers
         /// </returns>
         public virtual async Task<IList<int>> GetAppliedCategoryIdsAsync(Discount discount, User user)
@@ -390,7 +390,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="storeId">Store identifier; 0 if you want to get all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category identifiers
         /// </returns>
         public virtual async Task<IList<int>> GetChildCategoryIdsAsync(int parentCategoryId, int storeId = 0, bool showHidden = false)
@@ -423,7 +423,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="categoryId">Category identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category
         /// </returns>
         public virtual async Task<Category> GetCategoryByIdAsync(int categoryId)
@@ -439,7 +439,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of categories
         /// </returns>
         public virtual async Task<IPagedList<Category>> GetCategoriesByAppliedDiscountAsync(int? discountId = null,
@@ -465,7 +465,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts category
         /// </summary>
         /// <param name="category">Category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertCategoryAsync(Category category)
         {
             await _categoryRepository.InsertAsync(category);
@@ -477,7 +477,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="categoryId">Category identifier</param>
         /// <param name="discountId">Discount identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         public virtual async Task<DiscountCategoryMapping> GetDiscountAppliedToCategoryAsync(int categoryId, int discountId)
@@ -490,7 +490,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a discount-category mapping record
         /// </summary>
         /// <param name="discountCategoryMapping">Discount-category mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertDiscountCategoryMappingAsync(DiscountCategoryMapping discountCategoryMapping)
         {
             await _discountCategoryMappingRepository.InsertAsync(discountCategoryMapping);
@@ -500,7 +500,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a discount-category mapping record
         /// </summary>
         /// <param name="discountCategoryMapping">Discount-category mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteDiscountCategoryMappingAsync(DiscountCategoryMapping discountCategoryMapping)
         {
             await _discountCategoryMappingRepository.DeleteAsync(discountCategoryMapping);
@@ -510,7 +510,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the category
         /// </summary>
         /// <param name="category">Category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateCategoryAsync(Category category)
         {
             if (category == null)
@@ -536,7 +536,7 @@ namespace TvProgViewer.Services.Catalog
         /// Deletes a tvchannel category mapping
         /// </summary>
         /// <param name="tvchannelCategory">TvChannel category</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelCategoryAsync(TvChannelCategory tvchannelCategory)
         {
             await _tvchannelCategoryRepository.DeleteAsync(tvchannelCategory);
@@ -550,7 +550,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel a category mapping collection
         /// </returns>
         public virtual async Task<IPagedList<TvChannelCategory>> GetTvChannelCategoriesByCategoryIdAsync(int categoryId,
@@ -589,7 +589,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <param name="showHidden"> A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel category mapping collection
         /// </returns>
         public virtual async Task<IList<TvChannelCategory>> GetTvChannelCategoriesByTvChannelIdAsync(int tvchannelId, bool showHidden = false)
@@ -604,7 +604,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelCategoryId">TvChannel category mapping identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel category mapping
         /// </returns>
         public virtual async Task<TvChannelCategory> GetTvChannelCategoryByIdAsync(int tvchannelCategoryId)
@@ -616,7 +616,7 @@ namespace TvProgViewer.Services.Catalog
         /// Inserts a tvchannel category mapping
         /// </summary>
         /// <param name="tvchannelCategory">>TvChannel category mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelCategoryAsync(TvChannelCategory tvchannelCategory)
         {
             await _tvchannelCategoryRepository.InsertAsync(tvchannelCategory);
@@ -626,7 +626,7 @@ namespace TvProgViewer.Services.Catalog
         /// Updates the tvchannel category mapping 
         /// </summary>
         /// <param name="tvchannelCategory">>TvChannel category mapping</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelCategoryAsync(TvChannelCategory tvchannelCategory)
         {
             await _tvchannelCategoryRepository.UpdateAsync(tvchannelCategory);
@@ -637,7 +637,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="categoryIdsNames">The names and/or IDs of the categories to check</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of names and/or IDs not existing categories
         /// </returns>
         public virtual async Task<string[]> GetNotExistingCategoriesAsync(string[] categoryIdsNames)
@@ -671,7 +671,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="tvchannelIds">TvChannels IDs</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category IDs for tvchannels
         /// </returns>
         public virtual async Task<IDictionary<int, int[]>> GetTvChannelCategoryIdsAsync(int[] tvchannelIds)
@@ -690,7 +690,7 @@ namespace TvProgViewer.Services.Catalog
         /// </summary>
         /// <param name="categoryIds">Category identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the categories
         /// </returns>
         public virtual async Task<IList<Category>> GetCategoriesByIdsAsync(int[] categoryIds)
@@ -723,7 +723,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="separator">Separator</param>
         /// <param name="languageId">Language identifier for localization</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the formatted breadcrumb
         /// </returns>
         public virtual async Task<string> GetFormattedBreadCrumbAsync(Category category, IList<Category> allCategories = null,
@@ -748,7 +748,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="allCategories">All categories</param>
         /// <param name="showHidden">A value indicating whether to load hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the category breadcrumb 
         /// </returns>
         public virtual async Task<IList<Category>> GetCategoryBreadCrumbAsync(Category category, IList<Category> allCategories = null, bool showHidden = false)

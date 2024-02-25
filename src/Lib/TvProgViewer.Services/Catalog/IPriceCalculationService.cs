@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for final price computation</param>
         /// <param name="quantity">Shopping cart item quantity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
         Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
@@ -46,7 +46,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
         /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
         Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
@@ -71,7 +71,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
         /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
         Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
@@ -90,7 +90,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannel">TvChannel</param>
         /// <param name="attributesXml">Shopping cart item attributes in XML</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannel cost (one item)
         /// </returns>
         Task<decimal> GetTvChannelCostAsync(TvChannel tvchannel, string attributesXml);
@@ -105,7 +105,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="tvchannelPrice">TvChannel price (null for using the base tvchannel price)</param>
         /// <param name="quantity">Shopping cart item quantity</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the price adjustment
         /// </returns>
         Task<decimal> GetTvChannelAttributeValuePriceAdjustmentAsync(TvChannel tvchannel,
@@ -121,7 +121,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="value">Value to round</param>
         /// <param name="currency">Currency; pass null to use the primary store currency</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the rounded value
         /// </returns>
         Task<decimal> RoundPriceAsync(decimal value, Currency currency = null);

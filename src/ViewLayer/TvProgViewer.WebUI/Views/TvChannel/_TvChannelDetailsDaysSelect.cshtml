@@ -1,8 +1,7 @@
 @model TvChannelDetailsModel
-<link asp-exclude-from-bundle="true" rel="stylesheet" href="~/css/bootstrap-select/bootstrap-select.css" />
-<script asp-exclude-from-bundle="true" data-src="~/js/popper.min.js"></script>
-<script asp-exclude-from-bundle="true" src="~/js/bootstrap.bundle.min.js" data-src="~/js/bootstrap.min.js"></script>
-<script asp-exclude-from-bundle="true" src="~/js/bootstrap-select.min.js"></script>
+<script asp-exclude-from-bundle="true" asp-location="Head" data-src="~/js/popper.min.js"></script>
+<script asp-exclude-from-bundle="true" asp-location="Head" src="~/js/bootstrap.bundle.min.js" data-src="~/js/bootstrap.min.js"></script>
+<script asp-exclude-from-bundle="true" asp-location="Head" src="~/js/bootstrap-select.min.js"></script>
 <div class="days-select">
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsBeforeDaysSelect, additionData = Model })
     <select title="Выберите день..." class="days-selectpicker">

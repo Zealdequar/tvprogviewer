@@ -40,7 +40,7 @@ namespace TvProgViewer.Web.Framework.Factories
         /// </summary>
         /// <typeparam name="TModel">ACL supported model type</typeparam>
         /// <param name="model">Model</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareModelUserRolesAsync<TModel>(TModel model) where TModel : IAclSupportedModel
         {
             if (model == null)
@@ -64,7 +64,7 @@ namespace TvProgViewer.Web.Framework.Factories
         /// <param name="model">Model</param>
         /// <param name="entity">Entity</param>
         /// <param name="ignoreAclMappings">Whether to ignore existing ACL mappings</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareModelUserRolesAsync<TModel, TEntity>(TModel model, TEntity entity, bool ignoreAclMappings)
             where TModel : IAclSupportedModel where TEntity : BaseEntity, IAclSupported
         {

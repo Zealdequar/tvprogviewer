@@ -75,7 +75,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Address attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute search model
         /// </returns>
         public virtual Task<AddressAttributeSearchModel> PrepareAddressAttributeSearchModelAsync(AddressAttributeSearchModel searchModel)
@@ -94,7 +94,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Address attribute search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute list model
         /// </returns>
         public virtual async Task<AddressAttributeListModel> PrepareAddressAttributeListModelAsync(AddressAttributeSearchModel searchModel)
@@ -130,7 +130,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="addressAttribute">Address attribute</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute model
         /// </returns>
         public virtual async Task<AddressAttributeModel> PrepareAddressAttributeModelAsync(AddressAttributeModel model,
@@ -166,7 +166,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="searchModel">Address attribute value search model</param>
         /// <param name="addressAttribute">Address attribute</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute value list model
         /// </returns>
         public virtual async Task<AddressAttributeValueListModel> PrepareAddressAttributeValueListModelAsync(AddressAttributeValueSearchModel searchModel,
@@ -199,7 +199,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// <param name="addressAttributeValue">Address attribute value</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute value model
         /// </returns>
         public virtual async Task<AddressAttributeValueModel> PrepareAddressAttributeValueModelAsync(AddressAttributeValueModel model,
@@ -236,7 +236,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="models">List of address attribute models</param>
         /// <param name="address">Address</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareCustomAddressAttributesAsync(IList<AddressModel.AddressAttributeModel> models, Address address)
         {
             if (models == null)

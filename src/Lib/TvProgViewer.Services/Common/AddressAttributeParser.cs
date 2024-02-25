@@ -82,7 +82,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the selected address attributes
         /// </returns>
         public virtual async Task<IList<AddressAttribute>> ParseAddressAttributesAsync(string attributesXml)
@@ -107,7 +107,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the address attribute values
         /// </returns>
         public virtual async Task<IList<AddressAttributeValue>> ParseAddressAttributeValuesAsync(string attributesXml)
@@ -260,7 +260,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetAttributeWarningsAsync(string attributesXml)
@@ -306,7 +306,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="form">Form values</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the attributes in XML format
         /// </returns>
         public virtual async Task<string> ParseCustomAddressAttributesAsync(IFormCollection form)

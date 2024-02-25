@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="startTimeUtc">Start date</param>
         /// <param name="endTimeUtc">End date</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IList<OrderByCountryReportLine>> GetCountryReportAsync(int storeId = 0, OrderStatus? os = null,
@@ -51,7 +51,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="billingLastName">Billing last name. Leave empty to load all records.</param>
         /// <param name="orderNotes">Search in order notes. Leave empty to load all records.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<OrderAverageReportLine> GetOrderAverageReportLineAsync(int storeId = 0, int vendorId = 0, int tvchannelId = 0,
@@ -66,7 +66,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="storeId">Store identifier</param>
         /// <param name="os">Order status</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<OrderAverageReportLineSummary> OrderAverageReportAsync(int storeId, OrderStatus os);
@@ -88,7 +88,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IPagedList<SalesSummaryReportLine>> SalesSummaryReportAsync(
@@ -124,7 +124,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<IPagedList<BestsellersReportLine>> BestSellersReportAsync(
@@ -158,7 +158,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="billingCountryId">Billing country identifier; 0 to load all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<decimal> BestSellersReportTotalAmountAsync(
@@ -183,7 +183,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="visibleIndividuallyOnly">A values indicating whether to load only tvchannels marked as "visible individually"; "false" to load all records; "true" to load "visible individually" only</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<int[]> GetAlsoPurchasedTvChannelsIdsAsync(int storeId, int tvchannelId,
@@ -202,7 +202,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the tvchannels
         /// </returns>
         Task<IPagedList<TvChannel>> TvChannelsNeverSoldAsync(int vendorId = 0, int storeId = 0,
@@ -230,7 +230,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="billingLastName">Billing last name. Leave empty to load all records.</param>
         /// <param name="orderNotes">Search in order notes. Leave empty to load all records.</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
         Task<decimal> ProfitReportAsync(int storeId = 0, int vendorId = 0, int tvchannelId = 0,

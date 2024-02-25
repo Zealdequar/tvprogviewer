@@ -17,7 +17,7 @@ namespace TvProgViewer.Services.Users.Caching
         /// Handle password changed event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task HandleEventAsync(UserPasswordChangedEvent eventMessage)
         {
             await RemoveAsync(TvProgUserServicesDefaults.UserPasswordLifetimeCacheKey, eventMessage.Password.UserId);
@@ -28,7 +28,7 @@ namespace TvProgViewer.Services.Users.Caching
         /// </summary>
         /// <param name="entity">Entity</param>
         /// <param name="entityEventType">Entity event type</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(User entity, EntityEventType entityEventType)
         {
             if (entityEventType == EntityEventType.Delete)
@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Users.Caching
         /// Clear cache data
         /// </summary>
         /// <param name="entity">Entity</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected override async Task ClearCacheAsync(User entity)
         {
             await RemoveByPrefixAsync(TvProgUserServicesDefaults.UserUserRolesByUserPrefix, entity);

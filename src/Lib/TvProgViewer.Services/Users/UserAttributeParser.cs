@@ -77,7 +77,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the selected user attributes
         /// </returns>
         public virtual async Task<IList<UserAttribute>> ParseUserAttributesAsync(string attributesXml)
@@ -102,7 +102,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user attribute values
         /// </returns>
         public virtual async Task<IList<UserAttributeValue>> ParseUserAttributeValuesAsync(string attributesXml)
@@ -255,7 +255,7 @@ namespace TvProgViewer.Services.Users
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetAttributeWarningsAsync(string attributesXml)

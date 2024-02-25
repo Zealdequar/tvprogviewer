@@ -18,7 +18,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="manufacturers">Manufacturers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         Task<string> ExportManufacturersToXmlAsync(IList<Manufacturer> manufacturers);
@@ -27,14 +27,14 @@ namespace TvProgViewer.Services.ExportImport
         /// Export manufacturers to XLSX
         /// </summary>
         /// <param name="manufacturers">Manufactures</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<byte[]> ExportManufacturersToXlsxAsync(IEnumerable<Manufacturer> manufacturers);
 
         /// <summary>
         /// Export category list to XML
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         Task<string> ExportCategoriesToXmlAsync();
@@ -43,7 +43,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export categories to XLSX
         /// </summary>
         /// <param name="categories">Categories</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<byte[]> ExportCategoriesToXlsxAsync(IList<Category> categories);
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="tvchannels">TvChannels</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         Task<string> ExportTvChannelsToXmlAsync(IList<TvChannel> tvchannels);
@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.ExportImport
         /// Export tvchannels to XLSX
         /// </summary>
         /// <param name="tvchannels">TvChannels</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<byte[]> ExportTvChannelsToXlsxAsync(IEnumerable<TvChannel> tvchannels);
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="orders">Orders</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         Task<string> ExportOrdersToXmlAsync(IList<Order> orders);
@@ -77,14 +77,14 @@ namespace TvProgViewer.Services.ExportImport
         /// Export orders to XLSX
         /// </summary>
         /// <param name="orders">Orders</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<byte[]> ExportOrdersToXlsxAsync(IList<Order> orders);
 
         /// <summary>
         /// Export user list to XLSX
         /// </summary>
         /// <param name="users">Users</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         Task<byte[]> ExportUsersToXlsxAsync(IList<User> users);
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="users">Users</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
         Task<string> ExportUsersToXmlAsync(IList<User> users);
@@ -102,7 +102,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="subscriptions">Subscriptions</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in TXT (string) format
         /// </returns>
         Task<string> ExportNewsletterSubscribersToTxtAsync(IList<NewsLetterSubscription> subscriptions);
@@ -112,7 +112,7 @@ namespace TvProgViewer.Services.ExportImport
         /// </summary>
         /// <param name="states">States</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the result in TXT (string) format
         /// </returns>
         Task<string> ExportStatesToTxtAsync(IList<StateProvince> states);
@@ -123,7 +123,7 @@ namespace TvProgViewer.Services.ExportImport
         /// <param name="user">User</param>
         /// <param name="storeId">Store identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the user GDPR info
         /// </returns>
         Task<byte[]> ExportUserGdprInfoToXlsxAsync(User user, int storeId);

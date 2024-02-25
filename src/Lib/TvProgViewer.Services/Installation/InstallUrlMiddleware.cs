@@ -33,7 +33,7 @@ namespace TvProgViewer.Services.Installation
         /// </summary>
         /// <param name="context">HTTP context</param>
         /// <param name="webHelper">Web helper</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public async Task InvokeAsync(HttpContext context, IWebHelper webHelper)
         {
             //whether database is installed

@@ -70,7 +70,7 @@ namespace TvProgViewer.Services.Messages
         /// Log exception
         /// </summary>
         /// <param name="exception">Exception</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task LogExceptionAsync(Exception exception)
         {
             if (exception == null)
@@ -129,7 +129,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="exception">Exception</param>
         /// <param name="logException">A value indicating whether exception should be logged</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task ErrorNotificationAsync(Exception exception, bool logException = true)
         {
             if (exception == null)

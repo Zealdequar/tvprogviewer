@@ -78,7 +78,7 @@ namespace TvProgViewer.WebUI.Extensions
         /// <param name="html">HTML helper</param>
         /// <param name="model">Pager model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the pager
         /// </returns>
         /// <remarks>We have two pagers: The first one can have custom routes. The second one just adds query string parameter</remarks>
@@ -273,7 +273,7 @@ namespace TvProgViewer.WebUI.Extensions
         /// <param name="html">HTML helper</param>
         /// <param name="model">Model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the pager
         /// </returns>
         public static async Task<IHtmlContent> ForumTopicSmallPagerAsync<TModel>(this IHtmlHelper<TModel> html, ForumTopicRowModel model)
@@ -351,7 +351,7 @@ namespace TvProgViewer.WebUI.Extensions
         /// <param name="html">HTML helper</param>
         /// <param name="themeName">Theme name</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the value
         /// </returns>
         public static async Task<bool> ShouldUseRtlThemeAsync(this IHtmlHelper html, string themeName = null)

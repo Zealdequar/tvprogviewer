@@ -32,7 +32,7 @@ namespace TvProgViewer.Services.Topics
         /// Delete topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTopicTemplateAsync(TopicTemplate topicTemplate)
         {
             await _topicTemplateRepository.DeleteAsync(topicTemplate);
@@ -42,7 +42,7 @@ namespace TvProgViewer.Services.Topics
         /// Gets all topic templates
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opic templates
         /// </returns>
         public virtual async Task<IList<TopicTemplate>> GetAllTopicTemplatesAsync()
@@ -62,7 +62,7 @@ namespace TvProgViewer.Services.Topics
         /// </summary>
         /// <param name="topicTemplateId">Topic template identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the opic template
         /// </returns>
         public virtual async Task<TopicTemplate> GetTopicTemplateByIdAsync(int topicTemplateId)
@@ -74,7 +74,7 @@ namespace TvProgViewer.Services.Topics
         /// Inserts topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTopicTemplateAsync(TopicTemplate topicTemplate)
         {
             await _topicTemplateRepository.InsertAsync(topicTemplate);
@@ -84,7 +84,7 @@ namespace TvProgViewer.Services.Topics
         /// Updates the topic template
         /// </summary>
         /// <param name="topicTemplate">Topic template</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTopicTemplateAsync(TopicTemplate topicTemplate)
         {
             await _topicTemplateRepository.UpdateAsync(topicTemplate);

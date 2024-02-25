@@ -191,7 +191,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare store URL warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareStoreUrlWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -224,7 +224,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare primary exchange rate currency warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareExchangeRateCurrencyWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -263,7 +263,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare primary store currency warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PreparePrimaryStoreCurrencyWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -292,7 +292,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare base weight warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareBaseWeightWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -331,7 +331,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare base dimension warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareBaseDimensionWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -370,7 +370,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare payment methods warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PreparePaymentMethodsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -398,7 +398,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare plugins warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PreparePluginsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -469,7 +469,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare performance settings warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PreparePerformanceSettingsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -500,7 +500,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare file permissions warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareFilePermissionsWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -577,7 +577,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare plugins installed warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PreparePluginsInstalledWarningModelAsync(List<SystemWarningModel> models)
         {
             var plugins = await _pluginService.GetPluginDescriptorsAsync<IPlugin>(LoadPluginsMode.NotInstalledOnly);
@@ -599,7 +599,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare plugins enabled warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PreparePluginsEnabledWarningModelAsync(List<SystemWarningModel> models)
         {
             var plugins = await _pluginService.GetPluginsAsync<IPlugin>();
@@ -677,7 +677,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">System info model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the system info model
         /// </returns>
         public virtual async Task<SystemInfoModel> PrepareSystemInfoModelAsync(SystemInfoModel model)
@@ -760,7 +760,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare proxy connection warning model
         /// </summary>
         /// <param name="models">List of system warning models</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task PrepareProxyConnectionWarningModelAsync(IList<SystemWarningModel> models)
         {
             if (models == null)
@@ -796,7 +796,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare system warning models
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the list of system warning models
         /// </returns>
         public virtual async Task<IList<SystemWarningModel>> PrepareSystemWarningModelsAsync()
@@ -853,7 +853,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Maintenance model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the maintenance model
         /// </returns>
         public virtual Task<MaintenanceModel> PrepareMaintenanceModelAsync(MaintenanceModel model)
@@ -880,7 +880,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Backup file search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the backup file list model
         /// </returns>
         public virtual Task<BackupFileListModel> PrepareBackupFileListModelAsync(BackupFileSearchModel searchModel)
@@ -913,7 +913,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">URL record search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the uRL record search model
         /// </returns>
         public virtual async Task<UrlRecordSearchModel> PrepareUrlRecordSearchModelAsync(UrlRecordSearchModel searchModel)
@@ -958,7 +958,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">URL record search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the uRL record list model
         /// </returns>
         public virtual async Task<UrlRecordListModel> PrepareUrlRecordListModelAsync(UrlRecordSearchModel searchModel)
@@ -1031,7 +1031,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare language selector model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the language selector model
         /// </returns>
         public virtual async Task<LanguageSelectorModel> PrepareLanguageSelectorModelAsync()
@@ -1053,7 +1053,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Popular search term search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the popular search term search model
         /// </returns>
         public virtual Task<PopularSearchTermSearchModel> PreparePopularSearchTermSearchModelAsync(PopularSearchTermSearchModel searchModel)
@@ -1072,7 +1072,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="searchModel">Popular search term search model</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the popular search term list model
         /// </returns>
         public virtual async Task<PopularSearchTermListModel> PreparePopularSearchTermListModelAsync(PopularSearchTermSearchModel searchModel)
@@ -1100,7 +1100,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// Prepare common statistics model
         /// </summary>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the common statistics model
         /// </returns>
         public virtual async Task<CommonStatisticsModel> PrepareCommonStatisticsModelAsync()

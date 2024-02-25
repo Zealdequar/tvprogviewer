@@ -50,7 +50,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorId">Vendor identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor
         /// </returns>
         public virtual async Task<Vendor> GetVendorByIdAsync(int vendorId)
@@ -63,7 +63,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="tvchannelId">TvChannel identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor
         /// </returns>
         public virtual async Task<Vendor> GetVendorByTvChannelIdAsync(int tvchannelId)
@@ -82,7 +82,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="tvchannelIds">Array of tvchannel identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendors
         /// </returns>
         public virtual async Task<IList<Vendor>> GetVendorsByTvChannelIdsAsync(int[] tvchannelIds)
@@ -101,7 +101,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="userIds">Array of user identifiers</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendors
         /// </returns>
         public virtual async Task<IList<Vendor>> GetVendorsByUserIdsAsync(int[] userIds)
@@ -119,7 +119,7 @@ namespace TvProgViewer.Services.Vendors
         /// Delete a vendor
         /// </summary>
         /// <param name="vendor">Vendor</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteVendorAsync(Vendor vendor)
         {
             await _vendorRepository.DeleteAsync(vendor);
@@ -134,7 +134,7 @@ namespace TvProgViewer.Services.Vendors
         /// <param name="pageSize">Page size</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendors
         /// </returns>
         public virtual async Task<IPagedList<Vendor>> GetAllVendorsAsync(string name = "", string email = "", int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
@@ -163,7 +163,7 @@ namespace TvProgViewer.Services.Vendors
         /// Inserts a vendor
         /// </summary>
         /// <param name="vendor">Vendor</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertVendorAsync(Vendor vendor)
         {
             await _vendorRepository.InsertAsync(vendor);
@@ -173,7 +173,7 @@ namespace TvProgViewer.Services.Vendors
         /// Updates the vendor
         /// </summary>
         /// <param name="vendor">Vendor</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateVendorAsync(Vendor vendor)
         {
             await _vendorRepository.UpdateAsync(vendor);
@@ -184,7 +184,7 @@ namespace TvProgViewer.Services.Vendors
         /// </summary>
         /// <param name="vendorNoteId">The vendor note identifier</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor note
         /// </returns>
         public virtual async Task<VendorNote> GetVendorNoteByIdAsync(int vendorNoteId)
@@ -199,7 +199,7 @@ namespace TvProgViewer.Services.Vendors
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
-        /// A task that represents the asynchronous operation
+        /// Задача представляет асинхронную операцию
         /// The task result contains the vendor notes
         /// </returns>
         public virtual async Task<IPagedList<VendorNote>> GetVendorNotesByVendorAsync(int vendorId, int pageIndex = 0, int pageSize = int.MaxValue)
@@ -215,7 +215,7 @@ namespace TvProgViewer.Services.Vendors
         /// Deletes a vendor note
         /// </summary>
         /// <param name="vendorNote">The vendor note</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteVendorNoteAsync(VendorNote vendorNote)
         {
             await _vendorNoteRepository.DeleteAsync(vendorNote);
@@ -225,7 +225,7 @@ namespace TvProgViewer.Services.Vendors
         /// Inserts a vendor note
         /// </summary>
         /// <param name="vendorNote">Vendor note</param>
-        /// <returns>A task that represents the asynchronous operation</returns>
+        /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertVendorNoteAsync(VendorNote vendorNote)
         {
             await _vendorNoteRepository.InsertAsync(vendorNote);
