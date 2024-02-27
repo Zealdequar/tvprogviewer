@@ -122,7 +122,7 @@ function UploadImage(response, postData) {
 
 function linkformatter(cellvalue, options, rowObject) {
     if (cellvalue)
-        return '<a href="~/' + cellvalue + '" target="_blank" title="Детальная информация о телеканале ' + rowObject.SystemTitle +
+        return '<a href="/' + cellvalue + '" target="_blank" title="Детальная информация о телеканале ' + rowObject.SystemTitle +
             '..."><img src="/images/i/channel-prog-25.png" alt="Детальная информация о телеканале ' + rowObject.SystemTitle + '" class="ahover"></img></a>';
     else
         return ""

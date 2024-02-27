@@ -14,7 +14,6 @@
             $.jgrid.no_legacy_api = true;
             $.jgrid.useJSON = true;
 
-            chansArr = getStorageChannels();
             $("#anonsToolProgrammeViewer").on('click', function () {
                 $('#anonsDescrProgrammeViewer').toggle(100);
                 return;
@@ -26,6 +25,10 @@
                     fillProgrammeViewerByDay(daysSelectPickerValue, @Model.Sku);
                 }
             });
+            let currentDateFormatted = formatDate(new Date());
+            $(".days-selectpicker").selectpicker('val', currentDateFormatted);
+            $('.days-selectpicker').selectpicker('refresh');
+            fillProgrammeViewerByDay(currentDateFormatted, @Model.Sku);
         });
     </script>
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsAfterProgrammeViewer, additionData = Model })

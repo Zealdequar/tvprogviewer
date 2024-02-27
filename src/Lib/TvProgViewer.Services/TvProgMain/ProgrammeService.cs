@@ -171,18 +171,21 @@ namespace TvProgViewer.Services.TvProgMain
         public virtual async Task<List<DaysItem>> GetDaysAsync(int typeProg)
         {
             ProgPeriod periodMinMax = await GetSystemProgrammePeriodAsync(typeProg);
-            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : new DateTime();
+            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : DateTime.Now;
             tsMin = new DateTime(tsMin.Year, tsMin.Month, tsMin.Day, 5, 45, 0);
             DateTime tsMiddle = tsMin.AddDays(6);
-            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : new DateTime();
-            tsMax = new DateTime(tsMax.AddDays(-1).Year, tsMax.AddDays(-1).Month, tsMax.AddDays(-1).Day, 5, 45, 0);
+            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : DateTime.Now;
+            DateTime dtMax = tsMax.AddDays(-1);
+            tsMax = new DateTime(dtMax.Year, dtMax.Month, dtMax.Day, 5, 45, 0, Calendar.CurrentEra);
+            IFormatProvider provider = CultureInfo.GetCultureInfo("ru-RU");
             List<DaysItem> daysList = [];
             for (DateTime tsCurDate = tsMiddle.AddDays(1); tsCurDate <= tsMax; tsCurDate = tsCurDate.AddDays(1))
             {
                 string strKey = dictWeek[tsCurDate.DayOfWeek.ToString().ToLower()];
+                
                 DaysItem dayItem = new()
                 {
-                    Name = tsCurDate.ToString("dd.MM.yyyy"),
+                    Name = tsCurDate.ToString("dd.MM.yyyy", provider),
                     DayOfWeek = tsCurDate.DayOfWeek.ToString(),
                     IconSrc = $"./images/i/{strKey}.png",
                     Color = (tsCurDate.Date < DateTime.Now.Date) ? GRAY_COLOR : (tsCurDate.Date == DateTime.Now.Date) ? BLACK_COLOR : GREEN_COLOR

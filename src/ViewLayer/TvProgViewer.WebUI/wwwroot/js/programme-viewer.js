@@ -123,3 +123,13 @@ function fillProgrammeViewerByDay(date, channelId) {
         jQuery("#TVProgrammeByDaysGrid").jqGrid('hideCol', "RatingContent");
     }*/
 }
+
+function formatDate(date) {
+    let formattedDate = date.toLocaleDateString('ru-Ru', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    });
+
+    return formattedDate;
+}

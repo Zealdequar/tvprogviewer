@@ -16,6 +16,7 @@ using TvProgViewer.Services.Users;
 using FluentMigrator.Model;
 using NUglify.Helpers;
 using TvProgViewer.Core;
+using System.Globalization;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -418,9 +419,11 @@ namespace TvProgViewer.WebUI.Controllers
         /// <param name="category">Категория</param>
         public async Task<JsonResult> GetUserProgrammeOfDay(int progTypeID, int cid, string tsDate, string category)
         {
-            return Json(await _programmeService.GetUserProgrammesOfDayListAsync(null, progTypeID, cid,
-                                Convert.ToDateTime(tsDate).AddHours(5).AddMinutes(45),
-                                Convert.ToDateTime(tsDate).AddDays(1).AddHours(5).AddMinutes(45), (category != "null") ? category : null));
+            IFormatProvider provider = CultureInfo.GetCultureInfo("ru-RU");
+            DateTime dtStart = Convert.ToDateTime(tsDate, provider).AddHours(5).AddMinutes(45);
+            DateTime dtEnd = Convert.ToDateTime(tsDate, provider).AddDays(1).AddHours(5).AddMinutes(45);
+            return Json(await _programmeService.GetUserProgrammesOfDayListAsync(null, progTypeID, cid, dtStart, dtEnd, 
+                (category != "null") ? category : null));
         }
 
         #endregion

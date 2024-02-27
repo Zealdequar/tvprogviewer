@@ -13,27 +13,21 @@
     </select>
     
     <script asp-location="Footer">
+        $(document).ready(function() {
+            const $_SELECT_PICKER = $('.days-selectpicker');
 
-        const $_SELECT_PICKER = $('.days-selectpicker');
+            $_SELECT_PICKER.find('option').each((idx, elem) => {
+                const $OPTION = $(elem);
+                const IMAGE_URL = $OPTION.attr('data-thumbnail');
+                const TEXT_COLOR = $OPTION.attr('data-color');
 
-        $_SELECT_PICKER.find('option').each((idx, elem) => {
-            const $OPTION = $(elem);
-            const IMAGE_URL = $OPTION.attr('data-thumbnail');
-            const TEXT_COLOR = $OPTION.attr('data-color');
+                if (IMAGE_URL) {
+                    $OPTION.attr('data-content', "<img class='img-padding' src='%i'/>%s".replace(/%i/, IMAGE_URL).replace(/%s/, "<span class='" + TEXT_COLOR + "'>" + $OPTION.text() + "</span>"))
+                }
+            });
 
-            if (IMAGE_URL) {
-                $OPTION.attr('data-content', "<img class='img-padding' src='%i'/>%s".replace(/%i/, IMAGE_URL).replace(/%s/, "<span class='" + TEXT_COLOR +"'>" + $OPTION.text() + "</span>"))
-            }
-        });
-
-        $_SELECT_PICKER.selectpicker();
-                
-        /* $(document).ready(function() {
-          // Initiate with custom caret icon
-          $('.days-selectpicker').selectpicker({
-            caretIcon: 'glyphicon glyphicon-menu-down'
-          });
-        }); */
+            $_SELECT_PICKER.selectpicker();
+        }); 
     </script>
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsAfterDaysSelect, additionData = Model })
 </div>

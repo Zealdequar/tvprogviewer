@@ -28,6 +28,7 @@ using TvProgViewer.Web.Framework.Mvc.Filters;
 using TvProgViewer.Web.Framework.Mvc.Routing;
 using TvProgViewer.WebUI.Models.Catalog;
 using TvProgViewer.Services.TvProgMain;
+using System.Globalization;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -334,9 +335,11 @@ namespace TvProgViewer.WebUI.Controllers
         public async Task<JsonResult> GetUserProgrammeOfDay(int progTypeID, int cid, string tsDate, string category)
         {
             int? channelId = await _channelService.GetChannelIdByInternalIdAsync(cid);
-            return Json(await _programmeService.GetUserProgrammesOfDayListAsync(null, progTypeID, channelId.Value,
-                                Convert.ToDateTime(tsDate).AddHours(5).AddMinutes(45),
-                                Convert.ToDateTime(tsDate).AddDays(1).AddHours(5).AddMinutes(45), (category != "null") ? category : null));
+            IFormatProvider provider = CultureInfo.GetCultureInfo("ru-RU");
+            DateTime dtStart = Convert.ToDateTime(tsDate, provider).AddHours(5).AddMinutes(45);
+            DateTime dtEnd = Convert.ToDateTime(tsDate, provider).AddDays(1).AddHours(5).AddMinutes(45);
+            return Json(await _programmeService.GetUserProgrammesOfDayListAsync(null, progTypeID, channelId.Value, dtStart, dtEnd,
+                (category != "null") ? category : null));
         }
 
         #endregion
