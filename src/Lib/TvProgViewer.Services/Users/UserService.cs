@@ -605,7 +605,9 @@ namespace TvProgViewer.Services.Users
         /// </returns>
         public virtual async Task<User> InsertTvGuestUserAsync(string uuid, string ipAddress)
         {
-            Guid guid = new Guid(uuid);
+            if (!Guid.TryParse(uuid, out Guid guid))
+                return null;
+            
             var user = await GetUserByGuidAsync(guid);
 
             if (user != null)

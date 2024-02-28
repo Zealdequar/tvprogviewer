@@ -169,13 +169,16 @@ namespace TvProgViewer.WebUI.Controllers
         public async Task SendStatForChannelRating(string uuid, int progType, string channels)
         {
             var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
-            await _userService.RemoveUserChannelMappingAsync(user);
-            if (!channels.IsNullOrWhiteSpace())
+            if (user != null)
             {
-                var listChannelId = await channels.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Where(ch => int.TryParse(ch, out int id))
-                    .Select(ch => { _ = int.TryParse(ch, out int id); return id; }).ToListAsync();
-                await _userService.AddUserChannelMappingAsync(user, listChannelId);
+                await _userService.RemoveUserChannelMappingAsync(user);
+                if (!channels.IsNullOrWhiteSpace())
+                {
+                    var listChannelId = await channels.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Where(ch => int.TryParse(ch, out int id))
+                        .Select(ch => { _ = int.TryParse(ch, out int id); return id; }).ToListAsync();
+                    await _userService.AddUserChannelMappingAsync(user, listChannelId);
+                }
             }
         }
 
@@ -275,10 +278,10 @@ namespace TvProgViewer.WebUI.Controllers
             };
 
             ProgPeriod periodMinMax = await _programmeService.GetSystemProgrammePeriodAsync(typeProg);
-            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : new DateTime();
+            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : DateTime.Now;
             tsMin = new DateTime(tsMin.Year, tsMin.Month, tsMin.Day, 5, 45, 0);
             DateTime tsMiddle = tsMin.AddDays(6);
-            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : new DateTime();
+            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : DateTime.Now;
             tsMax = new DateTime(tsMax.AddDays(-1).Year, tsMax.AddDays(-1).Month, tsMax.AddDays(-1).Day, 5, 45, 0);
 
             List<UserChannel> chanList = await _channelService.GetUserChannelsByLocalStorageAsync(providerId, jsonChannels);
