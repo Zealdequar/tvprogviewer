@@ -46,7 +46,7 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         public string FileNameOrig { get; set; }
 
         /// <summary>
-        /// Названия файла крупной пиктограммы телеканала
+        /// Названия файла мелкой пиктограммы телеканала
         /// </summary>
         [DataMember]
         public string FileName25 { get; set; }

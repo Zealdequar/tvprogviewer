@@ -429,6 +429,11 @@ namespace TvProgViewer.WebUI.Controllers
                 (category != "null") ? category : null));
         }
 
+        public async Task<JsonResult> GetChannels (int providerId, string jsonChannels)
+        {
+            List<UserChannel> chanList = await _channelService.GetUserChannelsByLocalStorageAsync(providerId, jsonChannels);
+            return Json(chanList.ToArray());
+        }
         #endregion
     }
 }

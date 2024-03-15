@@ -159,7 +159,7 @@
     }
 
     .greenColor {
-        color: forestgreen;
+        color: #004000;
     }
 
     .channel-text {
@@ -291,9 +291,31 @@
         margin-top: -100px;
     }
 
-    @media (min-width: 1200px) {
-        /* стиль имеет смысл, когда ширина экрана больше 1200px, к тому же не нужно придумывать решения для IE7 и ниже */
-        div.allDisplay {
+    #searchTabs {
+        margin: 20px 10px;
+    }
+
+#datesToolSearch, #channelToolSearch, #genreToolSearch {
+    margin: 5px 0px;
+    padding: 10px 25px;
+    border-left: 1px solid #dddddd;
+    border-right: 1px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    height: 255px;
+}
+#chkToolSearch {
+    height: 30px;
+    margin: 14px 0 0 14px;
+}
+.input-medium{
+    width: 170px;
+}
+@media (min-width: 1200px) {
+    /* стиль имеет смысл, когда ширина экрана больше 1200px, к тому же не нужно придумывать решения для IE7 и ниже */
+    div .allDisplay {
             width: 50vw;
             margin-left: 50%;
             height: 680px
@@ -337,10 +359,18 @@
         margin-left: 10px;
     }
 
-    .label-of-checkbox {
-        margin-top: -3px;
-        font-weight: normal !important;
-    }
+.pic-channel-of-checkbox {
+    margin: -5px 9px 0 7px;
+}
+.pic-genre-of-checkbox {
+    margin: -5px 9px 0 7px;
+}
+
+.label-of-checkbox {
+    margin-top: -3px;
+    font-weight: normal !important;
+    font-size: 12pt;
+}
 
     .period {
         margin-top: 10px;
@@ -8513,4 +8543,12 @@
     margin: 0 0 0;
     left: 0;
     top: 0; 
+}
+.videoplayer_media_provider {
+    position:  relative;
+    z-index: 0;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
 }

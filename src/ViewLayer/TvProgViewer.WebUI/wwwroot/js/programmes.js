@@ -33,6 +33,7 @@ $(function () {
     fillGenresToolSearch();
     fillSearchTab();
     fillDatesToolSearch();
+    fillChannelsToolSearch();
     
     setGrids();
     $('#tabs').tabs({
@@ -51,9 +52,13 @@ $(function () {
             if (idx === 2 || idx === 3) {
                 setTree(idx);
             }
+            if (idx === 4) {
+                var datesToolSearch = document.getElementById("datesToolSearch");
+                datesToolSearch.scrollTop = datesToolSearch.scrollHeight - datesToolSearch.clientHeight;
+            }
         }
     });
-
+    
     $("#anonsTool").on('click', function () {
         $('#anonsDescr').toggle(100);
     });
@@ -64,7 +69,17 @@ $(function () {
     $("#anonsToolSearch").on('click', function () {
         $('#anonsDescrSearch').toggle(100);
     });
+    $("#chkAll").on('click', function () {
+        checkSearchAll();
+    });
 
+    $("#chkUncheckAll").on('click', function () {
+        uncheckSearchAll();
+    });
+
+    $("#chkInvert").on('click', function () {
+        invertSearchAll();
+    });
     $("#anonsToolByDays").on('click', function () {
         $('#anonsDescrByDays').toggle(100);
     });
@@ -114,7 +129,6 @@ $(function () {
     });
     $("#dragToolGenreNow").draggable();
     $("#dragToolGenreNext").draggable();
-    $("#dragToolGenreSearch").draggable();
 });
 
 
@@ -384,16 +398,13 @@ function setGrids() {
 
 // Поиск по всей программе передач
 function searchProgramme(typeProgID, findTitle) {
-    if (findTitle.length == 0 || findTitle == "" || findTitle == null)
-      return;
-
     if (incSearch == 1)
     {
         $('#SearchedTVProgramme').jqGrid(
             {
                 url: "Home/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
-                    "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked") +
-                    "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
+                    "&genres=" + getSearchGenres(".chkGenres:checkbox:checked") + "&dates=" + getSearchDates(".chkDates:checkbox:checked") +
+                    "&channels=" + getSearchChannels(".chkChannels:checkbox:checked"),
                 datatype: 'json',
                 type: 'GET',
                 colNames: ["Рейтинг", "Название рейтинга", "Жанр", "Название жанра", "Анонс", "Эмблема канала", "Название канала", "День", "От", "До", "Передачи", ""],
@@ -499,8 +510,8 @@ function searchProgramme(typeProgID, findTitle) {
     {
         $("#SearchedTVProgramme").setGridParam({
             url: "Home/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
-                "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked") +
-                "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : "")
+                "&genres=" + getSearchGenres(".chkGenres:checkbox:checked") + "&dates=" + getSearchDates(".chkDates:checkbox:checked") +
+                "&channels=" + getSearchChannels(".chkChannels:checkbox:checked")
         });
         $("#SearchedTVProgramme").trigger("reloadGrid");
     }
@@ -784,13 +795,31 @@ function fillUserByChannels(date, channelId) {
     }*/
 }
 
+// Получение отмеченных жанров
+function getSearchGenres(chbGenreChecked) {
+    var ids_genres = $(chbGenreChecked).map(function () {
+        return this.id.replace('Genre', '');
+    }).get();
 
-function GetDates(chbChecked) {
+    return ids_genres.join(";");
+}
+
+// Получение отмеченных дат
+function getSearchDates(chbChecked) {
     var ids_dates = $(chbChecked).map(function () {
         return this.id.replace('Date', '');
     }).get();
 
     return ids_dates.join(";");
+}
+
+// Получение отмеченных каналов
+function getSearchChannels(chbChannelChecked) {
+    var ids_channels = $(chbChannelChecked).map(function () {
+        return this.id.replace('Channel', '');
+    }).get();
+
+    return ids_channels.join(";");
 }
 
 function fillGenresToolNow() {
@@ -897,7 +926,7 @@ function fillGenresToolNext() {
 }
 
 function fillGenresToolSearch() {
-    $('#genresToolSearch').hide();
+    
         $.ajax({
             url: "Home/GetGenres",
             dataType: 'json',
@@ -905,27 +934,12 @@ function fillGenresToolSearch() {
             type: 'Get',
             contentType: 'application/json; charset=utf-8',
             success: function (response) {
-                $('#genresToolSearch').empty();
+                $('#genreToolSearch').empty();
                 for (var i = 0; i < response.length; i++) {
-                    var b = $('<button id="' + response[i].GenreId + '" class="btn btn-default btn-genre-search">');
-
-                    $('#genresToolSearch').append(
-                        b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" alt="' + response[i].GenreName + '" height="24px" width="24px">'));
-
-
+                    $("#genreToolSearch").append('<div class="row search-conditions">' +
+                        appendGenreColumn(response[i]) +
+                        '</div>');
                 }
-                $('.btn-group-genres-search').on('click', '.btn', function (e) {
-                    e.preventDefault();
-                    $(this).toggleClass("active");
-                    $("#SearchedTVProgramme").setGridParam({
-                        url: "Home/SearchProgramme?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&findTitle=" + $('#tbContains').val() +
-                            "&category=" + $('#userCategory option:selected').val().split(';')[1] +
-                            "&genres=" + GetGenres(".btn-genre-search.active") + "&dates=" + GetDates(".chkDates:checkbox:checked") + 
-                            "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),});
-                    $("#SearchedTVProgramme").trigger("reloadGrid");
-                });
-                window.setTimeout(function () { $('#genresToolSearch').show(); }, 3000);
-                
             },
             error: function (jqXHR, exception) {
                 var msg = '';
@@ -949,6 +963,27 @@ function fillGenresToolSearch() {
 
 }
 
+function fillChannelsToolSearch() {
+    if (!$('#userProvider option:selected') || !$('#userProvider option:selected').val().split(';')[1])
+        return;
+
+    $.ajax({
+        url: "Home/GetChannels?providerId=" + $('#userProvider option:selected').val().split(';')[1] +
+                                                "&jsonChannels=" + window.localStorage.getItem("optChans"),
+        dataType: 'json',
+        type: 'GET',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            var arrChannels = response;
+            for (var i = 1; i <= arrChannels.length; i++) {
+                $("#channelToolSearch").append('<div class="row search-conditions">' +
+                    appendChannelColumn(arrChannels[i - 1]) +
+                    '</div>');
+            }
+        }
+    });
+}
+
 function fillDatesToolSearch() {
     if (!$('#userTypeProg option:selected') || !$('#userTypeProg option:selected').val().split(';')[1])
         return;
@@ -962,19 +997,13 @@ function fillDatesToolSearch() {
             var startDate = new Date(Date.parse(response.dtStart));
             var endDate = new Date(Date.parse(response.dtEnd));
             var arrDates = getDates(startDate, endDate);
-            for (var i = 1; i <= 7; i++) {
-                $("#datesToolSearch").append('<div class="row">' +
-                    appendDateColumn(arrDates[(i - 1) % 7]) +
-                    appendDateColumn(arrDates[(i - 1) % 7 + 7]) +
-                    appendDateColumn(arrDates[(i - 1) % 7 + 14]) +
-                    appendDateColumn(arrDates[(i - 1) % 7 + 21]) +
-                    appendDateColumn(arrDates[(i - 1) % 7 + 28]) +
-                    appendDateColumn(arrDates[(i - 1) % 7 + 35]) +
+            for (var i = 1; i <= arrDates.length; i++) {
+                $("#datesToolSearch").append('<div class="row search-conditions">' +
+                    appendDateColumn(arrDates[i - 1]) +
                                               '</div>');
             }
         }
-    }); 
- 
+    });
 }
 
 Date.prototype.yyyymmdd = function () {
@@ -993,22 +1022,35 @@ Date.prototype.addDays = function (days) {
     return date;
 };
 
-
-
 function appendDateColumn(dt) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).valueOf();
     var dtDate = new Date(dt);
     var chb = dtDate >= today ? 'checked="checked" ' : '';
     var days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-    return '<div class="col-sm-2"><div class="form-group form-check">' +
+    
+    return '<div  class="form-group form-check">' +
         (typeof dt !== 'undefined' ? '<input id="Date' + numDateString(dt) + '" type="checkbox" ' + chb + 'class="form-check-input chkDates">' : '') +
            (typeof dt !== 'undefined' ? '<label class="form-check-label label-of-checkbox" for="Date' +
               numDateString(dt) + '"><img class="pic-of-checkbox" src="/images/i/' + getDayOfWeek(dt) + '.png" alt="' + days[dtDate.getDay()] +'"></img>' : '') +
                 (typeof dt !== 'undefined' ? formatDateString(dt) : '') + '</label></div></div>';
 }
 
+function appendGenreColumn(genre) {
+    return '<div class="form-group form-check">' +
+        (typeof genre !== 'undefined' ? '<input id="Genre' + genre.GenreId + '" type="checkbox" class="form-check-input chkGenres">' : '') +
+        (typeof genre !== 'undefined' ? '<label class="form-check-label label-of-checkbox" for="Genre' +
+            genre.GenreId + '"><img class="pic-genre-of-checkbox" src="' + genre.GenrePath + '" title="' + genre.GenreName + '" alt="' + genre.GenreName + '" height="24px" width="24px"></img>' : '') +
+        (typeof genre !== 'undefined' ? genre.GenreName : '') + '</label></div></div>';
+}
 
+function appendChannelColumn(channel) {
+    return '<div class="form-group form-check">' +
+        (typeof channel !== 'undefined' ? '<input id="Channel' + channel.ChannelId + '" type="checkbox" checked="checked" class="form-check-input chkChannels">' : '') +
+        (typeof channel !== 'undefined' ? '<label class="form-check-label label-of-checkbox" for="Channel' +
+        channel.ChannelId + '"><img class="pic-channel-of-checkbox" src="' + channel.FileName25 + '" alt="' + channel.Title + '"></img>' : '') +
+        (typeof channel !== 'undefined' ? channel.Title : '') + '</label></div></div>';
+}
 function getDates(startDate, stopDate) {
     var dateArray = new Array();
     var currentDate = startDate;
@@ -1026,5 +1068,58 @@ function getDayOfWeek(dt) {
 }
 
 function fillSearchTab() {
-    window.setTimeout(function () { $('#searchPanel').show(); }, 3000);
+    window.setTimeout(function () {
+        $('#searchPanel').show();     
+    }, 3000);
+}
+
+// Отметить все чекбоксы:
+function checkSearchAll() {
+    if ($("#calendarTab").hasClass("active")) {
+        $(".chkDates").each(function () {
+            $(this).prop('checked', true);
+        });
+    } else if ($("#channelTab").hasClass("active")) {
+        $(".chkChannels").each(function () {
+            $(this).prop('checked', true);
+        });
+    } else if ($("#genreTab").hasClass("active")) {
+        $(".chkGenres").each(function () {
+            $(this).prop('checked', true);
+        });
+    }
+}
+
+// Снять все флажки у чекбоксов:
+function uncheckSearchAll() {
+    if ($("#calendarTab").hasClass("active")) {
+        $(".chkDates").each(function () {
+            $(this).prop('checked', false);
+        });
+    } else if ($("#channelTab").hasClass("active")) {
+        $(".chkChannels").each(function () {
+            $(this).prop('checked', false);
+        });
+    } else if ($("#genreTab").hasClass("active")) {
+        $(".chkGenres").each(function () {
+            $(this).prop('checked', false);
+        });
+    }
+}
+
+// Инвертирование установки флажка:
+function invertSearchAll() {
+    if ($("#calendarTab").hasClass("active")) {
+        $(".chkDates").each(function () {
+            $(this).prop('checked', !$(this).is(":checked"));
+        });
+    } else if ($("#channelTab").hasClass("active")) {
+        $(".chkChannels").each(function () {
+            $(this).prop('checked', !$(this).is(":checked"));
+        });
+    } else if ($("#genreTab").hasClass("active")) {
+        $(".chkGenres").each(function () {
+            $(this).prop('checked', !$(this).is(":checked"));
+        });
+    }
 }
