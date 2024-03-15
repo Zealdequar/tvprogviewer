@@ -23,6 +23,7 @@ using TvProgViewer.Services.Vendors;
 using TvProgViewer.Web.Framework.Globalization;
 using TvProgViewer.Services.TvProgMain;
 using TvProgViewer.Core.Domain.TvProgMain;
+using System.ComponentModel;
 
 namespace TvProgViewer.Web.Framework
 {
@@ -206,7 +207,7 @@ namespace TvProgViewer.Web.Framework
         #region Properties
 
         /// <summary>
-        /// Gets the current user
+        /// Получение текущего пользователя
         /// </summary>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task<User> GetCurrentUserAsync()
@@ -218,6 +219,24 @@ namespace TvProgViewer.Web.Framework
             await SetCurrentUserAsync();
 
             return _cachedUser;
+        }
+
+        /// <summary>
+        /// Получение полных лет пользователя
+        /// </summary>
+        /// <returns>Задача представляет асинхронную операцию</returns>
+        public virtual async Task<int?> GetCurrentUserFullYearsOldAsync()
+        {
+            var user = await GetCurrentUserAsync();
+            if (user == null || user.BirthDate == null)
+                return null;
+
+            DateTime zeroTime = new DateTime(1, 1, 1);
+            DateTime now = DateTime.UtcNow;
+            TimeSpan diff = now - user.BirthDate.Value;
+
+            int userYears = (zeroTime + diff).Year - 1;
+            return userYears;
         }
 
         /// <summary>

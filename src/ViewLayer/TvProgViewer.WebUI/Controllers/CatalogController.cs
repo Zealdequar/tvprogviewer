@@ -465,17 +465,26 @@ namespace TvProgViewer.WebUI.Controllers
                                                         string sidx, string sord, int page, int rows, string genres, string channels)
         {
             object jsonData;
-            KeyValuePair<int, List<SystemProgramme>> result;
+            KeyValuePair<int, List<SystemProgramme>> result = new();
             if (User.Identity.IsAuthenticated)
             {
-                /*result = await progRepository.SearchUserProgramme(UserId.Value, progType, findTitle
-                    , (category != "null") ? category : null, sidx, sord, page, rows, genres, dates);
-
-                jsonData = ControllerExtensions.GetJsonPagingInfo(page, rows, result);
-                return Json(jsonData, JsonRequestBehavior.AllowGet);*/
-            }
-            result = await _programmeService.SearchGlobalProgrammeAsync(progType, findTitle
+                if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
+                {
+                    result = await _programmeService.SearchAdultGlobalProgrammeAsync(progType, findTitle
+                            , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
+                }
+                else
+                {
+                    result = await _programmeService.SearchGlobalProgrammeAsync(progType, findTitle
                 , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
+                }
+            }
+            else
+            {
+                result = await _programmeService.SearchGlobalProgrammeAsync(progType, findTitle
+                , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
+            }
+
             jsonData = GetJsonPagingInfo(page, rows, result);
             return Json(jsonData);
         }

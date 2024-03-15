@@ -20,6 +20,12 @@ namespace TvProgViewer.Core
         Task<User> GetCurrentUserAsync();
 
         /// <summary>
+        /// Получение полных лет пользователя
+        /// </summary>
+        /// <returns>Задача представляет асинхронную операцию</returns>
+        Task<int?> GetCurrentUserFullYearsOldAsync();
+
+        /// <summary>
         /// Sets the current user
         /// </summary>
         /// <param name="user">Current user</param>

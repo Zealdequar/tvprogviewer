@@ -338,8 +338,24 @@ namespace TvProgViewer.WebUI.Controllers
             IFormatProvider provider = CultureInfo.GetCultureInfo("ru-RU");
             DateTime dtStart = Convert.ToDateTime(tsDate, provider).AddHours(5).AddMinutes(45);
             DateTime dtEnd = Convert.ToDateTime(tsDate, provider).AddDays(1).AddHours(5).AddMinutes(45);
-            return Json(await _programmeService.GetUserProgrammesOfDayListAsync(null, progTypeID, channelId.Value, dtStart, dtEnd,
+            if (User.Identity.IsAuthenticated)
+            {
+                if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
+                {
+                    return Json(await _programmeService.GetUserAdultProgrammesOfDayListAsync(progTypeID, channelId.Value, dtStart, dtEnd,
+                                   (category != "null") ? category : null));
+                }
+                else
+                {
+                    return Json(await _programmeService.GetUserProgrammesOfDayListAsync(progTypeID, channelId.Value, dtStart, dtEnd,
+                                   (category != "null") ? category : null));
+                }
+            }
+            else
+            {
+                return Json(await _programmeService.GetUserProgrammesOfDayListAsync(progTypeID, channelId.Value, dtStart, dtEnd,
                 (category != "null") ? category : null));
+            }
         }
 
         #endregion

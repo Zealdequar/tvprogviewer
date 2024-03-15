@@ -6,7 +6,7 @@ using TvProgViewer.Web.Framework.Models;
 
 namespace TvProgViewer.WebUI.Models.Tree
 {
-    public partial record TreeNode: BaseTvProgEntityModel
+    public partial class TreeNode
     {
         public string id { get; set; }
 
@@ -29,7 +29,7 @@ namespace TvProgViewer.WebUI.Models.Tree
         }
     }
 
-    public record State
+    public class State
     {
         public bool opened = false;
         public bool disabled = false;

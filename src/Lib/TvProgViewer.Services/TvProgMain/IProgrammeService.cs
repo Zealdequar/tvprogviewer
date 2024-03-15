@@ -72,12 +72,28 @@ namespace TvProgViewer.Services.TvProgMain
                                                          string sidx, string sord, int page, int rows, string genres, string channels);
 
         /// <summary>
+        /// Выборка телепрограммы для совершеннолетних
+        /// </summary>
+        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="dateTimeOffset">Время</param>
+        /// <param name="mode">режимы выборки: 1 - сейчас; 2 - следом</param>
+        public Task<KeyValuePair<int, List<SystemProgramme>>> GetUserAdultProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels);
+        
+        /// <summary>
         /// Поиск телепередачи
         /// </summary>
         /// <param name="TypeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         public Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string dates, string channels);
+        /// <summary>
+        /// Поиск телепередачи для совершеннолетних
+        /// </summary>
+        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="findTitle">Поисковая подстрока</param>
+        public Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultProgrammeAsync(int typeProgId, string findTitle, string category
+                                                               , string sidx, string sord, int page, int rows, string genres, string dates, string channels);
         /// <summary>
         /// Глобальный поиск телепередачи
         /// </summary>
@@ -90,14 +106,34 @@ namespace TvProgViewer.Services.TvProgMain
                                                          string sidx, string sord, int page, int rows, string genres, string channels);
 
         /// <summary>
+        /// Глобальный поиск телепередачи для совершеннолетних
+        /// </summary>
+        /// <param name="typeProgId">Тип программы телепередач</param>
+        /// <param name="findTitle">Поисковая подстрока</param>
+        /// <param name="category">Категория</param>
+        /// <param name="genres">Жанры</param>
+        /// <param name="channels">Каналы</param>
+        public Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels);
+
+        /// <summary>
         /// Получение пользовательских телепередач за день
         /// </summary>
-        /// <param name="uid">Идентификатор пользователя</param>
         /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
         /// <param name="channelId">Код канала</param>
         /// <param name="tsStart">Время начала выборки</param>
         /// <param name="tsEnd">Время завершения выборки</param>
         /// <param name="category">Категория</param>
-        public Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(long? uid, int typeProgId, int channeldId, DateTime tsStart, DateTime tsEnd, string category);
+        public Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(int typeProgId, int channeldId, DateTime tsStart, DateTime tsEnd, string category);
+
+        /// <summary>
+        /// Получение пользовательских телепередач за день для совершеннолетних
+        /// </summary>
+        /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
+        /// <param name="channelId">Код канала</param>
+        /// <param name="tsStart">Время начала выборки</param>
+        /// <param name="tsEnd">Время завершения выборки</param>
+        /// <param name="category">Категория</param>
+        public Task<List<SystemProgramme>> GetUserAdultProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category);
     }
 }

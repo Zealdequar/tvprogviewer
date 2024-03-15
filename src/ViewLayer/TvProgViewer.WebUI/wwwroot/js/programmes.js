@@ -26,7 +26,6 @@ $(function () {
     }
         
     
-    setTree(getSelectedTabIndex()); 
     fillFooter();
     fillGenresToolNow();
     fillGenresToolNext();
@@ -520,7 +519,8 @@ function searchProgramme(typeProgID, findTitle) {
 
 // Установка деревьев
 function setTree(index) {
-    var url = 'Home/GetTreeData?providerId=' + $('#userProvider option:selected').val().split(';')[1] + "&typeProg=" + $('#userTypeProg option:selected').val().split(';')[1] +
+    var url = 'Home/GetTreeData?providerId=' + $('#userProvider option:selected').val().split(';')[1] +
+        "&typeProg=" + $('#userTypeProg option:selected').val().split(';')[1] +
        "&jsonChannels=" + window.localStorage.getItem("optChans") + '&mode=' + (index - 1);
     if (index === 2) {
         
