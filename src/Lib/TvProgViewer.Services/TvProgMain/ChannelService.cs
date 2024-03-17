@@ -35,9 +35,11 @@ namespace TvProgViewer.Services.TvProgMain
         private readonly IRepository<UserChannelMapping> _userChannelMappingRepository;
         private readonly IUrlRecordService _urlRecordService;
         private readonly ITvChannelService _tvChannelService;
-        private readonly List<string> _firstMultiplex = new List<string> {
+        private readonly List<string> _firstMultiplex =
+        [
             "Первый канал", "Россия 1", "Матч!", "НТВ", "Пятый Канал", "Культура", "Россия 24", "Карусель", "ОТР", "ТВ Центр",
-            "РЕН ТВ", "Спас ТВ", "СТС", "Домашний", "ТВ-3", "Пятница", "Звезда", "МИР", "ТНТ", "МУЗ-ТВ" }; 
+            "РЕН ТВ", "Спас ТВ", "СТС", "Домашний", "ТВ-3", "Пятница", "Звезда", "МИР", "ТНТ", "МУЗ-ТВ" 
+        ]; 
         #endregion
 
         #region Конструктор
@@ -84,7 +86,7 @@ namespace TvProgViewer.Services.TvProgMain
                                         (filtData == null || ch.TitleChannel.Contains(filtData)) &&
                                         (from pr in _programmesRepository.Table select pr.ChannelId).Contains(ch.Id)
                             select ch.Id).CountAsync(CancellationToken.None);
-            sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : SYS_ORDER_COL;         // - поле для сортировки
+            sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx.Replace("SystemTitle", "Title") : SYS_ORDER_COL;         // - поле для сортировки
             var scRows = await (from ch in _channelsRepository.Table
                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
                             from mp in chmp.DefaultIfEmpty()
@@ -125,6 +127,8 @@ namespace TvProgViewer.Services.TvProgMain
         public virtual async Task<string> GetSeNameByInternalIdAsync(int? internalId)
         {
            var tvChannel = (await _tvChannelService.GetTvChannelsBySkuAsync([internalId.Value.ToString()])).FirstOrDefault();
+           if (tvChannel == null)
+                return string.Empty;
            return await _urlRecordService.GetSeNameAsync(tvChannel, 0, true, false);
             
         }
