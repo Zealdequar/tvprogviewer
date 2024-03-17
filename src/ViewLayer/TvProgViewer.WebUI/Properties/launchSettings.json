@@ -3,10 +3,10 @@
     "WSL": {
       "commandName": "WSL2",
       "launchBrowser": true,
-      "launchUrl": "https://localhost:61263",
+      "launchUrl": "https://localhost:61268",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "https://localhost:61263;http://localhost:61264"
+        "ASPNETCORE_URLS": "https://localhost:61268;http://localhost:61269"
       },
       "distributionName": ""
     },
@@ -16,7 +16,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:61263;http://localhost:61264"
+      "applicationUrl": "https://localhost:61268;http://localhost:61269"
     }
   }
 }

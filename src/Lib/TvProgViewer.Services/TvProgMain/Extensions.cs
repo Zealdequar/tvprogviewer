@@ -1,85 +1,81 @@
-﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
+﻿using System.Linq;
+using DynamicExpression.Extensions;
+using DynamicExpression.Entities;
+using DynamicExpression.Enums;
 
 namespace TvProgViewer.Services.TvProgMain
 {
+    /// <summary>
+    /// Расширения
+    /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Содержит любую строку
+        /// </summary>
+        /// <param name="str">Строка</param>
+        /// <param name="values">Массив строк</param>
+        /// <returns></returns>
         public static bool ContainsAny(this string str, params string[] values)
         {
-            if (!string.IsNullOrEmpty(str) || values.Length > 0)
+            if (!string.IsNullOrWhiteSpace(str) || values.Length > 0)
             {
-                foreach (string value in values)
+                foreach (var _ in from string value in values
+                                  where str.Contains(value)
+                                  select new { })
                 {
-                    if (str.Contains(value))
-                        return true;
+                    return true;
                 }
             }
 
             return false;
         }
 
-        public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, string property, string sord)
+        /// <summary>
+        /// Динамическая сортировка
+        /// </summary>
+        /// <typeparam name="T">Класс коллекции</typeparam>
+        /// <param name="source">Источник-запрос</param>
+        /// <param name="property">Поле</param>
+        /// <param name="sord">Порядок сортировки</param>
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string property, string sord) where T : class
         {
+            Ordering ordering = new()
+            {
+                By = property
+            };
+            
             if (sord == "asc")
-                return ApplyOrder<T>(source, property, "OrderBy");
-
+            {
+                ordering.Direction = OrderingDirection.Asc;
+                return source.Order(ordering);
+            }
             else if (sord == "desc")
-                return ApplyOrder<T>(source, property, "OrderByDescending");
+            {
+                ordering.Direction = OrderingDirection.Desc;
+                return source.Order(ordering);
+            } 
 
             return null;
         }
 
-        public static IOrderedQueryable<T> OrderByDescending<T>(
-            this IQueryable<T> source,
-            string property)
+        /// <summary>
+        /// Динамическое постраничное ограничение и сортировка
+        /// </summary>
+        /// <typeparam name="T">Класс коллекции</typeparam>
+        /// <param name="source">Источник-запрос</param>
+        /// <param name="page">Страница</param>
+        /// <param name="rows">Количество страниц</param>
+        /// <param name="property">Поле</param>
+        /// <param name="sord">Порядок сортировки</param>
+        public static IQueryable<T> LimitAndOrderBy<T>(this IQueryable<T> source, int page, int rows, string property, string sord) where T : class
         {
-            return ApplyOrder<T>(source, property, "OrderByDescending");
-        }
-
-        public static IOrderedQueryable<T> ThenBy<T>(
-            this IOrderedQueryable<T> source,
-            string property)
-        {
-            return ApplyOrder<T>(source, property, "ThenBy");
-        }
-
-        public static IOrderedQueryable<T> ThenByDescending<T>(
-            this IOrderedQueryable<T> source,
-            string property)
-        {
-            return ApplyOrder<T>(source, property, "ThenByDescending");
-        }
-
-        static IOrderedQueryable<T> ApplyOrder<T>(
-            IQueryable<T> source,
-            string property,
-            string methodName)
-        {
-            string[] props = property.Split('.');
-            Type type = typeof(T);
-            ParameterExpression arg = Expression.Parameter(type, "x");
-            Expression expr = arg;
-            foreach (string prop in props)
+            Pagination pagination = new()
             {
-                // use reflection (not ComponentModel) to mirror LINQ
-                PropertyInfo pi = type.GetProperty(prop);
-                expr = Expression.Property(expr, pi);
-                type = pi.PropertyType;
-            }
-            Type delegateType = typeof(Func<,>).MakeGenericType(typeof(T), type);
-            LambdaExpression lambda = Expression.Lambda(delegateType, expr, arg);
-
-            object result = typeof(Queryable).GetMethods().Single(
-                    method => method.Name == methodName
-                            && method.IsGenericMethodDefinition
-                            && method.GetGenericArguments().Length == 2
-                            && method.GetParameters().Length == 2)
-                    .MakeGenericMethod(typeof(T), type)
-                    .Invoke(null, new object[] { source, lambda });
-            return (IOrderedQueryable<T>)result;
+                Number = page,
+                Count = rows
+            };
+            return source.OrderBy(property, sord).Limit(pagination);
         }
     }
 }

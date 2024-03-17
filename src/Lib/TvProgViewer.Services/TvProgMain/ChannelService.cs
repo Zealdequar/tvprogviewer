@@ -26,6 +26,7 @@ namespace TvProgViewer.Services.TvProgMain
     /// </summary>
     public class ChannelService: IChannelService
     {
+        private const string SYS_ORDER_COL = "SysOrderCol";
         #region Поля
 
         private readonly IRepository<Channels> _channelsRepository;
@@ -83,7 +84,7 @@ namespace TvProgViewer.Services.TvProgMain
                                         (filtData == null || ch.TitleChannel.Contains(filtData)) &&
                                         (from pr in _programmesRepository.Table select pr.ChannelId).Contains(ch.Id)
                             select ch.Id).CountAsync(CancellationToken.None);
-
+            sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : SYS_ORDER_COL;         // - поле для сортировки
             var scRows = await (from ch in _channelsRepository.Table
                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
                             from mp in chmp.DefaultIfEmpty()
@@ -101,9 +102,8 @@ namespace TvProgViewer.Services.TvProgMain
                                 ImageWebSrc = ch.IconWebSrc,
                                 SysOrderCol = ch.SysOrderCol
                             }).Where(ch => (from pr in _programmesRepository.Table select pr.ChannelId).Contains(ch.ChannelId))
-                              .OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId)
-                              .AsQueryable().OrderBy(!(sidx == null || sidx.Trim() == string.Empty) ? sidx : "SysOrderCol", sord)
-                                        .Skip((page - 1) * rows).Take(rows).ToListAsync<SystemChannel>();
+                              .LimitAndOrderBy(page, rows, sidx, sord).ToListAsync();
+        
             SetUrls(scRows);
             
             return new KeyValuePair<int, List<SystemChannel>>(scCount, scRows);

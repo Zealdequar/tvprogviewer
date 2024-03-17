@@ -5,7 +5,7 @@
     <Copyright>Copyright © TvProgViewer</Copyright>
     <Company>TvProgViewer</Company>
     <Authors>TvProgViewer</Authors>
-    <Version>4.70.0</Version>
+    <Version>4.80.0</Version>
     <Description>TvProgViewer.WebUI is also an MVC web application project, a presentation layer for public store and admin area.</Description>
     <PackageLicenseUrl>https://tvprogviewer.ru/license</PackageLicenseUrl>
     <PackageProjectUrl>https://tvprogviewer.ru/</PackageProjectUrl>
