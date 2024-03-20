@@ -466,6 +466,21 @@ namespace TvProgViewer.WebUI.Controllers
             List<UserChannel> chanList = await _channelService.GetUserChannelsByLocalStorageAsync(providerId, jsonChannels);
             return Json(chanList.ToArray());
         }
+
+        /// <summary>
+        /// Получение uuid авторизованного пользователя
+        /// </summary>
+        public async Task<JsonResult> GetUnidentificator()
+        {
+            string uuid = null;
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _workContext.GetCurrentUserAsync();
+                uuid = user.UserGuid.ToString().ToLower(CultureInfo.CurrentCulture);
+            }
+            uuid = !string.IsNullOrWhiteSpace(uuid) ? $"\"{uuid}\"" : "null";
+            return Json($"{{\"uuid\":{uuid}}}");
+        }
         #endregion
     }
 }

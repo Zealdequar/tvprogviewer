@@ -3,7 +3,7 @@ var pageNum = 1;
 $(function () {
     setGrid();
     let jsonData = window.localStorage.getItem("optChans");
-    let uuid = window.localStorage.getItem("_tv_uuid");
+    let uuid = getUuid();
     if (jsonData && jsonData.length != 0) {
         try {
             checkedArray = JSON.parse(jsonData);
@@ -13,10 +13,7 @@ $(function () {
             window.localStorage.setItem("optChans", "[]");
         }
     }
-    if (!uuid || uuid.length == 0) {
-        window.localStorage.setItem("_tv_uuid", crypto.randomUUID());
-    }
-
+    
     if (!jsonData || !checkedArray || checkedArray.length == 0) {
         $("#infoPanel").show(300);
     } else {
@@ -24,6 +21,32 @@ $(function () {
     }
     $("#choicePnl").show();
 });
+// Получение ууид
+function getUuid() {
+    let result;
+    $.ajax({
+        url: "Home/GetUnidentificator",
+        dataType: 'json',
+        type: 'GET',
+        contentType: 'application/json; charset=utf-8',
+        success: function (response) {
+            let uuid = window.localStorage.getItem("_tv_uuid");
+            let jsonObj = JSON.parse(response);
+            if ((!uuid || uuid.length == 0) && (!jsonObj.uuid || jsonObj.uuid.length== 0)) {
+                window.localStorage.setItem("_tv_uuid", crypto.randomUUID());
+            }
+            
+            if (jsonObj.uuid && jsonObj.uuid.length > 0 && jsonObj.uuid != uuid) {
+                uuid = jsonObj.uuid;
+                window.localStorage.setItem("_tv_uuid", uuid);
+            }
+            return uuid;
+        },
+        error: function (err) {
+            result = err.statusText;
+        }
+    });
+}
 
 function chAction() {
     let jsonData = window.localStorage.getItem("optChans");

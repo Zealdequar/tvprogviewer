@@ -5,19 +5,14 @@ using System.Threading.Tasks;
 using TvProgViewer.Data.TvProgMain.ProgObjs;
 using TvProgViewer.Data;
 using TvProgViewer.Core.Domain.TvProgMain;
-using TvProgViewer.Core.Caching;
-using System.Globalization;
 using LinqToDB;
 using TvProgViewer.Data.TvProgMain;
 using System.Threading;
 using Newtonsoft.Json;
 using TvProgViewer.Core.Domain.Users;
-using System.Text.RegularExpressions;
 using TvProgViewer.Services.Seo;
 using TvProgViewer.Services.Catalog;
-using DocumentFormat.OpenXml.Office.Word;
 using TvProgViewer.Core.Domain.Catalog;
-using LinqToDB.Linq;
 
 namespace TvProgViewer.Services.TvProgMain
 {
@@ -111,6 +106,10 @@ namespace TvProgViewer.Services.TvProgMain
             return new KeyValuePair<int, List<SystemChannel>>(scCount, scRows);
         }
 
+        /// <summary>
+        /// Установить ссылки на странички с детализацией
+        /// </summary>
+        /// <param name="systemChannel">Системные каналы</param>
         private void SetUrls(List<SystemChannel> systemChannel)
         {
             Parallel.ForEach(systemChannel, sp =>
