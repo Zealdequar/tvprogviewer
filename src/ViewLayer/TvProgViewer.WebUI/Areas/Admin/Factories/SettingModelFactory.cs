@@ -1236,6 +1236,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 model.TvChannelReviewPossibleOnlyAfterPurchasing_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelReviewPossibleOnlyAfterPurchasing, storeId);
                 model.NotifyStoreOwnerAboutNewTvChannelReviews_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NotifyStoreOwnerAboutNewTvChannelReviews, storeId);
                 model.NotifyUserAboutTvChannelReviewReply_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.NotifyUserAboutTvChannelReviewReply, storeId);
+                model.TvChannelLiveUrlEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.TvChannelLiveUrlEnabled, storeId);
                 model.EmailAFriendEnabled_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.EmailAFriendEnabled, storeId);
                 model.AllowAnonymousUsersToEmailAFriend_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.AllowAnonymousUsersToEmailAFriend, storeId);
                 model.RecentlyViewedTvChannelsNumber_OverrideForStore = await _settingService.SettingExistsAsync(catalogSettings, x => x.RecentlyViewedTvChannelsNumber, storeId);

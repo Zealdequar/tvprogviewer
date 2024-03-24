@@ -121,6 +121,11 @@ namespace TvProgViewer.Core.Domain.Catalog
         public string Sku { get; set; }
 
         /// <summary>
+        /// Получение или установка сслыки на эфир
+        /// </summary>
+        public string TvChannelLiveUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets the manufacturer part number
         /// </summary>
         public string ManufacturerPartNumber { get; set; }

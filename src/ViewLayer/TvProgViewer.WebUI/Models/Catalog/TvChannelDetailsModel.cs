@@ -89,6 +89,8 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public bool DisplayBackInStockSubscription { get; set; }
 
         public bool EmailAFriendEnabled { get; set; }
+        public bool TvChannelLiveUrlEnabled { get; set; }
+        public string TvChannelLiveUrl { get; set; }
         public bool CompareTvChannelsEnabled { get; set; }
 
         public string PageShareCode { get; set; }

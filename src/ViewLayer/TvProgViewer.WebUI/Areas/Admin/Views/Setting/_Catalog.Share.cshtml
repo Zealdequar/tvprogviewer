@@ -25,6 +25,17 @@
     </tvprog-nested-setting>
     <div class="form-group row">
         <div class="col-md-3">
+            <tvprog-override-store-checkbox asp-for="TvChannelLiveUrlEnabled_OverrideForStore" asp-input="TvChannelLiveUrlEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
+            <tvprog-label asp-for="TvChannelLiveUrlEnabled" />
+        </div>
+        <div class="col-md-9">
+            <tvprog-editor asp-for="TvChannelLiveUrlEnabled" />
+            <span asp-validation-for="TvChannelLiveUrlEnabled"></span>
+        </div>
+    </div>
+    <tvprog-nested-setting asp-for="TvChannelLiveUrlEnabled">
+    <div class="form-group row">
+        <div class="col-md-3">
             <tvprog-override-store-checkbox asp-for="EmailAFriendEnabled_OverrideForStore" asp-input="EmailAFriendEnabled" asp-store-scope="@Model.ActiveStoreScopeConfiguration" />
             <tvprog-label asp-for="EmailAFriendEnabled" />
         </div>
@@ -33,6 +44,7 @@
             <span asp-validation-for="EmailAFriendEnabled"></span>
         </div>
     </div>
+    </tvprog-nested-setting>
     <tvprog-nested-setting asp-for="EmailAFriendEnabled">
         <div class="form-group row advanced-setting">
             <div class="col-md-3">

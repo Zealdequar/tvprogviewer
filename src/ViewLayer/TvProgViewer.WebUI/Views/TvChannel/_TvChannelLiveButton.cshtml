@@ -1,0 +1,7 @@
+﻿@model TvChannelDetailsModel
+@if (Model.TvChannelLiveUrlEnabled && !string.IsNullOrWhiteSpace(Model.TvChannelLiveUrl))
+{
+    <div class="tvchannel-live-url">
+        <button type="button" class="button-2 tvchannel-live-url" onclick="window.open('@Model.TvChannelLiveUrl', '_blank')">@T("TvChannels.TvChannelLiveUrl")</button>
+    </div>
+}

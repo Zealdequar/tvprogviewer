@@ -1541,6 +1541,9 @@ namespace TvProgViewer.WebUI.Factories
             }
 
             var store = await _storeContext.GetCurrentStoreAsync();
+            //tvchannel live url
+            model.TvChannelLiveUrlEnabled = _catalogSettings.TvChannelLiveUrlEnabled;
+            model.TvChannelLiveUrl = tvchannel.TvChannelLiveUrl;
             //email a friend
             model.EmailAFriendEnabled = _catalogSettings.EmailAFriendEnabled;
             //compare tvchannels

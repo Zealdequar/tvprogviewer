@@ -161,6 +161,11 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool TvChannelReviewsSortByCreatedDateAscending { get; set; }
 
         /// <summary>
+        /// Получение или установка значения, означающего доступна ли функция 'Ссылка на эфир'
+        /// </summary>
+        public bool TvChannelLiveUrlEnabled { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether tvchannel 'Email a friend' feature is enabled
         /// </summary>
         public bool EmailAFriendEnabled { get; set; }

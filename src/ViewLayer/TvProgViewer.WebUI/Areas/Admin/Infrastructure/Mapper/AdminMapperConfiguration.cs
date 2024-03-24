@@ -327,6 +327,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.DisplayTaxShippingInfoTvChannelDetailsPage_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayTaxShippingInfoShoppingCart_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.DisplayTaxShippingInfoWishlist_OverrideForStore, options => options.Ignore())
+                .ForMember(model => model.TvChannelLiveUrlEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.EmailAFriendEnabled_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ExportImportAllowDownloadImages_OverrideForStore, options => options.Ignore())
                 .ForMember(model => model.ExportImportCategoriesUsingCategoryName_OverrideForStore, options => options.Ignore())

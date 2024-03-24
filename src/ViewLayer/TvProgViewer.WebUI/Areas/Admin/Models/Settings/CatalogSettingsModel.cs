@@ -135,6 +135,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public bool TvChannelReviewsSortByCreatedDateAscending { get; set; }
         public bool TvChannelReviewsSortByCreatedDateAscending_OverrideForStore { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.TvChannelLiveUrlEnabled")]
+        public bool TvChannelLiveUrlEnabled { get; set; }
+        public bool TvChannelLiveUrlEnabled_OverrideForStore { get; set; }
+
         [TvProgResourceDisplayName("Admin.Configuration.Settings.Catalog.EmailAFriendEnabled")]
         public bool EmailAFriendEnabled { get; set; }
         public bool EmailAFriendEnabled_OverrideForStore { get; set; }

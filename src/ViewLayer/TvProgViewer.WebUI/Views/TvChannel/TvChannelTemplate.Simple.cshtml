@@ -152,6 +152,7 @@
                                 @await Html.PartialAsync("_AddToWishlist", Model.AddToCart, dataDictAddToWishlist)
                             }
                             @await Html.PartialAsync("_CompareTvChannelsButton", Model)
+                            @await Html.PartialAsync("_TvChannelLiveButton", Model)
                             @await Html.PartialAsync("_TvChannelEmailAFriendButton", Model)
                             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsInsideOverviewButtonsAfter, additionalData = Model })
                         </div>

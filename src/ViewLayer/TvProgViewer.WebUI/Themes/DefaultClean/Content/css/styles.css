@@ -2543,6 +2543,10 @@
         background-image: url('../images/compare-button.png');
     }
 
+    .overview .tvchannel-live-url {
+        background-image: url('../images/live.png');
+    }
+
     .overview .email-a-friend-button {
         background-image: url('../images/email-button.png');
     }

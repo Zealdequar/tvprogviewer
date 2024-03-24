@@ -135,6 +135,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
         [TvProgResourceDisplayName("Admin.Catalog.TvChannels.Fields.Sku")]
         public string Sku { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.Fields.TvChannelLiveUrl")]
+        public string TvChannelLiveUrl { get; set; }
+
         [TvProgResourceDisplayName("Admin.Catalog.TvChannels.Fields.ManufacturerPartNumber")]
         public string ManufacturerPartNumber { get; set; }
 

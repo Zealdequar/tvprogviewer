@@ -702,6 +702,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 await _settingService.SaveSettingOverridablePerStoreAsync(catalogSettings, x => x.TvChannelReviewPossibleOnlyAfterPurchasing, model.TvChannelReviewPossibleOnlyAfterPurchasing_OverrideForStore, storeScope, false);
                 await _settingService.SaveSettingOverridablePerStoreAsync(catalogSettings, x => x.NotifyStoreOwnerAboutNewTvChannelReviews, model.NotifyStoreOwnerAboutNewTvChannelReviews_OverrideForStore, storeScope, false);
                 await _settingService.SaveSettingOverridablePerStoreAsync(catalogSettings, x => x.NotifyUserAboutTvChannelReviewReply, model.NotifyUserAboutTvChannelReviewReply_OverrideForStore, storeScope, false);
+                await _settingService.SaveSettingOverridablePerStoreAsync(catalogSettings, x => x.TvChannelLiveUrlEnabled, model.TvChannelLiveUrlEnabled_OverrideForStore, storeScope, false);
                 await _settingService.SaveSettingOverridablePerStoreAsync(catalogSettings, x => x.EmailAFriendEnabled, model.EmailAFriendEnabled_OverrideForStore, storeScope, false);
                 await _settingService.SaveSettingOverridablePerStoreAsync(catalogSettings, x => x.AllowAnonymousUsersToEmailAFriend, model.AllowAnonymousUsersToEmailAFriend_OverrideForStore, storeScope, false);
                 await _settingService.SaveSettingOverridablePerStoreAsync(catalogSettings, x => x.RecentlyViewedTvChannelsNumber, model.RecentlyViewedTvChannelsNumber_OverrideForStore, storeScope, false);

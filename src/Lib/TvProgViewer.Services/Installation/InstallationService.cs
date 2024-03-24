@@ -2907,6 +2907,7 @@ namespace TvProgViewer.Services.Installation
                 NotifyStoreOwnerAboutNewTvChannelReviews = false,
                 NotifyUserAboutTvChannelReviewReply = false,
                 EmailAFriendEnabled = true,
+                TvChannelLiveUrlEnabled = true,
                 AllowAnonymousUsersToEmailAFriend = false,
                 RecentlyViewedTvChannelsNumber = 3,
                 RecentlyViewedTvChannelsEnabled = true,
