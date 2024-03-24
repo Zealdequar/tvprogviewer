@@ -2060,7 +2060,7 @@
                 .item-box .picture a:before {
                     content: "";
                     display: block;
-                    padding-top: 40%;
+                    padding-top: 100%;
                 }
 
                 .item-box .picture a img {
@@ -2382,29 +2382,30 @@
     }
 
         .gallery .picture-wrapper {
-            margin: 0 0 0px;
+            margin: 0 0 10px;
         }
 
         .gallery .picture {
-            display: table-cell;
             position: relative;
-            max-width: 50px;
-            height: 45px;
-            width: 100%;
-            overflow: hidden;
-            float: right;
-            right: 18px;
-            top: -3px;
+            max-width: 100%;
+            margin: 0 auto 10px;
+           // overflow: hidden;
         }
 
             .gallery .picture:before {
                 content: "";
                 display: block;
+                padding-top: 100%;
             }
 
             .gallery .picture img, .picture-gallery .picture-thumbs img, .video-gallery .video-thumbs iframe, .variant-picture img {
-                max-width: 45px;
-                max-height: 45px;
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                max-width: 100%;
+                max-height: 100%;
                 margin: auto;
             }
 
@@ -2416,11 +2417,10 @@
     .picture-gallery .picture-thumbs .thumb-item {
         display: inline-block;
         position: relative;
-        width: 50px;
-        height: 50px;
+        width: 100px;
+        height: 100px;
         margin: 0 5px 10px;
         overflow: hidden;
-        font-size: 0;
         cursor: pointer;
     }
 
@@ -8062,7 +8062,9 @@
         }
 
         .picture-gallery .picture {
-            width: auto;
+            margin-top: 35px;
+            width: 300px;
+            z-index: -200;
         }
 
         .video-gallery {
@@ -8547,12 +8549,4 @@
     margin: 0 0 0;
     left: 0;
     top: 0; 
-}
-.videoplayer_media_provider {
-    position:  relative;
-    z-index: 0;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
 }

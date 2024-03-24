@@ -642,12 +642,10 @@ namespace TvProgViewer.WebUI.Factories
                     //we use the Task.WhenAll method to control that both image thumbs was created in same time.
                     //without this method, sometimes there were situations when one of the pictures was not generated on time
                     //this section of code requires detailed analysis in the future
-                    /*var picResultTasks = await Task.WhenAll(_pictureService.GetPictureUrlAsync(picture, pictureSize), _pictureService.GetPictureUrlAsync(picture));
+                    var picResultTasks = await Task.WhenAll(_pictureService.GetPictureUrlAsync(picture, pictureSize), _pictureService.GetPictureUrlAsync(picture));
 
                     var (imageUrl, _) = picResultTasks[0];
-                    var (fullSizeImageUrl, _) = picResultTasks[1];*/
-                    var imageUrl = $"/images/system/large/{tvchannel.Sku}.gif";
-                    var fullSizeImageUrl = $"/images/system/large/{tvchannel.Sku}.gif";
+                    var (fullSizeImageUrl, _) = picResultTasks[1];
                     return new PictureModel
                     {
                         ImageUrl = imageUrl,
@@ -1254,12 +1252,10 @@ namespace TvProgViewer.WebUI.Factories
                 var pictures = await _pictureService.GetPicturesByTvChannelIdAsync(tvchannel.Id);
                 var defaultPicture = pictures.FirstOrDefault();
 
-                /* string fullSizeImageUrl, imageUrl, thumbImageUrl;
-                 (imageUrl, defaultPicture) = await _pictureService.GetPictureUrlAsync(defaultPicture, defaultPictureSize, !isAssociatedTvChannel);
-                 (fullSizeImageUrl, defaultPicture) = await _pictureService.GetPictureUrlAsync(defaultPicture, 0, !isAssociatedTvChannel);
-                */
-                var imageUrl = $"/images/system/large/{tvchannel.Sku}.gif";
-                var fullSizeImageUrl = $"/images/system/large/{tvchannel.Sku}.gif";
+                string fullSizeImageUrl, imageUrl, thumbImageUrl;
+                (imageUrl, defaultPicture) = await _pictureService.GetPictureUrlAsync(defaultPicture, defaultPictureSize, !isAssociatedTvChannel);
+                (fullSizeImageUrl, defaultPicture) = await _pictureService.GetPictureUrlAsync(defaultPicture, 0, !isAssociatedTvChannel);
+                
                 var defaultPictureModel = new PictureModel
                 {
                     ImageUrl = imageUrl,
@@ -1280,12 +1276,10 @@ namespace TvProgViewer.WebUI.Factories
                 {
                     var picture = pictures[i];
 
-                    /*(imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, defaultPictureSize, !isAssociatedTvChannel);
+                    (imageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, defaultPictureSize, !isAssociatedTvChannel);
                     (fullSizeImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture);
-                    (thumbImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.TvChannelThumbPictureSizeOnTvChannelDetailsPage);*/
-                    imageUrl = $"/images/system/large/{tvchannel.Sku}.gif";
-                    fullSizeImageUrl = $"/images/system/large/{tvchannel.Sku}.gif";
-                    var thumbImageUrl = $"/images/system/large/{tvchannel.Sku}.gif";
+                    (thumbImageUrl, picture) = await _pictureService.GetPictureUrlAsync(picture, _mediaSettings.TvChannelThumbPictureSizeOnTvChannelDetailsPage);
+                    
                     var pictureModel = new PictureModel
                     {
                         ImageUrl = imageUrl,
