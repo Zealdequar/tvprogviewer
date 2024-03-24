@@ -230,7 +230,7 @@ namespace TvProgViewer.WebUI.Factories
                     //use default logo
                     var pathBase = _httpContextAccessor.HttpContext.Request.PathBase.Value ?? string.Empty;
                     var storeLocation = _mediaSettings.UseAbsoluteImagePath ? _webHelper.GetStoreLocation() : $"{pathBase}/";
-                    logo = $"{storeLocation}Themes/{await _themeContext.GetWorkingThemeNameAsync()}/Content/images/logo.png";
+                    logo = $"{storeLocation}Themes/{await _themeContext.GetWorkingThemeNameAsync()}/Content/images/traur-logo.png";
                 }
 
                 return logo;
