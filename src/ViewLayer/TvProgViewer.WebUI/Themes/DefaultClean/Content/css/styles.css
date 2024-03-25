@@ -2357,11 +2357,14 @@
                 border-color: transparent;
                 background-color: #ddd;
             }
+
     /********** PRODUCT PAGE **********/
     .tvchannel-details-page {
         padding: 20px 0 0;
     }
-
+    #tvchannels-orderby, #tvchannels-pagesize {
+        height: 40px; 
+    }
     .tvchannel-essential {
         margin: 0 0 40px;
         border-bottom: 1px solid #ddd;
@@ -2389,7 +2392,6 @@
             position: relative;
             max-width: 100%;
             margin: 0 auto 10px;
-           // overflow: hidden;
         }
 
             .gallery .picture:before {

@@ -58,8 +58,8 @@ namespace TvProgViewer.Services.Catalog
             
             return orderBy switch
             {
-                TvChannelSortingEnum.PriceAsc => tvchannelsQuery.OrderBy(p => p.Price),
-                TvChannelSortingEnum.PriceDesc => tvchannelsQuery.OrderByDescending(p => p.Price),
+                /*TvChannelSortingEnum.PriceAsc => tvchannelsQuery.OrderBy(p => p.Price),
+                TvChannelSortingEnum.PriceDesc => tvchannelsQuery.OrderByDescending(p => p.Price),*/
                 TvChannelSortingEnum.CreatedOn => tvchannelsQuery.OrderByDescending(p => p.CreatedOnUtc),
                 TvChannelSortingEnum.Position when tvchannelsQuery is IOrderedQueryable => tvchannelsQuery,
                 _ => tvchannelsQuery.OrderBy(p => p.DisplayOrder).ThenBy(p => p.Id)

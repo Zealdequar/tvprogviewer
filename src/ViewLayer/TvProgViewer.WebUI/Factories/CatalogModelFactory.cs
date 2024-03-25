@@ -706,7 +706,7 @@ namespace TvProgViewer.WebUI.Factories
             PriceRangeModel selectedPriceRange = null;
             if (_catalogSettings.EnablePriceRangeFiltering && category.PriceRangeFiltering)
             {
-                selectedPriceRange = await GetConvertedPriceRangeAsync(command);
+                /*selectedPriceRange = await GetConvertedPriceRangeAsync(command);
 
                 PriceRangeModel availablePriceRange = null;
                 if (!category.ManuallyPriceRange)
@@ -739,6 +739,7 @@ namespace TvProgViewer.WebUI.Factories
                 }
 
                 model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);
+                */
             }
 
             //filterable options
@@ -979,7 +980,7 @@ namespace TvProgViewer.WebUI.Factories
             PriceRangeModel selectedPriceRange = null;
             if (_catalogSettings.EnablePriceRangeFiltering && manufacturer.PriceRangeFiltering)
             {
-                selectedPriceRange = await GetConvertedPriceRangeAsync(command);
+               /* selectedPriceRange = await GetConvertedPriceRangeAsync(command);
 
                 PriceRangeModel availablePriceRange = null;
                 if (!manufacturer.ManuallyPriceRange)
@@ -1012,6 +1013,7 @@ namespace TvProgViewer.WebUI.Factories
                 }
 
                 model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);
+               */
             }
 
             // filterable options
@@ -1236,7 +1238,7 @@ namespace TvProgViewer.WebUI.Factories
             var store = await _storeContext.GetCurrentStoreAsync();
             if (_catalogSettings.EnablePriceRangeFiltering && vendor.PriceRangeFiltering)
             {
-                selectedPriceRange = await GetConvertedPriceRangeAsync(command);
+                /*selectedPriceRange = await GetConvertedPriceRangeAsync(command);
 
                 PriceRangeModel availablePriceRange;
                 if (!vendor.ManuallyPriceRange)
@@ -1267,7 +1269,7 @@ namespace TvProgViewer.WebUI.Factories
                     };
                 }
 
-                model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);
+                model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);*/
             }
 
             //tvchannels
@@ -1482,7 +1484,7 @@ namespace TvProgViewer.WebUI.Factories
             var store = await _storeContext.GetCurrentStoreAsync();
             if (_catalogSettings.EnablePriceRangeFiltering && _catalogSettings.TvChannelsByTagPriceRangeFiltering)
             {
-                selectedPriceRange = await GetConvertedPriceRangeAsync(command);
+                /*selectedPriceRange = await GetConvertedPriceRangeAsync(command);
 
                 PriceRangeModel availablePriceRange;
                 if (!_catalogSettings.TvChannelsByTagManuallyPriceRange)
@@ -1514,6 +1516,7 @@ namespace TvProgViewer.WebUI.Factories
                 }
 
                 model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);
+                */
             }
 
             //tvchannels
@@ -1760,7 +1763,7 @@ namespace TvProgViewer.WebUI.Factories
                     PriceRangeModel selectedPriceRange = null;
                     if (_catalogSettings.EnablePriceRangeFiltering && _catalogSettings.SearchPagePriceRangeFiltering)
                     {
-                        selectedPriceRange = await GetConvertedPriceRangeAsync(command);
+                        /*selectedPriceRange = await GetConvertedPriceRangeAsync(command);
 
                         PriceRangeModel availablePriceRange;
                         async Task<decimal?> getTvChannelPriceAsync(TvChannelSortingEnum orderBy)
@@ -1797,7 +1800,7 @@ namespace TvProgViewer.WebUI.Factories
                                 To = await getTvChannelPriceAsync(TvChannelSortingEnum.PriceDesc)
                             };
 
-                        model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);
+                        model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);*/
                     }
 
                     //tvchannels
