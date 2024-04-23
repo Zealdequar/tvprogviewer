@@ -14,6 +14,9 @@
         };
         AjaxCart.init(false, '.header-links .cart-qty', '.header-links .wishlist-qty', '#flyout-cart', localized_data);
     </script>
+    <div class="header-menu">
+        @await Component.InvokeAsync(typeof(TopMenuViewComponent))
+    </div>
         <div class="master-wrapper-content">
         <!-- Yandex.RTB R-A-5258749-1 -->
         <div class="top-banner">

@@ -599,7 +599,7 @@ function fillUserByDay(date, channelId) {
                         key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
                     }
                 ],
-                rowNum: 20,
+                rowNum: 500,
                 beforeSelectRow: function (rowid, e) {
                     $('#TVProgrammeByDaysGrid').jqGrid('resetSelection');
                     return (true);
@@ -720,7 +720,7 @@ function fillUserByChannels(date, channelId) {
                         key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
                     }
                 ],
-                rowNum: 20,
+                rowNum: 500,
                 beforeSelectRow: function (rowid, e) {
                     $('#TVProgrammeByChannelsGrid').jqGrid('resetSelection');
                     return (true);

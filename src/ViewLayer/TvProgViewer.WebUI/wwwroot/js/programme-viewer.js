@@ -46,7 +46,7 @@ function fillProgrammeViewerByDay(date, channelId) {
                         key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true
                     }
                 ],
-                rowNum: 20,
+                rowNum: 500,
                 beforeSelectRow: function (rowid, e) {
                     $('#TVProgrammeViewerGrid').jqGrid('resetSelection');
                     return (true);

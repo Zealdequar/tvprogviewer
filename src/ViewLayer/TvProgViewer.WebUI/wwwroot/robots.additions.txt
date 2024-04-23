@@ -2,3 +2,6 @@ Clean-param: returnurl
 Clean-param: etext 
 Clean-param: utm
 Clean-param: ReturnUrl
+Clean-param: pagenumber
+Clean-param: yhyd
+Clean-param: ycyd

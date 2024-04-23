@@ -49,10 +49,10 @@
 
 <ul class="top-menu notmobile">
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderMenuBefore, additionalData = Model })
-    @if (Model.DisplayHomepageMenuItem)
+  @*  @if (Model.DisplayHomepageMenuItem)
     {
         <li><a href="@Url.RouteUrl("Homepage")">@T("Homepage")</a></li>
-    }
+    } *@
     @if (!Model.UseAjaxMenu)
     {
         var rootCategories = Model.Categories.Where(x => x.IncludeInTopMenu).ToList();
@@ -66,14 +66,15 @@
         }
 
     }
-    @foreach (var topic in Model.Topics)
+   @* @foreach (var topic in Model.Topics)
     {
         <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
-    }
+    } *@
     @if (Model.NewTvChannelsEnabled && Model.DisplayNewTvChannelsMenuItem)
     {
         <li><a href="@Url.RouteUrl("NewTvChannels")">@T("TvChannels.NewTvChannels")</a></li>
     }
+    @*
     @if (Model.DisplayTvChannelSearchMenuItem)
     {
         <li><a href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
@@ -82,6 +83,7 @@
     {
         <li><a href="@Url.RouteUrl("UserInfo")">@T("Account.MyAccount")</a></li>
     }
+    *@
     @if (Model.BlogEnabled && Model.DisplayBlogMenuItem)
     {
         <li><a href="@Url.RouteUrl("Blog")">@T("Blog")</a></li>
@@ -90,10 +92,12 @@
     {
         <li><a href="@Url.RouteUrl("Boards")">@T("Forum.Forums")</a></li>
     }
+    @*
     @if (Model.DisplayContactUsMenuItem)
     {
         <li><a href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
     }
+    *@
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.HeaderMenuAfter, additionalData = Model })
 </ul>
 @{
@@ -103,10 +107,10 @@
     <div class="menu-toggle">@responsiveMenuTitle</div>
     <ul class="top-menu mobile">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.MobHeaderMenuBefore, additionalData = Model })
-        @if (Model.DisplayHomepageMenuItem)
+       @* @if (Model.DisplayHomepageMenuItem)
         {
             <li><a href="@Url.RouteUrl("Homepage")">@T("Homepage")</a></li>
-        }
+        } *@
         @if (!Model.UseAjaxMenu)
         {
             @foreach (var category in rootCategoriesResponsive)
@@ -120,22 +124,22 @@
             }
 
         }
-        @foreach (var topic in Model.Topics)
+   @*      @foreach (var topic in Model.Topics)
         {
             <li><a href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
-        }
+        } *@
         @if (Model.NewTvChannelsEnabled && Model.DisplayNewTvChannelsMenuItem)
         {
             <li><a href="@Url.RouteUrl("NewTvChannels")">@T("TvChannels.NewTvChannels")</a></li>
         }
-        @if (Model.DisplayTvChannelSearchMenuItem)
+       @* @if (Model.DisplayTvChannelSearchMenuItem)
         {
             <li><a href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
         }
         @if (Model.DisplayUserInfoMenuItem)
         {
             <li><a href="@Url.RouteUrl("UserInfo")">@T("Account.MyAccount")</a></li>
-        }
+        } *@
         @if (Model.BlogEnabled && Model.DisplayBlogMenuItem)
         {
             <li><a href="@Url.RouteUrl("Blog")">@T("Blog")</a></li>
@@ -144,10 +148,10 @@
         {
             <li><a href="@Url.RouteUrl("Boards")">@T("Forum.Forums")</a></li>
         }
-        @if (Model.DisplayContactUsMenuItem)
+    @*    @if (Model.DisplayContactUsMenuItem)
         {
             <li><a href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
-        }
+        } *@
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.MobHeaderMenuAfter, additionalData = Model })
     </ul>
 
