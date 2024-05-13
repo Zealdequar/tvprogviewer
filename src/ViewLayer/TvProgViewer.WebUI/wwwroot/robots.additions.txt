@@ -5,3 +5,13 @@ Clean-param: ReturnUrl
 Clean-param: pagenumber
 Clean-param: yhyd
 Clean-param: ycyd
+Clean-param: ycyid
+Clean-param: ycylid
+Clean-param: yhic
+Clean-param: ycilyd
+Clean-param: ychyd
+Clean-param: _ym_debug
+Clean-param: newsitemid
+Clean-param: viewmode
+Clean-param: orderby
+Clean-param: pagesize
