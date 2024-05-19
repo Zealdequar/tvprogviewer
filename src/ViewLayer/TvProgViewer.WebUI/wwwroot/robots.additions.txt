@@ -10,6 +10,13 @@ Clean-param: ycylid
 Clean-param: yhic
 Clean-param: ycilyd
 Clean-param: ychyd
+Clean-param: ycyylyd
+Clean-param: yciild
+Clean-param: ycliid
+Clean-param: ycyyld
+Clean-param: ychid
+Clean-param: yclyyd
+Clean-param: ycylyd
 Clean-param: _ym_debug
 Clean-param: newsitemid
 Clean-param: viewmode
