@@ -1204,12 +1204,31 @@
         text-align: center;
     }
 
+.advertise-rewarded-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1050;
+    width: 320px;
+    height: 210px;
+    margin: -103px 0 0 -160px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 2px rgba(0,0,0,0.15);
+    background-color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
         .eu-cookie-bar-notification .text {
             margin-bottom: 20px;
             line-height: 20px;
         }
 
-        .eu-cookie-bar-notification button {
+.advertise-rewarded-box .text {
+    margin-bottom: 20px;
+    line-height: 20px;
+}
+        .eu-cookie-bar-notification button, .advertise-rewarded-box button {
             min-width: 60px;
             margin: 5px 0 10px;
             border: none;
@@ -1219,16 +1238,16 @@
             color: #fff;
         }
 
-            .eu-cookie-bar-notification button:hover, .eu-cookie-bar-notification button:focus {
+            .eu-cookie-bar-notification button:hover, .eu-cookie-bar-notification button:focus, .advertise-rewarded-box button:hover, .advertise-rewarded-box button:focus {
                 background-color: #248ece;
             }
 
-        .eu-cookie-bar-notification a {
+        .eu-cookie-bar-notification a, .advertise-rewarded-box a{
             display: block;
             color: #4ab2f1;
         }
 
-            .eu-cookie-bar-notification a:hover, .eu-cookie-bar-notification a:focus {
+            .eu-cookie-bar-notification a:hover, .eu-cookie-bar-notification a:focus, .advertise-rewarded-box a:hover, .advertise-rewarded-box a:focus{
                 text-decoration: underline;
             }
     /*********** HEADER ***********/
@@ -8055,7 +8074,7 @@
                 clear: none;
             }
 
-            .home-page .tvchannel-grid .item-box:nth-child(4n+1), .tvchannel-details-page .tvchannel-grid .item-box:nth-child(4n+1), .shopping-cart-page .tvchannel-grid .item-box:nth-child(4n+1) {
+            .home-page .tvchannel-grid .item-box:nth-child(5n+1), .tvchannel-details-page .tvchannel-grid .item-box:nth-child(5n+1), .shopping-cart-page .tvchannel-grid .item-box:nth-child(5n+1) {
                 clear: both;
             }
         /*** TVCHANNEL PAGE ***/
@@ -8416,7 +8435,7 @@
         }
 
             .header-menu > ul > li {
-                padding: 0 20px;
+                padding: 0 10px;
             }
 
                 .header-menu > ul > li > a, .header-menu > ul > li > span {

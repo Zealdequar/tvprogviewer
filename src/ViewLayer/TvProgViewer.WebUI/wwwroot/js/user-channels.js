@@ -88,13 +88,11 @@ function sendStatForChannelRating() {
     $("#ChannelTool").on('click', chAction);
     $("#ChannelToolBottom").on('click', chAction);
 $("#ApplyTool").on('click', function () {
-    sendStatForChannelRating();
-    document.location.href = "/";
-    });
+    $('#advertise-rewarded-box-start').show();
+});
 $("#ApplyToolBottom").on('click', function () {
-    sendStatForChannelRating();
-    document.location.href = "/";
-    });
+    $('#advertise-rewarded-box-start').show();
+});
 // Заполнение раскрывающихся списков
 /*
 function fillSelects() {

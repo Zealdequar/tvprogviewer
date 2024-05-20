@@ -1,0 +1,104 @@
+﻿<!-- Yandex.RTB R-A-5258749-3 -->
+<!-- Yandex.RTB R-A-5258749-4 -->
+<script asp-location="Footer">
+    $(document).ready(function () {
+        $('#advertise-rewarded-box-start-ok').on('click', function () {
+            $('#advertise-rewarded-box-start').hide();
+            window.yaContextCb.push(() => {
+                if (Ya.Context.AdvManager.getPlatform() === 'desktop') {
+                    // Вызов блока Rewarded для десктопной версии
+                    Ya.Context.AdvManager.render({
+                        "blockId": "R-A-5258749-3",
+                        "type": "rewarded",
+                        "platform": "desktop",
+                        "onRewarded": (isRewarded) => {
+                            if (isRewarded) {
+                                // Условие получения награды выполнено
+                                sendStatForChannelRating();
+                                document.location.href = "/";
+                            } else {
+                                // Условие получения награды не выполнено
+                            }
+                        }
+                    });
+                } else {
+                    // Вызов блока Rewarded для мобильной версии
+                    Ya.Context.AdvManager.render({
+                        "blockId": "R-A-5258749-4",
+                        "type": "rewarded",
+                        "platform": "touch",
+                        "onRewarded": (isRewarded) => {
+                            if (isRewarded) {
+                                // Условие получения награды выполнено
+                                sendStatForChannelRating();
+                                document.location.href = "/";
+                            } else {
+                                // Условие получения награды не выполено
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        $('#advertise-rewarded-box-start-cancel').on('click', function () {
+            $('#advertise-rewarded-box-start').hide();
+        });
+        $('#advertise-rewarded-box-tvchannel-ok').on('click', function () {
+            $('#advertise-rewarded-box-tvchannel').hide();
+            window.yaContextCb.push(() => {
+                if (Ya.Context.AdvManager.getPlatform() === 'desktop') {
+                    // Вызов блока Rewarded для десктопной версии
+                    Ya.Context.AdvManager.render({
+                        "blockId": "R-A-5258749-3",
+                        "type": "rewarded",
+                        "platform": "desktop",
+                        "onRewarded": (isRewarded) => {
+                            if (isRewarded) {
+                                // Условие получения награды выполнено
+                                
+                            } else {
+                                // Условие получения награды не выполнено
+                            }
+                        }
+                    });
+                } else {
+                    // Вызов блока Rewarded для мобильной версии
+                    Ya.Context.AdvManager.render({
+                        "blockId": "R-A-5258749-4",
+                        "type": "rewarded",
+                        "platform": "touch",
+                        "onRewarded": (isRewarded) => {
+                            if (isRewarded) {
+                                // Условие получения награды выполнено
+                                
+                            } else {
+                                // Условие получения награды не выполено
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        $('#advertise-rewarded-box-tvchannel-cancel').on('click', function () {
+            $('#advertise-rewarded-box-tvchannel').hide();
+        });
+    });
+</script>
+<div id="advertise-rewarded-box-start" class="advertise-rewarded-box" style="display: none;">
+    <div class="content">
+        <div class="text">Переход к программе передач по выбранным телеканалам</div>
+        <div class="buttons-more">
+            <button type="button" class="ok-button button-1" id="advertise-rewarded-box-start-ok">Посмотреть рекламу и перейти к программе передач</button>
+            <button type="button" class="cancel-button button-1" id="advertise-rewarded-box-start-cancel">Закрыть</button>
+        </div>
+    </div>
+</div>
+<div id="advertise-rewarded-box-tvchannel" class="advertise-rewarded-box" style="display: none;">
+    <div class="content">
+        <div class="text">Переход к телеканалу с программой передач</div>
+        <div class="buttons-more">
+            <button type="button" class="ok-button button-1" id="advertise-rewarded-box-tvchannel-ok">Посмотреть рекламу и перейти к телеканалу</button>
+            <button type="button" class="cancel-button button-1" id="advertise-rewarded-box-tvchannel-cancel">Закрыть</button>
+        </div>
+    </div>
+</div>

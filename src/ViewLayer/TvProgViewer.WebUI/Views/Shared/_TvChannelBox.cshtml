@@ -86,14 +86,14 @@
         <div class="description" @(catalogSettings.ShowShortDescriptionOnCatalogPages ? "" : "data-short-description=none")>
             @Html.Raw(Model.ShortDescription)
         </div>
-        <div class="add-info">
+       @* <div class="add-info">
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelBoxAddinfoBefore, additionalData = Model })
             <div class="prices">
                 @if (!string.IsNullOrEmpty(Model.TvChannelPrice.OldPrice))
                 {
                     <span class="price old-price">@Model.TvChannelPrice.OldPrice</span>
                 }
-                @*<span class="price actual-price">@Model.TvChannelPrice.Price</span>*@
+                comment*<span class="price actual-price">@Model.TvChannelPrice.Price</span>*comment
                 @if (Model.TvChannelPrice.DisplayTaxShippingInfo)
                 {
                     var inclTax = await workContext.GetTaxDisplayTypeAsync() == TaxDisplayType.IncludingTax;
@@ -135,6 +135,6 @@
                 }
             </div>
             @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelBoxAddinfoAfter, additionalData = Model })
-        </div>
+        </div> *@
     </div>
 </div>
