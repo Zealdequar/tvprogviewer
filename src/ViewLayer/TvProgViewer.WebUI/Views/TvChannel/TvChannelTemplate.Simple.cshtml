@@ -25,7 +25,25 @@
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/jquery.jqgrid.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/programme-viewer.min.js");
-
+    <!-- Yandex.RTB R-A-5258749-6 -->
+    <!-- Yandex.RTB R-A-5258749-7 -->
+    <script>
+        window.yaContextCb.push(()=>{
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-5258749-6",
+                "type": "fullscreen",
+                "platform": "touch"
+            })
+        })
+        
+        window.yaContextCb.push(()=>{
+	        Ya.Context.AdvManager.render({
+		        "blockId": "R-A-5258749-7",
+		        "type": "fullscreen",
+		        "platform": "desktop"
+	        })
+        })
+    </script>
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
     {

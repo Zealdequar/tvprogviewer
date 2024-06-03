@@ -3614,10 +3614,15 @@
         padding: 2px 0 3px;
     }
 
-        .topic-block-title h2 {
+        .topic-block-title h1 {
             font-size: 30px;
             font-weight: normal;
         }
+
+.card-body h2 {
+    font-size: 25px !important;
+    font-weight: normal !important;
+}
 
     .topic-block-body {
         text-align: justify;
@@ -7997,6 +8002,11 @@
 
         .footer-info {
             float: right;
+            line-height: 32px;
+        }
+
+        .footer-version {
+            float: left;
             line-height: 32px;
         }
 
