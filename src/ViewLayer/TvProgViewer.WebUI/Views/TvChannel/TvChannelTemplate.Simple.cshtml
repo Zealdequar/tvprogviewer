@@ -185,13 +185,14 @@
                     }
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialBottom, additionalData = Model })
                 </div>
-                @*
+                
                 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforeCollateral, additionalData = Model })
-                <div class="tvchannel-collateral">
-                    @await Html.PartialAsync("_TvChannelSpecifications", Model.TvChannelSpecificationModel)
-                    @await Html.PartialAsync("_TvChannelTags", Model.TvChannelTags)
-                </div>*@
                 @await Html.PartialAsync("_TvChannelDetailsProgrammeViewer", Model)
+                <div class="tvchannel-collateral">
+                   @* @await Html.PartialAsync("_TvChannelSpecifications", Model.TvChannelSpecificationModel) *@
+                    @await Html.PartialAsync("_TvChannelTags", Model.TvChannelTags)
+                </div>
+                
                 @await Component.InvokeAsync(typeof(TvChannelsAlsoPurchasedViewComponent), new { tvchannelId = Model.Id })
                 @await Component.InvokeAsync(typeof(RelatedTvChannelsViewComponent), new { tvchannelId = Model.Id })
             </div>

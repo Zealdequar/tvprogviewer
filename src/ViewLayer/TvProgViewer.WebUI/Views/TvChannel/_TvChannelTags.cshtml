@@ -14,8 +14,8 @@
                 {
                     <li class="tag">
                         <a href="@(Url.RouteUrl<TvChannelTag>(new { SeName = Model[i].SeName }))" class="tvchanneltag">
-                            @Model[i].Name
-                        </a> <span>@T("TvChannels.Tags.Count", Model[i].TvChannelCount)</span>
+                            #@Model[i].Name
+                        </a> @*<span>@T("TvChannels.Tags.Count", Model[i].TvChannelCount)</span>*@
                     </li>
                     if (i != Model.Count - 1)
                     {
