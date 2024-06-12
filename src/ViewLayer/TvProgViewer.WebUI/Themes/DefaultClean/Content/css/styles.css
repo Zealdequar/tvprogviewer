@@ -8571,10 +8571,12 @@
         font-size: 12pt !important;
     }
 .days-select {
+    position: relative;
     display: table-cell;
     float: left;
     width: auto;
     left: 0;
+    z-index: 3000;
 }
 
 .btn.dropdown-toggle.btn-light.bs-placeholder {

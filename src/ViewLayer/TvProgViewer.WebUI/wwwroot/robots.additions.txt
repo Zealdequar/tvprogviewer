@@ -18,6 +18,9 @@ Clean-param: ychid
 Clean-param: yclyyd
 Clean-param: ycylyd
 Clean-param: yycliyd
+Clean-param: yycleed
+Clean-param: ycilid
+Clean-param: yyclyyd
 Clean-param: _ym_debug
 Clean-param: newsitemid
 Clean-param: viewmode

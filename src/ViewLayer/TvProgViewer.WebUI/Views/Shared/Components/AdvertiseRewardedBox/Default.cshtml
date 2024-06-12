@@ -3,7 +3,6 @@
 <script asp-location="Footer">
     $(document).ready(function () {
         $('#advertise-rewarded-box-start-ok').on('click', function () {
-            $('#advertise-rewarded-box-start').hide();
             window.yaContextCb.push(() => {
                 if (Ya.Context.AdvManager.getPlatform() === 'desktop') {
                     // Вызов блока Rewarded для десктопной версии
@@ -39,66 +38,25 @@
                     });
                 }
             });
-        });
-        $('#advertise-rewarded-box-start-cancel').on('click', function () {
-            $('#advertise-rewarded-box-start').hide();
-        });
-        $('#advertise-rewarded-box-tvchannel-ok').on('click', function () {
-            $('#advertise-rewarded-box-tvchannel').hide();
-            window.yaContextCb.push(() => {
-                if (Ya.Context.AdvManager.getPlatform() === 'desktop') {
-                    // Вызов блока Rewarded для десктопной версии
-                    Ya.Context.AdvManager.render({
-                        "blockId": "R-A-5258749-3",
-                        "type": "rewarded",
-                        "platform": "desktop",
-                        "onRewarded": (isRewarded) => {
-                            if (isRewarded) {
-                                // Условие получения награды выполнено
-                                
-                            } else {
-                                // Условие получения награды не выполнено
-                            }
-                        }
-                    });
-                } else {
-                    // Вызов блока Rewarded для мобильной версии
-                    Ya.Context.AdvManager.render({
-                        "blockId": "R-A-5258749-4",
-                        "type": "rewarded",
-                        "platform": "touch",
-                        "onRewarded": (isRewarded) => {
-                            if (isRewarded) {
-                                // Условие получения награды выполнено
-                                
-                            } else {
-                                // Условие получения награды не выполено
-                            }
-                        }
-                    });
-                }
-            });
-        });
-        $('#advertise-rewarded-box-tvchannel-cancel').on('click', function () {
-            $('#advertise-rewarded-box-tvchannel').hide();
         });
     });
 </script>
-<div id="advertise-rewarded-box-start" class="advertise-rewarded-box" style="display: none;">
-    <div class="content">
-        <div class="text">Переход к программе передач по выбранным телеканалам</div>
-        <div class="buttons-more">
-            <button type="button" class="ok-button button-1" id="advertise-rewarded-box-start-ok">Посмотреть рекламу и перейти к программе передач</button>
-            <button type="button" class="cancel-button button-1" id="advertise-rewarded-box-start-cancel">Закрыть</button>
-        </div>
-    </div>
-</div>
-<div id="advertise-rewarded-box-tvchannel" class="advertise-rewarded-box" style="display: none;">
-    <div class="content">
-        <div class="text">Переход к телеканалу с программой передач</div>
-        <div class="buttons-more">
-            <button type="button" class="ok-button button-1" id="advertise-rewarded-box-tvchannel-ok">Посмотреть рекламу и перейти к телеканалу</button>
-            <button type="button" class="cancel-button button-1" id="advertise-rewarded-box-tvchannel-cancel">Закрыть</button>
+<div id="advertise-rewarded-box-start" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Выберите действие</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Переход к программе передач для выбранных вами каналов будет доступен после просмотра небольшой рекламы, когда вознаграждение станет доступным</p>
+            </div>
+            <div class="modal-footer">
+                <button id="advertise-rewarded-box-start-cancel" type="button" class="btn btn-outline-secondary" data-dismiss="modal">Закрыть</button>
+                <button id="advertise-rewarded-box-start-ok" type="button" class="btn btn-outline-primary">Посмотреть рекламу и перейти</button>
+            </div>
         </div>
     </div>
 </div>
