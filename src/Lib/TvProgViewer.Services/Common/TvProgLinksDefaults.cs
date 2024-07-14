@@ -13,32 +13,32 @@
             /// <summary>
             /// Gets the main site page
             /// </summary>
-            public static string Main => "https://tvprogviewer.ru/";
+            public static string Main => "https://www.nopcommerce.com/";
 
             /// <summary>
             /// Gets the boards page
             /// </summary>
-            public static string Boards => "https://tvprogviewer.ru/boards/";
+            public static string Boards => "https://www.nopcommerce.com/boards/";
 
             /// <summary>
             /// Gets the translations page
             /// </summary>
-            public static string Translations => "https://tvprogviewer.ru/translations/";
+            public static string Translations => "https://www.nopcommerce.com/translations/";
 
             /// <summary>
             /// Gets the copyright removal key page
             /// </summary>
-            public static string CopyrightRemovalKey => "https://tvprogviewer.ru/tvprogviewer-copyright-removal-key";
+            public static string CopyrightRemovalKey => "https://www.nopcommerce.com/nopcommerce-copyright-removal-key";
 
             /// <summary>
             /// Gets the premium support services page
             /// </summary>
-            public static string PremiumSupportServices => "https://tvprogviewer.ru/tvprogviewer-premium-support-services";
+            public static string PremiumSupportServices => "https://www.nopcommerce.com/nopcommerce-premium-support-services";
 
             /// <summary>
             /// Gets the marketplace page
             /// </summary>
-            public static string Marketplace => "https://tvprogviewer.ru/marketplace/";
+            public static string Marketplace => "https://www.nopcommerce.com/marketplace/";
 
             /// <summary>
             /// Gets the payment plugins page

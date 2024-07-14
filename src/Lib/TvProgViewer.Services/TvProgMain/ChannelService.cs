@@ -238,6 +238,26 @@ namespace TvProgViewer.Services.TvProgMain
             // Обновление телеканалов деталей:
             await _tvChannelService.UpdateTvChannelListAsync(tvChannelList);
         }
+
+        /// <summary>
+        /// Получение всех действующих каналов
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task<List<UserChannel>> GetAllChannels()
+        {
+            List<UserChannel> uch = await (from ch in _channelsRepository.Table
+                                           join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                                           from mp in chmp.DefaultIfEmpty()
+                                           where ch.TvProgProviderId == 1 && ch.Deleted == null && !string.IsNullOrWhiteSpace(ch.TitleChannel)
+                                           select new UserChannel
+                                           {
+                                               InternalId = ch.InternalId,
+                                               Title = ch.TitleChannel,
+                                               SysOrderCol = ch.SysOrderCol,
+                                               UserRating = ch.UserRating == null ? 0 : ch.UserRating,
+                                           }).ToListAsync();
+            return uch;
+        }
         #endregion
     }
 }

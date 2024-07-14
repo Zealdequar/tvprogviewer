@@ -140,6 +140,8 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         /// </summary>
         public int Freq { get; set; }
 
+        [DataMember]
+        public int? UserRating { get; set; }
         #endregion
     }
 }

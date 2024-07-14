@@ -3265,6 +3265,7 @@ namespace TvProgViewer.Services.Installation
                 AdminAreaAllowedIpAddresses = null,
                 HoneypotEnabled = false,
                 HoneypotInputName = "hpinput",
+                ProgrammesLoadKey = "231c3372-33eb-470e-b081-d9d4e011d80a",
                 AllowNonAsciiCharactersInHeaders = true
             });
 

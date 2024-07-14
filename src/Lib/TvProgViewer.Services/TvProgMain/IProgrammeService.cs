@@ -135,5 +135,12 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="tsEnd">Время завершения выборки</param>
         /// <param name="category">Категория</param>
         public Task<List<SystemProgramme>> GetUserAdultProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category);
+
+        /// <summary>
+        /// Получение всей телепрограммы
+        /// </summary>
+        /// <param name="page">Страница</param>
+        /// <param name="rows">Строки</param>
+        public Task<List<SystemProgramme>> GetAllProgrammes(int page, int rows);
     }
 }

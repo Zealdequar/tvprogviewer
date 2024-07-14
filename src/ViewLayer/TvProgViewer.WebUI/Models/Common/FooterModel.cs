@@ -25,7 +25,7 @@ namespace TvProgViewer.WebUI.Models.Common
         public bool AllowUsersToApplyForVendorAccount { get; set; }
         public bool AllowUsersToCheckGiftCardBalance { get; set; }
         public bool DisplayTaxShippingInfoFooter { get; set; }
-        public bool HidePoweredByTvProgViewer { get; set; }
+        public bool HidePoweredByNopCommerce { get; set; }
 
         public int WorkingLanguageId { get; set; }
 

@@ -509,7 +509,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             var model = new SecuritySettingsModel
             {
                 EncryptionKey = securitySettings.EncryptionKey,
-                HoneypotEnabled = securitySettings.HoneypotEnabled
+                HoneypotEnabled = securitySettings.HoneypotEnabled,
+                ProgrammesLoadKey = securitySettings.ProgrammesLoadKey
             };
 
             //fill in additional values (not existing in the entity)

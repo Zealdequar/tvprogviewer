@@ -49,5 +49,11 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="internalId">Внутренний идентификатор</param>
         /// <returns>Идентификатор телеканала</returns>
         public Task<int?> GetChannelIdByInternalIdAsync(int internalId);
+
+        /// <summary>
+        /// Получение всех действующих каналов
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<UserChannel>> GetAllChannels();
     }
 }

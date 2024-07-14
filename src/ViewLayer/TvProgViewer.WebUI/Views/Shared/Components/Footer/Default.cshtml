@@ -115,10 +115,27 @@
             @*  @await Component.InvokeAsync(typeof(NewsletterBoxViewComponent)) *@
         </div>
     </div>
-    <div class="footer-lower">
+    <div class="footer-middle">
+        <div class="footer-block marketplace">
+            <div class="title">
+                <strong>@T("Footer.Marketplace")</strong>
+            </div>
+            <ul class="list">
+                <li>
+                    <a title="Маркетплейс GreenData - TvProgViewer" href="https://market.greendata.store/product/129/description" target="_blank">
+                        <img title="Маркетплейс GreenData - TvProgViewer" src="/images/i/GreenData.png" alt="GreenDataMarketplace-TvProgViewer" width="24" height="24" />
+                        <span>GreenData-TvProgViewer</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-version-info">
         <div class="footer-version">
             <span class="footer-disclaimer">Актуальная версия: @TvProgVersion.FULL_VERSION</span>
         </div>
+    </div>
+    <div class="footer-lower">
         <div class="footer-info">
             <span class="footer-disclaimer">@T("Content.CopyrightNotice", "2012 — " + DateTime.Now.Year.ToString(), Model.StoreName)</span>
             @if (Model.DisplayTaxShippingInfoFooter)
@@ -129,12 +146,12 @@
                 </span>
             }
         </div>
-        @if (!Model.HidePoweredByTvProgViewer)
+        @if (!Model.HidePoweredByNopCommerce)
         {
             <div class="footer-powered-by">
-                @*Would you like to remove the "Powered by tvProgViewer" link in the bottom of the footer?
-                    Please find more info at https://tvprogviewer.ru/tvprogviwer-copyright-removal-key*@
-                Powered by <a href="@(OfficialSite.Main)" target="_blank" @(Model.IsHomePage ? string.Empty : "rel=nofollow")>tvProgViewer</a>
+                @*Would you like to remove the "Powered by nopCommerce" link in the bottom of the footer?
+                Please find more info at  https://www.nopcommerce.com/nopcommerce-copyright-removal-key*@
+                Powered by <a href="@(OfficialSite.Main)" target="_blank" @(Model.IsHomePage ? string.Empty : "rel=nofollow")>nopCommerce</a>
             </div>
         }
         @await Component.InvokeAsync(typeof(StoreThemeSelectorViewComponent))

@@ -12,6 +12,7 @@ using TvProgViewer.Services.Users;
 using NUglify.Helpers;
 using TvProgViewer.Core;
 using System.Globalization;
+using TvProgViewer.Core.Domain.Security;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -25,6 +26,7 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IUserService _userService;
         private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
+        private readonly SecuritySettings _securitySettings;
 
         /// <summary>
         /// Словарь с днями недели для обтображения пиктограмм
@@ -74,7 +76,8 @@ namespace TvProgViewer.WebUI.Controllers
             IGenreService genreService,
             IUserService userService,
             IWebHelper webHelper,
-            IWorkContext workContext)
+            IWorkContext workContext,
+            SecuritySettings securitySettings)
         {
             _programmeService = programmeService;
             _channelService = channelService;
@@ -82,6 +85,7 @@ namespace TvProgViewer.WebUI.Controllers
             _userService = userService;
             _webHelper = webHelper;
             _workContext = workContext;
+            _securitySettings = securitySettings;
         }
 
         #endregion
@@ -194,6 +198,7 @@ namespace TvProgViewer.WebUI.Controllers
             }
         }
 
+        
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
         public async Task<JsonResult> GetSystemChannels(int tvProgProvider, string filters, string sidx, string sord, int page, int rows)
@@ -480,6 +485,38 @@ namespace TvProgViewer.WebUI.Controllers
             }
             uuid = !string.IsNullOrWhiteSpace(uuid) ? $"\"{uuid}\"" : "null";
             return Json($"{{\"uuid\":{uuid}}}");
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GetAllChannels(string key)
+        {
+            if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
+            {
+                List<UserChannel> channelList = await _channelService.GetAllChannels();
+                var tvchannelObj = new
+                {
+                    tvchannels = channelList
+                };
+                return Json(tvchannelObj);
+            }
+            return Json("{}");
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GetAllProgrammes(string key, int page, int rows)
+        {
+            if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
+            {
+                List<SystemProgramme> programmeList = await _programmeService.GetAllProgrammes(page, rows);
+                var tvscheduleObj = new
+                {
+                    tvschedule = programmeList
+                };
+                return Json(tvscheduleObj);
+            }
+            return Json("{}");
         }
         #endregion
     }

@@ -1499,14 +1499,17 @@
         text-align: center;
     }
 
-    .footer-upper {
+    .footer-upper, .footer-middle {
         width: 95%;
         margin: auto;
-        border-bottom: 1px solid #ddd;
         overflow: hidden;
         padding: 40px 0;
         font-size: 0;
     }
+.footer-middle {
+    border-bottom: 1px solid #ddd;
+}
+
 
     .footer-block {
         width: 95%;
@@ -1643,11 +1646,23 @@
      display: none !important;
 }
 */
-    .footer-lower {
+.footer-lower {
+    width: 95%;
+    margin: auto;
+    overflow: hidden;
+    padding: 10px 0;
+    font-size: 12px;
+    white-space: nowrap;
+}
+    .footer-marketplace{
+        
+    }
+
+    .footer-version-info{
         width: 95%;
         margin: auto;
         overflow: hidden;
-        padding: 25px 0;
+        padding: 10px 0 3px 0;
         font-size: 12px;
     }
 
@@ -7941,12 +7956,16 @@
             width: 980px;
             padding: 35px 10px;
         }
+        .footer-middle {
+            width: 980px;
+            padding: 0 0 35px 10px;
+        }
 
-            .footer-upper:after {
-                content: "";
-                display: block;
-                clear: both;
-            }
+        .footer-upper:after, .footer-middle:after {
+            content: "";
+            display: block;
+            clear: both;
+        }
 
         .footer-block {
             float: left;
@@ -7991,7 +8010,7 @@
 
         .footer-lower {
             width: 980px;
-            padding: 25px 5px;
+            padding: 15px 5px;
         }
 
             .footer-lower:after {
@@ -8004,9 +8023,14 @@
             float: right;
             line-height: 32px;
         }
-
+        .footer-version-info{
+            width: 980px;
+            padding: 5px 5px;
+        }
+            
         .footer-version {
             float: left;
+            margin: 0px;
             line-height: 32px;
         }
 
@@ -8456,15 +8480,24 @@
             width: 1200px;
             padding: 35px 30px;
         }
-
+        .footer-middle {
+            width: 1200px;
+            padding: 0 0 35px 30px;
+        }
         .footer-block {
             width: 280px;
         }
 
+        .footer-version-info {
+            width: 1200px;
+            padding: 25px 20px 2px 20px;
+        }
+
         .footer-lower {
             width: 1200px;
-            padding: 25px 20px;
+            padding: 2px 20px 25px 20px;
         }
+                
         /*** PRODUCT REVIEWS ***/
         .tvchannel-review-item .review-title {
             max-width: 1050px;

@@ -21,6 +21,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.HoneypotEnabled")]
         public bool HoneypotEnabled { get; set; }
 
+        [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.ProgrammesLoadKey")]
+        public string ProgrammesLoadKey { get; set; }
+
         #endregion
     }
 }

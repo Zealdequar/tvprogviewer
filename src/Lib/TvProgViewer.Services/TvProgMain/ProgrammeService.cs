@@ -1152,6 +1152,26 @@ namespace TvProgViewer.Services.TvProgMain
             return systemProgrammes;
         }
 
+
+        /// <summary>
+        /// Получение всей телепрограммы
+        /// </summary>
+        /// <param name="page">Страница</param>
+        /// <param name="rows">Строки</param>
+        public virtual async Task<List<SystemProgramme>> GetAllProgrammes(int page, int rows)
+        {
+            List<SystemProgramme> systemProgrammeList = await (from pr in _programmesRepository.Table
+                                                               orderby pr.InternalChanId, pr.TsStartMo
+                                                               select new SystemProgramme
+                                                               {
+                                                                   InternalChanId = pr.InternalChanId,
+                                                                   TsStartMo = pr.TsStartMo.AddHours(-3),
+                                                                   TsStopMo = pr.TsStopMo.AddHours(-3),
+                                                                   TelecastTitle = pr.Title,
+                                                                   Category = pr.Category
+                                                               }).LimitAndOrderBy(page, rows, "InternalChanId", "asc").ToListAsync();
+            return systemProgrammeList;
+        }
         #endregion
     }
 }

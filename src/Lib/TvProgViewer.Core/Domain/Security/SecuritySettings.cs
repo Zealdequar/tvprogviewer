@@ -32,5 +32,10 @@ namespace TvProgViewer.Core.Domain.Security
         /// Gets or sets a value indicating whether to allow non-ASCII characters in headers
         /// </summary>
         public bool AllowNonAsciiCharactersInHeaders { get; set; }
+
+        /// <summary>
+        /// Получение или установка значения, обозначающее ключ для получения телеканалов и программы передач
+        /// </summary>
+        public string ProgrammesLoadKey { get; set; }
     }
 }

@@ -1553,6 +1553,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         if (!string.IsNullOrWhiteSpace(s))
                             securitySettings.AdminAreaAllowedIpAddresses.Add(s.Trim());
                 securitySettings.HoneypotEnabled = model.SecuritySettings.HoneypotEnabled;
+                securitySettings.ProgrammesLoadKey = model.SecuritySettings.ProgrammesLoadKey;
                 await _settingService.SaveSettingAsync(securitySettings);
 
                 //robots.txt settings
