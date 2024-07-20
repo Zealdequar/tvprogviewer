@@ -1549,42 +1549,9 @@
                     color: #4ab2f1;
                 }
 
-    .follow-us {
-        margin: 30px auto 0;
-        text-align: center;
-    }
-
-        .follow-us .title {
-            margin: 0 0 0px;
-            background: none;
-            color: #444;
-            cursor: auto;
-        }
-
-        .follow-us .social ul {
-            margin: 0 0 0px;
-            border-bottom: 1px solid #ddd;
-            padding: 0 0 0px;
-            font-size: 0;
-        }
-
-        .follow-us .social li {
-            display: inline-block;
-            margin: 0 5px;
-        }
-
-        .follow-us .social a {
-            display: block;
-            width: 38px;
-            height: 38px;
-            background: url('../images/social-sprite.png') no-repeat;
-            font-size: 0;
-        }
-
-        .follow-us .social .facebook a {
-            background-position: 0 0;
-        }
-
+        a.social{
+            text-decoration: none;
+        }        
         .follow-us .social .twitter a {
             background-position: -38px 0;
         }
@@ -1597,9 +1564,7 @@
             background-position: -114px 0;
         }
 
-        .follow-us .social .instagram a {
-            background-position: -152px 0;
-        }
+        
 
     .newsletter-email {
         display: inline-block;
@@ -7027,15 +6992,22 @@
                     padding: 5px 0;
                 }
 
+                .footer-block .list li.social {
+                    padding: 2px 0;
+                }
+
                 .footer-block .list a {
                     display: inline;
                     padding: 0;
                 }
 
-        .follow-us {
-            width: 98%;
-            margin: 25px auto 0;
-        }
+                .footer-block .list a.social {
+                    display: inline;
+                    padding: 0;
+                    text-decoration: none;
+                }
+
+        
         /*** CATEGORY ***/
         .tvchannel-selectors {
             text-align: left;
@@ -7980,18 +7952,7 @@
                 margin: 0;
             }
 
-        .follow-us {
-            float: right;
-            width: 300px !important;
-            margin: 0;
-            text-align: left;
-        }
-
-            .follow-us .social li {
-                margin: 0 10px 0 0;
-            }
-
-        .newsletter-email {
+       .newsletter-email {
             display: block;
         }
 

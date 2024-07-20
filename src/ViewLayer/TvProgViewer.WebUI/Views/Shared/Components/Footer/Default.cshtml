@@ -34,7 +34,7 @@
             <ul class="list">
                 @if (Model.SearchEnabled && Model.DisplayTvChannelSearchFooterItem)
                 {
-                    <li><a href="@Url.RouteUrl("TvSearch")">@T("Search")</a> </li>
+                    <li><a href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
                 }
                 @if (Model.NewsEnabled && Model.DisplayNewsFooterItem)
                 {
@@ -105,10 +105,10 @@
                 }
             </ul>
         </div>
-        <div class="footer-block follow-us">
+        <div class="footer-block talk-about-us">
             <div class="sociality">
                 <div class="title">
-                    <strong>@T("Footer.FollowUs")</strong>
+                    <strong>@T("Footer.TalkAboutUs")</strong>
                 </div>
                 @await Component.InvokeAsync(typeof(SocialButtonsViewComponent))
             </div>
@@ -123,9 +123,26 @@
             <ul class="list">
                 <li>
                     <a title="Маркетплейс GreenData - TvProgViewer" href="https://market.greendata.store/product/129/description" target="_blank">
-                        <img title="Маркетплейс GreenData - TvProgViewer" src="/images/i/GreenData.png" alt="GreenDataMarketplace-TvProgViewer" width="24" height="24" />
+                        <img title="Маркетплейс GreenData - TvProgViewer" src="~/images/i/GreenData.png" alt="GreenDataMarketplace-TvProgViewer" width="24" height="24" />
                         <span>GreenData-TvProgViewer</span>
                     </a>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-block follow-us">
+            <div class="title">
+                <strong>@T("Footer.FollowUs")</strong>
+            </div>
+            <ul class="list">
+                <li class="social">
+                    <div>
+                        <a class="social" title="Наше сообщество ВКонтакте" href="https://vk.com/tvprogviewer" target="_blank">
+                            <img title="Подписывайтесь на наше сообщество ВКонтакте" src="~/images/i/vk_subscribe.png" alt="Сообщество TvProgViewer ВКонтакте" width="30" height="30" />
+                        </a>
+                        <a class="social" title="Наш канал в Телеграм" href="https://t.me/tvprogviewer_official" target="_blank">
+                            <img title="Подписывайтесь на нашу группу в Телеграм" src="~/images/i/telegram_subscribe.png" alt="Канал TvProgViewer в Телеграм" width="30" height="30" />
+                        </a>
+                    </div>
                 </li>
             </ul>
         </div>
