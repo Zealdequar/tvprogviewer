@@ -493,7 +493,7 @@ namespace TvProgViewer.WebUI.Controllers
         {
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
-                List<UserChannel> channelList = await _channelService.GetAllChannels();
+                List<GdChannel> channelList = await _channelService.GetAllChannels();
                 var tvchannelObj = new
                 {
                     tvchannels = channelList
@@ -509,7 +509,7 @@ namespace TvProgViewer.WebUI.Controllers
         {
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
-                List<SystemProgramme> programmeList = await _programmeService.GetAllProgrammes(page, rows);
+                List<GdProgramme> programmeList = await _programmeService.GetAllProgrammes(page, rows);
                 var tvscheduleObj = new
                 {
                     tvschedule = programmeList

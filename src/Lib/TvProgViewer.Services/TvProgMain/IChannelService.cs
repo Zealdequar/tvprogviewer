@@ -54,6 +54,6 @@ namespace TvProgViewer.Services.TvProgMain
         /// Получение всех действующих каналов
         /// </summary>
         /// <returns></returns>
-        public Task<List<UserChannel>> GetAllChannels();
+        public Task<List<GdChannel>> GetAllChannels();
     }
 }

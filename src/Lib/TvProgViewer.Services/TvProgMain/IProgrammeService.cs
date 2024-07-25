@@ -141,6 +141,6 @@ namespace TvProgViewer.Services.TvProgMain
         /// </summary>
         /// <param name="page">Страница</param>
         /// <param name="rows">Строки</param>
-        public Task<List<SystemProgramme>> GetAllProgrammes(int page, int rows);
+        public Task<List<GdProgramme>> GetAllProgrammes(int page, int rows);
     }
 }

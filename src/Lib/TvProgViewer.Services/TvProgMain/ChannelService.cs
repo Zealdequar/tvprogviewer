@@ -243,20 +243,20 @@ namespace TvProgViewer.Services.TvProgMain
         /// Получение всех действующих каналов
         /// </summary>
         /// <returns></returns>
-        public virtual async Task<List<UserChannel>> GetAllChannels()
+        public virtual async Task<List<GdChannel>> GetAllChannels()
         {
-            List<UserChannel> uch = await (from ch in _channelsRepository.Table
+            List<GdChannel> gdch = await (from ch in _channelsRepository.Table
                                            join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
                                            from mp in chmp.DefaultIfEmpty()
                                            where ch.TvProgProviderId == 1 && ch.Deleted == null && !string.IsNullOrWhiteSpace(ch.TitleChannel)
-                                           select new UserChannel
+                                           select new GdChannel
                                            {
                                                InternalId = ch.InternalId,
                                                Title = ch.TitleChannel,
                                                SysOrderCol = ch.SysOrderCol,
                                                UserRating = ch.UserRating == null ? 0 : ch.UserRating,
                                            }).ToListAsync();
-            return uch;
+            return gdch;
         }
         #endregion
     }
