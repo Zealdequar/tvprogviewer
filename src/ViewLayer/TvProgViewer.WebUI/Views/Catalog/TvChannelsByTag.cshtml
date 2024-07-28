@@ -14,6 +14,9 @@
     TvProgHtml.AddTitleParts(string.Format(T("PageTitle.TvChannelsByTag").Text, Model.TagName));
     //page class
     TvProgHtml.AppendPageCssClassParts("html-tvchannel-tag-page");
+    //meta
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
+
 
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)

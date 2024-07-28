@@ -185,6 +185,37 @@
             "type": "feed"
         })
     })
+    window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+            "blockId": "R-A-5258749-8",
+            "type": "floorAd",
+            "platform": "touch"
+        })
+    })
+    window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+            "blockId": "R-A-5258749-9",
+            "type": "floorAd",
+            "platform": "desktop"
+        })
+    })
+    const feed = document.getElementById('yandex_rtb_R-A-5258749-5'); // ID из поля renderTo
+    const callback = (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                Ya.Context.AdvManager.destroy({
+                    blockId: 'R-A-5258749-8'
+                }), // blockId для мобильной версии
+                    Ya.Context.AdvManager.destroy({
+                        blockId: 'R-A-5258749-9'
+                    }); // blockId для десктопной версии
+            }
+        });
+    };
+    const observer = new IntersectionObserver(callback, {
+        threshold: 0,
+    });
+    observer.observe(feed);
 </script>
 <script asp-location="Footer">
     $(document).ready(function () {

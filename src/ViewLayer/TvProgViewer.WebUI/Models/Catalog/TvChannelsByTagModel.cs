@@ -14,5 +14,6 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public string TagSeName { get; set; }
 
         public CatalogTvChannelsModel CatalogTvChannelsModel { get; set; }
+        public string MetaDescription { get; set; }
     }
 }

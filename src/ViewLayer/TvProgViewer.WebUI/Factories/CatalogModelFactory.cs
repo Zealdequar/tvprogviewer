@@ -1438,12 +1438,15 @@ namespace TvProgViewer.WebUI.Factories
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
+            string tagName = await _localizationService.GetLocalizedAsync(tvchannelTag, y => y.Name);
+
             var model = new TvChannelsByTagModel
             {
                 Id = tvchannelTag.Id,
-                TagName = await _localizationService.GetLocalizedAsync(tvchannelTag, y => y.Name),
+                TagName = tagName,
                 TagSeName = await _urlRecordService.GetSeNameAsync(tvchannelTag),
-                CatalogTvChannelsModel = await PrepareTagTvChannelsModelAsync(tvchannelTag, command)
+                CatalogTvChannelsModel = await PrepareTagTvChannelsModelAsync(tvchannelTag, command),
+                MetaDescription = $"Телеканалы выбранные по ключевому слову/выражению «{tagName}»"
             };
 
             return model;
