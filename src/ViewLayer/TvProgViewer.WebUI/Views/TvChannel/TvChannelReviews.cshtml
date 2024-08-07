@@ -6,7 +6,9 @@
 
 @{
     Layout = "_ColumnsOne";
-
+    // meta
+    TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
     //title
     TvProgHtml.AddTitleParts(Model.TvChannelName);
     TvProgHtml.AddTitleParts(T("PageTitle.TvChannelReviews").Text);

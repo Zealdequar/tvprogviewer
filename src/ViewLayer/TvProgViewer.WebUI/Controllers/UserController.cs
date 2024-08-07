@@ -458,8 +458,8 @@ namespace TvProgViewer.WebUI.Controllers
 
             if (ModelState.IsValid)
             {
-                var userUserName = model.Username?.Trim();
-                var userEmail = model.Email?.Trim();
+                var userUserName = model.Username;
+                var userEmail = model.Email;
                 var userNameOrEmail = _userSettings.UsernamesEnabled ? userUserName : userEmail;
 
                 var loginResult = await _userRegistrationService.ValidateUserAsync(userNameOrEmail, model.Password);
@@ -631,7 +631,7 @@ namespace TvProgViewer.WebUI.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = await _userService.GetUserByEmailAsync(model.Email.Trim());
+                var user = await _userService.GetUserByEmailAsync(model.Email);
                 if (user != null && user.Active && !user.Deleted)
                 {
                     //save token and current date
@@ -673,6 +673,8 @@ namespace TvProgViewer.WebUI.Controllers
                 return RedirectToRoute("Homepage");
 
             var model = new PasswordRecoveryConfirmModel { ReturnUrl = Url.RouteUrl("Homepage") };
+            model.MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.PasswordRecovery.Confirm.MetaKeywords");
+            model.MetaDescription = await _localizationService.GetResourceAsync("PageTitle.PasswordRecovery.Confirm.MetaDescription");
             if (string.IsNullOrEmpty(await _genericAttributeService.GetAttributeAsync<string>(user, TvProgUserDefaults.PasswordRecoveryTokenAttribute)))
             {
                 model.DisablePasswordChanging = true;
@@ -823,8 +825,8 @@ namespace TvProgViewer.WebUI.Controllers
 
             if (ModelState.IsValid)
             {
-                var userUserName = model.Username?.Trim();
-                var userEmail = model.Email?.Trim();
+                var userUserName = model.Username;
+                var userEmail = model.Email;
 
                 var isApproved = _userSettings.UserRegistrationType == UserRegistrationType.Standard;
                 var registrationRequest = new UserRegistrationRequest(user,
@@ -1207,7 +1209,7 @@ namespace TvProgViewer.WebUI.Controllers
                     //username 
                     if (_userSettings.UsernamesEnabled && _userSettings.AllowUsersToChangeUsernames)
                     {
-                        var userName = model.Username.Trim();
+                        var userName = model.Username;
                         if (!user.Username.Equals(userName, StringComparison.InvariantCultureIgnoreCase))
                         {
                             //change username
@@ -1220,7 +1222,7 @@ namespace TvProgViewer.WebUI.Controllers
                         }
                     }
                     //email
-                    var email = model.Email.Trim();
+                    var email = model.Email;
                     if (!user.Email.Equals(email, StringComparison.InvariantCultureIgnoreCase))
                     {
                         //change email

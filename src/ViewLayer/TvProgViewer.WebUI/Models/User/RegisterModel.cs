@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 using TvProgViewer.Web.Framework.Models;
 using TvProgViewer.Core;
+using TvProgViewer.Web.Framework.Mvc;
 
 namespace TvProgViewer.WebUI.Models.User
 {
@@ -34,10 +35,12 @@ namespace TvProgViewer.WebUI.Models.User
 
         public bool CheckUsernameAvailabilityEnabled { get; set; }
 
+        [NoTrim]
         [DataType(DataType.Password)]
         [TvProgResourceDisplayName("Account.Fields.Password")]
         public string Password { get; set; }
-
+        
+        [NoTrim]
         [DataType(DataType.Password)]
         [TvProgResourceDisplayName("Account.Fields.ConfirmPassword")]
         public string ConfirmPassword { get; set; }

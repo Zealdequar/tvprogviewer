@@ -2,6 +2,9 @@
 @{
     Layout = "_ColumnsOne";
 
+    //meta
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
+    TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //title
     TvProgHtml.AddTitleParts(T("PageTitle.Sitemap").Text);
     //page class

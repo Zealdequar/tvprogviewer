@@ -14,6 +14,9 @@ namespace TvProgViewer.WebUI.Models.Catalog
         /// </summary>
         public CatalogTvChannelsModel CatalogTvChannelsModel { get; set; }
 
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get;set; }
+
         #endregion
 
         #region Ctor

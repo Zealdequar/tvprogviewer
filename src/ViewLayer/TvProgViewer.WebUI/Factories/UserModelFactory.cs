@@ -540,14 +540,16 @@ namespace TvProgViewer.WebUI.Factories
         /// Задача представляет асинхронную операцию
         /// The task result contains the password recovery model
         /// </returns>
-        public virtual Task<PasswordRecoveryModel> PreparePasswordRecoveryModelAsync(PasswordRecoveryModel model)
+        public virtual async Task<PasswordRecoveryModel> PreparePasswordRecoveryModelAsync(PasswordRecoveryModel model)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
 
             model.DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnForgotPasswordPage;
+            model.MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.PasswordRecovery.MetaKeywords");
+            model.MetaDescription = await _localizationService.GetResourceAsync("PageTitle.PasswordRecovery.MetaDescription");
 
-            return Task.FromResult(model);
+            return model;
         }
 
         /// <summary>

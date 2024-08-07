@@ -64,6 +64,8 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public IList<SelectListItem> AvailableCategories { get; set; }
         public IList<SelectListItem> AvailableManufacturers { get; set; }
         public IList<SelectListItem> AvailableVendors { get; set; }
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
 
         #region Nested classes
 

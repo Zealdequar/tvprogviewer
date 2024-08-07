@@ -39,7 +39,11 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         public IList<ReviewTypeModel> ReviewTypeList { get; set; }
 
-        public IList<AddTvChannelReviewReviewTypeMappingModel> AddAdditionalTvChannelReviewList { get; set; }        
+        public IList<AddTvChannelReviewReviewTypeMappingModel> AddAdditionalTvChannelReviewList { get; set; }
+        
+        public string MetaKeywords { get; set; }
+
+        public string MetaDescription { get; set; }
     }
 
     public partial record ReviewTypeModel : BaseTvProgEntityModel

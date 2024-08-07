@@ -1418,6 +1418,9 @@ namespace TvProgViewer.WebUI.Factories
                 .OrderBy(x => x.Name)
                 .ToListAsync());
 
+            model.MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.AllTvChannelTags.MetaKeywords");
+            model.MetaDescription = await _localizationService.GetResourceAsync("PageTitle.AllTvChannelTags.MetaDescription");
+
             return model;
         }
 
@@ -1446,7 +1449,8 @@ namespace TvProgViewer.WebUI.Factories
                 TagName = tagName,
                 TagSeName = await _urlRecordService.GetSeNameAsync(tvchannelTag),
                 CatalogTvChannelsModel = await PrepareTagTvChannelsModelAsync(tvchannelTag, command),
-                MetaDescription = $"Телеканалы выбранные по ключевому слову/выражению «{tagName}»"
+                MetaKeywords = tagName.Replace(' ', ','),
+                MetaDescription = string.Format(await _localizationService.GetResourceAsync("TvChannels.Tags.MetaDescriptionFormat"), tagName)
             };
 
             return model;
@@ -1680,6 +1684,9 @@ namespace TvProgViewer.WebUI.Factories
             }
 
             model.CatalogTvChannelsModel = await PrepareSearchTvChannelsModelAsync(model, command);
+
+            model.MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.Search.MetaKeywords");
+            model.MetaDescription = await _localizationService.GetResourceAsync("PageTitle.Search.MetaDescription");
 
             return model;
         }

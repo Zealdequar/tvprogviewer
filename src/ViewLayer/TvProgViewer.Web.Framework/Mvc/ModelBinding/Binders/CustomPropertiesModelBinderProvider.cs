@@ -5,7 +5,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.Web.Framework.Mvc.ModelBinding.Binders
 {
     /// <summary>
-    /// Represents a model binder provider for CustomProperties
+    /// Представляет модель провайдера связей для специфичных свойств  
     /// </summary>
     public class CustomPropertiesModelBinderProvider : IModelBinderProvider
     {
@@ -13,7 +13,10 @@ namespace TvProgViewer.Web.Framework.Mvc.ModelBinding.Binders
         {
             if (context.Metadata.PropertyName == nameof(BaseTvProgModel.CustomProperties) && context.Metadata.ModelType == typeof(Dictionary<string, string>))
                 return new CustomPropertiesModelBinder();
-            
+
+            if (!context.Metadata.IsComplexType && context.Metadata.ModelType == typeof(string))
+                return new StringModelBinder();
+
             return null;
         }
     }

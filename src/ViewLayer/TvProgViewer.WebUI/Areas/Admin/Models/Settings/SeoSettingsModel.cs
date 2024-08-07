@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using TvProgViewer.Web.Framework.Models;
+using TvProgViewer.Web.Framework.Mvc;
 using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
@@ -14,6 +15,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         public int ActiveStoreScopeConfiguration { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.GeneralCommon.PageTitleSeparator")]
+        [NoTrim]
         public string PageTitleSeparator { get; set; }
         public bool PageTitleSeparator_OverrideForStore { get; set; }
 

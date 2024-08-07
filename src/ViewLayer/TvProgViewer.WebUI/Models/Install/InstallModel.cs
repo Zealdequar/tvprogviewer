@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TvProgViewer.Data;
+using TvProgViewer.Web.Framework.Mvc;
 
 namespace TvProgViewer.WebUI.Models.Install
 {
@@ -16,8 +17,12 @@ namespace TvProgViewer.WebUI.Models.Install
 
         [DataType(DataType.EmailAddress)]
         public string AdminEmail { get; set; }
+
+        [NoTrim]
         [DataType(DataType.Password)]
         public string AdminPassword { get; set; }
+
+        [NoTrim]
         [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
         public bool UseCustomCollation { get; set; }
@@ -37,6 +42,8 @@ namespace TvProgViewer.WebUI.Models.Install
         public bool IntegratedSecurity { get; set; }
 
         public string Username { get; set; }
+        
+        [NoTrim]
         [DataType(DataType.Password)]
         public string Password { get; set; }
         public string ConnectionString { get; set; }

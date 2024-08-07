@@ -10,10 +10,6 @@
         {
             <li class="nav-item"><a class="nav-link ico-homepage" href="@Url.RouteUrl("Homepage")">@T("Homepage")</a></li>
         }
-        @foreach (var topic in Model.Topics)
-        {
-            <li class="nav-item"><a class="nav-link ico-topic-@topic.Id" href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
-        }
         @if (Model.DisplayTvChannelSearchMenuItem)
         {
             <li class="nav-item"><a class="nav-link ico-search" href="@Url.RouteUrl("TvSearch")">@T("Search")</a></li>
@@ -35,6 +31,7 @@
             }
             <li class="nav-item"><a class="nav-link ico-login" href="@Url.RouteUrl("Login", new { returnUrl })">@T("Account.Login")</a></li>
         }
+        
         @if (Model.AllowPrivateMessages)
         {
             <li class="nav-item">
@@ -56,6 +53,10 @@
         @if (Model.DisplayContactUsMenuItem)
         {
             <li class="nav-item"><a class="nav-link ico-contactus" href="@Url.RouteUrl("ContactUs")">@T("ContactUs")</a></li>
+        }
+        @foreach (var topic in Model.Topics)
+        {
+            <li class="nav-item"><a class="nav-link ico-topic-@topic.Id" href="@(Url.RouteUrl<Topic>(new { SeName = topic.SeName }))">@topic.Name</a></li>
         }
         @if (Model.ShoppingCartEnabled)
         {

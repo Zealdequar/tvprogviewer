@@ -331,7 +331,9 @@ namespace TvProgViewer.WebUI.Controllers
 
             var model = new NewTvChannelsModel
             {
-                CatalogTvChannelsModel = await _catalogModelFactory.PrepareNewTvChannelsModelAsync(command)
+                CatalogTvChannelsModel = await _catalogModelFactory.PrepareNewTvChannelsModelAsync(command),
+                MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.NewTvChannels.MetaKeywords"),
+                MetaDescription = await _localizationService.GetResourceAsync("PageTitle.NewTvChannels.MetaDescription")
             };
 
             return View(model);

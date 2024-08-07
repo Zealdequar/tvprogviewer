@@ -64,6 +64,7 @@
     <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.js.map" />
     <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.min.js" />
     <Content Remove="C:\Users\NOVATOR\.nuget\packages\bootstrap\4.5.0\contentFiles\any\any\wwwroot\js\bootstrap.min.js.map" />
+    <None Remove="App_Data\nop_issues_changelog.txt" />
     <None Remove="Plugins\Uploaded\placeholder.txt" />
     <None Remove="Properties\defaultResources.nopres.xml" />
     <Content Include="App_Data\appsettings.json" />

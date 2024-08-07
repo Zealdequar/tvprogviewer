@@ -15,6 +15,7 @@ using TvProgViewer.Services.News;
 using TvProgViewer.Services.Seo;
 using TvProgViewer.WebUI.Infrastructure.Cache;
 using TvProgViewer.WebUI.Models.News;
+using TvProgViewer.Services.Localization;
 
 namespace TvProgViewer.WebUI.Factories
 {
@@ -38,6 +39,7 @@ namespace TvProgViewer.WebUI.Factories
         private readonly IWorkContext _workContext;
         private readonly MediaSettings _mediaSettings;
         private readonly NewsSettings _newsSettings;
+        private readonly ILocalizationService _localizationService;
 
         #endregion
 
@@ -55,7 +57,8 @@ namespace TvProgViewer.WebUI.Factories
             IUrlRecordService urlRecordService,
             IWorkContext workContext,
             MediaSettings mediaSettings,
-            NewsSettings newsSettings)
+            NewsSettings newsSettings,
+            ILocalizationService localizationService)
         {
             _captchaSettings = captchaSettings;
             _userSettings = userSettings;
@@ -70,6 +73,7 @@ namespace TvProgViewer.WebUI.Factories
             _workContext = workContext;
             _mediaSettings = mediaSettings;
             _newsSettings = newsSettings;
+            _localizationService = localizationService;
         }
 
         #endregion
@@ -202,6 +206,8 @@ namespace TvProgViewer.WebUI.Factories
                 }).ToListAsync()
             };
             model.PagingFilteringContext.LoadPagedList(newsItems);
+            model.MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.NewsArchive.MetaKeywords");
+            model.MetaDescription = await _localizationService.GetResourceAsync("PageTitle.NewsArchive.MetaDescription");
 
             return model;
         }

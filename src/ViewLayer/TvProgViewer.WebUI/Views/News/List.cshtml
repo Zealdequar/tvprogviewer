@@ -5,6 +5,9 @@
 @{
     Layout = "_ColumnsTwo";
 
+    //meta
+    TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
+    TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
     //title
     TvProgHtml.AddTitleParts(T("PageTitle.NewsArchive").Text);
     //page class

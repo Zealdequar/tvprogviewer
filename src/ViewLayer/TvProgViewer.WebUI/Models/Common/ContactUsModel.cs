@@ -24,5 +24,8 @@ namespace TvProgViewer.WebUI.Models.Common
         public string Result { get; set; }
 
         public bool DisplayCaptcha { get; set; }
+
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
     }
 }

@@ -1748,7 +1748,8 @@ namespace TvProgViewer.WebUI.Factories
                 throw new ArgumentNullException(nameof(tvchannel));
 
             model.TvChannelId = tvchannel.Id;
-            model.TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name);
+            string tvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name);
+            model.TvChannelName = tvChannelName;
             model.TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel);
 
             var currentStore = await _storeContext.GetCurrentStoreAsync();
@@ -1859,6 +1860,9 @@ namespace TvProgViewer.WebUI.Factories
             model.AddTvChannelReview.CanCurrentUserLeaveReview = _catalogSettings.AllowAnonymousUsersToReviewTvChannel || !await _userService.IsGuestAsync(currentUser);
             model.AddTvChannelReview.DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnTvChannelReviewPage;
             model.AddTvChannelReview.CanAddNewReview = await _tvchannelService.CanAddReviewAsync(tvchannel.Id, _catalogSettings.ShowTvChannelReviewsPerStore ? currentStore.Id : 0);
+            model.MetaKeywords = string.Format("{0},{1}", (await _localizationService.GetResourceAsync("PageTitle.TvChannelReviews")).Replace(' ', ',').ToLower(),
+                                 tvChannelName.Replace(' ', ','));
+            model.MetaDescription = string.Format(await _localizationService.GetResourceAsync("PageTitle.TvChannelReviews.MetaDescriptionFormat"), tvChannelName);
 
             return model;
         }

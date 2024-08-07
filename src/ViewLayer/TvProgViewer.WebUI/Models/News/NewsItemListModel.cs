@@ -14,5 +14,8 @@ namespace TvProgViewer.WebUI.Models.News
         public int WorkingLanguageId { get; set; }
         public NewsPagingFilteringModel PagingFilteringContext { get; set; }
         public IList<NewsItemModel> NewsItems { get; set; }
+
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
     }
 }

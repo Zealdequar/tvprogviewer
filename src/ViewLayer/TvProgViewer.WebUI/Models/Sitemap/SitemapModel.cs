@@ -21,6 +21,9 @@ namespace TvProgViewer.WebUI.Models.Sitemap
 
         public SitemapPageModel PageModel { get; set; }
 
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
+
         #endregion
 
         #region Nested classes

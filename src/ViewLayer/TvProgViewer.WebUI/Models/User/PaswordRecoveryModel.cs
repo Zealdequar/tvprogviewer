@@ -11,5 +11,9 @@ namespace TvProgViewer.WebUI.Models.User
         public string Email { get; set; }
 
         public bool DisplayCaptcha { get; set; }
+
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
+
     }
 }

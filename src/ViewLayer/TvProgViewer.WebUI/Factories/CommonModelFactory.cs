@@ -601,6 +601,8 @@ namespace TvProgViewer.WebUI.Factories
 
             model.SubjectEnabled = _commonSettings.SubjectFieldOnContactUsForm;
             model.DisplayCaptcha = _captchaSettings.Enabled && _captchaSettings.ShowOnContactUsPage;
+            model.MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.ContactUs.MetaKeywords");
+            model.MetaDescription = await _localizationService.GetResourceAsync("PageTitle.ContactUs.MetaDescription");
 
             return model;
         }

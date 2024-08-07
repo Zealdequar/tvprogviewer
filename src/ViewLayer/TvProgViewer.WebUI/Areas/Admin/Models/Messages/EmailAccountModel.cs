@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 using TvProgViewer.Web.Framework.Models;
+using TvProgViewer.Web.Framework.Mvc;
 
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Messages
 {
@@ -28,6 +29,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Messages
         public string Username { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.EmailAccounts.Fields.Password")]
+        [NoTrim]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

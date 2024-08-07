@@ -737,6 +737,9 @@ namespace TvProgViewer.WebUI.Factories
                     }).ToListAsync());
                 }
 
+                model.MetaKeywords = await _localizationService.GetResourceAsync("Sitemap.MetaKeywords");
+                model.MetaDescription = await _localizationService.GetResourceAsync("Sitemap.MetaDescription");
+
                 return model;
             });
 
@@ -745,7 +748,11 @@ namespace TvProgViewer.WebUI.Factories
             pageModel.PageNumber = Math.Max(pageModel.PageNumber, 1);
 
             var pagedItems = new PagedList<SitemapModel.SitemapItemModel>(cachedModel.Items, pageModel.PageNumber - 1, pageModel.PageSize);
-            var sitemapModel = new SitemapModel { Items = pagedItems };
+            var sitemapModel = new SitemapModel { 
+                Items = pagedItems, 
+                MetaKeywords = cachedModel.MetaKeywords, 
+                MetaDescription = cachedModel.MetaDescription
+            };
             sitemapModel.PageModel.LoadPagedList(pagedItems);
 
             return sitemapModel;

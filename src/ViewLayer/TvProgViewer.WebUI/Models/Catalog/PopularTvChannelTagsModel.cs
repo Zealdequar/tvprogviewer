@@ -85,6 +85,9 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         public List<TvChannelTagModel> Tags { get; set; }
 
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
+
         #endregion
     }
 }

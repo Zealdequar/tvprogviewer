@@ -2,6 +2,7 @@
 using TvProgViewer.Core.Domain.Users;
 using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 using TvProgViewer.Web.Framework.Models;
+using TvProgViewer.Web.Framework.Mvc;
 
 namespace TvProgViewer.WebUI.Models.User
 {
@@ -21,6 +22,7 @@ namespace TvProgViewer.WebUI.Models.User
         public string Username { get; set; }
 
         [DataType(DataType.Password)]
+        [NoTrim]
         [TvProgResourceDisplayName("Account.Login.Fields.Password")]
         public string Password { get; set; }
 
