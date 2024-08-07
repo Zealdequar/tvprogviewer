@@ -21,6 +21,10 @@ Clean-param: yycliyd
 Clean-param: yycleed
 Clean-param: ycilid
 Clean-param: yyclyyd
+Clean-param: yqpil
+Clean-param: ypqpil
+Clean-param: ypppil
+Clean-param: ylcyd
 Clean-param: _ym_debug
 Clean-param: newsitemid
 Clean-param: viewmode
