@@ -53,8 +53,8 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
         private readonly IOrderService _orderService;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly IPaymentService _paymentService;
-        private readonly IProductAttributeService _productAttributeService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRepository<GenericAttribute> _genericAttributeRepository;
         private readonly IRepository<TaxCategory> _taxCategoryRepository;
         private readonly ISettingService _settingService;
@@ -93,8 +93,8 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
             IOrderService orderService,
             IOrderTotalCalculationService orderTotalCalculationService,
             IPaymentService paymentService,
-            IProductAttributeService productAttributeService,
-            IProductService productService,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
             IRepository<GenericAttribute> genericAttributeRepository,
             IRepository<TaxCategory> taxCategoryRepository,
             ISettingService settingService,
@@ -126,8 +126,8 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
             _orderService = orderService;
             _orderTotalCalculationService = orderTotalCalculationService;
             _paymentService = paymentService;
-            _productAttributeService = productAttributeService;
-            _productService = productService;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
             _genericAttributeRepository = genericAttributeRepository;
             _taxCategoryRepository = taxCategoryRepository;
             _settingService = settingService;
@@ -436,7 +436,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
         /// </returns>
         private async Task<List<LineItemModel>> GetItemLinesAsync(Order order, IList<OrderItem> orderItems)
         {
-            //get purchased products details
+            //get purchased tvChannels details
             var items = await CreateLinesForOrderItemsAsync(order, orderItems);
 
             //set payment method additional fee as the separate item line
@@ -467,26 +467,26 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
         {
             return await orderItems.SelectAwait(async orderItem =>
             {
-                var product = await _productService.GetProductByIdAsync(orderItem.ProductId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 var item = new LineItemModel
                 {
                     amount = orderItem.PriceExclTax,
 
                     //set name as item description to avoid long values
-                    description = CommonHelper.EnsureMaximumLength(product?.Name, 2096),
+                    description = CommonHelper.EnsureMaximumLength(tvChannel?.Name, 2096),
 
                     //whether the discount to the item was applied
                     discounted = order.OrderSubTotalDiscountExclTax > decimal.Zero,
 
-                    //product exemption
-                    exemptionCode = product?.IsTaxExempt ?? false
-                        ? CommonHelper.EnsureMaximumLength($"Exempt-product-#{product.Id}", 25)
+                    //tvChannel exemption
+                    exemptionCode = tvChannel?.IsTaxExempt ?? false
+                        ? CommonHelper.EnsureMaximumLength($"Exempt-tvChannel-#{tvChannel.Id}", 25)
                         : string.Empty,
 
                     //set SKU as item code
-                    itemCode = product != null
-                        ? CommonHelper.EnsureMaximumLength(await _productService.FormatSkuAsync(product, orderItem.AttributesXml), 50)
+                    itemCode = tvChannel != null
+                        ? CommonHelper.EnsureMaximumLength(await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml), 50)
                         : string.Empty,
 
                     quantity = orderItem.Quantity
@@ -497,7 +497,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
                 {
                     var user = await _userService.GetUserByIdAsync(order.UserId);
                     var billingAddress = await _addressService.GetAddressByIdAsync(order.BillingAddressId);
-                    var useEuVatRules = (product?.IsTelecommunicationsOrBroadcastingOrElectronicServices ?? false)
+                    var useEuVatRules = (tvChannel?.IsTelecommunicationsOrBroadcastingOrElectronicServices ?? false)
                         && ((await _countryService.GetCountryByAddressAsync(billingAddress)
                             ?? await _countryService.GetCountryByIdAsync(user.CountryId)
                             ?? await _countryService.GetCountryByTwoLetterIsoCodeAsync(_geoLookupService.LookupCountryIsoCode(user.LastIpAddress)))
@@ -513,12 +513,12 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
                 }
 
                 //set tax code
-                var productTaxCategory = await _taxCategoryService.GetTaxCategoryByIdAsync(product?.TaxCategoryId ?? 0);
-                item.taxCode = CommonHelper.EnsureMaximumLength(productTaxCategory?.Name, 25);
+                var tvChannelTaxCategory = await _taxCategoryService.GetTaxCategoryByIdAsync(tvChannel?.TaxCategoryId ?? 0);
+                item.taxCode = CommonHelper.EnsureMaximumLength(tvChannelTaxCategory?.Name, 25);
 
                 //whether entity use code is set
-                var entityUseCode = product != null
-                    ? await _genericAttributeService.GetAttributeAsync<string>(product, AvalaraTaxDefaults.EntityUseCodeAttribute)
+                var entityUseCode = tvChannel != null
+                    ? await _genericAttributeService.GetAttributeAsync<string>(tvChannel, AvalaraTaxDefaults.EntityUseCodeAttribute)
                     : string.Empty;
                 item.customerUsageType = CommonHelper.EnsureMaximumLength(entityUseCode, 25);
 
@@ -1029,13 +1029,13 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
         }
 
         /// <summary>
-        /// Export items (products) with the passed ids to Avalara services
+        /// Export items (tvChannels) with the passed ids to Avalara services
         /// </summary>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the number of exported items; null in case of error
         /// </returns>
-        public async Task<int?> ExportProductsAsync(string selectedIds)
+        public async Task<int?> ExportTvChannelsAsync(string selectedIds)
         {
             return await HandleFunctionAsync<int?>(async () =>
             {
@@ -1055,36 +1055,36 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
                 var existingItemCodes = items.value?.Select(item => item.itemCode).ToList() ?? new List<string>();
 
                 //prepare exported items
-                var productIds = selectedIds?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(id => Convert.ToInt32(id)).ToArray();
+                var tvChannelIds = selectedIds?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(id => Convert.ToInt32(id)).ToArray();
                 var exportedItems = new List<ItemModel>();
-                foreach (var product in await _productService.GetProductsByIdsAsync(productIds))
+                foreach (var tvChannel in await _tvChannelService.GetTvChannelsByIdsAsync(tvChannelIds))
                 {
-                    //find product combinations
-                    var combinations = (await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id))
+                    //find tvChannel combinations
+                    var combinations = (await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id))
                         .Where(combination => !string.IsNullOrEmpty(combination.Sku));
 
                     //export items with specified SKU only
-                    if (string.IsNullOrEmpty(product.Sku) && !combinations.Any())
+                    if (string.IsNullOrEmpty(tvChannel.Sku) && !combinations.Any())
                         continue;
 
                     //prepare common properties
-                    var taxCategory = await _taxCategoryService.GetTaxCategoryByIdAsync(product.TaxCategoryId);
+                    var taxCategory = await _taxCategoryService.GetTaxCategoryByIdAsync(tvChannel.TaxCategoryId);
                     var taxCode = CommonHelper.EnsureMaximumLength(taxCategory?.Name, 25);
-                    var description = CommonHelper.EnsureMaximumLength(product.Name, 255);
+                    var description = CommonHelper.EnsureMaximumLength(tvChannel.Name, 255);
 
-                    //add the product as exported item
-                    if (!string.IsNullOrEmpty(product.Sku))
+                    //add the tvChannel as exported item
+                    if (!string.IsNullOrEmpty(tvChannel.Sku))
                     {
                         exportedItems.Add(new ItemModel
                         {
                             createdDate = DateTime.UtcNow,
                             description = description,
-                            itemCode = CommonHelper.EnsureMaximumLength(product.Sku, 50),
+                            itemCode = CommonHelper.EnsureMaximumLength(tvChannel.Sku, 50),
                             taxCode = taxCode
                         });
                     }
 
-                    //add product combinations
+                    //add tvChannel combinations
                     exportedItems.AddRange(combinations.Select(combination => new ItemModel
                     {
                         createdDate = DateTime.UtcNow,
@@ -1208,7 +1208,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
             var user = taxRateRequest.User ?? await _workContext.GetCurrentUserAsync();
             var taxCategoryId = taxRateRequest.TaxCategoryId > 0
                 ? taxRateRequest.TaxCategoryId
-                : taxRateRequest.Product?.TaxCategoryId ?? 0;
+                : taxRateRequest.TvChannel?.TaxCategoryId ?? 0;
             var cacheKey = _staticCacheManager.PrepareKeyForDefaultCache(AvalaraTaxDefaults.TaxRateCacheKey,
                 _avalaraTaxSettings.GetTaxRateByAddressOnly ? null : user,
                 _avalaraTaxSettings.GetTaxRateByAddressOnly ? 0 : taxCategoryId,
@@ -1234,10 +1234,10 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
                         {
                             amount = 100,
                             quantity = 1,
-                            itemCode = CommonHelper.EnsureMaximumLength(taxRateRequest.Product?.Sku, 50),
+                            itemCode = CommonHelper.EnsureMaximumLength(taxRateRequest.TvChannel?.Sku, 50),
                             taxCode = CommonHelper.EnsureMaximumLength(taxCategory?.Name, 25),
-                            exemptionCode = !_avalaraTaxSettings.GetTaxRateByAddressOnly && (taxRateRequest.Product?.IsTaxExempt ?? false)
-                                ? CommonHelper.EnsureMaximumLength($"Exempt-product-#{taxRateRequest.Product.Id}", 25)
+                            exemptionCode = !_avalaraTaxSettings.GetTaxRateByAddressOnly && (taxRateRequest.TvChannel?.IsTaxExempt ?? false)
+                                ? CommonHelper.EnsureMaximumLength($"Exempt-tvChannel-#{taxRateRequest.TvChannel.Id}", 25)
                                 : string.Empty,
                         }
                     };
@@ -1299,7 +1299,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
                 var orderItems = await taxTotalRequest.ShoppingCart.SelectAwait(async cartItem => new OrderItem
                 {
                     AttributesXml = cartItem.AttributesXml,
-                    ProductId = cartItem.ProductId,
+                    TvChannelId = cartItem.TvChannelId,
                     Quantity = cartItem.Quantity,
                     PriceExclTax = (await _shoppingCartService.GetSubTotalAsync(cartItem, true)).subTotal
                 }).ToListAsync();

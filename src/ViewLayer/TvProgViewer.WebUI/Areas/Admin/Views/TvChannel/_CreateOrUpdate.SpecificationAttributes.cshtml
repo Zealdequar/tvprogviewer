@@ -60,14 +60,14 @@
                                 Title = T("Admin.Common.Edit").Text,
                                 Width = "100",
                                 ClassName =  TvProgColumnClassDefaults.Button,
-                                Render = new RenderButtonEdit(new DataUrl("~/Admin/TvChannel/TvChannelSpecAttributeAddOrEdit?tvchannelId=" + Model.TvChannelSpecificationAttributeSearchModel.TvChannelId + "&specificationId=", true))  
+                                Render = new RenderButtonEdit(new DataUrl("~/Admin/TvChannel/TvChannelSpecAttributeAddOrEdit?tvChannelId=" + Model.TvChannelSpecificationAttributeSearchModel.TvChannelId + "&specificationId=", true))  
                             }
                         }
                     })
                 </div>
                 <div class="card-footer">
                     <a asp-action="TvChannelSpecAttributeAddOrEdit"
-                       asp-route-tvchannelId="@Model.Id"
+                       asp-route-tvChannelId="@Model.Id"
                        class="btn btn-primary">
                         <i class="fas fa-plus-square"></i>
                         @T("Admin.Catalog.TvChannels.SpecificationAttributes.AddButton")

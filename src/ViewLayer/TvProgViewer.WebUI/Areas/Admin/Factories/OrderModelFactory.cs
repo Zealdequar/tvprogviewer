@@ -79,8 +79,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IPictureService _pictureService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IReturnRequestService _returnRequestService;
         private readonly IRewardPointService _rewardPointService;
         private readonly ISettingService _settingService;
@@ -129,8 +129,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IPictureService pictureService,
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
-            ITvChannelAttributeService tvchannelAttributeService,
-            ITvChannelService tvchannelService,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
             IReturnRequestService returnRequestService,
             IRewardPointService rewardPointService,
             ISettingService settingService,
@@ -175,8 +175,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _pictureService = pictureService;
             _priceCalculationService = priceCalculationService;
             _priceFormatter = priceFormatter;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelService = tvchannelService;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
             _returnRequestService = returnRequestService;
             _rewardPointService = rewardPointService;
             _settingService = settingService;
@@ -288,18 +288,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
             foreach (var orderItem in orderItems)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 //fill in model values from the entity
                 var orderItemModel = new OrderItemModel
                 {
                     Id = orderItem.Id,
                     TvChannelId = orderItem.TvChannelId,
-                    TvChannelName = tvchannel.Name,
+                    TvChannelName = tvChannel.Name,
                     Quantity = orderItem.Quantity,
-                    IsDownload = tvchannel.IsDownload,
+                    IsDownload = tvChannel.IsDownload,
                     DownloadCount = orderItem.DownloadCount,
-                    DownloadActivationType = tvchannel.DownloadActivationType,
+                    DownloadActivationType = tvChannel.DownloadActivationType,
                     IsDownloadActivated = orderItem.IsDownloadActivated,
                     UnitPriceInclTaxValue = orderItem.UnitPriceInclTax,
                     UnitPriceExclTaxValue = orderItem.UnitPriceExclTax,
@@ -311,11 +311,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 };
 
                 //fill in additional values (not existing in the entity)
-                orderItemModel.Sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml);
-                orderItemModel.VendorName = (await _vendorService.GetVendorByIdAsync(tvchannel.VendorId))?.Name;
+                orderItemModel.Sku = await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml);
+                orderItemModel.VendorName = (await _vendorService.GetVendorByIdAsync(tvChannel.VendorId))?.Name;
 
                 //picture
-                var orderItemPicture = await _pictureService.GetTvChannelPictureAsync(tvchannel, orderItem.AttributesXml);
+                var orderItemPicture = await _pictureService.GetTvChannelPictureAsync(tvChannel, orderItem.AttributesXml);
                 (orderItemModel.PictureThumbnailUrl, _) = await _pictureService.GetPictureUrlAsync(orderItemPicture, 75);
 
                 //license file
@@ -352,19 +352,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     _orderSettings.DisplayUserCurrencyOnOrders, primaryStoreCurrency, languageId, false, true);
 
                 //recurring info
-                if (tvchannel.IsRecurring)
+                if (tvChannel.IsRecurring)
                 {
                     orderItemModel.RecurringInfo = string.Format(await _localizationService.GetResourceAsync("Admin.Orders.TvChannels.RecurringPeriod"),
-                        tvchannel.RecurringCycleLength, await _localizationService.GetLocalizedEnumAsync(tvchannel.RecurringCyclePeriod));
+                        tvChannel.RecurringCycleLength, await _localizationService.GetLocalizedEnumAsync(tvChannel.RecurringCyclePeriod));
                 }
 
                 //rental info
-                if (tvchannel.IsRental)
+                if (tvChannel.IsRental)
                 {
                     var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
                     orderItemModel.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                 }
@@ -688,13 +688,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel attribute models
+        /// Prepare tvChannel attribute models
         /// </summary>
-        /// <param name="models">List of tvchannel attribute models</param>
+        /// <param name="models">List of tvChannel attribute models</param>
         /// <param name="order">Order</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task PrepareTvChannelAttributeModelsAsync(IList<AddTvChannelToOrderModel.TvChannelAttributeModel> models, Order order, TvChannel tvchannel)
+        protected virtual async Task PrepareTvChannelAttributeModelsAsync(IList<AddTvChannelToOrderModel.TvChannelAttributeModel> models, Order order, TvChannel tvChannel)
         {
             if (models == null)
                 throw new ArgumentNullException(nameof(models));
@@ -702,17 +702,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            var attributes = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
+            var attributes = await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
             foreach (var attribute in attributes)
             {
                 var attributeModel = new AddTvChannelToOrderModel.TvChannelAttributeModel
                 {
                     Id = attribute.Id,
                     TvChannelAttributeId = attribute.TvChannelAttributeId,
-                    Name = (await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(attribute.TvChannelAttributeId)).Name,
+                    Name = (await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(attribute.TvChannelAttributeId)).Name,
                     TextPrompt = attribute.TextPrompt,
                     IsRequired = attribute.IsRequired,
                     AttributeControlType = attribute.AttributeControlType,
@@ -731,12 +731,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     var store = await _storeService.GetStoreByIdAsync(order.StoreId);
                     
                     //values
-                    var attributeValues = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(attribute.Id);
+                    var attributeValues = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(attribute.Id);
                     foreach (var attributeValue in attributeValues)
                     {
                         //price adjustment
-                        var (priceAdjustment, _) = await _taxService.GetTvChannelPriceAsync(tvchannel,
-                            await _priceCalculationService.GetTvChannelAttributeValuePriceAdjustmentAsync(tvchannel, attributeValue, user, store));
+                        var (priceAdjustment, _) = await _taxService.GetTvChannelPriceAsync(tvChannel,
+                            await _priceCalculationService.GetTvChannelAttributeValuePriceAdjustmentAsync(tvChannel, attributeValue, user, store));
 
                         var priceAdjustmentStr = string.Empty;
                         if (priceAdjustment != 0)
@@ -774,9 +774,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         /// </summary>
         /// <param name="model">Shipment item model</param>
         /// <param name="orderItem">Order item</param>
-        /// <param name="tvchannel">TvChannel item</param>
+        /// <param name="tvChannel">TvChannel item</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task PrepareShipmentItemModelAsync(ShipmentItemModel model, OrderItem orderItem, TvChannel tvchannel)
+        protected virtual async Task PrepareShipmentItemModelAsync(ShipmentItemModel model, OrderItem orderItem, TvChannel tvChannel)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
@@ -784,19 +784,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (orderItem is null)
                 throw new ArgumentNullException(nameof(orderItem));
 
-            if (tvchannel is null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel is null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            if (orderItem.TvChannelId != tvchannel.Id)
-                throw new ArgumentException($"{nameof(orderItem.TvChannelId)} != {nameof(tvchannel.Id)}");
+            if (orderItem.TvChannelId != tvChannel.Id)
+                throw new ArgumentException($"{nameof(orderItem.TvChannelId)} != {nameof(tvChannel.Id)}");
 
             //fill in additional values (not existing in the entity)
             model.OrderItemId = orderItem.Id;
             model.TvChannelId = orderItem.TvChannelId;
-            model.TvChannelName = tvchannel.Name;
-            model.Sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml);
+            model.TvChannelName = tvChannel.Name;
+            model.Sku = await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml);
             model.AttributeInfo = orderItem.AttributeDescription;
-            model.ShipSeparately = tvchannel.ShipSeparately;
+            model.ShipSeparately = tvChannel.ShipSeparately;
             model.QuantityOrdered = orderItem.Quantity;
             model.QuantityInAllShipments = await _orderService.GetTotalNumberOfItemsInAllShipmentsAsync(orderItem);
             model.QuantityToAdd = await _orderService.GetTotalNumberOfItemsCanBeAddedToShipmentAsync(orderItem);
@@ -806,15 +806,15 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (orderItem.ItemWeight.HasValue)
                 model.ItemWeight = $"{orderItem.ItemWeight:F2} [{baseWeight}]";
             model.ItemDimensions =
-                $"{tvchannel.Length:F2} x {tvchannel.Width:F2} x {tvchannel.Height:F2} [{baseDimension}]";
+                $"{tvChannel.Length:F2} x {tvChannel.Width:F2} x {tvChannel.Height:F2} [{baseDimension}]";
 
-            if (!tvchannel.IsRental)
+            if (!tvChannel.IsRental)
                 return;
 
             var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
+                ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
             var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
+                ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
             model.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"), rentalStartDate, rentalEndDate);
         }
 
@@ -1047,14 +1047,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
             var endDateValue = !searchModel.EndDate.HasValue ? null
                 : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId);
-            var filterByTvChannelId = tvchannel != null && (currentVendor == null || tvchannel.VendorId == currentVendor.Id)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId);
+            var filterByTvChannelId = tvChannel != null && (currentVendor == null || tvChannel.VendorId == currentVendor.Id)
                 ? searchModel.TvChannelId : 0;
 
             //get orders
             var orders = await _orderService.SearchOrdersAsync(storeId: searchModel.StoreId,
                 vendorId: searchModel.VendorId,
-                tvchannelId: filterByTvChannelId,
+                tvChannelId: filterByTvChannelId,
                 warehouseId: searchModel.WarehouseId,
                 paymentMethodSystemName: searchModel.PaymentMethodSystemName,
                 createdFromUtc: startDateValue,
@@ -1134,14 +1134,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.StartDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync());
             var endDateValue = !searchModel.EndDate.HasValue ? null
                 : (DateTime?)_dateTimeHelper.ConvertToUtcTime(searchModel.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId);
-            var filterByTvChannelId = tvchannel != null && (currentVendor == null || tvchannel.VendorId == currentVendor.Id)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId);
+            var filterByTvChannelId = tvChannel != null && (currentVendor == null || tvChannel.VendorId == currentVendor.Id)
                 ? searchModel.TvChannelId : 0;
 
             //prepare additional model data
             var reportSummary = await _orderReportService.GetOrderAverageReportLineAsync(storeId: searchModel.StoreId,
                 vendorId: searchModel.VendorId,
-                tvchannelId: filterByTvChannelId,
+                tvChannelId: filterByTvChannelId,
                 warehouseId: searchModel.WarehouseId,
                 paymentMethodSystemName: searchModel.PaymentMethodSystemName,
                 osIds: orderStatusIds,
@@ -1157,7 +1157,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
             var profit = await _orderReportService.ProfitReportAsync(storeId: searchModel.StoreId,
                 vendorId: searchModel.VendorId,
-                tvchannelId: filterByTvChannelId,
+                tvChannelId: filterByTvChannelId,
                 warehouseId: searchModel.WarehouseId,
                 paymentMethodSystemName: searchModel.PaymentMethodSystemName,
                 osIds: orderStatusIds,
@@ -1285,13 +1285,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel search model to add to the order
+        /// Prepare tvChannel search model to add to the order
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the order
+        /// The task result contains the tvChannel search model to add to the order
         /// </returns>
         public virtual async Task<AddTvChannelToOrderSearchModel> PrepareAddTvChannelToOrderSearchModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order)
         {
@@ -1309,7 +1309,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //prepare available manufacturers
             await _baseAdminModelFactory.PrepareManufacturersAsync(searchModel.AvailableManufacturers);
 
-            //prepare available tvchannel types
+            //prepare available tvChannel types
             await _baseAdminModelFactory.PrepareTvChannelTypesAsync(searchModel.AvailableTvChannelTypes);
 
             //prepare page parameters
@@ -1319,38 +1319,38 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged tvchannel list model to add to the order
+        /// Prepare paged tvChannel list model to add to the order
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the order
+        /// The task result contains the tvChannel search model to add to the order
         /// </returns>
         public virtual async Task<AddTvChannelToOrderListModel> PrepareAddTvChannelToOrderListModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get tvchannels
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(showHidden: true,
+            //get tvChannels
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(showHidden: true,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },
-                tvchannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
+                tvChannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
                 keywords: searchModel.SearchTvChannelName,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-            var model = await new AddTvChannelToOrderListModel().PrepareToGridAsync(searchModel, tvchannels, () =>
+            var model = await new AddTvChannelToOrderListModel().PrepareToGridAsync(searchModel, tvChannels, () =>
             {
                 //fill in model values from the entity
-                return tvchannels.SelectAwait(async tvchannel =>
+                return tvChannels.SelectAwait(async tvChannel =>
                 {
-                    var tvchannelModel = tvchannel.ToModel<TvChannelModel>();
+                    var tvChannelModel = tvChannel.ToModel<TvChannelModel>();
 
-                    tvchannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvchannel, 0, true, false);
+                    tvChannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvChannel, 0, true, false);
 
-                    return tvchannelModel;
+                    return tvChannelModel;
                 });
             });
 
@@ -1358,16 +1358,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel model to add to the order
+        /// Prepare tvChannel model to add to the order
         /// </summary>
         /// <param name="model">TvChannel model to add to the order</param>
         /// <param name="order">Order</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel model to add to the order
+        /// The task result contains the tvChannel model to add to the order
         /// </returns>
-        public virtual async Task<AddTvChannelToOrderModel> PrepareAddTvChannelToOrderModelAsync(AddTvChannelToOrderModel model, Order order, TvChannel tvchannel)
+        public virtual async Task<AddTvChannelToOrderModel> PrepareAddTvChannelToOrderModelAsync(AddTvChannelToOrderModel model, Order order, TvChannel tvChannel)
         {
             if (model == null)
                 throw new ArgumentNullException(nameof(model));
@@ -1375,24 +1375,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var user = await _userService.GetUserByIdAsync(order.UserId);
             var store = await _storeService.GetStoreByIdAsync(order.StoreId);
 
-            model.TvChannelId = tvchannel.Id;
+            model.TvChannelId = tvChannel.Id;
             model.OrderId = order.Id;
-            model.Name = tvchannel.Name;
-            model.IsRental = tvchannel.IsRental;
-            model.TvChannelType = tvchannel.TvChannelType;
+            model.Name = tvChannel.Name;
+            model.IsRental = tvChannel.IsRental;
+            model.TvChannelType = tvChannel.TvChannelType;
             model.AutoUpdateOrderTotals = _orderSettings.AutoUpdateOrderTotalsOnEditingOrder;
 
             var presetQty = 1;
-            var (_, presetPrice, _, _) = await _priceCalculationService.GetFinalPriceAsync(tvchannel, user, store, decimal.Zero, true, presetQty);
+            var (_, presetPrice, _, _) = await _priceCalculationService.GetFinalPriceAsync(tvChannel, user, store, decimal.Zero, true, presetQty);
 
-            var (presetPriceInclTax, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, presetPrice, true, user);
-            var (presetPriceExclTax, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, presetPrice, false, user);
+            var (presetPriceInclTax, _) = await _taxService.GetTvChannelPriceAsync(tvChannel, presetPrice, true, user);
+            var (presetPriceExclTax, _) = await _taxService.GetTvChannelPriceAsync(tvChannel, presetPrice, false, user);
             model.UnitPriceExclTax = presetPriceExclTax;
             model.UnitPriceInclTax = presetPriceInclTax;
             model.Quantity = presetQty;
@@ -1400,13 +1400,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             model.SubTotalInclTax = presetPriceInclTax;
 
             //attributes
-            await PrepareTvChannelAttributeModelsAsync(model.TvChannelAttributes, order, tvchannel);
+            await PrepareTvChannelAttributeModelsAsync(model.TvChannelAttributes, order, tvChannel);
             model.HasCondition = model.TvChannelAttributes.Any(attribute => attribute.HasCondition);
 
             //gift card
-            model.GiftCard.IsGiftCard = tvchannel.IsGiftCard;
+            model.GiftCard.IsGiftCard = tvChannel.IsGiftCard;
             if (model.GiftCard.IsGiftCard)
-                model.GiftCard.GiftCardType = tvchannel.GiftCardType;
+                model.GiftCard.GiftCardType = tvChannel.GiftCardType;
 
             return model;
         }
@@ -1547,7 +1547,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     if (orderItem == null)
                         continue;
 
-                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                     //fill in model values from the entity
                     var shipmentItemModel = new ShipmentItemModel
@@ -1557,7 +1557,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                         ShippedFromWarehouse = (await _shippingService.GetWarehouseByIdAsync(item.WarehouseId))?.Name
                     };
 
-                    await PrepareShipmentItemModelAsync(shipmentItemModel, orderItem, tvchannel);
+                    await PrepareShipmentItemModelAsync(shipmentItemModel, orderItem, tvChannel);
 
                     model.Items.Add(shipmentItemModel);
                 }
@@ -1589,20 +1589,20 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             {
                 var shipmentItemModel = new ShipmentItemModel();
 
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                await PrepareShipmentItemModelAsync(shipmentItemModel, orderItem, tvchannel);
+                await PrepareShipmentItemModelAsync(shipmentItemModel, orderItem, tvChannel);
 
-                //ensure that this tvchannel can be added to a shipment
+                //ensure that this tvChannel can be added to a shipment
                 if (shipmentItemModel.QuantityToAdd <= 0)
                     continue;
 
-                if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
-                    tvchannel.UseMultipleWarehouses)
+                if (tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                    tvChannel.UseMultipleWarehouses)
                 {
                     //multiple warehouses supported
                     shipmentItemModel.AllowToChooseWarehouse = true;
-                    foreach (var pwi in (await _tvchannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(orderItem.TvChannelId)).OrderBy(w => w.WarehouseId).ToList())
+                    foreach (var pwi in (await _tvChannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(orderItem.TvChannelId)).OrderBy(w => w.WarehouseId).ToList())
                     {
                         if (await _shippingService.GetWarehouseByIdAsync(pwi.WarehouseId) is Warehouse warehouse)
                         {
@@ -1613,7 +1613,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                                 StockQuantity = pwi.StockQuantity,
                                 ReservedQuantity = pwi.ReservedQuantity,
                                 PlannedQuantity =
-                                    await _shipmentService.GetQuantityInShipmentsAsync(tvchannel, warehouse.Id, true, true)
+                                    await _shipmentService.GetQuantityInShipmentsAsync(tvChannel, warehouse.Id, true, true)
                             });
                         }
                     }
@@ -1621,14 +1621,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 else
                 {
                     //multiple warehouses are not supported
-                    var warehouse = await _shippingService.GetWarehouseByIdAsync(tvchannel.WarehouseId);
+                    var warehouse = await _shippingService.GetWarehouseByIdAsync(tvChannel.WarehouseId);
                     if (warehouse != null)
                     {
                         shipmentItemModel.AvailableWarehouses.Add(new ShipmentItemModel.WarehouseInfo
                         {
                             WarehouseId = warehouse.Id,
                             WarehouseName = warehouse.Name,
-                            StockQuantity = tvchannel.StockQuantity
+                            StockQuantity = tvChannel.StockQuantity
                         });
                     }
                 }
@@ -1660,7 +1660,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //get shipments
             var shipments = (await _shipmentService.GetAllShipmentsAsync(
                 orderId: order.Id,
-                //a vendor should have access only to his tvchannels
+                //a vendor should have access only to his tvChannels
                 vendorId: vendor?.Id ?? 0))
                 .OrderBy(shipment => shipment.CreatedOnUtc)
                 .ToList();
@@ -1715,11 +1715,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     if (orderItem == null)
                         return shipmentItemModel;
 
-                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                     shipmentItemModel.OrderItemId = orderItem.Id;
                     shipmentItemModel.TvChannelId = orderItem.TvChannelId;
-                    shipmentItemModel.TvChannelName = tvchannel.Name;
+                    shipmentItemModel.TvChannelName = tvChannel.Name;
 
                     shipmentItemModel.ShippedFromWarehouse = (await _shippingService.GetWarehouseByIdAsync(item.WarehouseId))?.Name;
 
@@ -1730,7 +1730,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                         shipmentItemModel.ItemWeight = $"{orderItem.ItemWeight:F2} [{baseWeight}]";
 
                     shipmentItemModel.ItemDimensions =
-                        $"{tvchannel.Length:F2} x {tvchannel.Width:F2} x {tvchannel.Height:F2} [{baseDimension}]";
+                        $"{tvChannel.Length:F2} x {tvChannel.Width:F2} x {tvChannel.Height:F2} [{baseDimension}]";
 
                     return shipmentItemModel;
                 });

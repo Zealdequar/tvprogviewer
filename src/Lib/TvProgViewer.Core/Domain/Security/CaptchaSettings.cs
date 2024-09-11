@@ -53,7 +53,7 @@ namespace TvProgViewer.Core.Domain.Security
         public bool ShowOnNewsCommentPage { get; set; }
 
         /// <summary>
-        /// A value indicating whether CAPTCHA should be displayed on the tvchannel reviews page
+        /// A value indicating whether CAPTCHA should be displayed on the tvChannel reviews page
         /// </summary>
         public bool ShowOnTvChannelReviewPage { get; set; }
 

@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a copy tvchannel model
+    /// Represents a copy tvChannel model
     /// </summary>
     public partial record CopyTvChannelModel : BaseTvProgEntityModel
     {

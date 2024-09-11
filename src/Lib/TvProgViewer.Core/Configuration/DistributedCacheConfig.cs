@@ -9,10 +9,10 @@ namespace TvProgViewer.Core.Configuration
     public partial class DistributedCacheConfig : IConfig
     {
         /// <summary>
-        /// Gets or sets a distributed cache type
+        /// Получение или установка типа распределённого кэша
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public DistributedCacheType DistributedCacheType { get; private set; } = DistributedCacheType.Redis;
+        public DistributedCacheType DistributedCacheType { get; private set; } = DistributedCacheType.RedisSynchronizedMemory;
 
         /// <summary>
         /// Gets or sets a value indicating whether we should use distributed cache
@@ -30,8 +30,14 @@ namespace TvProgViewer.Core.Configuration
         public string SchemaName { get; private set; } = "dbo";
 
         /// <summary>
-        /// Gets or sets table name. Used when distributed cache is enabled and DistributedCacheType property is set as SqlServer
+        /// Получает или устанавливает название таблички. Используется когда включен распределённое кэширование и значение свойства DistributedCacheType установлено в SqlServer
         /// </summary>
         public string TableName { get; private set; } = "DistributedCache";
+
+        /// <summary>
+        /// Получает или устанавливает наименование экземпляра. Используется когда включен распределённое кэширование и значение свойства DistributedCacheType установлено как Redis или RedisSynchronizedMemory.
+        /// Полезно, когда требуется разделить один сервер Redis для использования с несколькими приложениями, например, указав в имени экземпляра значения "разработка" и "пром".
+        /// </summary>
+        public string InstanceName { get; private set; } = "TvProgViewer";
     }
 }

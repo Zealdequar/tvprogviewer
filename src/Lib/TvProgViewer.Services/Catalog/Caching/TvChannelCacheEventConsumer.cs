@@ -8,7 +8,7 @@ using TvProgViewer.Services.Discounts;
 namespace TvProgViewer.Services.Catalog.Caching
 {
     /// <summary>
-    /// Represents a tvchannel cache event consumer
+    /// Represents a tvChannel cache event consumer
     /// </summary>
     public partial class TvChannelCacheEventConsumer : CacheEventConsumer<TvChannel>
     {

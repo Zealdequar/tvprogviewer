@@ -18,7 +18,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Domain
         public string Currency { get; set; }
 
         /// <summary>
-        /// Gets or sets the content ids associated with the event, such as product skus for items in an addtocart event. if content_type is a product, then your content ids must be an array with a single string value. otherwise, this array can contain any number of string values
+        /// Gets or sets the content ids associated with the event, such as tvChannel skus for items in an addtocart event. if content_type is a tvChannel, then your content ids must be an array with a single string value. otherwise, this array can contain any number of string values
         /// </summary>
         [JsonProperty(PropertyName = "content_ids")]
         public List<string> ContentIds { get; set; }
@@ -36,7 +36,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Domain
         public string ContentCategory { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the page or product associated with the event
+        /// Gets or sets the name of the page or tvChannel associated with the event
         /// </summary>
         [JsonProperty(PropertyName = "content_name")]
         public string ContentName { get; set; }
@@ -54,7 +54,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Domain
         public string Status { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of json objects that contain the product ids associated with the event plus information about the products
+        /// Gets or sets a list of json objects that contain the tvChannel ids associated with the event plus information about the tvChannels
         /// </summary>
         [JsonProperty(PropertyName = "contents")]
         public List<object> Contents { get; set; }

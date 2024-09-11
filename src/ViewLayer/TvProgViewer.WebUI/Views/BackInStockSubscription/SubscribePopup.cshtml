@@ -51,7 +51,7 @@
                             cache: false,
                             type: "POST",
                             data: postData,
-                            url: "@(Url.RouteUrl("BackInStockSubscribeSend", new { tvchannelId = Model.TvChannelId }))",
+                            url: "@(Url.RouteUrl("BackInStockSubscribeSend", new { tvChannelId = Model.TvChannelId }))",
                             success: function (data, textStatus, jqXHR) {
                                 $(subscribeButton).closest('.ui-dialog-content').dialog('destroy').remove();
                                 location.reload();

@@ -11,7 +11,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         Simple = 0,
 
         /// <summary>
-        /// Associated to a tvchannel (used when configuring bundled tvchannels)
+        /// Associated to a tvChannel (used when configuring bundled tvChannels)
         /// </summary>
         AssociatedToTvChannel = 10,
     }

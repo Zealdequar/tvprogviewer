@@ -1,15 +1,15 @@
 ﻿@model IList<TvChannelOverviewModel>
 @if (Model.Count > 0)
 {
-    <div class="tvchannel-grid cross-sells">
+    <div class="tvChannel-grid cross-sells">
         <div class="title">
             <strong>@T("ShoppingCart.CrossSells")</strong>
         </div>
         <div class="item-grid">
-            @foreach (var tvchannel in Model)
+            @foreach (var tvChannel in Model)
             {
                 <div class="item-box">
-                    @await Html.PartialAsync("_TvChannelBox", tvchannel)
+                    @await Html.PartialAsync("_TvChannelBox", tvChannel)
                 </div>
             }
         </div>

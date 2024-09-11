@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
 {
     /// <summary>
-    /// Represents a never sold tvchannels report model
+    /// Represents a never sold tvChannels report model
     /// </summary>
     public partial record NeverSoldReportModel : BaseTvProgModel
     {

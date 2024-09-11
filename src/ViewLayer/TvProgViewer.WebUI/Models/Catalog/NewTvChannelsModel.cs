@@ -3,14 +3,14 @@
 namespace TvProgViewer.WebUI.Models.Catalog
 {
     /// <summary>
-    /// Represents a new tvchannels model
+    /// Represents a new tvChannels model
     /// </summary>
     public partial record NewTvChannelsModel : BaseTvProgModel
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the catalog tvchannels model
+        /// Gets or sets the catalog tvChannels model
         /// </summary>
         public CatalogTvChannelsModel CatalogTvChannelsModel { get; set; }
 

@@ -115,27 +115,27 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<DeliveryDateModel> PrepareDeliveryDateModelAsync(DeliveryDateModel model, DeliveryDate deliveryDate, bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare paged tvchannel availability range list model
+        /// Prepare paged tvChannel availability range list model
         /// </summary>
         /// <param name="searchModel">TvChannel availability range search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability range list model
+        /// The task result contains the tvChannel availability range list model
         /// </returns>
         Task<TvChannelAvailabilityRangeListModel> PrepareTvChannelAvailabilityRangeListModelAsync(TvChannelAvailabilityRangeSearchModel searchModel);
 
         /// <summary>
-        /// Prepare tvchannel availability range model
+        /// Prepare tvChannel availability range model
         /// </summary>
         /// <param name="model">TvChannel availability range model</param>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability range model
+        /// The task result contains the tvChannel availability range model
         /// </returns>
         Task<TvChannelAvailabilityRangeModel> PrepareTvChannelAvailabilityRangeModelAsync(TvChannelAvailabilityRangeModel model,
-            TvChannelAvailabilityRange tvchannelAvailabilityRange, bool excludeProperties = false);
+            TvChannelAvailabilityRange tvChannelAvailabilityRange, bool excludeProperties = false);
 
         /// <summary>
         /// Prepare warehouse search model

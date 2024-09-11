@@ -12,39 +12,39 @@ namespace TvProgViewer.WebUI.Components
     public partial class RelatedTvChannelsViewComponent : TvProgViewComponent
     {
         private readonly IAclService _aclService;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStoreMappingService _storeMappingService;
 
         public RelatedTvChannelsViewComponent(IAclService aclService,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
             IStoreMappingService storeMappingService)
         {
             _aclService = aclService;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
             _storeMappingService = storeMappingService;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int tvchannelId, int? tvchannelThumbPictureSize)
+        public async Task<IViewComponentResult> InvokeAsync(int tvChannelId, int? tvChannelThumbPictureSize)
         {
             //load and cache report
-            var tvchannelIds = (await _tvchannelService.GetRelatedTvChannelsByTvChannelId1Async(tvchannelId)).Select(x => x.TvChannelId2).ToArray();
+            var tvChannelIds = (await _tvChannelService.GetRelatedTvChannelsByTvChannelId1Async(tvChannelId)).Select(x => x.TvChannelId2).ToArray();
 
-            //load tvchannels
-            var tvchannels = await (await _tvchannelService.GetTvChannelsByIdsAsync(tvchannelIds))
+            //load tvChannels
+            var tvChannels = await (await _tvChannelService.GetTvChannelsByIdsAsync(tvChannelIds))
             //ACL and store mapping
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            .Where(p => _tvchannelService.TvChannelIsAvailable(p))
+            .Where(p => _tvChannelService.TvChannelIsAvailable(p))
             //visible individually
             .Where(p => p.VisibleIndividually).ToListAsync();
 
-            if (!tvchannels.Any())
+            if (!tvChannels.Any())
                 return Content(string.Empty);
 
-            var model = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels, true, true, tvchannelThumbPictureSize)).ToList();
+            var model = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels, true, true, tvChannelThumbPictureSize)).ToList();
             return View(model);
         }
     }

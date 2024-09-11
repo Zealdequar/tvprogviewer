@@ -12,7 +12,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         #region Fields
 
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IWorkContext _workContext;
 
         #endregion
@@ -21,11 +21,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         public SearchCompleteController(
             IPermissionService permissionService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IWorkContext workContext)
         {
             _permissionService = permissionService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _workContext = workContext;
         }
 
@@ -42,7 +42,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (string.IsNullOrWhiteSpace(term) || term.Length < searchTermMinimumLength)
                 return Content(string.Empty);
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             var vendorId = 0;
             if (currentVendor != null)
@@ -50,19 +50,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 vendorId = currentVendor.Id;
             }
 
-            //tvchannels
-            const int tvchannelNumber = 15;
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0,
+            //tvChannels
+            const int tvChannelNumber = 15;
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0,
                 vendorId: vendorId,
                 keywords: term,
-                pageSize: tvchannelNumber,
+                pageSize: tvChannelNumber,
                 showHidden: true);
 
-            var result = (from p in tvchannels
+            var result = (from p in tvChannels
                             select new
                             {
                                 label = p.Name,
-                                tvchannelid = p.Id
+                                tvChannelid = p.Id
                             }).ToList();
 
             return Json(result);

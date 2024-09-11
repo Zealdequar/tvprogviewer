@@ -27,7 +27,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IWorkContext _workContext;
 
         #endregion
@@ -40,7 +40,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             ILocalizationService localizationService,
             INotificationService notificationService,
             IPermissionService permissionService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IWorkContext workContext)
         {
             _userActivityService = userActivityService;
@@ -49,7 +49,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _localizationService = localizationService;
             _notificationService = notificationService;
             _permissionService = permissionService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _workContext = workContext;
         }
 
@@ -249,19 +249,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageUsers) || !await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAcl))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(model.AssociatedToTvChannelId);
+            //try to get a tvChannel with the specified id
+            var associatedTvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.AssociatedToTvChannelId);
             if (associatedTvChannel == null)
-                return Content("Cannot load a tvchannel");
+                return Content("Cannot load a tvChannel");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null && associatedTvChannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+                return Content("This is not your tvChannel");
 
             ViewBag.RefreshPage = true;
-            ViewBag.tvchannelId = associatedTvChannel.Id;
-            ViewBag.tvchannelName = associatedTvChannel.Name;
+            ViewBag.tvChannelId = associatedTvChannel.Id;
+            ViewBag.tvChannelName = associatedTvChannel.Name;
 
             return View(new UserRoleTvChannelSearchModel());
         }

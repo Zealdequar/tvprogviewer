@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Nop.Core;
-using Nop.Core.Configuration;
-using Nop.Services.ScheduleTasks;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Configuration;
+using TvProgViewer.Services.ScheduleTasks;
 
 
-namespace Nop.Tests.Nop.Services.Tests.ScheduleTasks
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.ScheduleTasks
 {
     public class TestTaskScheduler: TaskScheduler
     {

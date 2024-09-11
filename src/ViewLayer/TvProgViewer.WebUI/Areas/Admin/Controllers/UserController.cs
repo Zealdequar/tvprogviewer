@@ -475,7 +475,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 }
 
                 //ensure that a user in the Vendors role has a vendor account associated.
-                //otherwise, he will have access to ALL tvchannels
+                //otherwise, he will have access to ALL tvChannels
                 if (await _userService.IsVendorAsync(user) && user.VendorId == 0)
                 {
                     var vendorRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.VendorsRoleName);
@@ -729,7 +729,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     }
 
                     //ensure that a user in the Vendors role has a vendor account associated.
-                    //otherwise, he will have access to ALL tvchannels
+                    //otherwise, he will have access to ALL tvChannels
                     if (await _userService.IsVendorAsync(user) && user.VendorId == 0)
                     {
                         var vendorRole = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.VendorsRoleName);

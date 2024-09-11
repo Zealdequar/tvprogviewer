@@ -124,12 +124,12 @@ namespace TvProgViewer.Services.Messages
         Task AddNewsLetterSubscriptionTokensAsync(IList<Token> tokens, NewsLetterSubscription subscription);
 
         /// <summary>
-        /// Add tvchannel review tokens
+        /// Add tvChannel review tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task AddTvChannelReviewTokensAsync(IList<Token> tokens, TvChannelReview tvchannelReview);
+        Task AddTvChannelReviewTokensAsync(IList<Token> tokens, TvChannelReview tvChannelReview);
 
         /// <summary>
         /// Add blog comment tokens
@@ -148,16 +148,16 @@ namespace TvProgViewer.Services.Messages
         Task AddNewsCommentTokensAsync(IList<Token> tokens, NewsComment newsComment);
         
         /// <summary>
-        /// Add tvchannel tokens
+        /// Add tvChannel tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task AddTvChannelTokensAsync(IList<Token> tokens, TvChannel tvchannel, int languageId);
+        Task AddTvChannelTokensAsync(IList<Token> tokens, TvChannel tvChannel, int languageId);
 
         /// <summary>
-        /// Add tvchannel attribute combination tokens
+        /// Add tvChannel attribute combination tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="combination">TvChannel attribute combination</param>

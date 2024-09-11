@@ -42,33 +42,33 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<CategoryModel> PrepareCategoryModelAsync(CategoryModel model, Category category, bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare paged category tvchannel list model
+        /// Prepare paged category tvChannel list model
         /// </summary>
-        /// <param name="searchModel">Category tvchannel search model</param>
+        /// <param name="searchModel">Category tvChannel search model</param>
         /// <param name="category">Category</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the category tvchannel list model
+        /// The task result contains the category tvChannel list model
         /// </returns>
         Task<CategoryTvChannelListModel> PrepareCategoryTvChannelListModelAsync(CategoryTvChannelSearchModel searchModel, Category category);
 
         /// <summary>
-        /// Prepare tvchannel search model to add to the category
+        /// Prepare tvChannel search model to add to the category
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the category</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the category
+        /// The task result contains the tvChannel search model to add to the category
         /// </returns>
         Task<AddTvChannelToCategorySearchModel> PrepareAddTvChannelToCategorySearchModelAsync(AddTvChannelToCategorySearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged tvchannel list model to add to the category
+        /// Prepare paged tvChannel list model to add to the category
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the category</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel list model to add to the category
+        /// The task result contains the tvChannel list model to add to the category
         /// </returns>
         Task<AddTvChannelToCategoryListModel> PrepareAddTvChannelToCategoryListModelAsync(AddTvChannelToCategorySearchModel searchModel);
     }

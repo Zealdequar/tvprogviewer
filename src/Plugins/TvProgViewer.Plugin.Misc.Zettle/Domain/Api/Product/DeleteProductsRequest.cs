@@ -2,23 +2,23 @@
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
-    /// Represents request to delete multiple products
+    /// Represents request to delete multiple tvChannels
     /// </summary>
-    public class DeleteProductsRequest : ProductApiRequest
+    public class DeleteTvChannelsRequest : TvChannelApiRequest
     {
         /// <summary>
-        /// Gets or sets the list of product unique identifier as UUID version 1
+        /// Gets or sets the list of tvChannel unique identifier as UUID version 1
         /// </summary>
         [JsonIgnore]
-        public List<string> ProductUuids { get; set; }
+        public List<string> TvChannelUuids { get; set; }
 
         /// <summary>
         /// Gets the request path
         /// </summary>
-        public override string Path => $"organizations/self/products?uuid={string.Join("&uuid=", ProductUuids)}";
+        public override string Path => $"organizations/self/tvChannels?uuid={string.Join("&uuid=", TvChannelUuids)}";
 
         /// <summary>
         /// Gets the request method

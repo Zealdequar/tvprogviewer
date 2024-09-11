@@ -46,7 +46,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IStoreService _storeService;
@@ -70,7 +70,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             INotificationService notificationService,
             IPermissionService permissionService,
             IPictureService pictureService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IStaticCacheManager staticCacheManager,
             IStoreMappingService storeMappingService,
             IStoreService storeService,
@@ -90,7 +90,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _notificationService = notificationService;
             _permissionService = permissionService;
             _pictureService = pictureService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _staticCacheManager = staticCacheManager;
             _storeMappingService = storeMappingService;
             _storeService = storeService;
@@ -539,13 +539,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
 
-            //try to get a tvchannel category with the specified id
-            var tvchannelCategory = await _categoryService.GetTvChannelCategoryByIdAsync(model.Id)
-                ?? throw new ArgumentException("No tvchannel category mapping found with the specified id");
+            //try to get a tvChannel category with the specified id
+            var tvChannelCategory = await _categoryService.GetTvChannelCategoryByIdAsync(model.Id)
+                ?? throw new ArgumentException("No tvChannel category mapping found with the specified id");
 
-            //fill entity from tvchannel
-            tvchannelCategory = model.ToEntity(tvchannelCategory);
-            await _categoryService.UpdateTvChannelCategoryAsync(tvchannelCategory);
+            //fill entity from tvChannel
+            tvChannelCategory = model.ToEntity(tvChannelCategory);
+            await _categoryService.UpdateTvChannelCategoryAsync(tvChannelCategory);
 
             return new NullJsonResult();
         }
@@ -555,11 +555,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
 
-            //try to get a tvchannel category with the specified id
-            var tvchannelCategory = await _categoryService.GetTvChannelCategoryByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel category mapping found with the specified id", nameof(id));
+            //try to get a tvChannel category with the specified id
+            var tvChannelCategory = await _categoryService.GetTvChannelCategoryByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel category mapping found with the specified id", nameof(id));
 
-            await _categoryService.DeleteTvChannelCategoryAsync(tvchannelCategory);
+            await _categoryService.DeleteTvChannelCategoryAsync(tvChannelCategory);
 
             return new NullJsonResult();
         }
@@ -594,22 +594,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageCategories))
                 return AccessDeniedView();
 
-            //get selected tvchannels
-            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            //get selected tvChannels
+            var selectedTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
             if (selectedTvChannels.Any())
             {
                 var existingTvChannelCategories = await _categoryService.GetTvChannelCategoriesByCategoryIdAsync(model.CategoryId, showHidden: true);
-                foreach (var tvchannel in selectedTvChannels)
+                foreach (var tvChannel in selectedTvChannels)
                 {
-                    //whether tvchannel category with such parameters already exists
-                    if (_categoryService.FindTvChannelCategory(existingTvChannelCategories, tvchannel.Id, model.CategoryId) != null)
+                    //whether tvChannel category with such parameters already exists
+                    if (_categoryService.FindTvChannelCategory(existingTvChannelCategories, tvChannel.Id, model.CategoryId) != null)
                         continue;
 
-                    //insert the new tvchannel category mapping
+                    //insert the new tvChannel category mapping
                     await _categoryService.InsertTvChannelCategoryAsync(new TvChannelCategory
                     {
                         CategoryId = model.CategoryId,
-                        TvChannelId = tvchannel.Id,
+                        TvChannelId = tvChannel.Id,
                         IsFeaturedTvChannel = false,
                         DisplayOrder = 1
                     });

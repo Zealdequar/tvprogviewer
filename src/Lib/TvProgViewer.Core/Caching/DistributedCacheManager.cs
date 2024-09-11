@@ -2,45 +2,44 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using Nito.AsyncEx;
 using TvProgViewer.Core.Configuration;
-using static TvProgViewer.Core.Caching.CacheKey;
+using TvProgViewer.Core.Infrastructure;
 
 namespace TvProgViewer.Core.Caching
 {
     /// <summary>
-    /// Represents a base distributed cache 
+    /// Представляет распределённый кэш
     /// </summary>
-    public abstract class DistributedCacheManager: CacheKeyService, ILocker, IStaticCacheManager
+    public abstract class DistributedCacheManager : CacheKeyService, IStaticCacheManager
     {
-        #region Fields
+        #region Поля
 
+        /// <summary>
+        /// Содержит ключи, известные этому экземпляру TvProgViewer
+        /// </summary>
+        protected readonly CacheKeyManager _localKeyManager;
         protected readonly IDistributedCache _distributedCache;
-        protected readonly ConcurrentDictionary<CacheKey, object> _items;
-        protected static readonly AsyncLock _locker;
+        private readonly ConcurrentTrie<object> _perRequestCache = new();
 
-        protected delegate void OnKeyChanged(CacheKey key);
-
-        protected OnKeyChanged _onKeyAdded;
-        protected OnKeyChanged _onKeyRemoved;
+        /// <summary>
+        /// Выполняет текущие задачи по преобретению, используя для предотвращения дублирования работы
+        /// </summary>
+        private readonly ConcurrentDictionary<string, Lazy<Task<object>>> _ongoing = new();
 
         #endregion
 
-        #region Ctor
+        #region Конструктор
 
-        static DistributedCacheManager()
-        {
-            _locker = new AsyncLock();
-        }
-
-        protected DistributedCacheManager(AppSettings appSettings, IDistributedCache distributedCache) :base(appSettings)
+        public DistributedCacheManager(AppSettings appSettings,
+            IDistributedCache distributedCache,
+            CacheKeyManager cacheKeyManager)
+            : base(appSettings)
         {
             _distributedCache = distributedCache;
-            _items = new ConcurrentDictionary<CacheKey, object>(new CacheKeyEqualityComparer());
+            _localKeyManager = cacheKeyManager;
         }
 
         #endregion
@@ -48,345 +47,189 @@ namespace TvProgViewer.Core.Caching
         #region Utilities
 
         /// <summary>
-        /// Clear all data on this instance
+        /// Очистить все данные в этом экземпляре
         /// </summary>
-        /// <returns>Задача представляет асинхронную операцию</returns>
+        /// <returns>Задача, которая представляет асинхронную операцию</returns>
         protected void ClearInstanceData()
         {
-            _items.Clear();
+            _perRequestCache.Clear();
+            _localKeyManager.Clear();
         }
 
         /// <summary>
-        /// Remove items by cache key prefix
+        /// Очистить элементы по префиксу ключа кэша
         /// </summary>
-        /// <param name="prefix">Cache key prefix</param>
-        /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        /// <returns>Задача представляет асинхронную операцию</returns>
-        protected async Task RemoveByPrefixInstanceDataAsync(string prefix, params object[] prefixParameters)
+        /// <param name="prefix">Префикс ключа кэша</param>
+        /// <param name="prefixParameters">Параметры для создания префикса ключа кэша</param>
+        /// <returns>Удалённые ключи</returns>
+        protected IEnumerable<string> RemoveByPrefixInstanceData(string prefix, params object[] prefixParameters)
         {
-            using var _ = await _locker.LockAsync();
-
-            prefix = PrepareKeyPrefix(prefix, prefixParameters);
-
-            var regex = new Regex(prefix,
-                RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-            var matchesKeys = new List<CacheKey>();
-
-            //get cache keys that matches pattern
-            matchesKeys.AddRange(_items.Keys.Where(key => regex.IsMatch(key.Key)).ToList());
-
-            //remove matching values
-            if (matchesKeys.Any())
-                foreach (var key in matchesKeys)
-                    _items.TryRemove(key, out var _);
+            var prefix_ = PrepareKeyPrefix(prefix, prefixParameters);
+            _perRequestCache.Prune(prefix_, out _);
+            return _localKeyManager.RemoveByPrefix(prefix_);
         }
 
         /// <summary>
-        /// Remove items by cache key prefix
+        /// Подготовка параметров ввода в кэш для переданного ключа
         /// </summary>
-        /// <param name="prefix">Cache key prefix</param>
-        /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        protected void RemoveByPrefixInstanceData(string prefix, params object[] prefixParameters)
-        {
-            using var _ = _locker.Lock();
-
-            prefix = PrepareKeyPrefix(prefix, prefixParameters);
-
-            var regex = new Regex(prefix,
-                RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-            var matchesKeys = new List<CacheKey>();
-
-            //get cache keys that matches pattern
-            matchesKeys.AddRange(_items.Keys.Where(key => regex.IsMatch(key.Key)).ToList());
-
-            //remove matching values
-            if (matchesKeys.Any())
-                foreach (var key in matchesKeys)
-                    _items.TryRemove(key, out var _);
-        }
-
-        /// <summary>
-        /// Prepare cache entry options for the passed key
-        /// </summary>
-        /// <param name="key">Cache key</param>
-        /// <returns>Cache entry options</returns>
-        private DistributedCacheEntryOptions PrepareEntryOptions(CacheKey key)
+        /// <param name="key">Ключ кэша</param>
+        /// <returns>Опции ввода кэша</returns>
+        private static DistributedCacheEntryOptions PrepareEntryOptions(CacheKey key)
         {
             //set expiration time for the passed cache key
-            var options = new DistributedCacheEntryOptions
+            return new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(key.CacheTime)
             };
-
-            return options;
         }
 
-        /// <summary>
-        /// Try to get the cached item
-        /// </summary>
-        /// <typeparam name="T">Type of cached item</typeparam>
-        /// <param name="key">Cache key</param>
-        /// <returns>
-        /// Задача представляет асинхронную операцию
-        /// The task result contains the flag which indicate is the key exists in the cache, cached item or default value
-        /// </returns>
-        private async Task<(bool isSet, T item)> TryGetItemAsync<T>(CacheKey key)
+        private void SetLocal(string key, object value)
         {
-            var json = await _distributedCache.GetStringAsync(key.Key);
-
-            if (string.IsNullOrEmpty(json))
-                return (false, default);
-
-            _onKeyAdded?.Invoke(key);
-
-            return (true, JsonConvert.DeserializeObject<T>(json));
+            _perRequestCache.Add(key, value);
+            _localKeyManager.AddKey(key);
         }
 
-        /// <summary>
-        /// Try to get the cached item
-        /// </summary>
-        /// <typeparam name="T">Type of cached item</typeparam>
-        /// <param name="key">Cache key</param>
-        /// <returns>Flag which indicate is the key exists in the cache, cached item or default value</returns>
-        private (bool isSet, T item) TryGetItem<T>(CacheKey key)
+        private void RemoveLocal(string key)
         {
-            var json = _distributedCache.GetString(key.Key);
-
-            if (string.IsNullOrEmpty(json))
-                return (false, default);
-
-            _onKeyAdded?.Invoke(key);
-
-            return (true, JsonConvert.DeserializeObject<T>(json));
+            _perRequestCache.Remove(key);
+            _localKeyManager.RemoveKey(key);
         }
 
-        /// <summary>
-        /// Add the specified key and object to the cache
-        /// </summary>
-        /// <param name="key">Key of cached item</param>
-        /// <param name="data">Value for caching</param>
-        private void Set(CacheKey key, object data)
+        private async Task<(bool isSet, T item)> TryGetItemAsync<T>(string key)
         {
-            if ((key?.CacheTime ?? 0) <= 0 || data == null)
-                return;
+            var json = await _distributedCache.GetStringAsync(key);
+            return string.IsNullOrEmpty(json)
+              ? (false, default)
+              : (true, item: JsonConvert.DeserializeObject<T>(json));
+        }
 
-            _distributedCache.SetString(key.Key, JsonConvert.SerializeObject(data), PrepareEntryOptions(key));
-            _items.TryAdd(key, data);
-
-            _onKeyAdded?.Invoke(key);
+        protected async Task RemoveAsync(string key, bool removeFromInstance = true)
+        {
+            _ongoing.TryRemove(key, out _);
+            await _distributedCache.RemoveAsync(key);
+            if (removeFromInstance)
+                RemoveLocal(key);
         }
 
         #endregion
 
-        #region Methods
+        #region Методы
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing,
-        /// releasing, or resetting unmanaged resources.
+        /// Удаление из кэша значения с указанным ключом
         /// </summary>
-        public void Dispose()
+        /// <param name="cacheKey">Ключ кэша</param>
+        /// <param name="cacheKeyParameters">Параметры для создания ключа кэша</param>
+        /// <returns>Задача, которая представляет асинхронную операцию</returns>
+        public async Task RemoveAsync(CacheKey cacheKey, params object[] cacheKeyParameters)
         {
+            await RemoveAsync(PrepareKey(cacheKey, cacheKeyParameters).Key);
         }
 
         /// <summary>
-        /// Get a cached item. If it's not in the cache yet, then load and cache it
+        /// Получает закэшированный элемент. Если его ещё нет в кэше, тогда загружает и кэшируется
         /// </summary>
-        /// <typeparam name="T">Type of cached item</typeparam>
-        /// <param name="key">Cache key</param>
-        /// <param name="acquire">Function to load item if it's not in the cache yet</param>
+        /// <typeparam name="T">Тип кэшированного элемента</typeparam>
+        /// <param name="key">Ключ кэша</param>
+        /// <param name="acquire">Функция для загрузки элемента если он ещё не был закэширован</param>
         /// <returns>
-        /// Задача представляет асинхронную операцию
-        /// The task result contains the cached value associated with the specified key
+        /// Задача, которая представляет асинхронную операцию
+        /// Результат задачи содержит результат кэширования значения, ассоциированного с указанным ключом
         /// </returns>
         public async Task<T> GetAsync<T>(CacheKey key, Func<Task<T>> acquire)
         {
-            //little performance workaround here:
-            //we use local dictionary to cache a loaded object in memory for the current HTTP request.
-            //this way we won't connect to distributed cache server many times per HTTP request (e.g. each time to load a locale or setting)
-            if (_items.ContainsKey(key))
-                return (T)_items.GetOrAdd(key, acquire);
-
-            if (key.CacheTime <= 0)
-                return await acquire();
-
-            var (isSet, item) = await TryGetItemAsync<T>(key);
-
-            if (isSet)
-            {
-                if (item != null)
-                    _items.TryAdd(key, item);
-
-                return item;
-            }
-
-            var result = await acquire();
-
-            if (result != null)
-                await SetAsync(key, result);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Get a cached item. If it's not in the cache yet, then load and cache it
-        /// </summary>
-        /// <typeparam name="T">Type of cached item</typeparam>
-        /// <param name="key">Cache key</param>
-        /// <param name="acquire">Function to load item if it's not in the cache yet</param>
-        /// <returns>
-        /// Задача представляет асинхронную операцию
-        /// The task result contains the cached value associated with the specified key
-        /// </returns>
-        public async Task<T> GetAsync<T>(CacheKey key, Func<T> acquire)
-        {
-            //little performance workaround here:
-            //we use local dictionary to cache a loaded object in memory for the current HTTP request.
-            //this way we won't connect to distributed cache server many times per HTTP request (e.g. each time to load a locale or setting)
-            if (_items.ContainsKey(key))
-                return (T)_items.GetOrAdd(key, acquire);
-
-            if (key.CacheTime <= 0)
-                return acquire();
-
-            var (isSet, item) = await TryGetItemAsync<T>(key);
-
-            if (isSet)
-            {
-                if (item != null)
-                    _items.TryAdd(key, item);
-
-                return item;
-            }
-
-            var result = acquire();
-
-            if (result != null)
-                await SetAsync(key, result);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Get a cached item. If it's not in the cache yet, then load and cache it
-        /// </summary>
-        /// <typeparam name="T">Type of cached item</typeparam>
-        /// <param name="key">Cache key</param>
-        /// <param name="acquire">Function to load item if it's not in the cache yet</param>
-        /// <returns>The cached value associated with the specified key</returns>
-        public T Get<T>(CacheKey key, Func<T> acquire)
-        {
-            //little performance workaround here:
-            //we use local dictionary to cache a loaded object in memory for the current HTTP request.
-            //this way we won't connect to distributed cache server many times per HTTP request (e.g. each time to load a locale or setting)
-            if (_items.ContainsKey(key))
-                return (T)_items.GetOrAdd(key, acquire);
-
-            if (key.CacheTime <= 0)
-                return acquire();
-
-            var (isSet, item) = TryGetItem<T>(key);
-
-            if (isSet)
-            { 
-                if (item != null)
-                    _items.TryAdd(key, item);
-
-                return item;
-            }
-
-            var result = acquire();
-
-            if (result != null)
-                Set(key, result);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Remove the value with the specified key from the cache
-        /// </summary>
-        /// <param name="cacheKey">Cache key</param>
-        /// <param name="cacheKeyParameters">Parameters to create cache key</param>
-        /// <returns>Задача представляет асинхронную операцию</returns>
-        public async Task RemoveAsync(CacheKey cacheKey, params object[] cacheKeyParameters)
-        {
-            cacheKey = PrepareKey(cacheKey, cacheKeyParameters);
-
-            await _distributedCache.RemoveAsync(cacheKey.Key);
-            _items.TryRemove(cacheKey, out _);
-
-            _onKeyRemoved?.Invoke(cacheKey);
-        }
-
-        /// <summary>
-        /// Add the specified key and object to the cache
-        /// </summary>
-        /// <param name="key">Key of cached item</param>
-        /// <param name="data">Value for caching</param>
-        /// <returns>Задача представляет асинхронную операцию</returns>
-        public async Task SetAsync(CacheKey key, object data)
-        {
-            if ((key?.CacheTime ?? 0) <= 0 || data == null)
-                return;
-
-            await _distributedCache.SetStringAsync(key.Key, JsonConvert.SerializeObject(data), PrepareEntryOptions(key));
-            _items.TryAdd(key, data);
-
-            _onKeyAdded?.Invoke(key);
-        }
-
-        /// <summary>
-        /// Remove items by cache key prefix
-        /// </summary>
-        /// <param name="prefix">Cache key prefix</param>
-        /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        /// <returns>Задача представляет асинхронную операцию</returns>
-        public abstract Task RemoveByPrefixAsync(string prefix, params object[] prefixParameters);
-
-        /// <summary>
-        /// Remove items by cache key prefix
-        /// </summary>
-        /// <param name="prefix">Cache key prefix</param>
-        /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        public abstract void RemoveByPrefix(string prefix, params object[] prefixParameters);
-
-        /// <summary>
-        /// Clear all cache data
-        /// </summary>
-        /// <returns>Задача представляет асинхронную операцию</returns>
-        public abstract Task ClearAsync();
-
-        /// <summary>
-        /// Perform asynchronous action with exclusive in-memory lock
-        /// </summary>
-        /// <param name="resource">The key we are locking on</param>
-        /// <param name="expirationTime">The time after which the lock will automatically be expired</param>
-        /// <param name="action">Action to be performed with locking</param>
-        /// <returns>True if lock was acquired and action was performed; otherwise false</returns>
-        public async Task<bool> PerformActionWithLockAsync(string resource, TimeSpan expirationTime, Func<Task> action)
-        {
-            if (!string.IsNullOrEmpty(await _distributedCache.GetStringAsync(resource)))
-                return false;
-
+            if (_perRequestCache.TryGetValue(key.Key, out var data))
+                return (T)data;
+            var lazy = _ongoing.GetOrAdd(key.Key, _ => new(async () => await acquire(), true));
+            var setTask = Task.CompletedTask;
             try
             {
-                await _distributedCache.SetStringAsync(resource, resource, new DistributedCacheEntryOptions
+                if (lazy.IsValueCreated)
+                    return (T)await lazy.Value;
+                var (isSet, item) = await TryGetItemAsync<T>(key.Key);
+                if (!isSet)
                 {
-                    AbsoluteExpirationRelativeToNow = expirationTime
-                });
-
-                //perform action
-                await action();
-
-                return true;
+                    item = (T)await lazy.Value;
+                    setTask = _distributedCache.SetStringAsync(
+                        key.Key,
+                        JsonConvert.SerializeObject(item),
+                        PrepareEntryOptions(key));
+                }
+                SetLocal(key.Key, item);
+                return item;
             }
             finally
             {
-                //release lock even if action fails
-                await _distributedCache.RemoveAsync(resource);
+                _ = setTask.ContinueWith(_ => _ongoing.TryRemove(new KeyValuePair<string, Lazy<Task<object>>>(key.Key, lazy)));
             }
+        }
+
+        /// <summary>
+        /// Получение закэшированного элемента. Если он ещё не был закэширован, тогда загрузить и закэшировать его
+        /// </summary>
+        /// <typeparam name="T">Тип кэшируемого элемента</typeparam>
+        /// <param name="key">Ключ кэша</param>
+        /// <param name="acquire">Функция для загрузки элемента, если он ещё не был закэширован</param>
+        /// <returns>
+        /// Задача, которая представляет асинхронную операцию
+        /// Результат задачи содержит результат кэширования значения, ассоциированного с указанным ключом
+        /// </returns>
+        public Task<T> GetAsync<T>(CacheKey key, Func<T> acquire)
+        {
+            return GetAsync(key, () => Task.FromResult(acquire()));
+        }
+
+        public async Task<T> GetAsync<T>(CacheKey key, T defaultValue = default)
+        {
+            var value = await _distributedCache.GetStringAsync(key.Key);
+            return value != null
+                ? JsonConvert.DeserializeObject<T>(value)
+                : defaultValue;
+        }
+
+        /// <summary>
+        /// Добавление указанного ключа и объекта для кэширования
+        /// </summary>
+        /// <param name="key">Ключ кэшированного элемента</param>
+        /// <param name="data">Значение для кэширования</param>
+        /// <returns>Задача, которая представляет асинхронную операцию</returns>
+        public async Task SetAsync<T>(CacheKey key, T data)
+        {
+            if (data == null || (key?.CacheTime ?? 0) <= 0)
+                return;
+
+            var lazy = new Lazy<Task<object>>(() => Task.FromResult(data as object), true);
+            try
+            {
+                // дождатья отложенной задачи, чтобы принудительно создать значение, вместо прямой настройки данных таким образом,
+                // чтобы другие экземпляры менеджера кэша могли получить к ним доступ во время настройки
+                SetLocal(key.Key, await lazy.Value);
+                _ongoing.TryAdd(key.Key, lazy);
+                await _distributedCache.SetStringAsync(key.Key, JsonConvert.SerializeObject(data), PrepareEntryOptions(key));
+            }
+            finally
+            {
+                _ongoing.TryRemove(new KeyValuePair<string, Lazy<Task<object>>>(key.Key, lazy));
+            }
+        }
+
+        /// <summary>
+        /// Удаление элементов по префиксу ключа кэша
+        /// </summary>
+        /// <param name="prefix">Префикс ключа кэша</param>
+        /// <param name="prefixParameters">Параметры для создания префикса ключа кэша</param>
+        /// <returns>Задача, которая представляет асинхронную операцию</returns>
+        public abstract Task RemoveByPrefixAsync(string prefix, params object[] prefixParameters);
+
+        /// <summary>
+        /// Очистить все данные кэша
+        /// </summary>
+        /// <returns>Задача, которая представляет асинхронную операцию</returns>
+        public abstract Task ClearAsync();
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
 
         #endregion

@@ -14,8 +14,8 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Inventory
         /// <summary>
         /// Gets or sets the the list of inventory balance changes
         /// </summary>
-        [JsonProperty(PropertyName = "productChanges")]
-        public List<ProductBalanceChange> ProductChanges { get; set; }
+        [JsonProperty(PropertyName = "tvChannelChanges")]
+        public List<TvChannelBalanceChange> TvChannelChanges { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier as UUID version 1
@@ -44,15 +44,15 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Inventory
         #region Nested classes
 
         /// <summary>
-        /// Represents product balance change details
+        /// Represents tvChannel balance change details
         /// </summary>
-        public class ProductBalanceChange
+        public class TvChannelBalanceChange
         {
             /// <summary>
             /// Gets or sets the unique identifier as UUID version 1
             /// </summary>
-            [JsonProperty(PropertyName = "productUuid")]
-            public string ProductUuid { get; set; }
+            [JsonProperty(PropertyName = "tvChannelUuid")]
+            public string TvChannelUuid { get; set; }
 
             /// <summary>
             /// Gets or sets the status of the change
@@ -68,7 +68,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Inventory
         }
 
         /// <summary>
-        /// Represents product variant balance change details
+        /// Represents tvChannel variant balance change details
         /// </summary>
         public class VariantBalanceChange
         {

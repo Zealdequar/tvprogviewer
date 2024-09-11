@@ -11,7 +11,7 @@
 
             if (Model.CanCreateCombinations)
             {
-				<tvprog-tabs id="tvchannelattribute-edit" asp-tab-name-to-select="tab-attributes" asp-render-selected-tab-input="false">
+				<tvprog-tabs id="tvChannelattribute-edit" asp-tab-name-to-select="tab-attributes" asp-render-selected-tab-input="false">
 					<tvprog-tab asp-name="tab-attributes" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes")" asp-default="true">@await Html.PartialAsync("_CreateOrUpdate.TvChannelAttributes.Info", Model)</tvprog-tab>
 					<tvprog-tab asp-name="tab-attribute-combinations" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations")">@await Html.PartialAsync("_CreateOrUpdate.TvChannelAttributes.Combinations", Model)</tvprog-tab>
 				</tvprog-tabs>

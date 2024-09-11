@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Nop.Services.Common;
+using TvProgViewer.Services.Common;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Common
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Common
 {
     [TestFixture]
     public class GenericAttributeServiceTests : ServiceTest
@@ -19,7 +19,7 @@ namespace Nop.Tests.Nop.Services.Tests.Common
         [Test]
         public async Task ShouldSetCreatedOrUpdatedDateUtcInInsertAttribute()
         {
-            var attribute = new global::Nop.Core.Domain.Common.GenericAttribute
+            var attribute = new global::TvProgViewer.Core.Domain.Common.GenericAttribute
             {
                 Key = "test", KeyGroup = "test", Value = "test", CreatedOrUpdatedDateUTC = null
             };
@@ -37,7 +37,7 @@ namespace Nop.Tests.Nop.Services.Tests.Common
         [Test]
         public async Task ShouldUpdateCreatedOrUpdatedDateUtcInUpdateAttribute()
         {
-            var attribute = new global::Nop.Core.Domain.Common.GenericAttribute { Key = "test", KeyGroup = "test", Value = "test" };
+            var attribute = new global::TvProgViewer.Core.Domain.Common.GenericAttribute { Key = "test", KeyGroup = "test", Value = "test" };
 
             await _genericAttributeService.InsertAttributeAsync(attribute);
             attribute.CreatedOrUpdatedDateUTC = DateTime.UtcNow.AddDays(-30);

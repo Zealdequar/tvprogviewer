@@ -18,7 +18,7 @@
     TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
     TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-tvchannel-details-page");
+    TvProgHtml.AppendPageCssClassParts("html-tvChannel-details-page");
     TvProgHtml.AppendCssFileParts("~/css/jqGrid/ui.jqgrid.css");
     TvProgHtml.AppendCssFileParts("~/css/bootstrap-select/bootstrap-select.css");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/i18n/grid.locale-ru.js");
@@ -47,14 +47,14 @@
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
     {
-        var tvchannelUrl = Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        TvProgHtml.AddCanonicalUrlParts(tvchannelUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        var tvChannelUrl = Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        TvProgHtml.AddCanonicalUrlParts(tvChannelUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     //open graph META tags
     if (seoSettings.OpenGraphMetaTags)
     {
-        TvProgHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"tvchannel\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"tvChannel\" />");
         TvProgHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
         TvProgHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
         TvProgHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
@@ -74,36 +74,36 @@
         TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
 }
-<!--tvchannel breadcrumb-->
+<!--tvChannel breadcrumb-->
 @section Breadcrumb
 {
     @await Html.PartialAsync("_TvChannelBreadcrumb", Model.Breadcrumb)
 }
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsAfterBreadcrumb, additionalData = Model })
-<div class="page tvchannel-details-page">
+<div class="page tvChannel-details-page">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsTop, additionalData = Model })
-        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvchannel-details-form">
+        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvChannel-details-form">
             @if (seoSettings.MicrodataEnabled)
             {
                 @await Html.PartialAsync("_Microdata", Model)
             }
-            <div data-tvchannelid="@Model.Id">
-                <div class="tvchannel-essential">
+            <div data-tvChannelid="@Model.Id">
+                <div class="tvChannel-essential">
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialTop, additionalData = Model })
                     <div class="gallery">
-                        <!--tvchannel selectpicker days-->
+                        <!--tvChannel selectpicker days-->
                         @await Html.PartialAsync("_TvChannelDetailsDaysSelect", Model)
-                        <!--tvchannel pictures-->
+                        <!--tvChannel pictures-->
                         @await Html.PartialAsync("_TvChannelDetailsPictures", Model)
-                        <!--tvchannel videos-->
+                        <!--tvChannel videos-->
                         @await Html.PartialAsync("_TvChannelDetailsVideos", Model)
                         
                     </div>
                    
                     <div class="overview">
                         @await Html.PartialAsync("_Discontinued", Model)
-                        <div class="tvchannel-name">
+                        <div class="tvChannel-name">
                             <h1>
                                 @Model.Name
                             </h1>
@@ -115,7 +115,7 @@
                             </div>
                         }
                         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewTop, additionalData = Model })
-                        <!--tvchannel reviews-->
+                        <!--tvChannel reviews-->
                         @await Html.PartialAsync("_TvChannelReviewOverview", Model.TvChannelReviewOverview)
                         <!--manufacturers-->
                         @await Html.PartialAsync("_TvChannelManufacturers", Model.TvChannelManufacturers)
@@ -188,13 +188,13 @@
                 
                 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforeCollateral, additionalData = Model })
                 @await Html.PartialAsync("_TvChannelDetailsProgrammeViewer", Model)
-                <div class="tvchannel-collateral">
+                <div class="tvChannel-collateral">
                    @* @await Html.PartialAsync("_TvChannelSpecifications", Model.TvChannelSpecificationModel) *@
                     @await Html.PartialAsync("_TvChannelTags", Model.TvChannelTags)
                 </div>
                 
-                @await Component.InvokeAsync(typeof(TvChannelsAlsoPurchasedViewComponent), new { tvchannelId = Model.Id })
-                @await Component.InvokeAsync(typeof(RelatedTvChannelsViewComponent), new { tvchannelId = Model.Id })
+                @await Component.InvokeAsync(typeof(TvChannelsAlsoPurchasedViewComponent), new { tvChannelId = Model.Id })
+                @await Component.InvokeAsync(typeof(RelatedTvChannelsViewComponent), new { tvChannelId = Model.Id })
             </div>
         </form>
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBottom, additionalData = Model })

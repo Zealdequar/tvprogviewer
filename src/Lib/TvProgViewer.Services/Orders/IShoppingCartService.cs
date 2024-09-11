@@ -45,15 +45,15 @@ namespace TvProgViewer.Services.Orders
         Task<int> DeleteExpiredShoppingCartItemsAsync(DateTime olderThanUtc);
 
         /// <summary>
-        /// Get tvchannels from shopping cart whether requiring specific tvchannel
+        /// Get tvChannels from shopping cart whether requiring specific tvChannel
         /// </summary>
         /// <param name="cart">Shopping cart </param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        Task<IList<TvChannel>> GetTvChannelsRequiringTvChannelAsync(IList<ShoppingCartItem> cart, TvChannel tvchannel);
+        Task<IList<TvChannel>> GetTvChannelsRequiringTvChannelAsync(IList<ShoppingCartItem> cart, TvChannel tvChannel);
 
         /// <summary>
         /// Gets shopping cart
@@ -61,7 +61,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type; pass null to load all records</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
-        /// <param name="tvchannelId">TvChannel identifier; pass null to load all records</param>
+        /// <param name="tvChannelId">TvChannel identifier; pass null to load all records</param>
         /// <param name="createdFromUtc">Created date from (UTC); pass null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); pass null to load all records</param>
         /// <returns>
@@ -69,19 +69,19 @@ namespace TvProgViewer.Services.Orders
         /// The task result contains the shopping Cart
         /// </returns>
         Task<IList<ShoppingCartItem>> GetShoppingCartAsync(User user, ShoppingCartType? shoppingCartType = null,
-            int storeId = 0, int? tvchannelId = null, DateTime? createdFromUtc = null, DateTime? createdToUtc = null);
+            int storeId = 0, int? tvChannelId = null, DateTime? createdFromUtc = null, DateTime? createdToUtc = null);
 
         /// <summary>
         /// Validates shopping cart item attributes
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="quantity">Quantity</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <param name="ignoreConditionMet">A value indicating whether we should ignore filtering by "is condition met" property</param>
-        /// <param name="ignoreBundledTvChannels">A value indicating whether we should ignore bundled (associated) tvchannels</param>
+        /// <param name="ignoreBundledTvChannels">A value indicating whether we should ignore bundled (associated) tvChannels</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param> 
         /// <returns>
         /// Задача представляет асинхронную операцию
@@ -89,7 +89,7 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         Task<IList<string>> GetShoppingCartItemAttributeWarningsAsync(User user,
             ShoppingCartType shoppingCartType,
-            TvChannel tvchannel,
+            TvChannel tvChannel,
             int quantity = 1,
             string attributesXml = "",
             bool ignoreNonCombinableAttributes = false,
@@ -101,26 +101,26 @@ namespace TvProgViewer.Services.Orders
         /// Validates shopping cart item (gift card)
         /// </summary>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         Task<IList<string>> GetShoppingCartItemGiftCardWarningsAsync(ShoppingCartType shoppingCartType,
-            TvChannel tvchannel, string attributesXml);
+            TvChannel tvChannel, string attributesXml);
 
         /// <summary>
-        /// Validates shopping cart item for rental tvchannels
+        /// Validates shopping cart item for rental tvChannels
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
-        Task<IList<string>> GetRentalTvChannelWarningsAsync(TvChannel tvchannel,
+        Task<IList<string>> GetRentalTvChannelWarningsAsync(TvChannel tvChannel,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null);
 
         /// <summary>
@@ -128,26 +128,26 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="userEnteredPrice">User entered price</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <param name="quantity">Quantity</param>
-        /// <param name="addRequiredTvChannels">Whether to add required tvchannels</param>
+        /// <param name="addRequiredTvChannels">Whether to add required tvChannels</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
-        /// <param name="getStandardWarnings">A value indicating whether we should validate a tvchannel for standard properties</param>
-        /// <param name="getAttributesWarnings">A value indicating whether we should validate tvchannel attributes</param>
+        /// <param name="getStandardWarnings">A value indicating whether we should validate a tvChannel for standard properties</param>
+        /// <param name="getAttributesWarnings">A value indicating whether we should validate tvChannel attributes</param>
         /// <param name="getGiftCardWarnings">A value indicating whether we should validate gift card properties</param>
-        /// <param name="getRequiredTvChannelWarnings">A value indicating whether we should validate required tvchannels (tvchannels which require other tvchannels to be added to the cart)</param>
+        /// <param name="getRequiredTvChannelWarnings">A value indicating whether we should validate required tvChannels (tvChannels which require other tvChannels to be added to the cart)</param>
         /// <param name="getRentalWarnings">A value indicating whether we should validate rental properties</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         Task<IList<string>> GetShoppingCartItemWarningsAsync(User user, ShoppingCartType shoppingCartType,
-            TvChannel tvchannel, int storeId,
+            TvChannel tvChannel, int storeId,
             string attributesXml, decimal userEnteredPrice,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
             int quantity = 1, bool addRequiredTvChannels = true, int shoppingCartItemId = 0,
@@ -183,20 +183,20 @@ namespace TvProgViewer.Services.Orders
         /// <summary>
         /// Gets the shopping cart unit price (one item)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="quantity">Quantity</param>
         /// <param name="attributesXml">TvChannel attributes (XML format)</param>
         /// <param name="userEnteredPrice">User entered price (if specified)</param>
-        /// <param name="rentalStartDate">Rental start date (null for not rental tvchannels)</param>
-        /// <param name="rentalEndDate">Rental end date (null for not rental tvchannels)</param>
+        /// <param name="rentalStartDate">Rental start date (null for not rental tvChannels)</param>
+        /// <param name="rentalEndDate">Rental end date (null for not rental tvChannels)</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart unit price (one item)
         /// </returns>
-        Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(TvChannel tvchannel,
+        Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(TvChannel tvChannel,
             User user,
             Store store,
             ShoppingCartType shoppingCartType,
@@ -223,7 +223,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="userEnteredPrice">Price entered by a user</param>
         /// <param name="rentalStartDate">Rental start date</param>
@@ -234,17 +234,17 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         Task<ShoppingCartItem> FindShoppingCartItemInTheCartAsync(IList<ShoppingCartItem> shoppingCart,
             ShoppingCartType shoppingCartType,
-            TvChannel tvchannel,
+            TvChannel tvChannel,
             string attributesXml = "",
             decimal userEnteredPrice = decimal.Zero,
             DateTime? rentalStartDate = null,
             DateTime? rentalEndDate = null);
 
         /// <summary>
-        /// Add a tvchannel to shopping cart
+        /// Add a tvChannel to shopping cart
         /// </summary>
         /// <param name="user">User</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="attributesXml">Attributes in XML format</param>
@@ -252,12 +252,12 @@ namespace TvProgViewer.Services.Orders
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <param name="quantity">Quantity</param>
-        /// <param name="addRequiredTvChannels">Whether to add required tvchannels</param>
+        /// <param name="addRequiredTvChannels">Whether to add required tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
-        Task<IList<string>> AddToCartAsync(User user, TvChannel tvchannel,
+        Task<IList<string>> AddToCartAsync(User user, TvChannel tvChannel,
             ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
             decimal userEnteredPrice = decimal.Zero,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,

@@ -393,8 +393,8 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer
             {
                 PublicWidgetZones.CheckoutPaymentInfoTop,
                 PublicWidgetZones.OpcContentBefore,
-                PublicWidgetZones.ProductDetailsTop,
-                PublicWidgetZones.ProductDetailsAddInfo,
+                PublicWidgetZones.TvChannelDetailsTop,
+                PublicWidgetZones.TvChannelDetailsAddInfo,
                 PublicWidgetZones.OrderSummaryContentBefore,
                 PublicWidgetZones.OrderSummaryContentAfter,
                 PublicWidgetZones.HeaderLinksBefore,
@@ -414,13 +414,13 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer
 
             if (widgetZone.Equals(PublicWidgetZones.CheckoutPaymentInfoTop) ||
                 widgetZone.Equals(PublicWidgetZones.OpcContentBefore) ||
-                widgetZone.Equals(PublicWidgetZones.ProductDetailsTop) ||
+                widgetZone.Equals(PublicWidgetZones.TvChannelDetailsTop) ||
                 widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore))
             {
                 return typeof(ScriptViewComponent);
             }
 
-            if (widgetZone.Equals(PublicWidgetZones.ProductDetailsAddInfo) || widgetZone.Equals(PublicWidgetZones.OrderSummaryContentAfter))
+            if (widgetZone.Equals(PublicWidgetZones.TvChannelDetailsAddInfo) || widgetZone.Equals(PublicWidgetZones.OrderSummaryContentAfter))
                 return typeof(ButtonsViewComponent);
 
             if (widgetZone.Equals(PublicWidgetZones.HeaderLinksBefore) || widgetZone.Equals(PublicWidgetZones.Footer))
@@ -445,7 +445,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer
                 StyleColor = "blue",
                 StyleShape = "rect",
                 StyleLabel = "paypal",
-                DisplayButtonsOnProductDetails = true,
+                DisplayButtonsOnTvChannelDetails = true,
                 DisplayButtonsOnShoppingCart = true,
                 DisplayPayLaterMessages = false,
                 RequestTimeout = PayPalViewerDefaults.RequestTimeout,
@@ -475,8 +475,8 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer
                 ["Plugins.Payments.PayPalViewer.Fields.ClientId"] = "Client ID",
                 ["Plugins.Payments.PayPalViewer.Fields.ClientId.Hint"] = "Enter your PayPal REST API client ID. This identifies your PayPal account and determines where transactions are paid.",
                 ["Plugins.Payments.PayPalViewer.Fields.ClientId.Required"] = "Client ID is required",
-                ["Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnProductDetails"] = "Display buttons on product details",
-                ["Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnProductDetails.Hint"] = "Determine whether to display PayPal buttons on product details pages, clicking on them matches the behavior of the default 'Add to cart' button.",
+                ["Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnTvChannelDetails"] = "Display buttons on tvChannel details",
+                ["Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnTvChannelDetails.Hint"] = "Determine whether to display PayPal buttons on tvChannel details pages, clicking on them matches the behavior of the default 'Add to cart' button.",
                 ["Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnShoppingCart"] = "Display buttons on shopping cart",
                 ["Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnShoppingCart.Hint"] = "Determine whether to display PayPal buttons on the shopping cart page instead of the default checkout button.",
                 ["Plugins.Payments.PayPalViewer.Fields.DisplayLogoInFooter"] = "Display logo in footer",

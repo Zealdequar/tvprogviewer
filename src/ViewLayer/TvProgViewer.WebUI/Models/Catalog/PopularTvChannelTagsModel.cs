@@ -67,14 +67,14 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         #region Methods
 
-        public virtual int GetFontSize(TvChannelTagModel tvchannelTag)
+        public virtual int GetFontSize(TvChannelTagModel tvChannelTag)
         {
             var itemWeights = new List<double>();
             foreach (var tag in Tags)
                 itemWeights.Add(tag.TvChannelCount);
             var stdDev = StdDev(itemWeights, out double mean);
 
-            return GetFontSize(tvchannelTag.TvChannelCount, mean, stdDev);
+            return GetFontSize(tvChannelTag.TvChannelCount, mean, stdDev);
         }
 
         #endregion

@@ -3,7 +3,7 @@ using TvProgViewer.Core.Domain.Localization;
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel attribute
+    /// Represents a tvChannel attribute
     /// </summary>
     public partial class TvChannelAttribute : BaseEntity, ILocalizedEntity
     {

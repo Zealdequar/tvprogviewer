@@ -2,24 +2,24 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Directory;
-using Nop.Core.Domain.Discounts;
-using Nop.Core.Domain.Stores;
-using Nop.Services.Catalog;
-using Nop.Services.Customers;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Directory;
+using TvProgViewer.Core.Domain.Discounts;
+using TvProgViewer.Core.Domain.Stores;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Users;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Catalog
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Catalog
 {
     [TestFixture]
     public class PriceCalculationServiceTests : ServiceTest
     {
         #region Fields
 
-        private ICustomerService _customerService;
-        private IProductService _productService;
+        private IUserService _userService;
+        private ITvChannelService _tvChannelService;
         private IPriceCalculationService _priceCalcService;
 
         #endregion
@@ -29,8 +29,8 @@ namespace Nop.Tests.Nop.Services.Tests.Catalog
         [OneTimeSetUp]
         public void SetUp()
         {
-            _customerService = GetService<ICustomerService>();
-            _productService = GetService<IProductService>();
+            _userService = GetService<IUserService>();
+            _tvChannelService = GetService<ITvChannelService>();
             _priceCalcService = GetService<IPriceCalculationService>();
         }
 
@@ -39,84 +39,84 @@ namespace Nop.Tests.Nop.Services.Tests.Catalog
         #region Tests
 
         [Test]
-        public async Task CanGetFinalProductPrice()
+        public async Task CanGetFinalTvChannelPrice()
         {
-            var product = await _productService.GetProductBySkuAsync("BP_20_WSP");
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("BP_20_WSP");
 
-            var customer = new Customer();
+            var user = new User();
             var store = new Store();
 
-            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false);
+            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false);
             finalPrice.Should().Be(79.99M);
             finalPrice.Should().Be(finalPriceWithoutDiscounts);
             
-            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 2);
+            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 2);
 
             finalPrice.Should().Be(19M);
             finalPriceWithoutDiscounts.Should().Be(finalPriceWithoutDiscounts);
         }
 
         [Test]
-        public async Task CanGetFinalProductPriceWithTierPrices()
+        public async Task CanGetFinalTvChannelPriceWithTierPrices()
         {
-            var product = await _productService.GetProductBySkuAsync("BP_20_WSP");
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("BP_20_WSP");
 
-            var customer = new Customer();
+            var user = new User();
             var store = new Store();
 
-            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false);
+            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false);
             finalPrice.Should().Be(79.99M);
             finalPrice.Should().Be(finalPriceWithoutDiscounts);
-            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 2);
+            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 2);
             finalPrice.Should().Be(19);
             finalPrice.Should().Be(finalPriceWithoutDiscounts);
-            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 3);
+            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 3);
             finalPrice.Should().Be(19);
             finalPrice.Should().Be(finalPriceWithoutDiscounts);
-            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 5);
+            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 5);
             finalPrice.Should().Be(17);
             finalPrice.Should().Be(finalPriceWithoutDiscounts);
-            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 7);
+            (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 7);
 
             finalPrice.Should().Be(17);
             finalPrice.Should().Be(finalPriceWithoutDiscounts);
         }
 
         [Test]
-        public async Task CanGetFinalProductPriceWithTierPricesByCustomerRole()
+        public async Task CanGetFinalTvChannelPriceWithTierPricesByUserRole()
         {
-            var product = await _productService.GetProductBySkuAsync("NK_ZSJ_MM");
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("NK_ZSJ_MM");
 
-            //customer
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+            //user
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
             var store = new Store();
                 
-            var roles = await _customerService.GetAllCustomerRolesAsync();
-            var customerRole = roles.FirstOrDefault();
+            var roles = await _userService.GetAllUserRolesAsync();
+            var userRole = roles.FirstOrDefault();
 
-            customerRole.Should().NotBeNull();
+            userRole.Should().NotBeNull();
 
             var tierPrices = new List<TierPrice>
             {
-                new TierPrice { CustomerRoleId = customerRole.Id, ProductId = product.Id, Quantity = 2, Price = 25 },
-                new TierPrice { CustomerRoleId = customerRole.Id, ProductId = product.Id, Quantity = 5, Price = 20 },
-                new TierPrice { CustomerRoleId = customerRole.Id, ProductId = product.Id, Quantity = 10, Price = 15 }
+                new TierPrice { UserRoleId = userRole.Id, TvChannelId = tvChannel.Id, Quantity = 2, Price = 25 },
+                new TierPrice { UserRoleId = userRole.Id, TvChannelId = tvChannel.Id, Quantity = 5, Price = 20 },
+                new TierPrice { UserRoleId = userRole.Id, TvChannelId = tvChannel.Id, Quantity = 10, Price = 15 }
             };
 
             foreach (var tierPrice in tierPrices) 
-                await _productService.InsertTierPriceAsync(tierPrice);
+                await _tvChannelService.InsertTierPriceAsync(tierPrice);
 
-            product.HasTierPrices = true;
+            tvChannel.HasTierPrices = true;
 
-            var (rezWithoutDiscount1, rez1, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false);
-            var (rezWithoutDiscount2, rez2, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 2);
-            var (rezWithoutDiscount3, rez3, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 3);
-            var (rezWithoutDiscount4, rez4, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 5);
-            var (rezWithoutDiscount5, rez5, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 10);
-            var (rezWithoutDiscount6, rez6, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 0, false, 15);
+            var (rezWithoutDiscount1, rez1, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false);
+            var (rezWithoutDiscount2, rez2, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 2);
+            var (rezWithoutDiscount3, rez3, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 3);
+            var (rezWithoutDiscount4, rez4, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 5);
+            var (rezWithoutDiscount5, rez5, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 10);
+            var (rezWithoutDiscount6, rez6, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 0, false, 15);
 
             foreach (var tierPrice in tierPrices)
-                await _productService.DeleteTierPriceAsync(tierPrice);
+                await _tvChannelService.DeleteTierPriceAsync(tierPrice);
 
             rez1.Should().Be(30M);
             rez2.Should().Be(25);
@@ -134,43 +134,43 @@ namespace Nop.Tests.Nop.Services.Tests.Catalog
         }
 
         [Test]
-        public async Task CanGetFinalProductPriceWithAdditionalFee()
+        public async Task CanGetFinalTvChannelPriceWithAdditionalFee()
         {
-            var product = await _productService.GetProductBySkuAsync("BP_20_WSP");
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("BP_20_WSP");
 
-            //customer
-            var customer = new Customer();
+            //user
+            var user = new User();
             var store = new Store();
 
-            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store, 5, false);
+            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store, 5, false);
 
             finalPrice.Should().Be(84.99M);
             finalPrice.Should().Be(finalPriceWithoutDiscounts);
         }
 
         [Test]
-        public async Task CanGetFinalProductPriceWithDiscount()
+        public async Task CanGetFinalTvChannelPriceWithDiscount()
         {
-            var product = await _productService.GetProductBySkuAsync("BP_20_WSP");
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("BP_20_WSP");
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
             var store = new Store();
             
-            var mapping = new DiscountProductMapping
+            var mapping = new DiscountTvChannelMapping
             {
                 DiscountId = 1,
-                EntityId = product.Id
+                EntityId = tvChannel.Id
             };
 
-            await _productService.InsertDiscountProductMappingAsync(mapping);
-            await _customerService.ApplyDiscountCouponCodeAsync(customer, "123");
+            await _tvChannelService.InsertDiscountTvChannelMappingAsync(mapping);
+            await _userService.ApplyDiscountCouponCodeAsync(user, "123");
 
             //set HasDiscountsApplied property
-            product.HasDiscountsApplied = true;
+            tvChannel.HasDiscountsApplied = true;
            
-            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(product, customer, store);
+            var (finalPriceWithoutDiscounts, finalPrice, _, _) = await _priceCalcService.GetFinalPriceAsync(tvChannel, user, store);
 
-            await _productService.DeleteDiscountProductMappingAsync(mapping);
-            await _customerService.RemoveDiscountCouponCodeAsync(customer, "123");
+            await _tvChannelService.DeleteDiscountTvChannelMappingAsync(mapping);
+            await _userService.RemoveDiscountCouponCodeAsync(user, "123");
 
             finalPrice.Should().Be(69.99M);
             finalPriceWithoutDiscounts.Should().Be(79.99M);

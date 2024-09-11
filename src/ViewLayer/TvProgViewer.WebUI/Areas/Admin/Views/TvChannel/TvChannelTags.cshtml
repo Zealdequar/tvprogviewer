@@ -12,7 +12,7 @@
     var hideSearchBlock = await genericAttributeService.GetAttributeAsync<bool>(await workContext.GetCurrentUserAsync(), hideSearchBlockAttributeName);
 }
 
-<form asp-controller="TvChannel" asp-action="TvChannelTags" method="post" id="tvchannel-tags-form">
+<form asp-controller="TvChannel" asp-action="TvChannelTags" method="post" id="tvChannel-tags-form">
     <div class="content-header clearfix">
         <h1 class="float-left">
             @T("Admin.Catalog.TvChannelTags")
@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="text-center col-12">
-                                        <button type="button" id="search-tvchannel-tags" class="btn btn-primary btn-search">
+                                        <button type="button" id="search-tvChannel-tags" class="btn btn-primary btn-search">
                                             <i class="fas fa-search"></i>
                                             @T("Admin.Common.Search")
                                         </button>
@@ -71,9 +71,9 @@
 
                             @await Html.PartialAsync("Table", new DataTablesModel
                             {
-                                Name = "tvchannel-tags-grid",
+                                Name = "tvChannel-tags-grid",
                                 UrlRead = new DataUrl("TvChannelTags", "TvChannel", null),
-                                SearchButtonId = "search-tvchannel-tags",
+                                SearchButtonId = "search-tvChannel-tags",
                                 Length = Model.PageSize,
                                 LengthMenu = Model.AvailablePageSizes,
                                 Filters = new List<FilterParameter>
@@ -85,7 +85,7 @@
                                     new ColumnProperty(nameof(TvChannelTagModel.Id))
                                     {
                                         IsMasterCheckBox = true,
-                                        Render = new RenderCheckBox("checkbox_tvchanneltags"),
+                                        Render = new RenderCheckBox("checkbox_tvChanneltags"),
                                         ClassName =  TvProgColumnClassDefaults.CenterAll,
                                         Width = "50"
                                     },
@@ -130,7 +130,7 @@
                                             showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                             return;
                                         }
-                                        updateTable('#tvchannel-tags-grid');
+                                        updateTable('#tvChannel-tags-grid');
                                     }
                                 });
                                 $('#delete-selected-action-confirmation').modal('toggle');

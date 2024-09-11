@@ -1,117 +1,117 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Customers;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Services.Users;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Customers
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Users
 {
     [TestFixture]
-    public class CustomerServiceTests : ServiceTest
+    public class UserServiceTests : ServiceTest
     {
-        private ICustomerService _customerService;
+        private IUserService _userService;
 
         [OneTimeSetUp]
         public async Task SetUp()
         {
-            _customerService = GetService<ICustomerService>();
-            var moderator = await _customerService.GetCustomerRoleBySystemNameAsync(NopCustomerDefaults.ForumModeratorsRoleName);
+            _userService = GetService<IUserService>();
+            var moderator = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.ForumModeratorsRoleName);
             moderator.Active = false;
-            await _customerService.UpdateCustomerRoleAsync(moderator);
+            await _userService.UpdateUserRoleAsync(moderator);
         }
 
         [OneTimeTearDown]
         public async Task TearDown()
         {
-            var moderator = await _customerService.GetCustomerRoleBySystemNameAsync(NopCustomerDefaults.ForumModeratorsRoleName);
+            var moderator = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.ForumModeratorsRoleName);
             moderator.Active = true;
-            await _customerService.UpdateCustomerRoleAsync(moderator);
+            await _userService.UpdateUserRoleAsync(moderator);
         }
 
         [Test]
-        public async Task CanCheckIsInCustomerRole()
+        public async Task CanCheckIsInUserRole()
         {
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
 
-            var isInCustomerRole = await _customerService.IsInCustomerRoleAsync(customer, NopCustomerDefaults.AdministratorsRoleName, false);
-            isInCustomerRole.Should().BeTrue();
-            isInCustomerRole = await _customerService.IsInCustomerRoleAsync(customer, NopCustomerDefaults.AdministratorsRoleName);
-            isInCustomerRole.Should().BeTrue();
+            var isInUserRole = await _userService.IsInUserRoleAsync(user, TvProgUserDefaults.AdministratorsRoleName, false);
+            isInUserRole.Should().BeTrue();
+            isInUserRole = await _userService.IsInUserRoleAsync(user, TvProgUserDefaults.AdministratorsRoleName);
+            isInUserRole.Should().BeTrue();
 
-            isInCustomerRole = await _customerService.IsInCustomerRoleAsync(customer, NopCustomerDefaults.ForumModeratorsRoleName, false);
-            isInCustomerRole.Should().BeTrue();
-            isInCustomerRole = await _customerService.IsInCustomerRoleAsync(customer, NopCustomerDefaults.ForumModeratorsRoleName);
-            isInCustomerRole.Should().BeFalse();
+            isInUserRole = await _userService.IsInUserRoleAsync(user, TvProgUserDefaults.ForumModeratorsRoleName, false);
+            isInUserRole.Should().BeTrue();
+            isInUserRole = await _userService.IsInUserRoleAsync(user, TvProgUserDefaults.ForumModeratorsRoleName);
+            isInUserRole.Should().BeFalse();
 
-            isInCustomerRole = await _customerService.IsInCustomerRoleAsync(customer, NopCustomerDefaults.GuestsRoleName, false);
-            isInCustomerRole.Should().BeFalse();
-            isInCustomerRole = await _customerService.IsInCustomerRoleAsync(customer, NopCustomerDefaults.GuestsRoleName);
-            isInCustomerRole.Should().BeFalse();
+            isInUserRole = await _userService.IsInUserRoleAsync(user, TvProgUserDefaults.GuestsRoleName, false);
+            isInUserRole.Should().BeFalse();
+            isInUserRole = await _userService.IsInUserRoleAsync(user, TvProgUserDefaults.GuestsRoleName);
+            isInUserRole.Should().BeFalse();
         }
 
         [Test]
-        public async Task CanCheckWhetherCustomerIsAdmin()
+        public async Task CanCheckWhetherUserIsAdmin()
         {
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
-            var isAdmin = await _customerService.IsAdminAsync(customer);
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
+            var isAdmin = await _userService.IsAdminAsync(user);
             isAdmin.Should().BeTrue();
         }
 
         [Test]
-        public async Task CanCheckWhetherCustomerIsForumModerator()
+        public async Task CanCheckWhetherUserIsForumModerator()
         {
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
-            var isForumModerator = await _customerService.IsForumModeratorAsync(customer, false);
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
+            var isForumModerator = await _userService.IsForumModeratorAsync(user, false);
             isForumModerator.Should().BeTrue();
         }
 
         [Test]
-        public async Task CanCheckWhetherCustomerIsGuest()
+        public async Task CanCheckWhetherUserIsGuest()
         {
-            var customer = await _customerService.GetCustomerByEmailAsync("builtin@search_engine_record.com");
-            var isGuest = await _customerService.IsGuestAsync(customer);
+            var user = await _userService.GetUserByEmailAsync("builtin@search_engine_record.com");
+            var isGuest = await _userService.IsGuestAsync(user);
             isGuest.Should().BeTrue();
         }
 
         [Test]
-        public async Task CanCheckWhetherCustomerIsRegistered()
+        public async Task CanCheckWhetherUserIsRegistered()
         {
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
 
-            var isRegistered = await _customerService.IsRegisteredAsync(customer);
+            var isRegistered = await _userService.IsRegisteredAsync(user);
             isRegistered.Should().BeTrue();
         }
 
         [Test]
         public async Task CanRemoveAddressAssignedAsBillingAddress()
         {
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
-            var addresses = await _customerService.GetAddressesByCustomerIdAsync(customer.Id);
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
+            var addresses = await _userService.GetAddressesByUserIdAsync(user.Id);
 
             addresses.Count.Should().Be(1);
 
             var address = addresses[0];
 
-            await _customerService.InsertCustomerAddressAsync(customer, address);
+            await _userService.InsertUserAddressAsync(user, address);
 
-            var addressesByCustomer = await _customerService.GetAddressesByCustomerIdAsync(customer.Id);
-            addressesByCustomer.Count.Should().Be(1);
+            var addressesByUser = await _userService.GetAddressesByUserIdAsync(user.Id);
+            addressesByUser.Count.Should().Be(1);
 
-            var billingAddress = await _customerService.GetCustomerBillingAddressAsync(customer);
+            var billingAddress = await _userService.GetUserBillingAddressAsync(user);
             billingAddress.Should().NotBeNull();
 
-            billingAddress = await _customerService.GetCustomerBillingAddressAsync(customer);
+            billingAddress = await _userService.GetUserBillingAddressAsync(user);
             billingAddress.Id.Should().Be(address.Id);
 
-            await _customerService.RemoveCustomerAddressAsync(customer, address);
+            await _userService.RemoveUserAddressAsync(user, address);
 
-            addressesByCustomer = await _customerService.GetAddressesByCustomerIdAsync(customer.Id);
-            var countAddresses = addressesByCustomer.Count;
+            addressesByUser = await _userService.GetAddressesByUserIdAsync(user.Id);
+            var countAddresses = addressesByUser.Count;
 
-            var billingAddressId = customer.BillingAddressId;
+            var billingAddressId = user.BillingAddressId;
 
-            await _customerService.InsertCustomerAddressAsync(customer, address);
-            customer.BillingAddressId = address.Id;
+            await _userService.InsertUserAddressAsync(user, address);
+            user.BillingAddressId = address.Id;
 
             countAddresses.Should().Be(0);
             billingAddressId.Should().BeNull();

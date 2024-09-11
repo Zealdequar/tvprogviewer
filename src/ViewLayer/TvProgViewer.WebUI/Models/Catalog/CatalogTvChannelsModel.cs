@@ -5,14 +5,14 @@ using TvProgViewer.Web.Framework.UI.Paging;
 namespace TvProgViewer.WebUI.Models.Catalog
 {
     /// <summary>
-    /// Represents a catalog tvchannels model
+    /// Represents a catalog tvChannels model
     /// </summary>
     public partial record CatalogTvChannelsModel : BasePageableModel
     {
         #region Properties
 
         /// <summary>
-        /// Get or set a value indicating whether use standart or AJAX tvchannels loading (applicable to 'paging', 'filtering', 'view modes') in catalog
+        /// Get or set a value indicating whether use standart or AJAX tvChannels loading (applicable to 'paging', 'filtering', 'view modes') in catalog
         /// </summary>
         public bool UseAjaxLoading { get; set; }
 
@@ -22,7 +22,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public string WarningMessage { get; set; }
 
         /// <summary>
-        /// Gets or sets the message if there are no tvchannels to return
+        /// Gets or sets the message if there are no tvChannels to return
         /// </summary>
         public string NoResultMessage { get; set; }
 
@@ -42,7 +42,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public ManufacturerFilterModel ManufacturerFilter { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether tvchannel sorting is allowed
+        /// Gets or sets a value indicating whether tvChannel sorting is allowed
         /// </summary>
         public bool AllowTvChannelSorting { get; set; }
 
@@ -77,12 +77,12 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public int? OrderBy { get; set; }
 
         /// <summary>
-        /// Gets or sets a tvchannel sorting
+        /// Gets or sets a tvChannel sorting
         /// </summary>
         public string ViewMode { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannels
+        /// Gets or sets the tvChannels
         /// </summary>
         public IList<TvChannelOverviewModel> TvChannels { get; set; }
 

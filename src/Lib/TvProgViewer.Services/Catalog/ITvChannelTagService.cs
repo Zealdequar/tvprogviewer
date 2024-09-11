@@ -10,102 +10,102 @@ namespace TvProgViewer.Services.Catalog
     public partial interface ITvChannelTagService
     {
         /// <summary>
-        /// Delete a tvchannel tag
+        /// Delete a tvChannel tag
         /// </summary>
-        /// <param name="tvchannelTag">TvChannel tag</param>
+        /// <param name="tvChannelTag">TvChannel tag</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelTagAsync(TvChannelTag tvchannelTag);
+        Task DeleteTvChannelTagAsync(TvChannelTag tvChannelTag);
 
         /// <summary>
-        /// Delete tvchannel tags
+        /// Delete tvChannel tags
         /// </summary>
-        /// <param name="tvchannelTags">TvChannel tags</param>
+        /// <param name="tvChannelTags">TvChannel tags</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelTagsAsync(IList<TvChannelTag> tvchannelTags);
+        Task DeleteTvChannelTagsAsync(IList<TvChannelTag> tvChannelTags);
 
         /// <summary>
-        /// Gets tvchannel tags
+        /// Gets tvChannel tags
         /// </summary>
-        /// <param name="tvchannelTagIds">TvChannel tags identifiers</param>
+        /// <param name="tvChannelTagIds">TvChannel tags identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tags
+        /// The task result contains the tvChannel tags
         /// </returns>
-        Task<IList<TvChannelTag>> GetTvChannelTagsByIdsAsync(int[] tvchannelTagIds);
+        Task<IList<TvChannelTag>> GetTvChannelTagsByIdsAsync(int[] tvChannelTagIds);
 
         /// <summary>
-        /// Gets all tvchannel tags
+        /// Gets all tvChannel tags
         /// </summary>
         /// <param name="tagName">Tag name</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tags
+        /// The task result contains the tvChannel tags
         /// </returns>
         Task<IList<TvChannelTag>> GetAllTvChannelTagsAsync(string tagName = null);
 
         /// <summary>
-        /// Gets all tvchannel tags by tvchannel identifier
+        /// Gets all tvChannel tags by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tags
+        /// The task result contains the tvChannel tags
         /// </returns>
-        Task<IList<TvChannelTag>> GetAllTvChannelTagsByTvChannelIdAsync(int tvchannelId);
+        Task<IList<TvChannelTag>> GetAllTvChannelTagsByTvChannelIdAsync(int tvChannelId);
 
         /// <summary>
-        /// Gets tvchannel tag
+        /// Gets tvChannel tag
         /// </summary>
-        /// <param name="tvchannelTagId">TvChannel tag identifier</param>
+        /// <param name="tvChannelTagId">TvChannel tag identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tag
+        /// The task result contains the tvChannel tag
         /// </returns>
-        Task<TvChannelTag> GetTvChannelTagByIdAsync(int tvchannelTagId);
+        Task<TvChannelTag> GetTvChannelTagByIdAsync(int tvChannelTagId);
 
         /// <summary>
-        /// Inserts a tvchannel-tvchannel tag mapping
+        /// Inserts a tvChannel-tvChannel tag mapping
         /// </summary>
-        /// <param name="tagMapping">TvChannel-tvchannel tag mapping</param>
+        /// <param name="tagMapping">TvChannel-tvChannel tag mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelTvChannelTagMappingAsync(TvChannelTvChannelTagMapping tagMapping);
         
         /// <summary>
-        /// Updates the tvchannel tag
+        /// Updates the tvChannel tag
         /// </summary>
-        /// <param name="tvchannelTag">TvChannel tag</param>
+        /// <param name="tvChannelTag">TvChannel tag</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelTagAsync(TvChannelTag tvchannelTag);
+        Task UpdateTvChannelTagAsync(TvChannelTag tvChannelTag);
 
         /// <summary>
-        /// Get number of tvchannels
+        /// Get number of tvChannels
         /// </summary>
-        /// <param name="tvchannelTagId">TvChannel tag identifier</param>
+        /// <param name="tvChannelTagId">TvChannel tag identifier</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the number of tvchannels
+        /// The task result contains the number of tvChannels
         /// </returns>
-        Task<int> GetTvChannelCountByTvChannelTagIdAsync(int tvchannelTagId, int storeId, bool showHidden = false);
+        Task<int> GetTvChannelCountByTvChannelTagIdAsync(int tvChannelTagId, int storeId, bool showHidden = false);
 
         /// <summary>
-        /// Get tvchannel count for every linked tag
+        /// Get tvChannel count for every linked tag
         /// </summary>
         /// <param name="storeId">Store identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the dictionary of "tvchannel tag ID : tvchannel count"
+        /// The task result contains the dictionary of "tvChannel tag ID : tvChannel count"
         /// </returns>
         Task<Dictionary<int, int>> GetTvChannelCountAsync(int storeId, bool showHidden = false);
         
         /// <summary>
-        /// Update tvchannel tags
+        /// Update tvChannel tags
         /// </summary>
-        /// <param name="tvchannel">TvChannel for update</param>
-        /// <param name="tvchannelTags">TvChannel tags</param>
+        /// <param name="tvChannel">TvChannel for update</param>
+        /// <param name="tvChannelTags">TvChannel tags</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelTagsAsync(TvChannel tvchannel, string[] tvchannelTags);
+        Task UpdateTvChannelTagsAsync(TvChannel tvChannel, string[] tvChannelTags);
     }
 }

@@ -19,7 +19,7 @@ using TvProgViewer.Web.Framework.Models.Extensions;
 namespace TvProgViewer.WebUI.Areas.Admin.Factories
 {
     /// <summary>
-    /// Represents the tvchannel review model factory implementation
+    /// Represents the tvChannel review model factory implementation
     /// </summary>
     public partial class TvChannelReviewModelFactory : ITvChannelReviewModelFactory
     {
@@ -31,7 +31,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IDateTimeHelper _dateTimeHelper;
         private readonly IHtmlFormatter _htmlFormatter;
         private readonly ILocalizationService _localizationService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IReviewTypeService _reviewTypeService;
         private readonly IStoreService _storeService;
         private readonly IWorkContext _workContext;
@@ -46,7 +46,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IDateTimeHelper dateTimeHelper,
             IHtmlFormatter htmlFormatter,
             ILocalizationService localizationService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IReviewTypeService reviewTypeService,
             IStoreService storeService,
             IWorkContext workContext)
@@ -57,7 +57,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _dateTimeHelper = dateTimeHelper;
             _htmlFormatter = htmlFormatter;
             _localizationService = localizationService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _reviewTypeService = reviewTypeService;
             _storeService = storeService;
             _workContext = workContext;
@@ -68,12 +68,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         #region Methods
 
         /// <summary>
-        /// Prepare tvchannel review search model
+        /// Prepare tvChannel review search model
         /// </summary>
         /// <param name="searchModel">TvChannel review search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review search model
+        /// The task result contains the tvChannel review search model
         /// </returns>
         public virtual async Task<TvChannelReviewSearchModel> PrepareTvChannelReviewSearchModelAsync(TvChannelReviewSearchModel searchModel)
         {
@@ -111,12 +111,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged tvchannel review list model
+        /// Prepare paged tvChannel review list model
         /// </summary>
         /// <param name="searchModel">TvChannel review search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review list model
+        /// The task result contains the tvChannel review list model
         /// </returns>
         public virtual async Task<TvChannelReviewListModel> PrepareTvChannelReviewListModelAsync(TvChannelReviewSearchModel searchModel)
         {
@@ -132,40 +132,40 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             var vendor = await _workContext.GetCurrentVendorAsync();
             var vendorId = vendor?.Id ?? 0;
 
-            //get tvchannel reviews
-            var tvchannelReviews = await _tvchannelService.GetAllTvChannelReviewsAsync(showHidden: true,
+            //get tvChannel reviews
+            var tvChannelReviews = await _tvChannelService.GetAllTvChannelReviewsAsync(showHidden: true,
                 userId: 0,
                 approved: isApprovedOnly,
                 fromUtc: createdOnFromValue,
                 toUtc: createdToFromValue,
                 message: searchModel.SearchText,
                 storeId: searchModel.SearchStoreId,
-                tvchannelId: searchModel.SearchTvChannelId,
+                tvChannelId: searchModel.SearchTvChannelId,
                 vendorId: vendorId,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare list model
-            var model = await new TvChannelReviewListModel().PrepareToGridAsync(searchModel, tvchannelReviews, () =>
+            var model = await new TvChannelReviewListModel().PrepareToGridAsync(searchModel, tvChannelReviews, () =>
             {
-                return tvchannelReviews.SelectAwait(async tvchannelReview =>
+                return tvChannelReviews.SelectAwait(async tvChannelReview =>
                 {
                     //fill in model values from the entity
-                    var tvchannelReviewModel = tvchannelReview.ToModel<TvChannelReviewModel>();
+                    var tvChannelReviewModel = tvChannelReview.ToModel<TvChannelReviewModel>();
 
                     //convert dates to the user time
-                    tvchannelReviewModel.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(tvchannelReview.CreatedOnUtc, DateTimeKind.Utc);
+                    tvChannelReviewModel.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(tvChannelReview.CreatedOnUtc, DateTimeKind.Utc);
 
                     //fill in additional values (not existing in the entity)
-                    tvchannelReviewModel.StoreName = (await _storeService.GetStoreByIdAsync(tvchannelReview.StoreId))?.Name;
-                    tvchannelReviewModel.TvChannelName = (await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId))?.Name;
-                    tvchannelReviewModel.UserInfo = (await _userService.GetUserByIdAsync(tvchannelReview.UserId)) is User user && (await _userService.IsRegisteredAsync(user))
+                    tvChannelReviewModel.StoreName = (await _storeService.GetStoreByIdAsync(tvChannelReview.StoreId))?.Name;
+                    tvChannelReviewModel.TvChannelName = (await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId))?.Name;
+                    tvChannelReviewModel.UserInfo = (await _userService.GetUserByIdAsync(tvChannelReview.UserId)) is User user && (await _userService.IsRegisteredAsync(user))
                         ? user.Email
                         : await _localizationService.GetResourceAsync("Admin.Users.Guest");
 
-                    tvchannelReviewModel.ReviewText = _htmlFormatter.FormatText(tvchannelReview.ReviewText, false, true, false, false, false, false);
-                    tvchannelReviewModel.ReplyText = _htmlFormatter.FormatText(tvchannelReview.ReplyText, false, true, false, false, false, false);
+                    tvChannelReviewModel.ReviewText = _htmlFormatter.FormatText(tvChannelReview.ReviewText, false, true, false, false, false, false);
+                    tvChannelReviewModel.ReplyText = _htmlFormatter.FormatText(tvChannelReview.ReplyText, false, true, false, false, false, false);
 
-                    return tvchannelReviewModel;
+                    return tvChannelReviewModel;
                 });
             });
 
@@ -173,50 +173,50 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel review model
+        /// Prepare tvChannel review model
         /// </summary>
         /// <param name="model">TvChannel review model</param>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review model
+        /// The task result contains the tvChannel review model
         /// </returns>
         public virtual async Task<TvChannelReviewModel> PrepareTvChannelReviewModelAsync(TvChannelReviewModel model,
-            TvChannelReview tvchannelReview, bool excludeProperties = false)
+            TvChannelReview tvChannelReview, bool excludeProperties = false)
         {
-            if (tvchannelReview != null)
+            if (tvChannelReview != null)
             {
                 var showStoreName = (await _storeService.GetAllStoresAsync()).Count > 1;
 
                 //fill in model values from the entity
                 model ??= new TvChannelReviewModel
                 {
-                    Id = tvchannelReview.Id,
-                    StoreName = showStoreName ? (await _storeService.GetStoreByIdAsync(tvchannelReview.StoreId))?.Name : string.Empty,
-                    TvChannelId = tvchannelReview.TvChannelId,
-                    TvChannelName = (await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId))?.Name,
-                    UserId = tvchannelReview.UserId,
-                    Rating = tvchannelReview.Rating
+                    Id = tvChannelReview.Id,
+                    StoreName = showStoreName ? (await _storeService.GetStoreByIdAsync(tvChannelReview.StoreId))?.Name : string.Empty,
+                    TvChannelId = tvChannelReview.TvChannelId,
+                    TvChannelName = (await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId))?.Name,
+                    UserId = tvChannelReview.UserId,
+                    Rating = tvChannelReview.Rating
                 };
 
                 model.ShowStoreName = showStoreName;
 
-                model.UserInfo = await _userService.GetUserByIdAsync(tvchannelReview.UserId) is User user && await _userService.IsRegisteredAsync(user)
+                model.UserInfo = await _userService.GetUserByIdAsync(tvChannelReview.UserId) is User user && await _userService.IsRegisteredAsync(user)
                     ? user.Email : await _localizationService.GetResourceAsync("Admin.Users.Guest");
 
-                model.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(tvchannelReview.CreatedOnUtc, DateTimeKind.Utc);
+                model.CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(tvChannelReview.CreatedOnUtc, DateTimeKind.Utc);
 
                 if (!excludeProperties)
                 {
-                    model.Title = tvchannelReview.Title;
-                    model.ReviewText = tvchannelReview.ReviewText;
-                    model.ReplyText = tvchannelReview.ReplyText;
-                    model.IsApproved = tvchannelReview.IsApproved;
+                    model.Title = tvChannelReview.Title;
+                    model.ReviewText = tvChannelReview.ReviewText;
+                    model.ReplyText = tvChannelReview.ReplyText;
+                    model.IsApproved = tvChannelReview.IsApproved;
                 }
 
                 //prepare nested search model
-                await PrepareTvChannelReviewReviewTypeMappingSearchModelAsync(model.TvChannelReviewReviewTypeMappingSearchModel, tvchannelReview);
+                await PrepareTvChannelReviewReviewTypeMappingSearchModelAsync(model.TvChannelReviewReviewTypeMappingSearchModel, tvChannelReview);
             }
 
             model.IsLoggedInAsVendor = await _workContext.GetCurrentVendorAsync() != null;
@@ -225,26 +225,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel review mapping search model
+        /// Prepare tvChannel review mapping search model
         /// </summary>
         /// <param name="searchModel">TvChannel review mapping search model</param>
-        /// <param name="tvchannelReview">TvChannel</param>
+        /// <param name="tvChannelReview">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review mapping search model
+        /// The task result contains the tvChannel review mapping search model
         /// </returns>
         public virtual async Task<TvChannelReviewReviewTypeMappingSearchModel> PrepareTvChannelReviewReviewTypeMappingSearchModelAsync(TvChannelReviewReviewTypeMappingSearchModel searchModel,
-            TvChannelReview tvchannelReview)
+            TvChannelReview tvChannelReview)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            if (tvchannelReview == null)
-                throw new ArgumentNullException(nameof(tvchannelReview));
+            if (tvChannelReview == null)
+                throw new ArgumentNullException(nameof(tvChannelReview));
 
-            searchModel.TvChannelReviewId = tvchannelReview.Id;
+            searchModel.TvChannelReviewId = tvChannelReview.Id;
 
-            searchModel.IsAnyReviewTypes = (await _reviewTypeService.GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(tvchannelReview.Id)).Any();
+            searchModel.IsAnyReviewTypes = (await _reviewTypeService.GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(tvChannelReview.Id)).Any();
 
             //prepare page parameters
             searchModel.SetGridPageSize();
@@ -253,43 +253,43 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged tvchannel reviews mapping list model
+        /// Prepare paged tvChannel reviews mapping list model
         /// </summary>
         /// <param name="searchModel">TvChannel review and review type mapping search model</param>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review and review type mapping list model
+        /// The task result contains the tvChannel review and review type mapping list model
         /// </returns>
-        public virtual async Task<TvChannelReviewReviewTypeMappingListModel> PrepareTvChannelReviewReviewTypeMappingListModelAsync(TvChannelReviewReviewTypeMappingSearchModel searchModel, TvChannelReview tvchannelReview)
+        public virtual async Task<TvChannelReviewReviewTypeMappingListModel> PrepareTvChannelReviewReviewTypeMappingListModelAsync(TvChannelReviewReviewTypeMappingSearchModel searchModel, TvChannelReview tvChannelReview)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            if (tvchannelReview == null)
-                throw new ArgumentNullException(nameof(tvchannelReview));
+            if (tvChannelReview == null)
+                throw new ArgumentNullException(nameof(tvChannelReview));
 
-            //get tvchannel review and review type mappings
-            var tvchannelReviewReviewTypeMappings = (await _reviewTypeService
-                .GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(tvchannelReview.Id)).ToPagedList(searchModel);
+            //get tvChannel review and review type mappings
+            var tvChannelReviewReviewTypeMappings = (await _reviewTypeService
+                .GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(tvChannelReview.Id)).ToPagedList(searchModel);
 
             //prepare grid model
-            var model = await new TvChannelReviewReviewTypeMappingListModel().PrepareToGridAsync(searchModel, tvchannelReviewReviewTypeMappings, () =>
+            var model = await new TvChannelReviewReviewTypeMappingListModel().PrepareToGridAsync(searchModel, tvChannelReviewReviewTypeMappings, () =>
             {
-                return tvchannelReviewReviewTypeMappings.SelectAwait(async tvchannelReviewReviewTypeMapping =>
+                return tvChannelReviewReviewTypeMappings.SelectAwait(async tvChannelReviewReviewTypeMapping =>
                 {
                     //fill in model values from the entity
-                    var tvchannelReviewReviewTypeMappingModel = tvchannelReviewReviewTypeMapping
+                    var tvChannelReviewReviewTypeMappingModel = tvChannelReviewReviewTypeMapping
                         .ToModel<TvChannelReviewReviewTypeMappingModel>();
 
                     //fill in additional values (not existing in the entity)
-                    var reviewType = await _reviewTypeService.GetReviewTypeByIdAsync(tvchannelReviewReviewTypeMapping.ReviewTypeId);
+                    var reviewType = await _reviewTypeService.GetReviewTypeByIdAsync(tvChannelReviewReviewTypeMapping.ReviewTypeId);
 
-                    tvchannelReviewReviewTypeMappingModel.Name = await _localizationService.GetLocalizedAsync(reviewType, entity => entity.Name);
-                    tvchannelReviewReviewTypeMappingModel.Description = await _localizationService.GetLocalizedAsync(reviewType, entity => entity.Description);
-                    tvchannelReviewReviewTypeMappingModel.VisibleToAllUsers = reviewType.VisibleToAllUsers;
+                    tvChannelReviewReviewTypeMappingModel.Name = await _localizationService.GetLocalizedAsync(reviewType, entity => entity.Name);
+                    tvChannelReviewReviewTypeMappingModel.Description = await _localizationService.GetLocalizedAsync(reviewType, entity => entity.Description);
+                    tvChannelReviewReviewTypeMappingModel.VisibleToAllUsers = reviewType.VisibleToAllUsers;
 
-                    return tvchannelReviewReviewTypeMappingModel;
+                    return tvChannelReviewReviewTypeMappingModel;
                 });
             });
 

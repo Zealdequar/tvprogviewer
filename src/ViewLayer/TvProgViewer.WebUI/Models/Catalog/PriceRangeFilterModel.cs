@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannels price range filter model
+    /// Represents a tvChannels price range filter model
     /// </summary>
     public partial record PriceRangeFilterModel : BaseTvProgModel
     {

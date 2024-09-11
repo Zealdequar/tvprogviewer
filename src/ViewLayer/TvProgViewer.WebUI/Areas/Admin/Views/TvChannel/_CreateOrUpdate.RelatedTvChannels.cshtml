@@ -10,7 +10,7 @@
 
                 @await Html.PartialAsync("Table", new DataTablesModel
                 {
-                    Name = "relatedtvchannels-grid",
+                    Name = "relatedtvChannels-grid",
                     UrlRead = new DataUrl("RelatedTvChannelList", "TvChannel", new RouteValueDictionary { [nameof(Model.RelatedTvChannelSearchModel.TvChannelId)] = Model.RelatedTvChannelSearchModel.TvChannelId }),
                     UrlDelete = new DataUrl("RelatedTvChannelDelete", "TvChannel", null),
                     UrlUpdate = new DataUrl("RelatedTvChannelUpdate", "TvChannel", null),
@@ -55,7 +55,7 @@
                 })
             </div>
             <div class="card-footer">
-                <button type="submit" id="btnAddNewRelatedTvChannel" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("RelatedTvChannelAddPopup", "TvChannel", new {tvchannelId = Model.Id, btnId = "btnRefreshRelatedTvChannels", formId = "tvchannel-form"}))', 800, 800, true); return false;">
+                <button type="submit" id="btnAddNewRelatedTvChannel" class="btn btn-primary" onclick="javascript:OpenWindow('@(Url.Action("RelatedTvChannelAddPopup", "TvChannel", new {tvChannelId = Model.Id, btnId = "btnRefreshRelatedTvChannels", formId = "tvChannel-form"}))', 800, 800, true); return false;">
                     @T("Admin.Catalog.TvChannels.RelatedTvChannels.AddNew")
                 </button>
                 <button type="submit" id="btnRefreshRelatedTvChannels" style="display: none"></button>
@@ -63,7 +63,7 @@
                     $(document).ready(function () {
                         $('#btnRefreshRelatedTvChannels').click(function () {
                             //refresh grid
-                            updateTable('#relatedtvchannels-grid');
+                            updateTable('#relatedtvChannels-grid');
 
                             //return false to don't reload a page
                             return false;

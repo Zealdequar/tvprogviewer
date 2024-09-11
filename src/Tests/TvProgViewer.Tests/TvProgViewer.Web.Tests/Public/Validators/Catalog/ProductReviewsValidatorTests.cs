@@ -1,51 +1,51 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.Catalog;
-using Nop.Web.Validators.Catalog;
+using TvProgViewer.WebUI.Models.Catalog;
+using TvProgViewer.WebUI.Validators.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Catalog
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.Catalog
 {
     [TestFixture]
-    public class ProductReviewsValidatorTests : BaseNopTest
+    public class TvChannelReviewsValidatorTests : BaseTvProgTest
     {
-        private ProductReviewsValidator _validator;
+        private TvChannelReviewsValidator _validator;
 
         [OneTimeSetUp]
         public void Setup()
         {
-            _validator = GetService<ProductReviewsValidator>();
+            _validator = GetService<TvChannelReviewsValidator>();
         }
 
         [Test]
         public void ShouldHaveErrorWhenTitleIsNullOrEmpty()
         {
-            var model = new ProductReviewsModel { AddProductReview = { Title = null } };
-            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddProductReview.Title);
-            model.AddProductReview.Title = string.Empty;
-            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddProductReview.Title);
+            var model = new TvChannelReviewsModel { AddTvChannelReview = { Title = null } };
+            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddTvChannelReview.Title);
+            model.AddTvChannelReview.Title = string.Empty;
+            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddTvChannelReview.Title);
         }
 
         [Test]
         public void ShouldNotHaveErrorWhenTitleIsSpecified()
         {
-            var model = new ProductReviewsModel { AddProductReview = { Title = "some comment" } };
-            _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.AddProductReview.Title);
+            var model = new TvChannelReviewsModel { AddTvChannelReview = { Title = "some comment" } };
+            _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.AddTvChannelReview.Title);
         }
 
         [Test]
         public void ShouldHaveErrorWhenReviewTextIsNullOrEmpty()
         {
-            var model = new ProductReviewsModel { AddProductReview = { ReviewText = null } };
-            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddProductReview.ReviewText);
-            model.AddProductReview.ReviewText = string.Empty;
-            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddProductReview.ReviewText);
+            var model = new TvChannelReviewsModel { AddTvChannelReview = { ReviewText = null } };
+            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddTvChannelReview.ReviewText);
+            model.AddTvChannelReview.ReviewText = string.Empty;
+            _validator.TestValidate(model).ShouldHaveValidationErrorFor(x => x.AddTvChannelReview.ReviewText);
         }
 
         [Test]
         public void ShouldNotHaveErrorWhenReviewTextIsSpecified()
         {
-            var model = new ProductReviewsModel { AddProductReview = { ReviewText = "some comment" } };
-            _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.AddProductReview.ReviewText);
+            var model = new TvChannelReviewsModel { AddTvChannelReview = { ReviewText = "some comment" } };
+            _validator.TestValidate(model).ShouldNotHaveValidationErrorFor(x => x.AddTvChannelReview.ReviewText);
         }
     }
 }

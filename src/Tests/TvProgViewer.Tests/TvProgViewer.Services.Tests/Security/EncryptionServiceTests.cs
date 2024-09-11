@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Security;
-using Nop.Services.Configuration;
-using Nop.Services.Security;
+using TvProgViewer.Core.Domain.Security;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.Services.Security;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Security
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Security
 {
     [TestFixture]
     public class EncryptionServiceTests : ServiceTest

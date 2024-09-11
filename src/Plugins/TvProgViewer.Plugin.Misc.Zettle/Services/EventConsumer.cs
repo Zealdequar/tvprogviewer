@@ -12,32 +12,32 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
     /// Represents plugin event consumer
     /// </summary>
     public class EventConsumer :
-        IConsumer<EntityInsertedEvent<Product>>,
-        IConsumer<EntityUpdatedEvent<Product>>,
-        IConsumer<EntityDeletedEvent<Product>>,
-        IConsumer<EntityInsertedEvent<ProductCategory>>,
-        IConsumer<EntityDeletedEvent<ProductCategory>>,
+        IConsumer<EntityInsertedEvent<TvChannel>>,
+        IConsumer<EntityUpdatedEvent<TvChannel>>,
+        IConsumer<EntityDeletedEvent<TvChannel>>,
+        IConsumer<EntityInsertedEvent<TvChannelCategory>>,
+        IConsumer<EntityDeletedEvent<TvChannelCategory>>,
         IConsumer<EntityUpdatedEvent<Category>>,
         IConsumer<EntityDeletedEvent<Category>>,
-        IConsumer<EntityInsertedEvent<ProductPicture>>,
-        IConsumer<EntityUpdatedEvent<ProductPicture>>,
-        IConsumer<EntityDeletedEvent<ProductPicture>>,
-        IConsumer<EntityUpdatedEvent<ProductAttribute>>,
-        IConsumer<EntityDeletedEvent<ProductAttribute>>,
-        IConsumer<EntityUpdatedEvent<ProductAttributeValue>>,
-        IConsumer<EntityDeletedEvent<ProductAttributeValue>>,
-        IConsumer<EntityInsertedEvent<ProductAttributeCombination>>,
-        IConsumer<EntityUpdatedEvent<ProductAttributeCombination>>,
-        IConsumer<EntityDeletedEvent<ProductAttributeCombination>>,
+        IConsumer<EntityInsertedEvent<TvChannelPicture>>,
+        IConsumer<EntityUpdatedEvent<TvChannelPicture>>,
+        IConsumer<EntityDeletedEvent<TvChannelPicture>>,
+        IConsumer<EntityUpdatedEvent<TvChannelAttribute>>,
+        IConsumer<EntityDeletedEvent<TvChannelAttribute>>,
+        IConsumer<EntityUpdatedEvent<TvChannelAttributeValue>>,
+        IConsumer<EntityDeletedEvent<TvChannelAttributeValue>>,
+        IConsumer<EntityInsertedEvent<TvChannelAttributeCombination>>,
+        IConsumer<EntityUpdatedEvent<TvChannelAttributeCombination>>,
+        IConsumer<EntityDeletedEvent<TvChannelAttributeCombination>>,
         IConsumer<EntityInsertedEvent<StockQuantityHistory>>
 
     {
         #region Fields
 
         private readonly ICategoryService _categoryService;
-        private readonly IProductAttributeParser _productAttributeParser;
-        private readonly IProductAttributeService _productAttributeService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly ZettleRecordService _zettleRecordService;
         private readonly ZettleService _zettleService;
         private readonly ZettleSettings _zettleSettings;
@@ -47,17 +47,17 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         #region Ctor
 
         public EventConsumer(ICategoryService categoryService,
-            IProductAttributeParser productAttributeParser,
-            IProductAttributeService productAttributeService,
-            IProductService productService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
             ZettleRecordService zettleRecordService,
             ZettleService zettleService,
             ZettleSettings zettleSettings)
         {
             _categoryService = categoryService;
-            _productAttributeParser = productAttributeParser;
-            _productAttributeService = productAttributeService;
-            _productService = productService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
             _zettleRecordService = zettleRecordService;
             _zettleService = zettleService;
             _zettleSettings = zettleSettings;
@@ -72,7 +72,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannel> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -88,7 +88,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannel> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -101,10 +101,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             else
             {
                 await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, eventMessage.Entity.Id);
-                var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(eventMessage.Entity.Id);
+                var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(eventMessage.Entity.Id);
                 foreach (var combination in combinations)
                 {
-                    await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, combination.ProductId, combination.Id);
+                    await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, combination.TvChannelId, combination.Id);
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<Product> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannel> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -123,10 +123,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                 return;
 
             await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, eventMessage.Entity.Id);
-            var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(eventMessage.Entity.Id);
+            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(eventMessage.Entity.Id);
             foreach (var combination in combinations)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, combination.ProductId, combination.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, combination.TvChannelId, combination.Id);
             }
         }
 
@@ -135,7 +135,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<ProductCategory> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannelCategory> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -146,7 +146,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!_zettleSettings.CategorySyncEnabled)
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.TvChannelId);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductCategory> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelCategory> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -165,7 +165,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!_zettleSettings.CategorySyncEnabled)
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.TvChannelId);
         }
 
         /// <summary>
@@ -184,10 +184,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!_zettleSettings.CategorySyncEnabled)
                 return;
 
-            var mappings = await _categoryService.GetProductCategoriesByCategoryIdAsync(eventMessage.Entity.Id, showHidden: true);
+            var mappings = await _categoryService.GetTvChannelCategoriesByCategoryIdAsync(eventMessage.Entity.Id, showHidden: true);
             foreach (var mapping in mappings)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.ProductId);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.TvChannelId);
             }
         }
 
@@ -207,10 +207,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!_zettleSettings.CategorySyncEnabled)
                 return;
 
-            var mappings = await _categoryService.GetProductCategoriesByCategoryIdAsync(eventMessage.Entity.Id, showHidden: true);
+            var mappings = await _categoryService.GetTvChannelCategoriesByCategoryIdAsync(eventMessage.Entity.Id, showHidden: true);
             foreach (var mapping in mappings)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.ProductId);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.TvChannelId);
             }
         }
 
@@ -219,7 +219,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannelPicture> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -227,9 +227,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            var pictures = await _productService.GetProductPicturesByProductIdAsync(eventMessage.Entity.ProductId);
+            var pictures = await _tvChannelService.GetTvChannelPicturesByTvChannelIdAsync(eventMessage.Entity.TvChannelId);
             if (eventMessage.Entity.DisplayOrder <= pictures.Min(picture => picture.DisplayOrder))
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.ImageChanged, eventMessage.Entity.ProductId);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.ImageChanged, eventMessage.Entity.TvChannelId);
         }
 
         /// <summary>
@@ -237,7 +237,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelPicture> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -245,9 +245,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            var pictures = await _productService.GetProductPicturesByProductIdAsync(eventMessage.Entity.ProductId);
+            var pictures = await _tvChannelService.GetTvChannelPicturesByTvChannelIdAsync(eventMessage.Entity.TvChannelId);
             if (eventMessage.Entity.DisplayOrder <= pictures.Min(picture => picture.DisplayOrder))
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.ImageChanged, eventMessage.Entity.ProductId);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.ImageChanged, eventMessage.Entity.TvChannelId);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductPicture> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelPicture> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -263,7 +263,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.ImageChanged, eventMessage.Entity.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.ImageChanged, eventMessage.Entity.TvChannelId);
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<ProductAttribute> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelAttribute> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -279,14 +279,14 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            var products = await _productService.GetProductsByProductAttributeIdAsync(eventMessage.Entity.Id);
-            foreach (var product in products)
+            var tvChannels = await _tvChannelService.GetTvChannelsByTvChannelAttributeIdAsync(eventMessage.Entity.Id);
+            foreach (var tvChannel in tvChannels)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, product.Id);
-                var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, tvChannel.Id);
+                var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
                 foreach (var combination in combinations)
                 {
-                    await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.ProductId, combination.Id);
+                    await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.TvChannelId, combination.Id);
                 }
             }
         }
@@ -296,7 +296,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductAttribute> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelAttribute> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -304,18 +304,18 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            var products = await _productService.GetProductsByProductAttributeIdAsync(eventMessage.Entity.Id);
-            foreach (var product in products)
+            var tvChannels = await _tvChannelService.GetTvChannelsByTvChannelAttributeIdAsync(eventMessage.Entity.Id);
+            foreach (var tvChannel in tvChannels)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, product.Id);
-                var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, tvChannel.Id);
+                var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
                 foreach (var combination in combinations)
                 {
-                    var mappings = await _productAttributeParser.ParseProductAttributeMappingsAsync(combination.AttributesXml);
-                    if (mappings.Any(mapping => mapping.ProductAttributeId == eventMessage.Entity.Id))
-                        await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, combination.ProductId, combination.Id);
+                    var mappings = await _tvChannelAttributeParser.ParseTvChannelAttributeMappingsAsync(combination.AttributesXml);
+                    if (mappings.Any(mapping => mapping.TvChannelAttributeId == eventMessage.Entity.Id))
+                        await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, combination.TvChannelId, combination.Id);
                     else
-                        await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.ProductId, combination.Id);
+                        await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.TvChannelId, combination.Id);
                 }
             }
         }
@@ -325,7 +325,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<ProductAttributeValue> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelAttributeValue> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -333,15 +333,15 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            var mapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(eventMessage.Entity.ProductAttributeMappingId);
+            var mapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(eventMessage.Entity.TvChannelAttributeMappingId);
             if (mapping is null)
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.ProductId);
-            var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(mapping.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.TvChannelId);
+            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(mapping.TvChannelId);
             foreach (var combination in combinations)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.ProductId, combination.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.TvChannelId, combination.Id);
             }
         }
 
@@ -350,7 +350,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductAttributeValue> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelAttributeValue> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -358,15 +358,15 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            var mapping = await _productAttributeService.GetProductAttributeMappingByIdAsync(eventMessage.Entity.ProductAttributeMappingId);
+            var mapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(eventMessage.Entity.TvChannelAttributeMappingId);
             if (mapping is null)
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.ProductId);
-            var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(mapping.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, mapping.TvChannelId);
+            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(mapping.TvChannelId);
             foreach (var combination in combinations)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.ProductId, combination.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.TvChannelId, combination.Id);
             }
         }
 
@@ -375,7 +375,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityInsertedEvent<ProductAttributeCombination> eventMessage)
+        public async Task HandleEventAsync(EntityInsertedEvent<TvChannelAttributeCombination> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -383,12 +383,12 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.ProductId);
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Create, eventMessage.Entity.ProductId, eventMessage.Entity.Id);
-            var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(eventMessage.Entity.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.TvChannelId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Create, eventMessage.Entity.TvChannelId, eventMessage.Entity.Id);
+            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(eventMessage.Entity.TvChannelId);
             foreach (var combination in combinations)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.ProductId, combination.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.TvChannelId, combination.Id);
             }
         }
 
@@ -397,7 +397,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityUpdatedEvent<ProductAttributeCombination> eventMessage)
+        public async Task HandleEventAsync(EntityUpdatedEvent<TvChannelAttributeCombination> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -405,11 +405,11 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.ProductId);
-            var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(eventMessage.Entity.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.TvChannelId);
+            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(eventMessage.Entity.TvChannelId);
             foreach (var combination in combinations)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.ProductId, combination.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.TvChannelId, combination.Id);
             }
         }
 
@@ -418,7 +418,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(EntityDeletedEvent<ProductAttributeCombination> eventMessage)
+        public async Task HandleEventAsync(EntityDeletedEvent<TvChannelAttributeCombination> eventMessage)
         {
             if (eventMessage.Entity is null)
                 return;
@@ -426,12 +426,12 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (!ZettleService.IsConfigured(_zettleSettings))
                 return;
 
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.ProductId);
-            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, eventMessage.Entity.ProductId, eventMessage.Entity.Id);
-            var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(eventMessage.Entity.ProductId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, eventMessage.Entity.TvChannelId);
+            await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Delete, eventMessage.Entity.TvChannelId, eventMessage.Entity.Id);
+            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(eventMessage.Entity.TvChannelId);
             foreach (var combination in combinations)
             {
-                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.ProductId, combination.Id);
+                await _zettleRecordService.CreateOrUpdateRecordAsync(OperationType.Update, combination.TvChannelId, combination.Id);
             }
         }
 
@@ -454,7 +454,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             if (eventMessage.Entity.Message.StartsWith(ZettleDefaults.SystemName))
                 return;
 
-            await _zettleService.ChangeInventoryBalanceAsync(eventMessage.Entity.ProductId,
+            await _zettleService.ChangeInventoryBalanceAsync(eventMessage.Entity.TvChannelId,
                 eventMessage.Entity.CombinationId ?? 0, eventMessage.Entity.QuantityAdjustment);
         }
 

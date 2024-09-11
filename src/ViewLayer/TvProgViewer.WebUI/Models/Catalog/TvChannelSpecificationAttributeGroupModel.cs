@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Models.Catalog
 {
     /// <summary>
-    /// Represents a grouped tvchannel specification attribute model
+    /// Represents a grouped tvChannel specification attribute model
     /// </summary>
     public partial record TvChannelSpecificationAttributeGroupModel : BaseTvProgEntityModel
     {

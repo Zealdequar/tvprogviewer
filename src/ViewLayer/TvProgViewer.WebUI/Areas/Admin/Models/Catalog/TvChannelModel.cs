@@ -9,7 +9,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel model
+    /// Represents a tvChannel model
     /// </summary>
     public partial record TvChannelModel : BaseTvProgEntityModel, 
         IAclSupportedModel, IDiscountSupportedModel, ILocalizedModel<TvChannelLocalizedModel>, IStoreMappingSupportedModel
@@ -94,7 +94,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
         public int TvChannelTemplateId { get; set; }
         public IList<SelectListItem> AvailableTvChannelTemplates { get; set; }
 
-        //<tvchannel type ID, list of supported tvchannel template IDs>
+        //<tvChannel type ID, list of supported tvChannel template IDs>
         public Dictionary<int, IList<SelectListItem>> TvChannelsTypesSupportedByTvChannelTemplates { get; set; }
 
         [TvProgResourceDisplayName("Admin.Catalog.TvChannels.Fields.Name")]
@@ -438,7 +438,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
         public TvChannelVideoModel AddVideoModel { get; set; }
         public IList<TvChannelVideoModel> TvChannelVideoModels { get; set; }
 
-        //tvchannel attributes
+        //tvChannel attributes
         public bool TvChannelAttributesExist { get; set; }
         public bool CanCreateCombinations { get; set; }
 
@@ -449,7 +449,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
         //specification attributes
         public bool HasAvailableSpecificationAttributes { get; set; }
 
-        //copy tvchannel
+        //copy tvChannel
         public CopyTvChannelModel CopyTvChannelModel { get; set; }
 
         //editor settings

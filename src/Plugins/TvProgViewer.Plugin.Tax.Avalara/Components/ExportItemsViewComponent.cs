@@ -8,7 +8,7 @@ using TvProgViewer.Web.Framework.Infrastructure;
 namespace TvProgViewer.Plugin.Tax.Avalara.Components
 {
     /// <summary>
-    /// Represents a view component to render the button on a product list view
+    /// Represents a view component to render the button on a tvChannel list view
     /// </summary>
     public class ExportItemsViewComponent : TvProgViewComponent
     {
@@ -51,10 +51,10 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Components
                 return Content(string.Empty);
 
             //ensure that it's a proper widget zone
-            if (!widgetZone.Equals(AdminWidgetZones.ProductListButtons))
+            if (!widgetZone.Equals(AdminWidgetZones.TvChannelListButtons))
                 return Content(string.Empty);
 
-            return View("~/Plugins/Tax.Avalara/Views/Product/ExportItems.cshtml");
+            return View("~/Plugins/Tax.Avalara/Views/TvChannel/ExportItems.cshtml");
         }
 
         #endregion

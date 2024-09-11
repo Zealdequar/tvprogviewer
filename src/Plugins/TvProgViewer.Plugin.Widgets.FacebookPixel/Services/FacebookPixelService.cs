@@ -57,7 +57,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
         private readonly IOrderService _orderService;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly IPriceCalculationService _priceCalculationService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRepository<FacebookPixelConfiguration> _facebookPixelConfigurationRepository;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -83,7 +83,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
             IOrderService orderService,
             IOrderTotalCalculationService orderTotalCalculationService,
             IPriceCalculationService priceCalculationService,
-            IProductService productService,
+            ITvChannelService tvChannelService,
             IRepository<FacebookPixelConfiguration> facebookPixelConfigurationRepository,
             IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
@@ -106,7 +106,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
             _orderService = orderService;
             _orderTotalCalculationService = orderTotalCalculationService;
             _priceCalculationService = priceCalculationService;
-            _productService = productService;
+            _tvChannelService = tvChannelService;
             _facebookPixelConfigurationRepository = facebookPixelConfigurationRepository;
             _shoppingCartService = shoppingCartService;
             _stateProvinceService = stateProvinceService;
@@ -648,13 +648,13 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
                 ? FacebookPixelDefaults.ADD_TO_CART
                 : FacebookPixelDefaults.ADD_TO_WISHLIST;
 
-            var product = await _productService.GetProductByIdAsync(item.ProductId);
-            var categoryMapping = (await _categoryService.GetProductCategoriesByProductIdAsync(product?.Id ?? 0)).FirstOrDefault();
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
+            var categoryMapping = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel?.Id ?? 0)).FirstOrDefault();
             var categoryName = (await _categoryService.GetCategoryByIdAsync(categoryMapping?.CategoryId ?? 0))?.Name;
-            var sku = product != null ? await _productService.FormatSkuAsync(product, item.AttributesXml) : string.Empty;
-            var quantity = product != null ? (int?)item.Quantity : null;
-            var (productPrice, _, _, _) = await _priceCalculationService.GetFinalPriceAsync(product, user, store, includeDiscounts: false);
-            var (price, _) = await _taxService.GetProductPriceAsync(product, productPrice);
+            var sku = tvChannel != null ? await _tvChannelService.FormatSkuAsync(tvChannel, item.AttributesXml) : string.Empty;
+            var quantity = tvChannel != null ? (int?)item.Quantity : null;
+            var (tvChannelPrice, _, _, _) = await _priceCalculationService.GetFinalPriceAsync(tvChannel, user, store, includeDiscounts: false);
+            var (price, _) = await _taxService.GetTvChannelPriceAsync(tvChannel, tvChannelPrice);
             var currentCurrency = await _workContext.GetWorkingCurrencyAsync();
             var priceValue = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(price, currentCurrency);
             var currency = currentCurrency?.CurrencyCode;
@@ -663,8 +663,8 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
             {
                 ContentCategory = categoryName,
                 ContentIds = new List<string> { sku },
-                ContentName = product?.Name,
-                ContentType = "product",
+                ContentName = tvChannel?.Name,
+                ContentType = "tvChannel",
                 Contents = new List<object>
                 {
                     new
@@ -718,14 +718,14 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
             var currency = await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId);
             var contentsProperties = await (await _orderService.GetOrderItemsAsync(order.Id)).SelectAwait(async item =>
             {
-                var product = await _productService.GetProductByIdAsync(item.ProductId);
-                var sku = product != null ? await _productService.FormatSkuAsync(product, item.AttributesXml) : string.Empty;
-                var quantity = product != null ? (int?)item.Quantity : null;
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
+                var sku = tvChannel != null ? await _tvChannelService.FormatSkuAsync(tvChannel, item.AttributesXml) : string.Empty;
+                var quantity = tvChannel != null ? (int?)item.Quantity : null;
                 return new { id = sku, quantity = quantity };
             }).Cast<object>().ToListAsync();
             var eventObject = new ConversionsEventCustomData
             {
-                ContentType = "product",
+                ContentType = "tvChannel",
                 Contents = contentsProperties,
                 Currency = currency?.CurrencyCode,
                 Value = order.OrderTotal
@@ -752,30 +752,30 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
         /// <summary>
         /// Prepare view content event model
         /// </summary>
-        /// <param name="productDetails">Product details model</param>
+        /// <param name="tvChannelDetails">TvChannel details model</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the ConversionsEvent model
         /// </returns>
-        private async Task<ConversionsEvent> PrepareViewContentModelAsync(ProductDetailsModel productDetails)
+        private async Task<ConversionsEvent> PrepareViewContentModelAsync(TvChannelDetailsModel tvChannelDetails)
         {
-            if (productDetails == null)
-                throw new ArgumentNullException(nameof(productDetails));
+            if (tvChannelDetails == null)
+                throw new ArgumentNullException(nameof(tvChannelDetails));
 
             //prepare event object
-            var product = await _productService.GetProductByIdAsync(productDetails.Id);
-            var categoryMapping = (await _categoryService.GetProductCategoriesByProductIdAsync(product?.Id ?? 0)).FirstOrDefault();
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelDetails.Id);
+            var categoryMapping = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel?.Id ?? 0)).FirstOrDefault();
             var categoryName = (await _categoryService.GetCategoryByIdAsync(categoryMapping?.CategoryId ?? 0))?.Name;
-            var sku = productDetails.Sku;
-            var priceValue = productDetails.ProductPrice.PriceValue;
+            var sku = tvChannelDetails.Sku;
+            var priceValue = tvChannelDetails.TvChannelPrice.PriceValue;
             var currency = (await _workContext.GetWorkingCurrencyAsync())?.CurrencyCode;
 
             var eventObject = new ConversionsEventCustomData
             {
                 ContentCategory = categoryName,
                 ContentIds = new List<string> { sku },
-                ContentName = product?.Name,
-                ContentType = "product",
+                ContentName = tvChannel?.Name,
+                ContentType = "tvChannel",
                 Currency = currency,
                 Value = priceValue
             };
@@ -817,15 +817,15 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
 
             var contentsProperties = await cart.SelectAwait(async item =>
             {
-                var product = await _productService.GetProductByIdAsync(item.ProductId);
-                var sku = product != null ? await _productService.FormatSkuAsync(product, item.AttributesXml) : string.Empty;
-                var quantity = product != null ? (int?)item.Quantity : null;
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
+                var sku = tvChannel != null ? await _tvChannelService.FormatSkuAsync(tvChannel, item.AttributesXml) : string.Empty;
+                var quantity = tvChannel != null ? (int?)item.Quantity : null;
                 return new { id = sku, quantity = quantity };
             }).Cast<object>().ToListAsync();
 
             var eventObject = new ConversionsEventCustomData
             {
-                ContentType = "product",
+                ContentType = "tvChannel",
                 Contents = contentsProperties,
                 Currency = currency,
                 Value = priceValue
@@ -1118,12 +1118,12 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
         /// <summary>
         /// Send view content events
         /// </summary>
-        /// <param name="productDetailsModel">Product details model</param>
+        /// <param name="tvChannelDetailsModel">TvChannel details model</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task SendViewContentEventAsync(ProductDetailsModel productDetailsModel)
+        public async Task SendViewContentEventAsync(TvChannelDetailsModel tvChannelDetailsModel)
         {
             await HandleFunctionAsync(() =>
-                HandleEventAsync(() => PrepareViewContentModelAsync(productDetailsModel), FacebookPixelDefaults.VIEW_CONTENT));
+                HandleEventAsync(() => PrepareViewContentModelAsync(tvChannelDetailsModel), FacebookPixelDefaults.VIEW_CONTENT));
         }
 
         /// <summary>

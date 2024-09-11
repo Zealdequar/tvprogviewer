@@ -32,12 +32,12 @@
                 public static string GenericCatalogUrlWithLanguageCode => "GenericCatalogUrlWithLanguageCode";
 
                 /// <summary>
-                /// Gets the generic tvchannel catalog route name
+                /// Gets the generic tvChannel catalog route name
                 /// </summary>
                 public static string TvChannelCatalog => "TvChannelCatalog";
 
                 /// <summary>
-                /// Gets the generic tvchannel route name
+                /// Gets the generic tvChannel route name
                 /// </summary>
                 public static string TvChannel => "TvChannelDetails";
 
@@ -72,7 +72,7 @@
                 public static string Topic => "TopicDetails";
 
                 /// <summary>
-                /// Gets the generic tvchannel tag route name
+                /// Gets the generic tvChannel tag route name
                 /// </summary>
                 public static string TvChannelTag => "TvChannelsByTag";
             }
@@ -125,14 +125,14 @@
             public static string NewsItemId => "newsitemId";
 
             /// <summary>
-            /// Gets default key for tvchannel id route value
+            /// Gets default key for tvChannel id route value
             /// </summary>
-            public static string TvChannelId => "tvchannelid";
+            public static string TvChannelId => "tvChannelid";
 
             /// <summary>
-            /// Gets default key for tvchannel tag id route value
+            /// Gets default key for tvChannel tag id route value
             /// </summary>
-            public static string TvChannelTagId => "tvchannelTagId";
+            public static string TvChannelTagId => "tvChannelTagId";
 
             /// <summary>
             /// Gets default key for topic id route value

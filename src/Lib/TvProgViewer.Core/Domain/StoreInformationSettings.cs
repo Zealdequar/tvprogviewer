@@ -11,7 +11,7 @@ namespace TvProgViewer.Core.Domain
         /// Gets or sets a value indicating whether "powered by tvProgViewer" text should be displayed.
         /// Please find more info at https://tvprogviewer.ru/tvprogviewer-copyright-removal-key
         /// </summary>
-        public bool HidePoweredByTvProgViewer { get; set; }
+        public bool HidePoweredByNopCommerce { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether store is closed

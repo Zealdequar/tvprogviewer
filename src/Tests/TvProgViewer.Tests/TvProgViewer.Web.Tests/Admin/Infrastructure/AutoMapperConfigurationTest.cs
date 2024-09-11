@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Nop.Core.Infrastructure.Mapper;
-using Nop.Web.Areas.Admin.Infrastructure.Mapper;
+using TvProgViewer.Core.Infrastructure.Mapper;
+using TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Admin.Infrastructure
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Admin.Infrastructure
 {
     [TestFixture]
     public class AutoMapperConfigurationTest

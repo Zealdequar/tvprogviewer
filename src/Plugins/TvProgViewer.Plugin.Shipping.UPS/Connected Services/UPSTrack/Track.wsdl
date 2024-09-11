@@ -52,8 +52,8 @@
 			<!-- CIE (Customer Integration Environment) URL -->
 			<soap:address location="https://wwwcie.ups.com/webservices/Track"/>
 		</wsdl:port>
-        <wsdl:port name="ProductionTrackPort" binding="tns:TrackBinding">
-            <!-- Production URL -->
+        <wsdl:port name="TvChannelionTrackPort" binding="tns:TrackBinding">
+            <!-- TvChannelion URL -->
           <soap:address location="https://onlinetools.ups.com/webservices/Track"/>
         </wsdl:port>
 	</wsdl:service>

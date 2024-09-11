@@ -54,7 +54,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             }
 
             //#3511
-            var newTvChannelsNumber = settingService.GetSetting("catalogsettings.newtvchannelsnumber");
+            var newTvChannelsNumber = settingService.GetSetting("catalogsettings.newtvChannelsnumber");
             if (newTvChannelsNumber is not null && int.TryParse(newTvChannelsNumber.Value, out var newTvChannelsPageSize))
             {
                 catalogSettings.NewTvChannelsPageSize = newTvChannelsPageSize;
@@ -201,7 +201,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/files/exportimport/",
                     "/country/getstatesbycountryid",
                     "/install",
-                    "/settvchannelreviewhelpfulness",
+                    "/settvChannelreviewhelpfulness",
                     "/*?*returnUrl="
                 });
 
@@ -212,8 +212,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             {
                 robotsTxtSettings.LocalizableDisallowPaths.AddRange(new[]
                 {
-                    "/addtvchanneltocart/catalog/",
-                    "/addtvchanneltocart/details/",
+                    "/addtvChanneltocart/catalog/",
+                    "/addtvChanneltocart/details/",
                     "/backinstocksubscriptions/manage",
                     "/boards/forumsubscriptions",
                     "/boards/forumwatch",
@@ -238,16 +238,16 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/checkout/paymentinfo",
                     "/checkout/paymentmethod",
                     "/clearcomparelist",
-                    "/comparetvchannels",
-                    "/comparetvchannels/add/*",
+                    "/comparetvChannels",
+                    "/comparetvChannels/add/*",
                     "/user/avatar",
                     "/user/activation",
                     "/user/addresses",
                     "/user/changepassword",
                     "/user/checkusernameavailability",
-                    "/user/downloadabletvchannels",
+                    "/user/downloadabletvChannels",
                     "/user/info",
-                    "/user/tvchannelreviews",
+                    "/user/tvChannelreviews",
                     "/deletepm",
                     "/emailwishlist",
                     "/eucookielawaccept",
@@ -259,7 +259,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/passwordrecovery/confirm",
                     "/poll/vote",
                     "/privatemessages",
-                    "/recentlyviewedtvchannels",
+                    "/recentlyviewedtvChannels",
                     "/returnrequest",
                     "/returnrequest/history",
                     "/rewardpoints/history",
@@ -272,7 +272,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/topic/authenticate",
                     "/viewpm",
                     "/uploadfilecheckoutattribute",
-                    "/uploadfiletvchannelattribute",
+                    "/uploadfiletvChannelattribute",
                     "/uploadfilereturnrequest",
                     "/wishlist"
                 });

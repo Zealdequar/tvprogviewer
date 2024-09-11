@@ -131,8 +131,16 @@ namespace TvProgViewer.Data.Migrations
                     migrationInfo.Description.StartsWith(string.Format(TvProgMigrationDefaults.UpdateMigrationDescriptionPrefix, TvProgVersion.FULL_VERSION)))
                     continue;
 #endif
-                _versionLoader.Value
-                    .UpdateVersionInfo(migrationInfo.Version, migrationInfo.Description ?? migrationInfo.Migration.GetType().Name);
+                try
+                {
+                    _versionLoader.Value
+                        .UpdateVersionInfo(migrationInfo.Version,
+                            migrationInfo.Description ?? migrationInfo.Migration.GetType().Name);
+                }
+                catch
+                {
+                    // TODO: рефакторинг GetUpMigrations чтобы получить напрямую выбранные MigrationProcessType для commitVersionOnly == true
+                }
             }
         }
 

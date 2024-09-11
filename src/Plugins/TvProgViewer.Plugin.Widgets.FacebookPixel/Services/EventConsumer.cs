@@ -24,7 +24,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
         IConsumer<ModelPreparedEvent<BaseTvProgModel>>,
         IConsumer<OrderPlacedEvent>,
         IConsumer<PageRenderingEvent>,
-        IConsumer<ProductSearchEvent>
+        IConsumer<TvChannelSearchEvent>
     {
         #region Fields
 
@@ -69,14 +69,14 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
         }
 
         /// <summary>
-        /// Handle product details model prepared event
+        /// Handle tvChannel details model prepared event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
         public async Task HandleEventAsync(ModelPreparedEvent<BaseTvProgModel> eventMessage)
         {
-            if (eventMessage?.Model is ProductDetailsModel productDetailsModel)
-                await _facebookPixelService.SendViewContentEventAsync(productDetailsModel);
+            if (eventMessage?.Model is TvChannelDetailsModel tvChannelDetailsModel)
+                await _facebookPixelService.SendViewContentEventAsync(tvChannelDetailsModel);
         }
 
         /// <summary>
@@ -95,11 +95,11 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel.Services
         }
 
         /// <summary>
-        /// Handle product search event
+        /// Handle tvChannel search event
         /// </summary>
         /// <param name="eventMessage">Event message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task HandleEventAsync(ProductSearchEvent eventMessage)
+        public async Task HandleEventAsync(TvChannelSearchEvent eventMessage)
         {
             if (eventMessage?.SearchTerm != null)
                 await _facebookPixelService.SendSearchEventAsync(eventMessage.SearchTerm);

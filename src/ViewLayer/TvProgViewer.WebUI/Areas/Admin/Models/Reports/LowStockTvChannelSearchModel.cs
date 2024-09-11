@@ -6,7 +6,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
 {
     /// <summary>
-    /// Represents a low stock tvchannel search model
+    /// Represents a low stock tvChannel search model
     /// </summary>
     public partial record LowStockTvChannelSearchModel : BaseSearchModel
     {

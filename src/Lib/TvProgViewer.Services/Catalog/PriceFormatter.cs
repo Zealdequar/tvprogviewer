@@ -318,30 +318,30 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Formats the price of rental tvchannel (with rental period)
+        /// Formats the price of rental tvChannel (with rental period)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the rental tvchannel price with period
+        /// The task result contains the rental tvChannel price with period
         /// </returns>
-        public virtual async Task<string> FormatRentalTvChannelPeriodAsync(TvChannel tvchannel, string price)
+        public virtual async Task<string> FormatRentalTvChannelPeriodAsync(TvChannel tvChannel, string price)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            if (!tvchannel.IsRental)
+            if (!tvChannel.IsRental)
                 return price;
 
             if (string.IsNullOrWhiteSpace(price))
                 return price;
-            var result = tvchannel.RentalPricePeriod switch
+            var result = tvChannel.RentalPricePeriod switch
             {
-                RentalPricePeriod.Days => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Days"), price, tvchannel.RentalPriceLength),
-                RentalPricePeriod.Weeks => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Weeks"), price, tvchannel.RentalPriceLength),
-                RentalPricePeriod.Months => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Months"), price, tvchannel.RentalPriceLength),
-                RentalPricePeriod.Years => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Years"), price, tvchannel.RentalPriceLength),
+                RentalPricePeriod.Days => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Days"), price, tvChannel.RentalPriceLength),
+                RentalPricePeriod.Weeks => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Weeks"), price, tvChannel.RentalPriceLength),
+                RentalPricePeriod.Months => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Months"), price, tvChannel.RentalPriceLength),
+                RentalPricePeriod.Years => string.Format(await _localizationService.GetResourceAsync("TvChannels.Price.Rental.Years"), price, tvChannel.RentalPriceLength),
                 _ => throw new TvProgException("Not supported rental period"),
             };
             return result;
@@ -477,40 +477,40 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Format base price (PAngV)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelPrice">TvChannel price (in primary currency). Pass null if you want to use a default produce price</param>
-        /// <param name="totalWeight">Total weight of tvchannel (with attribute weight adjustment). Pass null if you want to use a default produce weight</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelPrice">TvChannel price (in primary currency). Pass null if you want to use a default produce price</param>
+        /// <param name="totalWeight">Total weight of tvChannel (with attribute weight adjustment). Pass null if you want to use a default produce weight</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the base price
         /// </returns>
-        public virtual async Task<string> FormatBasePriceAsync(TvChannel tvchannel, decimal? tvchannelPrice, decimal? totalWeight = null)
+        public virtual async Task<string> FormatBasePriceAsync(TvChannel tvChannel, decimal? tvChannelPrice, decimal? totalWeight = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            if (!tvchannel.BasepriceEnabled)
+            if (!tvChannel.BasepriceEnabled)
                 return null;
 
-            var tvchannelAmount = totalWeight.HasValue && totalWeight.Value > decimal.Zero ? totalWeight.Value : tvchannel.BasepriceAmount;
-            //Amount in tvchannel cannot be 0
-            if (tvchannelAmount == 0)
+            var tvChannelAmount = totalWeight.HasValue && totalWeight.Value > decimal.Zero ? totalWeight.Value : tvChannel.BasepriceAmount;
+            //Amount in tvChannel cannot be 0
+            if (tvChannelAmount == 0)
                 return null;
-            var referenceAmount = tvchannel.BasepriceBaseAmount;
-            var tvchannelUnit = await _measureService.GetMeasureWeightByIdAsync(tvchannel.BasepriceUnitId);
+            var referenceAmount = tvChannel.BasepriceBaseAmount;
+            var tvChannelUnit = await _measureService.GetMeasureWeightByIdAsync(tvChannel.BasepriceUnitId);
             //measure weight cannot be loaded
-            if (tvchannelUnit == null)
+            if (tvChannelUnit == null)
                 return null;
-            var referenceUnit = await _measureService.GetMeasureWeightByIdAsync(tvchannel.BasepriceBaseUnitId);
+            var referenceUnit = await _measureService.GetMeasureWeightByIdAsync(tvChannel.BasepriceBaseUnitId);
             //measure weight cannot be loaded
             if (referenceUnit == null)
                 return null;
 
-            tvchannelPrice ??= tvchannel.Price;
+            tvChannelPrice ??= tvChannel.Price;
 
-            var basePrice = tvchannelPrice.Value /
+            var basePrice = tvChannelPrice.Value /
                 //do not round. otherwise, it can cause issues
-                await _measureService.ConvertWeightAsync(tvchannelAmount, tvchannelUnit, referenceUnit, false) *
+                await _measureService.ConvertWeightAsync(tvChannelAmount, tvChannelUnit, referenceUnit, false) *
                 referenceAmount;
             var basePriceInCurrentCurrency = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(basePrice, await _workContext.GetWorkingCurrencyAsync());
             var basePriceStr = await FormatPriceAsync(basePriceInCurrentCurrency, true, false);

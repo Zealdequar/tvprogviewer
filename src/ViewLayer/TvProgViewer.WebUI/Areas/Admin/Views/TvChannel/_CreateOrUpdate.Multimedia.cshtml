@@ -3,7 +3,7 @@
 <div class="card-body">
     @if (Model.Id > 0)
     {
-		<tvprog-tabs id="tvchannelmultimedia-edit" asp-tab-name-to-select="tab-pictures" asp-render-selected-tab-input="false">
+		<tvprog-tabs id="tvChannelmultimedia-edit" asp-tab-name-to-select="tab-pictures" asp-render-selected-tab-input="false">
 			<tvprog-tab asp-name="tab-pictures" asp-title="@T("Admin.Catalog.TvChannels.Multimedia.Pictures")" asp-default="true">@await Html.PartialAsync("_CreateOrUpdate.Multimedia.Pictures", Model)</tvprog-tab>
 			<tvprog-tab asp-name="tab-videos" asp-title="@T("Admin.Catalog.TvChannels.Multimedia.Videos")">@await Html.PartialAsync("_CreateOrUpdate.Multimedia.Videos", Model)</tvprog-tab>
 		</tvprog-tabs>

@@ -5,7 +5,7 @@
 <div class="card-body">
     @await Html.PartialAsync("Table", new DataTablesModel
     {
-        Name = "tvchannels-grid",
+        Name = "tvChannels-grid",
         UrlRead = new DataUrl("TvChannelList", "Manufacturer", new RouteValueDictionary { [nameof(Model.ManufacturerTvChannelSearchModel.ManufacturerId)] = Model.ManufacturerTvChannelSearchModel.ManufacturerId }),
         UrlDelete = new DataUrl("TvChannelDelete", "Manufacturer", null),
         UrlUpdate = new DataUrl("TvChannelUpdate", "Manufacturer", null),
@@ -68,7 +68,7 @@
         $(document).ready(function () {
             $('#btnRefreshTvChannels').click(function () {
                 //refresh grid
-                updateTable('#tvchannels-grid');
+                updateTable('#tvChannels-grid');
 
                 //return false to don't reload a page
                 return false;

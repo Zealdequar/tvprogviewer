@@ -20,14 +20,14 @@ namespace TvProgViewer.Services.Media
         Task<Video> GetVideoByIdAsync(int videoId);
 
         /// <summary>
-        /// Gets videos by tvchannel identifier
+        /// Gets videos by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the videos
         /// </returns>
-        Task<IList<Video>> GetVideosByTvChannelIdAsync(int tvchannelId);
+        Task<IList<Video>> GetVideosByTvChannelIdAsync(int tvChannelId);
 
         /// <summary>
         /// Inserts a video

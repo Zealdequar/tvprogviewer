@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Events;
-using Nop.Services.Events;
+using TvProgViewer.Core.Events;
+using TvProgViewer.Services.Events;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Events
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Events
 {
     [TestFixture]
-    public class EventsTests : BaseNopTest
+    public class EventsTests : BaseTvProgTest
     {
         private IEventPublisher _eventPublisher;
 

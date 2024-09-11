@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
 using Moq;
-using Nop.Core;
-using Nop.Core.Infrastructure;
-using Nop.Services.Plugins;
-using Nop.Tests.Nop.Web.Tests.Public;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Infrastructure;
+using TvProgViewer.Services.Plugins;
+using TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests
 {
     [TestFixture]
-    public abstract class WebTest : BaseNopTest
+    public abstract class WebTest : BaseTvProgTest
     {
         protected WebTest()
         {
@@ -23,7 +23,7 @@ namespace Nop.Tests.Nop.Web.Tests
             var webHostEnvironment = new Mock<IWebHostEnvironment>();
             webHostEnvironment.Setup(x => x.ContentRootPath).Returns(System.Reflection.Assembly.GetExecutingAssembly().Location);
             webHostEnvironment.Setup(x => x.WebRootPath).Returns(System.IO.Directory.GetCurrentDirectory());
-            CommonHelper.DefaultFileProvider = new NopFileProvider(webHostEnvironment.Object);
+            CommonHelper.DefaultFileProvider = new TvProgFileProvider(webHostEnvironment.Object);
 
             Singleton<IPluginsInfo>.Instance = new PluginsInfo(CommonHelper.DefaultFileProvider)
             {

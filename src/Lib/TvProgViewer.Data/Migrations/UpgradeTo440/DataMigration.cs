@@ -125,12 +125,12 @@ namespace TvProgViewer.Data.Migrations.UpgradeTo440
             }
 
             //#3353
-            var tvchannelAttributeCombinationTableName = NameCompatibilityManager.GetTableName(typeof(TvChannelAttributeCombination));
+            var tvChannelAttributeCombinationTableName = NameCompatibilityManager.GetTableName(typeof(TvChannelAttributeCombination));
 
             //add column
-            if (!Schema.Table(tvchannelAttributeCombinationTableName).Column(nameof(TvChannelAttributeCombination.MinStockQuantity)).Exists())
+            if (!Schema.Table(tvChannelAttributeCombinationTableName).Column(nameof(TvChannelAttributeCombination.MinStockQuantity)).Exists())
             {
-                Alter.Table(tvchannelAttributeCombinationTableName)
+                Alter.Table(tvChannelAttributeCombinationTableName)
                     .AddColumn(nameof(TvChannelAttributeCombination.MinStockQuantity)).AsInt32().NotNullable().SetExistingRowsTo(0);
             }
 

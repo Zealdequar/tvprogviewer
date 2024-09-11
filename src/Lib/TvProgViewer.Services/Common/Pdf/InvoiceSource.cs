@@ -63,7 +63,7 @@ namespace TvProgViewer.Services.Common.Pdf
         public AddressItem ShippingAddress { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display tvchannel SKU in the invoice document
+        /// Gets or sets a value indicating whether to display tvChannel SKU in the invoice document
         /// </summary>
         public bool ShowSkuInTvChannelList { get; set; }
 

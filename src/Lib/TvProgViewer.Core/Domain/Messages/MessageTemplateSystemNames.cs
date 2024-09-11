@@ -222,22 +222,22 @@
         public const string GiftCardNotification = "GiftCard.Notification";
 
         /// <summary>
-        /// Represents system name of notification store owner about new tvchannel review
+        /// Represents system name of notification store owner about new tvChannel review
         /// </summary>
         public const string TvChannelReviewStoreOwnerNotification = "TvChannel.TvChannelReview";
 
         /// <summary>
-        /// Represents system name of notification user about tvchannel review reply
+        /// Represents system name of notification user about tvChannel review reply
         /// </summary>
         public const string TvChannelReviewReplyUserNotification = "TvChannelReview.Reply.UserNotification";
 
         /// <summary>
-        /// Represents system name of notification store owner about below quantity of tvchannel
+        /// Represents system name of notification store owner about below quantity of tvChannel
         /// </summary>
         public const string QuantityBelowStoreOwnerNotification = "QuantityBelow.StoreOwnerNotification";
 
         /// <summary>
-        /// Represents system name of notification store owner about below quantity of tvchannel attribute combination
+        /// Represents system name of notification store owner about below quantity of tvChannel attribute combination
         /// </summary>
         public const string QuantityBelowAttributeCombinationStoreOwnerNotification = "QuantityBelow.AttributeCombination.StoreOwnerNotification";
 
@@ -257,7 +257,7 @@
         public const string NewsCommentStoreOwnerNotification = "News.NewsComment";
 
         /// <summary>
-        /// Represents system name of notification user about tvchannel receipt
+        /// Represents system name of notification user about tvChannel receipt
         /// </summary>
         public const string BackInStockNotification = "User.BackInStock";
 

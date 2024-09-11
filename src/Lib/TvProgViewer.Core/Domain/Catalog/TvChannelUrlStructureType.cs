@@ -1,22 +1,22 @@
 ﻿namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents the tvchannel URL structure type enum
+    /// Represents the tvChannel URL structure type enum
     /// </summary>
     public enum TvChannelUrlStructureType
     {
         /// <summary>
-        /// TvChannel only (e.g. '/tvchannel-seo-name')
+        /// TvChannel only (e.g. '/tvChannel-seo-name')
         /// </summary>
         TvChannel = 0,
 
         /// <summary>
-        /// Category (the most nested), then tvchannel (e.g. '/category-seo-name/tvchannel-seo-name')
+        /// Category (the most nested), then tvChannel (e.g. '/category-seo-name/tvChannel-seo-name')
         /// </summary>
         CategoryTvChannel = 10,
 
         /// <summary>
-        /// Manufacturer, then tvchannel (e.g. '/manufacturer-seo-name/tvchannel-seo-name')
+        /// Manufacturer, then tvChannel (e.g. '/manufacturer-seo-name/tvChannel-seo-name')
         /// </summary>
         ManufacturerTvChannel = 20
     }

@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.PrivateMessages;
-using Nop.Web.Validators.PrivateMessages;
+using TvProgViewer.WebUI.Models.PrivateMessages;
+using TvProgViewer.WebUI.Validators.PrivateMessages;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.PrivateMessages
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.PrivateMessages
 {
     [TestFixture]
-    public class SendPrivateMessageValidatorTests : BaseNopTest
+    public class SendPrivateMessageValidatorTests : BaseTvProgTest
     {
         private SendPrivateMessageValidator _validator;
         

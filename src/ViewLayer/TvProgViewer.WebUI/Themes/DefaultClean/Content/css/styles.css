@@ -904,7 +904,7 @@
             text-decoration: underline;
         }
 
-    .cart .tvchannel, .data-table .tvchannel, .data-table .message, .data-table .info, .data-table .name {
+    .cart .tvChannel, .data-table .tvChannel, .data-table .message, .data-table .info, .data-table .name {
         min-width: 225px;
         text-align: left;
     }
@@ -913,26 +913,26 @@
         text-align: left;
     }
 
-    .cart .tvchannel a, .data-table .tvchannel a, .data-table .info a {
+    .cart .tvChannel a, .data-table .tvChannel a, .data-table .info a {
         font-weight: bold;
         color: #444;
     }
 
-        .cart .tvchannel a:hover, .cart .tvchannel a:focus, .data-table .tvchannel a:hover, .data-table .tvchannel a:focus, .data-table .info a:hover, .data-table .info a:focus {
+        .cart .tvChannel a:hover, .cart .tvChannel a:focus, .data-table .tvChannel a:hover, .data-table .tvChannel a:focus, .data-table .info a:hover, .data-table .info a:focus {
             color: #4ab2f1;
             text-decoration: none;
         }
 
-    .cart .tvchannel .edit-item {
+    .cart .tvChannel .edit-item {
         margin: 10px 0 0;
     }
 
-        .cart .tvchannel .edit-item a {
+        .cart .tvChannel .edit-item a {
             font-weight: normal;
             color: #4ab2f1;
         }
 
-            .cart .tvchannel .edit-item a:hover, .cart .tvchannel .edit-item a:focus {
+            .cart .tvChannel .edit-item a:hover, .cart .tvChannel .edit-item a:focus {
                 text-decoration: underline;
             }
 
@@ -1721,11 +1721,11 @@
             color: #4ab2f1;
         }
 
-        .block a.tvchannel-picture {
+        .block a.tvChannel-picture {
             display: none;
         }
 
-            .block a.tvchannel-picture:before {
+            .block a.tvChannel-picture:before {
                 display: none;
             }
 
@@ -1760,7 +1760,7 @@
                 font-size: 0;
             }
 
-            .block .tags li, .tvchannel-tags-all-page li {
+            .block .tags li, .tvChannel-tags-all-page li {
                 display: inline-block;
                 position: relative;
                 margin: 0 10px;
@@ -1769,13 +1769,13 @@
                 /*setting base size*/
             }
 
-                .block .tags li a, .tvchannel-tags-all-page li a {
+                .block .tags li a, .tvChannel-tags-all-page li a {
                     float: left;
                     line-height: 30px;
                     color: #444;
                 }
 
-                    .block .tags li a:hover, .block .tags li a:focus, .tvchannel-tags-all-page li a:hover, .tvchannel-tags-all-page li a:focus {
+                    .block .tags li a:hover, .block .tags li a:focus, .tvChannel-tags-all-page li a:hover, .tvChannel-tags-all-page li a:focus {
                         color: #4ab2f1;
                     }
 
@@ -1910,43 +1910,43 @@
                 background-color: #248ece;
             }
 
-    .tvchannel-selectors {
+    .tvChannel-selectors {
         margin: 0 0 20px;
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
         padding: 20px 0;
     }
 
-        .tvchannel-selectors:first-child {
+        .tvChannel-selectors:first-child {
             border-top: none;
         }
 
-        .tvchannel-selectors:after {
+        .tvChannel-selectors:after {
             content: "";
             display: block;
             clear: both;
         }
 
-        .tvchannel-selectors > div {
+        .tvChannel-selectors > div {
             display: inline-block;
             margin: 5px;
         }
 
-        .tvchannel-selectors span {
+        .tvChannel-selectors span {
             vertical-align: middle;
             font-size: 16px;
         }
 
-        .tvchannel-selectors select {
+        .tvChannel-selectors select {
             margin: 0 8px;
         }
 
-        .tvchannel-selectors .tvchannel-viewmode {
+        .tvChannel-selectors .tvChannel-viewmode {
             display: none;
             font-size: 0;
         }
 
-    .tvchannel-filter .filter-title {
+    .tvChannel-filter .filter-title {
         margin: 0 0 10px;
         background: #f6f6f6 url('../images/toggle-gray.png') right 10px no-repeat;
         padding: 10px;
@@ -1954,39 +1954,39 @@
         color: #444;
     }
 
-        .tvchannel-filter .filter-title strong {
+        .tvChannel-filter .filter-title strong {
             font-weight: normal;
         }
 
-    .tvchannel-filter .filter-content {
+    .tvChannel-filter .filter-content {
         padding: 10px;
         color: #444;
         margin-bottom: 20px;
     }
 
-    .tvchannel-filter .group {
+    .tvChannel-filter .group {
         font-size: 15px;
     }
 
-        .tvchannel-filter .group + .group {
+        .tvChannel-filter .group + .group {
             margin-top: 16px;
         }
 
-        .tvchannel-filter .group .name {
+        .tvChannel-filter .group .name {
             padding-bottom: 10px;
         }
 
-        .tvchannel-filter .group .item {
+        .tvChannel-filter .group .item {
             display: flex;
             padding-left: 15px;
             align-items: center;
         }
 
-            .tvchannel-filter .group .item + .item {
+            .tvChannel-filter .group .item + .item {
                 padding-top: 8px;
             }
 
-            .tvchannel-filter .group .item label {
+            .tvChannel-filter .group .item label {
                 cursor: pointer;
                 display: flex;
                 align-items: center;
@@ -2014,11 +2014,11 @@
                 width: 50%;
             }
 
-    .tvchannel-filter .attribute-squares {
+    .tvChannel-filter .attribute-squares {
         font-size: inherit;
     }
 
-        .tvchannel-filter .attribute-squares .attribute-square {
+        .tvChannel-filter .attribute-squares .attribute-square {
             width: 20px !important;
             height: 20px !important;
             margin-right: 8px;
@@ -2083,7 +2083,7 @@
             padding: 0 10px;
         }
 
-        .item-box .tvchannel-title {
+        .item-box .tvChannel-title {
             margin: 0 0 10px;
             font-size: 17px;
             line-height: 1.2;
@@ -2091,11 +2091,11 @@
             color: #4ab2f1;
         }
 
-            .item-box .tvchannel-title a {
+            .item-box .tvChannel-title a {
                 display: block;
             }
 
-                .item-box .tvchannel-title a:hover, .item-box .tvchannel-title a:focus {
+                .item-box .tvChannel-title a:hover, .item-box .tvChannel-title a:focus {
                     color: #248ece;
                 }
 
@@ -2103,7 +2103,7 @@
             margin: 0 0 15px;
         }
 
-        .item-box .tvchannel-rating-box {
+        .item-box .tvChannel-rating-box {
             display: inline-block;
             margin: 0 0 10px;
         }
@@ -2119,7 +2119,7 @@
                 height: 14px;
             }
 
-    .tvchannel-grid .item-box .description:not([data-short-description]) {
+    .tvChannel-grid .item-box .description:not([data-short-description]) {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
@@ -2177,7 +2177,7 @@
         vertical-align: middle;
     }
 
-    .item-box .tvchannel-box-add-to-cart-button {
+    .item-box .tvChannel-box-add-to-cart-button {
         width: 60%;
         background-color: #4ab2f1;
         text-align: center;
@@ -2186,7 +2186,7 @@
         text-transform: uppercase;
     }
 
-        .item-box .tvchannel-box-add-to-cart-button:hover, .item-box .tvchannel-box-add-to-cart-button:focus {
+        .item-box .tvChannel-box-add-to-cart-button:hover, .item-box .tvChannel-box-add-to-cart-button:focus {
             background-color: #248ece;
         }
 
@@ -2236,11 +2236,11 @@
                 padding-top: 65%;
             }
 
-    .tvchannels-container {
+    .tvChannels-container {
         position: relative;
     }
 
-        .tvchannels-container .ajax-tvchannels-busy {
+        .tvChannels-container .ajax-tvChannels-busy {
             display: none;
             position: absolute;
             z-index: 2;
@@ -2249,11 +2249,11 @@
             background: #ffffffab url(../images/loading.gif) center no-repeat;
         }
 
-    .tvchannel-grid, .tvchannel-list {
+    .tvChannel-grid, .tvChannel-list {
         margin: 0 0 50px;
     }
 
-        .tvchannel-grid .title {
+        .tvChannel-grid .title {
             margin: 0 0 30px;
             border-bottom: 1px solid #ddd;
             padding: 0 0 15px;
@@ -2262,7 +2262,7 @@
             color: #444;
         }
 
-            .tvchannel-grid .title strong {
+            .tvChannel-grid .title strong {
                 font-weight: normal;
             }
 
@@ -2357,19 +2357,19 @@
             }
 
     /********** PRODUCT PAGE **********/
-    .tvchannel-details-page {
+    .tvChannel-details-page {
         padding: 20px 0 0;
     }
-    #tvchannels-orderby, #tvchannels-pagesize {
+    #tvChannels-orderby, #tvChannels-pagesize {
         height: 40px; 
     }
-    .tvchannel-essential {
+    .tvChannel-essential {
         margin: 0 0 40px;
         border-bottom: 1px solid #ddd;
         padding: 0 0 10px;
     }
 
-        .tvchannel-essential:after {
+        .tvChannel-essential:after {
             content: "";
             display: block;
             clear: both;
@@ -2436,26 +2436,26 @@
         margin: 0 0 5px;
     }
 
-        .overview .discontinued-tvchannel {
+        .overview .discontinued-tvChannel {
             background: #f3f3f3;
             margin: 0 0 20px;
         }
 
-            .overview .discontinued-tvchannel h4 {
+            .overview .discontinued-tvChannel h4 {
                 display: inline-block;
                 font-size: 14px;
                 padding: 17px 17px 17px 40px;
-                background: url('../images/discontinued-tvchannel-icon.png') no-repeat 13px center;
+                background: url('../images/discontinued-tvChannel-icon.png') no-repeat 13px center;
                 color: #de444c;
             }
 
-        .overview .tvchannel-name {
+        .overview .tvChannel-name {
             margin: 0 0 25px;
             border-bottom: 1px solid #ddd;
             padding: 0 0 10px;
         }
 
-            .overview .tvchannel-name h1 {
+            .overview .tvChannel-name h1 {
                 font-size: 30px;
                 font-weight: normal;
             }
@@ -2466,36 +2466,36 @@
             color: #666;
         }
 
-    .tvchannel-no-reviews, .tvchannel-reviews-overview {
+    .tvChannel-no-reviews, .tvChannel-reviews-overview {
         margin: 0 0 25px;
         color: #444;
     }
 
-        .tvchannel-no-reviews a {
+        .tvChannel-no-reviews a {
             text-decoration: underline;
         }
 
-    .tvchannel-review-box {
+    .tvChannel-review-box {
         display: inline-block;
         margin: 0 0 8px;
     }
 
-        .tvchannel-review-box .rating {
+        .tvChannel-review-box .rating {
             width: 95px;
             height: 14px;
             background: url('../images/rating1.png') repeat-x;
         }
 
-            .tvchannel-review-box .rating div {
+            .tvChannel-review-box .rating div {
                 height: 14px;
                 background: url('../images/rating2.png') repeat-x;
             }
 
-    .tvchannel-review-links a {
+    .tvChannel-review-links a {
         text-decoration: underline;
     }
 
-        .tvchannel-review-links a:hover, .tvchannel-review-links a:focus {
+        .tvChannel-review-links a:hover, .tvChannel-review-links a:focus {
             color: #4ab2f1;
         }
 
@@ -2543,7 +2543,7 @@
         background-image: url('../images/compare-button.png');
     }
 
-    .overview .tvchannel-live-url {
+    .overview .tvChannel-live-url {
         background-image: url('../images/live.png');
     }
 
@@ -2633,13 +2633,13 @@
                 vertical-align: middle;
             }
 
-    .overview .old-tvchannel-price, .variant-overview .old-tvchannel-price, .overview .non-discounted-price, .variant-overview .non-discounted-price {
+    .overview .old-tvChannel-price, .variant-overview .old-tvChannel-price, .overview .non-discounted-price, .variant-overview .non-discounted-price {
         font-size: 14px;
         color: #999;
         text-decoration: line-through;
     }
 
-    .overview .tvchannel-price, .variant-overview .tvchannel-price {
+    .overview .tvChannel-price, .variant-overview .tvChannel-price {
         font-size: 20px;
         font-weight: bold;
         color: #444;
@@ -2746,7 +2746,7 @@
             background-color: #248ece;
         }
 
-    .tvchannel-share-button {
+    .tvChannel-share-button {
         display: inline-block;
         overflow: hidden;
     }
@@ -2756,27 +2756,27 @@
         line-height: 24px;
     }
 
-    .tvchannel-collateral {
+    .tvChannel-collateral {
         margin: 0 0 75px;
     }
 
-        .tvchannel-collateral .title {
+        .tvChannel-collateral .title {
             margin: 0 0 10px;
             font-size: 18px;
             color: #444;
         }
 
-            .tvchannel-collateral .title strong {
+            .tvChannel-collateral .title strong {
                 font-weight: normal;
             }
 
-    .tvchannel-variant-line {
+    .tvChannel-variant-line {
         margin: 0 0 30px;
         border-bottom: 1px solid #ddd;
         padding: 0 0 20px;
     }
 
-        .tvchannel-variant-line:after {
+        .tvChannel-variant-line:after {
             content: "";
             display: block;
             clear: both;
@@ -2820,42 +2820,42 @@
             margin: 0 0 10px;
         }
 
-    .tvchannel-specs-box {
+    .tvChannel-specs-box {
         margin: 0 0 40px;
     }
 
-        .tvchannel-specs-box td {
+        .tvChannel-specs-box td {
             border: 1px solid #ddd;
             padding: 10px;
         }
 
-            .tvchannel-specs-box td.spec-group-name {
+            .tvChannel-specs-box td.spec-group-name {
                 border: 0;
                 padding-top: 20px;
                 font-size: 16px;
                 color: #444;
             }
 
-    .tvchannel-tags-list {
+    .tvChannel-tags-list {
         font-size: 0;
     }
 
-        .tvchannel-tags-list li {
+        .tvChannel-tags-list li {
             display: inline-block;
             font-size: 14px;
             /*reset zeroing*/
         }
 
-            .tvchannel-tags-list li.separator {
+            .tvChannel-tags-list li.separator {
                 margin: 0 5px 0 3px;
             }
 
-        .tvchannel-tags-list a {
+        .tvChannel-tags-list a {
             display: inline-block;
             line-height: 24px;
         }
 
-            .tvchannel-tags-list a:hover, .tvchannel-tags-list a:focus {
+            .tvChannel-tags-list a:hover, .tvChannel-tags-list a:focus {
                 color: #444;
             }
 
@@ -3196,21 +3196,21 @@
             height: 150px;
         }
     /********** PRODUCT REVIEWS **********/
-    .tvchannel-reviews-page h1 a {
+    .tvChannel-reviews-page h1 a {
         color: #4ab2f1;
     }
 
-        .tvchannel-reviews-page h1 a:before, .tvchannel-reviews-page h1 a:after {
+        .tvChannel-reviews-page h1 a:before, .tvChannel-reviews-page h1 a:after {
             content: "''";
         }
 
-    .tvchannel-reviews-page .title {
+    .tvChannel-reviews-page .title {
         margin: 0 0 20px;
         font-size: 20px;
         color: #444;
     }
 
-        .tvchannel-reviews-page .title strong {
+        .tvChannel-reviews-page .title strong {
             font-weight: normal;
         }
 
@@ -3301,88 +3301,88 @@
             background-color: #248ece;
         }
 
-    .tvchannel-reviews-page .result, .tvchannel-reviews-page .message-error {
+    .tvChannel-reviews-page .result, .tvChannel-reviews-page .message-error {
         margin: 0 0 20px;
     }
 
-    .tvchannel-review-list {
+    .tvChannel-review-list {
         overflow: hidden;
     }
 
-    .tvchannel-review-item {
+    .tvChannel-review-item {
         margin: 0 0 40px;
     }
 
-        .tvchannel-review-item .review-item-head {
+        .tvChannel-review-item .review-item-head {
             border-top: 1px solid #ddd;
             overflow: hidden;
             background-color: #f6f6f6;
             padding: 10px;
         }
 
-        .tvchannel-review-item .review-title {
+        .tvChannel-review-item .review-title {
             line-height: 20px;
             font-size: 15px;
             color: #444;
         }
 
-        .tvchannel-review-item .tvchannel-review-box {
+        .tvChannel-review-item .tvChannel-review-box {
             margin: 3px 0 0;
         }
 
-        .tvchannel-review-item .review-content {
+        .tvChannel-review-item .review-content {
             padding: 20px 10px;
         }
 
-        .tvchannel-review-item .review-text {
+        .tvChannel-review-item .review-text {
             margin: 0 0 15px;
             line-height: 22px;
             color: #444;
         }
 
-        .tvchannel-review-item .avatar {
+        .tvChannel-review-item .avatar {
             margin: 0 0 10px;
         }
 
-        .tvchannel-review-item .reply {
+        .tvChannel-review-item .reply {
             margin: 15px 0;
             border-top: 1px solid #ddd;
         }
 
-        .tvchannel-review-item .reply-header {
+        .tvChannel-review-item .reply-header {
             margin: 15px 0;
             font-weight: bold;
         }
 
-        .tvchannel-review-item .reply-text {
+        .tvChannel-review-item .reply-text {
             line-height: 22px;
         }
 
-        .tvchannel-review-item .review-info {
+        .tvChannel-review-item .review-info {
             margin: 0 0 5px;
         }
 
-            .tvchannel-review-item .review-info label {
+            .tvChannel-review-item .review-info label {
                 font-weight: normal;
             }
 
-            .tvchannel-review-item .review-info a, .tvchannel-review-helpfulness .vote {
+            .tvChannel-review-item .review-info a, .tvChannel-review-helpfulness .vote {
                 display: inline-block;
                 padding: 0 5px;
                 color: #4ab2f1;
                 cursor: pointer;
             }
 
-    .tvchannel-review-helpfulness .question {
+    .tvChannel-review-helpfulness .question {
         margin: 0 5px 0 0;
         font-style: italic;
     }
 
-    .tvchannel-review-helpfulness .result {
+    .tvChannel-review-helpfulness .result {
         margin: 0 0 0 10px;
     }
 
-    .tvchannel-review-item .review-type-rating-ext {
+    .tvChannel-review-item .review-type-rating-ext {
         overflow: hidden;
         margin: 0 0 20px;
     }
@@ -3403,7 +3403,7 @@
             margin: 0 0 30px;
         }
 
-        .wishlist-content .tvchannel-content {
+        .wishlist-content .tvChannel-content {
             min-width: 300px;
             text-align: left;
         }
@@ -3476,12 +3476,12 @@
         margin: 25px 0 0;
     }
 
-    .compare-tvchannels-page {
+    .compare-tvChannels-page {
         position: relative;
         overflow: hidden;
     }
 
-        .compare-tvchannels-page .clear-list {
+        .compare-tvChannels-page .clear-list {
             display: inline-block;
             margin: 0 0 20px;
             background-color: #4ab2f1;
@@ -3491,17 +3491,17 @@
             text-transform: uppercase;
         }
 
-            .compare-tvchannels-page .clear-list:hover, .compare-tvchannels-page .clear-list:focus {
+            .compare-tvChannels-page .clear-list:hover, .compare-tvChannels-page .clear-list:focus {
                 background-color: #248ece;
             }
 
-        .compare-tvchannels-page .table-wrapper {
+        .compare-tvChannels-page .table-wrapper {
             margin: 0 0 30px;
             padding: 0 0 1px;
             /*IE mobile table border fix*/
         }
 
-    .compare-tvchannels-table td {
+    .compare-tvChannels-table td {
         min-width: 150px;
         border: 1px solid #ddd;
         background-color: #fff;
@@ -3511,26 +3511,26 @@
         color: #444;
     }
 
-        .compare-tvchannels-table td:first-child {
+        .compare-tvChannels-table td:first-child {
             min-width: 0;
         }
 
-        .compare-tvchannels-table td label {
+        .compare-tvChannels-table td label {
             font-weight: normal;
             color: #777;
         }
 
-    .compare-tvchannels-table .specification-group td {
+    .compare-tvChannels-table .specification-group td {
         border: 0;
         padding: 20px 10px 10px 10px;
     }
 
-        .compare-tvchannels-table .specification-group td label {
+        .compare-tvChannels-table .specification-group td label {
             font-size: 16px;
             color: #444;
         }
 
-    .compare-tvchannels-table .remove-button {
+    .compare-tvChannels-table .remove-button {
         display: inline-block;
         border: none;
         background: url('../images/remove.png') left center no-repeat;
@@ -3539,11 +3539,11 @@
         color: #666;
     }
 
-        .compare-tvchannels-table .remove-button:hover, .compare-tvchannels-table .remove-button:focus {
+        .compare-tvChannels-table .remove-button:hover, .compare-tvChannels-table .remove-button:focus {
             color: #4ab2f1;
         }
 
-    .compare-tvchannels-table .picture {
+    .compare-tvChannels-table .picture {
         display: block;
         position: relative;
         max-width: 200px;
@@ -3551,7 +3551,7 @@
         overflow: hidden;
     }
 
-        .compare-tvchannels-table .picture img {
+        .compare-tvChannels-table .picture img {
             position: absolute;
             top: 0;
             right: 0;
@@ -3562,23 +3562,23 @@
             margin: auto;
         }
 
-    .compare-tvchannels-table .tvchannel-name td {
+    .compare-tvChannels-table .tvChannel-name td {
         font-weight: bold;
     }
 
-        .compare-tvchannels-table .tvchannel-name td a:hover, .compare-tvchannels-table .tvchannel-name td a:focus {
+        .compare-tvChannels-table .tvChannel-name td a:hover, .compare-tvChannels-table .tvChannel-name td a:focus {
             color: #4ab2f1;
         }
 
-    .compare-tvchannels-table .short-description td {
+    .compare-tvChannels-table .short-description td {
         line-height: 22px;
     }
 
-    .compare-tvchannels-table .full-description td {
+    .compare-tvChannels-table .full-description td {
         display: none;
     }
 
-    .compare-tvchannels-page .no-data {
+    .compare-tvChannels-page .no-data {
         margin: 25px 0 0;
     }
     /*********** TOPICS ***********/
@@ -4100,7 +4100,7 @@
         color: #444;
     }
 
-    .downloadable-tvchannels-page table td {
+    .downloadable-tvChannels-page table td {
         color: #444;
     }
 
@@ -4803,15 +4803,15 @@
             background-color: #999;
         }
     /*** PRODUCT ESTIMATE SHIPPING ***/
-    .tvchannel-estimate-shipping {
+    .tvChannel-estimate-shipping {
         margin-bottom: 20px;
     }
 
-        .tvchannel-estimate-shipping .shipping-date {
+        .tvChannel-estimate-shipping .shipping-date {
             margin-top: 3px;
         }
 
-        .tvchannel-estimate-shipping .shipping-title {
+        .tvChannel-estimate-shipping .shipping-title {
             font-size: 16px;
             font-weight: bold;
             color: #444;
@@ -4819,12 +4819,12 @@
             justify-content: center;
         }
 
-            .tvchannel-estimate-shipping .shipping-title .shipping-price {
+            .tvChannel-estimate-shipping .shipping-title .shipping-price {
                 margin-left: 5px;
                 vertical-align: middle;
             }
 
-            .tvchannel-estimate-shipping .shipping-title .shipping-loading {
+            .tvChannel-estimate-shipping .shipping-title .shipping-loading {
                 margin-left: 5px;
                 vertical-align: middle;
                 background: url(../images/ajax-loader-small.gif) no-repeat;
@@ -4833,7 +4833,7 @@
                 display: inline-block;
             }
 
-        .tvchannel-estimate-shipping .open-estimate-shipping-popup .arrow-down {
+        .tvChannel-estimate-shipping .open-estimate-shipping-popup .arrow-down {
             transform: rotate(45deg);
             -webkit-transform: rotate(45deg);
             margin: 0 0 3px 6px;
@@ -6620,12 +6620,12 @@
                     padding: 10px;
                 }
 
-                .cart td.tvchannel-picture {
+                .cart td.tvChannel-picture {
                     border-top: 1px solid #ddd;
                     padding: 15px 10px 5px;
                 }
 
-                .cart td.tvchannel {
+                .cart td.tvChannel {
                     min-width: 0;
                     border-bottom: 1px solid #ddd;
                     padding: 5px 10px 15px;
@@ -6671,7 +6671,7 @@
                 padding: 10px;
             }
 
-                .order-details-page .data-table td.tvchannel, .order-details-page .data-table td.tracking-number {
+                .order-details-page .data-table td.tvChannel, .order-details-page .data-table td.tracking-number {
                     min-width: 0;
                     border-bottom: 1px solid #ddd;
                     padding: 5px 10px 15px;
@@ -6848,7 +6848,7 @@
                 clear: both;
             }
 
-            .item-box .tvchannel-rating-box {
+            .item-box .tvChannel-rating-box {
                 margin: 0 0 15px;
             }
 
@@ -6856,7 +6856,7 @@
                 min-height: 40px;
             }
 
-            .item-box .tvchannel-title {
+            .item-box .tvChannel-title {
                 min-height: 42px;
                 margin: 0 0 5px;
             }
@@ -7008,20 +7008,20 @@
 
         
         /*** CATEGORY ***/
-        .tvchannel-selectors {
+        .tvChannel-selectors {
             text-align: left;
         }
 
-            .tvchannel-selectors .tvchannel-viewmode {
+            .tvChannel-selectors .tvChannel-viewmode {
                 display: inline-block;
                 float: right;
             }
 
-                .tvchannel-selectors .tvchannel-viewmode span {
+                .tvChannel-selectors .tvChannel-viewmode span {
                     display: none;
                 }
 
-                .tvchannel-selectors .tvchannel-viewmode a {
+                .tvChannel-selectors .tvChannel-viewmode a {
                     display: inline-block;
                     width: 24px;
                     height: 32px;
@@ -7031,15 +7031,15 @@
                     opacity: 0.5;
                 }
 
-                    .tvchannel-selectors .tvchannel-viewmode a.grid {
+                    .tvChannel-selectors .tvChannel-viewmode a.grid {
                         background-image: url('../images/view-grid.png');
                     }
 
-                    .tvchannel-selectors .tvchannel-viewmode a.list {
+                    .tvChannel-selectors .tvChannel-viewmode a.list {
                         background-image: url('../images/view-list.png');
                     }
 
-                    .tvchannel-selectors .tvchannel-viewmode a.selected {
+                    .tvChannel-selectors .tvChannel-viewmode a.selected {
                         opacity: 1;
                     }
 
@@ -7057,62 +7057,62 @@
                 clear: both;
             }
 
-        .tvchannel-list .item-box {
+        .tvChannel-list .item-box {
             float: none;
             width: auto;
             margin: 0 5px 20px;
         }
 
-            .tvchannel-list .item-box .tvchannel-item:after {
+            .tvChannel-list .item-box .tvChannel-item:after {
                 content: "";
                 display: block;
                 clear: both;                
             }
 
-            .tvchannel-list .item-box .picture {
+            .tvChannel-list .item-box .picture {
                 float: left;
                 width: 220px;
             }
 
-            .tvchannel-list .item-box:hover .picture a img, .tvchannel-list .item-box:focus .picture a img {
+            .tvChannel-list .item-box:hover .picture a img, .tvChannel-list .item-box:focus .picture a img {
                 opacity: 1;
             }
 
-            .tvchannel-list .item-box .picture:hover a img, .tvchannel-list .item-box .picture:focus a img {
+            .tvChannel-list .item-box .picture:hover a img, .tvChannel-list .item-box .picture:focus a img {
                 opacity: 0.85;
             }
 
-            .tvchannel-list .item-box .picture + .details {
+            .tvChannel-list .item-box .picture + .details {
                 margin: 0 0 0 240px;
             }
 
-            .tvchannel-list .item-box .tvchannel-title {
+            .tvChannel-list .item-box .tvChannel-title {
                 height: auto;
                 padding: 10px 0;
                 font-size: 18px;
             }
 
-            .tvchannel-list .item-box .description {
+            .tvChannel-list .item-box .description {
                 display: block;
                 margin: 0 0 10px;
                 line-height: 22px;
             }
 
-            .tvchannel-list .item-box .prices {
+            .tvChannel-list .item-box .prices {
                 height: auto;
                 margin: 0 0 30px;
             }
 
-            .tvchannel-list .item-box .buttons {
+            .tvChannel-list .item-box .buttons {
             }
 
-            .tvchannel-list .item-box .tvchannel-box-add-to-cart-button {
+            .tvChannel-list .item-box .tvChannel-box-add-to-cart-button {
                 width: auto;
                 min-width: 150px;
                 padding: 0 20px;
             }
 
-            .tvchannel-list .item-box .add-to-compare-list-button, .tvchannel-list .item-box .add-to-wishlist-button {
+            .tvChannel-list .item-box .add-to-compare-list-button, .tvChannel-list .item-box .add-to-wishlist-button {
                 width: 42px;
             }
         /*** PRODUCT PAGE ***/
@@ -7133,12 +7133,12 @@
             text-align: left;
         }
         /*** PRODUCT REVIEWS ***/
-        .tvchannel-review-item .review-title {
+        .tvChannel-review-item .review-title {
             float: left;
             max-width: 600px;
         }
 
-        .tvchannel-review-item .tvchannel-review-box {
+        .tvChannel-review-item .tvChannel-review-box {
             float: right;
         }
 
@@ -7756,7 +7756,7 @@
                     max-width: 100%;
                 }
 
-                .mini-shopping-cart .picture + .tvchannel {
+                .mini-shopping-cart .picture + .tvChannel {
                     margin: 0 0 0 80px;
                 }
 
@@ -8005,7 +8005,7 @@
             margin: 0 0 0 15px;
         }
         /*** COLUMN ***/
-        .tvchannel-filter .filter-title {
+        .tvChannel-filter .filter-title {
             background: #f6f6f6;
         }
 
@@ -8031,7 +8031,7 @@
                 border-bottom: none;
             }
 
-            .block a.tvchannel-picture {
+            .block a.tvChannel-picture {
                 display: inline-block;
                 position: relative;
                 width: 30%;
@@ -8039,15 +8039,15 @@
                 vertical-align: middle;
             }
 
-            .block a.tvchannel-name {
+            .block a.tvChannel-name {
                 vertical-align: middle;
             }
 
-            .block a.tvchannel-picture + a.tvchannel-name {
+            .block a.tvChannel-picture + a.tvChannel-name {
                 width: 70%;
             }
 
-                .block a.tvchannel-picture + a.tvchannel-name:before {
+                .block a.tvChannel-picture + a.tvChannel-name:before {
                     display: none;
                 }
         /*** CATEGORY ***/
@@ -8059,16 +8059,16 @@
             text-align: left;
         }
 
-        .home-page .tvchannel-grid .item-box, .tvchannel-details-page .tvchannel-grid .item-box, .shopping-cart-page .tvchannel-grid .item-box {
+        .home-page .tvChannel-grid .item-box, .tvChannel-details-page .tvChannel-grid .item-box, .shopping-cart-page .tvChannel-grid .item-box {
             width: 15%;
             margin: 0 0.5% 50px;
         }
 
-            .home-page .tvchannel-grid .item-box:nth-child(3n+1), .tvchannel-details-page .tvchannel-grid .item-box:nth-child(3n+1), .shopping-cart-page .tvchannel-grid .item-box:nth-child(3n+1) {
+            .home-page .tvChannel-grid .item-box:nth-child(3n+1), .tvChannel-details-page .tvChannel-grid .item-box:nth-child(3n+1), .shopping-cart-page .tvChannel-grid .item-box:nth-child(3n+1) {
                 clear: none;
             }
 
-            .home-page .tvchannel-grid .item-box:nth-child(5n+1), .tvchannel-details-page .tvchannel-grid .item-box:nth-child(5n+1), .shopping-cart-page .tvchannel-grid .item-box:nth-child(5n+1) {
+            .home-page .tvChannel-grid .item-box:nth-child(5n+1), .tvChannel-details-page .tvChannel-grid .item-box:nth-child(5n+1), .shopping-cart-page .tvChannel-grid .item-box:nth-child(5n+1) {
                 clear: both;
             }
         /*** TVCHANNEL PAGE ***/
@@ -8111,11 +8111,11 @@
             margin: 0 10px 10px 0;
         }
 
-        .tvchannel-details-page .title {
+        .tvChannel-details-page .title {
             text-align: left;
         }
         /*** PRODUCT REVIEWS ***/
-        .tvchannel-review-item .review-title {
+        .tvChannel-review-item .review-title {
             max-width: 850px;
         }
 
@@ -8125,46 +8125,46 @@
             text-align: right
         }
 
-        .tvchannel-review-item .review-text {
+        .tvChannel-review-item .review-text {
             display: table;
             width: 100%;
             table-layout: fixed;
         }
 
-        .tvchannel-review-item .avatar {
+        .tvChannel-review-item .avatar {
             display: table-cell;
             vertical-align: top;
             width: 120px;
         }
 
-            .tvchannel-review-item .avatar img {
+            .tvChannel-review-item .avatar img {
                 max-width: 100%;
             }
 
-        .tvchannel-review-item .text-body {
+        .tvChannel-review-item .text-body {
             display: table-cell;
             vertical-align: top;
         }
 
-        .tvchannel-review-item .avatar + .text-body {
+        .tvChannel-review-item .avatar + .text-body {
             padding: 0 0 0 20px;
         }
         /*** WISHLIST & COMPARE LIST ***/
-        .compare-tvchannels-page .page-title {
+        .compare-tvChannels-page .page-title {
             margin: 0 0 -1px;
         }
 
-        .compare-tvchannels-page .clear-list {
+        .compare-tvChannels-page .clear-list {
             position: absolute;
             top: 7px;
             right: 0;
         }
 
-        .compare-tvchannels-table .full-description td {
+        .compare-tvChannels-table .full-description td {
             display: table-cell;
         }
 
-            .compare-tvchannels-table .full-description td p {
+            .compare-tvChannels-table .full-description td p {
                 margin-top: 0;
             }
         /*** TOPICS ***/
@@ -8459,7 +8459,7 @@
         }
                 
         /*** PRODUCT REVIEWS ***/
-        .tvchannel-review-item .review-title {
+        .tvChannel-review-item .review-title {
             max-width: 1050px;
         }
 

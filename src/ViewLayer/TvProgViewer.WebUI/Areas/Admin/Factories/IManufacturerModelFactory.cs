@@ -43,34 +43,34 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             Manufacturer manufacturer, bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare paged manufacturer tvchannel list model
+        /// Prepare paged manufacturer tvChannel list model
         /// </summary>
-        /// <param name="searchModel">Manufacturer tvchannel search model</param>
+        /// <param name="searchModel">Manufacturer tvChannel search model</param>
         /// <param name="manufacturer">Manufacturer</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the manufacturer tvchannel list model
+        /// The task result contains the manufacturer tvChannel list model
         /// </returns>
         Task<ManufacturerTvChannelListModel> PrepareManufacturerTvChannelListModelAsync(ManufacturerTvChannelSearchModel searchModel,
             Manufacturer manufacturer);
 
         /// <summary>
-        /// Prepare tvchannel search model to add to the manufacturer
+        /// Prepare tvChannel search model to add to the manufacturer
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the manufacturer
+        /// The task result contains the tvChannel search model to add to the manufacturer
         /// </returns>
         Task<AddTvChannelToManufacturerSearchModel> PrepareAddTvChannelToManufacturerSearchModelAsync(AddTvChannelToManufacturerSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged tvchannel list model to add to the manufacturer
+        /// Prepare paged tvChannel list model to add to the manufacturer
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel list model to add to the manufacturer
+        /// The task result contains the tvChannel list model to add to the manufacturer
         /// </returns>
         Task<AddTvChannelToManufacturerListModel> PrepareAddTvChannelToManufacturerListModelAsync(AddTvChannelToManufacturerSearchModel searchModel);
     }

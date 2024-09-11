@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a cross-sell tvchannel search model
+    /// Represents a cross-sell tvChannel search model
     /// </summary>
     public partial record CrossSellTvChannelSearchModel : BaseSearchModel
     {

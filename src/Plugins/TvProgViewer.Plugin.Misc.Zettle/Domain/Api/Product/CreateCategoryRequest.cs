@@ -2,18 +2,18 @@
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
     /// Represents request to create category
     /// </summary>
-    public class CreateCategoryRequest : ProductApiRequest
+    public class CreateCategoryRequest : TvChannelApiRequest
     {
         /// <summary>
         /// Gets or sets the categories
         /// </summary>
         [JsonProperty(PropertyName = "categories")]
-        public List<Product.ProductCategory> Categories { get; set; }
+        public List<TvChannel.TvChannelCategory> Categories { get; set; }
 
         /// <summary>
         /// Gets the request path

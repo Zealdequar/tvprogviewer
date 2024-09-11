@@ -14,7 +14,7 @@ namespace TvProgViewer.Services.Catalog
     {
         #region Fields
 
-        private readonly IRepository<TvChannelReviewReviewTypeMapping> _tvchannelReviewReviewTypeMappingRepository;
+        private readonly IRepository<TvChannelReviewReviewTypeMapping> _tvChannelReviewReviewTypeMappingRepository;
         private readonly IRepository<ReviewType> _reviewTypeRepository;
         private readonly IStaticCacheManager _staticCacheManager;
 
@@ -22,11 +22,11 @@ namespace TvProgViewer.Services.Catalog
 
         #region Ctor
 
-        public ReviewTypeService(IRepository<TvChannelReviewReviewTypeMapping> tvchannelReviewReviewTypeMappingRepository,
+        public ReviewTypeService(IRepository<TvChannelReviewReviewTypeMapping> tvChannelReviewReviewTypeMappingRepository,
             IRepository<ReviewType> reviewTypeRepository,
             IStaticCacheManager staticCacheManager)
         {
-            _tvchannelReviewReviewTypeMappingRepository = tvchannelReviewReviewTypeMappingRepository;
+            _tvChannelReviewReviewTypeMappingRepository = tvChannelReviewReviewTypeMappingRepository;
             _reviewTypeRepository = reviewTypeRepository;
             _staticCacheManager = staticCacheManager;
         }
@@ -99,36 +99,36 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel review type mapping
 
         /// <summary>
-        /// Gets tvchannel review and review type mappings by tvchannel review identifier
+        /// Gets tvChannel review and review type mappings by tvChannel review identifier
         /// </summary>
-        /// <param name="tvchannelReviewId">The tvchannel review identifier</param>
+        /// <param name="tvChannelReviewId">The tvChannel review identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review and review type mapping collection
+        /// The task result contains the tvChannel review and review type mapping collection
         /// </returns>
         public async Task<IList<TvChannelReviewReviewTypeMapping>> GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(
-            int tvchannelReviewId)
+            int tvChannelReviewId)
         {
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelReviewTypeMappingByReviewTypeCacheKey, tvchannelReviewId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelReviewTypeMappingByReviewTypeCacheKey, tvChannelReviewId);
 
-            var query = from pam in _tvchannelReviewReviewTypeMappingRepository.Table
+            var query = from pam in _tvChannelReviewReviewTypeMappingRepository.Table
                 orderby pam.Id
-                where pam.TvChannelReviewId == tvchannelReviewId
+                where pam.TvChannelReviewId == tvChannelReviewId
                 select pam;
 
-            var tvchannelReviewReviewTypeMappings = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
+            var tvChannelReviewReviewTypeMappings = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
 
-            return tvchannelReviewReviewTypeMappings;
+            return tvChannelReviewReviewTypeMappings;
         }
 
         /// <summary>
-        /// Inserts a tvchannel review and review type mapping
+        /// Inserts a tvChannel review and review type mapping
         /// </summary>
-        /// <param name="tvchannelReviewReviewType">TvChannel review and review type mapping</param>
+        /// <param name="tvChannelReviewReviewType">TvChannel review and review type mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelReviewReviewTypeMappingsAsync(TvChannelReviewReviewTypeMapping tvchannelReviewReviewType)
+        public virtual async Task InsertTvChannelReviewReviewTypeMappingsAsync(TvChannelReviewReviewTypeMapping tvChannelReviewReviewType)
         {
-            await _tvchannelReviewReviewTypeMappingRepository.InsertAsync(tvchannelReviewReviewType);
+            await _tvChannelReviewReviewTypeMappingRepository.InsertAsync(tvChannelReviewReviewType);
         }
 
         #endregion

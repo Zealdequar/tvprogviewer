@@ -3,11 +3,11 @@
 {
     <div class="delivery">
         <script asp-location="Footer">
-            $(document).on("tvchannel_attributes_changed", function (data) {
+            $(document).on("tvChannel_attributes_changed", function (data) {
                 if (data.changedData.isFreeShipping) {
-                    $("#free-shipping-"+data.changedData.tvchannelId).removeClass("invisible");
+                    $("#free-shipping-"+data.changedData.tvChannelId).removeClass("invisible");
                 } else {
-                    $("#free-shipping-"+data.changedData.tvchannelId).addClass("invisible");
+                    $("#free-shipping-"+data.changedData.tvChannelId).addClass("invisible");
                 }
             });
         </script>

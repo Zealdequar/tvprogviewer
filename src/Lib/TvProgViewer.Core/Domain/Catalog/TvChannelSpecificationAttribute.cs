@@ -3,12 +3,12 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel specification attribute
+    /// Represents a tvChannel specification attribute
     /// </summary>
     public partial class TvChannelSpecificationAttribute : BaseEntity, ILocalizedEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 
@@ -33,7 +33,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool AllowFiltering { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the attribute will be shown on the tvchannel page
+        /// Gets or sets whether the attribute will be shown on the tvChannel page
         /// </summary>
         public bool ShowOnTvChannelPage { get; set; }
 

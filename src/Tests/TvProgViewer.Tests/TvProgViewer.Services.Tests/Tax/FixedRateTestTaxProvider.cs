@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Tax;
-using Nop.Services.Common;
-using Nop.Services.Orders;
-using Nop.Services.Payments;
-using Nop.Services.Plugins;
-using Nop.Services.Tax;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Tax;
+using TvProgViewer.Services.Common;
+using TvProgViewer.Services.Orders;
+using TvProgViewer.Services.Payments;
+using TvProgViewer.Services.Plugins;
+using TvProgViewer.Services.Tax;
 
-namespace Nop.Tests.Nop.Services.Tests.Tax
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Tax
 {
     public class FixedRateTestTaxProvider : BasePlugin, ITaxProvider
     {
@@ -52,14 +52,14 @@ namespace Nop.Tests.Nop.Services.Tests.Tax
         {
             var taxRates = new SortedDictionary<decimal, decimal>();
             var cart = taxTotalRequest.ShoppingCart;
-            var customer = taxTotalRequest.Customer;
+            var user = taxTotalRequest.User;
             var storeId = taxTotalRequest.StoreId;
             var usePaymentMethodAdditionalFee = taxTotalRequest.UsePaymentMethodAdditionalFee;
             
             var paymentMethodSystemName = string.Empty;
-            if (customer != null)
-                paymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(customer,
-                    NopCustomerDefaults.SelectedPaymentMethodAttribute, storeId);
+            if (user != null)
+                paymentMethodSystemName = await _genericAttributeService.GetAttributeAsync<string>(user,
+                    TvProgUserDefaults.SelectedPaymentMethodAttribute, storeId);
 
             //order sub total (items + checkout attributes)
             var subTotalTaxTotal = decimal.Zero;
@@ -108,8 +108,8 @@ namespace Nop.Tests.Nop.Services.Tests.Tax
             if (usePaymentMethodAdditionalFee && _taxSettings.PaymentMethodAdditionalFeeIsTaxable)
             {
                 var paymentMethodAdditionalFee = await _paymentService.GetAdditionalHandlingFeeAsync(cart, paymentMethodSystemName);
-                var (paymentMethodAdditionalFeeExclTax, _) = await _taxService.GetPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFee, false, customer);
-                var (paymentMethodAdditionalFeeInclTax, taxRate) = await _taxService.GetPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFee, true, customer);
+                var (paymentMethodAdditionalFeeExclTax, _) = await _taxService.GetPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFee, false, user);
+                var (paymentMethodAdditionalFeeInclTax, taxRate) = await _taxService.GetPaymentMethodAdditionalFeeAsync(paymentMethodAdditionalFee, true, user);
 
                 paymentMethodAdditionalFeeTax = paymentMethodAdditionalFeeInclTax - paymentMethodAdditionalFeeExclTax;
                 //ensure that tax is equal or greater than zero

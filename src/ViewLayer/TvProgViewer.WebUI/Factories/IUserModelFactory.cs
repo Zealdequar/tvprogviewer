@@ -91,11 +91,11 @@ namespace TvProgViewer.WebUI.Factories
         Task<UserAddressListModel> PrepareUserAddressListModelAsync();
 
         /// <summary>
-        /// Prepare the user downloadable tvchannels model
+        /// Prepare the user downloadable tvChannels model
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the user downloadable tvchannels model
+        /// The task result contains the user downloadable tvChannels model
         /// </returns>
         Task<UserDownloadableTvChannelsModel> PrepareUserDownloadableTvChannelsModelAsync();
 
@@ -103,12 +103,12 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the user agreement model
         /// </summary>
         /// <param name="orderItem">Order item</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the user agreement model
         /// </returns>
-        Task<UserAgreementModel> PrepareUserAgreementModelAsync(OrderItem orderItem, TvChannel tvchannel);
+        Task<UserAgreementModel> PrepareUserAgreementModelAsync(OrderItem orderItem, TvChannel tvChannel);
 
         /// <summary>
         /// Prepare the change password model

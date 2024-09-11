@@ -6,10 +6,10 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Newtonsoft.Json;
-using Nop.Services.Messages;
+using TvProgViewer.Services.Messages;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Messages
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Messages
 {
     [TestFixture]
     public class NotificationServiceTests : ServiceTest
@@ -27,7 +27,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         }
 
        private IList<NotifyData> DeserializedDataDictionary => 
-            JsonConvert.DeserializeObject<IList<NotifyData>>(_tempDataDictionaryFactory.GetTempData(_httpContext)[NopMessageDefaults.NotificationListKey].ToString());
+            JsonConvert.DeserializeObject<IList<NotifyData>>(_tempDataDictionaryFactory.GetTempData(_httpContext)[TvProgMessageDefaults.NotificationListKey].ToString());
 
         [Test]
         public void CanAddNotification()

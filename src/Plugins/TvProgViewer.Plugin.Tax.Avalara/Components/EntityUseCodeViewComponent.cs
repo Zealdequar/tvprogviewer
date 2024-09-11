@@ -25,7 +25,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.Plugin.Tax.Avalara.Components
 {
     /// <summary>
-    /// Represents a view component to render an additional field on user details, user role details, product details, checkout attribute details views
+    /// Represents a view component to render an additional field on user details, user role details, tvChannel details, checkout attribute details views
     /// </summary>
     public class EntityUseCodeViewComponent : TvProgViewComponent
     {
@@ -37,7 +37,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Components
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ILocalizationService _localizationService;
         private readonly IPermissionService _permissionService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly ITaxPluginManager _taxPluginManager;
 
@@ -51,7 +51,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Components
             IGenericAttributeService genericAttributeService,
             ILocalizationService localizationService,
             IPermissionService permissionService,
-            IProductService productService,
+            ITvChannelService tvChannelService,
             IStaticCacheManager staticCacheManager,
             ITaxPluginManager taxPluginManager)
         {
@@ -61,7 +61,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Components
             _genericAttributeService = genericAttributeService;
             _localizationService = localizationService;
             _permissionService = permissionService;
-            _productService = productService;
+            _tvChannelService = tvChannelService;
             _staticCacheManager = staticCacheManager;
             _taxPluginManager = taxPluginManager;
         }
@@ -95,7 +95,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Components
             //ensure that it's a proper widget zone
             if (!widgetZone.Equals(AdminWidgetZones.UserDetailsBlock) &&
                 !widgetZone.Equals(AdminWidgetZones.UserRoleDetailsTop) &&
-                !widgetZone.Equals(AdminWidgetZones.ProductDetailsBlock) &&
+                !widgetZone.Equals(AdminWidgetZones.TvChannelDetailsBlock) &&
                 !widgetZone.Equals(AdminWidgetZones.CheckoutAttributeDetailsBlock))
             {
                 return Content(string.Empty);
@@ -140,10 +140,10 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Components
                 entity = await _userService.GetUserRoleByIdAsync(entityModel.Id);
             }
 
-            if (widgetZone.Equals(AdminWidgetZones.ProductDetailsBlock))
+            if (widgetZone.Equals(AdminWidgetZones.TvChannelDetailsBlock))
             {
-                model.PrecedingElementId = nameof(ProductModel.IsTaxExempt);
-                entity = await _productService.GetProductByIdAsync(entityModel.Id);
+                model.PrecedingElementId = nameof(TvChannelModel.IsTaxExempt);
+                entity = await _tvChannelService.GetTvChannelByIdAsync(entityModel.Id);
             }
 
             if (widgetZone.Equals(AdminWidgetZones.CheckoutAttributeDetailsBlock))

@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Nop.Core.Domain.Gdpr;
-using Nop.Services.Gdpr;
+using TvProgViewer.Core.Domain.Gdpr;
+using TvProgViewer.Services.Gdpr;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Gdpr
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Gdpr
 {
     [TestFixture]
-    public class GdprServiceTests : BaseNopTest
+    public class GdprServiceTests : BaseTvProgTest
     {
         private IGdprService _gdprService;
 

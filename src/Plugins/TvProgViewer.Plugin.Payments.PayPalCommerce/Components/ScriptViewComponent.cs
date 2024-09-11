@@ -67,7 +67,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Components
 
             if (!widgetZone.Equals(PublicWidgetZones.CheckoutPaymentInfoTop) &&
                 !widgetZone.Equals(PublicWidgetZones.OpcContentBefore) &&
-                !widgetZone.Equals(PublicWidgetZones.ProductDetailsTop) &&
+                !widgetZone.Equals(PublicWidgetZones.TvChannelDetailsTop) &&
                 !widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore))
             {
                 return Content(string.Empty);
@@ -83,7 +83,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Components
                     return Content(string.Empty);
             }
 
-            if (widgetZone.Equals(PublicWidgetZones.ProductDetailsTop) && !_settings.DisplayButtonsOnProductDetails)
+            if (widgetZone.Equals(PublicWidgetZones.TvChannelDetailsTop) && !_settings.DisplayButtonsOnTvChannelDetails)
                 return Content(string.Empty);
 
             var (script, _) = await _serviceManager.GetScriptAsync(_settings, widgetZone);

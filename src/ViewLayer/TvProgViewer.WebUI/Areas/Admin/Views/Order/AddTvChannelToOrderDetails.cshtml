@@ -12,7 +12,7 @@
 @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
 
 <form asp-controller="Order" asp-action="AddTvChannelToOrderDetails" asp-route-orderId="@Model.OrderId"
-      asp-route-tvchannelId="@Model.TvChannelId" enctype="multipart/form-data" method="post" id="tvchannel-details-form">
+      asp-route-tvChannelId="@Model.TvChannelId" enctype="multipart/form-data" method="post" id="tvChannel-details-form">
     
     <div asp-validation-summary="All"></div>
 
@@ -92,7 +92,7 @@
                             </div>
                         </div>
 
-                        var dataDict = new ViewDataDictionary(ViewData) { new KeyValuePair<string, object>("tvchannelId", Model.TvChannelId) };
+                        var dataDict = new ViewDataDictionary(ViewData) { new KeyValuePair<string, object>("tvChannelId", Model.TvChannelId) };
                         @await Html.PartialAsync("_TvChannelAddAttributes", Model.TvChannelAttributes, dataDict)
 
                         var dataDictGiftCard = new ViewDataDictionary(ViewData);
@@ -127,7 +127,7 @@
                     {
                         <div class="card card-default">
                             <div class="card-body">
-                                Grouped tvchannels are not currently supported for adding to an existing order
+                                Grouped tvChannels are not currently supported for adding to an existing order
                             </div>
                         </div>
                     }
@@ -135,7 +135,7 @@
                     {
                         <div class="card card-default">
                             <div class="card-body">
-                                This tvchannel type (unknown) is not currently supported for adding to an existing order
+                                This tvChannel type (unknown) is not currently supported for adding to an existing order
                             </div>
                         </div>
                     }

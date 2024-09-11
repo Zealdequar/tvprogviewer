@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
 {
     /// <summary>
-    /// Represents a low stock tvchannel list model
+    /// Represents a low stock tvChannel list model
     /// </summary>
     public partial record LowStockTvChannelListModel : BasePagedListModel<LowStockTvChannelModel>
     {

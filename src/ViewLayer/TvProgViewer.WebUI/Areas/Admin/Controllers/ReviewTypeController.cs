@@ -149,7 +149,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageSettings))
                 return AccessDeniedView();
 
-            //try to get an tvchannel review type with the specified id
+            //try to get an tvChannel review type with the specified id
             var reviewType = await _reviewTypeService.GetReviewTypeByIdAsync(id);
             if (reviewType == null)
                 return RedirectToAction("List");

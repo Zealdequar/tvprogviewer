@@ -5,7 +5,7 @@ using TvProgViewer.Services.Caching;
 namespace TvProgViewer.Services.Catalog.Caching
 {
     /// <summary>
-    /// Represents a tvchannel attribute cache event consumer
+    /// Represents a tvChannel attribute cache event consumer
     /// </summary>
     public partial class TvChannelAttributeCacheEventConsumer : CacheEventConsumer<TvChannelAttribute>
     {

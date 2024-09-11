@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using Nop.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests.Domain
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests.Domain
 {
     [TestFixture]
     public class EntityEqualityTests
@@ -10,8 +10,8 @@ namespace Nop.Tests.Nop.Core.Tests.Domain
         [Test]
         public void TwoTransientEntitiesShouldNotBeEqual()
         {
-            var p1 = new Product();
-            var p2 = new Product();
+            var p1 = new TvChannel();
+            var p2 = new TvChannel();
 
             p1.Should().NotBe(p2, "Different transient entities should not be equal");
         }
@@ -19,7 +19,7 @@ namespace Nop.Tests.Nop.Core.Tests.Domain
         [Test]
         public void TwoReferencesToSameTransientEntityShouldBeEqual()
         {
-            var p1 = new Product();
+            var p1 = new TvChannel();
             var p2 = p1;
 
             p1.Should().Be(p2, "Two references to the same transient entity should be equal");
@@ -28,8 +28,8 @@ namespace Nop.Tests.Nop.Core.Tests.Domain
         [Test]
         public void EntitiesWithDifferentIdShouldNotBeEqual()
         {
-            var p1 = new Product { Id = 2 };
-            var p2 = new Product { Id = 5 };
+            var p1 = new TvChannel { Id = 2 };
+            var p2 = new TvChannel { Id = 5 };
 
             p1.Should().NotBe(p2, "Entities with different ids should not be equal");
         }
@@ -37,8 +37,8 @@ namespace Nop.Tests.Nop.Core.Tests.Domain
         [Test]
         public void EntityShouldNotEqualTransientEntity()
         {
-            var p1 = new Product { Id = 1 };
-            var p2 = new Product();
+            var p1 = new TvChannel { Id = 1 };
+            var p2 = new TvChannel();
 
             p1.Should().NotBe(p2, "Entity and transient entity should not be equal");
         }
@@ -47,7 +47,7 @@ namespace Nop.Tests.Nop.Core.Tests.Domain
         public void EntitiesWithSameIdButDifferentTypeShouldNotBeEqual()
         {
             const int id = 10;
-            var p1 = new Product { Id = id };
+            var p1 = new TvChannel { Id = id };
 
             var c1 = new Category { Id = id };
 

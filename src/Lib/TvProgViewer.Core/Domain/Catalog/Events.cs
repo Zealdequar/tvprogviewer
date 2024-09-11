@@ -8,10 +8,10 @@ namespace TvProgViewer.Core.Domain.Catalog
         /// <summary>
         /// Ctor
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
-        public TvChannelReviewApprovedEvent(TvChannelReview tvchannelReview)
+        /// <param name="tvChannelReview">TvChannel review</param>
+        public TvChannelReviewApprovedEvent(TvChannelReview tvChannelReview)
         {
-            TvChannelReview = tvchannelReview;
+            TvChannelReview = tvChannelReview;
         }
 
         /// <summary>

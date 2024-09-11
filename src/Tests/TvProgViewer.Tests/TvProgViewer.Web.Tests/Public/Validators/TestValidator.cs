@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentValidation;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators
 {
     public class TestValidator : InlineValidator<Person>
     { 

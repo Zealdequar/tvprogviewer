@@ -61,11 +61,11 @@
                             }
                             @if (Model.ShowTvChannelImages)
                             {
-                                <th class="tvchannel-picture">
+                                <th class="tvChannel-picture">
                                     @T("ShoppingCart.Image")
                                 </th>
                             }
-                            <th class="tvchannel">
+                            <th class="tvChannel">
                                 @T("ShoppingCart.TvChannel(s)")
                             </th>
                             @if (Model.ShowVendorName)
@@ -104,12 +104,12 @@
                                 }
                                 @if (Model.ShowTvChannelImages)
                                 {
-                                    <td class="tvchannel-picture">
+                                    <td class="tvChannel-picture">
                                         <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
                                     </td>
                                 }
-                                <td class="tvchannel">
-                                    <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))" class="tvchannel-name">@item.TvChannelName</a>
+                                <td class="tvChannel">
+                                    <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))" class="tvChannel-name">@item.TvChannelName</a>
                                     @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                     {
                                         <div class="attributes">
@@ -157,7 +157,7 @@
                                 }
                                 <td class="unit-price">
                                     <label class="td-title">@T("ShoppingCart.UnitPrice"):</label>
-                                    <span class="tvchannel-unit-price">@item.UnitPrice</span>
+                                    <span class="tvChannel-unit-price">@item.UnitPrice</span>
                                 </td>
                                 <td class="quantity">
                                     <label class="td-title" for="itemquantity@(item.Id)">@T("ShoppingCart.Quantity"):</label>
@@ -179,12 +179,12 @@
                                     }
                                     else
                                     {
-                                        <span class="tvchannel-quantity">@item.Quantity</span>
+                                        <span class="tvChannel-quantity">@item.Quantity</span>
                                     }
                                 </td>
                                 <td class="subtotal">
                                     <label class="td-title">@T("ShoppingCart.ItemTotal"):</label>
-                                    <span class="tvchannel-subtotal">@item.SubTotal</span>
+                                    <span class="tvChannel-subtotal">@item.SubTotal</span>
                                     @if (!string.IsNullOrEmpty(item.Discount))
                                     {
                                         <div class="discount">

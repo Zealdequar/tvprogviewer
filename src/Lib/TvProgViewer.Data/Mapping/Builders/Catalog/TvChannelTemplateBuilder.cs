@@ -4,7 +4,7 @@ using TvProgViewer.Core.Domain.Catalog;
 namespace TvProgViewer.Data.Mapping.Builders.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel template entity builder
+    /// Represents a tvChannel template entity builder
     /// </summary>
     public partial class TvChannelTemplateBuilder : TvProgEntityBuilder<TvChannelTemplate>
     {

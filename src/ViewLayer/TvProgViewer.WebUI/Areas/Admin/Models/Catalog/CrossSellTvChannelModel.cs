@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a cross-sell tvchannel model
+    /// Represents a cross-sell tvChannel model
     /// </summary>
     public partial record CrossSellTvChannelModel : BaseTvProgEntityModel
     {

@@ -12,6 +12,8 @@ namespace TvProgViewer.Core.Configuration
         [EnumMember(Value = "sqlserver")]
         SqlServer,
         [EnumMember(Value = "redis")]
-        Redis
+        Redis,
+        [EnumMember(Value = "redissynchronizedmemory")]
+        RedisSynchronizedMemory
     }
 }

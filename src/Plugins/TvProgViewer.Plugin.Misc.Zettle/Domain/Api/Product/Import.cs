@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
     /// Represents the import details

@@ -9,13 +9,13 @@
     TvProgHtml.AddTitleParts(T("PageTitle.Account").Text);
     //page class
     TvProgHtml.AppendPageCssClassParts("html-account-page");
-    TvProgHtml.AppendPageCssClassParts("html-downloadable-tvchannels-page");
+    TvProgHtml.AppendPageCssClassParts("html-downloadable-tvChannels-page");
 }
 @section left
 {
     @await Component.InvokeAsync(typeof(UserNavigationViewComponent), new { selectedTabId = UserNavigationEnum.DownloadableTvChannels })
 }
-<div class="page account-page downloadable-tvchannels-page">
+<div class="page account-page downloadable-tvChannels-page">
     <div class="page-title">
         <h1>@T("Account.MyAccount") - @T("Account.DownloadableTvChannels")</h1>
     </div>
@@ -38,7 +38,7 @@
                             <th class="date">
                                 @T("DownloadableTvChannels.Fields.Date")
                             </th>
-                            <th class="tvchannel">
+                            <th class="tvChannel">
                                 @T("DownloadableTvChannels.Fields.TvChannel")
                             </th>
                             <th class="download">
@@ -57,7 +57,7 @@
                                 <td class="date">
                                     @item.CreatedOn.ToString("d")
                                 </td>
-                                <td class="tvchannel">
+                                <td class="tvChannel">
                                     <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))">@item.TvChannelName</a>
                                     @if (!string.IsNullOrEmpty(item.TvChannelAttributes))
                                     {

@@ -47,21 +47,21 @@ namespace TvProgViewer.Services.ExportImport
         Task<byte[]> ExportCategoriesToXlsxAsync(IList<Category> categories);
 
         /// <summary>
-        /// Export tvchannel list to XML
+        /// Export tvChannel list to XML
         /// </summary>
-        /// <param name="tvchannels">TvChannels</param>
+        /// <param name="tvChannels">TvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
-        Task<string> ExportTvChannelsToXmlAsync(IList<TvChannel> tvchannels);
+        Task<string> ExportTvChannelsToXmlAsync(IList<TvChannel> tvChannels);
 
         /// <summary>
-        /// Export tvchannels to XLSX
+        /// Export tvChannels to XLSX
         /// </summary>
-        /// <param name="tvchannels">TvChannels</param>
+        /// <param name="tvChannels">TvChannels</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task<byte[]> ExportTvChannelsToXlsxAsync(IEnumerable<TvChannel> tvchannels);
+        Task<byte[]> ExportTvChannelsToXlsxAsync(IEnumerable<TvChannel> tvChannels);
 
         /// <summary>
         /// Export order list to XML

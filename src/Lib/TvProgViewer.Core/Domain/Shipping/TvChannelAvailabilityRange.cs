@@ -3,7 +3,7 @@ using TvProgViewer.Core.Domain.Localization;
 namespace TvProgViewer.Core.Domain.Shipping
 {
     /// <summary>
-    /// Represents a tvchannel availability range
+    /// Represents a tvChannel availability range
     /// </summary>
     public partial class TvChannelAvailabilityRange : BaseEntity, ILocalizedEntity
     {

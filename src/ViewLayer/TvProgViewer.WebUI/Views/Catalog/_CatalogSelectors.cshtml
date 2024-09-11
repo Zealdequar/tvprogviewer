@@ -8,11 +8,11 @@
     return;
 }
 
-<div class="tvchannel-selectors">
+<div class="tvChannel-selectors">
     @*view mode*@
     @if (Model.AllowTvChannelViewModeChanging)
     {
-        <div class="tvchannel-viewmode">
+        <div class="tvChannel-viewmode">
             <span>@T("Catalog.ViewMode")</span>
             @if (Model.AvailableViewModes.Count > 1)
             {
@@ -47,13 +47,13 @@
 
     @if (Model.AllowTvChannelSorting)
     {
-        <div class="tvchannel-sorting">
+        <div class="tvChannel-sorting">
             <span>@T("Catalog.OrderBy")</span>
-            @Html.DropDownList("tvchannels-orderby", Model.AvailableSortOptions, new { aria_label = T("Catalog.OrderBy.Label") })
+            @Html.DropDownList("tvChannels-orderby", Model.AvailableSortOptions, new { aria_label = T("Catalog.OrderBy.Label") })
         </div>
         <script asp-location="Footer">
             $(document).ready(function () {
-                var $orderByEl = $('#tvchannels-orderby');
+                var $orderByEl = $('#tvChannels-orderby');
                 $orderByEl.on('change', function () {
                     CatalogTvChannels.getTvChannels();
                 });
@@ -68,14 +68,14 @@
 
     @if (Model.AllowUsersToSelectPageSize)
     {
-        <div class="tvchannel-page-size">
+        <div class="tvChannel-page-size">
             <span>@T("Catalog.PageSize")</span>
-            @Html.DropDownList("tvchannels-pagesize", Model.PageSizeOptions, new { aria_label = T("Catalog.PageSize.Label") })
+            @Html.DropDownList("tvChannels-pagesize", Model.PageSizeOptions, new { aria_label = T("Catalog.PageSize.Label") })
             <span>@T("Catalog.PageSize.PerPage")</span>
         </div>
         <script asp-location="Footer">
             $(document).ready(function () {
-                var $pageSizeEl = $('#tvchannels-pagesize');
+                var $pageSizeEl = $('#tvChannels-pagesize');
                 $pageSizeEl.on('change', function () {
                     CatalogTvChannels.getTvChannels();
                 });

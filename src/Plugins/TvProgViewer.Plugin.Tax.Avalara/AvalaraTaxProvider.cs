@@ -149,7 +149,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara
             {
                 AdminWidgetZones.UserDetailsBlock,
                 AdminWidgetZones.UserRoleDetailsTop,
-                AdminWidgetZones.ProductListButtons,
+                AdminWidgetZones.TvChannelListButtons,
                 PublicWidgetZones.CheckoutConfirmTop,
                 PublicWidgetZones.OpCheckoutConfirmTop,
                 PublicWidgetZones.OrderSummaryContentBefore
@@ -167,7 +167,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara
                 widgetZone.Equals(AdminWidgetZones.UserRoleDetailsTop))
                 return typeof(EntityUseCodeViewComponent);
 
-            if (widgetZone.Equals(AdminWidgetZones.ProductListButtons))
+            if (widgetZone.Equals(AdminWidgetZones.TvChannelListButtons))
                 return typeof(ExportItemsViewComponent);
 
             if (widgetZone.Equals(PublicWidgetZones.CheckoutConfirmTop) ||
@@ -291,7 +291,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara
                 ["Plugins.Tax.Avalara.Fields.EntityUseCode.Hint"] = "Choose a code that can be used to designate the reason for a particular sale being exempt. Each entity use code stands for a different exemption reason, the logic of which can be found in Avalara exemption reason documentation.",
                 ["Plugins.Tax.Avalara.Fields.EntityUseCode.None"] = "None",
                 ["Plugins.Tax.Avalara.Fields.GetTaxRateByAddressOnly"] = "Tax rates by address only",
-                ["Plugins.Tax.Avalara.Fields.GetTaxRateByAddressOnly.Hint"] = "Determine whether to get tax rates by the address only. This may lead to not entirely accurate results (for example, when a user is exempt to tax, or the product belongs to a tax category that has a specific rate), but it will significantly reduce the number of GetTax API calls. This applies only to tax rates in the catalog, on the checkout full information is always used in requests.",
+                ["Plugins.Tax.Avalara.Fields.GetTaxRateByAddressOnly.Hint"] = "Determine whether to get tax rates by the address only. This may lead to not entirely accurate results (for example, when a user is exempt to tax, or the tvChannel belongs to a tax category that has a specific rate), but it will significantly reduce the number of GetTax API calls. This applies only to tax rates in the catalog, on the checkout full information is always used in requests.",
                 ["Plugins.Tax.Avalara.Fields.LicenseKey"] = "License key",
                 ["Plugins.Tax.Avalara.Fields.LicenseKey.Hint"] = "Specify Avalara account license key.",
                 ["Plugins.Tax.Avalara.Fields.LicenseKey.Required"] = "Account license key is required",
@@ -309,9 +309,9 @@ namespace TvProgViewer.Plugin.Tax.Avalara
                 ["Plugins.Tax.Avalara.Fields.ValidateAddress"] = "Validate address",
                 ["Plugins.Tax.Avalara.Fields.ValidateAddress.Hint"] = "Determine whether to validate entered by user addresses before the tax calculation.",
                 ["Plugins.Tax.Avalara.Items.Export"] = "Export to Avalara (selected)",
-                ["Plugins.Tax.Avalara.Items.Export.AlreadyExported"] = "Selected products have already been exported",
-                ["Plugins.Tax.Avalara.Items.Export.Error"] = "An error has occurred on export products",
-                ["Plugins.Tax.Avalara.Items.Export.Success"] = "Successfully exported {0} products",
+                ["Plugins.Tax.Avalara.Items.Export.AlreadyExported"] = "Selected tvChannels have already been exported",
+                ["Plugins.Tax.Avalara.Items.Export.Error"] = "An error has occurred on export tvChannels",
+                ["Plugins.Tax.Avalara.Items.Export.Success"] = "Successfully exported {0} tvChannels",
                 ["Plugins.Tax.Avalara.Log"] = "Log",
                 ["Plugins.Tax.Avalara.Log.BackToList"] = "back to log",
                 ["Plugins.Tax.Avalara.Log.ClearLog"] = "Clear log",

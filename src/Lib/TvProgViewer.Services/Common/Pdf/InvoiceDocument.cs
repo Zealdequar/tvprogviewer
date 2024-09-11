@@ -126,7 +126,7 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose order tvchannels
+        /// Compose order tvChannels
         /// </summary>
         /// <param name="container">Content placement container</param>
         protected void ComposeTvChannels(IContainer container)
@@ -165,26 +165,26 @@ namespace TvProgViewer.Services.Common.Pdf
                     }
                 });
 
-                foreach (var tvchannel in Source.TvChannels)
+                foreach (var tvChannel in Source.TvChannels)
                 {
-                    table.Cell().Element(CellStyle).Element(tvchannelContainer =>
+                    table.Cell().Element(CellStyle).Element(tvChannelContainer =>
                     {
-                        tvchannelContainer.Column(pColumn =>
+                        tvChannelContainer.Column(pColumn =>
                         {
-                            pColumn.Item().Text(tvchannel.Name);
+                            pColumn.Item().Text(tvChannel.Name);
 
-                            foreach (var attribute in tvchannel.TvChannelAttributes)
+                            foreach (var attribute in tvChannel.TvChannelAttributes)
                                 pColumn.Item().DefaultTextStyle(s => s.Italic().FontSize(9)).Text(attribute);
                         });
                     });
 
                     if (Source.ShowSkuInTvChannelList)
-                        table.Cell().Element(CellStyle).Text(tvchannel.Sku);
+                        table.Cell().Element(CellStyle).Text(tvChannel.Sku);
                     if (Source.ShowVendorInTvChannelList)
-                        table.Cell().Element(CellStyle).Text(tvchannel.VendorName);
-                    table.Cell().Element(CellStyle).AlignRight().Text(tvchannel.Price);
-                    table.Cell().Element(CellStyle).AlignRight().Text(tvchannel.Quantity);
-                    table.Cell().Element(CellStyle).AlignRight().Text(tvchannel.Total);
+                        table.Cell().Element(CellStyle).Text(tvChannel.VendorName);
+                    table.Cell().Element(CellStyle).AlignRight().Text(tvChannel.Price);
+                    table.Cell().Element(CellStyle).AlignRight().Text(tvChannel.Quantity);
+                    table.Cell().Element(CellStyle).AlignRight().Text(tvChannel.Total);
 
                     static IContainer CellStyle(IContainer container)
                     {

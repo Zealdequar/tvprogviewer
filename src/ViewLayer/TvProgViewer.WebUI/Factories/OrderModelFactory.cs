@@ -55,7 +55,7 @@ namespace TvProgViewer.WebUI.Factories
         private readonly IPaymentService _paymentService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShipmentService _shipmentService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -94,7 +94,7 @@ namespace TvProgViewer.WebUI.Factories
             IPaymentService paymentService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IRewardPointService rewardPointService,
             IShipmentService shipmentService,
             IStateProvinceService stateProvinceService,
@@ -129,7 +129,7 @@ namespace TvProgViewer.WebUI.Factories
             _paymentService = paymentService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _rewardPointService = rewardPointService;
             _shipmentService = shipmentService;
             _stateProvinceService = stateProvinceService;
@@ -158,12 +158,12 @@ namespace TvProgViewer.WebUI.Factories
         /// <param name="orderItem">Order item</param>
         /// <param name="pictureSize">Picture size</param>
         /// <param name="showDefaultPicture">Whether to show the default picture</param>
-        /// <param name="tvchannelName">TvChannel name</param>
+        /// <param name="tvChannelName">TvChannel name</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the picture model
         /// </returns>
-        protected virtual async Task<PictureModel> PrepareOrderItemPictureModelAsync(OrderItem orderItem, int pictureSize, bool showDefaultPicture, string tvchannelName)
+        protected virtual async Task<PictureModel> PrepareOrderItemPictureModelAsync(OrderItem orderItem, int pictureSize, bool showDefaultPicture, string tvChannelName)
         {
             var language = await _workContext.GetWorkingLanguageAsync();
             var store = await _storeContext.GetCurrentStoreAsync();
@@ -172,16 +172,16 @@ namespace TvProgViewer.WebUI.Factories
 
             var model = await _staticCacheManager.GetAsync(pictureCacheKey, async () =>
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 //order item picture
-                var orderItemPicture = await _pictureService.GetTvChannelPictureAsync(tvchannel, orderItem.AttributesXml);
+                var orderItemPicture = await _pictureService.GetTvChannelPictureAsync(tvChannel, orderItem.AttributesXml);
 
                 return new PictureModel
                 {
                     ImageUrl = (await _pictureService.GetPictureUrlAsync(orderItemPicture, pictureSize, showDefaultPicture)).Url,
-                    Title = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageLinkTitleFormat"), tvchannelName),
-                    AlternateText = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageAlternateTextFormat"), tvchannelName),
+                    Title = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageLinkTitleFormat"), tvChannelName),
+                    AlternateText = string.Format(await _localizationService.GetResourceAsync("Media.TvChannel.ImageAlternateTextFormat"), tvChannelName),
                 };
             });
 
@@ -503,7 +503,7 @@ namespace TvProgViewer.WebUI.Factories
                 });
             }
 
-            //purchased tvchannels
+            //purchased tvChannels
             model.ShowSku = _catalogSettings.ShowSkuOnTvChannelDetailsPage;
             model.ShowVendorName = _vendorSettings.ShowVendorOnOrderDetailsPage;
             model.ShowTvChannelThumbnail = _orderSettings.ShowTvChannelThumbnailInOrderDetailsPage;
@@ -512,27 +512,27 @@ namespace TvProgViewer.WebUI.Factories
 
             foreach (var orderItem in orderItems)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 var orderItemModel = new OrderDetailsModel.OrderItemModel
                 {
                     Id = orderItem.Id,
                     OrderItemGuid = orderItem.OrderItemGuid,
-                    Sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml),
-                    VendorName = (await _vendorService.GetVendorByIdAsync(tvchannel.VendorId))?.Name ?? string.Empty,
-                    TvChannelId = tvchannel.Id,
-                    TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
-                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
+                    Sku = await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml),
+                    VendorName = (await _vendorService.GetVendorByIdAsync(tvChannel.VendorId))?.Name ?? string.Empty,
+                    TvChannelId = tvChannel.Id,
+                    TvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name),
+                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvChannel),
                     Quantity = orderItem.Quantity,
                     AttributeInfo = orderItem.AttributeDescription,
                 };
                 //rental info
-                if (tvchannel.IsRental)
+                if (tvChannel.IsRental)
                 {
                     var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : "";
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalStartDateUtc.Value) : "";
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : "";
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalEndDateUtc.Value) : "";
                     orderItemModel.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                 }
@@ -562,9 +562,9 @@ namespace TvProgViewer.WebUI.Factories
                     orderItemModel.SubTotalValue = priceExclTaxInUserCurrency;
                 }
 
-                //downloadable tvchannels
+                //downloadable tvChannels
                 if (await _orderService.IsDownloadAllowedAsync(orderItem))
-                    orderItemModel.DownloadId = tvchannel.DownloadId;
+                    orderItemModel.DownloadId = tvChannel.DownloadId;
                 if (await _orderService.IsLicenseDownloadAllowedAsync(orderItem))
                     orderItemModel.LicenseId = orderItem.LicenseDownloadId ?? 0;
 
@@ -635,7 +635,7 @@ namespace TvProgViewer.WebUI.Factories
                 }
             }
 
-            //tvchannels in this shipment
+            //tvChannels in this shipment
             model.ShowSku = _catalogSettings.ShowSkuOnTvChannelDetailsPage;
             foreach (var shipmentItem in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
             {
@@ -643,26 +643,26 @@ namespace TvProgViewer.WebUI.Factories
                 if (orderItem == null)
                     continue;
 
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 var shipmentItemModel = new ShipmentDetailsModel.ShipmentItemModel
                 {
                     Id = shipmentItem.Id,
-                    Sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml),
-                    TvChannelId = tvchannel.Id,
-                    TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
-                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
+                    Sku = await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml),
+                    TvChannelId = tvChannel.Id,
+                    TvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name),
+                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvChannel),
                     AttributeInfo = orderItem.AttributeDescription,
                     QuantityOrdered = orderItem.Quantity,
                     QuantityShipped = shipmentItem.Quantity,
                 };
                 //rental info
-                if (tvchannel.IsRental)
+                if (tvChannel.IsRental)
                 {
                     var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : "";
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalStartDateUtc.Value) : "";
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : "";
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalEndDateUtc.Value) : "";
                     shipmentItemModel.RentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                 }

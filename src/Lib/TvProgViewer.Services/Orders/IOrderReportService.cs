@@ -36,7 +36,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="storeId">Store identifier; pass 0 to ignore this parameter</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore this parameter</param>
-        /// <param name="tvchannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
+        /// <param name="tvChannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
         /// <param name="warehouseId">Warehouse identifier; pass 0 to ignore this parameter</param>
         /// <param name="billingCountryId">Billing country identifier; 0 to load all orders</param>
         /// <param name="orderId">Order identifier; pass 0 to ignore this parameter</param>
@@ -54,7 +54,7 @@ namespace TvProgViewer.Services.Orders
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        Task<OrderAverageReportLine> GetOrderAverageReportLineAsync(int storeId = 0, int vendorId = 0, int tvchannelId = 0,
+        Task<OrderAverageReportLine> GetOrderAverageReportLineAsync(int storeId = 0, int vendorId = 0, int tvChannelId = 0,
             int warehouseId = 0, int billingCountryId = 0, int orderId = 0, string paymentMethodSystemName = null,
             List<int> osIds = null, List<int> psIds = null, List<int> ssIds = null,
             DateTime? startTimeUtc = null, DateTime? endTimeUtc = null,
@@ -75,7 +75,7 @@ namespace TvProgViewer.Services.Orders
         /// Get sales summary report
         /// </summary>
         /// <param name="categoryId">Category identifier; 0 to load all records</param>
-        /// <param name="tvchannelId">TvChannel identifier; 0 to load all records</param>
+        /// <param name="tvChannelId">TvChannel identifier; 0 to load all records</param>
         /// <param name="manufacturerId">Manufacturer identifier; 0 to load all records</param>
         /// <param name="storeId">Store identifier (orders placed in a specific store); 0 to load all records</param>
         /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
@@ -93,7 +93,7 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         Task<IPagedList<SalesSummaryReportLine>> SalesSummaryReportAsync(
             int categoryId = 0,
-            int tvchannelId = 0,
+            int tvChannelId = 0,
             int manufacturerId = 0,
             int storeId = 0,
             int vendorId = 0,
@@ -175,25 +175,25 @@ namespace TvProgViewer.Services.Orders
             bool showHidden = false);
             
         /// <summary>
-        /// Gets a list of tvchannels (identifiers) purchased by other users who purchased a specified tvchannel
+        /// Gets a list of tvChannels (identifiers) purchased by other users who purchased a specified tvChannel
         /// </summary>
         /// <param name="storeId">Store identifier</param>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="recordsToReturn">Records to return</param>
-        /// <param name="visibleIndividuallyOnly">A values indicating whether to load only tvchannels marked as "visible individually"; "false" to load all records; "true" to load "visible individually" only</param>
+        /// <param name="visibleIndividuallyOnly">A values indicating whether to load only tvChannels marked as "visible individually"; "false" to load all records; "true" to load "visible individually" only</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
-        Task<int[]> GetAlsoPurchasedTvChannelsIdsAsync(int storeId, int tvchannelId,
+        Task<int[]> GetAlsoPurchasedTvChannelsIdsAsync(int storeId, int tvChannelId,
             int recordsToReturn = 5, bool visibleIndividuallyOnly = true, bool showHidden = false);
 
         /// <summary>
-        /// Gets a list of tvchannels that were never sold
+        /// Gets a list of tvChannels that were never sold
         /// </summary>
-        /// <param name="vendorId">Vendor identifier (filter tvchannels by a specific vendor); 0 to load all records</param>
-        /// <param name="storeId">Store identifier (filter tvchannels by a specific store); 0 to load all records</param>
+        /// <param name="vendorId">Vendor identifier (filter tvChannels by a specific vendor); 0 to load all records</param>
+        /// <param name="storeId">Store identifier (filter tvChannels by a specific store); 0 to load all records</param>
         /// <param name="categoryId">Category identifier; 0 to load all records</param>
         /// <param name="manufacturerId">Manufacturer identifier; 0 to load all records</param>
         /// <param name="createdFromUtc">Order created date from (UTC); null to load all records</param>
@@ -203,7 +203,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
         Task<IPagedList<TvChannel>> TvChannelsNeverSoldAsync(int vendorId = 0, int storeId = 0,
             int categoryId = 0, int manufacturerId = 0,
@@ -215,7 +215,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="storeId">Store identifier; pass 0 to ignore this parameter</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore this parameter</param>
-        /// <param name="tvchannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
+        /// <param name="tvChannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
         /// <param name="warehouseId">Warehouse identifier; pass 0 to ignore this parameter</param>
         /// <param name="orderId">Order identifier; pass 0 to ignore this parameter</param>
         /// <param name="billingCountryId">Billing country identifier; 0 to load all orders</param>
@@ -233,7 +233,7 @@ namespace TvProgViewer.Services.Orders
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        Task<decimal> ProfitReportAsync(int storeId = 0, int vendorId = 0, int tvchannelId = 0,
+        Task<decimal> ProfitReportAsync(int storeId = 0, int vendorId = 0, int tvChannelId = 0,
             int warehouseId = 0, int billingCountryId = 0, int orderId = 0, string paymentMethodSystemName = null,
             List<int> osIds = null, List<int> psIds = null, List<int> ssIds = null,
             DateTime? startTimeUtc = null, DateTime? endTimeUtc = null,

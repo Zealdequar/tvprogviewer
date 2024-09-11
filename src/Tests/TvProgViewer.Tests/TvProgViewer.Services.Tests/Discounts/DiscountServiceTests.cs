@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Discounts;
-using Nop.Services.Discounts;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Discounts;
+using TvProgViewer.Services.Discounts;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Discounts
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Discounts
 {
     [TestFixture]
     public class DiscountServiceTests : ServiceTest
@@ -49,17 +49,17 @@ namespace Nop.Tests.Nop.Services.Tests.Discounts
         public async Task ShouldAcceptValidDiscountCode()
         {
             var discount = CreateDiscount();
-            var customer = CreateCustomer();
+            var user = CreateUser();
 
-            var result = await _discountService.ValidateDiscountAsync(discount, customer, new[] { "CouponCode 1" });
+            var result = await _discountService.ValidateDiscountAsync(discount, user, new[] { "CouponCode 1" });
             result.IsValid.Should().BeTrue();
         }
 
-        private static Customer CreateCustomer()
+        private static User CreateUser()
         {
-            return new Customer
+            return new User
             {
-                CustomerGuid = Guid.NewGuid(),
+                UserGuid = Guid.NewGuid(),
                 AdminComment = string.Empty,
                 Active = true,
                 Deleted = false,
@@ -88,9 +88,9 @@ namespace Nop.Tests.Nop.Services.Tests.Discounts
         public async Task ShouldNotAcceptWrongDiscountCode()
         {
             var discount = CreateDiscount();
-            var customer = CreateCustomer();
+            var user = CreateUser();
 
-            var result = await _discountService.ValidateDiscountAsync(discount, customer, new[] { "CouponCode 2" });
+            var result = await _discountService.ValidateDiscountAsync(discount, user, new[] { "CouponCode 2" });
             result.IsValid.Should().BeFalse();
         }
 
@@ -100,13 +100,13 @@ namespace Nop.Tests.Nop.Services.Tests.Discounts
             var discount = CreateDiscount();
             discount.RequiresCouponCode = false;
 
-            var customer = CreateCustomer();
+            var user = CreateUser();
 
-            var result = await _discountService.ValidateDiscountAsync(discount, customer, null);
+            var result = await _discountService.ValidateDiscountAsync(discount, user, null);
             result.IsValid.Should().BeTrue();
 
             discount.StartDateUtc = DateTime.UtcNow.AddDays(1);
-            result = await _discountService.ValidateDiscountAsync(discount, customer, null);
+            result = await _discountService.ValidateDiscountAsync(discount, user, null);
             result.IsValid.Should().BeFalse();
         }
 

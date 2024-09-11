@@ -3,31 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core;
-using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Payments;
-using Nop.Core.Domain.Shipping;
-using Nop.Services.Catalog;
-using Nop.Services.Common;
-using Nop.Services.Configuration;
-using Nop.Services.Customers;
-using Nop.Services.Orders;
-using Nop.Services.Payments;
-using Nop.Tests.Nop.Services.Tests;
-using Nop.Web.Factories;
-using Nop.Web.Models.Checkout;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Domain.Common;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Core.Domain.Payments;
+using TvProgViewer.Core.Domain.Shipping;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Common;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Orders;
+using TvProgViewer.Services.Payments;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.Checkout;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
     public class CheckoutModelFactoryTests : ServiceTest
     {
         private ICheckoutModelFactory _checkoutModelFactory;
         private IShoppingCartService _shoppingCartService;
-        private IProductService _productService;
+        private ITvChannelService _tvChannelService;
         private IList<ShoppingCartItem> _cart;
         private OrderSettings _orderSettings;
         private ShippingSettings _shippingSettings;
@@ -37,7 +37,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         private ISettingService _settingService;
         private PaymentSettings _paymentSettings;
         private IRewardPointService _rewardPointService;
-        private Customer _customer;
+        private User _user;
         private IPaymentMethod _paymentMethod;
         private CommonSettings _commonSettings;
         private IOrderService _orderService;
@@ -57,27 +57,27 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             _paymentSettings.ActivePaymentMethodSystemNames.Add("Payments.TestMethod");
             await _settingService.SaveSettingAsync(_paymentSettings);
 
-            _customer = await GetService<IWorkContext>().GetCurrentCustomerAsync();
+            _user = await GetService<IWorkContext>().GetCurrentUserAsync();
 
             _rewardPointService = GetService<IRewardPointService>();
-            await _rewardPointService.AddRewardPointsHistoryEntryAsync(_customer, 10000, 1);
+            await _rewardPointService.AddRewardPointsHistoryEntryAsync(_user, 10000, 1);
 
             _shoppingCartService = GetService<IShoppingCartService>();
-            _productService = GetService<IProductService>();
+            _tvChannelService = GetService<ITvChannelService>();
             _addressService = GetService<IAddressService>();
 
             _address = new Address();
 
             await _addressService.InsertAddressAsync(_address);
-            await GetService<ICustomerService>().InsertCustomerAddressAsync(_customer, _address);
+            await GetService<IUserService>().InsertUserAddressAsync(_user, _address);
 
             _orderSettings = GetService<OrderSettings>();
 
-            await _shoppingCartService.AddToCartAsync(_customer, await _productService.GetProductByIdAsync(1), ShoppingCartType.ShoppingCart, 1);
-            await _shoppingCartService.AddToCartAsync(_customer, await _productService.GetProductByIdAsync(2), ShoppingCartType.ShoppingCart, 1);
-            await _shoppingCartService.AddToCartAsync(_customer, await _productService.GetProductByIdAsync(3), ShoppingCartType.ShoppingCart, 1);
+            await _shoppingCartService.AddToCartAsync(_user, await _tvChannelService.GetTvChannelByIdAsync(1), ShoppingCartType.ShoppingCart, 1);
+            await _shoppingCartService.AddToCartAsync(_user, await _tvChannelService.GetTvChannelByIdAsync(2), ShoppingCartType.ShoppingCart, 1);
+            await _shoppingCartService.AddToCartAsync(_user, await _tvChannelService.GetTvChannelByIdAsync(3), ShoppingCartType.ShoppingCart, 1);
 
-            _cart = await _shoppingCartService.GetShoppingCartAsync(_customer, ShoppingCartType.ShoppingCart);
+            _cart = await _shoppingCartService.GetShoppingCartAsync(_user, ShoppingCartType.ShoppingCart);
 
             _paymentMethod = (await GetService<IPaymentPluginManager>().LoadActivePluginsAsync(new List<string> { "Payments.TestMethod" })).FirstOrDefault();
             _orderService = GetService<IOrderService>();
@@ -101,7 +101,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
 
             _rewardPointsSettings.Enabled = true;
             await _settingService.SaveSettingAsync(_rewardPointsSettings);
-            foreach (var history in await _rewardPointService.GetRewardPointsHistoryAsync(_customer.Id))
+            foreach (var history in await _rewardPointService.GetRewardPointsHistoryAsync(_user.Id))
                 await _rewardPointService.DeleteRewardPointsHistoryEntryAsync(history);
         }
 

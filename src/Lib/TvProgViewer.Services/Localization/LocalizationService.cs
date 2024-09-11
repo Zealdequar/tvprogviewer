@@ -304,10 +304,12 @@ namespace TvProgViewer.Services.Localization
         }
 
         /// <summary>
-        /// Gets all locale string resources by language identifier
+        /// Получает все локальные строковые ресурсы по идентификатору языка
         /// </summary>
-        /// <param name="languageId">Language identifier</param>
-        /// <param name="loadPublicLocales">A value indicating whether to load data for the public store only (if "false", then for admin area only. If null, then load all locales. We use it for performance optimization of the site startup</param>
+        /// <param name="languageId">Идентификатор языка</param>
+        /// <param name="loadPublicLocales">Значение, обозначающее загружать ли данные только для публичного сайта 
+        /// (если ложно, тогда только административное пространство, если null, тогда загружать все локали. 
+        /// Мы используем это для оптимизации производительности при старте сайта</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the locale string resources
@@ -316,16 +318,16 @@ namespace TvProgViewer.Services.Localization
         {
             var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgLocalizationDefaults.LocaleStringResourcesAllCacheKey, languageId);
 
-            //get all locale string resources by language identifier
+            //получить все локальные строковые ресурсы по идентификатору языка
             var allLocales =
-                await _staticCacheManager.GetAsync(key, () => (Dictionary<string, KeyValuePair<int, string>>)null);
+                await _staticCacheManager.GetAsync<Dictionary<string, KeyValuePair<int, string>>>(key);
 
             if (!loadPublicLocales.HasValue || allLocales != null)
             {
                 var rez = allLocales ?? await _staticCacheManager.GetAsync(key, () =>
                 {
-                    //we use no tracking here for performance optimization
-                    //anyway records are loaded only for read-only operations
+                    //мы не используем здесь отслеживание (tracking) для оптимизации производительности
+                    //во всяком случае записи загружаются только для операций чтения 
                     var query = from l in _lsrRepository.Table
                                 orderby l.ResourceName
                                 where l.LanguageId == languageId
@@ -334,14 +336,14 @@ namespace TvProgViewer.Services.Localization
                     return ResourceValuesToDictionary(query);
                 });
 
-                //remove separated resource 
+                //удаление отдельных ресурсов 
                 await _staticCacheManager.RemoveAsync(TvProgLocalizationDefaults.LocaleStringResourcesAllPublicCacheKey, languageId);
                 await _staticCacheManager.RemoveAsync(TvProgLocalizationDefaults.LocaleStringResourcesAllAdminCacheKey, languageId);
 
                 return rez;
             }
 
-            //performance optimization of the site startup
+            //оптимизация производительности при запуске сайта
             key = _staticCacheManager.PrepareKeyForDefaultCache(loadPublicLocales.Value
                 ? TvProgLocalizationDefaults.LocaleStringResourcesAllPublicCacheKey
                 : TvProgLocalizationDefaults.LocaleStringResourcesAllAdminCacheKey,
@@ -349,8 +351,8 @@ namespace TvProgViewer.Services.Localization
 
             return await _staticCacheManager.GetAsync(key, () =>
             {
-                //we use no tracking here for performance optimization
-                //anyway records are loaded only for read-only operations
+                //мы не используем здесь отслеживание (tracking) для оптимизации производительности
+                //во всяком случае записи загружаются только для операций чтения 
                 var query = from l in _lsrRepository.Table
                             orderby l.ResourceName
                             where l.LanguageId == languageId

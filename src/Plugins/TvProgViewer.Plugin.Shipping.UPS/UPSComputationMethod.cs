@@ -154,7 +154,7 @@ namespace TvProgViewer.Plugin.Shipping.UPS
                 ["Plugins.Shipping.UPS.Fields.SaturdayDeliveryEnabled"] = "Saturday Delivery enabled",
                 ["Plugins.Shipping.UPS.Fields.SaturdayDeliveryEnabled.Hint"] = "Check to get rates for Saturday Delivery options.",
                 ["Plugins.Shipping.UPS.Fields.Tracing"] = "Tracing",
-                ["Plugins.Shipping.UPS.Fields.Tracing.Hint"] = "Check if you want to record plugin tracing in System Log. Warning: The entire request and response XML will be logged (including AccessKey/Username,Password). Do not leave this enabled in a production environment.",
+                ["Plugins.Shipping.UPS.Fields.Tracing.Hint"] = "Check if you want to record plugin tracing in System Log. Warning: The entire request and response XML will be logged (including AccessKey/Username,Password). Do not leave this enabled in a tvChannelion environment.",
                 ["Plugins.Shipping.UPS.Fields.Username"] = "Username",
                 ["Plugins.Shipping.UPS.Fields.Username.Hint"] = "Specify UPS username.",
                 ["Plugins.Shipping.UPS.Fields.UseSandbox"] = "Use sandbox",

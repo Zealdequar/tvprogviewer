@@ -1,7 +1,7 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel type
+    /// Represents a tvChannel type
     /// </summary>
     public enum TvChannelType
     {
@@ -11,7 +11,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         SimpleTvChannel = 5,
 
         /// <summary>
-        /// Grouped (tvchannel with variants)
+        /// Grouped (tvChannel with variants)
         /// </summary>
         GroupedTvChannel = 10,
     }

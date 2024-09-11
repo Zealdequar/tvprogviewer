@@ -49,9 +49,9 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly ITvProgUrlHelper _nopUrlHelper;
         private readonly IOrderService _orderService;
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRecentlyViewedTvChannelsService _recentlyViewedTvChannelsService;
         private readonly IReviewTypeService _reviewTypeService;
         private readonly IShoppingCartModelFactory _shoppingCartModelFactory;
@@ -83,9 +83,9 @@ namespace TvProgViewer.WebUI.Controllers
             ITvProgUrlHelper nopUrlHelper,
             IOrderService orderService,
             IPermissionService permissionService,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
             IRecentlyViewedTvChannelsService recentlyViewedTvChannelsService,
             IReviewTypeService reviewTypeService,
             IShoppingCartModelFactory shoppingCartModelFactory,
@@ -113,9 +113,9 @@ namespace TvProgViewer.WebUI.Controllers
             _nopUrlHelper = nopUrlHelper;
             _orderService = orderService;
             _permissionService = permissionService;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
             _reviewTypeService = reviewTypeService;
             _recentlyViewedTvChannelsService = recentlyViewedTvChannelsService;
             _shoppingCartModelFactory = shoppingCartModelFactory;
@@ -136,7 +136,7 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region Utilities
 
-        protected virtual async Task ValidateTvChannelReviewAvailabilityAsync(TvChannel tvchannel)
+        protected virtual async Task ValidateTvChannelReviewAvailabilityAsync(TvChannel tvChannel)
         {
             var user = await _workContext.GetCurrentUserAsync();
             if (await _userService.IsGuestAsync(user) && !_catalogSettings.AllowAnonymousUsersToReviewTvChannel)
@@ -145,19 +145,19 @@ namespace TvProgViewer.WebUI.Controllers
             if (!_catalogSettings.TvChannelReviewPossibleOnlyAfterPurchasing)
                 return;
 
-            var hasCompletedOrders = tvchannel.TvChannelType == TvChannelType.SimpleTvChannel
-                ? await HasCompletedOrdersAsync(tvchannel)
-                : await (await _tvchannelService.GetAssociatedTvChannelsAsync(tvchannel.Id)).AnyAwaitAsync(HasCompletedOrdersAsync);
+            var hasCompletedOrders = tvChannel.TvChannelType == TvChannelType.SimpleTvChannel
+                ? await HasCompletedOrdersAsync(tvChannel)
+                : await (await _tvChannelService.GetAssociatedTvChannelsAsync(tvChannel.Id)).AnyAwaitAsync(HasCompletedOrdersAsync);
 
             if (!hasCompletedOrders)
                 ModelState.AddModelError(string.Empty, await _localizationService.GetResourceAsync("Reviews.TvChannelReviewPossibleOnlyAfterPurchasing"));
         }
 
-        protected virtual async ValueTask<bool> HasCompletedOrdersAsync(TvChannel tvchannel)
+        protected virtual async ValueTask<bool> HasCompletedOrdersAsync(TvChannel tvChannel)
         {
             var user = await _workContext.GetCurrentUserAsync();
             return (await _orderService.SearchOrdersAsync(userId: user.Id,
-                tvchannelId: tvchannel.Id,
+                tvChannelId: tvChannel.Id,
                 osIds: new List<int> { (int)OrderStatus.Complete },
                 pageSize: 1)).Any();
         }
@@ -166,84 +166,84 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region TvChannel details page
 
-        public virtual async Task<IActionResult> TvChannelDetails(int tvchannelId, int updatecartitemid = 0)
+        public virtual async Task<IActionResult> TvChannelDetails(int tvChannelId, int updatecartitemid = 0)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null || tvchannel.Deleted)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null || tvChannel.Deleted)
                 return InvokeHttp404();
 
             var notAvailable =
                 //published?
-                (!tvchannel.Published && !_catalogSettings.AllowViewUnpublishedTvChannelPage) ||
+                (!tvChannel.Published && !_catalogSettings.AllowViewUnpublishedTvChannelPage) ||
                 //ACL (access control list) 
-                !await _aclService.AuthorizeAsync(tvchannel) ||
+                !await _aclService.AuthorizeAsync(tvChannel) ||
                 //Store mapping
-                !await _storeMappingService.AuthorizeAsync(tvchannel) ||
+                !await _storeMappingService.AuthorizeAsync(tvChannel) ||
                 //availability dates
-                !_tvchannelService.TvChannelIsAvailable(tvchannel);
-            //Check whether the current user has a "Manage tvchannels" permission (usually a store owner)
+                !_tvChannelService.TvChannelIsAvailable(tvChannel);
+            //Check whether the current user has a "Manage tvChannels" permission (usually a store owner)
             //We should allows him (her) to use "Preview" functionality
             var hasAdminAccess = await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) && await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels);
             if (notAvailable && !hasAdminAccess)
                 return InvokeHttp404();
 
             //visible individually?
-            if (!tvchannel.VisibleIndividually)
+            if (!tvChannel.VisibleIndividually)
             {
-                //is this one an associated tvchannels?
-                var parentGroupedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannel.ParentGroupedTvChannelId);
+                //is this one an associated tvChannels?
+                var parentGroupedTvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannel.ParentGroupedTvChannelId);
                 if (parentGroupedTvChannel == null)
                     return RedirectToRoute("Homepage");
 
                 var seName = await _urlRecordService.GetSeNameAsync(parentGroupedTvChannel);
-                var tvchannelUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName });
-                return LocalRedirectPermanent(tvchannelUrl);
+                var tvChannelUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName });
+                return LocalRedirectPermanent(tvChannelUrl);
             }
 
             //update existing shopping cart or wishlist  item?
             ShoppingCartItem updatecartitem = null;
             if (_shoppingCartSettings.AllowCartItemEditing && updatecartitemid > 0)
             {
-                var seName = await _urlRecordService.GetSeNameAsync(tvchannel);
-                var tvchannelUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName });
+                var seName = await _urlRecordService.GetSeNameAsync(tvChannel);
+                var tvChannelUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName });
                 var store = await _storeContext.GetCurrentStoreAsync();
                 var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentUserAsync(), storeId: store.Id);
                 updatecartitem = cart.FirstOrDefault(x => x.Id == updatecartitemid);
                 
                 //not found?
                 if (updatecartitem == null)
-                    return LocalRedirect(tvchannelUrl);
+                    return LocalRedirect(tvChannelUrl);
 
-                //is it this tvchannel?
-                if (tvchannel.Id != updatecartitem.TvChannelId)
-                    return LocalRedirect(tvchannelUrl);
+                //is it this tvChannel?
+                if (tvChannel.Id != updatecartitem.TvChannelId)
+                    return LocalRedirect(tvChannelUrl);
             }
 
             //save as recently viewed
-            await _recentlyViewedTvChannelsService.AddTvChannelToRecentlyViewedListAsync(tvchannel.Id);
+            await _recentlyViewedTvChannelsService.AddTvChannelToRecentlyViewedListAsync(tvChannel.Id);
 
             //display "edit" (manage) link
             if (await _permissionService.AuthorizeAsync(StandardPermissionProvider.AccessAdminPanel) &&
                 await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
             {
-                //a vendor should have access only to his tvchannels
+                //a vendor should have access only to his tvChannels
                 var currentVendor = await _workContext.GetCurrentVendorAsync();
-                if (currentVendor == null || currentVendor.Id == tvchannel.VendorId)
+                if (currentVendor == null || currentVendor.Id == tvChannel.VendorId)
                 {
-                    DisplayEditLink(Url.Action("Edit", "TvChannel", new { id = tvchannel.Id, area = AreaNames.Admin }));
+                    DisplayEditLink(Url.Action("Edit", "TvChannel", new { id = tvChannel.Id, area = AreaNames.Admin }));
                 }
             }
 
             //activity log
             await _userActivityService.InsertActivityAsync("PublicStore.ViewTvChannel",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.ViewTvChannel"), tvchannel.Name), tvchannel);
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.ViewTvChannel"), tvChannel.Name), tvChannel);
 
             //model
-            var model = await _tvchannelModelFactory.PrepareTvChannelDetailsModelAsync(tvchannel, updatecartitem, false);
+            var model = await _tvChannelModelFactory.PrepareTvChannelDetailsModelAsync(tvChannel, updatecartitem, false);
             //template
-            var tvchannelTemplateViewPath = await _tvchannelModelFactory.PrepareTvChannelTemplateViewPathAsync(tvchannel);
+            var tvChannelTemplateViewPath = await _tvChannelModelFactory.PrepareTvChannelTemplateViewPathAsync(tvChannel);
 
-            return View(tvchannelTemplateViewPath, model);
+            return View(tvChannelTemplateViewPath, model);
         }
 
         [HttpPost]
@@ -270,8 +270,8 @@ namespace TvProgViewer.WebUI.Controllers
                     Errors = errors
                 });
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId);
-            if (tvchannel == null || tvchannel.Deleted)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId);
+            if (tvChannel == null || tvChannel.Deleted)
             {
                 errors.Add(await _localizationService.GetResourceAsync("Shipping.EstimateShippingPopUp.TvChannel.IsNotFound"));
                 return Json(new
@@ -289,22 +289,22 @@ namespace TvProgViewer.WebUI.Controllers
                 StoreId = store.Id,
                 ShoppingCartTypeId = (int)ShoppingCartType.ShoppingCart,
                 UserId = user.Id,
-                TvChannelId = tvchannel.Id,
+                TvChannelId = tvChannel.Id,
                 CreatedOnUtc = DateTime.UtcNow
             };
 
             var addToCartWarnings = new List<string>();
             //user entered price
-            wrappedTvChannel.UserEnteredPrice = await _tvchannelAttributeParser.ParseUserEnteredPriceAsync(tvchannel, form);
+            wrappedTvChannel.UserEnteredPrice = await _tvChannelAttributeParser.ParseUserEnteredPriceAsync(tvChannel, form);
 
             //entered quantity
-            wrappedTvChannel.Quantity = _tvchannelAttributeParser.ParseEnteredQuantity(tvchannel, form);
+            wrappedTvChannel.Quantity = _tvChannelAttributeParser.ParseEnteredQuantity(tvChannel, form);
 
-            //tvchannel and gift card attributes
-            wrappedTvChannel.AttributesXml = await _tvchannelAttributeParser.ParseTvChannelAttributesAsync(tvchannel, form, addToCartWarnings);
+            //tvChannel and gift card attributes
+            wrappedTvChannel.AttributesXml = await _tvChannelAttributeParser.ParseTvChannelAttributesAsync(tvChannel, form, addToCartWarnings);
 
             //rental attributes
-            _tvchannelAttributeParser.ParseRentalDates(tvchannel, form, out var rentalStartDate, out var rentalEndDate);
+            _tvChannelAttributeParser.ParseRentalDates(tvChannel, form, out var rentalStartDate, out var rentalEndDate);
             wrappedTvChannel.RentalStartDateUtc = rentalStartDate;
             wrappedTvChannel.RentalEndDateUtc = rentalEndDate;
 
@@ -315,13 +315,13 @@ namespace TvProgViewer.WebUI.Controllers
 
         //ignore SEO friendly URLs checks
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> GetTvChannelCombinations(int tvchannelId)
+        public virtual async Task<IActionResult> GetTvChannelCombinations(int tvChannelId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null)
                 return NotFound();
 
-            var model = await _tvchannelModelFactory.PrepareTvChannelCombinationModelsAsync(tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelCombinationModelsAsync(tvChannel);
             return Ok(model);
         }
 
@@ -360,17 +360,17 @@ namespace TvProgViewer.WebUI.Controllers
 
         #endregion
 
-        #region Recently viewed tvchannels
+        #region Recently viewed tvChannels
 
         public virtual async Task<IActionResult> RecentlyViewedTvChannels()
         {
             if (!_catalogSettings.RecentlyViewedTvChannelsEnabled)
                 return Content("");
 
-            var tvchannels = await _recentlyViewedTvChannelsService.GetRecentlyViewedTvChannelsAsync(_catalogSettings.RecentlyViewedTvChannelsNumber);
+            var tvChannels = await _recentlyViewedTvChannelsService.GetRecentlyViewedTvChannelsAsync(_catalogSettings.RecentlyViewedTvChannelsNumber);
 
             var model = new List<TvChannelOverviewModel>();
-            model.AddRange(await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels));
+            model.AddRange(await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels));
 
             return View(model);
         }
@@ -379,16 +379,16 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region TvChannel reviews
 
-        public virtual async Task<IActionResult> TvChannelReviews(int tvchannelId)
+        public virtual async Task<IActionResult> TvChannelReviews(int tvChannelId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null || tvchannel.Deleted || !tvchannel.Published || !tvchannel.AllowUserReviews)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null || tvChannel.Deleted || !tvChannel.Published || !tvChannel.AllowUserReviews)
                 return RedirectToRoute("Homepage");
 
             var model = new TvChannelReviewsModel();
-            model = await _tvchannelModelFactory.PrepareTvChannelReviewsModelAsync(model, tvchannel);
+            model = await _tvChannelModelFactory.PrepareTvChannelReviewsModelAsync(model, tvChannel);
 
-            await ValidateTvChannelReviewAvailabilityAsync(tvchannel);
+            await ValidateTvChannelReviewAvailabilityAsync(tvChannel);
 
             //default value
             model.AddTvChannelReview.Rating = _catalogSettings.DefaultTvChannelRatingValue;
@@ -406,13 +406,13 @@ namespace TvProgViewer.WebUI.Controllers
         [HttpPost, ActionName("TvChannelReviews")]
         [FormValueRequired("add-review")]
         [ValidateCaptcha]
-        public virtual async Task<IActionResult> TvChannelReviewsAdd(int tvchannelId, TvChannelReviewsModel model, bool captchaValid)
+        public virtual async Task<IActionResult> TvChannelReviewsAdd(int tvChannelId, TvChannelReviewsModel model, bool captchaValid)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
             var currentStore = await _storeContext.GetCurrentStoreAsync();
 
-            if (tvchannel == null || tvchannel.Deleted || !tvchannel.Published || !tvchannel.AllowUserReviews ||
-                !await _tvchannelService.CanAddReviewAsync(tvchannel.Id, _catalogSettings.ShowTvChannelReviewsPerStore ? currentStore.Id : 0))
+            if (tvChannel == null || tvChannel.Deleted || !tvChannel.Published || !tvChannel.AllowUserReviews ||
+                !await _tvChannelService.CanAddReviewAsync(tvChannel.Id, _catalogSettings.ShowTvChannelReviewsPerStore ? currentStore.Id : 0))
                 return RedirectToRoute("Homepage");
 
             //validate CAPTCHA
@@ -421,7 +421,7 @@ namespace TvProgViewer.WebUI.Controllers
                 ModelState.AddModelError("", await _localizationService.GetResourceAsync("Common.WrongCaptchaMessage"));
             }
 
-            await ValidateTvChannelReviewAvailabilityAsync(tvchannel);
+            await ValidateTvChannelReviewAvailabilityAsync(tvChannel);
 
             if (ModelState.IsValid)
             {
@@ -432,9 +432,9 @@ namespace TvProgViewer.WebUI.Controllers
                 var isApproved = !_catalogSettings.TvChannelReviewsMustBeApproved;
                 var user = await _workContext.GetCurrentUserAsync();
 
-                var tvchannelReview = new TvChannelReview
+                var tvChannelReview = new TvChannelReview
                 {
-                    TvChannelId = tvchannel.Id,
+                    TvChannelId = tvChannel.Id,
                     UserId = user.Id,
                     Title = model.AddTvChannelReview.Title,
                     ReviewText = model.AddTvChannelReview.ReviewText,
@@ -446,14 +446,14 @@ namespace TvProgViewer.WebUI.Controllers
                     StoreId = currentStore.Id,
                 };
 
-                await _tvchannelService.InsertTvChannelReviewAsync(tvchannelReview);
+                await _tvChannelService.InsertTvChannelReviewAsync(tvChannelReview);
 
-                //add tvchannel review and review type mapping                
+                //add tvChannel review and review type mapping                
                 foreach (var additionalReview in model.AddAdditionalTvChannelReviewList)
                 {
                     var additionalTvChannelReview = new TvChannelReviewReviewTypeMapping
                     {
-                        TvChannelReviewId = tvchannelReview.Id,
+                        TvChannelReviewId = tvChannelReview.Id,
                         ReviewTypeId = additionalReview.ReviewTypeId,
                         Rating = additionalReview.Rating
                     };
@@ -461,22 +461,22 @@ namespace TvProgViewer.WebUI.Controllers
                     await _reviewTypeService.InsertTvChannelReviewReviewTypeMappingsAsync(additionalTvChannelReview);
                 }
 
-                //update tvchannel totals
-                await _tvchannelService.UpdateTvChannelReviewTotalsAsync(tvchannel);
+                //update tvChannel totals
+                await _tvChannelService.UpdateTvChannelReviewTotalsAsync(tvChannel);
 
                 //notify store owner
                 if (_catalogSettings.NotifyStoreOwnerAboutNewTvChannelReviews)
-                    await _workflowMessageService.SendTvChannelReviewStoreOwnerNotificationMessageAsync(tvchannelReview, _localizationSettings.DefaultAdminLanguageId);
+                    await _workflowMessageService.SendTvChannelReviewStoreOwnerNotificationMessageAsync(tvChannelReview, _localizationSettings.DefaultAdminLanguageId);
 
                 //activity log
                 await _userActivityService.InsertActivityAsync("PublicStore.AddTvChannelReview",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddTvChannelReview"), tvchannel.Name), tvchannel);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddTvChannelReview"), tvChannel.Name), tvChannel);
 
                 //raise event
-                if (tvchannelReview.IsApproved)
-                    await _eventPublisher.PublishAsync(new TvChannelReviewApprovedEvent(tvchannelReview));
+                if (tvChannelReview.IsApproved)
+                    await _eventPublisher.PublishAsync(new TvChannelReviewApprovedEvent(tvChannelReview));
 
-                model = await _tvchannelModelFactory.PrepareTvChannelReviewsModelAsync(model, tvchannel);
+                model = await _tvChannelModelFactory.PrepareTvChannelReviewsModelAsync(model, tvChannel);
                 model.AddTvChannelReview.Title = null;
                 model.AddTvChannelReview.ReviewText = null;
 
@@ -490,16 +490,16 @@ namespace TvProgViewer.WebUI.Controllers
             }
 
             //if we got this far, something failed, redisplay form
-            model = await _tvchannelModelFactory.PrepareTvChannelReviewsModelAsync(model, tvchannel);
+            model = await _tvChannelModelFactory.PrepareTvChannelReviewsModelAsync(model, tvChannel);
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> SetTvChannelReviewHelpfulness(int tvchannelReviewId, bool washelpful)
+        public virtual async Task<IActionResult> SetTvChannelReviewHelpfulness(int tvChannelReviewId, bool washelpful)
         {
-            var tvchannelReview = await _tvchannelService.GetTvChannelReviewByIdAsync(tvchannelReviewId);
-            if (tvchannelReview == null)
-                throw new ArgumentException("No tvchannel review found with the specified id");
+            var tvChannelReview = await _tvChannelService.GetTvChannelReviewByIdAsync(tvChannelReviewId);
+            if (tvChannelReview == null)
+                throw new ArgumentException("No tvChannel review found with the specified id");
 
             var user = await _workContext.GetCurrentUserAsync();
             if (await _userService.IsGuestAsync(user) && !_catalogSettings.AllowAnonymousUsersToReviewTvChannel)
@@ -507,32 +507,32 @@ namespace TvProgViewer.WebUI.Controllers
                 return Json(new
                 {
                     Result = await _localizationService.GetResourceAsync("Reviews.Helpfulness.OnlyRegistered"),
-                    TotalYes = tvchannelReview.HelpfulYesTotal,
-                    TotalNo = tvchannelReview.HelpfulNoTotal
+                    TotalYes = tvChannelReview.HelpfulYesTotal,
+                    TotalNo = tvChannelReview.HelpfulNoTotal
                 });
             }
 
             //users aren't allowed to vote for their own reviews
-            if (tvchannelReview.UserId == user.Id)
+            if (tvChannelReview.UserId == user.Id)
             {
                 return Json(new
                 {
                     Result = await _localizationService.GetResourceAsync("Reviews.Helpfulness.YourOwnReview"),
-                    TotalYes = tvchannelReview.HelpfulYesTotal,
-                    TotalNo = tvchannelReview.HelpfulNoTotal
+                    TotalYes = tvChannelReview.HelpfulYesTotal,
+                    TotalNo = tvChannelReview.HelpfulNoTotal
                 });
             }
 
-            await _tvchannelService.SetTvChannelReviewHelpfulnessAsync(tvchannelReview, washelpful);
+            await _tvChannelService.SetTvChannelReviewHelpfulnessAsync(tvChannelReview, washelpful);
 
             //new totals
-            await _tvchannelService.UpdateTvChannelReviewHelpfulnessTotalsAsync(tvchannelReview);
+            await _tvChannelService.UpdateTvChannelReviewHelpfulnessTotalsAsync(tvChannelReview);
 
             return Json(new
             {
                 Result = await _localizationService.GetResourceAsync("Reviews.Helpfulness.SuccessfullyVoted"),
-                TotalYes = tvchannelReview.HelpfulYesTotal,
-                TotalNo = tvchannelReview.HelpfulNoTotal
+                TotalYes = tvChannelReview.HelpfulYesTotal,
+                TotalNo = tvChannelReview.HelpfulNoTotal
             });
         }
 
@@ -546,7 +546,7 @@ namespace TvProgViewer.WebUI.Controllers
                 return RedirectToRoute("UserInfo");
             }
 
-            var model = await _tvchannelModelFactory.PrepareUserTvChannelReviewsModelAsync(pageNumber);
+            var model = await _tvChannelModelFactory.PrepareUserTvChannelReviewsModelAsync(pageNumber);
 
             return View(model);
         }
@@ -555,14 +555,14 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region Email a friend
 
-        public virtual async Task<IActionResult> TvChannelEmailAFriend(int tvchannelId)
+        public virtual async Task<IActionResult> TvChannelEmailAFriend(int tvChannelId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null || tvchannel.Deleted || !tvchannel.Published || !_catalogSettings.EmailAFriendEnabled)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null || tvChannel.Deleted || !tvChannel.Published || !_catalogSettings.EmailAFriendEnabled)
                 return RedirectToRoute("Homepage");
 
             var model = new TvChannelEmailAFriendModel();
-            model = await _tvchannelModelFactory.PrepareTvChannelEmailAFriendModelAsync(model, tvchannel, false);
+            model = await _tvChannelModelFactory.PrepareTvChannelEmailAFriendModelAsync(model, tvChannel, false);
             return View(model);
         }
 
@@ -571,8 +571,8 @@ namespace TvProgViewer.WebUI.Controllers
         [ValidateCaptcha]
         public virtual async Task<IActionResult> TvChannelEmailAFriendSend(TvChannelEmailAFriendModel model, bool captchaValid)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId);
-            if (tvchannel == null || tvchannel.Deleted || !tvchannel.Published || !_catalogSettings.EmailAFriendEnabled)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId);
+            if (tvChannel == null || tvChannel.Deleted || !tvChannel.Published || !_catalogSettings.EmailAFriendEnabled)
                 return RedirectToRoute("Homepage");
 
             //validate CAPTCHA
@@ -592,11 +592,11 @@ namespace TvProgViewer.WebUI.Controllers
             {
                 //email
                 await _workflowMessageService.SendTvChannelEmailAFriendMessageAsync(user,
-                        (await _workContext.GetWorkingLanguageAsync()).Id, tvchannel,
+                        (await _workContext.GetWorkingLanguageAsync()).Id, tvChannel,
                         model.YourEmailAddress, model.FriendEmail,
                         _htmlFormatter.FormatText(model.PersonalMessage, false, true, false, false, false, false));
 
-                model = await _tvchannelModelFactory.PrepareTvChannelEmailAFriendModelAsync(model, tvchannel, true);
+                model = await _tvChannelModelFactory.PrepareTvChannelEmailAFriendModelAsync(model, tvChannel, true);
                 model.SuccessfullySent = true;
                 model.Result = await _localizationService.GetResourceAsync("TvChannels.EmailAFriend.SuccessfullySent");
 
@@ -604,23 +604,23 @@ namespace TvProgViewer.WebUI.Controllers
             }
 
             //If we got this far, something failed, redisplay form
-            model = await _tvchannelModelFactory.PrepareTvChannelEmailAFriendModelAsync(model, tvchannel, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelEmailAFriendModelAsync(model, tvChannel, true);
             return View(model);
         }
 
         #endregion
 
-        #region Comparing tvchannels
+        #region Comparing tvChannels
 
         [HttpPost]
-        public virtual async Task<IActionResult> AddTvChannelToCompareList(int tvchannelId)
+        public virtual async Task<IActionResult> AddTvChannelToCompareList(int tvChannelId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null || tvchannel.Deleted || !tvchannel.Published)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null || tvChannel.Deleted || !tvChannel.Published)
                 return Json(new
                 {
                     success = false,
-                    message = "No tvchannel found with the specified ID"
+                    message = "No tvChannel found with the specified ID"
                 });
 
             if (!_catalogSettings.CompareTvChannelsEnabled)
@@ -630,31 +630,31 @@ namespace TvProgViewer.WebUI.Controllers
                     message = "TvChannel comparison is disabled"
                 });
 
-            await _compareTvChannelsService.AddTvChannelToCompareListAsync(tvchannelId);
+            await _compareTvChannelsService.AddTvChannelToCompareListAsync(tvChannelId);
 
             //activity log
             await _userActivityService.InsertActivityAsync("PublicStore.AddToCompareList",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToCompareList"), tvchannel.Name), tvchannel);
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.PublicStore.AddToCompareList"), tvChannel.Name), tvChannel);
 
             return Json(new
             {
                 success = true,
                 message = string.Format(await _localizationService.GetResourceAsync("TvChannels.TvChannelHasBeenAddedToCompareList.Link"), Url.RouteUrl("CompareTvChannels"))
-                //use the code below (commented) if you want a user to be automatically redirected to the compare tvchannels page
+                //use the code below (commented) if you want a user to be automatically redirected to the compare tvChannels page
                 //redirect = Url.RouteUrl("CompareTvChannels"),
             });
         }
 
-        public virtual async Task<IActionResult> RemoveTvChannelFromCompareList(int tvchannelId)
+        public virtual async Task<IActionResult> RemoveTvChannelFromCompareList(int tvChannelId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null)
                 return RedirectToRoute("Homepage");
 
             if (!_catalogSettings.CompareTvChannelsEnabled)
                 return RedirectToRoute("Homepage");
 
-            await _compareTvChannelsService.RemoveTvChannelFromCompareListAsync(tvchannelId);
+            await _compareTvChannelsService.RemoveTvChannelFromCompareListAsync(tvChannelId);
 
             return RedirectToRoute("CompareTvChannels");
         }
@@ -670,14 +670,14 @@ namespace TvProgViewer.WebUI.Controllers
                 IncludeFullDescriptionInCompareTvChannels = _catalogSettings.IncludeFullDescriptionInCompareTvChannels,
             };
 
-            var tvchannels = await (await _compareTvChannelsService.GetComparedTvChannelsAsync())
+            var tvChannels = await (await _compareTvChannelsService.GetComparedTvChannelsAsync())
             //ACL and store mapping
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            .Where(p => _tvchannelService.TvChannelIsAvailable(p)).ToListAsync();
+            .Where(p => _tvChannelService.TvChannelIsAvailable(p)).ToListAsync();
 
             //prepare model
-            var poModels = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels, prepareSpecificationAttributes: true))
+            var poModels = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels, prepareSpecificationAttributes: true))
                 .ToList();
             foreach(var poModel in poModels)
             {

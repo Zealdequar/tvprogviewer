@@ -13,16 +13,16 @@ using LinqToDB.DataProvider;
 using LinqToDB.DataProvider.SQLite;
 using LinqToDB.Tools;
 using Microsoft.Data.Sqlite;
-using Nop.Core;
-using Nop.Core.ComponentModel;
-using Nop.Data;
-using Nop.Data.DataProviders;
-namespace Nop.Tests
+using TvProgViewer.Core;
+using TvProgViewer.Core.ComponentModel;
+using TvProgViewer.Data;
+using TvProgViewer.Data.DataProviders;
+namespace TvProgViewer.Tests
 {
     /// <summary>
     /// Represents the SQLite data provider
     /// </summary>
-    public partial class SqLiteNopDataProvider : BaseDataProvider, INopDataProvider
+    public partial class SqLiteTvProgDataProvider : BaseDataProvider, ITvProgDataProvider
     {
         #region Consts
 
@@ -273,13 +273,13 @@ namespace Nop.Tests
         /// </summary>
         /// <param name="nopConnectionString">Connection string info</param>
         /// <returns>Connection string</returns>
-        public string BuildConnectionString(INopConnectionStringInfo nopConnectionString)
+        public string BuildConnectionString(ITvProgConnectionStringInfo nopConnectionString)
         {
             if (nopConnectionString is null)
                 throw new ArgumentNullException(nameof(nopConnectionString));
 
             if (nopConnectionString.IntegratedSecurity)
-                throw new NopException("Data provider supports connection only with password");
+                throw new TvProgException("Data provider supports connection only with password");
 
             var builder = new SqliteConnectionStringBuilder
             {

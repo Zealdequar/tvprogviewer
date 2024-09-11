@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Services.Seo;
+using TvProgViewer.Services.Seo;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Seo
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Seo
 {
     [TestFixture]
     public class SeoExtensionsTests : ServiceTest

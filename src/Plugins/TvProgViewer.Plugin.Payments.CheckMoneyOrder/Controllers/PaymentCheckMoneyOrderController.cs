@@ -71,7 +71,7 @@ namespace TvProgViewer.Plugin.Payments.CheckMoneyOrder.Controllers
             });
             model.AdditionalFee = checkMoneyOrderPaymentSettings.AdditionalFee;
             model.AdditionalFeePercentage = checkMoneyOrderPaymentSettings.AdditionalFeePercentage;
-            model.ShippableProductRequired = checkMoneyOrderPaymentSettings.ShippableProductRequired;
+            model.ShippableTvChannelRequired = checkMoneyOrderPaymentSettings.ShippableTvChannelRequired;
 
             model.ActiveStoreScopeConfiguration = storeScope;
             if (storeScope > 0)
@@ -79,7 +79,7 @@ namespace TvProgViewer.Plugin.Payments.CheckMoneyOrder.Controllers
                 model.DescriptionText_OverrideForStore = await _settingService.SettingExistsAsync(checkMoneyOrderPaymentSettings, x => x.DescriptionText, storeScope);
                 model.AdditionalFee_OverrideForStore = await _settingService.SettingExistsAsync(checkMoneyOrderPaymentSettings, x => x.AdditionalFee, storeScope);
                 model.AdditionalFeePercentage_OverrideForStore = await _settingService.SettingExistsAsync(checkMoneyOrderPaymentSettings, x => x.AdditionalFeePercentage, storeScope);
-                model.ShippableProductRequired_OverrideForStore = await _settingService.SettingExistsAsync(checkMoneyOrderPaymentSettings, x => x.ShippableProductRequired, storeScope);
+                model.ShippableTvChannelRequired_OverrideForStore = await _settingService.SettingExistsAsync(checkMoneyOrderPaymentSettings, x => x.ShippableTvChannelRequired, storeScope);
             }
 
             return View("~/Plugins/Payments.CheckMoneyOrder/Views/Configure.cshtml", model);
@@ -102,7 +102,7 @@ namespace TvProgViewer.Plugin.Payments.CheckMoneyOrder.Controllers
             checkMoneyOrderPaymentSettings.DescriptionText = model.DescriptionText;
             checkMoneyOrderPaymentSettings.AdditionalFee = model.AdditionalFee;
             checkMoneyOrderPaymentSettings.AdditionalFeePercentage = model.AdditionalFeePercentage;
-            checkMoneyOrderPaymentSettings.ShippableProductRequired = model.ShippableProductRequired;
+            checkMoneyOrderPaymentSettings.ShippableTvChannelRequired = model.ShippableTvChannelRequired;
 
             /* We do not clear cache after each setting update.
              * This behavior can increase performance because cached settings will not be cleared 
@@ -110,7 +110,7 @@ namespace TvProgViewer.Plugin.Payments.CheckMoneyOrder.Controllers
             await _settingService.SaveSettingOverridablePerStoreAsync(checkMoneyOrderPaymentSettings, x => x.DescriptionText, model.DescriptionText_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(checkMoneyOrderPaymentSettings, x => x.AdditionalFee, model.AdditionalFee_OverrideForStore, storeScope, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(checkMoneyOrderPaymentSettings, x => x.AdditionalFeePercentage, model.AdditionalFeePercentage_OverrideForStore, storeScope, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(checkMoneyOrderPaymentSettings, x => x.ShippableProductRequired, model.ShippableProductRequired_OverrideForStore, storeScope, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(checkMoneyOrderPaymentSettings, x => x.ShippableTvChannelRequired, model.ShippableTvChannelRequired_OverrideForStore, storeScope, false);
 
             //now clear settings cache
             await _settingService.ClearCacheAsync();

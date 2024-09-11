@@ -4,7 +4,7 @@ using System.ComponentModel;
 namespace TvProgViewer.Services.Common.Pdf
 {
     /// <summary>
-    /// Represents tvchannel entry
+    /// Represents tvChannel entry
     /// </summary>
     public partial class TvChannelItem
     {
@@ -20,13 +20,13 @@ namespace TvProgViewer.Services.Common.Pdf
         #region Properties
 
         /// <summary>
-        /// Gets or sets the tvchannel name
+        /// Gets or sets the tvChannel name
         /// </summary>
         [DisplayName("Pdf.TvChannel.Name")]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel SKU
+        /// Gets or sets the tvChannel SKU
         /// </summary>
         [DisplayName("Pdf.TvChannel.Sku")]
         public string Sku { get; set; }
@@ -38,25 +38,25 @@ namespace TvProgViewer.Services.Common.Pdf
         public string VendorName { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel price
+        /// Gets or sets the tvChannel price
         /// </summary>
         [DisplayName("Pdf.TvChannel.Price")]
         public string Price { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel quantity
+        /// Gets or sets the tvChannel quantity
         /// </summary>
         [DisplayName("Pdf.TvChannel.Quantity")]
         public string Quantity { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel total
+        /// Gets or sets the tvChannel total
         /// </summary>
         [DisplayName("Pdf.TvChannel.Total")]
         public string Total { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel attribute description
+        /// Gets or sets the tvChannel attribute description
         /// </summary>
         public List<string> TvChannelAttributes { get; set; }
 

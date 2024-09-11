@@ -2,28 +2,28 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Blogs;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Media;
-using Nop.Core.Domain.Security;
-using Nop.Services.Blogs;
-using Nop.Services.Configuration;
-using Nop.Services.Customers;
-using Nop.Services.Helpers;
-using Nop.Web.Factories;
-using Nop.Web.Models.Blogs;
+using TvProgViewer.Core.Domain.Blogs;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Media;
+using TvProgViewer.Core.Domain.Security;
+using TvProgViewer.Services.Blogs;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Helpers;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.Blogs;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
-    public class BlogModelFactoryTests : BaseNopTest
+    public class BlogModelFactoryTests : BaseTvProgTest
     {
         private IBlogModelFactory _blogModelFactory;
         private IBlogService _blogService;
-        private ICustomerService _customerService;
+        private IUserService _userService;
         private IDateTimeHelper _dateTimeHelper;
-        private CustomerSettings _customerSettings;
+        private UserSettings _userSettings;
         private CaptchaSettings _captchaSettings;
         private BlogSettings _blogSettings;
         private ISettingService _settingsService;
@@ -33,9 +33,9 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             _blogModelFactory = GetService<IBlogModelFactory>();
             _blogService = GetService<IBlogService>();
-            _customerService = GetService<ICustomerService>();
+            _userService = GetService<IUserService>();
             _dateTimeHelper = GetService<IDateTimeHelper>();
-            _customerSettings = GetService<CustomerSettings>();
+            _userSettings = GetService<UserSettings>();
             _captchaSettings = GetService<CaptchaSettings>();
             _blogSettings = GetService<BlogSettings>();
             _settingsService = GetService<ISettingService>();
@@ -44,9 +44,9 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [OneTimeTearDown]
         public async Task TearDown()
         {
-            _customerSettings.AllowCustomersToUploadAvatars = false;
-            _customerSettings.AllowViewingProfiles = false;
-            await _settingsService.SaveSettingAsync(_customerSettings);
+            _userSettings.AllowUsersToUploadAvatars = false;
+            _userSettings.AllowViewingProfiles = false;
+            await _settingsService.SaveSettingAsync(_userSettings);
             _captchaSettings.Enabled = false;
             _captchaSettings.ShowOnBlogCommentPage = false;
             await _settingsService.SaveSettingAsync(_captchaSettings);
@@ -169,7 +169,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             model = await _blogModelFactory.PrepareBlogPostListModelAsync(new BlogPagingFilteringModel
             {
                 Month = $"{date.Year}-{date.Month}",
-                Tag = "nopCommerce"
+                Tag = "tvProgViewer"
             });
 
             model.PagingFilteringContext.Month.Should().NotBeNullOrEmpty();
@@ -235,33 +235,33 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         }
 
         [Test]
-        public async Task PrepareBlogPostCommentCustomerAvatarUrlShouldNotBeNullIfAllowCustomersToUploadAvatarsIsTrue()
+        public async Task PrepareBlogPostCommentUserAvatarUrlShouldNotBeNullIfAllowUsersToUploadAvatarsIsTrue()
         {
             var blogComment = await _blogService.GetBlogCommentByIdAsync(1);
-            _customerSettings.AllowCustomersToUploadAvatars = true;
-            await _settingsService.SaveSettingAsync(_customerSettings);
+            _userSettings.AllowUsersToUploadAvatars = true;
+            await _settingsService.SaveSettingAsync(_userSettings);
             var blogModelFactory = GetService<IBlogModelFactory>();
             var model = await blogModelFactory.PrepareBlogPostCommentModelAsync(blogComment);
-            _customerSettings.AllowCustomersToUploadAvatars = false;
-            await _settingsService.SaveSettingAsync(_customerSettings);
+            _userSettings.AllowUsersToUploadAvatars = false;
+            await _settingsService.SaveSettingAsync(_userSettings);
 
-            model.CustomerAvatarUrl.Should().NotBeNullOrEmpty();
-            model.CustomerAvatarUrl.Should()
-                .Be($"http://{NopTestsDefaults.HostIpAddress}/images/thumbs/default-avatar_{GetService<MediaSettings>().AvatarPictureSize}.jpg");
+            model.UserAvatarUrl.Should().NotBeNullOrEmpty();
+            model.UserAvatarUrl.Should()
+                .Be($"http://{TvProgTestsDefaults.HostIpAddress}/images/thumbs/default-avatar_{GetService<MediaSettings>().AvatarPictureSize}.jpg");
         }
 
         [Test]
-        public async Task PrepareBlogPostCommentCustomerAllowViewingProfilesShouldBeDependOnSettings()
+        public async Task PrepareBlogPostCommentUserAllowViewingProfilesShouldBeDependOnSettings()
         {
             var blogComment = await _blogService.GetBlogCommentByIdAsync(1);
             var model = await _blogModelFactory.PrepareBlogPostCommentModelAsync(blogComment);
             model.AllowViewingProfiles.Should().BeFalse();
-            _customerSettings.AllowViewingProfiles = true;
-            await _settingsService.SaveSettingAsync(_customerSettings);
+            _userSettings.AllowViewingProfiles = true;
+            await _settingsService.SaveSettingAsync(_userSettings);
             var blogModelFactory = GetService<IBlogModelFactory>();
             model = await blogModelFactory.PrepareBlogPostCommentModelAsync(blogComment);
-            _customerSettings.AllowViewingProfiles = false;
-            await _settingsService.SaveSettingAsync(_customerSettings);
+            _userSettings.AllowViewingProfiles = false;
+            await _settingsService.SaveSettingAsync(_userSettings);
             model.AllowViewingProfiles.Should().BeTrue();
         }
 
@@ -271,15 +271,15 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             var blogComment = await _blogService.GetBlogCommentByIdAsync(1);
             var model = await _blogModelFactory.PrepareBlogPostCommentModelAsync(blogComment);
 
-            var customer = await _customerService.GetCustomerByIdAsync(1);
+            var user = await _userService.GetUserByIdAsync(1);
 
             model.Id.Should().Be(blogComment.Id);
-            model.CustomerId.Should().Be(blogComment.CustomerId);
-            model.CustomerName.Should().Be(await _customerService.FormatUsernameAsync(customer));
+            model.UserId.Should().Be(blogComment.UserId);
+            model.UserName.Should().Be(await _userService.FormatUsernameAsync(user));
             model.CommentText.Should().Be(blogComment.CommentText);
             model.CreatedOn.Should().Be(await _dateTimeHelper.ConvertToUserTimeAsync(blogComment.CreatedOnUtc, DateTimeKind.Utc));
             model.AllowViewingProfiles.Should().BeFalse();
-            model.CustomerAvatarUrl.Should().BeNull();
+            model.UserAvatarUrl.Should().BeNull();
         }
     }
 }

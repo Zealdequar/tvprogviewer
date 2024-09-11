@@ -85,7 +85,7 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel
         public const string PAGE_VIEW = "PageView";
 
         /// <summary>
-        /// Gets the name of an event when a product is added to the shopping cart
+        /// Gets the name of an event when a tvChannel is added to the shopping cart
         /// </summary>
         public const string ADD_TO_CART = "AddToCart";
 
@@ -95,12 +95,12 @@ namespace TvProgViewer.Plugin.Widgets.FacebookPixel
         public const string PURCHASE = "Purchase";
 
         /// <summary>
-        /// Gets the name of an event when someone visit to a product page
+        /// Gets the name of an event when someone visit to a tvChannel page
         /// </summary>
         public const string VIEW_CONTENT = "ViewContent";
 
         /// <summary>
-        /// Gets the name of an event when a product is added to the wishlist
+        /// Gets the name of an event when a tvChannel is added to the wishlist
         /// </summary>
         public const string ADD_TO_WISHLIST = "AddToWishlist";
 

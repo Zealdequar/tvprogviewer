@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Orders;
-using Nop.Services.Catalog;
-using Nop.Services.Shipping;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Shipping;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Shipping
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Shipping
 {
     [TestFixture]
     public class ShippingServiceTests : ServiceTest
@@ -16,7 +16,7 @@ namespace Nop.Tests.Nop.Services.Tests.Shipping
 
         private IShippingPluginManager _shippingPluginManager;
         private IShippingService _shippingService;
-        private IProductService _productService;
+        private ITvChannelService _tvChannelService;
 
         #endregion
 
@@ -27,7 +27,7 @@ namespace Nop.Tests.Nop.Services.Tests.Shipping
         {
             _shippingPluginManager = GetService<IShippingPluginManager>();
             _shippingService = GetService<IShippingService>();
-            _productService = GetService<IProductService>();
+            _tvChannelService = GetService<ITvChannelService>();
         } 
 
         #endregion
@@ -58,19 +58,19 @@ namespace Nop.Tests.Nop.Services.Tests.Shipping
         [Test]
         public async Task CanGetShoppingCartTotalWeightWithoutAttributes()
         {
-            var product1 = await _productService.GetProductBySkuAsync("AS_551_LP");
-            var product2 = await _productService.GetProductBySkuAsync("FIRST_PRP");
+            var tvChannel1 = await _tvChannelService.GetTvChannelBySkuAsync("AS_551_LP");
+            var tvChannel2 = await _tvChannelService.GetTvChannelBySkuAsync("FIRST_PRP");
 
             var request = new GetShippingOptionRequest
             {
                 Items =
                 {
                     new GetShippingOptionRequest.PackageItem(
-                        new ShoppingCartItem { AttributesXml = string.Empty, Quantity = 3, ProductId = product1.Id },
-                        product1),
+                        new ShoppingCartItem { AttributesXml = string.Empty, Quantity = 3, TvChannelId = tvChannel1.Id },
+                        tvChannel1),
                     new GetShippingOptionRequest.PackageItem(
-                        new ShoppingCartItem { AttributesXml = string.Empty, Quantity = 4, ProductId = product2.Id },
-                        product2)
+                        new ShoppingCartItem { AttributesXml = string.Empty, Quantity = 4, TvChannelId = tvChannel2.Id },
+                        tvChannel2)
                 }
             };
 

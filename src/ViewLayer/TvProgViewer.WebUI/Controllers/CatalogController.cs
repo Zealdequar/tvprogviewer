@@ -43,9 +43,9 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IManufacturerService _manufacturerService;
         private readonly ITvProgUrlHelper _nopUrlHelper;
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
-        private readonly ITvChannelTagService _tvchannelTagService;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
+        private readonly ITvChannelTagService _tvChannelTagService;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IUrlRecordService _urlRecordService;
@@ -71,9 +71,9 @@ namespace TvProgViewer.WebUI.Controllers
             IManufacturerService manufacturerService,
             ITvProgUrlHelper nopUrlHelper,
             IPermissionService permissionService,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
-            ITvChannelTagService tvchannelTagService,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
+            ITvChannelTagService tvChannelTagService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
             IUrlRecordService urlRecordService,
@@ -95,9 +95,9 @@ namespace TvProgViewer.WebUI.Controllers
             _manufacturerService = manufacturerService;
             _nopUrlHelper = nopUrlHelper;
             _permissionService = permissionService;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
-            _tvchannelTagService = tvchannelTagService;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
+            _tvChannelTagService = tvChannelTagService;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
             _urlRecordService = urlRecordService;
@@ -289,13 +289,13 @@ namespace TvProgViewer.WebUI.Controllers
 
         #region TvChannel tags
 
-        public virtual async Task<IActionResult> TvChannelsByTag(int tvchannelTagId, CatalogTvChannelsCommand command)
+        public virtual async Task<IActionResult> TvChannelsByTag(int tvChannelTagId, CatalogTvChannelsCommand command)
         {
-            var tvchannelTag = await _tvchannelTagService.GetTvChannelTagByIdAsync(tvchannelTagId);
-            if (tvchannelTag == null)
+            var tvChannelTag = await _tvChannelTagService.GetTvChannelTagByIdAsync(tvChannelTagId);
+            if (tvChannelTag == null)
                 return InvokeHttp404();
 
-            var model = await _catalogModelFactory.PrepareTvChannelsByTagModelAsync(tvchannelTag, command);
+            var model = await _catalogModelFactory.PrepareTvChannelsByTagModelAsync(tvChannelTag, command);
 
             return View(model);
         }
@@ -304,11 +304,11 @@ namespace TvProgViewer.WebUI.Controllers
         [CheckLanguageSeoCode(ignore: true)]
         public virtual async Task<IActionResult> GetTagTvChannels(int tagId, CatalogTvChannelsCommand command)
         {
-            var tvchannelTag = await _tvchannelTagService.GetTvChannelTagByIdAsync(tagId);
-            if (tvchannelTag == null)
+            var tvChannelTag = await _tvChannelTagService.GetTvChannelTagByIdAsync(tagId);
+            if (tvChannelTag == null)
                 return NotFound();
 
-            var model = await _catalogModelFactory.PrepareTagTvChannelsModelAsync(tvchannelTag, command);
+            var model = await _catalogModelFactory.PrepareTagTvChannelsModelAsync(tvChannelTag, command);
 
             return PartialView("_TvChannelsInGridOrLines", model);
         }
@@ -322,7 +322,7 @@ namespace TvProgViewer.WebUI.Controllers
 
         #endregion
 
-        #region New (recently added) tvchannels page
+        #region New (recently added) tvChannels page
 
         public virtual async Task<IActionResult> NewTvChannels(CatalogTvChannelsCommand command)
         {
@@ -356,8 +356,8 @@ namespace TvProgViewer.WebUI.Controllers
         {
             var store = await _storeContext.GetCurrentStoreAsync();
             var feed = new RssFeed(
-                $"{await _localizationService.GetLocalizedAsync(store, x => x.Name)}: New tvchannels",
-                "Information about tvchannels",
+                $"{await _localizationService.GetLocalizedAsync(store, x => x.Name)}: New tvChannels",
+                "Information about tvChannels",
                 new Uri(_webHelper.GetStoreLocation()),
                 DateTime.UtcNow);
 
@@ -367,18 +367,18 @@ namespace TvProgViewer.WebUI.Controllers
             var items = new List<RssItem>();
 
             var storeId = store.Id;
-            var tvchannels = await _tvchannelService.GetTvChannelsMarkedAsNewAsync(storeId: storeId);
+            var tvChannels = await _tvChannelService.GetTvChannelsMarkedAsNewAsync(storeId: storeId);
 
-            foreach (var tvchannel in tvchannels)
+            foreach (var tvChannel in tvChannels)
             {
-                var seName = await _urlRecordService.GetSeNameAsync(tvchannel);
-                var tvchannelUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol());
-                var tvchannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name);
-                var tvchannelDescription = await _localizationService.GetLocalizedAsync(tvchannel, x => x.ShortDescription);
-                var item = new RssItem(tvchannelName, tvchannelDescription, new Uri(tvchannelUrl), $"urn:store:{store.Id}:newTvChannels:tvchannel:{tvchannel.Id}", tvchannel.CreatedOnUtc);
+                var seName = await _urlRecordService.GetSeNameAsync(tvChannel);
+                var tvChannelUrl = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol());
+                var tvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name);
+                var tvChannelDescription = await _localizationService.GetLocalizedAsync(tvChannel, x => x.ShortDescription);
+                var item = new RssItem(tvChannelName, tvChannelDescription, new Uri(tvChannelUrl), $"urn:store:{store.Id}:newTvChannels:tvChannel:{tvChannel.Id}", tvChannel.CreatedOnUtc);
                 items.Add(item);
                 //uncomment below if you want to add RSS enclosure for pictures
-                //var picture = _pictureService.GetPicturesByTvChannelId(tvchannel.Id, 1).FirstOrDefault();
+                //var picture = _pictureService.GetPicturesByTvChannelId(tvChannel.Id, 1).FirstOrDefault();
                 //if (picture != null)
                 //{
                 //    var imageUrl = _pictureService.GetPictureUrl(picture, _mediaSettings.TvChannelDetailsPictureSize);
@@ -423,26 +423,26 @@ namespace TvProgViewer.WebUI.Controllers
             if (string.IsNullOrWhiteSpace(term) || term.Length < _catalogSettings.TvChannelSearchTermMinimumLength)
                 return Content("");
 
-            //tvchannels
-            var tvchannelNumber = _catalogSettings.TvChannelSearchAutoCompleteNumberOfTvChannels > 0 ?
+            //tvChannels
+            var tvChannelNumber = _catalogSettings.TvChannelSearchAutoCompleteNumberOfTvChannels > 0 ?
                 _catalogSettings.TvChannelSearchAutoCompleteNumberOfTvChannels : 10;
             var store = await _storeContext.GetCurrentStoreAsync();
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0,
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0,
                 storeId: store.Id,
                 keywords: term,
                 languageId: (await _workContext.GetWorkingLanguageAsync()).Id,
                 visibleIndividuallyOnly: true,
-                pageSize: tvchannelNumber);
+                pageSize: tvChannelNumber);
 
-            var showLinkToResultSearch = _catalogSettings.ShowLinkToAllResultInSearchAutoComplete && (tvchannels.TotalCount > tvchannelNumber);
+            var showLinkToResultSearch = _catalogSettings.ShowLinkToAllResultInSearchAutoComplete && (tvChannels.TotalCount > tvChannelNumber);
 
-            var models = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels, false, _catalogSettings.ShowTvChannelImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize)).ToList();
+            var models = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels, false, _catalogSettings.ShowTvChannelImagesInSearchAutoComplete, _mediaSettings.AutoCompleteSearchThumbPictureSize)).ToList();
             var result = (from p in models
                           select new
                           {
                               label = p.Name,
-                              tvchannelurl = Url.RouteUrl<TvChannel>(new { SeName = p.SeName }),
-                              tvchannelpictureurl = p.PictureModels.FirstOrDefault()?.ImageUrl,
+                              tvChannelurl = Url.RouteUrl<TvChannel>(new { SeName = p.SeName }),
+                              tvChannelpictureurl = p.PictureModels.FirstOrDefault()?.ImageUrl,
                               showlinktoresultsearch = showLinkToResultSearch
                           })
                 .ToList();

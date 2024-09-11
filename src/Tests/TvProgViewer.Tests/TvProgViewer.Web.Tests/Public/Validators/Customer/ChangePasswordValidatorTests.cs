@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.Customer;
-using Nop.Web.Validators.Customer;
+using TvProgViewer.WebUI.Models.User;
+using TvProgViewer.WebUI.Validators.User;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.User
 {
     [TestFixture]
-    public class ChangePasswordValidatorTests : BaseNopTest
+    public class ChangePasswordValidatorTests : BaseTvProgTest
     {
         private ChangePasswordValidator _validator;
         

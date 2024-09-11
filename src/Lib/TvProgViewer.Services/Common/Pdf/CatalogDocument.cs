@@ -41,7 +41,7 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose a generic tvchannel info
+        /// Compose a generic tvChannel info
         /// </summary>
         /// <param name="container">Content placement container</param>
         /// <param name="catalogItem">Catalog item</param>
@@ -56,7 +56,7 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose tvchannel properties
+        /// Compose tvChannel properties
         /// </summary>
         /// <param name="container">Content placement container</param>
         /// <param name="catalogItem">Catalog item</param>
@@ -72,7 +72,7 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose tvchannel images
+        /// Compose tvChannel images
         /// </summary>
         /// <param name="container">Content placement container</param>
         /// <param name="catalogItem">Catalog item</param>

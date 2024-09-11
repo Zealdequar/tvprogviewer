@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Services.Localization;
+using TvProgViewer.Services.Localization;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Localization
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Localization
 {
     [TestFixture]
     public class LanguageServiceTests : ServiceTest

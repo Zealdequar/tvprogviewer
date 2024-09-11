@@ -16,10 +16,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Inventory
         public string LocationUuid { get; set; }
 
         /// <summary>
-        /// Gets or sets the tracked products
+        /// Gets or sets the tracked tvChannels
         /// </summary>
-        [JsonProperty(PropertyName = "trackedProducts")]
-        public List<string> TrackedProducts { get; set; }
+        [JsonProperty(PropertyName = "trackedTvChannels")]
+        public List<string> TrackedTvChannels { get; set; }
 
         /// <summary>
         /// Gets or sets the tracked variants

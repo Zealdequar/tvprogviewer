@@ -83,7 +83,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel availability range search model
+        /// Prepare tvChannel availability range search model
         /// </summary>
         /// <param name="searchModel">TvChannel availability range search model</param>
         /// <returns>TvChannel availability range search model</returns>
@@ -373,55 +373,55 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged tvchannel availability range list model
+        /// Prepare paged tvChannel availability range list model
         /// </summary>
         /// <param name="searchModel">TvChannel availability range search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability range list model
+        /// The task result contains the tvChannel availability range list model
         /// </returns>
         public virtual async Task<TvChannelAvailabilityRangeListModel> PrepareTvChannelAvailabilityRangeListModelAsync(TvChannelAvailabilityRangeSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get tvchannel availability ranges
-            var tvchannelAvailabilityRanges = (await _dateRangeService.GetAllTvChannelAvailabilityRangesAsync()).ToPagedList(searchModel);
+            //get tvChannel availability ranges
+            var tvChannelAvailabilityRanges = (await _dateRangeService.GetAllTvChannelAvailabilityRangesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
-            var model = new TvChannelAvailabilityRangeListModel().PrepareToGrid(searchModel, tvchannelAvailabilityRanges, () =>
+            var model = new TvChannelAvailabilityRangeListModel().PrepareToGrid(searchModel, tvChannelAvailabilityRanges, () =>
             {
                 //fill in model values from the entity
-                return tvchannelAvailabilityRanges.Select(range => range.ToModel<TvChannelAvailabilityRangeModel>());
+                return tvChannelAvailabilityRanges.Select(range => range.ToModel<TvChannelAvailabilityRangeModel>());
             });
 
             return model;
         }
 
         /// <summary>
-        /// Prepare tvchannel availability range model
+        /// Prepare tvChannel availability range model
         /// </summary>
         /// <param name="model">TvChannel availability range model</param>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <param name="excludeProperties">Whether to exclude populating of some properties of model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability range model
+        /// The task result contains the tvChannel availability range model
         /// </returns>
         public virtual async Task<TvChannelAvailabilityRangeModel> PrepareTvChannelAvailabilityRangeModelAsync(TvChannelAvailabilityRangeModel model,
-            TvChannelAvailabilityRange tvchannelAvailabilityRange, bool excludeProperties = false)
+            TvChannelAvailabilityRange tvChannelAvailabilityRange, bool excludeProperties = false)
         {
             Func<TvChannelAvailabilityRangeLocalizedModel, int, Task> localizedModelConfiguration = null;
 
-            if (tvchannelAvailabilityRange != null)
+            if (tvChannelAvailabilityRange != null)
             {
                 //fill in model values from the entity
-                model ??= tvchannelAvailabilityRange.ToModel<TvChannelAvailabilityRangeModel>();
+                model ??= tvChannelAvailabilityRange.ToModel<TvChannelAvailabilityRangeModel>();
 
                 //define localized model configuration action
                 localizedModelConfiguration = async (locale, languageId) =>
                 {
-                    locale.Name = await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, entity => entity.Name, languageId, false, false);
+                    locale.Name = await _localizationService.GetLocalizedAsync(tvChannelAvailabilityRange, entity => entity.Name, languageId, false, false);
                 };
             }
 

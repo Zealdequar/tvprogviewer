@@ -106,7 +106,7 @@ namespace TvProgViewer.Plugin.Payments.Manual
         public Task<bool> HidePaymentMethodAsync(IList<ShoppingCartItem> cart)
         {
             //you can put any logic here
-            //for example, hide this payment method if all products in the cart are downloadable
+            //for example, hide this payment method if all tvChannels in the cart are downloadable
             //or hide this payment method if current user is from certain country
             return Task.FromResult(false);
         }

@@ -22,7 +22,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Components
 
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly IPriceCalculationService _priceCalculationService;
-        private readonly IProductService _productServise;
+        private readonly ITvChannelService _tvChannelServise;
         private readonly IStoreContext _storeContext;
         private readonly IWorkContext _workContext;
         private readonly PayPalViewerSettings _settings;
@@ -33,14 +33,14 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Components
 
         public ButtonsViewComponent(IPaymentPluginManager paymentPluginManager,
             IPriceCalculationService priceCalculationService,
-            IProductService productServise,
+            ITvChannelService tvChannelServise,
             IStoreContext storeContext,
             IWorkContext workContext,
             PayPalViewerSettings settings)
         {
             _paymentPluginManager = paymentPluginManager;
             _priceCalculationService = priceCalculationService;
-            _productServise = productServise;
+            _tvChannelServise = tvChannelServise;
             _storeContext = storeContext;
             _workContext = workContext;
             _settings = settings;
@@ -69,7 +69,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Components
             if (!ServiceManager.IsConfigured(_settings))
                 return Content(string.Empty);
 
-            if (!widgetZone.Equals(PublicWidgetZones.ProductDetailsAddInfo) && !widgetZone.Equals(PublicWidgetZones.OrderSummaryContentAfter))
+            if (!widgetZone.Equals(PublicWidgetZones.TvChannelDetailsAddInfo) && !widgetZone.Equals(PublicWidgetZones.OrderSummaryContentAfter))
                 return Content(string.Empty);
 
             if (widgetZone.Equals(PublicWidgetZones.OrderSummaryContentAfter))
@@ -82,18 +82,18 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Components
                     return Content(string.Empty);
             }
 
-            if (widgetZone.Equals(PublicWidgetZones.ProductDetailsAddInfo) && !_settings.DisplayButtonsOnProductDetails)
+            if (widgetZone.Equals(PublicWidgetZones.TvChannelDetailsAddInfo) && !_settings.DisplayButtonsOnTvChannelDetails)
                 return Content(string.Empty);
 
-            var productId = additionalData is ProductDetailsModel.AddToCartModel model ? model.ProductId : 0;
-            var productCost = "0.00";
-            if (productId > 0)
+            var tvChannelId = additionalData is TvChannelDetailsModel.AddToCartModel model ? model.TvChannelId : 0;
+            var tvChannelCost = "0.00";
+            if (tvChannelId > 0)
             {
-                var product = await _productServise.GetProductByIdAsync(productId);
-                var finalPrice = (await _priceCalculationService.GetFinalPriceAsync(product, user, store)).finalPrice;
-                productCost = finalPrice.ToString("0.00", CultureInfo.InvariantCulture);
+                var tvChannel = await _tvChannelServise.GetTvChannelByIdAsync(tvChannelId);
+                var finalPrice = (await _priceCalculationService.GetFinalPriceAsync(tvChannel, user, store)).finalPrice;
+                tvChannelCost = finalPrice.ToString("0.00", CultureInfo.InvariantCulture);
             }
-            return View("~/Plugins/Payments.PayPalViewer/Views/Buttons.cshtml", (widgetZone, productId, productCost));
+            return View("~/Plugins/Payments.PayPalViewer/Views/Buttons.cshtml", (widgetZone, tvChannelId, tvChannelCost));
         }
 
         #endregion

@@ -3,17 +3,17 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel attribute mapping
+    /// Represents a tvChannel attribute mapping
     /// </summary>
     public partial class TvChannelAttributeMapping : BaseEntity, ILocalizedEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel attribute identifier
+        /// Gets or sets the tvChannel attribute identifier
         /// </summary>
         public int TvChannelAttributeId { get; set; }
 

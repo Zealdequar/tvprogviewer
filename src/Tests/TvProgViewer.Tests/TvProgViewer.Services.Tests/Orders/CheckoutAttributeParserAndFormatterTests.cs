@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Orders;
-using Nop.Services.Orders;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Services.Orders;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Orders
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Orders
 {
     [TestFixture]
     public class CheckoutAttributeParserAndFormatterTests : ServiceTest
@@ -148,10 +148,10 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             //custom text
             attributes = _checkoutAttributeParser.AddCheckoutAttribute(attributes, _ca3, "Some custom text goes here");
 
-            var customer = new Customer();
+            var user = new User();
 
             var formattedAttributes =
-                await _checkoutAttributeFormatter.FormatAttributesAsync(attributes, customer, "<br />", false, false);
+                await _checkoutAttributeFormatter.FormatAttributesAsync(attributes, user, "<br />", false, false);
             formattedAttributes.Should()
                 .Be(
                     "Color: Green<br />Custom option: Option 1<br />Custom option: Option 2<br />Custom text: Some custom text goes here");

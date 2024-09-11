@@ -58,7 +58,7 @@ namespace TvProgViewer.Core.Domain.Users
         public PasswordFormat DefaultPasswordFormat { get; set; }
 
         /// <summary>
-        /// Gets or sets a user password format (SHA1, MD5) when passwords are hashed (DO NOT edit in tvchannelion environment)
+        /// Gets or sets a user password format (SHA1, MD5) when passwords are hashed (DO NOT edit in tvChannelion environment)
         /// </summary>
         public string HashedPasswordFormat { get; set; }
 
@@ -153,7 +153,7 @@ namespace TvProgViewer.Core.Domain.Users
         public bool NotifyNewUserRegistration { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to hide 'Downloadable tvchannels' tab on 'My account' page
+        /// Gets or sets a value indicating whether to hide 'Downloadable tvChannels' tab on 'My account' page
         /// </summary>
         public bool HideDownloadableTvChannelsTab { get; set; }
 
@@ -163,7 +163,7 @@ namespace TvProgViewer.Core.Domain.Users
         public bool HideBackInStockSubscriptionsTab { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to validate user when downloading tvchannels
+        /// Gets or sets a value indicating whether to validate user when downloading tvChannels
         /// </summary>
         public bool DownloadableTvChannelsValidateUser { get; set; }
 
@@ -223,7 +223,7 @@ namespace TvProgViewer.Core.Domain.Users
         public bool EnteringEmailTwice { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether registration is required for downloadable tvchannels
+        /// Gets or sets a value indicating whether registration is required for downloadable tvChannels
         /// </summary>
         public bool RequireRegistrationForDownloadableTvChannels { get; set; }
 
@@ -394,7 +394,7 @@ namespace TvProgViewer.Core.Domain.Users
         /// </summary>
         public bool AcceptPrivacyPolicyEnabled { get; set; }
 
-        public bool AcceptPersonalDataAgreement { get; set; }
+        public bool AcceptPersonalDataAggreement { get; set; }
 
         /// <summary>
         /// Получение или установка значения, обозначающего включено ли условие предоставления Персональных данных

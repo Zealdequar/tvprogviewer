@@ -193,7 +193,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Controllers
                 SecretKey = settings.SetCredentialsManually ? settings.SecretKey : string.Empty,
                 PaymentTypeId = (int)settings.PaymentType,
                 DisplayButtonsOnShoppingCart = settings.DisplayButtonsOnShoppingCart,
-                DisplayButtonsOnProductDetails = settings.DisplayButtonsOnProductDetails,
+                DisplayButtonsOnTvChannelDetails = settings.DisplayButtonsOnTvChannelDetails,
                 DisplayLogoInHeaderLinks = settings.DisplayLogoInHeaderLinks,
                 LogoInHeaderLinks = settings.LogoInHeaderLinks,
                 DisplayLogoInFooter = settings.DisplayLogoInFooter,
@@ -214,7 +214,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Controllers
                 model.SecretKey_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.SecretKey, storeId);
                 model.PaymentTypeId_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.PaymentType, storeId);
                 model.DisplayButtonsOnShoppingCart_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.DisplayButtonsOnShoppingCart, storeId);
-                model.DisplayButtonsOnProductDetails_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.DisplayButtonsOnProductDetails, storeId);
+                model.DisplayButtonsOnTvChannelDetails_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.DisplayButtonsOnTvChannelDetails, storeId);
                 model.DisplayLogoInHeaderLinks_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.DisplayLogoInHeaderLinks, storeId);
                 model.LogoInHeaderLinks_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.LogoInHeaderLinks, storeId);
                 model.DisplayLogoInFooter_OverrideForStore = await _settingService.SettingExistsAsync(settings, setting => setting.DisplayLogoInFooter, storeId);
@@ -261,7 +261,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Controllers
             settings.SetCredentialsManually = model.SetCredentialsManually;
             settings.PaymentType = (PaymentType)model.PaymentTypeId;
             settings.DisplayButtonsOnShoppingCart = model.DisplayButtonsOnShoppingCart;
-            settings.DisplayButtonsOnProductDetails = model.DisplayButtonsOnProductDetails;
+            settings.DisplayButtonsOnTvChannelDetails = model.DisplayButtonsOnTvChannelDetails;
             settings.DisplayLogoInHeaderLinks = model.DisplayLogoInHeaderLinks;
             settings.LogoInHeaderLinks = model.LogoInHeaderLinks;
             settings.DisplayLogoInFooter = model.DisplayLogoInFooter;
@@ -318,7 +318,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Controllers
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.SetCredentialsManually, model.SetCredentialsManually_OverrideForStore, storeId, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.PaymentType, model.PaymentTypeId_OverrideForStore, storeId, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.DisplayButtonsOnShoppingCart, model.DisplayButtonsOnShoppingCart_OverrideForStore, storeId, false);
-            await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.DisplayButtonsOnProductDetails, model.DisplayButtonsOnProductDetails_OverrideForStore, storeId, false);
+            await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.DisplayButtonsOnTvChannelDetails, model.DisplayButtonsOnTvChannelDetails_OverrideForStore, storeId, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.DisplayLogoInHeaderLinks, model.DisplayLogoInHeaderLinks_OverrideForStore, storeId, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.LogoInHeaderLinks, model.LogoInHeaderLinks_OverrideForStore, storeId, false);
             await _settingService.SaveSettingOverridablePerStoreAsync(settings, setting => setting.DisplayLogoInFooter, model.DisplayLogoInFooter_OverrideForStore, storeId, false);

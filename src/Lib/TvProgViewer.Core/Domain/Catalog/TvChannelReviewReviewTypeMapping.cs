@@ -3,12 +3,12 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel review and review type mapping
+    /// Represents a tvChannel review and review type mapping
     /// </summary>
     public partial class TvChannelReviewReviewTypeMapping : BaseEntity, ILocalizedEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel review identifier
+        /// Gets or sets the tvChannel review identifier
         /// </summary>
         public int TvChannelReviewId { get; set; }
 

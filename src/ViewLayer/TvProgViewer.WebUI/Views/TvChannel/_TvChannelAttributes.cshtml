@@ -366,8 +366,8 @@
             var combinationsBehavior_@(Model.Id);
             $(document).ready(function () {
                 combinationsBehavior_@(Model.Id) = createCombinationsBehavior({
-                    contentEl: '[data-tvchannelid="@Model.Id"]',
-                    fetchUrl: '@Html.Raw(Url.RouteUrl("GetTvChannelCombinations", new { tvchannelId = Model.Id }))'
+                    contentEl: '[data-tvChannelid="@Model.Id"]',
+                    fetchUrl: '@Html.Raw(Url.RouteUrl("GetTvChannelCombinations", new { tvChannelId = Model.Id }))'
                 });
                 combinationsBehavior_@(Model.Id).init();
             });
@@ -444,8 +444,8 @@
             function @(attributeChangeHandlerFuncName)() {
                 $.ajax({
                     cache: false,
-                    url: "@Html.Raw(Url.Action("tvchanneldetails_attributechange", "shoppingcart", new { tvchannelId = Model.Id, validateAttributeConditions = attributesHaveConditions, loadPicture = attributesHaveAssociatedPictures }))",
-                    data: $('#tvchannel-details-form').serialize(),
+                    url: "@Html.Raw(Url.Action("tvChanneldetails_attributechange", "shoppingcart", new { tvChannelId = Model.Id, validateAttributeConditions = attributesHaveConditions, loadPicture = attributesHaveAssociatedPictures }))",
+                    data: $('#tvChannel-details-form').serialize(),
                     type: "POST",
                     success: function (data, textStatus, jqXHR) {
                         if (data.price) {
@@ -487,15 +487,15 @@
                             }
                         }
                         if (data.pictureDefaultSizeUrl) {
-                            $('#main-tvchannel-img-@Model.Id').attr("src", data.pictureDefaultSizeUrl);
+                            $('#main-tvChannel-img-@Model.Id').attr("src", data.pictureDefaultSizeUrl);
                         }
                         if (data.pictureFullSizeUrl) {
-                            $('#main-tvchannel-img-lightbox-anchor-@Model.Id').attr("href", data.pictureFullSizeUrl);
+                            $('#main-tvChannel-img-lightbox-anchor-@Model.Id').attr("href", data.pictureFullSizeUrl);
                         }
                         if (data.message) {
                             alert(data.message);
                         }
-                        $(document).trigger({ type: "tvchannel_attributes_changed", changedData: data });
+                        $(document).trigger({ type: "tvChannel_attributes_changed", changedData: data });
                     }
                 });
             }

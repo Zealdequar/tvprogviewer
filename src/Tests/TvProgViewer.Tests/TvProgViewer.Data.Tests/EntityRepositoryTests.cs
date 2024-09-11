@@ -1,19 +1,19 @@
-﻿using System;
+﻿using FluentAssertions;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Nop.Core.Caching;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Gdpr;
-using Nop.Core.Domain.Tax;
-using Nop.Data;
-using NUnit.Framework;
+using TvProgViewer.Core.Caching;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Gdpr;
+using TvProgViewer.Core.Domain.Tax;
+using TvProgViewer.Data;
 
-namespace Nop.Tests.Nop.Data.Tests
+namespace TvProgViewer.Tests.TvProgViewer.Data.Tests
 {
     [TestFixture]
-    public class EntityRepositoryTests : BaseNopTest
+    public class EntityRepositoryTests : BaseTvProgTest
     {
         private IStaticCacheManager _cacheManager;
         private CacheKey _cacheKey;
@@ -30,10 +30,10 @@ namespace Nop.Tests.Nop.Data.Tests
         {
             try
             {
-                var productRepository = GetService<IRepository<Product>>();
-                var product = await productRepository.GetByIdAsync(2);
-                product.Deleted = false;
-                await productRepository.UpdateAsync(product);
+                var tvChannelRepository = GetService<IRepository<TvChannel>>();
+                var tvChannel = await tvChannelRepository.GetByIdAsync(2);
+                tvChannel.Deleted = false;
+                await tvChannelRepository.UpdateAsync(tvChannel);
                 await _cacheManager.ClearAsync();
             }
             catch
@@ -54,26 +54,26 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var productRepository = GetService<IRepository<Product>>();
+            var tvChannelRepository = GetService<IRepository<TvChannel>>();
 
-            var product = await productRepository.GetByIdAsync(1);
-                    product.Should().NotBeNull();
+            var tvChannel = await tvChannelRepository.GetByIdAsync(1);
+                    tvChannel.Should().NotBeNull();
 
-            product = await productRepository.GetByIdAsync(2);
-            product.Deleted = true;
-            await productRepository.UpdateAsync(product);
+            tvChannel = await tvChannelRepository.GetByIdAsync(2);
+            tvChannel.Deleted = true;
+            await tvChannelRepository.UpdateAsync(tvChannel);
 
-            product = await productRepository.GetByIdAsync(2);
-            product.Should().NotBeNull();
-            product = await productRepository.GetByIdAsync(2, includeDeleted:false);
-            product.Should().BeNull();
+            tvChannel = await tvChannelRepository.GetByIdAsync(2);
+            tvChannel.Should().NotBeNull();
+            tvChannel = await tvChannelRepository.GetByIdAsync(2, includeDeleted:false);
+            tvChannel.Should().BeNull();
 
-            product = await _cacheManager.GetAsync(_cacheKey, () => default(Product));
-            product.Should().BeNull();
+            tvChannel = await _cacheManager.GetAsync(_cacheKey, default(TvChannel));
+            tvChannel.Should().BeNull();
 
-            await productRepository.GetByIdAsync(1, _ => _cacheKey);
-            product = await _cacheManager.GetAsync(_cacheKey, () => default(Product));
-            product.Should().NotBeNull();
+            await tvChannelRepository.GetByIdAsync(1, _ => _cacheKey);
+            tvChannel = await _cacheManager.GetAsync(_cacheKey, default(TvChannel));
+            tvChannel.Should().NotBeNull();
         }
 
         [Test]
@@ -86,26 +86,26 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var productRepository = GetService<IRepository<Product>>();
+            var tvChannelRepository = GetService<IRepository<TvChannel>>();
 
-            var product = await productRepository.GetByIdAsync(2);
-            product.Deleted = true;
-            await productRepository.UpdateAsync(product);
+            var tvChannel = await tvChannelRepository.GetByIdAsync(2);
+            tvChannel.Deleted = true;
+            await tvChannelRepository.UpdateAsync(tvChannel);
 
             var ids = new List<int> {1, 2, 3};
 
-            var products = await productRepository.GetByIdsAsync(ids);
-            products.Count.Should().Be(3);
+            var tvChannels = await tvChannelRepository.GetByIdsAsync(ids);
+            tvChannels.Count.Should().Be(3);
 
-            products = await productRepository.GetByIdsAsync(ids, includeDeleted: false);
-            products.Count.Should().Be(2);
+            tvChannels = await tvChannelRepository.GetByIdsAsync(ids, includeDeleted: false);
+            tvChannels.Count.Should().Be(2);
 
-            products = await _cacheManager.GetAsync(_cacheKey, () => default(IList<Product>));
-            products.Should().BeNull();
+            tvChannels = await _cacheManager.GetAsync(_cacheKey, default(IList<TvChannel>));
+            tvChannels.Should().BeNull();
 
-            await productRepository.GetByIdsAsync(ids, _ => _cacheKey);
-            products = await _cacheManager.GetAsync(_cacheKey, () => default(IList<Product>));
-            products.Count.Should().Be(3);
+            await tvChannelRepository.GetByIdsAsync(ids, _ => _cacheKey);
+            tvChannels = await _cacheManager.GetAsync(_cacheKey, default(IList<TvChannel>));
+            tvChannels.Count.Should().Be(3);
         }
 
         [Test]
@@ -118,34 +118,34 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var productRepository = GetService<IRepository<Product>>();
+            var tvChannelRepository = GetService<IRepository<TvChannel>>();
 
-            var product = await productRepository.GetByIdAsync(2);
-            product.Deleted = true;
-            await productRepository.UpdateAsync(product);
+            var tvChannel = await tvChannelRepository.GetByIdAsync(2);
+            tvChannel.Deleted = true;
+            await tvChannelRepository.UpdateAsync(tvChannel);
 
-            var asyncRez = await productRepository.GetAllAsync(query => query, null);
+            var asyncRez = await tvChannelRepository.GetAllAsync(query => query, null);
             asyncRez.Count.Should().BeGreaterThan(0);
 
-            var taskRez = await productRepository.GetAllAsync(Task.FromResult);
+            var taskRez = await tvChannelRepository.GetAllAsync(Task.FromResult);
             taskRez.Count.Should().BeGreaterThan(0);
 
-            var rez = productRepository.GetAll(query => query, manager => _cacheKey);
+            var rez = tvChannelRepository.GetAll(query => query, manager => _cacheKey);
             rez.Count.Should().BeGreaterThan(0);
 
-            rez = productRepository.GetAll(query => query);
+            rez = tvChannelRepository.GetAll(query => query);
             rez.Count.Should().BeGreaterThan(0);
 
             asyncRez.Count.Should().Be(rez.Count);
             rez.Count.Should().Be(taskRez.Count);
 
-            rez = await productRepository.GetAllAsync(Task.FromResult, manager => Task.FromResult(_cacheKey));
+            rez = await tvChannelRepository.GetAllAsync(Task.FromResult, manager => Task.FromResult(_cacheKey));
             rez.Count.Should().BeGreaterThan(0);
             var fullCount = rez.Count;
 
             await _cacheManager.RemoveAsync(_cacheKey);
 
-            rez = await productRepository.GetAllAsync(Task.FromResult, manager => Task.FromResult(default(CacheKey)), false);
+            rez = await tvChannelRepository.GetAllAsync(Task.FromResult, manager => Task.FromResult(default(CacheKey)), false);
             rez.Count.Should().BeGreaterThan(0);
             rez.Count.Should().BeLessThan(fullCount);
         }
@@ -160,17 +160,17 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var productRepository = GetService<IRepository<Product>>();
+            var tvChannelRepository = GetService<IRepository<TvChannel>>();
 
-            var product = await productRepository.GetByIdAsync(2);
-            product.Deleted = true;
-            await productRepository.UpdateAsync(product);
+            var tvChannel = await tvChannelRepository.GetByIdAsync(2);
+            tvChannel.Deleted = true;
+            await tvChannelRepository.UpdateAsync(tvChannel);
 
-            var rez = await productRepository.GetAllPagedAsync(query => query);
+            var rez = await tvChannelRepository.GetAllPagedAsync(query => query);
             rez.Count.Should().BeGreaterThan(0);
             var fullCount = rez.Count;
 
-            rez = await productRepository.GetAllPagedAsync(query => query, includeDeleted: false);
+            rez = await tvChannelRepository.GetAllPagedAsync(query => query, includeDeleted: false);
             rez.Count.Should().BeGreaterThan(0);
             rez.Count.Should().BeLessThan(fullCount);
         }
@@ -257,13 +257,13 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var productRepository = GetService<IRepository<Product>>();
-            var product = await productRepository.GetByIdAsync(1, _ => default);
-            product.Name = "test name";
-            var productNew = await productRepository.GetByIdAsync(1, _ => default);
-            var productOld = await productRepository.LoadOriginalCopyAsync(product);
+            var tvChannelRepository = GetService<IRepository<TvChannel>>();
+            var tvChannel = await tvChannelRepository.GetByIdAsync(1, _ => default);
+            tvChannel.Name = "test name";
+            var tvChannelNew = await tvChannelRepository.GetByIdAsync(1, _ => default);
+            var tvChannelOld = await tvChannelRepository.LoadOriginalCopyAsync(tvChannel);
 
-            productOld.Name.Should().NotBeEquivalentTo(productNew.Name);
+            tvChannelOld.Name.Should().NotBeEquivalentTo(tvChannelNew.Name);
         }
 
         [Test]

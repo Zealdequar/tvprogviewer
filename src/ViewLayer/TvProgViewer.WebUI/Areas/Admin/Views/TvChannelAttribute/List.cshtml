@@ -37,7 +37,7 @@
                 </p>
                 @await Html.PartialAsync("Table", new DataTablesModel
                 {
-                    Name = "tvchannels-grid",
+                    Name = "tvChannels-grid",
                     UrlRead = new DataUrl("List", "TvChannelAttribute", null),
                     Length = Model.PageSize,
                     LengthMenu = Model.AvailablePageSizes,
@@ -46,7 +46,7 @@
                          new ColumnProperty(nameof(TvChannelAttributeModel.Id))
                         {
                             IsMasterCheckBox = true,
-                            Render = new RenderCheckBox("checkbox_tvchannelattributes"),
+                            Render = new RenderCheckBox("checkbox_tvChannelattributes"),
                             ClassName =  TvProgColumnClassDefaults.CenterAll,
                             Width = "50"
                         },
@@ -85,7 +85,7 @@
                                         showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                         return;
                                     }
-                                    updateTable('#tvchannels-grid');
+                                    updateTable('#tvChannels-grid');
                                 }
                             });
                             $('#delete-selected-action-confirmation').modal('toggle');

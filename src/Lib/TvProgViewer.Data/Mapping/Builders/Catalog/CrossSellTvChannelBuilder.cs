@@ -4,7 +4,7 @@ using TvProgViewer.Core.Domain.Catalog;
 namespace TvProgViewer.Data.Mapping.Builders.Catalog
 {
     /// <summary>
-    /// Represents a cross sell tvchannel entity builder
+    /// Represents a cross sell tvChannel entity builder
     /// </summary>
     public partial class CrossSellTvChannelBuilder : TvProgEntityBuilder<CrossSellTvChannel>
     {

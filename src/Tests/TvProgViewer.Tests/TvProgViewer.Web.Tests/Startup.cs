@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Nop.Tests.Nop.Web.Tests
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests
 {
     /// <summary>
     /// Represents startup class of application

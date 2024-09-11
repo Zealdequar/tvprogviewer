@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel specification attribute value model
+    /// Represents a tvChannel specification attribute value model
     /// </summary>
     public partial record TvChannelSpecificationAttributeValueModel : BaseTvProgModel
     {

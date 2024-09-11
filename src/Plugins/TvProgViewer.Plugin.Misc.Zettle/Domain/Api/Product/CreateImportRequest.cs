@@ -2,18 +2,18 @@
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
-    /// Represents request to create import of multiple product
+    /// Represents request to create import of multiple tvChannel
     /// </summary>
-    public class CreateImportRequest : ProductApiRequest
+    public class CreateImportRequest : TvChannelApiRequest
     {
         /// <summary>
-        /// Gets or sets the products
+        /// Gets or sets the tvChannels
         /// </summary>
-        [JsonProperty(PropertyName = "products")]
-        public List<Product> Products { get; set; }
+        [JsonProperty(PropertyName = "tvChannels")]
+        public List<TvChannel> TvChannels { get; set; }
 
         /// <summary>
         /// Gets the request path

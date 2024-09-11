@@ -54,9 +54,9 @@ namespace TvProgViewer.WebUI.Factories
         private readonly IManufacturerTemplateService _manufacturerTemplateService;
         private readonly ITvProgUrlHelper _nopUrlHelper;
         private readonly IPictureService _pictureService;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
-        private readonly ITvChannelTagService _tvchannelTagService;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
+        private readonly ITvChannelTagService _tvChannelTagService;
         private readonly ISearchTermService _searchTermService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -88,9 +88,9 @@ namespace TvProgViewer.WebUI.Factories
             IManufacturerTemplateService manufacturerTemplateService,
             ITvProgUrlHelper nopUrlHelper,
             IPictureService pictureService,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
-            ITvChannelTagService tvchannelTagService,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
+            ITvChannelTagService tvChannelTagService,
             ISearchTermService searchTermService,
             ISpecificationAttributeService specificationAttributeService,
             IStaticCacheManager staticCacheManager,
@@ -118,9 +118,9 @@ namespace TvProgViewer.WebUI.Factories
             _manufacturerTemplateService = manufacturerTemplateService;
             _nopUrlHelper = nopUrlHelper;
             _pictureService = pictureService;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
-            _tvchannelTagService = tvchannelTagService;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
+            _tvChannelTagService = tvChannelTagService;
             _searchTermService = searchTermService;
             _specificationAttributeService = specificationAttributeService;
             _staticCacheManager = staticCacheManager;
@@ -161,7 +161,7 @@ namespace TvProgViewer.WebUI.Factories
         /// <summary>
         /// Gets the price range converted to primary store currency
         /// </summary>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the <see cref="Task"/> containing the price range converted to primary store currency
@@ -202,8 +202,8 @@ namespace TvProgViewer.WebUI.Factories
         /// <summary>
         /// Prepares the specification filter model
         /// </summary>
-        /// <param name="selectedOptions">The selected options to filter the tvchannels</param>
-        /// <param name="availableOptions">The available options to filter the tvchannels</param>
+        /// <param name="selectedOptions">The selected options to filter the tvChannels</param>
+        /// <param name="availableOptions">The available options to filter the tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the specification filter model
@@ -251,8 +251,8 @@ namespace TvProgViewer.WebUI.Factories
         /// <summary>
         /// Prepares the manufacturer filter model
         /// </summary>
-        /// <param name="selectedManufacturers">The selected manufacturers to filter the tvchannels</param>
-        /// <param name="availableManufacturers">The available manufacturers to filter the tvchannels</param>
+        /// <param name="selectedManufacturers">The selected manufacturers to filter the tvChannels</param>
+        /// <param name="availableManufacturers">The available manufacturers to filter the tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the specification filter model
@@ -286,8 +286,8 @@ namespace TvProgViewer.WebUI.Factories
         /// <summary>
         /// Prepares the price range filter
         /// </summary>
-        /// <param name="selectedPriceRange">The selected price range to filter the tvchannels</param>
-        /// <param name="availablePriceRange">The available price range to filter the tvchannels</param>
+        /// <param name="selectedPriceRange">The selected price range to filter the tvChannels</param>
+        /// <param name="availablePriceRange">The available price range to filter the tvChannels</param>
         /// <returns>The price range filter</returns>
         protected virtual async Task<PriceRangeFilterModel> PreparePriceRangeFilterAsync(PriceRangeModel selectedPriceRange, PriceRangeModel availablePriceRange)
         {
@@ -340,23 +340,23 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Prepares catalog tvchannels
+        /// Prepares catalog tvChannels
         /// </summary>
-        /// <param name="model">Catalog tvchannels model</param>
-        /// <param name="tvchannels">The tvchannels</param>
+        /// <param name="model">Catalog tvChannels model</param>
+        /// <param name="tvChannels">The tvChannels</param>
         /// <param name="isFiltering">A value indicating that filtering has been applied</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task PrepareCatalogTvChannelsAsync(CatalogTvChannelsModel model, IPagedList<TvChannel> tvchannels, bool isFiltering = false)
+        protected virtual async Task PrepareCatalogTvChannelsAsync(CatalogTvChannelsModel model, IPagedList<TvChannel> tvChannels, bool isFiltering = false)
         {
             if (!string.IsNullOrEmpty(model.WarningMessage))
                 return;
 
-            if (tvchannels.Count == 0 && isFiltering)
+            if (tvChannels.Count == 0 && isFiltering)
                 model.NoResultMessage = await _localizationService.GetResourceAsync("Catalog.TvChannels.NoResult");
             else
             {
-                model.TvChannels = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels)).ToList();
-                model.LoadPagedList(tvchannels);
+                model.TvChannels = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels)).ToList();
+                model.LoadPagedList(tvChannels);
             }
         }
 
@@ -368,7 +368,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare category model
         /// </summary>
         /// <param name="category">Category</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the category model
@@ -451,12 +451,12 @@ namespace TvProgViewer.WebUI.Factories
                     return subCatModel;
                 }).ToListAsync();
 
-            //featured tvchannels
+            //featured tvChannels
             if (!_catalogSettings.IgnoreFeaturedTvChannels)
             {
-                var featuredTvChannels = await _tvchannelService.GetCategoryFeaturedTvChannelsAsync(category.Id, currentStore.Id);
+                var featuredTvChannels = await _tvChannelService.GetCategoryFeaturedTvChannelsAsync(category.Id, currentStore.Id);
                 if (featuredTvChannels != null)
-                    model.FeaturedTvChannels = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(featuredTvChannels)).ToList();
+                    model.FeaturedTvChannels = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(featuredTvChannels)).ToList();
             }
 
             return model;
@@ -485,7 +485,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare category navigation model
         /// </summary>
         /// <param name="currentCategoryId">Current category identifier</param>
-        /// <param name="currentTvChannelId">Current tvchannel identifier</param>
+        /// <param name="currentTvChannelId">Current tvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the category navigation model
@@ -501,10 +501,10 @@ namespace TvProgViewer.WebUI.Factories
             }
             else if (currentTvChannelId > 0)
             {
-                //tvchannel details page
-                var tvchannelCategories = await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(currentTvChannelId);
-                if (tvchannelCategories.Any())
-                    activeCategoryId = tvchannelCategories[0].CategoryId;
+                //tvChannel details page
+                var tvChannelCategories = await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(currentTvChannelId);
+                if (tvChannelCategories.Any())
+                    activeCategoryId = tvChannelCategories[0].CategoryId;
             }
 
             var cachedCategoriesModel = await PrepareCategorySimpleModelsAsync();
@@ -665,13 +665,13 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Prepares the category tvchannels model
+        /// Prepares the category tvChannels model
         /// </summary>
         /// <param name="category">Category</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the category tvchannels model
+        /// The task result contains the category tvChannels model
         /// </returns>
         public virtual async Task<CatalogTvChannelsModel> PrepareCategoryTvChannelsModelAsync(Category category, CatalogTvChannelsCommand command)
         {
@@ -713,14 +713,14 @@ namespace TvProgViewer.WebUI.Factories
                 {
                     async Task<decimal?> getTvChannelPriceAsync(TvChannelSortingEnum orderBy)
                     {
-                        var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0, 1,
+                        var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0, 1,
                             categoryIds: categoryIds,
                             storeId: currentStore.Id,
                             visibleIndividuallyOnly: true,
                             excludeFeaturedTvChannels: !_catalogSettings.IgnoreFeaturedTvChannels && !_catalogSettings.IncludeFeaturedTvChannelsInNormalLists,
                             orderBy: orderBy);
 
-                        return tvchannels?.FirstOrDefault()?.Price ?? 0;
+                        return tvChannels?.FirstOrDefault()?.Price ?? 0;
                     }
 
                     availablePriceRange = new PriceRangeModel
@@ -761,8 +761,8 @@ namespace TvProgViewer.WebUI.Factories
 
             var filteredSpecs = command.SpecificationOptionIds is null ? null : filterableOptions.Where(fo => command.SpecificationOptionIds.Contains(fo.Id)).ToList();
 
-            //tvchannels
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(
+            //tvChannels
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(
                 command.PageNumber - 1,
                 command.PageSize,
                 categoryIds: categoryIds,
@@ -776,7 +776,7 @@ namespace TvProgViewer.WebUI.Factories
                 orderBy: (TvChannelSortingEnum)command.OrderBy);
 
             var isFiltering = filterableOptions.Any() || selectedPriceRange?.From is not null;
-            await PrepareCatalogTvChannelsAsync(model, tvchannels, isFiltering);
+            await PrepareCatalogTvChannelsAsync(model, tvChannels, isFiltering);
 
             return model;
         }
@@ -832,7 +832,7 @@ namespace TvProgViewer.WebUI.Factories
                     IncludeInTopMenu = category.IncludeInTopMenu
                 };
 
-                //number of tvchannels in each category
+                //number of tvChannels in each category
                 if (_catalogSettings.ShowCategoryTvChannelNumber)
                 {
                     var categoryIds = new List<int> { category.Id };
@@ -842,7 +842,7 @@ namespace TvProgViewer.WebUI.Factories
                             await _categoryService.GetChildCategoryIdsAsync(category.Id, store.Id));
 
                     categoryModel.NumberOfTvChannels =
-                        await _tvchannelService.GetNumberOfTvChannelsInCategoryAsync(categoryIds, store.Id);
+                        await _tvChannelService.GetNumberOfTvChannelsInCategoryAsync(categoryIds, store.Id);
                 }
 
                 if (loadSubCategories)
@@ -905,7 +905,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare manufacturer model
         /// </summary>
         /// <param name="manufacturer">Manufacturer identifier</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer model
@@ -930,27 +930,27 @@ namespace TvProgViewer.WebUI.Factories
                 CatalogTvChannelsModel = await PrepareManufacturerTvChannelsModelAsync(manufacturer, command)
             };
 
-            //featured tvchannels
+            //featured tvChannels
             if (!_catalogSettings.IgnoreFeaturedTvChannels)
             {
                 var store = await _storeContext.GetCurrentStoreAsync();
                 var storeId = store.Id;
-                var featuredTvChannels = await _tvchannelService.GetManufacturerFeaturedTvChannelsAsync(manufacturer.Id, storeId);
+                var featuredTvChannels = await _tvChannelService.GetManufacturerFeaturedTvChannelsAsync(manufacturer.Id, storeId);
                 if (featuredTvChannels != null)
-                    model.FeaturedTvChannels = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(featuredTvChannels)).ToList();
+                    model.FeaturedTvChannels = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(featuredTvChannels)).ToList();
             }
 
             return model;
         }
 
         /// <summary>
-        /// Prepares the manufacturer tvchannels model
+        /// Prepares the manufacturer tvChannels model
         /// </summary>
         /// <param name="manufacturer">Manufacturer</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the manufacturer tvchannels model
+        /// The task result contains the manufacturer tvChannels model
         /// </returns>
         public virtual async Task<CatalogTvChannelsModel> PrepareManufacturerTvChannelsModelAsync(Manufacturer manufacturer, CatalogTvChannelsCommand command)
         {
@@ -987,14 +987,14 @@ namespace TvProgViewer.WebUI.Factories
                 {
                     async Task<decimal?> getTvChannelPriceAsync(TvChannelSortingEnum orderBy)
                     {
-                        var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0, 1,
+                        var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0, 1,
                             manufacturerIds: manufacturerIds,
                             storeId: currentStore.Id,
                             visibleIndividuallyOnly: true,
                             excludeFeaturedTvChannels: !_catalogSettings.IgnoreFeaturedTvChannels && !_catalogSettings.IncludeFeaturedTvChannelsInNormalLists,
                             orderBy: orderBy);
 
-                        return tvchannels?.FirstOrDefault()?.Price ?? 0;
+                        return tvChannels?.FirstOrDefault()?.Price ?? 0;
                     }
 
                     availablePriceRange = new PriceRangeModel
@@ -1027,8 +1027,8 @@ namespace TvProgViewer.WebUI.Factories
 
             var filteredSpecs = command.SpecificationOptionIds is null ? null : filterableOptions.Where(fo => command.SpecificationOptionIds.Contains(fo.Id)).ToList();
 
-            //tvchannels
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(
+            //tvChannels
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(
                 command.PageNumber - 1,
                 command.PageSize,
                 manufacturerIds: manufacturerIds,
@@ -1041,7 +1041,7 @@ namespace TvProgViewer.WebUI.Factories
                 orderBy: (TvChannelSortingEnum)command.OrderBy);
 
             var isFiltering = filterableOptions.Any() || selectedPriceRange?.From is not null;
-            await PrepareCatalogTvChannelsAsync(model, tvchannels, isFiltering);
+            await PrepareCatalogTvChannelsAsync(model, tvChannels, isFiltering);
 
             return model;
         }
@@ -1174,7 +1174,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare vendor model
         /// </summary>
         /// <param name="vendor">Vendor</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the vendor model
@@ -1204,13 +1204,13 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Prepares the vendor tvchannels model
+        /// Prepares the vendor tvChannels model
         /// </summary>
         /// <param name="vendor">Vendor</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the vendor tvchannels model
+        /// The task result contains the vendor tvChannels model
         /// </returns>
         public virtual async Task<CatalogTvChannelsModel> PrepareVendorTvChannelsModelAsync(Vendor vendor, CatalogTvChannelsCommand command)
         {
@@ -1245,13 +1245,13 @@ namespace TvProgViewer.WebUI.Factories
                 {
                     async Task<decimal?> getTvChannelPriceAsync(TvChannelSortingEnum orderBy)
                     {
-                        var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0, 1,
+                        var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0, 1,
                             vendorId: vendor.Id,
                             storeId: store.Id,
                             visibleIndividuallyOnly: true,
                             orderBy: orderBy);
 
-                        return tvchannels?.FirstOrDefault()?.Price ?? 0;
+                        return tvChannels?.FirstOrDefault()?.Price ?? 0;
                     }
 
                     availablePriceRange = new PriceRangeModel
@@ -1272,8 +1272,8 @@ namespace TvProgViewer.WebUI.Factories
                 model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);*/
             }
 
-            //tvchannels
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(
+            //tvChannels
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(
                 command.PageNumber - 1,
                 command.PageSize,
                 vendorId: vendor.Id,
@@ -1284,7 +1284,7 @@ namespace TvProgViewer.WebUI.Factories
                 orderBy: (TvChannelSortingEnum)command.OrderBy);
 
             var isFiltering = selectedPriceRange?.From is not null;
-            await PrepareCatalogTvChannelsAsync(model, tvchannels, isFiltering);
+            await PrepareCatalogTvChannelsAsync(model, tvChannels, isFiltering);
 
             return model;
         }
@@ -1382,12 +1382,12 @@ namespace TvProgViewer.WebUI.Factories
         #region TvChannel tags
 
         /// <summary>
-        /// Prepare popular tvchannel tags model
+        /// Prepare popular tvChannel tags model
         /// </summary>
         /// <param name="numberTagsToReturn">The number of tags to be returned; pass 0 to get all tags</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tags model
+        /// The task result contains the tvChannel tags model
         /// </returns>
         public virtual async Task<PopularTvChannelTagsModel> PreparePopularTvChannelTagsModelAsync(int numberTagsToReturn = 0)
         {
@@ -1395,7 +1395,7 @@ namespace TvProgViewer.WebUI.Factories
 
             var currentStore = await _storeContext.GetCurrentStoreAsync();
 
-            var tagStats = await _tvchannelTagService.GetTvChannelCountAsync(currentStore.Id);
+            var tagStats = await _tvChannelTagService.GetTvChannelCountAsync(currentStore.Id);
 
             model.TotalTags = tagStats.Count;
 
@@ -1404,7 +1404,7 @@ namespace TvProgViewer.WebUI.Factories
                 .OrderByDescending(x => x.Value).Take(numberTagsToReturn > 0 ? numberTagsToReturn : tagStats.Count)
                 .SelectAwait(async tagStat =>
                 {
-                    var tag = await _tvchannelTagService.GetTvChannelTagByIdAsync(tagStat.Key);
+                    var tag = await _tvChannelTagService.GetTvChannelTagByIdAsync(tagStat.Key);
 
                     return new TvChannelTagModel
                     {
@@ -1425,30 +1425,30 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannels by tag model
+        /// Prepare tvChannels by tag model
         /// </summary>
-        /// <param name="tvchannelTag">TvChannel tag</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="tvChannelTag">TvChannel tag</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels by tag model
+        /// The task result contains the tvChannels by tag model
         /// </returns>
-        public virtual async Task<TvChannelsByTagModel> PrepareTvChannelsByTagModelAsync(TvChannelTag tvchannelTag, CatalogTvChannelsCommand command)
+        public virtual async Task<TvChannelsByTagModel> PrepareTvChannelsByTagModelAsync(TvChannelTag tvChannelTag, CatalogTvChannelsCommand command)
         {
-            if (tvchannelTag == null)
-                throw new ArgumentNullException(nameof(tvchannelTag));
+            if (tvChannelTag == null)
+                throw new ArgumentNullException(nameof(tvChannelTag));
 
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
 
-            string tagName = await _localizationService.GetLocalizedAsync(tvchannelTag, y => y.Name);
+            string tagName = await _localizationService.GetLocalizedAsync(tvChannelTag, y => y.Name);
 
             var model = new TvChannelsByTagModel
             {
-                Id = tvchannelTag.Id,
+                Id = tvChannelTag.Id,
                 TagName = tagName,
-                TagSeName = await _urlRecordService.GetSeNameAsync(tvchannelTag),
-                CatalogTvChannelsModel = await PrepareTagTvChannelsModelAsync(tvchannelTag, command),
+                TagSeName = await _urlRecordService.GetSeNameAsync(tvChannelTag),
+                CatalogTvChannelsModel = await PrepareTagTvChannelsModelAsync(tvChannelTag, command),
                 MetaKeywords = tagName.Replace(' ', ','),
                 MetaDescription = string.Format(await _localizationService.GetResourceAsync("TvChannels.Tags.MetaDescriptionFormat"), tagName)
             };
@@ -1457,18 +1457,18 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Prepares the tag tvchannels model
+        /// Prepares the tag tvChannels model
         /// </summary>
-        /// <param name="tvchannelTag">TvChannel tag</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="tvChannelTag">TvChannel tag</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the ag tvchannels model
+        /// The task result contains the ag tvChannels model
         /// </returns>
-        public virtual async Task<CatalogTvChannelsModel> PrepareTagTvChannelsModelAsync(TvChannelTag tvchannelTag, CatalogTvChannelsCommand command)
+        public virtual async Task<CatalogTvChannelsModel> PrepareTagTvChannelsModelAsync(TvChannelTag tvChannelTag, CatalogTvChannelsCommand command)
         {
-            if (tvchannelTag == null)
-                throw new ArgumentNullException(nameof(tvchannelTag));
+            if (tvChannelTag == null)
+                throw new ArgumentNullException(nameof(tvChannelTag));
 
             if (command == null)
                 throw new ArgumentNullException(nameof(command));
@@ -1498,13 +1498,13 @@ namespace TvProgViewer.WebUI.Factories
                 {
                     async Task<decimal?> getTvChannelPriceAsync(TvChannelSortingEnum orderBy)
                     {
-                        var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0, 1,
+                        var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0, 1,
                             storeId: store.Id,
-                            tvchannelTagId: tvchannelTag.Id,
+                            tvChannelTagId: tvChannelTag.Id,
                             visibleIndividuallyOnly: true,
                             orderBy: orderBy);
 
-                        return tvchannels?.FirstOrDefault()?.Price ?? 0;
+                        return tvChannels?.FirstOrDefault()?.Price ?? 0;
                     }
 
                     availablePriceRange = new PriceRangeModel
@@ -1526,34 +1526,34 @@ namespace TvProgViewer.WebUI.Factories
                 */
             }
 
-            //tvchannels
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(
+            //tvChannels
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(
                 command.PageNumber - 1,
                 command.PageSize,
                 priceMin: selectedPriceRange?.From,
                 priceMax: selectedPriceRange?.To,
                 storeId: store.Id,
-                tvchannelTagId: tvchannelTag.Id,
+                tvChannelTagId: tvChannelTag.Id,
                 visibleIndividuallyOnly: true,
                 orderBy: (TvChannelSortingEnum)command.OrderBy);
 
             var isFiltering = selectedPriceRange?.From is not null;
-            await PrepareCatalogTvChannelsAsync(model, tvchannels, isFiltering);
+            await PrepareCatalogTvChannelsAsync(model, tvChannels, isFiltering);
 
             return model;
         }
 
         #endregion
 
-        #region New tvchannels
+        #region New tvChannels
 
         /// <summary>
-        /// Prepare new tvchannels model
+        /// Prepare new tvChannels model
         /// </summary>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the new tvchannels model
+        /// The task result contains the new tvChannels model
         /// </returns>
         public virtual async Task<CatalogTvChannelsModel> PrepareNewTvChannelsModelAsync(CatalogTvChannelsCommand command)
         {
@@ -1571,12 +1571,12 @@ namespace TvProgViewer.WebUI.Factories
             await PreparePageSizeOptionsAsync(model, command, _catalogSettings.NewTvChannelsAllowUsersToSelectPageSize,
                 _catalogSettings.NewTvChannelsPageSizeOptions, _catalogSettings.NewTvChannelsPageSize);
 
-            //tvchannels
-            var tvchannels = await _tvchannelService.GetTvChannelsMarkedAsNewAsync(storeId: currentStore.Id,
+            //tvChannels
+            var tvChannels = await _tvChannelService.GetTvChannelsMarkedAsNewAsync(storeId: currentStore.Id,
                 pageIndex: command.PageNumber - 1,
                 pageSize: command.PageSize);
 
-            await PrepareCatalogTvChannelsAsync(model, tvchannels);
+            await PrepareCatalogTvChannelsAsync(model, tvChannels);
 
             return model;
         }
@@ -1589,7 +1589,7 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare search model
         /// </summary>
         /// <param name="model">Search model</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the search model
@@ -1692,13 +1692,13 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Prepares the search tvchannels model
+        /// Prepares the search tvChannels model
         /// </summary>
         /// <param name="model">Search model</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the search tvchannels model
+        /// The task result contains the search tvChannels model
         /// </returns>
         public virtual async Task<CatalogTvChannelsModel> PrepareSearchTvChannelsModelAsync(SearchModel searchModel, CatalogTvChannelsCommand command)
         {
@@ -1722,7 +1722,7 @@ namespace TvProgViewer.WebUI.Factories
                 ? string.Empty
                 : searchModel.q.Trim();
 
-            IPagedList<TvChannel> tvchannels = new PagedList<TvChannel>(new List<TvChannel>(), 0, 1);
+            IPagedList<TvChannel> tvChannels = new PagedList<TvChannel>(new List<TvChannel>(), 0, 1);
             //only search if query string search keyword is set (used to avoid searching or displaying search term min length error message on /search page load)
             //we don't use "!string.IsNullOrEmpty(searchTerms)" in cases of "TvChannelSearchTermMinimumLength" set to 0 but searching by other parameters (e.g. category or price filter)
             var isSearchTermSpecified = _httpContextAccessor.HttpContext.Request.Query.ContainsKey("q");
@@ -1778,7 +1778,7 @@ namespace TvProgViewer.WebUI.Factories
                         PriceRangeModel availablePriceRange;
                         async Task<decimal?> getTvChannelPriceAsync(TvChannelSortingEnum orderBy)
                         {
-                            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0, 1,
+                            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0, 1,
                                 categoryIds: categoryIds,
                                 manufacturerIds: new List<int> { manufacturerId },
                                 storeId: currentStore.Id,
@@ -1790,7 +1790,7 @@ namespace TvProgViewer.WebUI.Factories
                                 vendorId: vendorId,
                                 orderBy: orderBy);
 
-                            return tvchannels?.FirstOrDefault()?.Price ?? 0;
+                            return tvChannels?.FirstOrDefault()?.Price ?? 0;
                         }
 
                         if (_catalogSettings.SearchPageManuallyPriceRange)
@@ -1813,8 +1813,8 @@ namespace TvProgViewer.WebUI.Factories
                         model.PriceRangeFilter = await PreparePriceRangeFilterAsync(selectedPriceRange, availablePriceRange);*/
                     }
 
-                    //tvchannels
-                    tvchannels = await _tvchannelService.SearchTvChannelsAsync(
+                    //tvChannels
+                    tvChannels = await _tvChannelService.SearchTvChannelsAsync(
                         command.PageNumber - 1,
                         command.PageSize,
                         categoryIds: categoryIds,
@@ -1866,7 +1866,7 @@ namespace TvProgViewer.WebUI.Factories
             }
 
             var isFiltering = !string.IsNullOrEmpty(searchTerms);
-            await PrepareCatalogTvChannelsAsync(model, tvchannels, isFiltering);
+            await PrepareCatalogTvChannelsAsync(model, tvChannels, isFiltering);
 
             return model;
         }
@@ -1898,8 +1898,8 @@ namespace TvProgViewer.WebUI.Factories
         /// <summary>
         /// Prepare sorting options
         /// </summary>
-        /// <param name="model">Catalog tvchannels model</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="model">Catalog tvChannels model</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareSortingOptionsAsync(CatalogTvChannelsModel model, CatalogTvChannelsCommand command)
         {
@@ -1916,7 +1916,7 @@ namespace TvProgViewer.WebUI.Factories
             model.OrderBy = command.OrderBy;
             command.OrderBy = orderedActiveSortingOptions.FirstOrDefault()?.Id ?? (int)TvChannelSortingEnum.Position;
 
-            //ensure that tvchannel sorting is enabled
+            //ensure that tvChannel sorting is enabled
             if (!_catalogSettings.AllowTvChannelSorting)
                 return;
 
@@ -1938,8 +1938,8 @@ namespace TvProgViewer.WebUI.Factories
         /// <summary>
         /// Prepare view modes
         /// </summary>
-        /// <param name="model">Catalog tvchannels model</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="model">Catalog tvChannels model</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrepareViewModesAsync(CatalogTvChannelsModel model, CatalogTvChannelsCommand command)
         {
@@ -1971,8 +1971,8 @@ namespace TvProgViewer.WebUI.Factories
         /// <summary>
         /// Prepare page size options
         /// </summary>
-        /// <param name="model">Catalog tvchannels model</param>
-        /// <param name="command">Model to get the catalog tvchannels</param>
+        /// <param name="model">Catalog tvChannels model</param>
+        /// <param name="command">Model to get the catalog tvChannels</param>
         /// <param name="allowUsersToSelectPageSize">Are users allowed to select page size?</param>
         /// <param name="pageSizeOptions">Page size options</param>
         /// <param name="fixedPageSize">Fixed page size</param>

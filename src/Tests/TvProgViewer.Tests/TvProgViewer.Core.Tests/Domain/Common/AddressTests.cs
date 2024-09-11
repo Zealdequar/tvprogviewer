@@ -1,13 +1,13 @@
 ﻿using System;
 using FluentAssertions;
-using Nop.Core.Domain.Common;
-using Nop.Services.Common;
+using TvProgViewer.Core.Domain.Common;
+using TvProgViewer.Services.Common;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests.Domain.Common
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests.Domain.Common
 {
     [TestFixture]
-    public class AddressTests : BaseNopTest
+    public class AddressTests : BaseTvProgTest
     {
         [Test]
         public void CanCloneAddress()

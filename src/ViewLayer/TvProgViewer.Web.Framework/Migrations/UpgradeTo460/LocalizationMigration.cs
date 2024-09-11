@@ -111,10 +111,10 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.Configuration.Settings.GeneralCommon.HeaderCustomHtml.Hint"] = "Enter custom HTML here for header section.",
 
                 //#5604
-                ["Admin.Configuration.Settings.Order.ShowTvChannelThumbnailInOrderDetailsPage"] = "Show tvchannel thumbnail in order details page",
-                ["Admin.Configuration.Settings.Order.ShowTvChannelThumbnailInOrderDetailsPage.Hint"] = "Check to show tvchannel thumbnail in order details page.",
+                ["Admin.Configuration.Settings.Order.ShowTvChannelThumbnailInOrderDetailsPage"] = "Show tvChannel thumbnail in order details page",
+                ["Admin.Configuration.Settings.Order.ShowTvChannelThumbnailInOrderDetailsPage.Hint"] = "Check to show tvChannel thumbnail in order details page.",
                 ["Admin.Configuration.Settings.Media.OrderThumbPictureSize"] = "Order thumbnail image size",
-                ["Admin.Configuration.Settings.Media.OrderThumbPictureSize.Hint"] = "The default size (pixels) for tvchannel thumbnail images on the order details page.",
+                ["Admin.Configuration.Settings.Media.OrderThumbPictureSize.Hint"] = "The default size (pixels) for tvChannel thumbnail images on the order details page.",
                 ["Order.TvChannel(s).Image"] = "Image",
 
                 //#3777
@@ -122,7 +122,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["ActivityLog.ExportUsers"] = "{0} users were exported",
                 ["ActivityLog.ExportManufacturers"] = "{0} manufacturers were exported",
                 ["ActivityLog.ExportOrders"] = "{0} orders were exported",
-                ["ActivityLog.ExportTvChannels"] = "{0} tvchannels were exported",
+                ["ActivityLog.ExportTvChannels"] = "{0} tvChannels were exported",
                 ["ActivityLog.ExportStates"] = "{0} states and provinces were exported",
                 ["ActivityLog.ExportNewsLetterSubscriptions"] = "{0} newsletter subscriptions were exported",
                 ["ActivityLog.ImportNewsLetterSubscriptions"] = "{0} newsletter subscriptions were imported",
@@ -149,10 +149,10 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 ["Admin.Configuration.Settings.Catalog.DisplayAllPicturesOnCatalogPages.Hint"] = "Check to display all pictures on catalog pages.",
 
                 //#3511
-                ["Admin.Configuration.Settings.Catalog.NewTvChannelsAllowUsersToSelectPageSize"] = "'New tvchannels' page. Allow users to select page size",
-                ["Admin.Configuration.Settings.Catalog.NewTvChannelsAllowUsersToSelectPageSize.Hint"] = "'New tvchannels' page. Check to allow users to select the page size from a predefined list of options.",
-                ["Admin.Configuration.Settings.Catalog.NewTvChannelsPageSizeOptions"] = "'New tvchannels' page. Page size options",
-                ["Admin.Configuration.Settings.Catalog.NewTvChannelsPageSizeOptions.Hint"] = "'New tvchannels' page. Comma separated list of page size options (e.g. 10, 5, 15, 20). First option is the default page size if none are selected.",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsAllowUsersToSelectPageSize"] = "'New tvChannels' page. Allow users to select page size",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsAllowUsersToSelectPageSize.Hint"] = "'New tvChannels' page. Check to allow users to select the page size from a predefined list of options.",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsPageSizeOptions"] = "'New tvChannels' page. Page size options",
+                ["Admin.Configuration.Settings.Catalog.NewTvChannelsPageSizeOptions.Hint"] = "'New tvChannels' page. Comma separated list of page size options (e.g. 10, 5, 15, 20). First option is the default page size if none are selected.",
 
                 //#5123
                 ["Admin.Catalog.TvChannels.Pictures.Fields.Picture.Hint"] = "You can choose multiple images to upload at once. If the picture size exceeds your stores max image size setting, it will be automatically resized.",
@@ -164,12 +164,12 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
 
                 //#29
                 ["Admin.Configuration.Settings.Catalog.DisplayFromPrices"] = "Display 'From' prices",
-                ["Admin.Configuration.Settings.Catalog.DisplayFromPrices.Hint"] = "Check to display 'From' prices on catalog pages. This will display the minimum possible price of a tvchannel based on price adjustments of attributes and combinations instead of the fixed base price. If enabled, it is also recommended to enable setting 'Cache tvchannel prices'. But please note that it can affect performance if you use some complex discounts, discount requirement rules, etc.",
+                ["Admin.Configuration.Settings.Catalog.DisplayFromPrices.Hint"] = "Check to display 'From' prices on catalog pages. This will display the minimum possible price of a tvChannel based on price adjustments of attributes and combinations instead of the fixed base price. If enabled, it is also recommended to enable setting 'Cache tvChannel prices'. But please note that it can affect performance if you use some complex discounts, discount requirement rules, etc.",
 
                 //#5089
                 ["TvChannels.Availability.LowStock"] = "Low stock",
                 ["TvChannels.Availability.LowStockWithQuantity"] = "{0} low stock",
-                ["Admin.Catalog.TvChannels.Fields.LowStockActivity.Hint"] = "Action to be taken when your current stock quantity falls below (reaches) the 'Minimum stock quantity'. Activation of the action will occur only after an order is placed. If the value is 'Nothing', the tvchannel detail page will display a low-stock message in public store.",
+                ["Admin.Catalog.TvChannels.Fields.LowStockActivity.Hint"] = "Action to be taken when your current stock quantity falls below (reaches) the 'Minimum stock quantity'. Activation of the action will occur only after an order is placed. If the value is 'Nothing', the tvChannel detail page will display a low-stock message in public store.",
 
                 //#6101
                 ["Admin.System.Warnings.PluginNotInstalled.HelpText"] = "You may delete the plugins you don't use in order to decrease startup time",
@@ -184,22 +184,22 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                 //#7
                 ["Admin.Catalog.TvChannels.Multimedia"] = "Multimedia",
                 ["Admin.Catalog.TvChannels.Multimedia.Videos"] = "Videos",
-                ["Admin.Catalog.TvChannels.Multimedia.Videos.SaveBeforeEdit"] = "You need to save the tvchannel before you can upload videos for this tvchannel page.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.SaveBeforeEdit"] = "You need to save the tvChannel before you can upload videos for this tvChannel page.",
                 ["Admin.Catalog.TvChannels.Multimedia.Videos.AddNew"] = "Add a new video",
-                ["Admin.Catalog.TvChannels.Multimedia.Videos.Alert.VideoAdd"] = "Failed to add tvchannel video.",
-                ["Admin.Catalog.TvChannels.Multimedia.Videos.Alert.VideoUpdate"] = "Failed to update tvchannel video.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Alert.VideoAdd"] = "Failed to add tvChannel video.",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.Alert.VideoUpdate"] = "Failed to update tvChannel video.",
                 ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.DisplayOrder"] = "Display order",
                 ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.DisplayOrder.Hint"] = "Display order of the video. 1 represents the top of the list.",
                 ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.Preview"] = "Preview",
                 ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.VideoUrl"] = "Embed video URL",
                 ["Admin.Catalog.TvChannels.Multimedia.Videos.Fields.VideoUrl.Hint"] = "Specify the URL path to the video.",
-                ["Admin.Catalog.TvChannels.Multimedia.Videos.AddButton"] = "Add tvchannel video",
+                ["Admin.Catalog.TvChannels.Multimedia.Videos.AddButton"] = "Add tvChannel video",
                 ["Admin.Catalog.TvChannels.Copy.CopyMultimedia"] = "Copy multimedia",
                 ["Admin.Catalog.TvChannels.Copy.CopyMultimedia.Hint"] = "Check to copy the images and videos.",
 
                 //#6115
                 ["Admin.Configuration.Settings.Catalog.ShowShortDescriptionOnCatalogPages"] = "Show short description on catalog pages",
-                ["Admin.Configuration.Settings.Catalog.ShowShortDescriptionOnCatalogPages.Hint"] = "Check to show tvchannel short description on catalog pages.",
+                ["Admin.Configuration.Settings.Catalog.ShowShortDescriptionOnCatalogPages.Hint"] = "Check to show tvChannel short description on catalog pages.",
 
                 //#5905
                 ["Admin.ContentManagement.MessageTemplates.List.IsActive"] = "Is active",
@@ -215,7 +215,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
 
                 //#385
                 ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType"] = "TvChannel URL structure type",
-                ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType.Hint"] = "Select the tvchannel URL structure type (e.g. '/tvchannel-seo-name' or '/category-seo-name/tvchannel-seo-name' or '/manufacturer-seo-name/tvchannel-seo-name').",
+                ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType.Hint"] = "Select the tvChannel URL structure type (e.g. '/tvChannel-seo-name' or '/category-seo-name/tvChannel-seo-name' or '/manufacturer-seo-name/tvChannel-seo-name').",
                 ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.CategoryTvChannel"] = "/Category/TvChannel",
                 ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.ManufacturerTvChannel"] = "/Manufacturer/TvChannel",
                 ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.TvChannel"] = "/TvChannel",
@@ -285,7 +285,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
 
                 //#6396
                 ["Admin.Catalog.TvChannels.Fields.MinStockQuantity.Hint"] = "If you track inventory, you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity.",
-                ["Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.MinStockQuantity.Hint"] = "If you track inventory by tvchannel attributes, you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity (e.g. Low stock report).",
+                ["Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.MinStockQuantity.Hint"] = "If you track inventory by tvChannel attributes, you can perform a number of different actions when the current stock quantity falls below (reaches) your minimum stock quantity (e.g. Low stock report).",
                 //#6213
                 ["Admin.System.Maintenance.DeleteMinificationFiles"] = "Delete minification files",
                 ["Admin.System.Maintenance.DeleteMinificationFiles.Text"] = "Clear the bundles directory.",

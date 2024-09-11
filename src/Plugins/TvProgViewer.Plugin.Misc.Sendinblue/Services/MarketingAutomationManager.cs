@@ -43,8 +43,8 @@ namespace TvProgViewer.Plugin.Misc.Sendinblue.Services
         private readonly IOrderService _orderService;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
         private readonly IPictureService _pictureService;
-        private readonly IProductAttributeParser _productAttributeParser;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
@@ -72,8 +72,8 @@ namespace TvProgViewer.Plugin.Misc.Sendinblue.Services
             IOrderService orderService,
             IOrderTotalCalculationService orderTotalCalculationService,
             IPictureService pictureService,
-            IProductAttributeParser productAttributeParser,
-            IProductService productService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelService tvChannelService,
             IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
@@ -97,8 +97,8 @@ namespace TvProgViewer.Plugin.Misc.Sendinblue.Services
             _orderService = orderService;
             _orderTotalCalculationService = orderTotalCalculationService;
             _pictureService = pictureService;
-            _productAttributeParser = productAttributeParser;
-            _productService = productService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelService = tvChannelService;
             _shoppingCartService = shoppingCartService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
@@ -156,35 +156,35 @@ namespace TvProgViewer.Plugin.Misc.Sendinblue.Services
                     var cartShipping = await _orderTotalCalculationService.GetShoppingCartShippingTotalAsync(cart);
                     var (cartTotal, _, _, _, _, _) = await _orderTotalCalculationService.GetShoppingCartTotalAsync(cart, false, false);
 
-                    //get products data by shopping cart items
-                    var itemsData = await cart.Where(item => item.ProductId != 0).SelectAwait(async item =>
+                    //get tvChannels data by shopping cart items
+                    var itemsData = await cart.Where(item => item.TvChannelId != 0).SelectAwait(async item =>
                     {
-                        var product = await _productService.GetProductByIdAsync(item.ProductId);
+                        var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
 
-                        //try to get product attribute combination
-                        var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, item.AttributesXml);
+                        //try to get tvChannel attribute combination
+                        var combination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, item.AttributesXml);
 
-                        //get default product picture
-                        var picture = await _pictureService.GetProductPictureAsync(product, item.AttributesXml);
+                        //get default tvChannel picture
+                        var picture = await _pictureService.GetTvChannelPictureAsync(tvChannel, item.AttributesXml);
 
-                        //get product SEO slug name
-                        var seName = await _urlRecordService.GetSeNameAsync(product);
+                        //get tvChannel SEO slug name
+                        var seName = await _urlRecordService.GetSeNameAsync(tvChannel);
 
-                        //create product data
+                        //create tvChannel data
                         return new
                         {
-                            id = product.Id,
-                            name = product.Name,
-                            variant_id = combination?.Id ?? product.Id,
-                            variant_name = combination?.Sku ?? product.Name,
-                            sku = combination?.Sku ?? product.Sku,
-                            category = await (await _categoryService.GetProductCategoriesByProductIdAsync(item.ProductId)).AggregateAwaitAsync(",", async (all, pc) =>
+                            id = tvChannel.Id,
+                            name = tvChannel.Name,
+                            variant_id = combination?.Id ?? tvChannel.Id,
+                            variant_name = combination?.Sku ?? tvChannel.Name,
+                            sku = combination?.Sku ?? tvChannel.Sku,
+                            category = await (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(item.TvChannelId)).AggregateAwaitAsync(",", async (all, pc) =>
                             {
                                 var res = (await _categoryService.GetCategoryByIdAsync(pc.CategoryId)).Name;
                                 res = all == "," ? res : all + ", " + res;
                                 return res;
                             }),
-                            url = await _nopUrlHelper.RouteGenericUrlAsync<Product>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol()),
+                            url = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol()),
                             image = (await _pictureService.GetPictureUrlAsync(picture)).Url,
                             quantity = item.Quantity,
                             price = (await _shoppingCartService.GetSubTotalAsync(item, true)).subTotal
@@ -265,35 +265,35 @@ namespace TvProgViewer.Plugin.Misc.Sendinblue.Services
                 //get URL helper
                 var urlHelper = _urlHelperFactory.GetUrlHelper(_actionContextAccessor.ActionContext);
 
-                //get products data by order items
+                //get tvChannels data by order items
                 var itemsData = await (await _orderService.GetOrderItemsAsync(order.Id)).SelectAwait(async item =>
                 {
-                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
 
-                    //try to get product attribute combination
-                    var combination = await _productAttributeParser.FindProductAttributeCombinationAsync(product, item.AttributesXml);
+                    //try to get tvChannel attribute combination
+                    var combination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, item.AttributesXml);
 
-                    //get default product picture
-                    var picture = await _pictureService.GetProductPictureAsync(product, item.AttributesXml);
+                    //get default tvChannel picture
+                    var picture = await _pictureService.GetTvChannelPictureAsync(tvChannel, item.AttributesXml);
 
-                    //get product SEO slug name
-                    var seName = await _urlRecordService.GetSeNameAsync(product);
+                    //get tvChannel SEO slug name
+                    var seName = await _urlRecordService.GetSeNameAsync(tvChannel);
 
-                    //create product data
+                    //create tvChannel data
                     return new
                     {
-                        id = product.Id,
-                        name = product.Name,
-                        variant_id = combination?.Id ?? product.Id,
-                        variant_name = combination?.Sku ?? product.Name,
-                        sku = combination?.Sku ?? product.Sku,
-                        category = await (await _categoryService.GetProductCategoriesByProductIdAsync(item.ProductId)).AggregateAwaitAsync(",", async (all, pc) =>
+                        id = tvChannel.Id,
+                        name = tvChannel.Name,
+                        variant_id = combination?.Id ?? tvChannel.Id,
+                        variant_name = combination?.Sku ?? tvChannel.Name,
+                        sku = combination?.Sku ?? tvChannel.Sku,
+                        category = await (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(item.TvChannelId)).AggregateAwaitAsync(",", async (all, pc) =>
                         {
                             var res = (await _categoryService.GetCategoryByIdAsync(pc.CategoryId)).Name;
                             res = all == "," ? res : all + ", " + res;
                             return res;
                         }),
-                        url = await _nopUrlHelper.RouteGenericUrlAsync<Product>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol()),
+                        url = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = seName }, _webHelper.GetCurrentRequestProtocol()),
                         image = (await _pictureService.GetPictureUrlAsync(picture)).Url,
                         quantity = item.Quantity,
                         price = item.PriceInclTax,

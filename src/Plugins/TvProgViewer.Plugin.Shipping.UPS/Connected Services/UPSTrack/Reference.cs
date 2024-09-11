@@ -4217,7 +4217,7 @@ namespace UPSTrack
                 result.Security.Mode = System.ServiceModel.BasicHttpSecurityMode.Transport;
                 return result;
             }
-            if ((endpointConfiguration == EndpointConfiguration.ProductionTrackPort))
+            if ((endpointConfiguration == EndpointConfiguration.TvChannelionTrackPort))
             {
                 System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
                 result.MaxBufferSize = int.MaxValue;
@@ -4236,7 +4236,7 @@ namespace UPSTrack
             {
                 return new System.ServiceModel.EndpointAddress("https://wwwcie.ups.com/webservices/Track");
             }
-            if ((endpointConfiguration == EndpointConfiguration.ProductionTrackPort))
+            if ((endpointConfiguration == EndpointConfiguration.TvChannelionTrackPort))
             {
                 return new System.ServiceModel.EndpointAddress("https://onlinetools.ups.com/webservices/Track");
             }
@@ -4248,7 +4248,7 @@ namespace UPSTrack
             
             TrackPort,
             
-            ProductionTrackPort,
+            TvChannelionTrackPort,
         }
     }
 }

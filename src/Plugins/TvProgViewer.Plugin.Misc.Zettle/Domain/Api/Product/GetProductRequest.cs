@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
-    /// Represents request to get the single product
+    /// Represents request to get the single tvChannel
     /// </summary>
-    public class GetProductRequest : ProductApiRequest, IConditionalRequest
+    public class GetTvChannelRequest : TvChannelApiRequest, IConditionalRequest
     {
         /// <summary>
-        /// Gets or sets the product unique identifier as UUID version 1
+        /// Gets or sets the tvChannel unique identifier as UUID version 1
         /// </summary>
         [JsonIgnore]
         public string Uuid { get; set; }
@@ -23,7 +23,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         /// <summary>
         /// Gets the request path
         /// </summary>
-        public override string Path => $"organizations/self/products/{Uuid}";
+        public override string Path => $"organizations/self/tvChannels/{Uuid}";
 
         /// <summary>
         /// Gets the request method

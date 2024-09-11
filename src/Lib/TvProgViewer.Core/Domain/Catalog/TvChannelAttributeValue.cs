@@ -3,12 +3,12 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel attribute value
+    /// Represents a tvChannel attribute value
     /// </summary>
     public partial class TvChannelAttributeValue : BaseEntity, ILocalizedEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel attribute mapping identifier
+        /// Gets or sets the tvChannel attribute mapping identifier
         /// </summary>
         public int TvChannelAttributeMappingId { get; set; }
 
@@ -18,12 +18,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int AttributeValueTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets the associated tvchannel identifier (used only with AttributeValueType.AssociatedToTvChannel)
+        /// Gets or sets the associated tvChannel identifier (used only with AttributeValueType.AssociatedToTvChannel)
         /// </summary>
         public int AssociatedTvChannelId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel attribute name
+        /// Gets or sets the tvChannel attribute name
         /// </summary>
         public string Name { get; set; }
 
@@ -58,12 +58,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public decimal Cost { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user can enter the quantity of associated tvchannel (used only with AttributeValueType.AssociatedToTvChannel)
+        /// Gets or sets a value indicating whether the user can enter the quantity of associated tvChannel (used only with AttributeValueType.AssociatedToTvChannel)
         /// </summary>
         public bool UserEntersQty { get; set; }
 
         /// <summary>
-        /// Gets or sets the quantity of associated tvchannel (used only with AttributeValueType.AssociatedToTvChannel)
+        /// Gets or sets the quantity of associated tvChannel (used only with AttributeValueType.AssociatedToTvChannel)
         /// </summary>
         public int Quantity { get; set; }
 
@@ -78,7 +78,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int DisplayOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets the picture (identifier) associated with this value. This picture should replace a tvchannel main picture once clicked (selected).
+        /// Gets or sets the picture (identifier) associated with this value. This picture should replace a tvChannel main picture once clicked (selected).
         /// </summary>
         public int PictureId { get; set; }
 

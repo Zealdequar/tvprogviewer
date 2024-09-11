@@ -3,14 +3,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Directory;
-using Nop.Services.Catalog;
-using Nop.Services.Configuration;
-using Nop.Services.Directory;
-using Nop.Services.Localization;
+using TvProgViewer.Core.Domain.Directory;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.Services.Directory;
+using TvProgViewer.Services.Localization;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Catalog
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Catalog
 {
     [TestFixture]
     public class PriceFormatterTests : ServiceTest

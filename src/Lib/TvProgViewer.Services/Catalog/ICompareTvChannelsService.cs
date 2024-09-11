@@ -5,36 +5,36 @@ using TvProgViewer.Core.Domain.Catalog;
 namespace TvProgViewer.Services.Catalog
 {
     /// <summary>
-    /// Compare tvchannels service interface
+    /// Compare tvChannels service interface
     /// </summary>
     public partial interface ICompareTvChannelsService
     {
         /// <summary>
-        /// Clears a "compare tvchannels" list
+        /// Clears a "compare tvChannels" list
         /// </summary>
         void ClearCompareTvChannels();
 
         /// <summary>
-        /// Gets a "compare tvchannels" list
+        /// Gets a "compare tvChannels" list
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the "Compare tvchannels" list
+        /// The task result contains the "Compare tvChannels" list
         /// </returns>
         Task<IList<TvChannel>> GetComparedTvChannelsAsync();
 
         /// <summary>
-        /// Removes a tvchannel from a "compare tvchannels" list
+        /// Removes a tvChannel from a "compare tvChannels" list
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task RemoveTvChannelFromCompareListAsync(int tvchannelId);
+        Task RemoveTvChannelFromCompareListAsync(int tvChannelId);
 
         /// <summary>
-        /// Adds a tvchannel to a "compare tvchannels" list
+        /// Adds a tvChannel to a "compare tvChannels" list
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task AddTvChannelToCompareListAsync(int tvchannelId);
+        Task AddTvChannelToCompareListAsync(int tvChannelId);
     }
 }

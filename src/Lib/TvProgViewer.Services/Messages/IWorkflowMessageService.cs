@@ -349,7 +349,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
-        /// <param name="tvchannel">TvChannel instance</param>
+        /// <param name="tvChannel">TvChannel instance</param>
         /// <param name="userEmail">User's email</param>
         /// <param name="friendsEmail">Friend's email</param>
         /// <param name="personalMessage">Personal message</param>
@@ -358,7 +358,7 @@ namespace TvProgViewer.Services.Messages
         /// The task result contains the queued email identifier
         /// </returns>
         Task<IList<int>> SendTvChannelEmailAFriendMessageAsync(User user, int languageId,
-            TvChannel tvchannel, string userEmail, string friendsEmail, string personalMessage);
+            TvChannel tvChannel, string userEmail, string friendsEmail, string personalMessage);
 
         /// <summary>
         /// Sends wishlist "email a friend" message
@@ -488,26 +488,26 @@ namespace TvProgViewer.Services.Messages
         Task<IList<int>> SendVendorInformationChangeStoreOwnerNotificationAsync(Vendor vendor, int languageId);
 
         /// <summary>
-        /// Sends a tvchannel review notification message to a store owner
+        /// Sends a tvChannel review notification message to a store owner
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendTvChannelReviewStoreOwnerNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId);
+        Task<IList<int>> SendTvChannelReviewStoreOwnerNotificationMessageAsync(TvChannelReview tvChannelReview, int languageId);
 
         /// <summary>
-        /// Sends a tvchannel review reply notification message to a user
+        /// Sends a tvChannel review reply notification message to a user
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendTvChannelReviewReplyUserNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId);
+        Task<IList<int>> SendTvChannelReviewReplyUserNotificationMessageAsync(TvChannelReview tvChannelReview, int languageId);
 
         /// <summary>
         /// Sends a gift card notification
@@ -523,13 +523,13 @@ namespace TvProgViewer.Services.Messages
         /// <summary>
         /// Sends a "quantity below" notification to a store owner
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
-        Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannel tvchannel, int languageId);
+        Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannel tvChannel, int languageId);
 
         /// <summary>
         /// Sends a "quantity below" notification to a store owner

@@ -23,7 +23,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly IManufacturerTemplateService _manufacturerTemplateService;
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelTemplateService _tvchannelTemplateService;
+        private readonly ITvChannelTemplateService _tvChannelTemplateService;
         private readonly ITemplateModelFactory _templateModelFactory;
         private readonly ITopicTemplateService _topicTemplateService;
 
@@ -35,7 +35,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             ILocalizationService localizationService,
             IManufacturerTemplateService manufacturerTemplateService,
             IPermissionService permissionService,
-            ITvChannelTemplateService tvchannelTemplateService,
+            ITvChannelTemplateService tvChannelTemplateService,
             ITemplateModelFactory templateModelFactory,
             ITopicTemplateService topicTemplateService)
         {
@@ -43,7 +43,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _localizationService = localizationService;
             _manufacturerTemplateService = manufacturerTemplateService;
             _permissionService = permissionService;
-            _tvchannelTemplateService = tvchannelTemplateService;
+            _tvChannelTemplateService = tvChannelTemplateService;
             _templateModelFactory = templateModelFactory;
             _topicTemplateService = topicTemplateService;
         }
@@ -224,12 +224,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return ErrorJson(ModelState.SerializeErrors());
 
-            //try to get a tvchannel template with the specified id
-            var template = await _tvchannelTemplateService.GetTvChannelTemplateByIdAsync(model.Id)
+            //try to get a tvChannel template with the specified id
+            var template = await _tvChannelTemplateService.GetTvChannelTemplateByIdAsync(model.Id)
                 ?? throw new ArgumentException("No template found with the specified id");
 
             template = model.ToEntity(template);
-            await _tvchannelTemplateService.UpdateTvChannelTemplateAsync(template);
+            await _tvChannelTemplateService.UpdateTvChannelTemplateAsync(template);
 
             return new NullJsonResult();
         }
@@ -245,7 +245,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             var template = new TvChannelTemplate();
             template = model.ToEntity(template);
-            await _tvchannelTemplateService.InsertTvChannelTemplateAsync(template);
+            await _tvChannelTemplateService.InsertTvChannelTemplateAsync(template);
 
             return Json(new { Result = true });
         }
@@ -256,14 +256,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageMaintenance))
                 return AccessDeniedView();
 
-            if ((await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync()).Count == 1)
+            if ((await _tvChannelTemplateService.GetAllTvChannelTemplatesAsync()).Count == 1)
                 return ErrorJson(await _localizationService.GetResourceAsync("Admin.System.Templates.NotDeleteOnlyOne"));
 
-            //try to get a tvchannel template with the specified id
-            var template = await _tvchannelTemplateService.GetTvChannelTemplateByIdAsync(id)
+            //try to get a tvChannel template with the specified id
+            var template = await _tvChannelTemplateService.GetTvChannelTemplateByIdAsync(id)
                 ?? throw new ArgumentException("No template found with the specified id");
 
-            await _tvchannelTemplateService.DeleteTvChannelTemplateAsync(template);
+            await _tvChannelTemplateService.DeleteTvChannelTemplateAsync(template);
 
             return new NullJsonResult();
         }

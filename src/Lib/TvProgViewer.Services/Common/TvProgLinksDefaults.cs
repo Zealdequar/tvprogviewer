@@ -79,7 +79,7 @@
             /// <summary>
             /// Gets a URL of the TvChannels docs page
             /// </summary>
-            public static string TvChannels => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/index.html";
+            public static string TvChannels => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/index.html";
 
             /// <summary>
             /// Gets a URL of the Categories docs page
@@ -92,24 +92,24 @@
             public static string Manufacturers => "https://docs.tvprogviewer.ru/running-your-store/catalog/manufacturers.html";
 
             /// <summary>
-            /// Gets a URL of the tvchannel reviews docs page
+            /// Gets a URL of the tvChannel reviews docs page
             /// </summary>
-            public static string TvChannelReviews => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/tvchannel-reviews.html";
+            public static string TvChannelReviews => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/tvChannel-reviews.html";
 
             /// <summary>
-            /// Gets a URL of the tvchannel tags docs page
+            /// Gets a URL of the tvChannel tags docs page
             /// </summary>
-            public static string TvChannelTags => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/tvchannel-tags.html";
+            public static string TvChannelTags => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/tvChannel-tags.html";
 
             /// <summary>
-            /// Gets a URL of the tvchannel attributes docs page
+            /// Gets a URL of the tvChannel attributes docs page
             /// </summary>
-            public static string TvChannelAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/tvchannel-attributes.html";
+            public static string TvChannelAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/tvChannel-attributes.html";
 
             /// <summary>
             /// Gets a URL of the specification attributes docs page
             /// </summary>
-            public static string SpecificationAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/specification-attributes.html";
+            public static string SpecificationAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/specification-attributes.html";
 
             /// <summary>
             /// Gets a URL of the checkout attributes docs page
@@ -134,7 +134,7 @@
             /// <summary>
             /// Gets a URL of the recurring payments docs page
             /// </summary>
-            public static string RecurringPayments => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/recurring-tvchannels.html";
+            public static string RecurringPayments => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/recurring-tvChannels.html";
 
             /// <summary>
             /// Gets a URL of the shopping carts and wishlists docs page

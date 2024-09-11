@@ -52,8 +52,8 @@
 			<!-- CIE (Customer Integration Environment) URL -->
 			<soap:address location="https://wwwcie.ups.com/webservices/Rate"/>
 		</wsdl:port>
-        <wsdl:port name="ProductionRatePort" binding="tns:RateBinding">
-            <!-- Production URL -->
+        <wsdl:port name="TvChannelionRatePort" binding="tns:RateBinding">
+            <!-- TvChannelion URL -->
           <soap:address location="https://onlinetools.ups.com/webservices/Rate"/>
         </wsdl:port>
 	</wsdl:service>

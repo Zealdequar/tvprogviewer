@@ -44,16 +44,16 @@ namespace TvProgViewer.Plugin.Misc.Zettle
         public static int RequestTimeout => 15;
 
         /// <summary>
-        /// Gets a default number of products to import in one request
+        /// Gets a default number of tvChannels to import in one request
         /// </summary>
-        public static int ImportProductsNumber => 500;
+        public static int ImportTvChannelsNumber => 500;
 
         /// <summary>
         /// Gets webhook event names to subscribe
         /// </summary>
         public static List<string> WebhookEventNames => new()
         {
-            "ProductCreated",
+            "TvChannelCreated",
             "InventoryBalanceChanged",
             "InventoryTrackingStopped",
             "ApplicationConnectionRemoved"

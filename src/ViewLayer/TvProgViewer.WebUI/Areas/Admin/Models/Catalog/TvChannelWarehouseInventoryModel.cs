@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel warehouse inventory model
+    /// Represents a tvChannel warehouse inventory model
     /// </summary>
     public partial record TvChannelWarehouseInventoryModel : BaseTvProgModel
     {

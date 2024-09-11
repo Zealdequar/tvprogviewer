@@ -15,12 +15,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         }
 
         /// <summary>
-        /// Gets or sets a value indicating details pages of unpublished tvchannel details pages could be open (for SEO optimization)
+        /// Gets or sets a value indicating details pages of unpublished tvChannel details pages could be open (for SEO optimization)
         /// </summary>
         public bool AllowViewUnpublishedTvChannelPage { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating users should see "discontinued" message when visiting details pages of unpublished tvchannels (if "AllowViewUnpublishedTvChannelPage" is "true)
+        /// Gets or sets a value indicating users should see "discontinued" message when visiting details pages of unpublished tvChannels (if "AllowViewUnpublishedTvChannelPage" is "true)
         /// </summary>
         public bool DisplayDiscontinuedMessageForUnpublishedTvChannels { get; set; }
 
@@ -31,42 +31,42 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool PublishBackTvChannelWhenCancellingOrders { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display tvchannel SKU on the tvchannel details page
+        /// Gets or sets a value indicating whether to display tvChannel SKU on the tvChannel details page
         /// </summary>
         public bool ShowSkuOnTvChannelDetailsPage { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display tvchannel SKU on catalog pages
+        /// Gets or sets a value indicating whether to display tvChannel SKU on catalog pages
         /// </summary>
         public bool ShowSkuOnCatalogPages { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display manufacturer part number of a tvchannel
+        /// Gets or sets a value indicating whether to display manufacturer part number of a tvChannel
         /// </summary>
         public bool ShowManufacturerPartNumber { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display GTIN of a tvchannel
+        /// Gets or sets a value indicating whether to display GTIN of a tvChannel
         /// </summary>
         public bool ShowGtin { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether "Free shipping" icon should be displayed for tvchannels
+        /// Gets or sets a value indicating whether "Free shipping" icon should be displayed for tvChannels
         /// </summary>
         public bool ShowFreeShippingNotification { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether short description should be displayed in tvchannel box
+        /// Gets or sets a value indicating whether short description should be displayed in tvChannel box
         /// </summary>
         public bool ShowShortDescriptionOnCatalogPages { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether tvchannel sorting is enabled
+        /// Gets or sets a value indicating whether tvChannel sorting is enabled
         /// </summary>
         public bool AllowTvChannelSorting { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether users are allowed to change tvchannel view mode
+        /// Gets or sets a value indicating whether users are allowed to change tvChannel view mode
         /// </summary>
         public bool AllowTvChannelViewModeChanging { get; set; }
 
@@ -76,12 +76,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public string DefaultViewMode { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a category details page should include tvchannels from subcategories
+        /// Gets or sets a value indicating whether a category details page should include tvChannels from subcategories
         /// </summary>
         public bool ShowTvChannelsFromSubcategories { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether number of tvchannels should be displayed beside each category
+        /// Gets or sets a value indicating whether number of tvChannels should be displayed beside each category
         /// </summary>
         public bool ShowCategoryTvChannelNumber { get; set; }
 
@@ -106,57 +106,57 @@ namespace TvProgViewer.Core.Domain.Catalog
         public string PageShareCode { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating tvchannel reviews must be approved
+        /// Gets or sets a value indicating tvChannel reviews must be approved
         /// </summary>
         public bool TvChannelReviewsMustBeApproved { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating that user can add only one review per tvchannel
+        /// Gets or sets a value indicating that user can add only one review per tvChannel
         /// </summary>
         public bool OneReviewPerTvChannelFromUser { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating the default rating value of the tvchannel reviews
+        /// Gets or sets a value indicating the default rating value of the tvChannel reviews
         /// </summary>
         public int DefaultTvChannelRatingValue { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to allow anonymous users write tvchannel reviews.
+        /// Gets or sets a value indicating whether to allow anonymous users write tvChannel reviews.
         /// </summary>
         public bool AllowAnonymousUsersToReviewTvChannel { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether tvchannel can be reviewed only by user who have already ordered it
+        /// Gets or sets a value indicating whether tvChannel can be reviewed only by user who have already ordered it
         /// </summary>
         public bool TvChannelReviewPossibleOnlyAfterPurchasing { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether notification of a store owner about new tvchannel reviews is enabled
+        /// Gets or sets a value indicating whether notification of a store owner about new tvChannel reviews is enabled
         /// </summary>
         public bool NotifyStoreOwnerAboutNewTvChannelReviews { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether user notification about tvchannel review reply is enabled
+        /// Gets or sets a value indicating whether user notification about tvChannel review reply is enabled
         /// </summary>
         public bool NotifyUserAboutTvChannelReviewReply { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel reviews will be filtered per store
+        /// Gets or sets a value indicating whether the tvChannel reviews will be filtered per store
         /// </summary>
         public bool ShowTvChannelReviewsPerStore { get; set; }
 
         /// <summary>
-        /// Gets or sets a show tvchannel reviews tab on account page
+        /// Gets or sets a show tvChannel reviews tab on account page
         /// </summary>
         public bool ShowTvChannelReviewsTabOnAccountPage { get; set; }
 
         /// <summary>
-        /// Gets or sets the page size for tvchannel reviews in account page
+        /// Gets or sets the page size for tvChannel reviews in account page
         /// </summary>
         public int TvChannelReviewsPageSizeOnAccountPage { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel reviews should be sorted by creation date as ascending
+        /// Gets or sets a value indicating whether the tvChannel reviews should be sorted by creation date as ascending
         /// </summary>
         public bool TvChannelReviewsSortByCreatedDateAscending { get; set; }
 
@@ -166,7 +166,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool TvChannelLiveUrlEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether tvchannel 'Email a friend' feature is enabled
+        /// Gets or sets a value indicating whether tvChannel 'Email a friend' feature is enabled
         /// </summary>
         public bool EmailAFriendEnabled { get; set; }
 
@@ -176,42 +176,42 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool AllowAnonymousUsersToEmailAFriend { get; set; }
 
         /// <summary>
-        /// Gets or sets a number of "Recently viewed tvchannels"
+        /// Gets or sets a number of "Recently viewed tvChannels"
         /// </summary>
         public int RecentlyViewedTvChannelsNumber { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether "Recently viewed tvchannels" feature is enabled
+        /// Gets or sets a value indicating whether "Recently viewed tvChannels" feature is enabled
         /// </summary>
         public bool RecentlyViewedTvChannelsEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether "New tvchannels" page is enabled
+        /// Gets or sets a value indicating whether "New tvChannels" page is enabled
         /// </summary>
         public bool NewTvChannelsEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a number of tvchannels on the "New tvchannels" page
+        /// Gets or sets a number of tvChannels on the "New tvChannels" page
         /// </summary>
         public int NewTvChannelsPageSize { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether users are allowed to select page size on the "New tvchannels" page
+        /// Gets or sets a value indicating whether users are allowed to select page size on the "New tvChannels" page
         /// </summary>
         public bool NewTvChannelsAllowUsersToSelectPageSize { get; set; }
 
         /// <summary>
-        /// Gets or sets the available user selectable page size options on the "New tvchannels" page
+        /// Gets or sets the available user selectable page size options on the "New tvChannels" page
         /// </summary>
         public string NewTvChannelsPageSizeOptions { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether "Compare tvchannels" feature is enabled
+        /// Gets or sets a value indicating whether "Compare tvChannels" feature is enabled
         /// </summary>
         public bool CompareTvChannelsEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets an allowed number of tvchannels to be compared
+        /// Gets or sets an allowed number of tvChannels to be compared
         /// </summary>
         public int CompareTvChannelsNumber { get; set; }
 
@@ -226,12 +226,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool TvChannelSearchEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a number of tvchannels to return when using "autocomplete" feature
+        /// Gets or sets a number of tvChannels to return when using "autocomplete" feature
         /// </summary>
         public int TvChannelSearchAutoCompleteNumberOfTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show tvchannel images in the auto complete search
+        /// Gets or sets a value indicating whether to show tvChannel images in the auto complete search
         /// </summary>
         public bool ShowTvChannelImagesInSearchAutoComplete { get; set; }
 
@@ -256,17 +256,17 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int NumberOfBestsellersOnHomepage { get; set; }
 
         /// <summary>
-        /// Gets or sets a number of tvchannels per page on the search tvchannels page
+        /// Gets or sets a number of tvChannels per page on the search tvChannels page
         /// </summary>
         public int SearchPageTvChannelsPerPage { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether users are allowed to select page size on the search tvchannels page
+        /// Gets or sets a value indicating whether users are allowed to select page size on the search tvChannels page
         /// </summary>
         public bool SearchPageAllowUsersToSelectPageSize { get; set; }
 
         /// <summary>
-        /// Gets or sets the available user selectable page size options on the search tvchannels page
+        /// Gets or sets the available user selectable page size options on the search tvChannels page
         /// </summary>
         public string SearchPagePageSizeOptions { get; set; }
 
@@ -291,12 +291,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool SearchPageManuallyPriceRange { get; set; }
 
         /// <summary>
-        /// Gets or sets "List of tvchannels purchased by other users who purchased the above" option is enable
+        /// Gets or sets "List of tvChannels purchased by other users who purchased the above" option is enable
         /// </summary>
         public bool TvChannelsAlsoPurchasedEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a number of tvchannels also purchased by other users to display
+        /// Gets or sets a number of tvChannels also purchased by other users to display
         /// </summary>
         public int TvChannelsAlsoPurchasedNumber { get; set; }
 
@@ -306,62 +306,62 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool AjaxProcessAttributeChange { get; set; }
 
         /// <summary>
-        /// Gets or sets a number of tvchannel tags that appear in the tag cloud
+        /// Gets or sets a number of tvChannel tags that appear in the tag cloud
         /// </summary>
         public int NumberOfTvChannelTags { get; set; }
 
         /// <summary>
-        /// Gets or sets a number of tvchannels per page on 'tvchannels by tag' page
+        /// Gets or sets a number of tvChannels per page on 'tvChannels by tag' page
         /// </summary>
         public int TvChannelsByTagPageSize { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether users can select the page size for 'tvchannels by tag'
+        /// Gets or sets a value indicating whether users can select the page size for 'tvChannels by tag'
         /// </summary>
         public bool TvChannelsByTagAllowUsersToSelectPageSize { get; set; }
 
         /// <summary>
-        /// Gets or sets the available user selectable page size options for 'tvchannels by tag'
+        /// Gets or sets the available user selectable page size options for 'tvChannels by tag'
         /// </summary>
         public string TvChannelsByTagPageSizeOptions { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the price range filtering is enabled on 'tvchannels by tag' page
+        /// Gets or sets a value indicating whether the price range filtering is enabled on 'tvChannels by tag' page
         /// </summary>
         public bool TvChannelsByTagPriceRangeFiltering { get; set; }
 
         /// <summary>
-        /// Gets or sets the "from" price on 'tvchannels by tag' page
+        /// Gets or sets the "from" price on 'tvChannels by tag' page
         /// </summary>
         public decimal TvChannelsByTagPriceFrom { get; set; }
 
         /// <summary>
-        /// Gets or sets the "to" price on 'tvchannels by tag' page
+        /// Gets or sets the "to" price on 'tvChannels by tag' page
         /// </summary>
         public decimal TvChannelsByTagPriceTo { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the price range should be entered manually on 'tvchannels by tag' page
+        /// Gets or sets a value indicating whether the price range should be entered manually on 'tvChannels by tag' page
         /// </summary>
         public bool TvChannelsByTagManuallyPriceRange { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include "Short description" in compare tvchannels
+        /// Gets or sets a value indicating whether to include "Short description" in compare tvChannels
         /// </summary>
         public bool IncludeShortDescriptionInCompareTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to include "Full description" in compare tvchannels
+        /// Gets or sets a value indicating whether to include "Full description" in compare tvChannels
         /// </summary>
         public bool IncludeFullDescriptionInCompareTvChannels { get; set; }
 
         /// <summary>
-        /// An option indicating whether tvchannels on category and manufacturer pages should include featured tvchannels as well
+        /// An option indicating whether tvChannels on category and manufacturer pages should include featured tvChannels as well
         /// </summary>
         public bool IncludeFeaturedTvChannelsInNormalLists { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to render link to required tvchannels in "Require other tvchannels added to the cart" warning
+        /// Gets or sets a value indicating whether to render link to required tvChannels in "Require other tvChannels added to the cart" warning
         /// </summary>
         public bool UseLinksInRequiredTvChannelWarnings { get; set; }
 
@@ -376,7 +376,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool IgnoreDiscounts { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to ignore featured tvchannels (side-wide). It can significantly improve performance when enabled.
+        /// Gets or sets a value indicating whether to ignore featured tvChannels (side-wide). It can significantly improve performance when enabled.
         /// </summary>
         public bool IgnoreFeaturedTvChannels { get; set; }
 
@@ -391,7 +391,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool IgnoreStoreLimitations { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to cache tvchannel prices. It can significantly improve performance when enabled.
+        /// Gets or sets a value indicating whether to cache tvChannel prices. It can significantly improve performance when enabled.
         /// </summary>
         public bool CacheTvChannelPrices { get; set; }
 
@@ -411,12 +411,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool DisplayTaxShippingInfoFooter { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display information about shipping and tax on tvchannel details pages (used in Germany)
+        /// Gets or sets a value indicating whether to display information about shipping and tax on tvChannel details pages (used in Germany)
         /// </summary>
         public bool DisplayTaxShippingInfoTvChannelDetailsPage { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display information about shipping and tax in tvchannel boxes (used in Germany)
+        /// Gets or sets a value indicating whether to display information about shipping and tax in tvChannel boxes (used in Germany)
         /// </summary>
         public bool DisplayTaxShippingInfoTvChannelBoxes { get; set; }
 
@@ -466,17 +466,17 @@ namespace TvProgViewer.Core.Domain.Catalog
         public Dictionary<int, int> TvChannelSortingEnumDisplayOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannels need to be exported/imported with their attributes
+        /// Gets or sets a value indicating whether the tvChannels need to be exported/imported with their attributes
         /// </summary>
         public bool ExportImportTvChannelAttributes { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether need to use "limited to stores" property for exported/imported tvchannels
+        /// Gets or sets a value indicating whether need to use "limited to stores" property for exported/imported tvChannels
         /// </summary>
         public bool ExportImportTvChannelUseLimitedToStores { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannels need to be exported/imported with their specification attributes
+        /// Gets or sets a value indicating whether the tvChannels need to be exported/imported with their specification attributes
         /// </summary>
         public bool ExportImportTvChannelSpecificationAttributes { get; set; }
 
@@ -486,7 +486,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool ExportImportUseDropdownlistsForAssociatedEntities { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannels should be exported/imported with a full category name including names of all its parents
+        /// Gets or sets a value indicating whether the tvChannels should be exported/imported with a full category name including names of all its parents
         /// </summary>
         public bool ExportImportTvChannelCategoryBreadcrumb { get; set; }
 
@@ -501,17 +501,17 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool ExportImportAllowDownloadImages { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether tvchannels must be importing by separated files
+        /// Gets or sets a value indicating whether tvChannels must be importing by separated files
         /// </summary>
         public bool ExportImportSplitTvChannelsFile { get; set; }
 
         /// <summary>
-        /// Gets or sets a value of max tvchannels count in one file 
+        /// Gets or sets a value of max tvChannels count in one file 
         /// </summary>
         public int ExportImportTvChannelsCountInOneFile { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to remove required tvchannels from the cart if the main one is removed
+        /// Gets or sets a value indicating whether to remove required tvChannels from the cart if the main one is removed
         /// </summary>
         public bool RemoveRequiredTvChannels { get; set; }
 
@@ -536,7 +536,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool UseAjaxLoadMenu { get; set; }
 
         /// <summary>
-        /// Get or set a value indicating whether use standart or AJAX tvchannels loading (applicable to 'paging', 'filtering', 'view modes') in catalog
+        /// Get or set a value indicating whether use standart or AJAX tvChannels loading (applicable to 'paging', 'filtering', 'view modes') in catalog
         /// </summary>
         public bool UseAjaxCatalogTvChannelsLoading { get; set; }
 
@@ -581,7 +581,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool DisplayAllPicturesOnCatalogPages { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier of tvchannel URL structure type (e.g. '/category-seo-name/tvchannel-seo-name' or '/tvchannel-seo-name')
+        /// Gets or sets the identifier of tvChannel URL structure type (e.g. '/category-seo-name/tvChannel-seo-name' or '/tvChannel-seo-name')
         /// </summary>
         /// <remarks>We have TvChannelUrlStructureType enum, but we use int value here so that it can be overridden in third-party plugins</remarks>
         public int TvChannelUrlStructureTypeId { get; set; }

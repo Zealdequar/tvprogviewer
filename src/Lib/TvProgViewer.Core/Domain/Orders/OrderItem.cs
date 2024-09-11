@@ -18,7 +18,7 @@ namespace TvProgViewer.Core.Domain.Orders
         public int OrderId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 
@@ -68,7 +68,7 @@ namespace TvProgViewer.Core.Domain.Orders
         public string AttributeDescription { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel attributes in XML format
+        /// Gets or sets the tvChannel attributes in XML format
         /// </summary>
         public string AttributesXml { get; set; }
         
@@ -83,7 +83,7 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool IsDownloadActivated { get; set; }
 
         /// <summary>
-        /// Gets or sets a license download identifier (in case this is a downloadable tvchannel)
+        /// Gets or sets a license download identifier (in case this is a downloadable tvChannel)
         /// </summary>
         public int? LicenseDownloadId { get; set; }
 
@@ -94,12 +94,12 @@ namespace TvProgViewer.Core.Domain.Orders
         public decimal? ItemWeight { get; set; }
 
         /// <summary>
-        /// Gets or sets the rental tvchannel start date (null if it's not a rental tvchannel)
+        /// Gets or sets the rental tvChannel start date (null if it's not a rental tvChannel)
         /// </summary>
         public DateTime? RentalStartDateUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the rental tvchannel end date (null if it's not a rental tvchannel)
+        /// Gets or sets the rental tvChannel end date (null if it's not a rental tvChannel)
         /// </summary>
         public DateTime? RentalEndDateUtc { get; set; }
     }

@@ -149,8 +149,8 @@ namespace TvProgViewer.WebUI.Models.User
 
         public bool PersonalDataAgreementEnabled { get; set; }
         public bool PersonalDataAgreementRequired { get; set; }
-        [TvProgResourceDisplayName("Account.Fields.AcceptPersonalDataAgreement")]
-        public bool PersonalDataAgreement { get; set; }
+        [TvProgResourceDisplayName("Account.Fields.AcceptPersonalDataAggreement")]
+        public bool PersonalDataAggreement { get; set; }
 
         public bool HoneypotEnabled { get; set; }
         public bool DisplayCaptcha { get; set; }

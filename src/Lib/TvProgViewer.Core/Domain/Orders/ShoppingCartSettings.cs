@@ -8,12 +8,12 @@ namespace TvProgViewer.Core.Domain.Orders
     public partial class ShoppingCartSettings : ISettings
     {
         /// <summary>
-        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a tvchannel to the cart/wishlist
+        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a tvChannel to the cart/wishlist
         /// </summary>
         public bool DisplayCartAfterAddingTvChannel { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a tvchannel to the cart/wishlist
+        /// Gets or sets a value indicating whether a user should be redirected to the shopping cart page after adding a tvChannel to the cart/wishlist
         /// </summary>
         public bool DisplayWishlistAfterAddingTvChannel { get; set; }
 
@@ -28,7 +28,7 @@ namespace TvProgViewer.Core.Domain.Orders
         public int MaximumWishlistItems { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show tvchannel images in the mini-shopping cart block
+        /// Gets or sets a value indicating whether to show tvChannel images in the mini-shopping cart block
         /// </summary>
         public bool AllowOutOfStockItemsToBeAddedToWishlist { get; set; }
 
@@ -43,12 +43,12 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool CartsSharedBetweenStores { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show tvchannel image on shopping cart page
+        /// Gets or sets a value indicating whether to show tvChannel image on shopping cart page
         /// </summary>
         public bool ShowTvChannelImagesOnShoppingCart { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show tvchannel image on wishlist page
+        /// Gets or sets a value indicating whether to show tvChannel image on wishlist page
         /// </summary>
         public bool ShowTvChannelImagesOnWishList { get; set; }
 
@@ -82,11 +82,11 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool MiniShoppingCartEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show tvchannel images in the mini-shopping cart block
+        /// Gets or sets a value indicating whether to show tvChannel images in the mini-shopping cart block
         /// </summary>
         public bool ShowTvChannelImagesInMiniShoppingCart { get; set; }
 
-        /// <summary>Gets or sets a maximum number of tvchannels which can be displayed in the mini-shopping cart block
+        /// <summary>Gets or sets a maximum number of tvChannels which can be displayed in the mini-shopping cart block
         /// </summary>
         public int MiniShoppingCartTvChannelNumber { get; set; }
 
@@ -100,18 +100,18 @@ namespace TvProgViewer.Core.Domain.Orders
         public bool RoundPricesDuringCalculation { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a store owner will be able to offer special prices when users buy bigger amounts of a particular tvchannel.
-        /// For example, a user could have two shopping cart items for the same tvchannels (different tvchannel attributes).
+        /// Gets or sets a value indicating whether a store owner will be able to offer special prices when users buy bigger amounts of a particular tvChannel.
+        /// For example, a user could have two shopping cart items for the same tvChannels (different tvChannel attributes).
         /// </summary>
         public bool GroupTierPricesForDistinctShoppingCartItems { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a user will be able to edit tvchannels in the cart
+        /// Gets or sets a value indicating whether a user will be able to edit tvChannels in the cart
         /// </summary>
         public bool AllowCartItemEditing { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether a user will see quantity of attribute values associated to tvchannels (when qty > 1)
+        /// Gets or sets a value indicating whether a user will see quantity of attribute values associated to tvChannels (when qty > 1)
         /// </summary>
         public bool RenderAssociatedAttributeValueQuantity { get; set; }
     }

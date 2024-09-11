@@ -221,8 +221,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.AcceptPrivacyPolicyEnabled")]
         public bool AcceptPrivacyPolicyEnabled { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Users.Users.Fields.AcceptPersonalDataAgreement")]
-        public bool AcceptPersonalDataAgreement { get; set; }
+        [TvProgResourceDisplayName("Admin.Users.Users.Fields.AcceptPersonalDataAggreement")]
+        public bool AcceptPersonalDataAggreement { get; set; }
 
         [TvProgResourceDisplayName("Admin.Configuration.Settings.UserUser.AcceptPersonalDataAgreementEnabled")]
         public bool AcceptPersonalDataAgreementEnabled { get; set; }

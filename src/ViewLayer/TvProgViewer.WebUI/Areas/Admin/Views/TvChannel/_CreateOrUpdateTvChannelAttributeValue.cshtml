@@ -31,7 +31,7 @@
     function toggleTvChannelType() {
         var selectedTvChannelTypeId = $("#@Html.IdFor(model => model.AttributeValueTypeId)").val();
         if (selectedTvChannelTypeId == @(((int) AttributeValueType.Simple).ToString())) {
-            $('#group-associated-tvchannel').hideElement();
+            $('#group-associated-tvChannel').hideElement();
         $('#group-user-enters-qty').hideElement();
         $('#group-quantity').hideElement();
         $('#group-price-adjustment').showElement();
@@ -39,7 +39,7 @@
         $('#group-weight-adjustment').showElement();
         $('#group-cost').showElement();
     } else if (selectedTvChannelTypeId == @(((int) AttributeValueType.AssociatedToTvChannel).ToString())) {
-        $('#group-associated-tvchannel').showElement();
+        $('#group-associated-tvChannel').showElement();
         $('#group-user-enters-qty').showElement();
         $('#group-price-adjustment').hideElement();
         $('#group-price-adjustment-percentage').hideElement();
@@ -76,25 +76,25 @@
                                     <span asp-validation-for="AttributeValueTypeId"></span>
                                 </div>
                             </div>
-                            <div class="form-group row" id="group-associated-tvchannel">
+                            <div class="form-group row" id="group-associated-tvChannel">
                                 <div class="col-sm-3">
                                     <tvprog-label asp-for="AssociatedTvChannelId" />
                                 </div>
                                 <div class="col-sm-9">
                                     <input asp-for="AssociatedTvChannelId" type="hidden" />
-                                    <span id="associate-tvchannel-name">@Model.AssociatedTvChannelName</span>
+                                    <span id="associate-tvChannel-name">@Model.AssociatedTvChannelName</span>
                                     <span asp-validation-for="AssociatedTvChannelId"></span>
-                                    <button type="submit" onclick="javascript:OpenWindow('@(Url.Action("AssociateTvChannelToAttributeValuePopup", "TvChannel", new {tvchannelIdInput = Html.IdFor(model => model.AssociatedTvChannelId), tvchannelNameInput = "associate-tvchannel-name"}))', 800, 850, true); return false;" class="btn btn-primary">
+                                    <button type="submit" onclick="javascript:OpenWindow('@(Url.Action("AssociateTvChannelToAttributeValuePopup", "TvChannel", new {tvChannelIdInput = Html.IdFor(model => model.AssociatedTvChannelId), tvChannelNameInput = "associate-tvChannel-name"}))', 800, 850, true); return false;" class="btn btn-primary">
                                         @T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.AssociatedTvChannel.AddNew")
                                     </button>
                                     <script>
                                 $(document).ready(function () {
                                     if (@Model.AssociatedTvChannelId > 0) {
-                                        warningValidation('@Url.Action("AssociatedTvChannelGetWarnings", "TvChannel")', '@Html.NameFor(model => model.AssociatedTvChannelId)', { tvchannelId: '@Model.AssociatedTvChannelId' });
+                                        warningValidation('@Url.Action("AssociatedTvChannelGetWarnings", "TvChannel")', '@Html.NameFor(model => model.AssociatedTvChannelId)', { tvChannelId: '@Model.AssociatedTvChannelId' });
                                     }
 
                                     $('#@Html.IdFor(model => model.AssociatedTvChannelId)').on('change', function () {
-                                        warningValidation('@Url.Action("AssociatedTvChannelGetWarnings", "TvChannel")', '@Html.NameFor(model => model.AssociatedTvChannelId)', { tvchannelId: $(this).val() });
+                                        warningValidation('@Url.Action("AssociatedTvChannelGetWarnings", "TvChannel")', '@Html.NameFor(model => model.AssociatedTvChannelId)', { tvChannelId: $(this).val() });
                                     });
                                 });
                                     </script>
@@ -119,7 +119,7 @@
                                 </div>
                             </div>
 
-                            @(await Html.LocalizedEditorAsync<TvChannelAttributeValueModel, TvChannelAttributeValueLocalizedModel>("tvchannelattributevalue-localized",
+                            @(await Html.LocalizedEditorAsync<TvChannelAttributeValueModel, TvChannelAttributeValueLocalizedModel>("tvChannelattributevalue-localized",
                                     @<div>
                                         <div class="form-group row">
                                             <div class="col-sm-3">

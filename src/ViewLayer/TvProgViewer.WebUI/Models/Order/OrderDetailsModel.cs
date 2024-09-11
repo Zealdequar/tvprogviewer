@@ -113,7 +113,7 @@ namespace TvProgViewer.WebUI.Models.Order
 
             public string VendorName { get; set; }
 
-            //downloadable tvchannel properties
+            //downloadable tvChannel properties
             public int DownloadId { get; set; }
             public int LicenseId { get; set; }
         }

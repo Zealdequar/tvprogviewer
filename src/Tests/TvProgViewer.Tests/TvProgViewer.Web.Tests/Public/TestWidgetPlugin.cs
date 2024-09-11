@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nop.Services.Cms;
-using Nop.Services.Plugins;
+using TvProgViewer.Services.Cms;
+using TvProgViewer.Services.Plugins;
 
-namespace Nop.Tests.Nop.Web.Tests.Public
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public
 {
     public class TestWidgetPlugin : BasePlugin, IWidgetPlugin
     {

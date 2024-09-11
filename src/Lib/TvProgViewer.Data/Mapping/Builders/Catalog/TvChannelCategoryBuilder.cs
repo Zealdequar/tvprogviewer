@@ -5,7 +5,7 @@ using TvProgViewer.Data.Extensions;
 namespace TvProgViewer.Data.Mapping.Builders.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel category entity builder
+    /// Represents a tvChannel category entity builder
     /// </summary>
     public partial class TvChannelCategoryBuilder : TvProgEntityBuilder<TvChannelCategory>
     {

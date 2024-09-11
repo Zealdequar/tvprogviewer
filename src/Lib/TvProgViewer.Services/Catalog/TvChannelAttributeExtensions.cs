@@ -8,19 +8,19 @@ namespace TvProgViewer.Services.Catalog
     public static class TvChannelAttributeExtensions
     {
         /// <summary>
-        /// A value indicating whether this tvchannel attribute should have values
+        /// A value indicating whether this tvChannel attribute should have values
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <returns>Result</returns>
-        public static bool ShouldHaveValues(this TvChannelAttributeMapping tvchannelAttributeMapping)
+        public static bool ShouldHaveValues(this TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            if (tvchannelAttributeMapping == null)
+            if (tvChannelAttributeMapping == null)
                 return false;
 
-            if (tvchannelAttributeMapping.AttributeControlType == AttributeControlType.TextBox ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.MultilineTextbox ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.Datepicker ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.FileUpload)
+            if (tvChannelAttributeMapping.AttributeControlType == AttributeControlType.TextBox ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.MultilineTextbox ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.Datepicker ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.FileUpload)
                 return false;
 
             //other attribute control types support values
@@ -28,20 +28,20 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// A value indicating whether this tvchannel attribute can be used as condition for some other attribute
+        /// A value indicating whether this tvChannel attribute can be used as condition for some other attribute
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <returns>Result</returns>
-        public static bool CanBeUsedAsCondition(this TvChannelAttributeMapping tvchannelAttributeMapping)
+        public static bool CanBeUsedAsCondition(this TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            if (tvchannelAttributeMapping == null)
+            if (tvChannelAttributeMapping == null)
                 return false;
 
-            if (tvchannelAttributeMapping.AttributeControlType == AttributeControlType.ReadonlyCheckboxes || 
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.TextBox ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.MultilineTextbox ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.Datepicker ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.FileUpload)
+            if (tvChannelAttributeMapping.AttributeControlType == AttributeControlType.ReadonlyCheckboxes || 
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.TextBox ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.MultilineTextbox ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.Datepicker ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.FileUpload)
                 return false;
 
             //other attribute control types support it
@@ -49,18 +49,18 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// A value indicating whether this tvchannel attribute should can have some validation rules
+        /// A value indicating whether this tvChannel attribute should can have some validation rules
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <returns>Result</returns>
-        public static bool ValidationRulesAllowed(this TvChannelAttributeMapping tvchannelAttributeMapping)
+        public static bool ValidationRulesAllowed(this TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            if (tvchannelAttributeMapping == null)
+            if (tvChannelAttributeMapping == null)
                 return false;
 
-            if (tvchannelAttributeMapping.AttributeControlType == AttributeControlType.TextBox ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.MultilineTextbox ||
-                tvchannelAttributeMapping.AttributeControlType == AttributeControlType.FileUpload)
+            if (tvChannelAttributeMapping.AttributeControlType == AttributeControlType.TextBox ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.MultilineTextbox ||
+                tvChannelAttributeMapping.AttributeControlType == AttributeControlType.FileUpload)
                 return true;
 
             //other attribute control types does not have validation
@@ -68,24 +68,24 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// A value indicating whether this tvchannel attribute is non-combinable
+        /// A value indicating whether this tvChannel attribute is non-combinable
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <returns>Result</returns>
-        public static bool IsNonCombinable(this TvChannelAttributeMapping tvchannelAttributeMapping)
+        public static bool IsNonCombinable(this TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            //When you have a tvchannel with several attributes it may well be that some are combinable,
+            //When you have a tvChannel with several attributes it may well be that some are combinable,
             //whose combination may form a new SKU with its own inventory,
             //and some non-combinable are more used to add accessories
 
-            if (tvchannelAttributeMapping == null)
+            if (tvChannelAttributeMapping == null)
                 return false;
 
             //we can add a new property to "TvChannelAttributeMapping" entity indicating whether it's combinable/non-combinable
             //but we assume that attributes
             //which cannot have values (any value can be entered by a user)
             //are non-combinable
-            var result = !ShouldHaveValues(tvchannelAttributeMapping);
+            var result = !ShouldHaveValues(tvChannelAttributeMapping);
             return result;
         }
     }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nop.Core.Domain.Directory;
-using Nop.Services.Directory;
-using Nop.Services.Plugins;
+using TvProgViewer.Core.Domain.Directory;
+using TvProgViewer.Services.Directory;
+using TvProgViewer.Services.Plugins;
 
-namespace Nop.Tests.Nop.Services.Tests.Directory
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Directory
 {
     public class TestExchangeRateProvider : BasePlugin, IExchangeRateProvider
     {

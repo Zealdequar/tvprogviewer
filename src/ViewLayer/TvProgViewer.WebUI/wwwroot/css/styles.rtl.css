@@ -304,7 +304,7 @@ ul.common-list {
 .requirement-container.requirement-group > .requirement-body {
     padding: 10px 20px 5px 0;
 }
-.requirement-container .requirement-tvchannel-names.filled {
+.requirement-container .requirement-tvChannel-names.filled {
     clear: both;
     max-width: 600px;
     padding-top: 5px;

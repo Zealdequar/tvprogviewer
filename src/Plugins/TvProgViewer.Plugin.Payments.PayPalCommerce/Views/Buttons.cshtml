@@ -1,14 +1,14 @@
-﻿@model (string WidgetZone, int ProductId, string ProductCost)
+﻿@model (string WidgetZone, int TvChannelId, string TvChannelCost)
 
-@if (Model.ProductId > 0)
+@if (Model.TvChannelId > 0)
 {
     <div>
-        <div class="add-to-cart-panel" id="paypal-button-container@($"-{Model.ProductId}")"></div>
+        <div class="add-to-cart-panel" id="paypal-button-container@($"-{Model.TvChannelId}")"></div>
          <div
             data-pp-message
             data-pp-layout="text"
-            data-pp-placement="product"
-            data-pp-amount="@Model.ProductCost">
+            data-pp-placement="tvChannel"
+            data-pp-amount="@Model.TvChannelCost">
         </div>
     </div>
 }
@@ -32,8 +32,8 @@ else
                 if ($('#checkout').length > 0) {
                     $('#checkout').click();
                 }
-                if ($('#add-to-cart-button-@Model.ProductId').length > 0) {
-                    $('#add-to-cart-button-@Model.ProductId').click();
+                if ($('#add-to-cart-button-@Model.TvChannelId').length > 0) {
+                    $('#add-to-cart-button-@Model.TvChannelId').click();
                 }
                 return false;
             },
@@ -46,7 +46,7 @@ else
             }
         });
         if (paymentForm) {
-            paymentForm.render('#paypal-button-container@(Model.ProductId > 0 ? $"-{Model.ProductId}" : null)');
+            paymentForm.render('#paypal-button-container@(Model.TvChannelId > 0 ? $"-{Model.TvChannelId}" : null)');
         }
     });
 </script>

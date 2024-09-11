@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.Install;
-using Nop.Web.Validators.Install;
+using TvProgViewer.WebUI.Models.Install;
+using TvProgViewer.WebUI.Validators.Install;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Install
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.Install
 {
     [TestFixture]
-    public class InstallValidatorTests : BaseNopTest
+    public class InstallValidatorTests : BaseTvProgTest
     {
         private InstallValidator _validator;
 

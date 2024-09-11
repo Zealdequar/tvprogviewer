@@ -1,28 +1,28 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Customers;
-using Nop.Web.Framework.Validators;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Web.Framework.Validators;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators
 {
     [TestFixture]
     public class UsernameValidatorTests
     {
         private TestValidator _validator;
-        private CustomerSettings _customerSettings;
+        private UserSettings _userSettings;
         
         [OneTimeSetUp]
         public void Setup()
         {
-            _customerSettings = new CustomerSettings
+            _userSettings = new UserSettings
             {
                 UsernameValidationRule = "^a.*1$",
                 UsernameValidationEnabled = true,
                 UsernameValidationUseRegex = false
             };
 
-            _validator = new TestValidator { v => v.RuleFor(x => x.Username).IsUsername(_customerSettings) };
+            _validator = new TestValidator { v => v.RuleFor(x => x.Username).IsUsername(_userSettings) };
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
             result.IsValid.Should().BeTrue();
 
             //validation with regex
-            _customerSettings.UsernameValidationUseRegex = true;
+            _userSettings.UsernameValidationUseRegex = true;
             result = await _validator.ValidateAsync(new Person { Username = "test_user" });
             result.IsValid.Should().BeFalse();
             result = await _validator.ValidateAsync(new Person { Username = "a*1^" });

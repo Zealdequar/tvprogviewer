@@ -1,7 +1,7 @@
 ﻿namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents the tvchannel sorting
+    /// Represents the tvChannel sorting
     /// </summary>
     public enum TvChannelSortingEnum
     {

@@ -131,30 +131,30 @@
                                                     <tvprog-label asp-for="TvChannelId" />
                                                 </div>
                                                 <div class="col-md-8">
-                                                    <input type="text" id="search-tvchannel-name" autocomplete="off" class="form-control" />
-                                                    <span id="search-tvchannel-friendly-name"></span>
-                                                    <button type="button" id="search-tvchannel-clear" class="btn bg-gray" style="display: none; margin-top: 5px;">@T("Admin.Common.Clear")</button>
+                                                    <input type="text" id="search-tvChannel-name" autocomplete="off" class="form-control" />
+                                                    <span id="search-tvChannel-friendly-name"></span>
+                                                    <button type="button" id="search-tvChannel-clear" class="btn bg-gray" style="display: none; margin-top: 5px;">@T("Admin.Common.Clear")</button>
                                                     <input asp-for="TvChannelId" autocomplete="off" style="display: none;" />
                                                     <script>
                                                     $(document).ready(function() {
-                                                        $('#search-tvchannel-name').autocomplete({
+                                                        $('#search-tvChannel-name').autocomplete({
                                                             delay: 500,
                                                             minLength: 3,
                                                             source: '@Url.Action("SearchAutoComplete", "SearchComplete")',
                                                             select: function(event, ui) {
-                                                                $('#@Html.IdFor(model => model.TvChannelId)').val(ui.item.tvchannelid);
-                                                                $('#search-tvchannel-friendly-name').text(ui.item.label);
+                                                                $('#@Html.IdFor(model => model.TvChannelId)').val(ui.item.tvChannelid);
+                                                                $('#search-tvChannel-friendly-name').text(ui.item.label);
 
-                                                                $('#search-tvchannel-clear').show();
+                                                                $('#search-tvChannel-clear').show();
                                                                 return false;
                                                             }
                                                         });
 
                                                         //remove button
-                                                        $('#search-tvchannel-clear').click(function() {
+                                                        $('#search-tvChannel-clear').click(function() {
                                                             $('#@Html.IdFor(model => model.TvChannelId)').val('0');
-                                                            $('#search-tvchannel-friendly-name').text('');
-                                                            $('#search-tvchannel-clear').hide();
+                                                            $('#search-tvChannel-friendly-name').text('');
+                                                            $('#search-tvChannel-clear').hide();
                                                             return false;
                                                         });
                                                     });

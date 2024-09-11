@@ -52,7 +52,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IManufacturerService _manufacturerService;
         private readonly IManufacturerTemplateService _manufacturerTemplateService;
         private readonly IPluginService _pluginService;
-        private readonly ITvChannelTemplateService _tvchannelTemplateService;
+        private readonly ITvChannelTemplateService _tvChannelTemplateService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly IShippingService _shippingService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -80,7 +80,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IManufacturerService manufacturerService,
             IManufacturerTemplateService manufacturerTemplateService,
             IPluginService pluginService,
-            ITvChannelTemplateService tvchannelTemplateService,
+            ITvChannelTemplateService tvChannelTemplateService,
             ISpecificationAttributeService specificationAttributeService,
             IShippingService shippingService,
             IStateProvinceService stateProvinceService,
@@ -104,7 +104,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _manufacturerService = manufacturerService;
             _manufacturerTemplateService = manufacturerTemplateService;
             _pluginService = pluginService;
-            _tvchannelTemplateService = tvchannelTemplateService;
+            _tvChannelTemplateService = tvChannelTemplateService;
             _specificationAttributeService = specificationAttributeService;
             _shippingService = shippingService;
             _stateProvinceService = stateProvinceService;
@@ -580,7 +580,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare available tvchannel types
+        /// Prepare available tvChannel types
         /// </summary>
         /// <param name="items">TvChannel type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
@@ -591,11 +591,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            //prepare available tvchannel types
+            //prepare available tvChannel types
             var availableTvChannelTypeItems = await TvChannelType.SimpleTvChannel.ToSelectListAsync(false);
-            foreach (var tvchannelTypeItem in availableTvChannelTypeItems)
+            foreach (var tvChannelTypeItem in availableTvChannelTypeItems)
             {
-                items.Add(tvchannelTypeItem);
+                items.Add(tvChannelTypeItem);
             }
 
             //insert special item for the default value
@@ -857,7 +857,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare available tvchannel templates
+        /// Prepare available tvChannel templates
         /// </summary>
         /// <param name="items">TvChannel template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
@@ -868,8 +868,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            //prepare available tvchannel templates
-            var availableTemplates = await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync();
+            //prepare available tvChannel templates
+            var availableTemplates = await _tvChannelTemplateService.GetAllTvChannelTemplatesAsync();
             foreach (var template in availableTemplates)
             {
                 items.Add(new SelectListItem { Value = template.Id.ToString(), Text = template.Name });
@@ -949,7 +949,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare available tvchannel availability ranges
+        /// Prepare available tvChannel availability ranges
         /// </summary>
         /// <param name="items">TvChannel availability range items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
@@ -961,7 +961,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (items == null)
                 throw new ArgumentNullException(nameof(items));
 
-            //prepare available tvchannel availability ranges
+            //prepare available tvChannel availability ranges
             var availableTvChannelAvailabilityRanges = await _dateRangeService.GetAllTvChannelAvailabilityRangesAsync();
             foreach (var range in availableTvChannelAvailabilityRanges)
             {

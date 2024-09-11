@@ -13,63 +13,63 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attributes
 
         /// <summary>
-        /// Deletes a tvchannel attribute
+        /// Deletes a tvChannel attribute
         /// </summary>
-        /// <param name="tvchannelAttribute">TvChannel attribute</param>
+        /// <param name="tvChannelAttribute">TvChannel attribute</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelAttributeAsync(TvChannelAttribute tvchannelAttribute);
+        Task DeleteTvChannelAttributeAsync(TvChannelAttribute tvChannelAttribute);
 
         /// <summary>
-        /// Deletes tvchannel attributes
+        /// Deletes tvChannel attributes
         /// </summary>
-        /// <param name="tvchannelAttributes">TvChannel attributes</param>
+        /// <param name="tvChannelAttributes">TvChannel attributes</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelAttributesAsync(IList<TvChannelAttribute> tvchannelAttributes);
+        Task DeleteTvChannelAttributesAsync(IList<TvChannelAttribute> tvChannelAttributes);
 
         /// <summary>
-        /// Gets all tvchannel attributes
+        /// Gets all tvChannel attributes
         /// </summary>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attributes
+        /// The task result contains the tvChannel attributes
         /// </returns>
         Task<IPagedList<TvChannelAttribute>> GetAllTvChannelAttributesAsync(int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
-        /// Gets a tvchannel attribute 
+        /// Gets a tvChannel attribute 
         /// </summary>
-        /// <param name="tvchannelAttributeId">TvChannel attribute identifier</param>
+        /// <param name="tvChannelAttributeId">TvChannel attribute identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute 
+        /// The task result contains the tvChannel attribute 
         /// </returns>
-        Task<TvChannelAttribute> GetTvChannelAttributeByIdAsync(int tvchannelAttributeId);
+        Task<TvChannelAttribute> GetTvChannelAttributeByIdAsync(int tvChannelAttributeId);
 
         /// <summary>
-        /// Gets tvchannel attributes 
+        /// Gets tvChannel attributes 
         /// </summary>
-        /// <param name="tvchannelAttributeIds">TvChannel attribute identifiers</param>
+        /// <param name="tvChannelAttributeIds">TvChannel attribute identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attributes
+        /// The task result contains the tvChannel attributes
         /// </returns>
-        Task<IList<TvChannelAttribute>> GetTvChannelAttributeByIdsAsync(int[] tvchannelAttributeIds);
+        Task<IList<TvChannelAttribute>> GetTvChannelAttributeByIdsAsync(int[] tvChannelAttributeIds);
 
         /// <summary>
-        /// Inserts a tvchannel attribute
+        /// Inserts a tvChannel attribute
         /// </summary>
-        /// <param name="tvchannelAttribute">TvChannel attribute</param>
+        /// <param name="tvChannelAttribute">TvChannel attribute</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task InsertTvChannelAttributeAsync(TvChannelAttribute tvchannelAttribute);
+        Task InsertTvChannelAttributeAsync(TvChannelAttribute tvChannelAttribute);
 
         /// <summary>
-        /// Updates the tvchannel attribute
+        /// Updates the tvChannel attribute
         /// </summary>
-        /// <param name="tvchannelAttribute">TvChannel attribute</param>
+        /// <param name="tvChannelAttribute">TvChannel attribute</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelAttributeAsync(TvChannelAttribute tvchannelAttribute);
+        Task UpdateTvChannelAttributeAsync(TvChannelAttribute tvChannelAttribute);
 
         /// <summary>
         /// Returns a list of IDs of not existing attributes
@@ -86,133 +86,133 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attributes mappings
 
         /// <summary>
-        /// Deletes a tvchannel attribute mapping
+        /// Deletes a tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvchannelAttributeMapping);
+        Task DeleteTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvChannelAttributeMapping);
 
         /// <summary>
-        /// Gets tvchannel attribute mappings by tvchannel identifier
+        /// Gets tvChannel attribute mappings by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">The tvchannel identifier</param>
+        /// <param name="tvChannelId">The tvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute mapping collection
+        /// The task result contains the tvChannel attribute mapping collection
         /// </returns>
-        Task<IList<TvChannelAttributeMapping>> GetTvChannelAttributeMappingsByTvChannelIdAsync(int tvchannelId);
+        Task<IList<TvChannelAttributeMapping>> GetTvChannelAttributeMappingsByTvChannelIdAsync(int tvChannelId);
 
         /// <summary>
-        /// Gets a tvchannel attribute mapping
+        /// Gets a tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMappingId">TvChannel attribute mapping identifier</param>
+        /// <param name="tvChannelAttributeMappingId">TvChannel attribute mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute mapping
+        /// The task result contains the tvChannel attribute mapping
         /// </returns>
-        Task<TvChannelAttributeMapping> GetTvChannelAttributeMappingByIdAsync(int tvchannelAttributeMappingId);
+        Task<TvChannelAttributeMapping> GetTvChannelAttributeMappingByIdAsync(int tvChannelAttributeMappingId);
 
         /// <summary>
-        /// Inserts a tvchannel attribute mapping
+        /// Inserts a tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">The tvchannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">The tvChannel attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task InsertTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvchannelAttributeMapping);
+        Task InsertTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvChannelAttributeMapping);
 
         /// <summary>
-        /// Updates the tvchannel attribute mapping
+        /// Updates the tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">The tvchannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">The tvChannel attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvchannelAttributeMapping);
+        Task UpdateTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvChannelAttributeMapping);
 
         #endregion
 
         #region TvChannel attribute values
 
         /// <summary>
-        /// Deletes a tvchannel attribute value
+        /// Deletes a tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValue">TvChannel attribute value</param>
+        /// <param name="tvChannelAttributeValue">TvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelAttributeValueAsync(TvChannelAttributeValue tvchannelAttributeValue);
+        Task DeleteTvChannelAttributeValueAsync(TvChannelAttributeValue tvChannelAttributeValue);
 
         /// <summary>
-        /// Gets tvchannel attribute values by tvchannel attribute mapping identifier
+        /// Gets tvChannel attribute values by tvChannel attribute mapping identifier
         /// </summary>
-        /// <param name="tvchannelAttributeMappingId">The tvchannel attribute mapping identifier</param>
+        /// <param name="tvChannelAttributeMappingId">The tvChannel attribute mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute values
+        /// The task result contains the tvChannel attribute values
         /// </returns>
-        Task<IList<TvChannelAttributeValue>> GetTvChannelAttributeValuesAsync(int tvchannelAttributeMappingId);
+        Task<IList<TvChannelAttributeValue>> GetTvChannelAttributeValuesAsync(int tvChannelAttributeMappingId);
 
         /// <summary>
-        /// Gets a tvchannel attribute value
+        /// Gets a tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValueId">TvChannel attribute value identifier</param>
+        /// <param name="tvChannelAttributeValueId">TvChannel attribute value identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute value
+        /// The task result contains the tvChannel attribute value
         /// </returns>
-        Task<TvChannelAttributeValue> GetTvChannelAttributeValueByIdAsync(int tvchannelAttributeValueId);
+        Task<TvChannelAttributeValue> GetTvChannelAttributeValueByIdAsync(int tvChannelAttributeValueId);
 
         /// <summary>
-        /// Inserts a tvchannel attribute value
+        /// Inserts a tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValue">The tvchannel attribute value</param>
+        /// <param name="tvChannelAttributeValue">The tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task InsertTvChannelAttributeValueAsync(TvChannelAttributeValue tvchannelAttributeValue);
+        Task InsertTvChannelAttributeValueAsync(TvChannelAttributeValue tvChannelAttributeValue);
 
         /// <summary>
-        /// Updates the tvchannel attribute value
+        /// Updates the tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValue">The tvchannel attribute value</param>
+        /// <param name="tvChannelAttributeValue">The tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelAttributeValueAsync(TvChannelAttributeValue tvchannelAttributeValue);
+        Task UpdateTvChannelAttributeValueAsync(TvChannelAttributeValue tvChannelAttributeValue);
 
         #endregion
 
-        #region Predefined tvchannel attribute values
+        #region Predefined tvChannel attribute values
 
         /// <summary>
-        /// Deletes a predefined tvchannel attribute value
+        /// Deletes a predefined tvChannel attribute value
         /// </summary>
-        /// <param name="ppav">Predefined tvchannel attribute value</param>
+        /// <param name="ppav">Predefined tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeletePredefinedTvChannelAttributeValueAsync(PredefinedTvChannelAttributeValue ppav);
 
         /// <summary>
-        /// Gets predefined tvchannel attribute values by tvchannel attribute identifier
+        /// Gets predefined tvChannel attribute values by tvChannel attribute identifier
         /// </summary>
-        /// <param name="tvchannelAttributeId">The tvchannel attribute identifier</param>
+        /// <param name="tvChannelAttributeId">The tvChannel attribute identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute mapping collection
+        /// The task result contains the tvChannel attribute mapping collection
         /// </returns>
-        Task<IList<PredefinedTvChannelAttributeValue>> GetPredefinedTvChannelAttributeValuesAsync(int tvchannelAttributeId);
+        Task<IList<PredefinedTvChannelAttributeValue>> GetPredefinedTvChannelAttributeValuesAsync(int tvChannelAttributeId);
 
         /// <summary>
-        /// Gets a predefined tvchannel attribute value
+        /// Gets a predefined tvChannel attribute value
         /// </summary>
-        /// <param name="id">Predefined tvchannel attribute value identifier</param>
+        /// <param name="id">Predefined tvChannel attribute value identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the predefined tvchannel attribute value
+        /// The task result contains the predefined tvChannel attribute value
         /// </returns>
         Task<PredefinedTvChannelAttributeValue> GetPredefinedTvChannelAttributeValueByIdAsync(int id);
 
         /// <summary>
-        /// Inserts a predefined tvchannel attribute value
+        /// Inserts a predefined tvChannel attribute value
         /// </summary>
-        /// <param name="ppav">The predefined tvchannel attribute value</param>
+        /// <param name="ppav">The predefined tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertPredefinedTvChannelAttributeValueAsync(PredefinedTvChannelAttributeValue ppav);
 
         /// <summary>
-        /// Updates the predefined tvchannel attribute value
+        /// Updates the predefined tvChannel attribute value
         /// </summary>
-        /// <param name="ppav">The predefined tvchannel attribute value</param>
+        /// <param name="ppav">The predefined tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task UpdatePredefinedTvChannelAttributeValueAsync(PredefinedTvChannelAttributeValue ppav);
 
@@ -221,51 +221,51 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attribute combinations
 
         /// <summary>
-        /// Deletes a tvchannel attribute combination
+        /// Deletes a tvChannel attribute combination
         /// </summary>
         /// <param name="combination">TvChannel attribute combination</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task DeleteTvChannelAttributeCombinationAsync(TvChannelAttributeCombination combination);
 
         /// <summary>
-        /// Gets all tvchannel attribute combinations
+        /// Gets all tvChannel attribute combinations
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute combinations
+        /// The task result contains the tvChannel attribute combinations
         /// </returns>
-        Task<IList<TvChannelAttributeCombination>> GetAllTvChannelAttributeCombinationsAsync(int tvchannelId);
+        Task<IList<TvChannelAttributeCombination>> GetAllTvChannelAttributeCombinationsAsync(int tvChannelId);
 
         /// <summary>
-        /// Gets a tvchannel attribute combination
+        /// Gets a tvChannel attribute combination
         /// </summary>
-        /// <param name="tvchannelAttributeCombinationId">TvChannel attribute combination identifier</param>
+        /// <param name="tvChannelAttributeCombinationId">TvChannel attribute combination identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute combination
+        /// The task result contains the tvChannel attribute combination
         /// </returns>
-        Task<TvChannelAttributeCombination> GetTvChannelAttributeCombinationByIdAsync(int tvchannelAttributeCombinationId);
+        Task<TvChannelAttributeCombination> GetTvChannelAttributeCombinationByIdAsync(int tvChannelAttributeCombinationId);
 
         /// <summary>
-        /// Gets a tvchannel attribute combination by SKU
+        /// Gets a tvChannel attribute combination by SKU
         /// </summary>
         /// <param name="sku">SKU</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute combination
+        /// The task result contains the tvChannel attribute combination
         /// </returns>
         Task<TvChannelAttributeCombination> GetTvChannelAttributeCombinationBySkuAsync(string sku);
 
         /// <summary>
-        /// Inserts a tvchannel attribute combination
+        /// Inserts a tvChannel attribute combination
         /// </summary>
         /// <param name="combination">TvChannel attribute combination</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelAttributeCombinationAsync(TvChannelAttributeCombination combination);
 
         /// <summary>
-        /// Updates a tvchannel attribute combination
+        /// Updates a tvChannel attribute combination
         /// </summary>
         /// <param name="combination">TvChannel attribute combination</param>
         /// <returns>Задача представляет асинхронную операцию</returns>

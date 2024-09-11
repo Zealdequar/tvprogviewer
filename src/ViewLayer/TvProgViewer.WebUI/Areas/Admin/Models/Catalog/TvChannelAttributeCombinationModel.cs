@@ -7,7 +7,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel attribute combination model
+    /// Represents a tvChannel attribute combination model
     /// </summary>
     public partial record TvChannelAttributeCombinationModel : BaseTvProgEntityModel
     {

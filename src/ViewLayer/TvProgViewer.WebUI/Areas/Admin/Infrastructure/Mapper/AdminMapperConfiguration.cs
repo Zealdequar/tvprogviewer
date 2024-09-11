@@ -473,7 +473,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
             CreateMap<ReviewType, ReviewTypeModel>();
             CreateMap<ReviewTypeModel, ReviewType>();
 
-            //tvchannel review
+            //tvChannel review
             CreateMap<TvChannelReview, TvChannelReviewModel>()
                 .ForMember(model => model.UserInfo, mo => mo.Ignore())
                 .ForMember(model => model.IsLoggedInAsVendor, mo => mo.Ignore())
@@ -483,13 +483,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(model => model.ShowStoreName, mo => mo.Ignore())
                 .ForMember(model => model.TvChannelName, mo => mo.Ignore());
 
-            //tvchannel review type mapping
+            //tvChannel review type mapping
             CreateMap<TvChannelReviewReviewTypeMapping, TvChannelReviewReviewTypeMappingModel>()
                 .ForMember(model => model.Name, mo => mo.Ignore())
                 .ForMember(model => model.Description, mo => mo.Ignore())
                 .ForMember(model => model.VisibleToAllUsers, mo => mo.Ignore());
 
-            //tvchannels
+            //tvChannels
             CreateMap<TvChannel, TvChannelModel>()
                 .ForMember(model => model.AddPictureModel, options => options.Ignore())
                 .ForMember(model => model.AssociatedTvChannelSearchModel, options => options.Ignore())
@@ -776,7 +776,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(settings => settings.OnlineUserMinutes, options => options.Ignore())
                 .ForMember(settings => settings.SuffixDeletedUsers, options => options.Ignore())
                 .ForMember(settings => settings.LastActivityMinutes, options => options.Ignore())
-                .ForMember(settings => settings.AcceptPersonalDataAgreement, options => options.Ignore());
+                .ForMember(settings => settings.AcceptPersonalDataAggreement, options => options.Ignore())
+                .ForMember(settings => settings.MiddleNameRequired, options => options.Ignore())
+                .ForMember(settings => settings.AcceptPersonalDataAgreementRequired, options => options.Ignore());
 
             CreateMap<MultiFactorAuthenticationSettings, MultiFactorAuthenticationSettingsModel>();
             CreateMap<MultiFactorAuthenticationSettingsModel, MultiFactorAuthenticationSettings>()
@@ -904,7 +906,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Infrastructure.Mapper
                 .ForMember(entity => entity.TaxDisplayTypeId, options => options.Ignore())
                 .ForMember(entity => entity.VatNumberStatus, options => options.Ignore())
                 .ForMember(entity => entity.TaxDisplayType, options => options.Ignore())
-                .ForMember(entity => entity.RegisteredInStoreId, options => options.Ignore());
+                .ForMember(entity => entity.RegisteredInStoreId, options => options.Ignore())
+                .ForMember(entity => entity.PersonalDataAggree, options => options.Ignore());
 
             CreateMap<User, OnlineUserModel>()
                 .ForMember(model => model.LastActivityDate, options => options.Ignore())

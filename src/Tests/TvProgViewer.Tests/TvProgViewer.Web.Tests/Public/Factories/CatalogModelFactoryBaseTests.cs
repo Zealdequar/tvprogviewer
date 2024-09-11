@@ -3,29 +3,29 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Vendors;
-using Nop.Services.Catalog;
-using Nop.Services.Topics;
-using Nop.Services.Vendors;
-using Nop.Web.Factories;
-using Nop.Web.Models.Catalog;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Vendors;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Topics;
+using TvProgViewer.Services.Vendors;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
     public class CatalogModelFactoryBaseTests : WebTest
     {
         private ICatalogModelFactory _catalogModelFactory;
         private Category _category;
-        private Product _product;
+        private TvChannel _tvChannel;
         private ICategoryService _categoryService;
         private Manufacturer _manufacturer;
         private Vendor _vendor;
         private ITopicService _topicService;
         private IHttpContextAccessor _httpContextAccessor;
-        private ProductTag _productTag;
+        private TvChannelTag _tvChannelTag;
         private CatalogSettings _catalogSettings;
 
         [OneTimeSetUp]
@@ -35,19 +35,19 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             _categoryService = GetService<ICategoryService>();
             _catalogModelFactory = GetService<ICatalogModelFactory>();
             _category = await _categoryService.GetCategoryByIdAsync(1);
-            _product = await GetService<IProductService>().GetProductByIdAsync(1);
+            _tvChannel = await GetService<ITvChannelService>().GetTvChannelByIdAsync(1);
             _manufacturer = await GetService<IManufacturerService>().GetManufacturerByIdAsync(1);
             _vendor = await GetService<IVendorService>().GetVendorByIdAsync(1);
             _topicService = GetService<ITopicService>();
             _httpContextAccessor = GetService<IHttpContextAccessor>();
 
-            _productTag = await GetService<IProductTagService>().GetProductTagByIdAsync(1);
+            _tvChannelTag = await GetService<ITvChannelTagService>().GetTvChannelTagByIdAsync(1);
         }
 
         [Test]
         public async Task CanPrepareSearchModel()
         {
-            var model = await _catalogModelFactory.PrepareSearchModelAsync(new SearchModel(), new CatalogProductsCommand());
+            var model = await _catalogModelFactory.PrepareSearchModelAsync(new SearchModel(), new CatalogTvChannelsCommand());
             model.AvailableCategories.Any().Should().BeTrue();
             model.AvailableCategories.Count.Should().Be(17);
 
@@ -59,23 +59,23 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             var queryString = _httpContextAccessor.HttpContext.Request.QueryString;
             _httpContextAccessor.HttpContext.Request.QueryString = new QueryString("?q=t");
 
-            model = await _catalogModelFactory.PrepareSearchModelAsync(new SearchModel(), new CatalogProductsCommand());
+            model = await _catalogModelFactory.PrepareSearchModelAsync(new SearchModel(), new CatalogTvChannelsCommand());
 
             _httpContextAccessor.HttpContext.Request.QueryString = queryString;
 
-            model.CatalogProductsModel.WarningMessage.Should()
-                .Be($"Search term minimum length is {_catalogSettings.ProductSearchTermMinimumLength} characters");
-            model.CatalogProductsModel.Products.Count.Should().Be(0);
+            model.CatalogTvChannelsModel.WarningMessage.Should()
+                .Be($"Search term minimum length is {_catalogSettings.TvChannelSearchTermMinimumLength} characters");
+            model.CatalogTvChannelsModel.TvChannels.Count.Should().Be(0);
 
             _httpContextAccessor.HttpContext.Request.QueryString = new QueryString("?q=Lenovo");
 
             model = await _catalogModelFactory.PrepareSearchModelAsync(new SearchModel
             {
                 q = "Lenovo"
-            }, new CatalogProductsCommand());
+            }, new CatalogTvChannelsCommand());
             _httpContextAccessor.HttpContext.Request.QueryString = queryString;
 
-            model.CatalogProductsModel.Products.Count.Should().Be(2);
+            model.CatalogTvChannelsModel.TvChannels.Count.Should().Be(2);
         }
 
         [Test]
@@ -85,7 +85,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
 
             model.Categories.Count.Should().Be(7);
             model.Topics.Any().Should().BeFalse();
-            model.NewProductsEnabled.Should().BeTrue();
+            model.NewTvChannelsEnabled.Should().BeTrue();
             model.BlogEnabled.Should().BeTrue();
             model.HasOnlyCategories.Should().BeTrue();
 
@@ -104,7 +104,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task CanPrepareCategoryModel()
         {
-            var model = await _catalogModelFactory.PrepareCategoryModelAsync(_category, new CatalogProductsCommand());
+            var model = await _catalogModelFactory.PrepareCategoryModelAsync(_category, new CatalogTvChannelsCommand());
 
             model.Id.Should().Be(_category.Id);
             model.Name.Should().Be(_category.Name);
@@ -122,7 +122,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public void PrepareCategoryModelShouldRaiseExceptionIfCategoryOrCommandIsNull()
         {
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareCategoryModelAsync(null, new CatalogProductsCommand()).Wait());
+                _catalogModelFactory.PrepareCategoryModelAsync(null, new CatalogTvChannelsCommand()).Wait());
 
             Assert.Throws<AggregateException>(() =>
                 _catalogModelFactory.PrepareCategoryModelAsync(_category, null).Wait());
@@ -132,10 +132,10 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public async Task CanPrepareCategoryTemplateViewPath()
         {
             var model = await _catalogModelFactory.PrepareCategoryTemplateViewPathAsync(1);
-            model.Should().Be("CategoryTemplate.ProductsInGridOrLines");
+            model.Should().Be("CategoryTemplate.TvChannelsInGridOrLines");
 
             model = await _catalogModelFactory.PrepareCategoryTemplateViewPathAsync(int.MaxValue);
-            model.Should().Be("CategoryTemplate.ProductsInGridOrLines");
+            model.Should().Be("CategoryTemplate.TvChannelsInGridOrLines");
         }
 
         [Test]
@@ -146,12 +146,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             model.Categories.Count.Should().Be(7);
             model.CurrentCategoryId.Should().Be(_category.Id);
 
-            model = await _catalogModelFactory.PrepareCategoryNavigationModelAsync(0, _product.Id);
+            model = await _catalogModelFactory.PrepareCategoryNavigationModelAsync(0, _tvChannel.Id);
             model.Categories.Count.Should().Be(7);
-            var productCategories = await _categoryService.GetProductCategoriesByProductIdAsync(_product.Id);
-            model.CurrentCategoryId.Should().Be(productCategories.FirstOrDefault()?.CategoryId ?? 0);
+            var tvChannelCategories = await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(_tvChannel.Id);
+            model.CurrentCategoryId.Should().Be(tvChannelCategories.FirstOrDefault()?.CategoryId ?? 0);
 
-            model = await _catalogModelFactory.PrepareCategoryNavigationModelAsync(_category.Id, _product.Id);
+            model = await _catalogModelFactory.PrepareCategoryNavigationModelAsync(_category.Id, _tvChannel.Id);
 
             model.Categories.Count.Should().Be(7);
             model.CurrentCategoryId.Should().Be(_category.Id);
@@ -195,7 +195,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task CanPrepareManufacturerModel()
         {
-            var model = await _catalogModelFactory.PrepareManufacturerModelAsync(_manufacturer, new CatalogProductsCommand());
+            var model = await _catalogModelFactory.PrepareManufacturerModelAsync(_manufacturer, new CatalogTvChannelsCommand());
             model.Id.Should().Be(_manufacturer.Id);
             model.Name.Should().Be(_manufacturer.Name);
             model.Description.Should().Be(_manufacturer.Description);
@@ -208,7 +208,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public void PrepareManufacturerModelShouldRaiseExceptionIfManufacturerOrCommandIsNull()
         {
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareManufacturerModelAsync(null, new CatalogProductsCommand()).Wait());
+                _catalogModelFactory.PrepareManufacturerModelAsync(null, new CatalogTvChannelsCommand()).Wait());
 
             Assert.Throws<AggregateException>(() =>
                 _catalogModelFactory.PrepareManufacturerModelAsync(_manufacturer, null).Wait());
@@ -218,10 +218,10 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public async Task CanPrepareManufacturerTemplateViewPath()
         {
             var model = await _catalogModelFactory.PrepareManufacturerTemplateViewPathAsync(1);
-            model.Should().Be("ManufacturerTemplate.ProductsInGridOrLines");
+            model.Should().Be("ManufacturerTemplate.TvChannelsInGridOrLines");
 
             model = await _catalogModelFactory.PrepareManufacturerTemplateViewPathAsync(int.MaxValue);
-            model.Should().Be("ManufacturerTemplate.ProductsInGridOrLines");
+            model.Should().Be("ManufacturerTemplate.TvChannelsInGridOrLines");
         }
 
         [Test]
@@ -253,7 +253,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task CanPrepareVendorModel()
         {
-            var model = await _catalogModelFactory.PrepareVendorModelAsync(_vendor, new CatalogProductsCommand());
+            var model = await _catalogModelFactory.PrepareVendorModelAsync(_vendor, new CatalogTvChannelsCommand());
 
             model.Id.Should().Be(_vendor.Id);
             model.Name.Should().Be(_vendor.Name);
@@ -267,7 +267,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public void PrepareVendorModelShouldRaiseExceptionIfVendorOrCommandIsNull()
         {
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareVendorModelAsync(null, new CatalogProductsCommand()).Wait());
+                _catalogModelFactory.PrepareVendorModelAsync(null, new CatalogTvChannelsCommand()).Wait());
 
             Assert.Throws<AggregateException>(() =>
                 _catalogModelFactory.PrepareVendorModelAsync(_vendor, null).Wait());
@@ -287,13 +287,13 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         }
 
         [Test]
-        public async Task CanPrepareProductsByTagModel()
+        public async Task CanPrepareTvChannelsByTagModel()
         {
-            var model = await _catalogModelFactory.PrepareProductsByTagModelAsync(_productTag, new CatalogProductsCommand());
+            var model = await _catalogModelFactory.PrepareTvChannelsByTagModelAsync(_tvChannelTag, new CatalogTvChannelsCommand());
 
-            model.Id.Should().Be(_productTag.Id);
-            model.TagName.Should().Be(_productTag.Name);
-            model.CatalogProductsModel.Products.Count.Should().Be(6);
+            model.Id.Should().Be(_tvChannelTag.Id);
+            model.TagName.Should().Be(_tvChannelTag.Name);
+            model.CatalogTvChannelsModel.TvChannels.Count.Should().Be(6);
         }
 
         [Test]
@@ -301,26 +301,26 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _catalogModelFactory.PrepareSearchBoxModelAsync();
 
-            model.AutoCompleteEnabled.Should().Be(_catalogSettings.ProductSearchAutoCompleteEnabled);
-            model.ShowProductImagesInSearchAutoComplete.Should().Be(_catalogSettings.ShowProductImagesInSearchAutoComplete);
-            model.SearchTermMinimumLength.Should().Be(_catalogSettings.ProductSearchTermMinimumLength);
-            model.ShowSearchBox.Should().Be(_catalogSettings.ProductSearchEnabled);
+            model.AutoCompleteEnabled.Should().Be(_catalogSettings.TvChannelSearchAutoCompleteEnabled);
+            model.ShowTvChannelImagesInSearchAutoComplete.Should().Be(_catalogSettings.ShowTvChannelImagesInSearchAutoComplete);
+            model.SearchTermMinimumLength.Should().Be(_catalogSettings.TvChannelSearchTermMinimumLength);
+            model.ShowSearchBox.Should().Be(_catalogSettings.TvChannelSearchEnabled);
         }
 
         [Test]
-        public void PrepareVendorModelShouldRaiseExceptionIfProductTagOrCommandIsNull()
+        public void PrepareVendorModelShouldRaiseExceptionIfTvChannelTagOrCommandIsNull()
         {
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareProductsByTagModelAsync(null, new CatalogProductsCommand()).Wait());
+                _catalogModelFactory.PrepareTvChannelsByTagModelAsync(null, new CatalogTvChannelsCommand()).Wait());
 
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareProductsByTagModelAsync(_productTag, null).Wait());
+                _catalogModelFactory.PrepareTvChannelsByTagModelAsync(_tvChannelTag, null).Wait());
         }
 
         [Test]
-        public async Task CanPrepareProductTagsAllModel()
+        public async Task CanPrepareTvChannelTagsAllModel()
         {
-            var model = await _catalogModelFactory.PreparePopularProductTagsModelAsync();
+            var model = await _catalogModelFactory.PreparePopularTvChannelTagsModelAsync();
             model.Tags.Count.Should().Be(16);
         }
 
@@ -328,7 +328,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public void PrepareSearchModelShouldRaiseExceptionIfSearchModelOrCommandIsNull()
         {
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareSearchModelAsync(null, new CatalogProductsCommand()).Wait());
+                _catalogModelFactory.PrepareSearchModelAsync(null, new CatalogTvChannelsCommand()).Wait());
 
             Assert.Throws<AggregateException>(() =>
                 _catalogModelFactory.PrepareSearchModelAsync(new SearchModel(), null).Wait());
@@ -337,12 +337,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task CanPrepareSortingOptions()
         {
-            var model = new CatalogProductsModel();
-            var command = new CatalogProductsCommand();
+            var model = new CatalogTvChannelsModel();
+            var command = new CatalogTvChannelsCommand();
             await _catalogModelFactory.PrepareSortingOptionsAsync(model, command);
 
-            model.AllowProductSorting.Should().BeTrue();
-            model.AvailableSortOptions.Count.Should().Be(6);
+            model.AllowTvChannelSorting.Should().BeTrue();
+            model.AvailableSortOptions.Count.Should().Be(4);
             command.OrderBy.Should().Be(0);
         }
 
@@ -350,19 +350,19 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public void PrepareSortingOptionsShouldRaiseExceptionIfPagingFilteringModelOrCommandIsNull()
         {
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareSortingOptionsAsync(null, new CatalogProductsCommand()).Wait());
+                _catalogModelFactory.PrepareSortingOptionsAsync(null, new CatalogTvChannelsCommand()).Wait());
 
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareSortingOptionsAsync(new CatalogProductsModel(), null).Wait());
+                _catalogModelFactory.PrepareSortingOptionsAsync(new CatalogTvChannelsModel(), null).Wait());
         }
 
         [Test]
         public async Task CanPrepareViewModes()
         {
-            var model = new CatalogProductsModel();
-            await _catalogModelFactory.PrepareViewModesAsync(model, new CatalogProductsCommand());
+            var model = new CatalogTvChannelsModel();
+            await _catalogModelFactory.PrepareViewModesAsync(model, new CatalogTvChannelsCommand());
 
-            model.AllowProductViewModeChanging.Should().BeTrue();
+            model.AllowTvChannelViewModeChanging.Should().BeTrue();
             model.AvailableViewModes.Count.Should().Be(2);
             model.ViewMode.Should().Be("grid");
         }
@@ -371,21 +371,21 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public void PrepareViewModesShouldRaiseExceptionIfPagingFilteringModelOrCommandIsNull()
         {
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareViewModesAsync(null, new CatalogProductsCommand()).Wait());
+                _catalogModelFactory.PrepareViewModesAsync(null, new CatalogTvChannelsCommand()).Wait());
 
             Assert.Throws<AggregateException>(() =>
-                _catalogModelFactory.PrepareViewModesAsync(new CatalogProductsModel(), null).Wait());
+                _catalogModelFactory.PrepareViewModesAsync(new CatalogTvChannelsModel(), null).Wait());
         }
 
         [Test]
         public async Task CanPreparePageSizeOptions()
         {
             var pageSizes = "10, 20, 30";
-            var model = new CatalogProductsModel();
-            var command = new CatalogProductsCommand();
+            var model = new CatalogTvChannelsModel();
+            var command = new CatalogTvChannelsCommand();
             await _catalogModelFactory.PreparePageSizeOptionsAsync(model, command, true, pageSizes, 0);
 
-            model.AllowCustomersToSelectPageSize.Should().BeTrue();
+            model.AllowUsersToSelectPageSize.Should().BeTrue();
             model.PageSizeOptions.Count.Should().Be(3);
 
             foreach (var modelPageSizeOption in model.PageSizeOptions)
@@ -400,7 +400,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
 
             await _catalogModelFactory.PreparePageSizeOptionsAsync(model, command, false, "10, 20, 30", 15);
 
-            model.AllowCustomersToSelectPageSize.Should().BeFalse();
+            model.AllowUsersToSelectPageSize.Should().BeFalse();
             command.PageSize.Should().Be(15);
             model.PageSizeOptions.Count.Should().Be(3);
         }
@@ -409,10 +409,10 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public void PreparePageSizeOptionsShouldRaiseExceptionIfPagingFilteringModelOrCommandIsNull()
         {
             Assert.Throws<NullReferenceException>(() =>
-                _catalogModelFactory.PreparePageSizeOptionsAsync(null, new CatalogProductsCommand(), true, string.Empty, 15).Wait());
+                _catalogModelFactory.PreparePageSizeOptionsAsync(null, new CatalogTvChannelsCommand(), true, string.Empty, 15).Wait());
 
             Assert.Throws<NullReferenceException>(() =>
-                _catalogModelFactory.PreparePageSizeOptionsAsync(new CatalogProductsModel(), null, false, "10, 15, 20", 0).Wait());
+                _catalogModelFactory.PreparePageSizeOptionsAsync(new CatalogTvChannelsModel(), null, false, "10, 15, 20", 0).Wait());
         }
 
         [Test]

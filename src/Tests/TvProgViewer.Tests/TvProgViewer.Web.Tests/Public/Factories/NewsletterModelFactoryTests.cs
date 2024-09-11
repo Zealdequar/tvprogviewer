@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Customers;
-using Nop.Web.Factories;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.WebUI.Factories;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
-    public class NewsletterModelFactoryTests : BaseNopTest
+    public class NewsletterModelFactoryTests : BaseTvProgTest
     {
         private INewsletterModelFactory _newsletterModelFactory;
 
@@ -22,7 +22,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _newsletterModelFactory.PrepareNewsletterBoxModelAsync();
 
-            model.AllowToUnsubscribe.Should().Be(GetService<CustomerSettings>().NewsletterBlockAllowToUnsubscribe);
+            model.AllowToUnsubscribe.Should().Be(GetService<UserSettings>().NewsletterBlockAllowToUnsubscribe);
         }
 
         [Test]

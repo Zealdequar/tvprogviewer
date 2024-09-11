@@ -26,14 +26,14 @@ namespace TvProgViewer.Services.Orders
         #region Fields
 
         private readonly IHtmlFormatter _htmlFormatter;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRepository<Address> _addressRepository;
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<OrderItem> _orderItemRepository;
         private readonly IRepository<OrderNote> _orderNoteRepository;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
-        private readonly IRepository<TvChannelWarehouseInventory> _tvchannelWarehouseInventoryRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
+        private readonly IRepository<TvChannelWarehouseInventory> _tvChannelWarehouseInventoryRepository;
         private readonly IRepository<RecurringPayment> _recurringPaymentRepository;
         private readonly IRepository<RecurringPaymentHistory> _recurringPaymentHistoryRepository;
         private readonly IShipmentService _shipmentService;
@@ -43,27 +43,27 @@ namespace TvProgViewer.Services.Orders
         #region Ctor
 
         public OrderService(IHtmlFormatter htmlFormatter,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IRepository<Address> addressRepository,
             IRepository<User> userRepository,
             IRepository<Order> orderRepository,
             IRepository<OrderItem> orderItemRepository,
             IRepository<OrderNote> orderNoteRepository,
-            IRepository<TvChannel> tvchannelRepository,
-            IRepository<TvChannelWarehouseInventory> tvchannelWarehouseInventoryRepository,
+            IRepository<TvChannel> tvChannelRepository,
+            IRepository<TvChannelWarehouseInventory> tvChannelWarehouseInventoryRepository,
             IRepository<RecurringPayment> recurringPaymentRepository,
             IRepository<RecurringPaymentHistory> recurringPaymentHistoryRepository,
             IShipmentService shipmentService)
         {
             _htmlFormatter = htmlFormatter;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _addressRepository = addressRepository;
             _userRepository = userRepository;
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
             _orderNoteRepository = orderNoteRepository;
-            _tvchannelRepository = tvchannelRepository;
-            _tvchannelWarehouseInventoryRepository = tvchannelWarehouseInventoryRepository;
+            _tvChannelRepository = tvChannelRepository;
+            _tvChannelWarehouseInventoryRepository = tvChannelWarehouseInventoryRepository;
             _recurringPaymentRepository = recurringPaymentRepository;
             _recurringPaymentHistoryRepository = recurringPaymentHistoryRepository;
             _shipmentService = shipmentService;
@@ -234,10 +234,10 @@ namespace TvProgViewer.Services.Orders
         /// <param name="storeId">Store identifier; 0 to load all orders</param>
         /// <param name="vendorId">Vendor identifier; null to load all orders</param>
         /// <param name="userId">User identifier; 0 to load all orders</param>
-        /// <param name="tvchannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
+        /// <param name="tvChannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
         /// <param name="affiliateId">Affiliate identifier; 0 to load all orders</param>
         /// <param name="billingCountryId">Billing country identifier; 0 to load all orders</param>
-        /// <param name="warehouseId">Warehouse identifier, only orders with tvchannels from a specified warehouse will be loaded; 0 to load all orders</param>
+        /// <param name="warehouseId">Warehouse identifier, only orders with tvChannels from a specified warehouse will be loaded; 0 to load all orders</param>
         /// <param name="paymentMethodSystemName">Payment method system name; null to load all records</param>
         /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
@@ -257,7 +257,7 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         public virtual async Task<IPagedList<Order>> SearchOrdersAsync(int storeId = 0,
             int vendorId = 0, int userId = 0,
-            int tvchannelId = 0, int affiliateId = 0, int warehouseId = 0,
+            int tvChannelId = 0, int affiliateId = 0, int warehouseId = 0,
             int billingCountryId = 0, string paymentMethodSystemName = null,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             List<int> osIds = null, List<int> psIds = null, List<int> ssIds = null,
@@ -273,7 +273,7 @@ namespace TvProgViewer.Services.Orders
             {
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
+                    join p in _tvChannelRepository.Table on oi.TvChannelId equals p.Id
                     where p.VendorId == vendorId
                     select o;
 
@@ -283,11 +283,11 @@ namespace TvProgViewer.Services.Orders
             if (userId > 0)
                 query = query.Where(o => o.UserId == userId);
 
-            if (tvchannelId > 0)
+            if (tvChannelId > 0)
             {
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    where oi.TvChannelId == tvchannelId
+                    where oi.TvChannelId == tvChannelId
                     select o;
 
                 query = query.Distinct();
@@ -299,8 +299,8 @@ namespace TvProgViewer.Services.Orders
 
                 query = from o in query
                     join oi in _orderItemRepository.Table on o.Id equals oi.OrderId
-                    join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
-                    join pwi in _tvchannelWarehouseInventoryRepository.Table on p.Id equals pwi.TvChannelId into ps
+                    join p in _tvChannelRepository.Table on oi.TvChannelId equals p.Id
+                    join pwi in _tvChannelWarehouseInventoryRepository.Table on p.Id equals pwi.TvChannelId into ps
                     from pwi in ps.DefaultIfEmpty()
                         where
                         //"Use multiple warehouses" enabled
@@ -429,7 +429,7 @@ namespace TvProgViewer.Services.Orders
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            foreach (var orderItem in await GetOrderItemsAsync(order.Id, isShipEnabled: true)) //we can ship only shippable tvchannels
+            foreach (var orderItem in await GetOrderItemsAsync(order.Id, isShipEnabled: true)) //we can ship only shippable tvChannels
             {
                 var totalNumberOfItemsCanBeAddedToShipment = await GetTotalNumberOfItemsCanBeAddedToShipmentAsync(orderItem);
                 if (totalNumberOfItemsCanBeAddedToShipment <= 0)
@@ -515,19 +515,19 @@ namespace TvProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Gets a tvchannel of specify order item
+        /// Gets a tvChannel of specify order item
         /// </summary>
         /// <param name="orderItemId">Order item identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel
+        /// The task result contains the tvChannel
         /// </returns>
         public virtual async Task<TvChannel> GetTvChannelByOrderItemIdAsync(int orderItemId)
         {
             if (orderItemId == 0)
                 return null;
 
-            return await (from p in _tvchannelRepository.Table
+            return await (from p in _tvChannelRepository.Table
                     join oi in _orderItemRepository.Table on p.Id equals oi.TvChannelId
                     where oi.Id == orderItemId
                     select p).SingleOrDefaultAsync();
@@ -537,7 +537,7 @@ namespace TvProgViewer.Services.Orders
         /// Gets a list items of order
         /// </summary>
         /// <param name="orderId">Order identifier</param>
-        /// <param name="isNotReturnable">Value indicating whether this tvchannel is returnable; pass null to ignore</param>
+        /// <param name="isNotReturnable">Value indicating whether this tvChannel is returnable; pass null to ignore</param>
         /// <param name="isShipEnabled">Value indicating whether the entity is ship enabled; pass null to ignore</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore</param>
         /// <returns>
@@ -550,7 +550,7 @@ namespace TvProgViewer.Services.Orders
                 return new List<OrderItem>();
 
             return await (from oi in _orderItemRepository.Table
-                    join p in _tvchannelRepository.Table on oi.TvChannelId equals p.Id
+                    join p in _tvChannelRepository.Table on oi.TvChannelId equals p.Id
                     where
                     oi.OrderId == orderId &&
                     (!isShipEnabled.HasValue || (p.IsShipEnabled == isShipEnabled.Value)) &&
@@ -594,7 +594,7 @@ namespace TvProgViewer.Services.Orders
 
             var query = from orderItem in _orderItemRepository.Table
                         join o in _orderRepository.Table on orderItem.OrderId equals o.Id
-                        join p in _tvchannelRepository.Table on orderItem.TvChannelId equals p.Id
+                        join p in _tvChannelRepository.Table on orderItem.TvChannelId equals p.Id
                         where userId == o.UserId &&
                         p.IsDownload &&
                         !o.Deleted
@@ -689,21 +689,21 @@ namespace TvProgViewer.Services.Orders
             if (order.OrderStatus == OrderStatus.Cancelled)
                 return false;
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-            if (tvchannel == null || !tvchannel.IsDownload)
+            if (tvChannel == null || !tvChannel.IsDownload)
                 return false;
 
             //payment status
-            switch (tvchannel.DownloadActivationType)
+            switch (tvChannel.DownloadActivationType)
             {
                 case DownloadActivationType.WhenOrderIsPaid:
                     if (order.PaymentStatus == PaymentStatus.Paid && order.PaidDateUtc.HasValue)
                     {
                         //expiration date
-                        if (tvchannel.DownloadExpirationDays.HasValue)
+                        if (tvChannel.DownloadExpirationDays.HasValue)
                         {
-                            if (order.PaidDateUtc.Value.AddDays(tvchannel.DownloadExpirationDays.Value) > DateTime.UtcNow)
+                            if (order.PaidDateUtc.Value.AddDays(tvChannel.DownloadExpirationDays.Value) > DateTime.UtcNow)
                             {
                                 return true;
                             }
@@ -719,9 +719,9 @@ namespace TvProgViewer.Services.Orders
                     if (orderItem.IsDownloadActivated)
                     {
                         //expiration date
-                        if (tvchannel.DownloadExpirationDays.HasValue)
+                        if (tvChannel.DownloadExpirationDays.HasValue)
                         {
-                            if (order.CreatedOnUtc.AddDays(tvchannel.DownloadExpirationDays.Value) > DateTime.UtcNow)
+                            if (order.CreatedOnUtc.AddDays(tvChannel.DownloadExpirationDays.Value) > DateTime.UtcNow)
                             {
                                 return true;
                             }

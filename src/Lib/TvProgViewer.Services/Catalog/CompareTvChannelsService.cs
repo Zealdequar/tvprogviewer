@@ -11,7 +11,7 @@ using TvProgViewer.Core.Security;
 namespace TvProgViewer.Services.Catalog
 {
     /// <summary>
-    /// Compare tvchannels service
+    /// Compare tvChannels service
     /// </summary>
     public partial class CompareTvChannelsService : ICompareTvChannelsService
     {
@@ -20,7 +20,7 @@ namespace TvProgViewer.Services.Catalog
         private readonly CatalogSettings _catalogSettings;
         private readonly CookieSettings _cookieSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IWebHelper _webHelper;
 
         #endregion
@@ -30,13 +30,13 @@ namespace TvProgViewer.Services.Catalog
         public CompareTvChannelsService(CatalogSettings catalogSettings,
             CookieSettings cookieSettings,
             IHttpContextAccessor httpContextAccessor,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IWebHelper webHelper)
         {
             _catalogSettings = catalogSettings;
             _cookieSettings = cookieSettings;
             _httpContextAccessor = httpContextAccessor;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _webHelper = webHelper;
         }
 
@@ -45,7 +45,7 @@ namespace TvProgViewer.Services.Catalog
         #region Utilities
 
         /// <summary>
-        /// Get a list of identifier of compared tvchannels
+        /// Get a list of identifier of compared tvChannels
         /// </summary>
         /// <returns>List of identifier</returns>
         protected virtual List<int> GetComparedTvChannelIds()
@@ -56,20 +56,20 @@ namespace TvProgViewer.Services.Catalog
 
             //try to get cookie
             var cookieName = $"{TvProgCookieDefaults.Prefix}{TvProgCookieDefaults.ComparedTvChannelsCookie}";
-            if (!httpContext.Request.Cookies.TryGetValue(cookieName, out var tvchannelIdsCookie) || string.IsNullOrEmpty(tvchannelIdsCookie))
+            if (!httpContext.Request.Cookies.TryGetValue(cookieName, out var tvChannelIdsCookie) || string.IsNullOrEmpty(tvChannelIdsCookie))
                 return new List<int>();
 
-            //get array of string tvchannel identifiers from cookie
-            var tvchannelIds = tvchannelIdsCookie.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            //get array of string tvChannel identifiers from cookie
+            var tvChannelIds = tvChannelIdsCookie.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            //return list of int tvchannel identifiers
-            return tvchannelIds.Select(int.Parse).Distinct().ToList();
+            //return list of int tvChannel identifiers
+            return tvChannelIds.Select(int.Parse).Distinct().ToList();
         }
 
         /// <summary>
-        /// Add cookie value for the compared tvchannels
+        /// Add cookie value for the compared tvChannels
         /// </summary>
-        /// <param name="comparedTvChannelIds">Collection of compared tvchannels identifiers</param>
+        /// <param name="comparedTvChannelIds">Collection of compared tvChannels identifiers</param>
         protected virtual void AddCompareTvChannelsCookie(IEnumerable<int> comparedTvChannelIds)
         {
             //delete current cookie if exists
@@ -97,7 +97,7 @@ namespace TvProgViewer.Services.Catalog
         #region Methods
 
         /// <summary>
-        /// Clears a "compare tvchannels" list
+        /// Clears a "compare tvChannels" list
         /// </summary>
         public virtual void ClearCompareTvChannels()
         {
@@ -110,41 +110,41 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a "compare tvchannels" list
+        /// Gets a "compare tvChannels" list
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the "Compare tvchannels" list
+        /// The task result contains the "Compare tvChannels" list
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetComparedTvChannelsAsync()
         {
-            //get list of compared tvchannel identifiers
-            var tvchannelIds = GetComparedTvChannelIds();
+            //get list of compared tvChannel identifiers
+            var tvChannelIds = GetComparedTvChannelIds();
 
-            //return list of tvchannel
-            return (await _tvchannelService.GetTvChannelsByIdsAsync(tvchannelIds.ToArray()))
-                .Where(tvchannel => tvchannel.Published && !tvchannel.Deleted).ToList();
+            //return list of tvChannel
+            return (await _tvChannelService.GetTvChannelsByIdsAsync(tvChannelIds.ToArray()))
+                .Where(tvChannel => tvChannel.Published && !tvChannel.Deleted).ToList();
         }
 
         /// <summary>
-        /// Removes a tvchannel from a "compare tvchannels" list
+        /// Removes a tvChannel from a "compare tvChannels" list
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual Task RemoveTvChannelFromCompareListAsync(int tvchannelId)
+        public virtual Task RemoveTvChannelFromCompareListAsync(int tvChannelId)
         {
             if (_httpContextAccessor.HttpContext?.Response == null)
                 return Task.CompletedTask;
 
-            //get list of compared tvchannel identifiers
+            //get list of compared tvChannel identifiers
             var comparedTvChannelIds = GetComparedTvChannelIds();
 
-            //whether tvchannel identifier to remove exists
-            if (!comparedTvChannelIds.Contains(tvchannelId))
+            //whether tvChannel identifier to remove exists
+            if (!comparedTvChannelIds.Contains(tvChannelId))
                 return Task.CompletedTask;
 
             //it exists, so remove it from list
-            comparedTvChannelIds.Remove(tvchannelId);
+            comparedTvChannelIds.Remove(tvChannelId);
 
             //set cookie
             AddCompareTvChannelsCookie(comparedTvChannelIds);
@@ -153,23 +153,23 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Adds a tvchannel to a "compare tvchannels" list
+        /// Adds a tvChannel to a "compare tvChannels" list
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual Task AddTvChannelToCompareListAsync(int tvchannelId)
+        public virtual Task AddTvChannelToCompareListAsync(int tvChannelId)
         {
             if (_httpContextAccessor.HttpContext?.Response == null)
                 return Task.CompletedTask;
 
-            //get list of compared tvchannel identifiers
+            //get list of compared tvChannel identifiers
             var comparedTvChannelIds = GetComparedTvChannelIds();
 
-            //whether tvchannel identifier to add already exist
-            if (!comparedTvChannelIds.Contains(tvchannelId))
-                comparedTvChannelIds.Insert(0, tvchannelId);
+            //whether tvChannel identifier to add already exist
+            if (!comparedTvChannelIds.Contains(tvChannelId))
+                comparedTvChannelIds.Insert(0, tvChannelId);
 
-            //limit list based on the allowed number of tvchannels to be compared
+            //limit list based on the allowed number of tvChannels to be compared
             comparedTvChannelIds = comparedTvChannelIds.Take(_catalogSettings.CompareTvChannelsNumber).ToList();
 
             //set cookie

@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Web.Framework.Validators;
+using TvProgViewer.Web.Framework.Validators;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators
 {
     [TestFixture]
     public class CreditCardValidatorTests

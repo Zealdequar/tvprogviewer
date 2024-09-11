@@ -22,7 +22,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="order">Order</param>
         /// <param name="language">Language; null to use a language used when placing an order</param>
         /// <param name="store">Store</param>
-        /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
+        /// <param name="vendor">Vendor to limit tvChannels; null to print all tvChannels. If specified, then totals won't be printed</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// </returns>
@@ -34,7 +34,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="stream">Stream</param>
         /// <param name="orders">Orders</param>
         /// <param name="language">Language; null to use a language used when placing an order</param>
-        /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
+        /// <param name="vendor">Vendor to limit tvChannels; null to print all tvChannels. If specified, then totals won't be printed</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task PrintOrdersToPdfAsync(Stream stream, IList<Order> orders, Language language = null, Vendor vendor = null);
 
@@ -60,16 +60,16 @@ namespace TvProgViewer.Services.Common
         /// Write PDF catalog to the specified stream
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <param name="tvchannels">TvChannels</param>
+        /// <param name="tvChannels">TvChannels</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task PrintTvChannelsToPdfAsync(Stream stream, IList<TvChannel> tvchannels);
+        Task PrintTvChannelsToPdfAsync(Stream stream, IList<TvChannel> tvChannels);
 
         /// <summary>
         /// Export an order to PDF and save to disk
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="language">Language identifier; null to use a language used when placing an order</param>
-        /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
+        /// <param name="vendor">Vendor to limit tvChannels; null to print all tvChannels. If specified, then totals won't be printed</param>
         /// <returns>
         /// The task result contains a path of generated file
         /// </returns>

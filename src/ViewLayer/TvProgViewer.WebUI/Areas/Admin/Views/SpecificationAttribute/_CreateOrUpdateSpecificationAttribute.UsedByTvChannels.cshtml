@@ -3,7 +3,7 @@
 <div class="card-body">
     @await Html.PartialAsync("Table", new DataTablesModel
     {
-        Name = "used-by-tvchannels-grid",
+        Name = "used-by-tvChannels-grid",
         UrlRead = new DataUrl("UsedByTvChannels", "SpecificationAttribute", new RouteValueDictionary { [nameof(Model.SpecificationAttributeTvChannelSearchModel.SpecificationAttributeId)] = Model.SpecificationAttributeTvChannelSearchModel.SpecificationAttributeId }),
         SearchButtonId = "search-categories",
         Length = Model.SpecificationAttributeTvChannelSearchModel.PageSize,

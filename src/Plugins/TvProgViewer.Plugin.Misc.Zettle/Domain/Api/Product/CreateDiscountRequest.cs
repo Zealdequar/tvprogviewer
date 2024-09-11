@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
     /// Represents request to create discount
     /// </summary>
-    public class CreateDiscountRequest : ProductApiRequest
+    public class CreateDiscountRequest : TvChannelApiRequest
     {
         /// <summary>
         /// Gets or sets the unique identifier as UUID version 1

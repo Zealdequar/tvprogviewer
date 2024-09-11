@@ -66,9 +66,9 @@ namespace TvProgViewer.Services.Orders
         private readonly IPdfService _pdfService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelAttributeFormatter _tvchannelAttributeFormatter;
-        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelAttributeFormatter _tvChannelAttributeFormatter;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IReturnRequestService _returnRequestService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShipmentService _shipmentService;
@@ -116,9 +116,9 @@ namespace TvProgViewer.Services.Orders
             IPdfService pdfService,
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
-            ITvChannelAttributeFormatter tvchannelAttributeFormatter,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelService tvchannelService,
+            ITvChannelAttributeFormatter tvChannelAttributeFormatter,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelService tvChannelService,
             IReturnRequestService returnRequestService,
             IRewardPointService rewardPointService,
             IShipmentService shipmentService,
@@ -162,9 +162,9 @@ namespace TvProgViewer.Services.Orders
             _pdfService = pdfService;
             _priceCalculationService = priceCalculationService;
             _priceFormatter = priceFormatter;
-            _tvchannelAttributeFormatter = tvchannelAttributeFormatter;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelService = tvchannelService;
+            _tvChannelAttributeFormatter = tvChannelAttributeFormatter;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelService = tvChannelService;
             _returnRequestService = returnRequestService;
             _rewardPointService = rewardPointService;
             _shipmentService = shipmentService;
@@ -391,11 +391,11 @@ namespace TvProgViewer.Services.Orders
         {
             foreach (var item in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
             {
-                var tvchannel = await _orderService.GetTvChannelByOrderItemIdAsync(item.OrderItemId);
-                if (tvchannel is null)
+                var tvChannel = await _orderService.GetTvChannelByOrderItemIdAsync(item.OrderItemId);
+                if (tvChannel is null)
                     continue;
 
-                await _tvchannelService.BookReservedInventoryAsync(tvchannel, item.WarehouseId, -item.Quantity, message);
+                await _tvChannelService.BookReservedInventoryAsync(tvChannel, item.WarehouseId, -item.Quantity, message);
             }
         }
 
@@ -411,11 +411,11 @@ namespace TvProgViewer.Services.Orders
             {
                 foreach (var shipmentItem in await _shipmentService.GetShipmentItemsByShipmentIdAsync(shipment.Id))
                 {
-                    var tvchannel = await _orderService.GetTvChannelByOrderItemIdAsync(shipmentItem.OrderItemId);
-                    if (tvchannel is null)
+                    var tvChannel = await _orderService.GetTvChannelByOrderItemIdAsync(shipmentItem.OrderItemId);
+                    if (tvChannel is null)
                         continue;
 
-                    await _tvchannelService.ReverseBookedInventoryAsync(tvchannel, shipmentItem, message);
+                    await _tvChannelService.ReverseBookedInventoryAsync(tvChannel, shipmentItem, message);
                 }
             }
         }
@@ -430,11 +430,11 @@ namespace TvProgViewer.Services.Orders
         {
             foreach (var orderItem in await _orderService.GetOrderItemsAsync(order.Id))
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
-                if (tvchannel is null)
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                if (tvChannel is null)
                     continue;
 
-                await _tvchannelService.AdjustInventoryAsync(tvchannel, orderItem.Quantity, orderItem.AttributesXml, message);
+                await _tvChannelService.AdjustInventoryAsync(tvChannel, orderItem.Quantity, orderItem.AttributesXml, message);
             }
         }
 
@@ -681,10 +681,10 @@ namespace TvProgViewer.Services.Orders
             //validate individual cart items
             foreach (var sci in details.Cart)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
                 var sciWarnings = await _shoppingCartService.GetShoppingCartItemWarningsAsync(details.User,
-                    sci.ShoppingCartType, tvchannel, processPaymentRequest.StoreId, sci.AttributesXml,
+                    sci.ShoppingCartType, tvChannel, processPaymentRequest.StoreId, sci.AttributesXml,
                     sci.UserEnteredPrice, sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, false, sci.Id);
                 if (sciWarnings.Any())
                     throw new TvProgException(sciWarnings.Aggregate(string.Empty, (current, next) => $"{current}{next};"));
@@ -1316,7 +1316,7 @@ namespace TvProgViewer.Services.Orders
                 }
             }
 
-            //user roles with "purchased with tvchannel" specified
+            //user roles with "purchased with tvChannel" specified
             await ProcessUserRolesWithPurchasedTvChannelSpecifiedAsync(order, true);
         }
 
@@ -1331,15 +1331,15 @@ namespace TvProgViewer.Services.Orders
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            //purchased tvchannel identifiers
+            //purchased tvChannel identifiers
             var purchasedTvChannelIds = new List<int>();
             foreach (var orderItem in await _orderService.GetOrderItemsAsync(order.Id))
             {
                 //standard items
                 purchasedTvChannelIds.Add(orderItem.TvChannelId);
 
-                //bundled (associated) tvchannels
-                var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(orderItem.AttributesXml);
+                //bundled (associated) tvChannels
+                var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(orderItem.AttributesXml);
                 foreach (var attributeValue in attributeValues)
                 {
                     if (attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel)
@@ -1451,24 +1451,24 @@ namespace TvProgViewer.Services.Orders
         {
             foreach (var sc in details.Cart)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sc.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(sc.TvChannelId);
 
                 //prices
                 var scUnitPrice = (await _shoppingCartService.GetUnitPriceAsync(sc, true)).unitPrice;
                 var (scSubTotal, discountAmount, scDiscounts, _) = await _shoppingCartService.GetSubTotalAsync(sc, true);
-                var scUnitPriceInclTax = await _taxService.GetTvChannelPriceAsync(tvchannel, scUnitPrice, true, details.User);
-                var scUnitPriceExclTax = await _taxService.GetTvChannelPriceAsync(tvchannel, scUnitPrice, false, details.User);
-                var scSubTotalInclTax = await _taxService.GetTvChannelPriceAsync(tvchannel, scSubTotal, true, details.User);
-                var scSubTotalExclTax = await _taxService.GetTvChannelPriceAsync(tvchannel, scSubTotal, false, details.User);
-                var discountAmountInclTax = await _taxService.GetTvChannelPriceAsync(tvchannel, discountAmount, true, details.User);
-                var discountAmountExclTax = await _taxService.GetTvChannelPriceAsync(tvchannel, discountAmount, false, details.User);
+                var scUnitPriceInclTax = await _taxService.GetTvChannelPriceAsync(tvChannel, scUnitPrice, true, details.User);
+                var scUnitPriceExclTax = await _taxService.GetTvChannelPriceAsync(tvChannel, scUnitPrice, false, details.User);
+                var scSubTotalInclTax = await _taxService.GetTvChannelPriceAsync(tvChannel, scSubTotal, true, details.User);
+                var scSubTotalExclTax = await _taxService.GetTvChannelPriceAsync(tvChannel, scSubTotal, false, details.User);
+                var discountAmountInclTax = await _taxService.GetTvChannelPriceAsync(tvChannel, discountAmount, true, details.User);
+                var discountAmountExclTax = await _taxService.GetTvChannelPriceAsync(tvChannel, discountAmount, false, details.User);
                 foreach (var disc in scDiscounts)
                     if (!_discountService.ContainsDiscount(details.AppliedDiscounts, disc))
                         details.AppliedDiscounts.Add(disc);
 
                 //attributes
                 var store = await _storeService.GetStoreByIdAsync(sc.StoreId);
-                var attributeDescription = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, sc.AttributesXml, details.User, store);
+                var attributeDescription = await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel, sc.AttributesXml, details.User, store);
 
                 var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(sc);
 
@@ -1477,12 +1477,12 @@ namespace TvProgViewer.Services.Orders
                 {
                     OrderItemGuid = Guid.NewGuid(),
                     OrderId = order.Id,
-                    TvChannelId = tvchannel.Id,
+                    TvChannelId = tvChannel.Id,
                     UnitPriceInclTax = scUnitPriceInclTax.price,
                     UnitPriceExclTax = scUnitPriceExclTax.price,
                     PriceInclTax = scSubTotalInclTax.price,
                     PriceExclTax = scSubTotalExclTax.price,
-                    OriginalTvChannelCost = await _priceCalculationService.GetTvChannelCostAsync(tvchannel, sc.AttributesXml),
+                    OriginalTvChannelCost = await _priceCalculationService.GetTvChannelCostAsync(tvChannel, sc.AttributesXml),
                     AttributeDescription = attributeDescription,
                     AttributesXml = sc.AttributesXml,
                     Quantity = sc.Quantity,
@@ -1499,10 +1499,10 @@ namespace TvProgViewer.Services.Orders
                 await _orderService.InsertOrderItemAsync(orderItem);
 
                 //gift cards
-                await AddGiftCardsAsync(tvchannel, sc.AttributesXml, sc.Quantity, orderItem, scUnitPriceExclTax.price);
+                await AddGiftCardsAsync(tvChannel, sc.AttributesXml, sc.Quantity, orderItem, scUnitPriceExclTax.price);
 
                 //inventory
-                await _tvchannelService.AdjustInventoryAsync(tvchannel, -sc.Quantity, sc.AttributesXml,
+                await _tvChannelService.AdjustInventoryAsync(tvChannel, -sc.Quantity, sc.AttributesXml,
                     string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
             }
 
@@ -1513,27 +1513,27 @@ namespace TvProgViewer.Services.Orders
         /// <summary>
         /// Add gift cards
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">attributes XML</param>
         /// <param name="quantity">Quantity</param>
         /// <param name="orderItem">Order item</param>
-        /// <param name="unitPriceExclTax">Unit price exclude tax, it set as amount if not set specific amount and tvchannel.OverriddenGiftCardAmount isn't set to</param>
+        /// <param name="unitPriceExclTax">Unit price exclude tax, it set as amount if not set specific amount and tvChannel.OverriddenGiftCardAmount isn't set to</param>
         /// <param name="amount">Amount</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task AddGiftCardsAsync(TvChannel tvchannel, string attributesXml, int quantity, OrderItem orderItem, decimal? unitPriceExclTax = null, decimal? amount = null)
+        protected virtual async Task AddGiftCardsAsync(TvChannel tvChannel, string attributesXml, int quantity, OrderItem orderItem, decimal? unitPriceExclTax = null, decimal? amount = null)
         {
-            if (!tvchannel.IsGiftCard)
+            if (!tvChannel.IsGiftCard)
                 return;
 
-            _tvchannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName, out var giftCardRecipientEmail, out var giftCardSenderName, out var giftCardSenderEmail, out var giftCardMessage);
+            _tvChannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName, out var giftCardRecipientEmail, out var giftCardSenderName, out var giftCardSenderEmail, out var giftCardMessage);
 
             for (var i = 0; i < quantity; i++)
             {
                 await _giftCardService.InsertGiftCardAsync(new GiftCard
                 {
-                    GiftCardType = tvchannel.GiftCardType,
+                    GiftCardType = tvChannel.GiftCardType,
                     PurchasedWithOrderItemId = orderItem.Id,
-                    Amount = amount ?? tvchannel.OverriddenGiftCardAmount ?? unitPriceExclTax ?? 0,
+                    Amount = amount ?? tvChannel.OverriddenGiftCardAmount ?? unitPriceExclTax ?? 0,
                     IsGiftCardActivated = false,
                     GiftCardCouponCode = _giftCardService.GenerateGiftCardCode(),
                     RecipientName = giftCardRecipientName,
@@ -1811,20 +1811,20 @@ namespace TvProgViewer.Services.Orders
 
             if (!itemDeleted)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(updatedShoppingCartItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(updatedShoppingCartItem.TvChannelId);
                 var store = await _storeService.GetStoreByIdAsync(updatedShoppingCartItem.StoreId);
 
                 updateOrderParameters.Warnings.AddRange(await _shoppingCartService.GetShoppingCartItemWarningsAsync(user, updatedShoppingCartItem.ShoppingCartType,
-                    tvchannel, updatedOrder.StoreId, updatedShoppingCartItem.AttributesXml, updatedShoppingCartItem.UserEnteredPrice,
+                    tvChannel, updatedOrder.StoreId, updatedShoppingCartItem.AttributesXml, updatedShoppingCartItem.UserEnteredPrice,
                     updatedShoppingCartItem.RentalStartDateUtc, updatedShoppingCartItem.RentalEndDateUtc, updatedShoppingCartItem.Quantity, false, updatedShoppingCartItem.Id));
 
                 updatedOrderItem.ItemWeight = await _shippingService.GetShoppingCartItemWeightAsync(updatedShoppingCartItem);
-                updatedOrderItem.OriginalTvChannelCost = await _priceCalculationService.GetTvChannelCostAsync(tvchannel, updatedShoppingCartItem.AttributesXml);
-                updatedOrderItem.AttributeDescription = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel,
+                updatedOrderItem.OriginalTvChannelCost = await _priceCalculationService.GetTvChannelCostAsync(tvChannel, updatedShoppingCartItem.AttributesXml);
+                updatedOrderItem.AttributeDescription = await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel,
                     updatedShoppingCartItem.AttributesXml, user, store);
 
                 //gift cards
-                await AddGiftCardsAsync(tvchannel, updatedShoppingCartItem.AttributesXml, updatedShoppingCartItem.Quantity, updatedOrderItem, updatedOrderItem.UnitPriceExclTax);
+                await AddGiftCardsAsync(tvChannel, updatedShoppingCartItem.AttributesXml, updatedShoppingCartItem.Quantity, updatedOrderItem, updatedOrderItem.UnitPriceExclTax);
             }
 
             await _orderTotalCalculationService.UpdateOrderTotalsAsync(updateOrderParameters, restoredCart);
@@ -1928,7 +1928,7 @@ namespace TvProgViewer.Services.Orders
                     await CancelRecurringPaymentAsync(rp);
 
                 //Adjust inventory for already shipped shipments
-                //only tvchannels with "use multiple warehouses"
+                //only tvChannels with "use multiple warehouses"
                 await ReverseBookedInventoryAsync(order, string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.DeleteOrder"), order.Id));
 
                 //Adjust inventory
@@ -2071,13 +2071,13 @@ namespace TvProgViewer.Services.Orders
 
                         await _orderService.InsertOrderItemAsync(newOrderItem);
 
-                        var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                        var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                         //gift cards
-                        await AddGiftCardsAsync(tvchannel, orderItem.AttributesXml, orderItem.Quantity, newOrderItem, amount: orderItem.UnitPriceExclTax);
+                        await AddGiftCardsAsync(tvChannel, orderItem.AttributesXml, orderItem.Quantity, newOrderItem, amount: orderItem.UnitPriceExclTax);
 
                         //inventory
-                        await _tvchannelService.AdjustInventoryAsync(tvchannel, -orderItem.Quantity, orderItem.AttributesXml,
+                        await _tvChannelService.AdjustInventoryAsync(tvChannel, -orderItem.Quantity, orderItem.AttributesXml,
                             string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.PlaceOrder"), order.Id));
                     }
 
@@ -2319,7 +2319,7 @@ namespace TvProgViewer.Services.Orders
             shipment.ShippedDateUtc = DateTime.UtcNow;
             await _shipmentService.UpdateShipmentAsync(shipment);
 
-            //process tvchannels with "Multiple warehouse" support enabled
+            //process tvChannels with "Multiple warehouse" support enabled
             await BookReservedInventoryAsync(shipment, string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Ship"), shipment.OrderId));
 
             //check whether we have more items to ship
@@ -2425,7 +2425,7 @@ namespace TvProgViewer.Services.Orders
             if (order.PickupInStore)
             {
                 // Shipment has been collected by user.
-                // We must process tvchannels with "Multiple warehouse" support enabled.
+                // We must process tvChannels with "Multiple warehouse" support enabled.
                 await BookReservedInventoryAsync(shipment, string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.ReadyForPickupByUser"), shipment.OrderId));
             }
 
@@ -2493,7 +2493,7 @@ namespace TvProgViewer.Services.Orders
                 await CancelRecurringPaymentAsync(rp);
 
             //Adjust inventory for already shipped shipments
-            //only tvchannels with "use multiple warehouses"
+            //only tvChannels with "use multiple warehouses"
             await ReverseBookedInventoryAsync(order, string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CancelOrder"), order.Id));
 
             //Adjust inventory
@@ -3221,9 +3221,9 @@ namespace TvProgViewer.Services.Orders
             //move shopping cart items (if possible)
             foreach (var orderItem in await _orderService.GetOrderItemsAsync(order.Id))
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                await _shoppingCartService.AddToCartAsync(user, tvchannel,
+                await _shoppingCartService.AddToCartAsync(user, tvChannel,
                     ShoppingCartType.ShoppingCart, order.StoreId,
                     orderItem.AttributesXml, orderItem.UnitPriceExclTax,
                     orderItem.RentalStartDateUtc, orderItem.RentalEndDateUtc,

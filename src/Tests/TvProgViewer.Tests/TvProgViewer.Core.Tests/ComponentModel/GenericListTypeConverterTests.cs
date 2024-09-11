@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using FluentAssertions;
-using Nop.Core.ComponentModel;
+using TvProgViewer.Core.ComponentModel;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests.ComponentModel
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests.ComponentModel
 {
     [TestFixture]
     public class GenericListTypeConverter

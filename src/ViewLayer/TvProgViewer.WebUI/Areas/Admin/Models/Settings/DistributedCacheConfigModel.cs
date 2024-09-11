@@ -27,6 +27,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
         [TvProgResourceDisplayName("Admin.Configuration.AppSettings.DistributedCache.TableName")]
         public string TableName { get; set; } = "DistributedCache";
 
+        [TvProgResourceDisplayName("Admin.Configuration.AppSettings.DistributedCache.InstanceName")]
+        public string InstanceName { get; private set; } = string.Empty;
+
         #endregion
     }
 }

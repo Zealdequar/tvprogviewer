@@ -53,27 +53,27 @@
             function @(dateControlChangeHandlerFuncName)() {
                 @{
                     //almost the same implementation is used in the \Views\TvChannel\_TvChannelAttributes.cshtml file
-                    var tvchannelId = Model.Id;
+                    var tvChannelId = Model.Id;
                     if (catalogSettings.AjaxProcessAttributeChange)
                     {
                         <text>
                         $.ajax({
                             cache: false,
-                            url: "@Html.Raw(Url.Action("tvchanneldetails_attributechange", "shoppingcart", new {tvchannelId = tvchannelId, validateAttributeConditions = false, loadPicture = false }))",
-                            data: $('#tvchannel-details-form').serialize(),
+                            url: "@Html.Raw(Url.Action("tvChanneldetails_attributechange", "shoppingcart", new {tvChannelId = tvChannelId, validateAttributeConditions = false, loadPicture = false }))",
+                            data: $('#tvChannel-details-form').serialize(),
                             type: "POST",
                             success: function (data, textStatus, jqXHR) {
                                 if (data.sku) {
-                                    $('#sku-@tvchannelId').text(data.sku);
+                                    $('#sku-@tvChannelId').text(data.sku);
                                 }
                                 if (data.mpn) {
-                                    $('#mpn-@tvchannelId').text(data.mpn);
+                                    $('#mpn-@tvChannelId').text(data.mpn);
                                 }
                                 if (data.gtin) {
-                                    $('#gtin-@tvchannelId').text(data.gtin);
+                                    $('#gtin-@tvChannelId').text(data.gtin);
                                 }
                                 if (data.price) {
-                                    $('.price-value-@tvchannelId').text(data.price);
+                                    $('.price-value-@tvChannelId').text(data.price);
                                 }
                             }
                         });

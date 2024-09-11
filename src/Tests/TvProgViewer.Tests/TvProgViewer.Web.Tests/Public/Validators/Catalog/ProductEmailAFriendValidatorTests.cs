@@ -1,25 +1,25 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.Catalog;
-using Nop.Web.Validators.Catalog;
+using TvProgViewer.WebUI.Models.Catalog;
+using TvProgViewer.WebUI.Validators.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Catalog
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.Catalog
 {
     [TestFixture]
-    public class ProductEmailAFriendValidatorTests : BaseNopTest
+    public class TvChannelEmailAFriendValidatorTests : BaseTvProgTest
     {
-        private ProductEmailAFriendValidator _validator;
+        private TvChannelEmailAFriendValidator _validator;
         
         [OneTimeSetUp]
         public void Setup()
         {
-            _validator = GetService<ProductEmailAFriendValidator>();
+            _validator = GetService<TvChannelEmailAFriendValidator>();
         }
         
         [Test]
         public void ShouldHaveErrorWhenFriendEmailIsNullOrEmpty()
         {
-            var model = new ProductEmailAFriendModel
+            var model = new TvChannelEmailAFriendModel
             {
                 FriendEmail = null
             };
@@ -31,7 +31,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Catalog
         [Test]
         public void ShouldHaveErrorWhenFriendEmailIsWrongFormat()
         {
-            var model = new ProductEmailAFriendModel
+            var model = new TvChannelEmailAFriendModel
             {
                 FriendEmail = "adminexample.com"
             };
@@ -41,7 +41,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Catalog
         [Test]
         public void PublicVoidShouldNotHaveErrorWhenFriendEmailIsCorrectFormat()
         {
-            var model = new ProductEmailAFriendModel
+            var model = new TvChannelEmailAFriendModel
             {
                 FriendEmail = "admin@example.com"
             };
@@ -51,7 +51,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Catalog
         [Test]
         public void ShouldHaveErrorWhenYourEmailAddressIsNullOrEmpty()
         {
-            var model = new ProductEmailAFriendModel
+            var model = new TvChannelEmailAFriendModel
             {
                 YourEmailAddress = null
             };
@@ -63,7 +63,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Catalog
         [Test]
         public void ShouldHaveErrorWhenYourEmailAddressIsWrongFormat()
         {
-            var model = new ProductEmailAFriendModel
+            var model = new TvChannelEmailAFriendModel
             {
                 YourEmailAddress = "adminexample.com"
             };
@@ -73,7 +73,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Catalog
         [Test]
         public void ShouldNotHaveErrorWhenYourEmailAddressIsCorrectFormat()
         {
-            var model = new ProductEmailAFriendModel
+            var model = new TvChannelEmailAFriendModel
             {
                 YourEmailAddress = "admin@example.com"
             };

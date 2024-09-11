@@ -93,34 +93,34 @@
                                         <tvprog-label asp-for="SearchTvChannelId" />
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control" id="search-tvchannel-name" autocomplete="off" />
+                                        <input type="text" class="form-control" id="search-tvChannel-name" autocomplete="off" />
                                         <script>
                                         $(document).ready(function() {
-                                            $('#search-tvchannel-name').autocomplete({
+                                            $('#search-tvChannel-name').autocomplete({
                                                 delay: 500,
                                                 minLength: 3,
                                                 source: '@Url.Action("SearchAutoComplete", "SearchComplete")',
                                                 select: function(event, ui) {
                                                     $('#@Html.IdFor(model => model.SearchTvChannelId)')
-                                                        .val(ui.item.tvchannelid);
-                                                    $('#search-tvchannel-friendly-name').text(ui.item.label);
-                                                    $('#search-tvchannel-clear').show();
+                                                        .val(ui.item.tvChannelid);
+                                                    $('#search-tvChannel-friendly-name').text(ui.item.label);
+                                                    $('#search-tvChannel-clear').show();
                                                     return false;
                                                 }
                                             });
                                         });
                                         </script>
 
-                                        <span id="search-tvchannel-friendly-name"></span>
-                                        <button type="button" id="search-tvchannel-clear" class="btn bg-gray" style="display: none; margin-top: 5px;">@T("Admin.Common.Clear")</button>
+                                        <span id="search-tvChannel-friendly-name"></span>
+                                        <button type="button" id="search-tvChannel-clear" class="btn bg-gray" style="display: none; margin-top: 5px;">@T("Admin.Common.Clear")</button>
                                         <input asp-for="SearchTvChannelId" autocomplete="off" style="display: none;" />
 
                                         <script>
                                         //remove button
-                                        $('#search-tvchannel-clear').click(function() {
+                                        $('#search-tvChannel-clear').click(function() {
                                             $('#@Html.IdFor(model => model.SearchTvChannelId)').val('0');
-                                            $('#search-tvchannel-friendly-name').text('');
-                                            $('#search-tvchannel-clear').hide();
+                                            $('#search-tvChannel-friendly-name').text('');
+                                            $('#search-tvChannel-clear').hide();
                                             return false;
                                         });
                                         </script>
@@ -138,7 +138,7 @@
                         </div>
                         <div class="row">
                             <div class="text-center col-12">
-                                <button type="button" id="search-tvchannelreviews" class="btn btn-primary btn-search">
+                                <button type="button" id="search-tvChannelreviews" class="btn btn-primary btn-search">
                                     <i class="fas fa-search"></i>
                                     @T("Admin.Common.Search")
                                 </button>
@@ -154,9 +154,9 @@
 
                     @await Html.PartialAsync("Table", new DataTablesModel
                     {
-                        Name = "tvchannelreviews-grid",
+                        Name = "tvChannelreviews-grid",
                         UrlRead = new DataUrl("List", "TvChannelReview", null),
-                        SearchButtonId = "search-tvchannelreviews",
+                        SearchButtonId = "search-tvChannelreviews",
                         Length = Model.PageSize,
                         LengthMenu = Model.AvailablePageSizes,
                         Filters = new List<FilterParameter>
@@ -173,7 +173,7 @@
                             new ColumnProperty(nameof(TvChannelReviewModel.Id))
                             {
                                 IsMasterCheckBox = true,
-                                Render = new RenderCheckBox("checkbox_tvchannel_reviews"),
+                                Render = new RenderCheckBox("checkbox_tvChannel_reviews"),
                                 Visible = !Model.IsLoggedInAsVendor,
                                 ClassName =  TvProgColumnClassDefaults.CenterAll,
                                 Width = "50"
@@ -267,7 +267,7 @@
                                             showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                             return;
                                         }
-                                        updateTable('#tvchannelreviews-grid');
+                                        updateTable('#tvChannelreviews-grid');
                                     }
                                 });
                                 return false;
@@ -297,7 +297,7 @@
                                             showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                             return;
                                         }
-                                        updateTable('#tvchannelreviews-grid');
+                                        updateTable('#tvChannelreviews-grid');
                                     }
                                 });
                                 return false;
@@ -323,7 +323,7 @@
                                             showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                             return;
                                         }
-                                        updateTable('#tvchannelreviews-grid');
+                                        updateTable('#tvChannelreviews-grid');
                                     }
                                 });
                                 $('#delete-selected-action-confirmation').modal('toggle');

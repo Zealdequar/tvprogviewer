@@ -94,13 +94,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare paged list model of tvchannels that use the specification attribute
+        /// Prepare paged list model of tvChannels that use the specification attribute
         /// </summary>
-        /// <param name="searchModel">Search model of tvchannels that use the specification attribute</param>
+        /// <param name="searchModel">Search model of tvChannels that use the specification attribute</param>
         /// <param name="specificationAttribute">Specification attribute</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list model of tvchannels that use the specification attribute
+        /// The task result contains the list model of tvChannels that use the specification attribute
         /// </returns>
         Task<SpecificationAttributeTvChannelListModel> PrepareSpecificationAttributeTvChannelListModelAsync(
             SpecificationAttributeTvChannelSearchModel searchModel, SpecificationAttribute specificationAttribute);

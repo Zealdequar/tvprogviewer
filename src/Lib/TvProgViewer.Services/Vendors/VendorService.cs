@@ -20,7 +20,7 @@ namespace TvProgViewer.Services.Vendors
 
         private readonly IHtmlFormatter _htmlFormatter;
         private readonly IRepository<User> _userRepository;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
         private readonly IRepository<Vendor> _vendorRepository;
         private readonly IRepository<VendorNote> _vendorNoteRepository;
 
@@ -30,13 +30,13 @@ namespace TvProgViewer.Services.Vendors
 
         public VendorService(IHtmlFormatter htmlFormatter,
             IRepository<User> userRepository,
-            IRepository<TvChannel> tvchannelRepository,
+            IRepository<TvChannel> tvChannelRepository,
             IRepository<Vendor> vendorRepository,
             IRepository<VendorNote> vendorNoteRepository)
         {
             _htmlFormatter = htmlFormatter;
             _userRepository = userRepository;
-            _tvchannelRepository = tvchannelRepository;
+            _tvChannelRepository = tvChannelRepository;
             _vendorRepository = vendorRepository;
             _vendorNoteRepository = vendorNoteRepository;
         }
@@ -59,40 +59,40 @@ namespace TvProgViewer.Services.Vendors
         }
 
         /// <summary>
-        /// Gets a vendor by tvchannel identifier
+        /// Gets a vendor by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the vendor
         /// </returns>
-        public virtual async Task<Vendor> GetVendorByTvChannelIdAsync(int tvchannelId)
+        public virtual async Task<Vendor> GetVendorByTvChannelIdAsync(int tvChannelId)
         {
-            if (tvchannelId == 0)
+            if (tvChannelId == 0)
                 return null;
 
             return await (from v in _vendorRepository.Table
-                    join p in _tvchannelRepository.Table on v.Id equals p.VendorId
-                    where p.Id == tvchannelId
+                    join p in _tvChannelRepository.Table on v.Id equals p.VendorId
+                    where p.Id == tvChannelId
                     select v).FirstOrDefaultAsync();
         }
 
         /// <summary>
-        /// Gets vendors by tvchannel identifiers
+        /// Gets vendors by tvChannel identifiers
         /// </summary>
-        /// <param name="tvchannelIds">Array of tvchannel identifiers</param>
+        /// <param name="tvChannelIds">Array of tvChannel identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the vendors
         /// </returns>
-        public virtual async Task<IList<Vendor>> GetVendorsByTvChannelIdsAsync(int[] tvchannelIds)
+        public virtual async Task<IList<Vendor>> GetVendorsByTvChannelIdsAsync(int[] tvChannelIds)
         {
-            if (tvchannelIds is null)
-                throw new ArgumentNullException(nameof(tvchannelIds));
+            if (tvChannelIds is null)
+                throw new ArgumentNullException(nameof(tvChannelIds));
 
             return await (from v in _vendorRepository.Table
-                    join p in _tvchannelRepository.Table on v.Id equals p.VendorId
-                    where tvchannelIds.Contains(p.Id) && !v.Deleted && v.Active
+                    join p in _tvChannelRepository.Table on v.Id equals p.VendorId
+                    where tvChannelIds.Contains(p.Id) && !v.Deleted && v.Active
                     select v).Distinct().ToListAsync();
         }
 

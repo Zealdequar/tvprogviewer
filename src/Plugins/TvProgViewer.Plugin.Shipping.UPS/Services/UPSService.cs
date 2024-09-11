@@ -180,7 +180,7 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
                 //create client
                 var trackPort = _upsSettings.UseSandbox
                     ? UPSTrack.TrackPortTypeClient.EndpointConfiguration.TrackPort
-                    : UPSTrack.TrackPortTypeClient.EndpointConfiguration.ProductionTrackPort;
+                    : UPSTrack.TrackPortTypeClient.EndpointConfiguration.TvChannelionTrackPort;
 
                 using var client = new UPSTrack.TrackPortTypeClient(trackPort);
                 //create object to authenticate request
@@ -336,7 +336,7 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
                 //create client
                 var ratePort = _upsSettings.UseSandbox
                     ? UPSRate.RatePortTypeClient.EndpointConfiguration.RatePort
-                    : UPSRate.RatePortTypeClient.EndpointConfiguration.ProductionRatePort;
+                    : UPSRate.RatePortTypeClient.EndpointConfiguration.TvChannelionRatePort;
 
                 using var client = new UPSRate.RatePortTypeClient(ratePort);
                 //create object to authenticate request
@@ -398,7 +398,7 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
                 Request = new UPSRate.RequestType
                 {
                     //used to define the request type
-                    //Shop - the server validates the shipment, and returns rates for all UPS products from the ShipFrom to the ShipTo addresses
+                    //Shop - the server validates the shipment, and returns rates for all UPS tvChannels from the ShipFrom to the ShipTo addresses
                     RequestOption = new[] { "Shop" }
                 }
             };
@@ -558,14 +558,14 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
             return await shippingOptionRequest.Items.SelectManyAwait(async packageItem =>
             {
                 //get dimensions and weight of the single item
-                var (width, length, height) = await GetDimensionsForSingleItemAsync(packageItem.ShoppingCartItem, packageItem.Product);
-                var weight = await GetWeightForSingleItemAsync(packageItem.ShoppingCartItem, shippingOptionRequest.User, packageItem.Product);
+                var (width, length, height) = await GetDimensionsForSingleItemAsync(packageItem.ShoppingCartItem, packageItem.TvChannel);
+                var weight = await GetWeightForSingleItemAsync(packageItem.ShoppingCartItem, shippingOptionRequest.User, packageItem.TvChannel);
 
                 var insuranceAmount = 0;
                 if (_upsSettings.InsurePackage)
                 {
                     //The maximum declared amount per package: 50000 USD.
-                    insuranceAmount = Convert.ToInt32(packageItem.Product.Price);
+                    insuranceAmount = Convert.ToInt32(packageItem.TvChannel.Price);
                 }
 
                 //create packages according to item quantity
@@ -670,7 +670,7 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
             {
                 //get dimensions and weight of the single cubic size of package
                 var item = shippingOptionRequest.Items.FirstOrDefault();
-                (width, length, height) = await GetDimensionsForSingleItemAsync(item.ShoppingCartItem, item.Product);
+                (width, length, height) = await GetDimensionsForSingleItemAsync(item.ShoppingCartItem, item.TvChannel);
             }
             else
             {
@@ -681,7 +681,7 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
                 var totalVolume = await shippingOptionRequest.Items.SumAwaitAsync(async item =>
                 {
                     //get dimensions and weight of the single item
-                    var (itemWidth, itemLength, itemHeight) = await GetDimensionsForSingleItemAsync(item.ShoppingCartItem, item.Product);
+                    var (itemWidth, itemLength, itemHeight) = await GetDimensionsForSingleItemAsync(item.ShoppingCartItem, item.TvChannel);
                     return item.GetQuantity() * itemWidth * itemLength * itemHeight;
                 });
                 if (totalVolume > decimal.Zero)
@@ -741,9 +741,9 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
         /// A task that represents the asynchronous operation
         /// The task result contains the dimensions values
         /// </returns>
-        private async Task<(decimal width, decimal length, decimal height)> GetDimensionsForSingleItemAsync(ShoppingCartItem item, Product product)
+        private async Task<(decimal width, decimal length, decimal height)> GetDimensionsForSingleItemAsync(ShoppingCartItem item, TvChannel tvChannel)
         {
-            var items = new[] { new GetShippingOptionRequest.PackageItem(item, product, 1) };
+            var items = new[] { new GetShippingOptionRequest.PackageItem(item, tvChannel, 1) };
             
             return await GetDimensionsAsync(items);
         }
@@ -781,12 +781,12 @@ namespace TvProgViewer.Plugin.Shipping.UPS.Services
         /// A task that represents the asynchronous operation
         /// The task result contains the weight value
         /// </returns>
-        private async Task<decimal> GetWeightForSingleItemAsync(ShoppingCartItem item, User user, Product product)
+        private async Task<decimal> GetWeightForSingleItemAsync(ShoppingCartItem item, User user, TvChannel tvChannel)
         {
             var shippingOptionRequest = new GetShippingOptionRequest
             {
                 User = user,
-                Items = new[] { new GetShippingOptionRequest.PackageItem(item, product, 1) }
+                Items = new[] { new GetShippingOptionRequest.PackageItem(item, tvChannel, 1) }
             };
 
             return await GetWeightAsync(shippingOptionRequest);

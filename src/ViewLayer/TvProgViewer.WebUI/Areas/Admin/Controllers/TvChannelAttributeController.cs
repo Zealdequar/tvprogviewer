@@ -26,8 +26,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly ILocalizedEntityService _localizedEntityService;
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelAttributeModelFactory _tvchannelAttributeModelFactory;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
+        private readonly ITvChannelAttributeModelFactory _tvChannelAttributeModelFactory;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
 
         #endregion Fields
 
@@ -38,32 +38,32 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             ILocalizedEntityService localizedEntityService,
             INotificationService notificationService,
             IPermissionService permissionService,
-            ITvChannelAttributeModelFactory tvchannelAttributeModelFactory,
-            ITvChannelAttributeService tvchannelAttributeService)
+            ITvChannelAttributeModelFactory tvChannelAttributeModelFactory,
+            ITvChannelAttributeService tvChannelAttributeService)
         {
             _userActivityService = userActivityService;
             _localizationService = localizationService;
             _localizedEntityService = localizedEntityService;
             _notificationService = notificationService;
             _permissionService = permissionService;
-            _tvchannelAttributeModelFactory = tvchannelAttributeModelFactory;
-            _tvchannelAttributeService = tvchannelAttributeService;
+            _tvChannelAttributeModelFactory = tvChannelAttributeModelFactory;
+            _tvChannelAttributeService = tvChannelAttributeService;
         }
 
         #endregion
 
         #region Utilities
 
-        protected virtual async Task UpdateLocalesAsync(TvChannelAttribute tvchannelAttribute, TvChannelAttributeModel model)
+        protected virtual async Task UpdateLocalesAsync(TvChannelAttribute tvChannelAttribute, TvChannelAttributeModel model)
         {
             foreach (var localized in model.Locales)
             {
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannelAttribute,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannelAttribute,
                     x => x.Name,
                     localized.Name,
                     localized.LanguageId);
 
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannelAttribute,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannelAttribute,
                     x => x.Description,
                     localized.Description,
                     localized.LanguageId);
@@ -98,7 +98,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory.PrepareTvChannelAttributeSearchModelAsync(new TvChannelAttributeSearchModel());
+            var model = await _tvChannelAttributeModelFactory.PrepareTvChannelAttributeSearchModelAsync(new TvChannelAttributeSearchModel());
 
             return View(model);
         }
@@ -110,7 +110,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory.PrepareTvChannelAttributeListModelAsync(searchModel);
+            var model = await _tvChannelAttributeModelFactory.PrepareTvChannelAttributeListModelAsync(searchModel);
 
             return Json(model);
         }
@@ -121,7 +121,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(new TvChannelAttributeModel(), null);
+            var model = await _tvChannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(new TvChannelAttributeModel(), null);
 
             return View(model);
         }
@@ -134,24 +134,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var tvchannelAttribute = model.ToEntity<TvChannelAttribute>();
-                await _tvchannelAttributeService.InsertTvChannelAttributeAsync(tvchannelAttribute);
-                await UpdateLocalesAsync(tvchannelAttribute, model);
+                var tvChannelAttribute = model.ToEntity<TvChannelAttribute>();
+                await _tvChannelAttributeService.InsertTvChannelAttributeAsync(tvChannelAttribute);
+                await UpdateLocalesAsync(tvChannelAttribute, model);
 
                 //activity log
                 await _userActivityService.InsertActivityAsync("AddNewTvChannelAttribute",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewTvChannelAttribute"), tvchannelAttribute.Name), tvchannelAttribute);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewTvChannelAttribute"), tvChannelAttribute.Name), tvChannelAttribute);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Attributes.TvChannelAttributes.Added"));
 
                 if (!continueEditing)
                     return RedirectToAction("List");
                 
-                return RedirectToAction("Edit", new { id = tvchannelAttribute.Id });
+                return RedirectToAction("Edit", new { id = tvChannelAttribute.Id });
             }
 
             //prepare model
-            model = await _tvchannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(model, null, true);
+            model = await _tvChannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(model, null, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -162,13 +162,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(id);
-            if (tvchannelAttribute == null)
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(id);
+            if (tvChannelAttribute == null)
                 return RedirectToAction("List");
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(null, tvchannelAttribute);
+            var model = await _tvChannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(null, tvChannelAttribute);
 
             return View(model);
         }
@@ -179,32 +179,32 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(model.Id);
-            if (tvchannelAttribute == null)
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(model.Id);
+            if (tvChannelAttribute == null)
                 return RedirectToAction("List");
 
             if (ModelState.IsValid)
             {
-                tvchannelAttribute = model.ToEntity(tvchannelAttribute);
-                await _tvchannelAttributeService.UpdateTvChannelAttributeAsync(tvchannelAttribute);
+                tvChannelAttribute = model.ToEntity(tvChannelAttribute);
+                await _tvChannelAttributeService.UpdateTvChannelAttributeAsync(tvChannelAttribute);
 
-                await UpdateLocalesAsync(tvchannelAttribute, model);
+                await UpdateLocalesAsync(tvChannelAttribute, model);
 
                 //activity log
                 await _userActivityService.InsertActivityAsync("EditTvChannelAttribute",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditTvChannelAttribute"), tvchannelAttribute.Name), tvchannelAttribute);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditTvChannelAttribute"), tvChannelAttribute.Name), tvChannelAttribute);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Attributes.TvChannelAttributes.Updated"));
 
                 if (!continueEditing)
                     return RedirectToAction("List");
                 
-                return RedirectToAction("Edit", new { id = tvchannelAttribute.Id });
+                return RedirectToAction("Edit", new { id = tvChannelAttribute.Id });
             }
 
             //prepare model
-            model = await _tvchannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(model, tvchannelAttribute, true);
+            model = await _tvChannelAttributeModelFactory.PrepareTvChannelAttributeModelAsync(model, tvChannelAttribute, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -216,16 +216,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(id);
-            if (tvchannelAttribute == null)
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(id);
+            if (tvChannelAttribute == null)
                 return RedirectToAction("List");
 
-            await _tvchannelAttributeService.DeleteTvChannelAttributeAsync(tvchannelAttribute);
+            await _tvChannelAttributeService.DeleteTvChannelAttributeAsync(tvChannelAttribute);
 
             //activity log
             await _userActivityService.InsertActivityAsync("DeleteTvChannelAttribute",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannelAttribute"), tvchannelAttribute.Name), tvchannelAttribute);
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannelAttribute"), tvChannelAttribute.Name), tvChannelAttribute);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.Attributes.TvChannelAttributes.Deleted"));
 
@@ -241,13 +241,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (selectedIds == null || selectedIds.Count == 0)
                 return NoContent();
 
-            var tvchannelAttributes = await _tvchannelAttributeService.GetTvChannelAttributeByIdsAsync(selectedIds.ToArray());
-            await _tvchannelAttributeService.DeleteTvChannelAttributesAsync(tvchannelAttributes);
+            var tvChannelAttributes = await _tvChannelAttributeService.GetTvChannelAttributeByIdsAsync(selectedIds.ToArray());
+            await _tvChannelAttributeService.DeleteTvChannelAttributesAsync(tvChannelAttributes);
 
-            foreach (var tvchannelAttribute in tvchannelAttributes)
+            foreach (var tvChannelAttribute in tvChannelAttributes)
             {
                 await _userActivityService.InsertActivityAsync("DeleteTvChannelAttribute",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannelAttribute"), tvchannelAttribute.Name), tvchannelAttribute);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannelAttribute"), tvChannelAttribute.Name), tvChannelAttribute);
             }
 
             return Json(new { Result = true });
@@ -255,7 +255,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Used by tvchannels
+        #region Used by tvChannels
 
         [HttpPost]
         public virtual async Task<IActionResult> UsedByTvChannels(TvChannelAttributeTvChannelSearchModel searchModel)
@@ -263,12 +263,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(searchModel.TvChannelAttributeId)
-                ?? throw new ArgumentException("No tvchannel attribute found with the specified id");
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(searchModel.TvChannelAttributeId)
+                ?? throw new ArgumentException("No tvChannel attribute found with the specified id");
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory.PrepareTvChannelAttributeTvChannelListModelAsync(searchModel, tvchannelAttribute);
+            var model = await _tvChannelAttributeModelFactory.PrepareTvChannelAttributeTvChannelListModelAsync(searchModel, tvChannelAttribute);
 
             return Json(model);
         }
@@ -283,28 +283,28 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(searchModel.TvChannelAttributeId)
-                ?? throw new ArgumentException("No tvchannel attribute found with the specified id");
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(searchModel.TvChannelAttributeId)
+                ?? throw new ArgumentException("No tvChannel attribute found with the specified id");
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueListModelAsync(searchModel, tvchannelAttribute);
+            var model = await _tvChannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueListModelAsync(searchModel, tvChannelAttribute);
 
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> PredefinedTvChannelAttributeValueCreatePopup(int tvchannelAttributeId)
+        public virtual async Task<IActionResult> PredefinedTvChannelAttributeValueCreatePopup(int tvChannelAttributeId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(tvchannelAttributeId)
-                ?? throw new ArgumentException("No tvchannel attribute found with the specified id", nameof(tvchannelAttributeId));
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(tvChannelAttributeId)
+                ?? throw new ArgumentException("No tvChannel attribute found with the specified id", nameof(tvChannelAttributeId));
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory
-                .PreparePredefinedTvChannelAttributeValueModelAsync(new PredefinedTvChannelAttributeValueModel(), tvchannelAttribute, null);
+            var model = await _tvChannelAttributeModelFactory
+                .PreparePredefinedTvChannelAttributeValueModelAsync(new PredefinedTvChannelAttributeValueModel(), tvChannelAttribute, null);
 
             return View(model);
         }
@@ -315,16 +315,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(model.TvChannelAttributeId)
-                ?? throw new ArgumentException("No tvchannel attribute found with the specified id");
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(model.TvChannelAttributeId)
+                ?? throw new ArgumentException("No tvChannel attribute found with the specified id");
 
             if (ModelState.IsValid)
             {
                 //fill entity from model
                 var ppav = model.ToEntity<PredefinedTvChannelAttributeValue>();
 
-                await _tvchannelAttributeService.InsertPredefinedTvChannelAttributeValueAsync(ppav);
+                await _tvChannelAttributeService.InsertPredefinedTvChannelAttributeValueAsync(ppav);
                 await UpdateLocalesAsync(ppav, model);
 
                 ViewBag.RefreshPage = true;
@@ -333,7 +333,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueModelAsync(model, tvchannelAttribute, null, true);
+            model = await _tvChannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueModelAsync(model, tvChannelAttribute, null, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -344,16 +344,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a predefined tvchannel attribute value with the specified id
-            var tvchannelAttributeValue = await _tvchannelAttributeService.GetPredefinedTvChannelAttributeValueByIdAsync(id)
-                ?? throw new ArgumentException("No predefined tvchannel attribute value found with the specified id");
+            //try to get a predefined tvChannel attribute value with the specified id
+            var tvChannelAttributeValue = await _tvChannelAttributeService.GetPredefinedTvChannelAttributeValueByIdAsync(id)
+                ?? throw new ArgumentException("No predefined tvChannel attribute value found with the specified id");
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(tvchannelAttributeValue.TvChannelAttributeId)
-                ?? throw new ArgumentException("No tvchannel attribute found with the specified id");
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(tvChannelAttributeValue.TvChannelAttributeId)
+                ?? throw new ArgumentException("No tvChannel attribute found with the specified id");
 
             //prepare model
-            var model = await _tvchannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueModelAsync(null, tvchannelAttribute, tvchannelAttributeValue);
+            var model = await _tvChannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueModelAsync(null, tvChannelAttribute, tvChannelAttributeValue);
 
             return View(model);
         }
@@ -364,20 +364,20 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a predefined tvchannel attribute value with the specified id
-            var tvchannelAttributeValue = await _tvchannelAttributeService.GetPredefinedTvChannelAttributeValueByIdAsync(model.Id)
-                ?? throw new ArgumentException("No predefined tvchannel attribute value found with the specified id");
+            //try to get a predefined tvChannel attribute value with the specified id
+            var tvChannelAttributeValue = await _tvChannelAttributeService.GetPredefinedTvChannelAttributeValueByIdAsync(model.Id)
+                ?? throw new ArgumentException("No predefined tvChannel attribute value found with the specified id");
 
-            //try to get a tvchannel attribute with the specified id
-            var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(tvchannelAttributeValue.TvChannelAttributeId)
-                ?? throw new ArgumentException("No tvchannel attribute found with the specified id");
+            //try to get a tvChannel attribute with the specified id
+            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(tvChannelAttributeValue.TvChannelAttributeId)
+                ?? throw new ArgumentException("No tvChannel attribute found with the specified id");
 
             if (ModelState.IsValid)
             {
-                tvchannelAttributeValue = model.ToEntity(tvchannelAttributeValue);
-                await _tvchannelAttributeService.UpdatePredefinedTvChannelAttributeValueAsync(tvchannelAttributeValue);
+                tvChannelAttributeValue = model.ToEntity(tvChannelAttributeValue);
+                await _tvChannelAttributeService.UpdatePredefinedTvChannelAttributeValueAsync(tvChannelAttributeValue);
 
-                await UpdateLocalesAsync(tvchannelAttributeValue, model);
+                await UpdateLocalesAsync(tvChannelAttributeValue, model);
 
                 ViewBag.RefreshPage = true;
 
@@ -385,7 +385,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueModelAsync(model, tvchannelAttribute, tvchannelAttributeValue, true);
+            model = await _tvChannelAttributeModelFactory.PreparePredefinedTvChannelAttributeValueModelAsync(model, tvChannelAttribute, tvChannelAttributeValue, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -397,11 +397,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageAttributes))
                 return AccessDeniedView();
 
-            //try to get a predefined tvchannel attribute value with the specified id
-            var tvchannelAttributeValue = await _tvchannelAttributeService.GetPredefinedTvChannelAttributeValueByIdAsync(id)
-                ?? throw new ArgumentException("No predefined tvchannel attribute value found with the specified id", nameof(id));
+            //try to get a predefined tvChannel attribute value with the specified id
+            var tvChannelAttributeValue = await _tvChannelAttributeService.GetPredefinedTvChannelAttributeValueByIdAsync(id)
+                ?? throw new ArgumentException("No predefined tvChannel attribute value found with the specified id", nameof(id));
 
-            await _tvchannelAttributeService.DeletePredefinedTvChannelAttributeValueAsync(tvchannelAttributeValue);
+            await _tvChannelAttributeService.DeletePredefinedTvChannelAttributeValueAsync(tvChannelAttributeValue);
 
             return new NullJsonResult();
         }

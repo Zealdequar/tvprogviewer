@@ -6,7 +6,7 @@
     public partial class CommonConfig : IConfig
     {
         /// <summary>
-        /// Gets or sets a value indicating whether to display the full error in tvchannelion environment. It's ignored (always enabled) in development environment
+        /// Gets or sets a value indicating whether to display the full error in tvChannelion environment. It's ignored (always enabled) in development environment
         /// </summary>
         public bool DisplayFullErrorStack { get; private set; } = false;
 

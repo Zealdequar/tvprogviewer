@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Payments;
-using Nop.Core.Domain.Shipping;
-using Nop.Data;
-using Nop.Services.Orders;
-using Nop.Tests.Nop.Services.Tests.Payments;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Core.Domain.Payments;
+using TvProgViewer.Core.Domain.Shipping;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Orders;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.Payments;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Orders
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Orders
 {
     [TestFixture]
     public class OrderProcessingServiceTests : ServiceTest
@@ -486,7 +486,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             var rp = new RecurringPayment
             {
                 CycleLength = 7,
-                CyclePeriod = RecurringProductCyclePeriod.Days,
+                CyclePeriod = RecurringTvChannelCyclePeriod.Days,
                 TotalCycles = 3,
                 StartDateUtc = new DateTime(2010, 3, 1),
                 CreatedOnUtc = new DateTime(2010, 1, 1),
@@ -521,7 +521,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             var rp = new RecurringPayment
             {
                 CycleLength = 2,
-                CyclePeriod = RecurringProductCyclePeriod.Weeks,
+                CyclePeriod = RecurringTvChannelCyclePeriod.Weeks,
                 TotalCycles = 3,
                 StartDateUtc = new DateTime(2010, 3, 1),
                 CreatedOnUtc = new DateTime(2010, 1, 1),
@@ -554,7 +554,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             var rp = new RecurringPayment
             {
                 CycleLength = 2,
-                CyclePeriod = RecurringProductCyclePeriod.Months,
+                CyclePeriod = RecurringTvChannelCyclePeriod.Months,
                 TotalCycles = 3,
                 StartDateUtc = new DateTime(2010, 3, 1),
                 CreatedOnUtc = new DateTime(2010, 1, 1),
@@ -587,7 +587,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             var rp = new RecurringPayment
             {
                 CycleLength = 2,
-                CyclePeriod = RecurringProductCyclePeriod.Years,
+                CyclePeriod = RecurringTvChannelCyclePeriod.Years,
                 TotalCycles = 3,
                 StartDateUtc = new DateTime(2010, 3, 1),
                 CreatedOnUtc = new DateTime(2010, 1, 1),
@@ -620,7 +620,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             var rp = new RecurringPayment
             {
                 CycleLength = 7,
-                CyclePeriod = RecurringProductCyclePeriod.Days,
+                CyclePeriod = RecurringTvChannelCyclePeriod.Days,
                 TotalCycles = 3,
                 StartDateUtc = new DateTime(2010, 3, 1),
                 CreatedOnUtc = new DateTime(2010, 1, 1),
@@ -653,7 +653,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             var rp = new RecurringPayment
             {
                 CycleLength = 2,
-                CyclePeriod = RecurringProductCyclePeriod.Days,
+                CyclePeriod = RecurringTvChannelCyclePeriod.Days,
                 TotalCycles = 3,
                 StartDateUtc = new DateTime(2010, 3, 1),
                 CreatedOnUtc = new DateTime(2010, 1, 1),

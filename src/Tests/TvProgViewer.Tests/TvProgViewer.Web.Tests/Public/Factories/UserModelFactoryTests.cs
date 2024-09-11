@@ -1,100 +1,100 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Customers;
-using Nop.Web.Factories;
-using Nop.Web.Models.Customer;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Services.Users;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.User;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
-    public class CustomerModelFactoryTests : WebTest
+    public class UserModelFactoryTests : WebTest
     {
-        private ICustomerModelFactory _customerModelFactory;
-        private Customer _customer;
-        private ICustomerAttributeService _customerAttributeService;
-        private CustomerAttribute[] _customerAttributes;
+        private IUserModelFactory _userModelFactory;
+        private User _user;
+        private IUserAttributeService _userAttributeService;
+        private UserAttribute[] _userAttributes;
 
 
         [OneTimeSetUp]
         public async Task SetUp()
         {
-            _customerModelFactory = GetService<ICustomerModelFactory>();
-            _customer = await GetService<IWorkContext>().GetCurrentCustomerAsync();
+            _userModelFactory = GetService<IUserModelFactory>();
+            _user = await GetService<IWorkContext>().GetCurrentUserAsync();
 
-            _customerAttributeService = GetService<ICustomerAttributeService>();
+            _userAttributeService = GetService<IUserAttributeService>();
 
-            _customerAttributes = new[]
+            _userAttributes = new[]
             {
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.Checkboxes, Name = "Test customer attribute 1"
+                    AttributeControlType = AttributeControlType.Checkboxes, Name = "Test user attribute 1"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.ColorSquares, Name = "Test customer attribute 2"
+                    AttributeControlType = AttributeControlType.ColorSquares, Name = "Test user attribute 2"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.Datepicker, Name = "Test customer attribute 3"
+                    AttributeControlType = AttributeControlType.Datepicker, Name = "Test user attribute 3"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.DropdownList, Name = "Test customer attribute 4"
+                    AttributeControlType = AttributeControlType.DropdownList, Name = "Test user attribute 4"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.FileUpload, Name = "Test customer attribute 5"
+                    AttributeControlType = AttributeControlType.FileUpload, Name = "Test user attribute 5"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.ImageSquares, Name = "Test customer attribute 6"
+                    AttributeControlType = AttributeControlType.ImageSquares, Name = "Test user attribute 6"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.MultilineTextbox, Name = "Test customer attribute 7"
+                    AttributeControlType = AttributeControlType.MultilineTextbox, Name = "Test user attribute 7"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.RadioList, Name = "Test customer attribute 8"
+                    AttributeControlType = AttributeControlType.RadioList, Name = "Test user attribute 8"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.ReadonlyCheckboxes, Name = "Test customer attribute 9"
+                    AttributeControlType = AttributeControlType.ReadonlyCheckboxes, Name = "Test user attribute 9"
                 },
-                new CustomerAttribute
+                new UserAttribute
                 {
-                    AttributeControlType = AttributeControlType.TextBox, Name = "Test customer attribute 10"
+                    AttributeControlType = AttributeControlType.TextBox, Name = "Test user attribute 10"
                 }
             };
 
-            foreach (var customerAttribute in _customerAttributes) 
-                await _customerAttributeService.InsertCustomerAttributeAsync(customerAttribute);
+            foreach (var userAttribute in _userAttributes) 
+                await _userAttributeService.InsertUserAttributeAsync(userAttribute);
         }
 
         [OneTimeTearDown]
         public async Task TearDown()
         {
-            foreach (var customerAttribute in _customerAttributes)
-                await _customerAttributeService.DeleteCustomerAttributeAsync(customerAttribute);
+            foreach (var userAttribute in _userAttributes)
+                await _userAttributeService.DeleteUserAttributeAsync(userAttribute);
         }
 
         [Test]
-        public async Task CanPrepareCustomerInfoModel()
+        public async Task CanPrepareUserInfoModel()
         {
-            var model = await _customerModelFactory.PrepareCustomerInfoModelAsync(new CustomerInfoModel(), _customer, false);
+            var model = await _userModelFactory.PrepareUserInfoModelAsync(new UserInfoModel(), _user, false);
             model.AvailableTimeZones.Any().Should().BeTrue();
 
-            model.Email.Should().Be(NopTestsDefaults.AdminEmail);
-            model.Username.Should().Be(NopTestsDefaults.AdminEmail);
+            model.Email.Should().Be(TvProgTestsDefaults.AdminEmail);
+            model.Username.Should().Be(TvProgTestsDefaults.AdminEmail);
             model.FirstName.Should().Be("John");
             model.LastName.Should().Be("Smith");
 
-            model = await _customerModelFactory.PrepareCustomerInfoModelAsync(new CustomerInfoModel(), _customer, true);
+            model = await _userModelFactory.PrepareUserInfoModelAsync(new UserInfoModel(), _user, true);
 
             model.Email.Should().BeNullOrEmpty();
             model.Username.Should().BeNullOrEmpty();
@@ -105,26 +105,26 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task CanPrepareRegisterModel()
         {
-            var model = await _customerModelFactory.PrepareRegisterModelAsync(new RegisterModel(), false);
+            var model = await _userModelFactory.PrepareRegisterModelAsync(new RegisterModel(), false);
             model.AvailableTimeZones.Any().Should().BeTrue();
-            model.CustomerAttributes.Any().Should().BeTrue();
+            model.UserAttributes.Any().Should().BeTrue();
         }
 
         [Test]
         public async Task CanPrepareLoginModel()
         {
-            var model = await _customerModelFactory.PrepareLoginModelAsync(null);
+            var model = await _userModelFactory.PrepareLoginModelAsync(null);
             model.CheckoutAsGuest.Should().Be(default);
-            model = await _customerModelFactory.PrepareLoginModelAsync(true);
+            model = await _userModelFactory.PrepareLoginModelAsync(true);
             model.CheckoutAsGuest.Should().BeTrue();
-            model = await _customerModelFactory.PrepareLoginModelAsync(false);
+            model = await _userModelFactory.PrepareLoginModelAsync(false);
             model.CheckoutAsGuest.Should().BeFalse();
         }
 
         [Test]
         public async Task CanPreparePasswordRecoveryModel()
         {
-            var model = await _customerModelFactory.PreparePasswordRecoveryModelAsync(new PasswordRecoveryModel{Email = "test@email.com"});
+            var model = await _userModelFactory.PreparePasswordRecoveryModelAsync(new PasswordRecoveryModel{Email = "test@email.com"});
             model.DisplayCaptcha.Should().BeFalse();
             model.Email.Should().Be("test@email.com");
         }
@@ -132,22 +132,22 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task CanPrepareRegisterResultModel()
         {
-            var model = await _customerModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.AdminApproval, string.Empty);
+            var model = await _userModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.AdminApproval, string.Empty);
             model.Result.Should().Be("Your account will be activated after approving by administrator.");
-            model = await _customerModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.Disabled, string.Empty);
+            model = await _userModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.Disabled, string.Empty);
             model.Result.Should().Be("Registration not allowed. You can edit this in the admin area.");
-            model = await _customerModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.EmailValidation, string.Empty);
+            model = await _userModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.EmailValidation, string.Empty);
             model.Result.Should().Be("Your registration has been successfully completed. You have just been sent an email containing activation instructions.");
-            model = await _customerModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.Standard, string.Empty);
+            model = await _userModelFactory.PrepareRegisterResultModelAsync((int)UserRegistrationType.Standard, string.Empty);
             model.Result.Should().Be("Your registration completed");
-            model = await _customerModelFactory.PrepareRegisterResultModelAsync(400, string.Empty);
+            model = await _userModelFactory.PrepareRegisterResultModelAsync(400, string.Empty);
             model.Result.Should().BeNullOrEmpty();
         }
 
         [Test]
-        public async Task CanPrepareCustomCustomerAttributes()
+        public async Task CanPrepareCustomUserAttributes()
         {
-            var model = await _customerModelFactory.PrepareCustomCustomerAttributesAsync(_customer);
+            var model = await _userModelFactory.PrepareCustomUserAttributesAsync(_user);
             model.Any().Should().BeTrue();
             model.Count.Should().Be(10);
         }

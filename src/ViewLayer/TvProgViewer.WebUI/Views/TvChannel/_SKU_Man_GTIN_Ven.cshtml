@@ -31,7 +31,7 @@
     @*Vendor*@
     @if (Model.ShowVendor)
     {
-        <div class="tvchannel-vendor">
+        <div class="tvChannel-vendor">
             <span class="label">@T("TvChannels.Vendor"):</span>
             <span class="value"><a href="@(Url.RouteUrl<Vendor>(new { SeName = Model.VendorModel.SeName }))">@Model.VendorModel.Name</a></span>
         </div>

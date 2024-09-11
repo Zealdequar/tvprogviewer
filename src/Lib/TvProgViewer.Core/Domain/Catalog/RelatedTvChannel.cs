@@ -1,17 +1,17 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a related tvchannel
+    /// Represents a related tvChannel
     /// </summary>
     public partial class RelatedTvChannel : BaseEntity
     {
         /// <summary>
-        /// Gets or sets the first tvchannel identifier
+        /// Gets or sets the first tvChannel identifier
         /// </summary>
         public int TvChannelId1 { get; set; }
 
         /// <summary>
-        /// Gets or sets the second tvchannel identifier
+        /// Gets or sets the second tvChannel identifier
         /// </summary>
         public int TvChannelId2 { get; set; }
 

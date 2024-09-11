@@ -1,10 +1,10 @@
 ﻿@model CatalogTvChannelsModel
 
-<script src="~/js/public.catalogtvchannels.js" asp-location="Footer"></script>
+<script src="~/js/public.catalogtvChannels.js" asp-location="Footer"></script>
 
-<div class="tvchannels-container">
-    <div class="ajax-tvchannels-busy"></div>
-    <div class="tvchannels-wrapper">
+<div class="tvChannels-container">
+    <div class="ajax-tvChannels-busy"></div>
+    <div class="tvChannels-wrapper">
         @await Html.PartialAsync("_TvChannelsInGridOrLines", Model)
     </div>
 </div>

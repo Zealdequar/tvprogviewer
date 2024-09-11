@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.ScheduleTasks;
-using Nop.Data;
-using Nop.Services.ScheduleTasks;
+using TvProgViewer.Core.Domain.ScheduleTasks;
+using TvProgViewer.Data;
+using TvProgViewer.Services.ScheduleTasks;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.ScheduleTasks
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.ScheduleTasks
 {
     [TestFixture]
     public class TaskSchedulerTests : ServiceTest

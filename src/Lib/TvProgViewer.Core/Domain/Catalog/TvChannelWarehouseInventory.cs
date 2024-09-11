@@ -1,12 +1,12 @@
 ﻿namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a record to manage tvchannel inventory per warehouse
+    /// Represents a record to manage tvChannel inventory per warehouse
     /// </summary>
     public partial class TvChannelWarehouseInventory : BaseEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 

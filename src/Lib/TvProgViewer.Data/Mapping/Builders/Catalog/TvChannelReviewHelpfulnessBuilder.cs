@@ -5,7 +5,7 @@ using TvProgViewer.Data.Extensions;
 namespace TvProgViewer.Data.Mapping.Builders.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel review helpfulness entity builder
+    /// Represents a tvChannel review helpfulness entity builder
     /// </summary>
     public partial class TvChannelReviewHelpfulnessBuilder : TvProgEntityBuilder<TvChannelReviewHelpfulness>
     {

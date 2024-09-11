@@ -30,7 +30,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedModelFactory _localizedModelFactory;
         private readonly IOrderService _orderService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IReturnRequestService _returnRequestService;
 
         #endregion
@@ -44,7 +44,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             ILocalizationService localizationService,
             ILocalizedModelFactory localizedModelFactory,
             IOrderService orderService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IReturnRequestService returnRequestService)
         {
             _baseAdminModelFactory = baseAdminModelFactory;
@@ -54,7 +54,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _localizationService = localizationService;
             _localizedModelFactory = localizedModelFactory;
             _orderService = orderService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _returnRequestService = returnRequestService;
         }
 
@@ -159,10 +159,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (orderItem != null)
             {
                 var order = await _orderService.GetOrderByIdAsync(orderItem.OrderId);
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                model.TvChannelId = tvchannel.Id;
-                model.TvChannelName = tvchannel.Name;
+                model.TvChannelId = tvChannel.Id;
+                model.TvChannelName = tvChannel.Name;
                 model.OrderId = order.Id;
                 model.AttributeInfo = orderItem.AttributeDescription;
                 model.CustomOrderNumber = order.CustomOrderNumber;

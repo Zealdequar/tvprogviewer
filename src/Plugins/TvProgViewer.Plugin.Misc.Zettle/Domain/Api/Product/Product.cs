@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
-    /// Represents the product details
+    /// Represents the tvChannel details
     /// </summary>
-    public class Product : ApiResponse
+    public class TvChannel : ApiResponse
     {
         #region Properties
 
@@ -78,13 +78,13 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         public List<string> TaxRates { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the product is tax exempt
+        /// Gets or sets a value indicating whether the tvChannel is tax exempt
         /// </summary>
         [JsonProperty(PropertyName = "taxExempt")]
         public bool? TaxExempt { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the product is create with default tax
+        /// Gets or sets a value indicating whether the tvChannel is create with default tax
         /// </summary>
         [JsonProperty(PropertyName = "createWithDefaultTax")]
         public bool? CreateWithDefaultTax { get; set; }
@@ -99,40 +99,40 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         /// Gets or sets the presentation
         /// </summary>
         [JsonProperty(PropertyName = "presentation")]
-        public ProductPresentation Presentation { get; set; }
+        public TvChannelPresentation Presentation { get; set; }
 
         /// <summary>
         /// Gets or sets the variants
         /// </summary>
         [JsonProperty(PropertyName = "variants")]
-        public List<ProductVariant> Variants { get; set; }
+        public List<TvChannelVariant> Variants { get; set; }
 
         /// <summary>
-        /// Gets or sets the online product info
+        /// Gets or sets the online tvChannel info
         /// </summary>
         [JsonProperty(PropertyName = "online")]
-        public ProductOnlineInfo Online { get; set; }
+        public TvChannelOnlineInfo Online { get; set; }
 
         /// <summary>
         /// Gets or sets the variant option definitions
         /// </summary>
         [JsonProperty(PropertyName = "variantOptionDefinitions")]
-        public ProductVariantDefinitions VariantOptionDefinitions { get; set; }
+        public TvChannelVariantDefinitions VariantOptionDefinitions { get; set; }
 
         /// <summary>
         /// Gets or sets the category
         /// </summary>
         [JsonProperty(PropertyName = "category")]
-        public ProductCategory Category { get; set; }
+        public TvChannelCategory Category { get; set; }
 
         /// <summary>
         /// Gets or sets the metadata
         /// </summary>
         [JsonProperty(PropertyName = "metadata")]
-        public ProductMetadata Metadata { get; set; }
+        public TvChannelMetadata Metadata { get; set; }
 
         /// <summary>
-        /// Gets or sets the unique identifier as UUID version 1 of a user who updated the product
+        /// Gets or sets the unique identifier as UUID version 1 of a user who updated the tvChannel
         /// </summary>
         [JsonProperty(PropertyName = "updatedBy")]
         public string UpdatedBy { get; set; }
@@ -154,9 +154,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         #region Nested classes
 
         /// <summary>
-        /// Represents the product category details
+        /// Represents the tvChannel category details
         /// </summary>
-        public class ProductCategory
+        public class TvChannelCategory
         {
             /// <summary>
             /// Gets or sets the unique identifier as UUID version 1
@@ -172,9 +172,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         }
 
         /// <summary>
-        /// Represents the product presentation details
+        /// Represents the tvChannel presentation details
         /// </summary>
-        public class ProductPresentation
+        public class TvChannelPresentation
         {
             /// <summary>
             /// Gets or sets the image URL
@@ -196,9 +196,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         }
 
         /// <summary>
-        /// Represents the product variant details
+        /// Represents the tvChannel variant details
         /// </summary>
-        public class ProductVariant
+        public class TvChannelVariant
         {
             #region Properties
 
@@ -242,34 +242,34 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
             /// Gets or sets the price
             /// </summary>
             [JsonProperty(PropertyName = "price")]
-            public ProductPrice Price { get; set; }
+            public TvChannelPrice Price { get; set; }
 
             /// <summary>
             /// Gets or sets the cost price
             /// </summary>
             [JsonProperty(PropertyName = "costPrice")]
-            public ProductPrice CostPrice { get; set; }
+            public TvChannelPrice CostPrice { get; set; }
 
             /// <summary>
             /// Gets or sets the options
             /// </summary>
             [JsonProperty(PropertyName = "options")]
-            public List<ProductVariantOption> Options { get; set; }
+            public List<TvChannelVariantOption> Options { get; set; }
 
             /// <summary>
             /// Gets or sets the presentation
             /// </summary>
             [JsonProperty(PropertyName = "presentation")]
-            public ProductPresentation Presentation { get; set; }
+            public TvChannelPresentation Presentation { get; set; }
 
             #endregion
 
             #region Nested classes
 
             /// <summary>
-            /// Represents the product price details
+            /// Represents the tvChannel price details
             /// </summary>
-            public class ProductPrice
+            public class TvChannelPrice
             {
                 /// <summary>
                 /// Gets or sets the amount
@@ -285,9 +285,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
             }
 
             /// <summary>
-            /// Represents the product variant option property details
+            /// Represents the tvChannel variant option property details
             /// </summary>
-            public class ProductVariantOption
+            public class TvChannelVariantOption
             {
                 /// <summary>
                 /// Gets or sets the name
@@ -306,26 +306,26 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         }
 
         /// <summary>
-        /// Represents the product variant options details
+        /// Represents the tvChannel variant options details
         /// </summary>
-        public class ProductVariantDefinitions
+        public class TvChannelVariantDefinitions
         {
             #region Properties
 
             /// <summary>
-            /// Gets or sets the product variant options
+            /// Gets or sets the tvChannel variant options
             /// </summary>
             [JsonProperty(PropertyName = "definitions")]
-            public List<ProductVariantOptionDefinition> Definitions { get; set; }
+            public List<TvChannelVariantOptionDefinition> Definitions { get; set; }
 
             #endregion
 
             #region Nested classes
 
             /// <summary>
-            /// Represents the product variant option details
+            /// Represents the tvChannel variant option details
             /// </summary>
-            public class ProductVariantOptionDefinition
+            public class TvChannelVariantOptionDefinition
             {
                 #region Properties
 
@@ -336,19 +336,19 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
                 public string Name { get; set; }
 
                 /// <summary>
-                /// Gets or sets the product variant option properties
+                /// Gets or sets the tvChannel variant option properties
                 /// </summary>
                 [JsonProperty(PropertyName = "properties")]
-                public List<ProductVariantOptionProperty> Properties { get; set; }
+                public List<TvChannelVariantOptionProperty> Properties { get; set; }
 
                 #endregion
 
                 #region Nested classes
 
                 /// <summary>
-                /// Represents the product variant option property details
+                /// Represents the tvChannel variant option property details
                 /// </summary>
-                public class ProductVariantOptionProperty
+                public class TvChannelVariantOptionProperty
                 {
                     /// <summary>
                     /// Gets or sets the value
@@ -370,9 +370,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         }
 
         /// <summary>
-        /// Represents the product online info details
+        /// Represents the tvChannel online info details
         /// </summary>
-        public class ProductOnlineInfo
+        public class TvChannelOnlineInfo
         {
             #region Properties
 
@@ -398,28 +398,28 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
             /// Gets or sets the shipping details
             /// </summary>
             [JsonProperty(PropertyName = "shipping")]
-            public ProductShippingInfo Shipping { get; set; }
+            public TvChannelShippingInfo Shipping { get; set; }
 
             /// <summary>
             /// Gets or sets the presentation
             /// </summary>
             [JsonProperty(PropertyName = "presentation")]
-            public ProductOnlinePresentation Presentation { get; set; }
+            public TvChannelOnlinePresentation Presentation { get; set; }
 
             /// <summary>
             /// Gets or sets the SEO details
             /// </summary>
             [JsonProperty(PropertyName = "seo")]
-            public ProductSeo Seo { get; set; }
+            public TvChannelSeo Seo { get; set; }
 
             #endregion
 
             #region Nested classes
 
             /// <summary>
-            /// Represents the product shipping details
+            /// Represents the tvChannel shipping details
             /// </summary>
-            public class ProductShippingInfo
+            public class TvChannelShippingInfo
             {
                 #region Properties
 
@@ -439,16 +439,16 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
                 /// Gets or sets the weight info
                 /// </summary>
                 [JsonProperty(PropertyName = "weight")]
-                public ProductWeight Weight { get; set; }
+                public TvChannelWeight Weight { get; set; }
 
                 #endregion
 
                 #region Nested classes
 
                 /// <summary>
-                /// Represents the product weight details
+                /// Represents the tvChannel weight details
                 /// </summary>
-                public class ProductWeight
+                public class TvChannelWeight
                 {
                     /// <summary>
                     /// Gets or sets the weight
@@ -467,9 +467,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
             }
 
             /// <summary>
-            /// Represents the product online presentation details
+            /// Represents the tvChannel online presentation details
             /// </summary>
-            public class ProductOnlinePresentation
+            public class TvChannelOnlinePresentation
             {
                 /// <summary>
                 /// Gets or sets the display image URL
@@ -491,9 +491,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
             }
 
             /// <summary>
-            /// Represents the product SEO details
+            /// Represents the tvChannel SEO details
             /// </summary>
-            public class ProductSeo
+            public class TvChannelSeo
             {
                 /// <summary>
                 /// Gets or sets the title
@@ -518,14 +518,14 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
         }
 
         /// <summary>
-        /// Represents the product metadata details
+        /// Represents the tvChannel metadata details
         /// </summary>
-        public class ProductMetadata
+        public class TvChannelMetadata
         {
             #region Properties
 
             /// <summary>
-            /// Gets or sets a value indicating whether the product is in POS
+            /// Gets or sets a value indicating whether the tvChannel is in POS
             /// </summary>
             [JsonProperty(PropertyName = "inPos")]
             public bool? InPos { get; set; }
@@ -534,16 +534,16 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
             /// Gets or sets the source
             /// </summary>
             [JsonProperty(PropertyName = "source")]
-            public ProductSource Source { get; set; }
+            public TvChannelSource Source { get; set; }
 
             #endregion
 
             #region Nested classes
 
             /// <summary>
-            /// Represents the product source details
+            /// Represents the tvChannel source details
             /// </summary>
-            public class ProductSource
+            public class TvChannelSource
             {
                 /// <summary>
                 /// Gets or sets the name
@@ -552,7 +552,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
                 public string Name { get; set; }
 
                 /// <summary>
-                /// Gets or sets a value indicating whether the source of product is external
+                /// Gets or sets a value indicating whether the source of tvChannel is external
                 /// </summary>
                 [JsonProperty(PropertyName = "external")]
                 public bool? External { get; set; }

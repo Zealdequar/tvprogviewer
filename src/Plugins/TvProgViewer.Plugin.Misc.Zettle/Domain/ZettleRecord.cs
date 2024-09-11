@@ -4,7 +4,7 @@ using TvProgViewer.Core;
 namespace TvProgViewer.Plugin.Misc.Zettle.Domain
 {
     /// <summary>
-    /// Represents a record of the product and other details required for synchronization with Zettle
+    /// Represents a record of the tvChannel and other details required for synchronization with Zettle
     /// </summary>
     public class ZettleRecord : BaseEntity
     {
@@ -19,17 +19,17 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain
         public string Uuid { get; set; }
 
         /// <summary>
-        /// Gets or sets the product identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
         /// <summary>
-        /// Gets or sets the unique identifier as UUID version 1 of product variant
+        /// Gets or sets the unique identifier as UUID version 1 of tvChannel variant
         /// </summary>
         public string VariantUuid { get; set; }
 
         /// <summary>
-        /// Gets or sets the product attribute combination identifier
+        /// Gets or sets the tvChannel attribute combination identifier
         /// </summary>
         public int CombinationId { get; set; }
 
@@ -44,17 +44,17 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain
         public int OperationTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to sync price for this product
+        /// Gets or sets a value indicating whether to sync price for this tvChannel
         /// </summary>
         public bool PriceSyncEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to sync images for this product
+        /// Gets or sets a value indicating whether to sync images for this tvChannel
         /// </summary>
         public bool ImageSyncEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to track inventory for this product
+        /// Gets or sets a value indicating whether to track inventory for this tvChannel
         /// </summary>
         public bool InventoryTrackingEnabled { get; set; }
 

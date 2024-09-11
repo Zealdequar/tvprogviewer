@@ -1,13 +1,13 @@
-﻿namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+﻿namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
-    /// Represents base request to Product API
+    /// Represents base request to TvChannel API
     /// </summary>
-    public abstract class ProductApiRequest : ApiRequest, IAuthorizedRequest
+    public abstract class TvChannelApiRequest : ApiRequest, IAuthorizedRequest
     {
         /// <summary>
         /// Gets the request base URL
         /// </summary>
-        public override string BaseUrl => "https://products.izettle.com/";
+        public override string BaseUrl => "https://tvChannels.izettle.com/";
     }
 }

@@ -156,9 +156,9 @@ namespace TvProgViewer.Web.Framework.Infrastructure.Extensions
         }
 
         /// <summary>
-        /// Adds services required for distributed cache
+        /// Добавление сервисов, требующихся для распеределённого кэширования
         /// </summary>
-        /// <param name="services">Collection of service descriptors</param>
+        /// <param name="services">Коллекция дескрипторов сервисов</param>
         public static void AddDistributedCache(this IServiceCollection services)
         {
             var appSettings = Singleton<AppSettings>.Instance;
@@ -186,6 +186,15 @@ namespace TvProgViewer.Web.Framework.Infrastructure.Extensions
                     services.AddStackExchangeRedisCache(options =>
                     {
                         options.Configuration = distributedCacheConfig.ConnectionString;
+                        options.InstanceName = distributedCacheConfig.InstanceName ?? string.Empty;
+                    });
+                    break;
+
+                case DistributedCacheType.RedisSynchronizedMemory:
+                    services.AddStackExchangeRedisCache(options =>
+                    {
+                        options.Configuration = distributedCacheConfig.ConnectionString;
+                        options.InstanceName = distributedCacheConfig.InstanceName ?? string.Empty;
                     });
                     break;
             }

@@ -11,20 +11,20 @@
     //title
     TvProgHtml.AddTitleParts(T("PageTitle.AllTvChannelTags").Text);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-tvchannel-tags-all-page");
+    TvProgHtml.AppendPageCssClassParts("html-tvChannel-tags-all-page");
 }
-<div class="page tvchannel-tags-all-page">
+<div class="page tvChannel-tags-all-page">
     <div class="page-title">
         <h1>@T("TvChannels.Tags.All")</h1>
     </div>
     <div class="page-body">
         @if (Model.Tags.Count > 0)
         {
-            <ul class="tvchannel-tags-list">
+            <ul class="tvChannel-tags-list">
                 @foreach (var item in Model.Tags)
                 {
                     <li>
-                        <a href="@(Url.RouteUrl<TvChannelTag>(new { SeName = item.SeName }))" class="tvchanneltag" style="font-size:@(Model.GetFontSize(item))%;">
+                        <a href="@(Url.RouteUrl<TvChannelTag>(new { SeName = item.SeName }))" class="tvChanneltag" style="font-size:@(Model.GetFontSize(item))%;">
                             @item.Name
                         </a>
                     </li>

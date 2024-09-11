@@ -67,7 +67,7 @@ namespace TvProgViewer.WebUI.Factories
         private readonly IOrderService _orderService;
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IReturnRequestService _returnRequestService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
@@ -110,7 +110,7 @@ namespace TvProgViewer.WebUI.Factories
             IOrderService orderService,
             IPermissionService permissionService,
             IPictureService pictureService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IReturnRequestService returnRequestService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
@@ -149,7 +149,7 @@ namespace TvProgViewer.WebUI.Factories
             _orderService = orderService;
             _permissionService = permissionService;
             _pictureService = pictureService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _returnRequestService = returnRequestService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
@@ -640,7 +640,7 @@ namespace TvProgViewer.WebUI.Factories
                     RouteName = "UserDownloadableTvChannels",
                     Title = await _localizationService.GetResourceAsync("Account.DownloadableTvChannels"),
                     Tab = (int)UserNavigationEnum.DownloadableTvChannels,
-                    ItemClass = "downloadable-tvchannels"
+                    ItemClass = "downloadable-tvChannels"
                 });
             }
 
@@ -785,11 +785,11 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Prepare the user downloadable tvchannels model
+        /// Prepare the user downloadable tvChannels model
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the user downloadable tvchannels model
+        /// The task result contains the user downloadable tvChannels model
         /// </returns>
         public virtual async Task<UserDownloadableTvChannelsModel> PrepareUserDownloadableTvChannelsModelAsync()
         {
@@ -799,7 +799,7 @@ namespace TvProgViewer.WebUI.Factories
             foreach (var item in items)
             {
                 var order = await _orderService.GetOrderByIdAsync(item.OrderId);
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(item.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
 
                 var itemModel = new UserDownloadableTvChannelsModel.DownloadableTvChannelsModel
                 {
@@ -807,15 +807,15 @@ namespace TvProgViewer.WebUI.Factories
                     OrderId = order.Id,
                     CustomOrderNumber = order.CustomOrderNumber,
                     CreatedOn = await _dateTimeHelper.ConvertToUserTimeAsync(order.CreatedOnUtc, DateTimeKind.Utc),
-                    TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
-                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
+                    TvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name),
+                    TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvChannel),
                     TvChannelAttributes = item.AttributeDescription,
                     TvChannelId = item.TvChannelId
                 };
                 model.Items.Add(itemModel);
 
                 if (await _orderService.IsDownloadAllowedAsync(item))
-                    itemModel.DownloadId = tvchannel.DownloadId;
+                    itemModel.DownloadId = tvChannel.DownloadId;
 
                 if (await _orderService.IsLicenseDownloadAllowedAsync(item))
                     itemModel.LicenseId = item.LicenseDownloadId ?? 0;
@@ -828,22 +828,22 @@ namespace TvProgViewer.WebUI.Factories
         /// Prepare the user agreement model
         /// </summary>
         /// <param name="orderItem">Order item</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the user agreement model
         /// </returns>
-        public virtual Task<UserAgreementModel> PrepareUserAgreementModelAsync(OrderItem orderItem, TvChannel tvchannel)
+        public virtual Task<UserAgreementModel> PrepareUserAgreementModelAsync(OrderItem orderItem, TvChannel tvChannel)
         {
             if (orderItem == null)
                 throw new ArgumentNullException(nameof(orderItem));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var model = new UserAgreementModel
             {
-                UserAgreementText = tvchannel.UserAgreementText,
+                UserAgreementText = tvChannel.UserAgreementText,
                 OrderItemGuid = orderItem.OrderItemGuid
             };
 

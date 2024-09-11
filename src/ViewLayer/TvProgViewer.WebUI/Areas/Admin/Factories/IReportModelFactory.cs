@@ -35,22 +35,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         #region LowStockTvChannel
 
         /// <summary>
-        /// Prepare low stock tvchannel search model
+        /// Prepare low stock tvChannel search model
         /// </summary>
-        /// <param name="searchModel">Low stock tvchannel search model</param>
+        /// <param name="searchModel">Low stock tvChannel search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the low stock tvchannel search model
+        /// The task result contains the low stock tvChannel search model
         /// </returns>
         Task<LowStockTvChannelSearchModel> PrepareLowStockTvChannelSearchModelAsync(LowStockTvChannelSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged low stock tvchannel list model
+        /// Prepare paged low stock tvChannel list model
         /// </summary>
-        /// <param name="searchModel">Low stock tvchannel search model</param>
+        /// <param name="searchModel">Low stock tvChannel search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the low stock tvchannel list model
+        /// The task result contains the low stock tvChannel list model
         /// </returns>
         Task<LowStockTvChannelListModel> PrepareLowStockTvChannelListModelAsync(LowStockTvChannelSearchModel searchModel);
 

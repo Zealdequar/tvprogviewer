@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Nop.Services.Discounts;
-using Nop.Services.Plugins;
+using TvProgViewer.Services.Discounts;
+using TvProgViewer.Services.Plugins;
 
-namespace Nop.Tests.Nop.Services.Tests.Discounts
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Discounts
 {
     public partial class TestDiscountRequirementRule : BasePlugin, IDiscountRequirementRule
     {
         /// <summary>
         /// Check discount requirement
         /// </summary>
-        /// <param name="request">Object that contains all information required to check the requirement (Current customer, discount, etc)</param>
+        /// <param name="request">Object that contains all information required to check the requirement (Current user, discount, etc)</param>
         /// <returns>Result</returns>
         public Task<DiscountRequirementValidationResult> CheckRequirementAsync(DiscountRequirementValidationRequest request)
         {

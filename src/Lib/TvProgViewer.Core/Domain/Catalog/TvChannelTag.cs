@@ -4,7 +4,7 @@ using TvProgViewer.Core.Domain.Seo;
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel tag
+    /// Represents a tvChannel tag
     /// </summary>
     public partial class TvChannelTag : BaseEntity, ILocalizedEntity, ISlugSupported
     {

@@ -27,7 +27,7 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IUserService _userService;
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStoreContext _storeContext;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IWorkContext _workContext;
@@ -42,7 +42,7 @@ namespace TvProgViewer.WebUI.Controllers
             IUserService userService,
             ILocalizationService localizationService,
             INotificationService notificationService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IStoreContext storeContext,
             IUrlRecordService urlRecordService,
             IWorkContext workContext)
@@ -53,7 +53,7 @@ namespace TvProgViewer.WebUI.Controllers
             _userService = userService;
             _localizationService = localizationService;
             _notificationService = notificationService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _storeContext = storeContext;
             _urlRecordService = urlRecordService;
             _workContext = workContext;
@@ -65,59 +65,59 @@ namespace TvProgViewer.WebUI.Controllers
 
         // TvChannel details page > back in stock subscribe
         [CheckLanguageSeoCode(ignore: true)]
-        public virtual async Task<IActionResult> SubscribePopup(int tvchannelId)
+        public virtual async Task<IActionResult> SubscribePopup(int tvChannelId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null || tvchannel.Deleted)
-                throw new ArgumentException("No tvchannel found with the specified id");
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null || tvChannel.Deleted)
+                throw new ArgumentException("No tvChannel found with the specified id");
 
             var user = await _workContext.GetCurrentUserAsync();
             var store = await _storeContext.GetCurrentStoreAsync();
             var model = new BackInStockSubscribeModel
             {
-                TvChannelId = tvchannel.Id,
-                TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
-                TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvchannel),
+                TvChannelId = tvChannel.Id,
+                TvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name),
+                TvChannelSeName = await _urlRecordService.GetSeNameAsync(tvChannel),
                 IsCurrentUserRegistered = await _userService.IsRegisteredAsync(user),
                 MaximumBackInStockSubscriptions = _catalogSettings.MaximumBackInStockSubscriptions,
                 CurrentNumberOfBackInStockSubscriptions = (await _backInStockSubscriptionService
                 .GetAllSubscriptionsByUserIdAsync(user.Id, store.Id, 0, 1))
                 .TotalCount
             };
-            if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
-                tvchannel.BackorderMode == BackorderMode.NoBackorders &&
-                tvchannel.AllowBackInStockSubscriptions &&
-                await _tvchannelService.GetTotalStockQuantityAsync(tvchannel) <= 0)
+            if (tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                tvChannel.BackorderMode == BackorderMode.NoBackorders &&
+                tvChannel.AllowBackInStockSubscriptions &&
+                await _tvChannelService.GetTotalStockQuantityAsync(tvChannel) <= 0)
             {
                 //out of stock
                 model.SubscriptionAllowed = true;
                 model.AlreadySubscribed = await _backInStockSubscriptionService
-                    .FindSubscriptionAsync(user.Id, tvchannel.Id, store.Id) != null;
+                    .FindSubscriptionAsync(user.Id, tvChannel.Id, store.Id) != null;
             }
 
             return PartialView(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> SubscribePopupPOST(int tvchannelId)
+        public virtual async Task<IActionResult> SubscribePopupPOST(int tvChannelId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null || tvchannel.Deleted)
-                throw new ArgumentException("No tvchannel found with the specified id");
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null || tvChannel.Deleted)
+                throw new ArgumentException("No tvChannel found with the specified id");
 
             var user = await _workContext.GetCurrentUserAsync();
             if (!await _userService.IsRegisteredAsync(user))
                 return Content(await _localizationService.GetResourceAsync("BackInStockSubscriptions.OnlyRegistered"));
 
-            if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
-                tvchannel.BackorderMode == BackorderMode.NoBackorders &&
-                tvchannel.AllowBackInStockSubscriptions &&
-                await _tvchannelService.GetTotalStockQuantityAsync(tvchannel) <= 0)
+            if (tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                tvChannel.BackorderMode == BackorderMode.NoBackorders &&
+                tvChannel.AllowBackInStockSubscriptions &&
+                await _tvChannelService.GetTotalStockQuantityAsync(tvChannel) <= 0)
             {
                 //out of stock
                 var store = await _storeContext.GetCurrentStoreAsync();
                 var subscription = await _backInStockSubscriptionService
-                    .FindSubscriptionAsync(user.Id, tvchannel.Id, store.Id);
+                    .FindSubscriptionAsync(user.Id, tvChannel.Id, store.Id);
                 if (subscription != null)
                 {
                     //subscription already exists
@@ -142,7 +142,7 @@ namespace TvProgViewer.WebUI.Controllers
                 subscription = new BackInStockSubscription
                 {
                     UserId = user.Id,
-                    TvChannelId = tvchannel.Id,
+                    TvChannelId = tvChannel.Id,
                     StoreId = store.Id,
                     CreatedOnUtc = DateTime.UtcNow
                 };
@@ -180,16 +180,16 @@ namespace TvProgViewer.WebUI.Controllers
 
             foreach (var subscription in list)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(subscription.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(subscription.TvChannelId);
 
-                if (tvchannel != null)
+                if (tvChannel != null)
                 {
                     var subscriptionModel = new UserBackInStockSubscriptionsModel.BackInStockSubscriptionModel
                     {
                         Id = subscription.Id,
-                        TvChannelId = tvchannel.Id,
-                        TvChannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
-                        SeName = await _urlRecordService.GetSeNameAsync(tvchannel),
+                        TvChannelId = tvChannel.Id,
+                        TvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name),
+                        SeName = await _urlRecordService.GetSeNameAsync(tvChannel),
                     };
                     model.Subscriptions.Add(subscriptionModel);
                 }

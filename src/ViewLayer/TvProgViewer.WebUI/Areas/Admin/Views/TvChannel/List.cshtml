@@ -71,7 +71,7 @@
                 </div>
                 @if (!Model.IsLoggedInAsVendor || Model.AllowVendorsToImportTvChannels)
                 {
-                    //a vendor cannot import tvchannels
+                    //a vendor cannot import tvChannels
                     <button type="button" name="importexcel" class="btn bg-olive" data-toggle="modal" data-target="#importexcel-window">
                         <i class="fas fa-upload"></i>
                         @T("Admin.Common.Import")
@@ -183,7 +183,7 @@
                                                 <div class="input-group input-group-short">
                                                     <tvprog-editor asp-for="GoDirectlyToSku" />
                                                     <span class="input-group-append">
-                                                        <button type="submit" id="go-to-tvchannel-by-sku" name="go-to-tvchannel-by-sku" class="btn btn-info btn-flat">
+                                                        <button type="submit" id="go-to-tvChannel-by-sku" name="go-to-tvChannel-by-sku" class="btn btn-info btn-flat">
                                                             @T("Admin.Common.Go")
                                                         </button>
                                                     </span>
@@ -194,7 +194,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="text-center col-12">
-                                        <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
+                                        <button type="button" id="search-tvChannels" class="btn btn-primary btn-search">
                                             <i class="fas fa-search"></i>
                                             @T("Admin.Common.Search")
                                         </button>
@@ -210,9 +210,9 @@
 
                               @await Html.PartialAsync("Table", new DataTablesModel
                          {
-                             Name = "tvchannels-grid",
+                             Name = "tvChannels-grid",
                              UrlRead = new DataUrl("TvChannelList", "TvChannel", null),
-                             SearchButtonId = "search-tvchannels",
+                             SearchButtonId = "search-tvChannels",
                              Length = Model.PageSize,
                              LengthMenu = Model.AvailablePageSizes,
                              Filters = new List<FilterParameter>
@@ -232,7 +232,7 @@
                                       new ColumnProperty(nameof(TvChannelModel.Id))
                                       {
                                           IsMasterCheckBox = true,
-                                          Render = new RenderCheckBox("checkbox_tvchannels"),
+                                          Render = new RenderCheckBox("checkbox_tvChannels"),
                                           ClassName =  TvProgColumnClassDefaults.CenterAll,
                                           Width = "50"
                                       },
@@ -302,7 +302,7 @@
                                                 showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                                 return;
                                             }
-                                            updateTable('#tvchannels-grid');
+                                            updateTable('#tvChannels-grid');
                                         }
                                     });
                                     $('#delete-selected-action-confirmation').modal('toggle');
@@ -323,7 +323,7 @@
         $(document).ready(function () {
             $("#@Html.IdFor(model => model.GoDirectlyToSku)").keydown(function (event) {
                 if (event.keyCode === 13) {
-                    $("#go-to-tvchannel-by-sku").click();
+                    $("#go-to-tvChannel-by-sku").click();
                     return false;
                 }
             });
@@ -372,7 +372,7 @@
     </div>
 </div>
 
-    @*import tvchannels form*@
+    @*import tvChannels form*@
     <div id="importexcel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="importexcel-window-title">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -432,7 +432,7 @@
             else {
                 $('#export-xml-selected-form #selectedIds').val(ids);
                 $('#export-xml-selected-form').submit();
-                updateTable('#tvchannels-grid');
+                updateTable('#tvChannels-grid');
             }
             return false;
         });
@@ -457,7 +457,7 @@
                 else {
                     $('#export-excel-selected-form #selectedIds').val(ids);
                     $('#export-excel-selected-form').submit();
-                    updateTable('#tvchannels-grid');
+                    updateTable('#tvChannels-grid');
                 }
                 return false;
             });

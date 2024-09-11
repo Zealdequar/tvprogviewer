@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Areas.Admin.Models.Vendors;
-using Nop.Web.Areas.Admin.Validators.Vendors;
+using TvProgViewer.WebUI.Areas.Admin.Models.Vendors;
+using TvProgViewer.WebUI.Areas.Admin.Validators.Vendors;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Admin.Validators.Vendors
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Admin.Validators.Vendors
 {
     [TestFixture]
-    public class VendorValidatorTests : BaseNopTest
+    public class VendorValidatorTests : BaseTvProgTest
     {
         private VendorValidator _validator;
 

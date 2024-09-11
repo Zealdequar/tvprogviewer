@@ -51,8 +51,8 @@
         public int DefaultTaxDisplayTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets a tvchannel identifier that is required by this user role. 
-        /// A user is added to this user role once a specified tvchannel is purchased.
+        /// Gets or sets a tvChannel identifier that is required by this user role. 
+        /// A user is added to this user role once a specified tvChannel is purchased.
         /// </summary>
         public int PurchasedWithTvChannelId { get; set; }
     }

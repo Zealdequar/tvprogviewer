@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
-using Nop.Core.Domain.Stores;
-using Nop.Services.Stores;
+using TvProgViewer.Core.Domain.Stores;
+using TvProgViewer.Services.Stores;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Stores
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Stores
 {
     [TestFixture]
     public class StoreExtensionsTests : ServiceTest

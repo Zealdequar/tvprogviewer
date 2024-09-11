@@ -55,7 +55,7 @@ namespace TvProgViewer.Services.Common.Pdf
         }
 
         /// <summary>
-        /// Compose shipment tvchannels
+        /// Compose shipment tvChannels
         /// </summary>
         /// <param name="container">Content placement container</param>
         protected void ComposeTvChannels(IContainer container)
@@ -76,21 +76,21 @@ namespace TvProgViewer.Services.Common.Pdf
                     header.Cell().Element(CellHeaderStyle).AlignRight().Text(t => ComposeLabel<TvChannelItem>(t, x => x.Quantity));
                 });
 
-                foreach (var tvchannel in Source.TvChannels)
+                foreach (var tvChannel in Source.TvChannels)
                 {
-                    table.Cell().Element(CellContentStyle).Element(tvchannelContainer =>
+                    table.Cell().Element(CellContentStyle).Element(tvChannelContainer =>
                     {
-                        tvchannelContainer.Column(pColumn =>
+                        tvChannelContainer.Column(pColumn =>
                         {
-                            pColumn.Item().Text(tvchannel.Name);
+                            pColumn.Item().Text(tvChannel.Name);
 
-                            foreach (var attribute in tvchannel.TvChannelAttributes)
+                            foreach (var attribute in tvChannel.TvChannelAttributes)
                                 pColumn.Item().DefaultTextStyle(s => s.Italic().FontSize(9)).Text(attribute);
                         });
                     });
 
-                    table.Cell().Element(CellContentStyle).Text(tvchannel.Sku);
-                    table.Cell().Element(CellContentStyle).AlignRight().Text(tvchannel.Quantity);
+                    table.Cell().Element(CellContentStyle).Text(tvChannel.Sku);
+                    table.Cell().Element(CellContentStyle).AlignRight().Text(tvChannel.Quantity);
                 }
 
                 static IContainer CellHeaderStyle(IContainer container)

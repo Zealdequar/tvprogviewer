@@ -48,7 +48,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Services
         private readonly IOrderProcessingService _orderProcessingService;
         private readonly IOrderService _orderService;
         private readonly IOrderTotalCalculationService _orderTotalCalculationService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
@@ -74,7 +74,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Services
             IOrderProcessingService orderProcessingService,
             IOrderService orderService,
             IOrderTotalCalculationService orderTotalCalculationService,
-            IProductService productService,
+            ITvChannelService tvChannelService,
             IShoppingCartService shoppingCartService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
@@ -96,7 +96,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Services
             _orderProcessingService = orderProcessingService;
             _orderService = orderService;
             _orderTotalCalculationService = orderTotalCalculationService;
-            _productService = productService;
+            _tvChannelService = tvChannelService;
             _shoppingCartService = shoppingCartService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
@@ -297,7 +297,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Services
                     parameters["disable-funding"] = settings.DisabledFunding;
                 if (!string.IsNullOrEmpty(settings.EnabledFunding))
                     parameters["enable-funding"] = settings.EnabledFunding;
-                if (widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore) || widgetZone.Equals(PublicWidgetZones.ProductDetailsTop))
+                if (widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore) || widgetZone.Equals(PublicWidgetZones.TvChannelDetailsTop))
                     components.Add("funding-eligibility");
                 if (settings.DisplayPayLaterMessages)
                     components.Add("messages");
@@ -306,8 +306,8 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Services
 
                 var pageType = widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore)
                     ? "cart"
-                    : (widgetZone.Equals(PublicWidgetZones.ProductDetailsTop)
-                    ? "product-details"
+                    : (widgetZone.Equals(PublicWidgetZones.TvChannelDetailsTop)
+                    ? "tvChannel-details"
                     : "checkout");
 
                 return $@"<script src=""{scriptUrl}"" data-partner-attribution-id=""{PayPalViewerDefaults.PartnerCode}"" data-page-type=""{pageType}""></script>";
@@ -437,17 +437,17 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Services
                 //set order items
                 purchaseUnit.Items = await shoppingCart.SelectAwait(async item =>
                 {
-                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
 
                     var (unitPrice, _, _) = await _shoppingCartService.GetUnitPriceAsync(item, true);
-                    var (itemPrice, _) = await _taxService.GetProductPriceAsync(product, unitPrice, false, user);
+                    var (itemPrice, _) = await _taxService.GetTvChannelPriceAsync(tvChannel, unitPrice, false, user);
                     return new Item
                     {
-                        Name = CommonHelper.EnsureMaximumLength(product.Name, 127),
-                        Description = CommonHelper.EnsureMaximumLength(product.ShortDescription, 127),
-                        Sku = CommonHelper.EnsureMaximumLength(product.Sku, 127),
+                        Name = CommonHelper.EnsureMaximumLength(tvChannel.Name, 127),
+                        Description = CommonHelper.EnsureMaximumLength(tvChannel.ShortDescription, 127),
+                        Sku = CommonHelper.EnsureMaximumLength(tvChannel.Sku, 127),
                         Quantity = item.Quantity.ToString(),
-                        Category = (product.IsDownload ? ItemCategoryType.Digital_goods : ItemCategoryType.Physical_goods)
+                        Category = (tvChannel.IsDownload ? ItemCategoryType.Digital_goods : ItemCategoryType.Physical_goods)
                             .ToString().ToUpperInvariant(),
                         UnitAmount = prepareMoney(itemPrice)
                     };

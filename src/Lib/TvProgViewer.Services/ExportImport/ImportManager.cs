@@ -70,10 +70,10 @@ namespace TvProgViewer.Services.ExportImport
         private readonly ITvProgFileProvider _fileProvider;
         private readonly IOrderService _orderService;
         private readonly IPictureService _pictureService;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly ITvChannelService _tvchannelService;
-        private readonly ITvChannelTagService _tvchannelTagService;
-        private readonly ITvChannelTemplateService _tvchannelTemplateService;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
+        private readonly ITvChannelTagService _tvChannelTagService;
+        private readonly ITvChannelTemplateService _tvChannelTemplateService;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IShippingService _shippingService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
@@ -114,10 +114,10 @@ namespace TvProgViewer.Services.ExportImport
             ITvProgFileProvider fileProvider,
             IOrderService orderService,
             IPictureService pictureService,
-            ITvChannelAttributeService tvchannelAttributeService,
-            ITvChannelService tvchannelService,
-            ITvChannelTagService tvchannelTagService,
-            ITvChannelTemplateService tvchannelTemplateService,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
+            ITvChannelTagService tvChannelTagService,
+            ITvChannelTemplateService tvChannelTemplateService,
             IServiceScopeFactory serviceScopeFactory,
             IShippingService shippingService,
             ISpecificationAttributeService specificationAttributeService,
@@ -154,10 +154,10 @@ namespace TvProgViewer.Services.ExportImport
             _newsLetterSubscriptionService = newsLetterSubscriptionService;
             _orderService = orderService;
             _pictureService = pictureService;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelService = tvchannelService;
-            _tvchannelTagService = tvchannelTagService;
-            _tvchannelTemplateService = tvchannelTemplateService;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
+            _tvChannelTagService = tvChannelTagService;
+            _tvChannelTemplateService = tvChannelTemplateService;
             _serviceScopeFactory = serviceScopeFactory;
             _shippingService = shippingService;
             _specificationAttributeService = specificationAttributeService;
@@ -178,14 +178,14 @@ namespace TvProgViewer.Services.ExportImport
 
         #region Utilities
 
-        private static ExportedAttributeType GetTypeOfExportedAttribute(IXLWorksheet defaultWorksheet, List<IXLWorksheet> localizedWorksheets, PropertyManager<ExportTvChannelAttribute, Language> tvchannelAttributeManager, PropertyManager<ExportSpecificationAttribute, Language> specificationAttributeManager, int iRow)
+        private static ExportedAttributeType GetTypeOfExportedAttribute(IXLWorksheet defaultWorksheet, List<IXLWorksheet> localizedWorksheets, PropertyManager<ExportTvChannelAttribute, Language> tvChannelAttributeManager, PropertyManager<ExportSpecificationAttribute, Language> specificationAttributeManager, int iRow)
         {
-            tvchannelAttributeManager.ReadDefaultFromXlsx(defaultWorksheet, iRow, ExportTvChannelAttribute.TvChannelAttributeCellOffset);
+            tvChannelAttributeManager.ReadDefaultFromXlsx(defaultWorksheet, iRow, ExportTvChannelAttribute.TvChannelAttributeCellOffset);
 
-            if (tvchannelAttributeManager.IsCaption)
+            if (tvChannelAttributeManager.IsCaption)
             {
                 foreach (var worksheet in localizedWorksheets)
-                    tvchannelAttributeManager.ReadLocalizedFromXlsx(worksheet, iRow, ExportTvChannelAttribute.TvChannelAttributeCellOffset);
+                    tvChannelAttributeManager.ReadLocalizedFromXlsx(worksheet, iRow, ExportTvChannelAttribute.TvChannelAttributeCellOffset);
 
                 return ExportedAttributeType.TvChannelAttribute;
             }
@@ -293,7 +293,7 @@ namespace TvProgViewer.Services.ExportImport
             var pictureAlreadyExists = false;
             if (picId != null)
             {
-                //compare with existing tvchannel pictures
+                //compare with existing tvChannel pictures
                 var existingPicture = await _pictureService.GetPictureByIdAsync(picId.Value);
                 if (existingPicture != null)
                 {
@@ -328,11 +328,11 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task ImportTvChannelImagesUsingServicesAsync(IList<TvChannelPictureMetadata> tvchannelPictureMetadata)
+        protected virtual async Task ImportTvChannelImagesUsingServicesAsync(IList<TvChannelPictureMetadata> tvChannelPictureMetadata)
         {
-            foreach (var tvchannel in tvchannelPictureMetadata)
+            foreach (var tvChannel in tvChannelPictureMetadata)
             {
-                foreach (var picturePath in new[] { tvchannel.Picture1Path, tvchannel.Picture2Path, tvchannel.Picture3Path })
+                foreach (var picturePath in new[] { tvChannel.Picture1Path, tvChannel.Picture2Path, tvChannel.Picture3Path })
                 {
                     if (string.IsNullOrEmpty(picturePath))
                         continue;
@@ -343,10 +343,10 @@ namespace TvProgViewer.Services.ExportImport
 
                     var newPictureBinary = await _fileProvider.ReadAllBytesAsync(picturePath);
                     var pictureAlreadyExists = false;
-                    if (!tvchannel.IsNew)
+                    if (!tvChannel.IsNew)
                     {
-                        //compare with existing tvchannel pictures
-                        var existingPictures = await _pictureService.GetPicturesByTvChannelIdAsync(tvchannel.TvChannelItem.Id);
+                        //compare with existing tvChannel pictures
+                        var existingPictures = await _pictureService.GetPicturesByTvChannelIdAsync(tvChannel.TvChannelItem.Id);
                         foreach (var existingPicture in existingPictures)
                         {
                             var existingBinary = await _pictureService.LoadPictureBinaryAsync(existingPicture);
@@ -366,17 +366,17 @@ namespace TvProgViewer.Services.ExportImport
 
                     try
                     {
-                        var newPicture = await _pictureService.InsertPictureAsync(newPictureBinary, mimeType, await _pictureService.GetPictureSeNameAsync(tvchannel.TvChannelItem.Name));
-                        await _tvchannelService.InsertTvChannelPictureAsync(new TvChannelPicture
+                        var newPicture = await _pictureService.InsertPictureAsync(newPictureBinary, mimeType, await _pictureService.GetPictureSeNameAsync(tvChannel.TvChannelItem.Name));
+                        await _tvChannelService.InsertTvChannelPictureAsync(new TvChannelPicture
                         {
                             //EF has some weird issue if we set "Picture = newPicture" instead of "PictureId = newPicture.Id"
                             //pictures are duplicated
                             //maybe because entity size is too large
                             PictureId = newPicture.Id,
                             DisplayOrder = 1,
-                            TvChannelId = tvchannel.TvChannelItem.Id
+                            TvChannelId = tvChannel.TvChannelItem.Id
                         });
-                        await _tvchannelService.UpdateTvChannelAsync(tvchannel.TvChannelItem);
+                        await _tvChannelService.UpdateTvChannelAsync(tvChannel.TvChannelItem);
                     }
                     catch (Exception ex)
                     {
@@ -387,21 +387,21 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task ImportTvChannelImagesUsingHashAsync(IList<TvChannelPictureMetadata> tvchannelPictureMetadata, IList<TvChannel> allTvChannelsBySku)
+        protected virtual async Task ImportTvChannelImagesUsingHashAsync(IList<TvChannelPictureMetadata> tvChannelPictureMetadata, IList<TvChannel> allTvChannelsBySku)
         {
             //performance optimization, load all pictures hashes
             //it will only be used if the images are stored in the SQL Server database (not compact)
             var trimByteCount = _dataProvider.SupportedLengthOfBinaryHash - 1;
-            var tvchannelsImagesIds = await _tvchannelService.GetTvChannelsImagesIdsAsync(allTvChannelsBySku.Select(p => p.Id).ToArray());
+            var tvChannelsImagesIds = await _tvChannelService.GetTvChannelsImagesIdsAsync(allTvChannelsBySku.Select(p => p.Id).ToArray());
 
-            var allTvChannelPictureIds = tvchannelsImagesIds.SelectMany(p => p.Value);
+            var allTvChannelPictureIds = tvChannelsImagesIds.SelectMany(p => p.Value);
 
             var allPicturesHashes = allTvChannelPictureIds.Any() ? await _dataProvider.GetFieldHashesAsync<PictureBinary>(p => allTvChannelPictureIds.Contains(p.PictureId),
                 p => p.PictureId, p => p.BinaryData) : new Dictionary<int, string>();
 
-            foreach (var tvchannel in tvchannelPictureMetadata)
+            foreach (var tvChannel in tvChannelPictureMetadata)
             {
-                foreach (var picturePath in new[] { tvchannel.Picture1Path, tvchannel.Picture2Path, tvchannel.Picture3Path })
+                foreach (var picturePath in new[] { tvChannel.Picture1Path, tvChannel.Picture2Path, tvChannel.Picture3Path })
                 {
                     if (string.IsNullOrEmpty(picturePath))
                         continue;
@@ -413,9 +413,9 @@ namespace TvProgViewer.Services.ExportImport
 
                         var newPictureBinary = await _fileProvider.ReadAllBytesAsync(picturePath);
                         var pictureAlreadyExists = false;
-                        var seoFileName = await _pictureService.GetPictureSeNameAsync(tvchannel.TvChannelItem.Name);
+                        var seoFileName = await _pictureService.GetPictureSeNameAsync(tvChannel.TvChannelItem.Name);
 
-                        if (!tvchannel.IsNew)
+                        if (!tvChannel.IsNew)
                         {
                             var newImageHash = HashHelper.CreateHash(
                                 newPictureBinary,
@@ -427,8 +427,8 @@ namespace TvProgViewer.Services.ExportImport
                                 ExportImportDefaults.ImageHashAlgorithm,
                                 trimByteCount);
 
-                            var imagesIds = tvchannelsImagesIds.ContainsKey(tvchannel.TvChannelItem.Id)
-                                ? tvchannelsImagesIds[tvchannel.TvChannelItem.Id]
+                            var imagesIds = tvChannelsImagesIds.ContainsKey(tvChannel.TvChannelItem.Id)
+                                ? tvChannelsImagesIds[tvChannel.TvChannelItem.Id]
                                 : Array.Empty<int>();
 
                             pictureAlreadyExists = allPicturesHashes.Where(p => imagesIds.Contains(p.Key))
@@ -443,17 +443,17 @@ namespace TvProgViewer.Services.ExportImport
 
                         var newPicture = await _pictureService.InsertPictureAsync(newPictureBinary, mimeType, seoFileName);
 
-                        await _tvchannelService.InsertTvChannelPictureAsync(new TvChannelPicture
+                        await _tvChannelService.InsertTvChannelPictureAsync(new TvChannelPicture
                         {
                             //EF has some weird issue if we set "Picture = newPicture" instead of "PictureId = newPicture.Id"
                             //pictures are duplicated
                             //maybe because entity size is too large
                             PictureId = newPicture.Id,
                             DisplayOrder = 1,
-                            TvChannelId = tvchannel.TvChannelItem.Id
+                            TvChannelId = tvChannel.TvChannelItem.Id
                         });
 
-                        await _tvchannelService.UpdateTvChannelAsync(tvchannel.TvChannelItem);
+                        await _tvChannelService.UpdateTvChannelAsync(tvChannel.TvChannelItem);
                     }
                     catch (Exception ex)
                     {
@@ -749,9 +749,9 @@ namespace TvProgViewer.Services.ExportImport
             {
                 var aid = Convert.ToInt32(cellValue ?? -1);
 
-                var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(aid);
+                var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(aid);
 
-                if (tvchannelAttribute != null)
+                if (tvChannelAttribute != null)
                     worksheet.Row(endRow).OutlineLevel = 1;
             }
             catch (FormatException)
@@ -764,62 +764,62 @@ namespace TvProgViewer.Services.ExportImport
         /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task ImportTvChannelAttributeAsync(ImportTvChannelMetadata metadata, TvChannel lastLoadedTvChannel, IList<Language> languages, int iRow)
         {
-            var tvchannelAttributeManager = metadata.TvChannelAttributeManager;
-            if (!_catalogSettings.ExportImportTvChannelAttributes || lastLoadedTvChannel == null || tvchannelAttributeManager.IsCaption)
+            var tvChannelAttributeManager = metadata.TvChannelAttributeManager;
+            if (!_catalogSettings.ExportImportTvChannelAttributes || lastLoadedTvChannel == null || tvChannelAttributeManager.IsCaption)
                 return;
 
-            var tvchannelAttributeId = tvchannelAttributeManager.GetDefaultProperty("AttributeId").IntValue;
-            var attributeControlTypeId = tvchannelAttributeManager.GetDefaultProperty("AttributeControlType").IntValue;
+            var tvChannelAttributeId = tvChannelAttributeManager.GetDefaultProperty("AttributeId").IntValue;
+            var attributeControlTypeId = tvChannelAttributeManager.GetDefaultProperty("AttributeControlType").IntValue;
 
-            var tvchannelAttributeValueId = tvchannelAttributeManager.GetDefaultProperty("TvChannelAttributeValueId").IntValue;
-            var associatedTvChannelId = tvchannelAttributeManager.GetDefaultProperty("AssociatedTvChannelId").IntValue;
-            var valueName = tvchannelAttributeManager.GetDefaultProperty("ValueName").StringValue;
-            var attributeValueTypeId = tvchannelAttributeManager.GetDefaultProperty("AttributeValueType").IntValue;
-            var colorSquaresRgb = tvchannelAttributeManager.GetDefaultProperty("ColorSquaresRgb").StringValue;
-            var imageSquaresPictureId = tvchannelAttributeManager.GetDefaultProperty("ImageSquaresPictureId").IntValue;
-            var priceAdjustment = tvchannelAttributeManager.GetDefaultProperty("PriceAdjustment").DecimalValue;
-            var priceAdjustmentUsePercentage = tvchannelAttributeManager.GetDefaultProperty("PriceAdjustmentUsePercentage").BooleanValue;
-            var weightAdjustment = tvchannelAttributeManager.GetDefaultProperty("WeightAdjustment").DecimalValue;
-            var cost = tvchannelAttributeManager.GetDefaultProperty("Cost").DecimalValue;
-            var userEntersQty = tvchannelAttributeManager.GetDefaultProperty("UserEntersQty").BooleanValue;
-            var quantity = tvchannelAttributeManager.GetDefaultProperty("Quantity").IntValue;
-            var isPreSelected = tvchannelAttributeManager.GetDefaultProperty("IsPreSelected").BooleanValue;
-            var displayOrder = tvchannelAttributeManager.GetDefaultProperty("DisplayOrder").IntValue;
-            var pictureId = tvchannelAttributeManager.GetDefaultProperty("PictureId").IntValue;
-            var textPrompt = tvchannelAttributeManager.GetDefaultProperty("AttributeTextPrompt").StringValue;
-            var isRequired = tvchannelAttributeManager.GetDefaultProperty("AttributeIsRequired").BooleanValue;
-            var attributeDisplayOrder = tvchannelAttributeManager.GetDefaultProperty("AttributeDisplayOrder").IntValue;
+            var tvChannelAttributeValueId = tvChannelAttributeManager.GetDefaultProperty("TvChannelAttributeValueId").IntValue;
+            var associatedTvChannelId = tvChannelAttributeManager.GetDefaultProperty("AssociatedTvChannelId").IntValue;
+            var valueName = tvChannelAttributeManager.GetDefaultProperty("ValueName").StringValue;
+            var attributeValueTypeId = tvChannelAttributeManager.GetDefaultProperty("AttributeValueType").IntValue;
+            var colorSquaresRgb = tvChannelAttributeManager.GetDefaultProperty("ColorSquaresRgb").StringValue;
+            var imageSquaresPictureId = tvChannelAttributeManager.GetDefaultProperty("ImageSquaresPictureId").IntValue;
+            var priceAdjustment = tvChannelAttributeManager.GetDefaultProperty("PriceAdjustment").DecimalValue;
+            var priceAdjustmentUsePercentage = tvChannelAttributeManager.GetDefaultProperty("PriceAdjustmentUsePercentage").BooleanValue;
+            var weightAdjustment = tvChannelAttributeManager.GetDefaultProperty("WeightAdjustment").DecimalValue;
+            var cost = tvChannelAttributeManager.GetDefaultProperty("Cost").DecimalValue;
+            var userEntersQty = tvChannelAttributeManager.GetDefaultProperty("UserEntersQty").BooleanValue;
+            var quantity = tvChannelAttributeManager.GetDefaultProperty("Quantity").IntValue;
+            var isPreSelected = tvChannelAttributeManager.GetDefaultProperty("IsPreSelected").BooleanValue;
+            var displayOrder = tvChannelAttributeManager.GetDefaultProperty("DisplayOrder").IntValue;
+            var pictureId = tvChannelAttributeManager.GetDefaultProperty("PictureId").IntValue;
+            var textPrompt = tvChannelAttributeManager.GetDefaultProperty("AttributeTextPrompt").StringValue;
+            var isRequired = tvChannelAttributeManager.GetDefaultProperty("AttributeIsRequired").BooleanValue;
+            var attributeDisplayOrder = tvChannelAttributeManager.GetDefaultProperty("AttributeDisplayOrder").IntValue;
 
-            var tvchannelAttributeMapping = (await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(lastLoadedTvChannel.Id))
-                .FirstOrDefault(pam => pam.TvChannelAttributeId == tvchannelAttributeId);
+            var tvChannelAttributeMapping = (await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(lastLoadedTvChannel.Id))
+                .FirstOrDefault(pam => pam.TvChannelAttributeId == tvChannelAttributeId);
 
-            if (tvchannelAttributeMapping == null)
+            if (tvChannelAttributeMapping == null)
             {
                 //insert mapping
-                tvchannelAttributeMapping = new TvChannelAttributeMapping
+                tvChannelAttributeMapping = new TvChannelAttributeMapping
                 {
                     TvChannelId = lastLoadedTvChannel.Id,
-                    TvChannelAttributeId = tvchannelAttributeId,
+                    TvChannelAttributeId = tvChannelAttributeId,
                     TextPrompt = textPrompt,
                     IsRequired = isRequired,
                     AttributeControlTypeId = attributeControlTypeId,
                     DisplayOrder = attributeDisplayOrder
                 };
-                await _tvchannelAttributeService.InsertTvChannelAttributeMappingAsync(tvchannelAttributeMapping);
+                await _tvChannelAttributeService.InsertTvChannelAttributeMappingAsync(tvChannelAttributeMapping);
             }
             else
             {
-                tvchannelAttributeMapping.AttributeControlTypeId = attributeControlTypeId;
-                tvchannelAttributeMapping.TextPrompt = textPrompt;
-                tvchannelAttributeMapping.IsRequired = isRequired;
-                tvchannelAttributeMapping.DisplayOrder = attributeDisplayOrder;
-                await _tvchannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvchannelAttributeMapping);
+                tvChannelAttributeMapping.AttributeControlTypeId = attributeControlTypeId;
+                tvChannelAttributeMapping.TextPrompt = textPrompt;
+                tvChannelAttributeMapping.IsRequired = isRequired;
+                tvChannelAttributeMapping.DisplayOrder = attributeDisplayOrder;
+                await _tvChannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvChannelAttributeMapping);
             }
 
-            var pav = (await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(tvchannelAttributeMapping.Id))
-                .FirstOrDefault(p => p.Id == tvchannelAttributeValueId);
+            var pav = (await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(tvChannelAttributeMapping.Id))
+                .FirstOrDefault(p => p.Id == tvChannelAttributeValueId);
 
-            //var pav = await _tvchannelAttributeService.GetTvChannelAttributeValueByIdAsync(tvchannelAttributeValueId);
+            //var pav = await _tvChannelAttributeService.GetTvChannelAttributeValueByIdAsync(tvChannelAttributeValueId);
 
             var attributeControlType = (AttributeControlType)attributeControlTypeId;
 
@@ -831,15 +831,15 @@ namespace TvProgViewer.Services.ExportImport
                     case AttributeControlType.FileUpload:
                     case AttributeControlType.MultilineTextbox:
                     case AttributeControlType.TextBox:
-                        if (tvchannelAttributeMapping.ValidationRulesAllowed())
+                        if (tvChannelAttributeMapping.ValidationRulesAllowed())
                         {
-                            tvchannelAttributeMapping.ValidationMinLength = tvchannelAttributeManager.GetDefaultProperty("ValidationMinLength")?.IntValueNullable;
-                            tvchannelAttributeMapping.ValidationMaxLength = tvchannelAttributeManager.GetDefaultProperty("ValidationMaxLength")?.IntValueNullable;
-                            tvchannelAttributeMapping.ValidationFileMaximumSize = tvchannelAttributeManager.GetDefaultProperty("ValidationFileMaximumSize")?.IntValueNullable;
-                            tvchannelAttributeMapping.ValidationFileAllowedExtensions = tvchannelAttributeManager.GetDefaultProperty("ValidationFileAllowedExtensions")?.StringValue;
-                            tvchannelAttributeMapping.DefaultValue = tvchannelAttributeManager.GetDefaultProperty("DefaultValue")?.StringValue;
+                            tvChannelAttributeMapping.ValidationMinLength = tvChannelAttributeManager.GetDefaultProperty("ValidationMinLength")?.IntValueNullable;
+                            tvChannelAttributeMapping.ValidationMaxLength = tvChannelAttributeManager.GetDefaultProperty("ValidationMaxLength")?.IntValueNullable;
+                            tvChannelAttributeMapping.ValidationFileMaximumSize = tvChannelAttributeManager.GetDefaultProperty("ValidationFileMaximumSize")?.IntValueNullable;
+                            tvChannelAttributeMapping.ValidationFileAllowedExtensions = tvChannelAttributeManager.GetDefaultProperty("ValidationFileAllowedExtensions")?.StringValue;
+                            tvChannelAttributeMapping.DefaultValue = tvChannelAttributeManager.GetDefaultProperty("DefaultValue")?.StringValue;
 
-                            await _tvchannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvchannelAttributeMapping);
+                            await _tvChannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvChannelAttributeMapping);
                         }
 
                         return;
@@ -847,7 +847,7 @@ namespace TvProgViewer.Services.ExportImport
 
                 pav = new TvChannelAttributeValue
                 {
-                    TvChannelAttributeMappingId = tvchannelAttributeMapping.Id,
+                    TvChannelAttributeMappingId = tvChannelAttributeMapping.Id,
                     AttributeValueType = (AttributeValueType)attributeValueTypeId,
                     AssociatedTvChannelId = associatedTvChannelId,
                     Name = valueName,
@@ -864,7 +864,7 @@ namespace TvProgViewer.Services.ExportImport
                     PictureId = pictureId
                 };
 
-                await _tvchannelAttributeService.InsertTvChannelAttributeValueAsync(pav);
+                await _tvChannelAttributeService.InsertTvChannelAttributeValueAsync(pav);
             }
             else
             {
@@ -883,7 +883,7 @@ namespace TvProgViewer.Services.ExportImport
                 pav.DisplayOrder = displayOrder;
                 pav.PictureId = pictureId;
 
-                await _tvchannelAttributeService.UpdateTvChannelAttributeValueAsync(pav);
+                await _tvChannelAttributeService.UpdateTvChannelAttributeValueAsync(pav);
             }
 
             if (!metadata.LocalizedWorksheets.Any())
@@ -895,14 +895,14 @@ namespace TvProgViewer.Services.ExportImport
                 if (lWorksheet == null)
                     continue;
 
-                tvchannelAttributeManager.CurrentLanguage = language;
-                tvchannelAttributeManager.ReadLocalizedFromXlsx(lWorksheet, iRow, ExportTvChannelAttribute.TvChannelAttributeCellOffset);
+                tvChannelAttributeManager.CurrentLanguage = language;
+                tvChannelAttributeManager.ReadLocalizedFromXlsx(lWorksheet, iRow, ExportTvChannelAttribute.TvChannelAttributeCellOffset);
 
-                valueName = tvchannelAttributeManager.GetLocalizedProperty("ValueName").StringValue;
-                textPrompt = tvchannelAttributeManager.GetLocalizedProperty("AttributeTextPrompt").StringValue;
+                valueName = tvChannelAttributeManager.GetLocalizedProperty("ValueName").StringValue;
+                textPrompt = tvChannelAttributeManager.GetLocalizedProperty("AttributeTextPrompt").StringValue;
 
                 await _localizedEntityService.SaveLocalizedValueAsync(pav, p => p.Name, valueName, language.Id);
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannelAttributeMapping, p => p.TextPrompt, textPrompt, language.Id);
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannelAttributeMapping, p => p.TextPrompt, textPrompt, language.Id);
 
                 switch (attributeControlType)
                 {
@@ -910,10 +910,10 @@ namespace TvProgViewer.Services.ExportImport
                     case AttributeControlType.FileUpload:
                     case AttributeControlType.MultilineTextbox:
                     case AttributeControlType.TextBox:
-                        if (tvchannelAttributeMapping.ValidationRulesAllowed())
+                        if (tvChannelAttributeMapping.ValidationRulesAllowed())
                         {
-                            var defaultValue = tvchannelAttributeManager.GetLocalizedProperty("DefaultValue")?.StringValue;
-                            await _localizedEntityService.SaveLocalizedValueAsync(tvchannelAttributeMapping, p => p.DefaultValue, defaultValue, language.Id);
+                            var defaultValue = tvChannelAttributeManager.GetLocalizedProperty("DefaultValue")?.StringValue;
+                            await _localizedEntityService.SaveLocalizedValueAsync(tvChannelAttributeMapping, p => p.DefaultValue, defaultValue, language.Id);
                         }
 
                         return;
@@ -931,7 +931,7 @@ namespace TvProgViewer.Services.ExportImport
             var attributeTypeId = specificationAttributeManager.GetDefaultProperty("AttributeType").IntValue;
             var allowFiltering = specificationAttributeManager.GetDefaultProperty("AllowFiltering").BooleanValue;
             var specificationAttributeOptionId = specificationAttributeManager.GetDefaultProperty("SpecificationAttributeOptionId").IntValue;
-            var tvchannelId = lastLoadedTvChannel.Id;
+            var tvChannelId = lastLoadedTvChannel.Id;
             var customValue = specificationAttributeManager.GetDefaultProperty("CustomValue").StringValue;
             var displayOrder = specificationAttributeManager.GetDefaultProperty("DisplayOrder").IntValue;
             var showOnTvChannelPage = specificationAttributeManager.GetDefaultProperty("ShowOnTvChannelPage").BooleanValue;
@@ -946,14 +946,14 @@ namespace TvProgViewer.Services.ExportImport
                     .FirstOrDefault()?.Id ?? specificationAttributeOptionId;
             }
 
-            var tvchannelSpecificationAttribute = specificationAttributeOptionId == 0
+            var tvChannelSpecificationAttribute = specificationAttributeOptionId == 0
                 ? null
-                : (await _specificationAttributeService.GetTvChannelSpecificationAttributesAsync(tvchannelId, specificationAttributeOptionId)).FirstOrDefault();
+                : (await _specificationAttributeService.GetTvChannelSpecificationAttributesAsync(tvChannelId, specificationAttributeOptionId)).FirstOrDefault();
 
-            var isNew = tvchannelSpecificationAttribute == null;
+            var isNew = tvChannelSpecificationAttribute == null;
 
             if (isNew)
-                tvchannelSpecificationAttribute = new TvChannelSpecificationAttribute();
+                tvChannelSpecificationAttribute = new TvChannelSpecificationAttribute();
 
             if (attributeTypeId != (int)SpecificationAttributeType.Option)
                 //we allow filtering only for "Option" attribute type
@@ -963,18 +963,18 @@ namespace TvProgViewer.Services.ExportImport
             if (attributeTypeId == (int)SpecificationAttributeType.Option)
                 customValue = null;
 
-            tvchannelSpecificationAttribute.AttributeTypeId = attributeTypeId;
-            tvchannelSpecificationAttribute.SpecificationAttributeOptionId = specificationAttributeOptionId;
-            tvchannelSpecificationAttribute.TvChannelId = tvchannelId;
-            tvchannelSpecificationAttribute.CustomValue = customValue;
-            tvchannelSpecificationAttribute.AllowFiltering = allowFiltering;
-            tvchannelSpecificationAttribute.ShowOnTvChannelPage = showOnTvChannelPage;
-            tvchannelSpecificationAttribute.DisplayOrder = displayOrder;
+            tvChannelSpecificationAttribute.AttributeTypeId = attributeTypeId;
+            tvChannelSpecificationAttribute.SpecificationAttributeOptionId = specificationAttributeOptionId;
+            tvChannelSpecificationAttribute.TvChannelId = tvChannelId;
+            tvChannelSpecificationAttribute.CustomValue = customValue;
+            tvChannelSpecificationAttribute.AllowFiltering = allowFiltering;
+            tvChannelSpecificationAttribute.ShowOnTvChannelPage = showOnTvChannelPage;
+            tvChannelSpecificationAttribute.DisplayOrder = displayOrder;
 
             if (isNew)
-                await _specificationAttributeService.InsertTvChannelSpecificationAttributeAsync(tvchannelSpecificationAttribute);
+                await _specificationAttributeService.InsertTvChannelSpecificationAttributeAsync(tvChannelSpecificationAttribute);
             else
-                await _specificationAttributeService.UpdateTvChannelSpecificationAttributeAsync(tvchannelSpecificationAttribute);
+                await _specificationAttributeService.UpdateTvChannelSpecificationAttributeAsync(tvChannelSpecificationAttribute);
 
             if (!metadata.LocalizedWorksheets.Any())
                 return;
@@ -989,7 +989,7 @@ namespace TvProgViewer.Services.ExportImport
                 specificationAttributeManager.ReadLocalizedFromXlsx(lWorksheet, iRow, ExportTvChannelAttribute.TvChannelAttributeCellOffset);
 
                 customValue = specificationAttributeManager.GetLocalizedProperty("CustomValue").StringValue;
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannelSpecificationAttribute, p => p.CustomValue, customValue, language.Id);
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannelSpecificationAttribute, p => p.CustomValue, customValue, language.Id);
             }
         }
 
@@ -1043,7 +1043,7 @@ namespace TvProgViewer.Services.ExportImport
 
             var manager = new PropertyManager<TvChannel, Language>(defaultProperties, _catalogSettings, localizedProperties, languages);
 
-            var tvchannelAttributeProperties = new[]
+            var tvChannelAttributeProperties = new[]
             {
                 new PropertyByName<ExportTvChannelAttribute, Language>("AttributeId"),
                 new PropertyByName<ExportTvChannelAttribute, Language>("AttributeName"),
@@ -1073,14 +1073,14 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<ExportTvChannelAttribute, Language>("PictureId")
             };
 
-            var tvchannelAttributeLocalizedProperties = new[]
+            var tvChannelAttributeLocalizedProperties = new[]
             {
                 new PropertyByName<ExportTvChannelAttribute, Language>("DefaultValue"),
                 new PropertyByName<ExportTvChannelAttribute, Language>("AttributeTextPrompt"),
                 new PropertyByName<ExportTvChannelAttribute, Language>("ValueName")
             };
 
-            var tvchannelAttributeManager = new PropertyManager<ExportTvChannelAttribute, Language>(tvchannelAttributeProperties, _catalogSettings, tvchannelAttributeLocalizedProperties, languages);
+            var tvChannelAttributeManager = new PropertyManager<ExportTvChannelAttribute, Language>(tvChannelAttributeProperties, _catalogSettings, tvChannelAttributeLocalizedProperties, languages);
 
             var specificationAttributeProperties = new[]
             {
@@ -1120,8 +1120,8 @@ namespace TvProgViewer.Services.ExportImport
 
             if (_catalogSettings.ExportImportUseDropdownlistsForAssociatedEntities)
             {
-                tvchannelAttributeManager.SetSelectList("AttributeControlType", await AttributeControlType.TextBox.ToSelectListAsync(useLocalization: false));
-                tvchannelAttributeManager.SetSelectList("AttributeValueType", await AttributeValueType.Simple.ToSelectListAsync(useLocalization: false));
+                tvChannelAttributeManager.SetSelectList("AttributeControlType", await AttributeControlType.TextBox.ToSelectListAsync(useLocalization: false));
+                tvChannelAttributeManager.SetSelectList("AttributeValueType", await AttributeValueType.Simple.ToSelectListAsync(useLocalization: false));
 
                 specificationAttributeManager.SetSelectList("AttributeType", await SpecificationAttributeType.Option.ToSelectListAsync(useLocalization: false));
                 specificationAttributeManager.SetSelectList("SpecificationAttribute", (await _specificationAttributeService
@@ -1146,7 +1146,7 @@ namespace TvProgViewer.Services.ExportImport
                     (await _vendorService.GetAllVendorsAsync(showHidden: true)).Select(v => v as BaseEntity)
                         .ToSelectList(p => (p as Vendor)?.Name ?? string.Empty));
                 manager.SetSelectList("TvChannelTemplate",
-                    (await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync()).Select(pt => pt as BaseEntity)
+                    (await _tvChannelTemplateService.GetAllTvChannelTemplatesAsync()).Select(pt => pt as BaseEntity)
                         .ToSelectList(p => (p as TvChannelTemplate)?.Name ?? string.Empty));
                 manager.SetSelectList("DeliveryDate",
                     (await _dateRangeService.GetAllDeliveryDatesAsync()).Select(dd => dd as BaseEntity)
@@ -1173,7 +1173,7 @@ namespace TvProgViewer.Services.ExportImport
                 specificationAttributeManager.GetIndex("SpecificationAttributeOptionId") +
                 ExportTvChannelAttribute.TvChannelAttributeCellOffset;
 
-            var tvchannelsInFile = new List<int>();
+            var tvChannelsInFile = new List<int>();
 
             //find end of data
             var typeOfExportedAttribute = ExportedAttributeType.NotSpecified;
@@ -1197,7 +1197,7 @@ namespace TvProgViewer.Services.ExportImport
 
                 if (defaultWorksheet.Row(endRow).OutlineLevel != 0)
                 {
-                    var newTypeOfExportedAttribute = GetTypeOfExportedAttribute(defaultWorksheet, metadata.LocalizedWorksheets, tvchannelAttributeManager, specificationAttributeManager, endRow);
+                    var newTypeOfExportedAttribute = GetTypeOfExportedAttribute(defaultWorksheet, metadata.LocalizedWorksheets, tvChannelAttributeManager, specificationAttributeManager, endRow);
 
                     //skip caption row
                     if (newTypeOfExportedAttribute != ExportedAttributeType.NotSpecified && newTypeOfExportedAttribute != typeOfExportedAttribute)
@@ -1210,7 +1210,7 @@ namespace TvProgViewer.Services.ExportImport
                     switch (typeOfExportedAttribute)
                     {
                         case ExportedAttributeType.TvChannelAttribute:
-                            tvchannelAttributeManager.ReadDefaultFromXlsx(defaultWorksheet, endRow,
+                            tvChannelAttributeManager.ReadDefaultFromXlsx(defaultWorksheet, endRow,
                                 ExportTvChannelAttribute.TvChannelAttributeCellOffset);
                             if (int.TryParse((defaultWorksheet.Row(endRow).Cell(attributeIdCellNum).Value ?? string.Empty).ToString(), out var aid))
                             {
@@ -1269,8 +1269,8 @@ namespace TvProgViewer.Services.ExportImport
                             .Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()));
                 }
 
-                //counting the number of tvchannels
-                tvchannelsInFile.Add(endRow);
+                //counting the number of tvChannels
+                tvChannelsInFile.Add(endRow);
 
                 endRow++;
             }
@@ -1289,8 +1289,8 @@ namespace TvProgViewer.Services.ExportImport
                 throw new ArgumentException(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Import.ManufacturersDontExist"), string.Join(", ", notExistingManufacturers)));
             }
 
-            //performance optimization, the check for the existence of the tvchannel attributes in one SQL request
-            var notExistingTvChannelAttributes = await _tvchannelAttributeService.GetNotExistingAttributesAsync(allAttributeIds.ToArray());
+            //performance optimization, the check for the existence of the tvChannel attributes in one SQL request
+            var notExistingTvChannelAttributes = await _tvChannelAttributeService.GetNotExistingAttributesAsync(allAttributeIds.ToArray());
             if (notExistingTvChannelAttributes.Any())
             {
                 throw new ArgumentException(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Import.TvChannelAttributesDontExist"), string.Join(", ", notExistingTvChannelAttributes)));
@@ -1315,8 +1315,8 @@ namespace TvProgViewer.Services.ExportImport
                 EndRow = endRow,
                 Manager = manager,
                 Properties = defaultProperties,
-                TvChannelsInFile = tvchannelsInFile,
-                TvChannelAttributeManager = tvchannelAttributeManager,
+                TvChannelsInFile = tvChannelsInFile,
+                TvChannelAttributeManager = tvChannelAttributeManager,
                 DefaultWorksheet = defaultWorksheet,
                 LocalizedWorksheets = metadata.LocalizedWorksheets,
                 SpecificationAttributeManager = specificationAttributeManager,
@@ -1479,7 +1479,7 @@ namespace TvProgViewer.Services.ExportImport
             }
 
             //performance optimization, the check for the existence of the order items in one SQL request
-            var notExistingTvChannelSkus = await _tvchannelService.GetNotExistingTvChannelsAsync(allOrderItemSkus.ToArray());
+            var notExistingTvChannelSkus = await _tvChannelService.GetNotExistingTvChannelsAsync(allOrderItemSkus.ToArray());
             if (notExistingTvChannelSkus.Any())
             {
                 throw new ArgumentException(string.Format(await _localizationService.GetResourceAsync("Admin.Orders.Import.TvChannelsDontExist"), string.Join(", ", notExistingTvChannelSkus)));
@@ -1513,7 +1513,7 @@ namespace TvProgViewer.Services.ExportImport
             var totalExclTax = orderItemManager.GetDefaultProperty("TotalExclTax").DecimalValue;
             var totalInclTax = orderItemManager.GetDefaultProperty("TotalInclTax").DecimalValue;
 
-            var orderItemTvChannel = await _tvchannelService.GetTvChannelBySkuAsync(sku);
+            var orderItemTvChannel = await _tvChannelService.GetTvChannelBySkuAsync(sku);
             var orderItem = (await _orderService.GetOrderItemsAsync(lastLoadedOrder.Id)).FirstOrDefault(f => f.OrderItemGuid == orderItemGuid);
 
             if (orderItem == null)
@@ -1551,7 +1551,7 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected async Task ImportTvChannelLocalizedAsync(TvChannel tvchannel, ImportTvChannelMetadata metadata, int iRow, IList<Language> languages)
+        protected async Task ImportTvChannelLocalizedAsync(TvChannel tvChannel, ImportTvChannelMetadata metadata, int iRow, IList<Language> languages)
         {
             if (metadata.LocalizedWorksheets.Any())
             {
@@ -1573,27 +1573,27 @@ namespace TvProgViewer.Services.ExportImport
                         {
                             case "Name":
                                 localizedName = property.StringValue;
-                                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel, p => p.Name, localizedName, language.Id);
+                                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.Name, localizedName, language.Id);
                                 break;
                             case "ShortDescription":
-                                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel, p => p.ShortDescription, property.StringValue, language.Id);
+                                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.ShortDescription, property.StringValue, language.Id);
                                 break;
                             case "FullDescription":
-                                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel, p => p.FullDescription, property.StringValue, language.Id);
+                                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.FullDescription, property.StringValue, language.Id);
                                 break;
                             case "MetaKeywords":
-                                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel, p => p.MetaKeywords, property.StringValue, language.Id);
+                                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.MetaKeywords, property.StringValue, language.Id);
                                 break;
                             case "MetaDescription":
-                                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel, p => p.MetaDescription, property.StringValue, language.Id);
+                                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.MetaDescription, property.StringValue, language.Id);
                                 break;
                             case "MetaTitle":
-                                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel, p => p.MetaTitle, property.StringValue, language.Id);
+                                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.MetaTitle, property.StringValue, language.Id);
                                 break;
                             case "SeName":
                                 //search engine name
-                                var localizedSeName = await _urlRecordService.ValidateSeNameAsync(tvchannel, property.StringValue, localizedName, false);
-                                await _urlRecordService.SaveSlugAsync(tvchannel, localizedSeName, language.Id);
+                                var localizedSeName = await _urlRecordService.ValidateSeNameAsync(tvChannel, property.StringValue, localizedName, false);
+                                await _urlRecordService.SaveSlugAsync(tvChannel, localizedSeName, language.Id);
                                 break;
                         }
                     }
@@ -1681,7 +1681,7 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <summary>
-        /// Import tvchannels from XLSX file
+        /// Import tvChannels from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
@@ -1701,20 +1701,20 @@ namespace TvProgViewer.Services.ExportImport
                 return;
             }
 
-            //performance optimization, load all tvchannels by SKU in one SQL request
+            //performance optimization, load all tvChannels by SKU in one SQL request
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            var allTvChannelsBySku = await _tvchannelService.GetTvChannelsBySkuAsync(metadata.AllSku.ToArray(), currentVendor?.Id ?? 0);
+            var allTvChannelsBySku = await _tvChannelService.GetTvChannelsBySkuAsync(metadata.AllSku.ToArray(), currentVendor?.Id ?? 0);
 
-            //validate maximum number of tvchannels per vendor
+            //validate maximum number of tvChannels per vendor
             if (_vendorSettings.MaximumTvChannelNumber > 0 &&
                 currentVendor != null)
             {
                 var newTvChannelsCount = metadata.CountTvChannelsInFile - allTvChannelsBySku.Count;
-                if (await _tvchannelService.GetNumberOfTvChannelsByVendorIdAsync(currentVendor.Id) + newTvChannelsCount > _vendorSettings.MaximumTvChannelNumber)
+                if (await _tvChannelService.GetNumberOfTvChannelsByVendorIdAsync(currentVendor.Id) + newTvChannelsCount > _vendorSettings.MaximumTvChannelNumber)
                     throw new ArgumentException(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.ExceededMaximumNumber"), _vendorSettings.MaximumTvChannelNumber));
             }
 
-            //performance optimization, load all categories IDs for tvchannels in one SQL request
+            //performance optimization, load all categories IDs for tvChannels in one SQL request
             var allTvChannelsCategoryIds = await _categoryService.GetTvChannelCategoryIdsAsync(allTvChannelsBySku.Select(p => p.Id).ToArray());
 
             //performance optimization, load all categories in one SQL request
@@ -1732,7 +1732,7 @@ namespace TvProgViewer.Services.ExportImport
                 throw new ArgumentException(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Import.CategoriesWithSameNameNotSupported"));
             }
 
-            //performance optimization, load all manufacturers IDs for tvchannels in one SQL request
+            //performance optimization, load all manufacturers IDs for tvChannels in one SQL request
             var allTvChannelsManufacturerIds = await _manufacturerService.GetTvChannelManufacturerIdsAsync(allTvChannelsBySku.Select(p => p.Id).ToArray());
 
             //performance optimization, load all manufacturers in one SQL request
@@ -1741,8 +1741,8 @@ namespace TvProgViewer.Services.ExportImport
             //performance optimization, load all stores in one SQL request
             var allStores = await _storeService.GetAllStoresAsync();
 
-            //tvchannel to import images
-            var tvchannelPictureMetadata = new List<TvChannelPictureMetadata>();
+            //tvChannel to import images
+            var tvChannelPictureMetadata = new List<TvChannelPictureMetadata>();
 
             TvChannel lastLoadedTvChannel = null;
             var typeOfExportedAttribute = ExportedAttributeType.NotSpecified;
@@ -1782,324 +1782,324 @@ namespace TvProgViewer.Services.ExportImport
 
                 metadata.Manager.ReadDefaultFromXlsx(defaultWorksheet, iRow);
 
-                var tvchannel = metadata.SkuCellNum > 0 ? allTvChannelsBySku.FirstOrDefault(p => p.Sku == metadata.Manager.GetDefaultProperty("SKU").StringValue) : null;
+                var tvChannel = metadata.SkuCellNum > 0 ? allTvChannelsBySku.FirstOrDefault(p => p.Sku == metadata.Manager.GetDefaultProperty("SKU").StringValue) : null;
 
-                var isNew = tvchannel == null;
+                var isNew = tvChannel == null;
 
-                tvchannel ??= new TvChannel();
+                tvChannel ??= new TvChannel();
 
                 //some of previous values
-                var previousStockQuantity = tvchannel.StockQuantity;
-                var previousWarehouseId = tvchannel.WarehouseId;
-                var prevTotalStockQuantity = await _tvchannelService.GetTotalStockQuantityAsync(tvchannel);
+                var previousStockQuantity = tvChannel.StockQuantity;
+                var previousWarehouseId = tvChannel.WarehouseId;
+                var prevTotalStockQuantity = await _tvChannelService.GetTotalStockQuantityAsync(tvChannel);
 
                 if (isNew)
-                    tvchannel.CreatedOnUtc = DateTime.UtcNow;
+                    tvChannel.CreatedOnUtc = DateTime.UtcNow;
 
                 foreach (var property in metadata.Manager.GetDefaultProperties)
                 {
                     switch (property.PropertyName)
                     {
                         case "TvChannelType":
-                            tvchannel.TvChannelTypeId = property.IntValue;
+                            tvChannel.TvChannelTypeId = property.IntValue;
                             break;
                         case "ParentGroupedTvChannelId":
-                            tvchannel.ParentGroupedTvChannelId = property.IntValue;
+                            tvChannel.ParentGroupedTvChannelId = property.IntValue;
                             break;
                         case "VisibleIndividually":
-                            tvchannel.VisibleIndividually = property.BooleanValue;
+                            tvChannel.VisibleIndividually = property.BooleanValue;
                             break;
                         case "Name":
-                            tvchannel.Name = property.StringValue;
+                            tvChannel.Name = property.StringValue;
                             break;
                         case "ShortDescription":
-                            tvchannel.ShortDescription = property.StringValue;
+                            tvChannel.ShortDescription = property.StringValue;
                             break;
                         case "FullDescription":
-                            tvchannel.FullDescription = property.StringValue;
+                            tvChannel.FullDescription = property.StringValue;
                             break;
                         case "Vendor":
                             //vendor can't change this field
                             if (currentVendor == null)
-                                tvchannel.VendorId = property.IntValue;
+                                tvChannel.VendorId = property.IntValue;
                             break;
                         case "TvChannelTemplate":
-                            tvchannel.TvChannelTemplateId = property.IntValue;
+                            tvChannel.TvChannelTemplateId = property.IntValue;
                             break;
                         case "ShowOnHomepage":
                             //vendor can't change this field
                             if (currentVendor == null)
-                                tvchannel.ShowOnHomepage = property.BooleanValue;
+                                tvChannel.ShowOnHomepage = property.BooleanValue;
                             break;
                         case "DisplayOrder":
                             //vendor can't change this field
                             if (currentVendor == null)
-                                tvchannel.DisplayOrder = property.IntValue;
+                                tvChannel.DisplayOrder = property.IntValue;
                             break;
                         case "MetaKeywords":
-                            tvchannel.MetaKeywords = property.StringValue;
+                            tvChannel.MetaKeywords = property.StringValue;
                             break;
                         case "MetaDescription":
-                            tvchannel.MetaDescription = property.StringValue;
+                            tvChannel.MetaDescription = property.StringValue;
                             break;
                         case "MetaTitle":
-                            tvchannel.MetaTitle = property.StringValue;
+                            tvChannel.MetaTitle = property.StringValue;
                             break;
                         case "AllowUserReviews":
-                            tvchannel.AllowUserReviews = property.BooleanValue;
+                            tvChannel.AllowUserReviews = property.BooleanValue;
                             break;
                         case "Published":
-                            tvchannel.Published = property.BooleanValue;
+                            tvChannel.Published = property.BooleanValue;
                             break;
                         case "SKU":
-                            tvchannel.Sku = property.StringValue;
+                            tvChannel.Sku = property.StringValue;
                             break;
                         case "ManufacturerPartNumber":
-                            tvchannel.ManufacturerPartNumber = property.StringValue;
+                            tvChannel.ManufacturerPartNumber = property.StringValue;
                             break;
                         case "Gtin":
-                            tvchannel.Gtin = property.StringValue;
+                            tvChannel.Gtin = property.StringValue;
                             break;
                         case "IsGiftCard":
-                            tvchannel.IsGiftCard = property.BooleanValue;
+                            tvChannel.IsGiftCard = property.BooleanValue;
                             break;
                         case "GiftCardType":
-                            tvchannel.GiftCardTypeId = property.IntValue;
+                            tvChannel.GiftCardTypeId = property.IntValue;
                             break;
                         case "OverriddenGiftCardAmount":
-                            tvchannel.OverriddenGiftCardAmount = property.DecimalValue;
+                            tvChannel.OverriddenGiftCardAmount = property.DecimalValue;
                             break;
                         case "RequireOtherTvChannels":
-                            tvchannel.RequireOtherTvChannels = property.BooleanValue;
+                            tvChannel.RequireOtherTvChannels = property.BooleanValue;
                             break;
                         case "RequiredTvChannelIds":
-                            tvchannel.RequiredTvChannelIds = property.StringValue;
+                            tvChannel.RequiredTvChannelIds = property.StringValue;
                             break;
                         case "AutomaticallyAddRequiredTvChannels":
-                            tvchannel.AutomaticallyAddRequiredTvChannels = property.BooleanValue;
+                            tvChannel.AutomaticallyAddRequiredTvChannels = property.BooleanValue;
                             break;
                         case "IsDownload":
-                            tvchannel.IsDownload = property.BooleanValue;
+                            tvChannel.IsDownload = property.BooleanValue;
                             break;
                         case "DownloadId":
-                            tvchannel.DownloadId = property.IntValue;
+                            tvChannel.DownloadId = property.IntValue;
                             break;
                         case "UnlimitedDownloads":
-                            tvchannel.UnlimitedDownloads = property.BooleanValue;
+                            tvChannel.UnlimitedDownloads = property.BooleanValue;
                             break;
                         case "MaxNumberOfDownloads":
-                            tvchannel.MaxNumberOfDownloads = property.IntValue;
+                            tvChannel.MaxNumberOfDownloads = property.IntValue;
                             break;
                         case "DownloadActivationType":
-                            tvchannel.DownloadActivationTypeId = property.IntValue;
+                            tvChannel.DownloadActivationTypeId = property.IntValue;
                             break;
                         case "HasSampleDownload":
-                            tvchannel.HasSampleDownload = property.BooleanValue;
+                            tvChannel.HasSampleDownload = property.BooleanValue;
                             break;
                         case "SampleDownloadId":
-                            tvchannel.SampleDownloadId = property.IntValue;
+                            tvChannel.SampleDownloadId = property.IntValue;
                             break;
                         case "HasUserAgreement":
-                            tvchannel.HasUserAgreement = property.BooleanValue;
+                            tvChannel.HasUserAgreement = property.BooleanValue;
                             break;
                         case "UserAgreementText":
-                            tvchannel.UserAgreementText = property.StringValue;
+                            tvChannel.UserAgreementText = property.StringValue;
                             break;
                         case "IsRecurring":
-                            tvchannel.IsRecurring = property.BooleanValue;
+                            tvChannel.IsRecurring = property.BooleanValue;
                             break;
                         case "RecurringCycleLength":
-                            tvchannel.RecurringCycleLength = property.IntValue;
+                            tvChannel.RecurringCycleLength = property.IntValue;
                             break;
                         case "RecurringCyclePeriod":
-                            tvchannel.RecurringCyclePeriodId = property.IntValue;
+                            tvChannel.RecurringCyclePeriodId = property.IntValue;
                             break;
                         case "RecurringTotalCycles":
-                            tvchannel.RecurringTotalCycles = property.IntValue;
+                            tvChannel.RecurringTotalCycles = property.IntValue;
                             break;
                         case "IsRental":
-                            tvchannel.IsRental = property.BooleanValue;
+                            tvChannel.IsRental = property.BooleanValue;
                             break;
                         case "RentalPriceLength":
-                            tvchannel.RentalPriceLength = property.IntValue;
+                            tvChannel.RentalPriceLength = property.IntValue;
                             break;
                         case "RentalPricePeriod":
-                            tvchannel.RentalPricePeriodId = property.IntValue;
+                            tvChannel.RentalPricePeriodId = property.IntValue;
                             break;
                         case "IsShipEnabled":
-                            tvchannel.IsShipEnabled = property.BooleanValue;
+                            tvChannel.IsShipEnabled = property.BooleanValue;
                             break;
                         case "IsFreeShipping":
-                            tvchannel.IsFreeShipping = property.BooleanValue;
+                            tvChannel.IsFreeShipping = property.BooleanValue;
                             break;
                         case "ShipSeparately":
-                            tvchannel.ShipSeparately = property.BooleanValue;
+                            tvChannel.ShipSeparately = property.BooleanValue;
                             break;
                         case "AdditionalShippingCharge":
-                            tvchannel.AdditionalShippingCharge = property.DecimalValue;
+                            tvChannel.AdditionalShippingCharge = property.DecimalValue;
                             break;
                         case "DeliveryDate":
-                            tvchannel.DeliveryDateId = property.IntValue;
+                            tvChannel.DeliveryDateId = property.IntValue;
                             break;
                         case "IsTaxExempt":
-                            tvchannel.IsTaxExempt = property.BooleanValue;
+                            tvChannel.IsTaxExempt = property.BooleanValue;
                             break;
                         case "TaxCategory":
-                            tvchannel.TaxCategoryId = property.IntValue;
+                            tvChannel.TaxCategoryId = property.IntValue;
                             break;
                         case "IsTelecommunicationsOrBroadcastingOrElectronicServices":
-                            tvchannel.IsTelecommunicationsOrBroadcastingOrElectronicServices = property.BooleanValue;
+                            tvChannel.IsTelecommunicationsOrBroadcastingOrElectronicServices = property.BooleanValue;
                             break;
                         case "ManageInventoryMethod":
-                            tvchannel.ManageInventoryMethodId = property.IntValue;
+                            tvChannel.ManageInventoryMethodId = property.IntValue;
                             break;
                         case "TvChannelAvailabilityRange":
-                            tvchannel.TvChannelAvailabilityRangeId = property.IntValue;
+                            tvChannel.TvChannelAvailabilityRangeId = property.IntValue;
                             break;
                         case "UseMultipleWarehouses":
-                            tvchannel.UseMultipleWarehouses = property.BooleanValue;
+                            tvChannel.UseMultipleWarehouses = property.BooleanValue;
                             break;
                         case "WarehouseId":
-                            tvchannel.WarehouseId = property.IntValue;
+                            tvChannel.WarehouseId = property.IntValue;
                             break;
                         case "StockQuantity":
-                            tvchannel.StockQuantity = property.IntValue;
+                            tvChannel.StockQuantity = property.IntValue;
                             break;
                         case "DisplayStockAvailability":
-                            tvchannel.DisplayStockAvailability = property.BooleanValue;
+                            tvChannel.DisplayStockAvailability = property.BooleanValue;
                             break;
                         case "DisplayStockQuantity":
-                            tvchannel.DisplayStockQuantity = property.BooleanValue;
+                            tvChannel.DisplayStockQuantity = property.BooleanValue;
                             break;
                         case "MinStockQuantity":
-                            tvchannel.MinStockQuantity = property.IntValue;
+                            tvChannel.MinStockQuantity = property.IntValue;
                             break;
                         case "LowStockActivity":
-                            tvchannel.LowStockActivityId = property.IntValue;
+                            tvChannel.LowStockActivityId = property.IntValue;
                             break;
                         case "NotifyAdminForQuantityBelow":
-                            tvchannel.NotifyAdminForQuantityBelow = property.IntValue;
+                            tvChannel.NotifyAdminForQuantityBelow = property.IntValue;
                             break;
                         case "BackorderMode":
-                            tvchannel.BackorderModeId = property.IntValue;
+                            tvChannel.BackorderModeId = property.IntValue;
                             break;
                         case "AllowBackInStockSubscriptions":
-                            tvchannel.AllowBackInStockSubscriptions = property.BooleanValue;
+                            tvChannel.AllowBackInStockSubscriptions = property.BooleanValue;
                             break;
                         case "OrderMinimumQuantity":
-                            tvchannel.OrderMinimumQuantity = property.IntValue;
+                            tvChannel.OrderMinimumQuantity = property.IntValue;
                             break;
                         case "OrderMaximumQuantity":
-                            tvchannel.OrderMaximumQuantity = property.IntValue;
+                            tvChannel.OrderMaximumQuantity = property.IntValue;
                             break;
                         case "AllowedQuantities":
-                            tvchannel.AllowedQuantities = property.StringValue;
+                            tvChannel.AllowedQuantities = property.StringValue;
                             break;
                         case "AllowAddingOnlyExistingAttributeCombinations":
-                            tvchannel.AllowAddingOnlyExistingAttributeCombinations = property.BooleanValue;
+                            tvChannel.AllowAddingOnlyExistingAttributeCombinations = property.BooleanValue;
                             break;
                         case "NotReturnable":
-                            tvchannel.NotReturnable = property.BooleanValue;
+                            tvChannel.NotReturnable = property.BooleanValue;
                             break;
                         case "DisableBuyButton":
-                            tvchannel.DisableBuyButton = property.BooleanValue;
+                            tvChannel.DisableBuyButton = property.BooleanValue;
                             break;
                         case "DisableWishlistButton":
-                            tvchannel.DisableWishlistButton = property.BooleanValue;
+                            tvChannel.DisableWishlistButton = property.BooleanValue;
                             break;
                         case "AvailableForPreOrder":
-                            tvchannel.AvailableForPreOrder = property.BooleanValue;
+                            tvChannel.AvailableForPreOrder = property.BooleanValue;
                             break;
                         case "PreOrderAvailabilityStartDateTimeUtc":
-                            tvchannel.PreOrderAvailabilityStartDateTimeUtc = property.DateTimeNullable;
+                            tvChannel.PreOrderAvailabilityStartDateTimeUtc = property.DateTimeNullable;
                             break;
                         case "CallForPrice":
-                            tvchannel.CallForPrice = property.BooleanValue;
+                            tvChannel.CallForPrice = property.BooleanValue;
                             break;
                         case "Price":
-                            tvchannel.Price = property.DecimalValue;
+                            tvChannel.Price = property.DecimalValue;
                             break;
                         case "OldPrice":
-                            tvchannel.OldPrice = property.DecimalValue;
+                            tvChannel.OldPrice = property.DecimalValue;
                             break;
                         case "TvChannelCost":
-                            tvchannel.TvChannelCost = property.DecimalValue;
+                            tvChannel.TvChannelCost = property.DecimalValue;
                             break;
                         case "UserEntersPrice":
-                            tvchannel.UserEntersPrice = property.BooleanValue;
+                            tvChannel.UserEntersPrice = property.BooleanValue;
                             break;
                         case "MinimumUserEnteredPrice":
-                            tvchannel.MinimumUserEnteredPrice = property.DecimalValue;
+                            tvChannel.MinimumUserEnteredPrice = property.DecimalValue;
                             break;
                         case "MaximumUserEnteredPrice":
-                            tvchannel.MaximumUserEnteredPrice = property.DecimalValue;
+                            tvChannel.MaximumUserEnteredPrice = property.DecimalValue;
                             break;
                         case "BasepriceEnabled":
-                            tvchannel.BasepriceEnabled = property.BooleanValue;
+                            tvChannel.BasepriceEnabled = property.BooleanValue;
                             break;
                         case "BasepriceAmount":
-                            tvchannel.BasepriceAmount = property.DecimalValue;
+                            tvChannel.BasepriceAmount = property.DecimalValue;
                             break;
                         case "BasepriceUnit":
-                            tvchannel.BasepriceUnitId = property.IntValue;
+                            tvChannel.BasepriceUnitId = property.IntValue;
                             break;
                         case "BasepriceBaseAmount":
-                            tvchannel.BasepriceBaseAmount = property.DecimalValue;
+                            tvChannel.BasepriceBaseAmount = property.DecimalValue;
                             break;
                         case "BasepriceBaseUnit":
-                            tvchannel.BasepriceBaseUnitId = property.IntValue;
+                            tvChannel.BasepriceBaseUnitId = property.IntValue;
                             break;
                         case "MarkAsNew":
-                            tvchannel.MarkAsNew = property.BooleanValue;
+                            tvChannel.MarkAsNew = property.BooleanValue;
                             break;
                         case "MarkAsNewStartDateTimeUtc":
-                            tvchannel.MarkAsNewStartDateTimeUtc = property.DateTimeNullable;
+                            tvChannel.MarkAsNewStartDateTimeUtc = property.DateTimeNullable;
                             break;
                         case "MarkAsNewEndDateTimeUtc":
-                            tvchannel.MarkAsNewEndDateTimeUtc = property.DateTimeNullable;
+                            tvChannel.MarkAsNewEndDateTimeUtc = property.DateTimeNullable;
                             break;
                         case "Weight":
-                            tvchannel.Weight = property.DecimalValue;
+                            tvChannel.Weight = property.DecimalValue;
                             break;
                         case "Length":
-                            tvchannel.Length = property.DecimalValue;
+                            tvChannel.Length = property.DecimalValue;
                             break;
                         case "Width":
-                            tvchannel.Width = property.DecimalValue;
+                            tvChannel.Width = property.DecimalValue;
                             break;
                         case "Height":
-                            tvchannel.Height = property.DecimalValue;
+                            tvChannel.Height = property.DecimalValue;
                             break;
                         case "IsLimitedToStores":
-                            tvchannel.LimitedToStores = property.BooleanValue;
+                            tvChannel.LimitedToStores = property.BooleanValue;
                             break;
                     }
                 }
 
                 //set some default values if not specified
                 if (isNew && metadata.Properties.All(p => p.PropertyName != "TvChannelType"))
-                    tvchannel.TvChannelType = TvChannelType.SimpleTvChannel;
+                    tvChannel.TvChannelType = TvChannelType.SimpleTvChannel;
                 if (isNew && metadata.Properties.All(p => p.PropertyName != "VisibleIndividually"))
-                    tvchannel.VisibleIndividually = true;
+                    tvChannel.VisibleIndividually = true;
                 if (isNew && metadata.Properties.All(p => p.PropertyName != "Published"))
-                    tvchannel.Published = true;
+                    tvChannel.Published = true;
 
-                //sets the current vendor for the new tvchannel
+                //sets the current vendor for the new tvChannel
                 if (isNew && currentVendor != null)
-                    tvchannel.VendorId = currentVendor.Id;
+                    tvChannel.VendorId = currentVendor.Id;
 
-                tvchannel.UpdatedOnUtc = DateTime.UtcNow;
+                tvChannel.UpdatedOnUtc = DateTime.UtcNow;
 
                 if (isNew)
-                    await _tvchannelService.InsertTvChannelAsync(tvchannel);
+                    await _tvChannelService.InsertTvChannelAsync(tvChannel);
                 else
-                    await _tvchannelService.UpdateTvChannelAsync(tvchannel);
+                    await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
                 //quantity change history
-                if (isNew || previousWarehouseId == tvchannel.WarehouseId)
+                if (isNew || previousWarehouseId == tvChannel.WarehouseId)
                 {
-                    await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, tvchannel.StockQuantity - previousStockQuantity, tvchannel.StockQuantity,
-                        tvchannel.WarehouseId, await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.ImportTvChannel.Edit"));
+                    await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, tvChannel.StockQuantity - previousStockQuantity, tvChannel.StockQuantity,
+                        tvChannel.WarehouseId, await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.ImportTvChannel.Edit"));
                 }
                 //warehouse is changed 
                 else
@@ -2114,9 +2114,9 @@ namespace TvProgViewer.Services.ExportImport
                     }
 
                     var newWarehouseMessage = string.Empty;
-                    if (tvchannel.WarehouseId > 0)
+                    if (tvChannel.WarehouseId > 0)
                     {
-                        var newWarehouse = await _shippingService.GetWarehouseByIdAsync(tvchannel.WarehouseId);
+                        var newWarehouse = await _shippingService.GetWarehouseByIdAsync(tvChannel.WarehouseId);
                         if (newWarehouse != null)
                             newWarehouseMessage = string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.EditWarehouse.New"), newWarehouse.Name);
                     }
@@ -2124,30 +2124,30 @@ namespace TvProgViewer.Services.ExportImport
                     var message = string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.ImportTvChannel.EditWarehouse"), oldWarehouseMessage, newWarehouseMessage);
 
                     //record history
-                    await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, -previousStockQuantity, 0, previousWarehouseId, message);
-                    await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, tvchannel.StockQuantity, tvchannel.StockQuantity, tvchannel.WarehouseId, message);
+                    await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, -previousStockQuantity, 0, previousWarehouseId, message);
+                    await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, tvChannel.StockQuantity, tvChannel.StockQuantity, tvChannel.WarehouseId, message);
                 }
 
                 if (!isNew &&
-                    tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
-                    tvchannel.BackorderMode == BackorderMode.NoBackorders &&
-                    tvchannel.AllowBackInStockSubscriptions &&
-                    await _tvchannelService.GetTotalStockQuantityAsync(tvchannel) > 0 &&
+                    tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                    tvChannel.BackorderMode == BackorderMode.NoBackorders &&
+                    tvChannel.AllowBackInStockSubscriptions &&
+                    await _tvChannelService.GetTotalStockQuantityAsync(tvChannel) > 0 &&
                     prevTotalStockQuantity <= 0 &&
-                    tvchannel.Published &&
-                    !tvchannel.Deleted)
+                    tvChannel.Published &&
+                    !tvChannel.Deleted)
                 {
-                    await _backInStockSubscriptionService.SendNotificationsToSubscribersAsync(tvchannel);
+                    await _backInStockSubscriptionService.SendNotificationsToSubscribersAsync(tvChannel);
                 }
 
                 var tempProperty = metadata.Manager.GetDefaultProperty("SeName");
 
                 //search engine name
-                var seName = tempProperty?.StringValue ?? (isNew ? string.Empty : await _urlRecordService.GetSeNameAsync(tvchannel, 0));
-                await _urlRecordService.SaveSlugAsync(tvchannel, await _urlRecordService.ValidateSeNameAsync(tvchannel, seName, tvchannel.Name, true), 0);
+                var seName = tempProperty?.StringValue ?? (isNew ? string.Empty : await _urlRecordService.GetSeNameAsync(tvChannel, 0));
+                await _urlRecordService.SaveSlugAsync(tvChannel, await _urlRecordService.ValidateSeNameAsync(tvChannel, seName, tvChannel.Name, true), 0);
 
-                //save tvchannel localized data
-                await ImportTvChannelLocalizedAsync(tvchannel, metadata, iRow, languages);
+                //save tvChannel localized data
+                await ImportTvChannelLocalizedAsync(tvChannel, metadata, iRow, languages);
 
                 tempProperty = metadata.Manager.GetDefaultProperty("Categories");
 
@@ -2156,10 +2156,10 @@ namespace TvProgViewer.Services.ExportImport
                     var categoryList = tempProperty.StringValue;
 
                     //category mappings
-                    var categories = isNew || !allTvChannelsCategoryIds.ContainsKey(tvchannel.Id) ? Array.Empty<int>() : allTvChannelsCategoryIds[tvchannel.Id];
+                    var categories = isNew || !allTvChannelsCategoryIds.ContainsKey(tvChannel.Id) ? Array.Empty<int>() : allTvChannelsCategoryIds[tvChannel.Id];
 
-                    var storesIds = tvchannel.LimitedToStores
-                        ? (await _storeMappingService.GetStoresIdsWithAccessAsync(tvchannel)).ToList()
+                    var storesIds = tvChannel.LimitedToStores
+                        ? (await _storeMappingService.GetStoresIdsWithAccessAsync(tvChannel)).ToList()
                         : new List<int>();
 
                     var importedCategories = await categoryList.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
@@ -2186,19 +2186,19 @@ namespace TvProgViewer.Services.ExportImport
                         if (categories.Any(c => c == categoryId))
                             continue;
 
-                        var tvchannelCategory = new TvChannelCategory
+                        var tvChannelCategory = new TvChannelCategory
                         {
-                            TvChannelId = tvchannel.Id,
+                            TvChannelId = tvChannel.Id,
                             CategoryId = categoryId,
                             IsFeaturedTvChannel = false,
                             DisplayOrder = 1
                         };
-                        await _categoryService.InsertTvChannelCategoryAsync(tvchannelCategory);
+                        await _categoryService.InsertTvChannelCategoryAsync(tvChannelCategory);
                     }
 
-                    //delete tvchannel categories
+                    //delete tvChannel categories
                     var deletedTvChannelCategories = await categories.Where(categoryId => !importedCategories.Contains(categoryId))
-                        .SelectAwait(async categoryId => (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvchannel.Id, true)).FirstOrDefault(pc => pc.CategoryId == categoryId)).Where(pc => pc != null).ToListAsync();
+                        .SelectAwait(async categoryId => (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel.Id, true)).FirstOrDefault(pc => pc.CategoryId == categoryId)).Where(pc => pc != null).ToListAsync();
 
                     foreach (var deletedTvChannelCategory in deletedTvChannelCategories)
                         await _categoryService.DeleteTvChannelCategoryAsync(deletedTvChannelCategory);
@@ -2210,7 +2210,7 @@ namespace TvProgViewer.Services.ExportImport
                     var manufacturerList = tempProperty.StringValue;
 
                     //manufacturer mappings
-                    var manufacturers = isNew || !allTvChannelsManufacturerIds.ContainsKey(tvchannel.Id) ? Array.Empty<int>() : allTvChannelsManufacturerIds[tvchannel.Id];
+                    var manufacturers = isNew || !allTvChannelsManufacturerIds.ContainsKey(tvChannel.Id) ? Array.Empty<int>() : allTvChannelsManufacturerIds[tvChannel.Id];
                     var importedManufacturers = manufacturerList.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(x => allManufacturers.FirstOrDefault(m => m.Name == x.Trim())?.Id ?? int.Parse(x.Trim())).ToList();
                     foreach (var manufacturerId in importedManufacturers)
@@ -2218,19 +2218,19 @@ namespace TvProgViewer.Services.ExportImport
                         if (manufacturers.Any(c => c == manufacturerId))
                             continue;
 
-                        var tvchannelManufacturer = new TvChannelManufacturer
+                        var tvChannelManufacturer = new TvChannelManufacturer
                         {
-                            TvChannelId = tvchannel.Id,
+                            TvChannelId = tvChannel.Id,
                             ManufacturerId = manufacturerId,
                             IsFeaturedTvChannel = false,
                             DisplayOrder = 1
                         };
-                        await _manufacturerService.InsertTvChannelManufacturerAsync(tvchannelManufacturer);
+                        await _manufacturerService.InsertTvChannelManufacturerAsync(tvChannelManufacturer);
                     }
 
-                    //delete tvchannel manufacturers
+                    //delete tvChannel manufacturers
                     var deletedTvChannelsManufacturers = await manufacturers.Where(manufacturerId => !importedManufacturers.Contains(manufacturerId))
-                        .SelectAwait(async manufacturerId => (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvchannel.Id)).First(pc => pc.ManufacturerId == manufacturerId)).ToListAsync();
+                        .SelectAwait(async manufacturerId => (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvChannel.Id)).First(pc => pc.ManufacturerId == manufacturerId)).ToListAsync();
                     foreach (var deletedTvChannelManufacturer in deletedTvChannelsManufacturers)
                         await _manufacturerService.DeleteTvChannelManufacturerAsync(deletedTvChannelManufacturer);
                 }
@@ -2238,18 +2238,18 @@ namespace TvProgViewer.Services.ExportImport
                 tempProperty = metadata.Manager.GetDefaultProperty("TvChannelTags");
                 if (tempProperty != null)
                 {
-                    var tvchannelTags = tempProperty.StringValue.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
+                    var tvChannelTags = tempProperty.StringValue.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).ToList();
 
-                    //searching existing tvchannel tags by their id
-                    var tvchannelTagIds = tvchannelTags.Where(pt => int.TryParse(pt, out var _)).Select(int.Parse);
+                    //searching existing tvChannel tags by their id
+                    var tvChannelTagIds = tvChannelTags.Where(pt => int.TryParse(pt, out var _)).Select(int.Parse);
 
-                    var tvchannelTagsByIds = (await _tvchannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvchannel.Id)).Where(pt => tvchannelTagIds.Contains(pt.Id)).ToList();
+                    var tvChannelTagsByIds = (await _tvChannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvChannel.Id)).Where(pt => tvChannelTagIds.Contains(pt.Id)).ToList();
 
-                    tvchannelTags.AddRange(tvchannelTagsByIds.Select(pt => pt.Name));
-                    var filter = tvchannelTagsByIds.Select(pt => pt.Id.ToString()).ToList();
+                    tvChannelTags.AddRange(tvChannelTagsByIds.Select(pt => pt.Name));
+                    var filter = tvChannelTagsByIds.Select(pt => pt.Id.ToString()).ToList();
 
-                    //tvchannel tag mappings
-                    await _tvchannelTagService.UpdateTvChannelTagsAsync(tvchannel, tvchannelTags.Where(pt => !filter.Contains(pt)).ToArray());
+                    //tvChannel tag mappings
+                    await _tvChannelTagService.UpdateTvChannelTagsAsync(tvChannel, tvChannelTags.Where(pt => !filter.Contains(pt)).ToArray());
                 }
 
                 tempProperty = metadata.Manager.GetDefaultProperty("LimitedToStores");
@@ -2257,36 +2257,36 @@ namespace TvProgViewer.Services.ExportImport
                 {
                     var limitedToStoresList = tempProperty.StringValue;
 
-                    var importedStores = tvchannel.LimitedToStores ? limitedToStoresList.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    var importedStores = tvChannel.LimitedToStores ? limitedToStoresList.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
                         .Select(x => allStores.FirstOrDefault(store => store.Name == x.Trim())?.Id ?? int.Parse(x.Trim())).ToList() : new List<int>();
 
-                    await _tvchannelService.UpdateTvChannelStoreMappingsAsync(tvchannel, importedStores);
+                    await _tvChannelService.UpdateTvChannelStoreMappingsAsync(tvChannel, importedStores);
                 }
 
                 var picture1 = await DownloadFileAsync(metadata.Manager.GetDefaultProperty("Picture1")?.StringValue, downloadedFiles);
                 var picture2 = await DownloadFileAsync(metadata.Manager.GetDefaultProperty("Picture2")?.StringValue, downloadedFiles);
                 var picture3 = await DownloadFileAsync(metadata.Manager.GetDefaultProperty("Picture3")?.StringValue, downloadedFiles);
 
-                tvchannelPictureMetadata.Add(new TvChannelPictureMetadata
+                tvChannelPictureMetadata.Add(new TvChannelPictureMetadata
                 {
-                    TvChannelItem = tvchannel,
+                    TvChannelItem = tvChannel,
                     Picture1Path = picture1,
                     Picture2Path = picture2,
                     Picture3Path = picture3,
                     IsNew = isNew
                 });
 
-                lastLoadedTvChannel = tvchannel;
+                lastLoadedTvChannel = tvChannel;
 
                 //update "HasTierPrices" and "HasDiscountsApplied" properties
-                //_tvchannelService.UpdateHasTierPricesProperty(tvchannel);
-                //_tvchannelService.UpdateHasDiscountsApplied(tvchannel);
+                //_tvChannelService.UpdateHasTierPricesProperty(tvChannel);
+                //_tvChannelService.UpdateHasDiscountsApplied(tvChannel);
             }
 
             if (_mediaSettings.ImportTvChannelImagesUsingHash && await _pictureService.IsStoreInDbAsync())
-                await ImportTvChannelImagesUsingHashAsync(tvchannelPictureMetadata, allTvChannelsBySku);
+                await ImportTvChannelImagesUsingHashAsync(tvChannelPictureMetadata, allTvChannelsBySku);
             else
-                await ImportTvChannelImagesUsingServicesAsync(tvchannelPictureMetadata);
+                await ImportTvChannelImagesUsingServicesAsync(tvChannelPictureMetadata);
 
             foreach (var downloadedFile in downloadedFiles)
             {
@@ -2723,7 +2723,7 @@ namespace TvProgViewer.Services.ExportImport
 
             for (var iRow = 2; iRow < metadata.EndRow; iRow++)
             {
-                //imports tvchannel attributes
+                //imports tvChannel attributes
                 if (worksheet.Row(iRow).OutlineLevel != 0)
                 {
                     if (lastLoadedOrder == null)

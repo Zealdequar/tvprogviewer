@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents an associated tvchannel model to add to the tvchannel
+    /// Represents an associated tvChannel model to add to the tvChannel
     /// </summary>
     public partial record AddAssociatedTvChannelModel : BaseTvProgModel
     {

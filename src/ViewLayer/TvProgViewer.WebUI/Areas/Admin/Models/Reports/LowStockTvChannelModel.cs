@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
 {
     /// <summary>
-    /// Represents a low stock tvchannel model
+    /// Represents a low stock tvChannel model
     /// </summary>
     public partial record LowStockTvChannelModel : BaseTvProgEntityModel
     {

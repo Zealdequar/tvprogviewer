@@ -147,7 +147,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         }
 
         /// <summary>
-        /// Try transforming the route values, assuming the passed URL record is of a tvchannel type
+        /// Try transforming the route values, assuming the passed URL record is of a tvChannel type
         /// </summary>
         /// <param name="httpContext">HTTP context</param>
         /// <param name="values">The route values associated with the current match</param>
@@ -159,35 +159,35 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         /// </returns>
         protected virtual async Task<bool> TryTvChannelCatalogRoutingAsync(HttpContext httpContext, RouteValueDictionary values, UrlRecord urlRecord, string catalogPath)
         {
-            //ensure it's a tvchannel URL record
+            //ensure it's a tvChannel URL record
             if (!urlRecord.EntityName.Equals(nameof(TvChannel), StringComparison.InvariantCultureIgnoreCase))
                 return false;
 
-            //if the tvchannel URL structure type is tvchannel seName only, it will be processed later by a single slug
+            //if the tvChannel URL structure type is tvChannel seName only, it will be processed later by a single slug
             if (_catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.TvChannel)
                 return false;
 
-            //get active slug for the tvchannel
+            //get active slug for the tvChannel
             var slug = urlRecord.IsActive
                 ? urlRecord.Slug
                 : await _urlRecordService.GetActiveSlugAsync(urlRecord.EntityId, urlRecord.EntityName, urlRecord.LanguageId);
             if (string.IsNullOrEmpty(slug))
                 return false;
 
-            //try to get active catalog (e.g. category or manufacturer) seName for the tvchannel
+            //try to get active catalog (e.g. category or manufacturer) seName for the tvChannel
             var catalogSeName = string.Empty;
             var isCategoryTvChannelUrl = _catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.CategoryTvChannel;
             if (isCategoryTvChannelUrl)
             {
-                var tvchannelCategory = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var category = await _categoryService.GetCategoryByIdAsync(tvchannelCategory?.CategoryId ?? 0);
+                var tvChannelCategory = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var category = await _categoryService.GetCategoryByIdAsync(tvChannelCategory?.CategoryId ?? 0);
                 catalogSeName = category is not null ? await _urlRecordService.GetSeNameAsync(category) : string.Empty;
             }
             var isManufacturerTvChannelUrl = _catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.ManufacturerTvChannel;
             if (isManufacturerTvChannelUrl)
             {
-                var tvchannelManufacturer = (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(tvchannelManufacturer?.ManufacturerId ?? 0);
+                var tvChannelManufacturer = (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(tvChannelManufacturer?.ManufacturerId ?? 0);
                 catalogSeName = manufacturer is not null ? await _urlRecordService.GetSeNameAsync(manufacturer) : string.Empty;
             }
             if (string.IsNullOrEmpty(catalogSeName))

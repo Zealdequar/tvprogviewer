@@ -2,45 +2,45 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Stores;
-using Nop.Services.Catalog;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Stores;
+using TvProgViewer.Services.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Catalog
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Catalog
 {
     [TestFixture]
-    public class ProductAttributeParserTests : ServiceTest
+    public class TvChannelAttributeParserTests : ServiceTest
     {
-        private IProductAttributeParser _productAttributeParser;
-        private IProductAttributeFormatter _productAttributeFormatter;
-        private IEnumerable<KeyValuePair<ProductAttributeMapping, IList<ProductAttributeValue>>> _productAttributeMappings;
+        private ITvChannelAttributeParser _tvChannelAttributeParser;
+        private ITvChannelAttributeFormatter _tvChannelAttributeFormatter;
+        private IEnumerable<KeyValuePair<TvChannelAttributeMapping, IList<TvChannelAttributeValue>>> _tvChannelAttributeMappings;
 
         [OneTimeSetUp]
         public async Task SetUp()
         {
-            var productAttributeService = GetService<IProductAttributeService>();
+            var tvChannelAttributeService = GetService<ITvChannelAttributeService>();
 
-            _productAttributeParser = GetService<IProductAttributeParser>();
-            _productAttributeFormatter = GetService<IProductAttributeFormatter>();
+            _tvChannelAttributeParser = GetService<ITvChannelAttributeParser>();
+            _tvChannelAttributeFormatter = GetService<ITvChannelAttributeFormatter>();
 
-            var product = await GetService<IProductService>()
-                .GetProductBySkuAsync("COMP_CUST");
-            var mappings = await productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
-            _productAttributeMappings = await mappings.SelectAwait(async p => KeyValuePair.Create(p, await productAttributeService.GetProductAttributeValuesAsync(p.Id))).ToListAsync();
+            var tvChannel = await GetService<ITvChannelService>()
+                .GetTvChannelBySkuAsync("COMP_CUST");
+            var mappings = await tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
+            _tvChannelAttributeMappings = await mappings.SelectAwait(async p => KeyValuePair.Create(p, await tvChannelAttributeService.GetTvChannelAttributeValuesAsync(p.Id))).ToListAsync();
         }
 
         [Test]
-        public async Task CanAddAndParseProductAttributes()
+        public async Task CanAddAndParseTvChannelAttributes()
         {
             var attributes = string.Empty;
 
-            foreach (var productAttributeMapping in _productAttributeMappings)
+            foreach (var tvChannelAttributeMapping in _tvChannelAttributeMappings)
             {
                 var skip = true;
 
-                foreach (var productAttributeValue in productAttributeMapping.Value.OrderBy(p => p.Id))
+                foreach (var tvChannelAttributeValue in tvChannelAttributeMapping.Value.OrderBy(p => p.Id))
                 {
                     if (skip)
                     {
@@ -48,60 +48,60 @@ namespace Nop.Tests.Nop.Services.Tests.Catalog
                         continue;
                     }
 
-                    attributes = _productAttributeParser.AddProductAttribute(attributes, productAttributeMapping.Key, productAttributeValue.Id.ToString());
+                    attributes = _tvChannelAttributeParser.AddTvChannelAttribute(attributes, tvChannelAttributeMapping.Key, tvChannelAttributeValue.Id.ToString());
                 }
             }
 
-            var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributes);
+            var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributes);
 
             var parsedAttributeValues = attributeValues.Select(p => p.Id).ToList();
 
-            foreach (var productAttributeMapping in _productAttributeMappings)
+            foreach (var tvChannelAttributeMapping in _tvChannelAttributeMappings)
             {
                 var skip = true;
 
-               foreach (var productAttributeValue in productAttributeMapping.Value.OrderBy(p => p.Id))
+               foreach (var tvChannelAttributeValue in tvChannelAttributeMapping.Value.OrderBy(p => p.Id))
                 {
                     if (skip)
                     {
-                        parsedAttributeValues.Contains(productAttributeValue.Id).Should().BeFalse();
+                        parsedAttributeValues.Contains(tvChannelAttributeValue.Id).Should().BeFalse();
                         skip = false;
                         continue;
                     }
 
-                    parsedAttributeValues.Contains(productAttributeValue.Id).Should().BeTrue();
+                    parsedAttributeValues.Contains(tvChannelAttributeValue.Id).Should().BeTrue();
                 }
             }
         }
 
         [Test]
-        public async Task CanAddAndRemoveProductAttributes()
+        public async Task CanAddAndRemoveTvChannelAttributes()
         {
             var attributes = string.Empty;
 
             var delete = false;
 
-            foreach (var productAttributeMapping in _productAttributeMappings)
+            foreach (var tvChannelAttributeMapping in _tvChannelAttributeMappings)
             {
-                foreach (var productAttributeValue in productAttributeMapping.Value.OrderBy(p => p.Id)) 
-                    attributes = _productAttributeParser.AddProductAttribute(attributes, productAttributeMapping.Key, productAttributeValue.Id.ToString());
+                foreach (var tvChannelAttributeValue in tvChannelAttributeMapping.Value.OrderBy(p => p.Id)) 
+                    attributes = _tvChannelAttributeParser.AddTvChannelAttribute(attributes, tvChannelAttributeMapping.Key, tvChannelAttributeValue.Id.ToString());
 
                 if (delete)
-                    attributes = _productAttributeParser.RemoveProductAttribute(attributes, productAttributeMapping.Key);
+                    attributes = _tvChannelAttributeParser.RemoveTvChannelAttribute(attributes, tvChannelAttributeMapping.Key);
 
                 delete = !delete;
             }
 
-            var attributeValues = await _productAttributeParser.ParseProductAttributeValuesAsync(attributes);
+            var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributes);
 
             var parsedAttributeValues = attributeValues.Select(p => p.Id).ToList();
 
             delete = false;
 
-            foreach (var productAttributeMapping in _productAttributeMappings)
+            foreach (var tvChannelAttributeMapping in _tvChannelAttributeMappings)
             {
-                foreach (var productAttributeValue in productAttributeMapping.Value.OrderBy(p => p.Id)) 
-                    parsedAttributeValues.Contains(productAttributeValue.Id).Should().Be(!delete);
+                foreach (var tvChannelAttributeValue in tvChannelAttributeMapping.Value.OrderBy(p => p.Id)) 
+                    parsedAttributeValues.Contains(tvChannelAttributeValue.Id).Should().Be(!delete);
 
                 delete = !delete;
             }
@@ -112,26 +112,26 @@ namespace Nop.Tests.Nop.Services.Tests.Catalog
         {
             var attributes = string.Empty;
 
-            foreach (var productAttributeMapping in _productAttributeMappings)
-                foreach (var productAttributeValue in productAttributeMapping.Value.OrderBy(p => p.Id))
-                    attributes = _productAttributeParser.AddProductAttribute(attributes, productAttributeMapping.Key, productAttributeValue.Id.ToString());
+            foreach (var tvChannelAttributeMapping in _tvChannelAttributeMappings)
+                foreach (var tvChannelAttributeValue in tvChannelAttributeMapping.Value.OrderBy(p => p.Id))
+                    attributes = _tvChannelAttributeParser.AddTvChannelAttribute(attributes, tvChannelAttributeMapping.Key, tvChannelAttributeValue.Id.ToString());
 
-            attributes = _productAttributeParser.AddGiftCardAttribute(attributes,
+            attributes = _tvChannelAttributeParser.AddGiftCardAttribute(attributes,
                 "recipientName 1", "recipientEmail@gmail.com",
                 "senderName 1", "senderEmail@gmail.com", "custom message");
             
-            var product = new Product { IsGiftCard = true, GiftCardType = GiftCardType.Virtual };
-            var customer = new Customer();
+            var tvChannel = new TvChannel { IsGiftCard = true, GiftCardType = GiftCardType.Virtual };
+            var user = new User();
             var store = new Store();
 
-            var formattedAttributes = await _productAttributeFormatter.FormatAttributesAsync(product,
-                attributes, customer, store, "<br />", false);
+            var formattedAttributes = await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel,
+                attributes, user, store, "<br />", false);
 
             formattedAttributes.Should().Be(
                 "Processor: 2.2 GHz Intel Pentium Dual-Core E2200<br />Processor: 2.5 GHz Intel Pentium Dual-Core E2200 [+$15.00]<br />RAM: 2 GB<br />RAM: 4GB [+$20.00]<br />RAM: 8GB [+$60.00]<br />HDD: 320 GB<br />HDD: 400 GB [+$100.00]<br />OS: Vista Home [+$50.00]<br />OS: Vista Premium [+$60.00]<br />Software: Microsoft Office [+$50.00]<br />Software: Acrobat Reader [+$10.00]<br />Software: Total Commander [+$5.00]<br />From: senderName 1 <senderEmail@gmail.com><br />For: recipientName 1 <recipientEmail@gmail.com>");
 
-            formattedAttributes = await _productAttributeFormatter.FormatAttributesAsync(product,
-                attributes, customer, store, "<br />", false, false);
+            formattedAttributes = await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel,
+                attributes, user, store, "<br />", false, false);
 
             formattedAttributes.Should().Be(
                 "Processor: 2.2 GHz Intel Pentium Dual-Core E2200<br />Processor: 2.5 GHz Intel Pentium Dual-Core E2200<br />RAM: 2 GB<br />RAM: 4GB<br />RAM: 8GB<br />HDD: 320 GB<br />HDD: 400 GB<br />OS: Vista Home<br />OS: Vista Premium<br />Software: Microsoft Office<br />Software: Acrobat Reader<br />Software: Total Commander<br />From: senderName 1 <senderEmail@gmail.com><br />For: recipientName 1 <recipientEmail@gmail.com>");
@@ -141,11 +141,11 @@ namespace Nop.Tests.Nop.Services.Tests.Catalog
         public void CanAddAndParseGiftCardAttributes()
         {
             var attributes = string.Empty;
-            attributes = _productAttributeParser.AddGiftCardAttribute(attributes,
+            attributes = _tvChannelAttributeParser.AddGiftCardAttribute(attributes,
                 "recipientName 1", "recipientEmail@gmail.com",
                 "senderName 1", "senderEmail@gmail.com", "custom message");
 
-            _productAttributeParser.GetGiftCardAttribute(attributes,
+            _tvChannelAttributeParser.GetGiftCardAttribute(attributes,
                 out var recipientName,
                 out var recipientEmail,
                 out var senderName,
@@ -161,40 +161,40 @@ namespace Nop.Tests.Nop.Services.Tests.Catalog
         [Test]
         public async Task CanRenderVirtualGiftCart()
         {
-            var attributes = _productAttributeParser.AddGiftCardAttribute(string.Empty,
+            var attributes = _tvChannelAttributeParser.AddGiftCardAttribute(string.Empty,
                 "recipientName 1", "recipientEmail@gmail.com",
                 "senderName 1", "senderEmail@gmail.com", "custom message");
 
-            var product = new Product
+            var tvChannel = new TvChannel
             {
                 IsGiftCard = true,
                 GiftCardType = GiftCardType.Virtual
             };
-            var customer = new Customer();
+            var user = new User();
             var store = new Store();
             
-            var formattedAttributes = await _productAttributeFormatter.FormatAttributesAsync(product,
-                attributes, customer, store, "<br />", false, false);
+            var formattedAttributes = await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel,
+                attributes, user, store, "<br />", false, false);
             formattedAttributes.Should().Be("From: senderName 1 <senderEmail@gmail.com><br />For: recipientName 1 <recipientEmail@gmail.com>");
         }
 
         [Test]
         public async Task CanRenderPhysicalGiftCart()
         {
-            var attributes = _productAttributeParser.AddGiftCardAttribute(string.Empty,
+            var attributes = _tvChannelAttributeParser.AddGiftCardAttribute(string.Empty,
                 "recipientName 1", "recipientEmail@gmail.com",
                 "senderName 1", "senderEmail@gmail.com", "custom message");
 
-            var product = new Product
+            var tvChannel = new TvChannel
             {
                 IsGiftCard = true,
                 GiftCardType = GiftCardType.Physical
             };
-            var customer = new Customer();
+            var user = new User();
             var store = new Store();
             
-            var formattedAttributes = await _productAttributeFormatter.FormatAttributesAsync(product,
-                attributes, customer, store, "<br />", false, false);
+            var formattedAttributes = await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel,
+                attributes, user, store, "<br />", false, false);
             formattedAttributes.Should().Be("From: senderName 1<br />For: recipientName 1");
         }
     }

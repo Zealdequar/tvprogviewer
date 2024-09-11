@@ -138,7 +138,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task PrepareVendorsAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
-        /// Prepare available tvchannel types
+        /// Prepare available tvChannel types
         /// </summary>
         /// <param name="items">TvChannel type items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
@@ -248,7 +248,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
-        /// Prepare available tvchannel templates
+        /// Prepare available tvChannel templates
         /// </summary>
         /// <param name="items">TvChannel template items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>
@@ -284,7 +284,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task PrepareDeliveryDatesAsync(IList<SelectListItem> items, bool withSpecialDefaultItem = true, string defaultItemText = null);
 
         /// <summary>
-        /// Prepare available tvchannel availability ranges
+        /// Prepare available tvChannel availability ranges
         /// </summary>
         /// <param name="items">TvChannel availability range items</param>
         /// <param name="withSpecialDefaultItem">Whether to insert the first special item for the default value</param>

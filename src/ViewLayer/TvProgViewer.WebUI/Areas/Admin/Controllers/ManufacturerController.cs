@@ -45,7 +45,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IStoreService _storeService;
         private readonly IUrlRecordService _urlRecordService;
@@ -68,7 +68,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             INotificationService notificationService,
             IPermissionService permissionService,
             IPictureService pictureService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IStoreMappingService storeMappingService,
             IStoreService storeService,
             IUrlRecordService urlRecordService,
@@ -87,7 +87,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _notificationService = notificationService;
             _permissionService = permissionService;
             _pictureService = pictureService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _storeMappingService = storeMappingService;
             _storeService = storeService;
             _urlRecordService = urlRecordService;
@@ -536,13 +536,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return AccessDeniedView();
 
-            //try to get a tvchannel manufacturer with the specified id
-            var tvchannelManufacturer = await _manufacturerService.GetTvChannelManufacturerByIdAsync(model.Id)
-                ?? throw new ArgumentException("No tvchannel manufacturer mapping found with the specified id");
+            //try to get a tvChannel manufacturer with the specified id
+            var tvChannelManufacturer = await _manufacturerService.GetTvChannelManufacturerByIdAsync(model.Id)
+                ?? throw new ArgumentException("No tvChannel manufacturer mapping found with the specified id");
 
             //fill entity from model
-            tvchannelManufacturer = model.ToEntity(tvchannelManufacturer);
-            await _manufacturerService.UpdateTvChannelManufacturerAsync(tvchannelManufacturer);
+            tvChannelManufacturer = model.ToEntity(tvChannelManufacturer);
+            await _manufacturerService.UpdateTvChannelManufacturerAsync(tvChannelManufacturer);
 
             return new NullJsonResult();
         }
@@ -553,11 +553,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return AccessDeniedView();
 
-            //try to get a tvchannel manufacturer with the specified id
-            var tvchannelManufacturer = await _manufacturerService.GetTvChannelManufacturerByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel manufacturer mapping found with the specified id");
+            //try to get a tvChannel manufacturer with the specified id
+            var tvChannelManufacturer = await _manufacturerService.GetTvChannelManufacturerByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel manufacturer mapping found with the specified id");
 
-            await _manufacturerService.DeleteTvChannelManufacturerAsync(tvchannelManufacturer);
+            await _manufacturerService.DeleteTvChannelManufacturerAsync(tvChannelManufacturer);
 
             return new NullJsonResult();
         }
@@ -592,23 +592,23 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageManufacturers))
                 return AccessDeniedView();
 
-            //get selected tvchannels
-            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            //get selected tvChannels
+            var selectedTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
             if (selectedTvChannels.Any())
             {
                 var existingTvChannelmanufacturers = await _manufacturerService
                     .GetTvChannelManufacturersByManufacturerIdAsync(model.ManufacturerId, showHidden: true);
-                foreach (var tvchannel in selectedTvChannels)
+                foreach (var tvChannel in selectedTvChannels)
                 {
-                    //whether tvchannel manufacturer with such parameters already exists
-                    if (_manufacturerService.FindTvChannelManufacturer(existingTvChannelmanufacturers, tvchannel.Id, model.ManufacturerId) != null)
+                    //whether tvChannel manufacturer with such parameters already exists
+                    if (_manufacturerService.FindTvChannelManufacturer(existingTvChannelmanufacturers, tvChannel.Id, model.ManufacturerId) != null)
                         continue;
 
-                    //insert the new tvchannel manufacturer mapping
+                    //insert the new tvChannel manufacturer mapping
                     await _manufacturerService.InsertTvChannelManufacturerAsync(new TvChannelManufacturer
                     {
                         ManufacturerId = model.ManufacturerId,
-                        TvChannelId = tvchannel.Id,
+                        TvChannelId = tvChannel.Id,
                         IsFeaturedTvChannel = false,
                         DisplayOrder = 1
                     });

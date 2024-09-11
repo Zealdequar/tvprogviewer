@@ -20,7 +20,7 @@ namespace TvProgViewer.Services.Orders
         private readonly IRepository<ReturnRequestAction> _returnRequestActionRepository;
         private readonly IRepository<ReturnRequestReason> _returnRequestReasonRepository;
         private readonly IRepository<OrderItem> _orderItemRepository;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
 
         #endregion
 
@@ -30,13 +30,13 @@ namespace TvProgViewer.Services.Orders
             IRepository<ReturnRequestAction> returnRequestActionRepository,
             IRepository<ReturnRequestReason> returnRequestReasonRepository,
             IRepository<OrderItem> orderItemRepository,
-            IRepository<TvChannel> tvchannelRepository)
+            IRepository<TvChannel> tvChannelRepository)
         {
             _returnRequestRepository = returnRequestRepository;
             _returnRequestActionRepository = returnRequestActionRepository;
             _returnRequestReasonRepository = returnRequestReasonRepository;
             _orderItemRepository = orderItemRepository;
-            _tvchannelRepository = tvchannelRepository;
+            _tvChannelRepository = tvChannelRepository;
         }
 
         #endregion
@@ -147,7 +147,7 @@ namespace TvProgViewer.Services.Orders
                     join roi in requestedOrderItemsForReturn
                         on oi.Id equals roi.OrderItemId into alreadyRequestedForReturn
                     from aroi in alreadyRequestedForReturn.DefaultIfEmpty()
-                    join p in _tvchannelRepository.Table
+                    join p in _tvChannelRepository.Table
                         on oi.TvChannelId equals p.Id
                     where !p.NotReturnable && oi.OrderId == orderId
                     select new ReturnableOrderItem

@@ -42,22 +42,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<UserRoleModel> PrepareUserRoleModelAsync(UserRoleModel model, UserRole userRole, bool excludeProperties = false);
 
         /// <summary>
-        /// Prepare user role tvchannel search model
+        /// Prepare user role tvChannel search model
         /// </summary>
-        /// <param name="searchModel">User role tvchannel search model</param>
+        /// <param name="searchModel">User role tvChannel search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the user role tvchannel search model
+        /// The task result contains the user role tvChannel search model
         /// </returns>
         Task<UserRoleTvChannelSearchModel> PrepareUserRoleTvChannelSearchModelAsync(UserRoleTvChannelSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged user role tvchannel list model
+        /// Prepare paged user role tvChannel list model
         /// </summary>
-        /// <param name="searchModel">User role tvchannel search model</param>
+        /// <param name="searchModel">User role tvChannel search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the user role tvchannel list model
+        /// The task result contains the user role tvChannel list model
         /// </returns>
         Task<UserRoleTvChannelListModel> PrepareUserRoleTvChannelListModelAsync(UserRoleTvChannelSearchModel searchModel);
     }

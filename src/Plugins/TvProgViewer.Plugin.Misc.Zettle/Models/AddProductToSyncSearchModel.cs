@@ -6,42 +6,42 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.Plugin.Misc.Zettle.Models
 {
     /// <summary>
-    /// Represents a product search model to add for synchronization
+    /// Represents a tvChannel search model to add for synchronization
     /// </summary>
-    public record AddProductToSyncSearchModel : BaseSearchModel
+    public record AddTvChannelToSyncSearchModel : BaseSearchModel
     {
         #region Ctor
 
-        public AddProductToSyncSearchModel()
+        public AddTvChannelToSyncSearchModel()
         {
             AvailableCategories = new List<SelectListItem>();
             AvailableManufacturers = new List<SelectListItem>();
             AvailableStores = new List<SelectListItem>();
             AvailableVendors = new List<SelectListItem>();
-            AvailableProductTypes = new List<SelectListItem>();
+            AvailableTvChannelTypes = new List<SelectListItem>();
         }
 
         #endregion
 
         #region Properties
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.List.SearchProductName")]
-        public string SearchProductName { get; set; }
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.List.SearchTvChannelName")]
+        public string SearchTvChannelName { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.List.SearchCategory")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.List.SearchCategory")]
         public int SearchCategoryId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.List.SearchManufacturer")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.List.SearchManufacturer")]
         public int SearchManufacturerId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.List.SearchStore")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.List.SearchStore")]
         public int SearchStoreId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.List.SearchVendor")]
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.List.SearchVendor")]
         public int SearchVendorId { get; set; }
 
-        [TvProgResourceDisplayName("Admin.Catalog.Products.List.SearchProductType")]
-        public int SearchProductTypeId { get; set; }
+        [TvProgResourceDisplayName("Admin.Catalog.TvChannels.List.SearchTvChannelType")]
+        public int SearchTvChannelTypeId { get; set; }
 
         public IList<SelectListItem> AvailableCategories { get; set; }
 
@@ -51,7 +51,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Models
 
         public IList<SelectListItem> AvailableVendors { get; set; }
 
-        public IList<SelectListItem> AvailableProductTypes { get; set; }
+        public IList<SelectListItem> AvailableTvChannelTypes { get; set; }
 
         #endregion
     }

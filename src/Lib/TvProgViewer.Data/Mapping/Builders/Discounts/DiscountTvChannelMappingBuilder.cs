@@ -6,7 +6,7 @@ using TvProgViewer.Data.Extensions;
 namespace TvProgViewer.Data.Mapping.Builders.Discounts
 {
     /// <summary>
-    /// Represents a discount tvchannel mapping entity builder
+    /// Represents a discount tvChannel mapping entity builder
     /// </summary>
     public partial class DiscountTvChannelMappingBuilder : TvProgEntityBuilder<DiscountTvChannelMapping>
     {

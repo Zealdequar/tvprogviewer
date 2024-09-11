@@ -532,7 +532,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         public virtual async Task<IActionResult> GetOptionsByAttributeId(string attributeId)
         {
             //do not make any permission validation here 
-            //because this method could be used on some other pages (such as tvchannel editing)
+            //because this method could be used on some other pages (such as tvChannel editing)
             //if (!await _permissionService.Authorize(StandardPermissionProvider.ManageAttributes))
             //    return AccessDeniedView();
 
@@ -548,7 +548,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Mapped tvchannels
+        #region Mapped tvChannels
 
         [HttpPost]
         public virtual async Task<IActionResult> UsedByTvChannels(SpecificationAttributeTvChannelSearchModel searchModel)

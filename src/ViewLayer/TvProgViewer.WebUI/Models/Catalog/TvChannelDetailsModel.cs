@@ -115,7 +115,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         public IList<TierPriceModel> TierPrices { get; set; }
 
-        //a list of associated tvchannels. For example, "Grouped" tvchannels could have several child "simple" tvchannels
+        //a list of associated tvChannels. For example, "Grouped" tvChannels could have several child "simple" tvChannels
         public IList<TvChannelDetailsModel> AssociatedTvChannels { get; set; }
 
         public bool DisplayDiscontinuedMessage { get; set; }
@@ -326,7 +326,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
             public bool IsPreSelected { get; set; }
 
-            //tvchannel picture ID (associated to this value)
+            //tvChannel picture ID (associated to this value)
             public int PictureId { get; set; }
 
             public bool UserEntersQty { get; set; }

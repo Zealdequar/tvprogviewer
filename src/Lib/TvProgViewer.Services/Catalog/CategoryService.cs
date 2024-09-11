@@ -28,8 +28,8 @@ namespace TvProgViewer.Services.Catalog
         private readonly ILocalizationService _localizationService;
         private readonly IRepository<Category> _categoryRepository;
         private readonly IRepository<DiscountCategoryMapping> _discountCategoryMappingRepository;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
-        private readonly IRepository<TvChannelCategory> _tvchannelCategoryRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
+        private readonly IRepository<TvChannelCategory> _tvChannelCategoryRepository;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
@@ -45,8 +45,8 @@ namespace TvProgViewer.Services.Catalog
             ILocalizationService localizationService,
             IRepository<Category> categoryRepository,
             IRepository<DiscountCategoryMapping> discountCategoryMappingRepository,
-            IRepository<TvChannel> tvchannelRepository,
-            IRepository<TvChannelCategory> tvchannelCategoryRepository,
+            IRepository<TvChannel> tvChannelRepository,
+            IRepository<TvChannelCategory> tvChannelCategoryRepository,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
@@ -57,8 +57,8 @@ namespace TvProgViewer.Services.Catalog
             _localizationService = localizationService;
             _categoryRepository = categoryRepository;
             _discountCategoryMappingRepository = discountCategoryMappingRepository;
-            _tvchannelRepository = tvchannelRepository;
-            _tvchannelCategoryRepository = tvchannelCategoryRepository;
+            _tvChannelRepository = tvChannelRepository;
+            _tvChannelCategoryRepository = tvChannelCategoryRepository;
             _staticCacheManager = staticCacheManager;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
@@ -70,24 +70,24 @@ namespace TvProgViewer.Services.Catalog
         #region Utilities
 
         /// <summary>
-        /// Gets a tvchannel category mapping collection
+        /// Gets a tvChannel category mapping collection
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="storeId">Store identifier (used in multi-store environment). "showHidden" parameter should also be "true"</param>
         /// <param name="showHidden"> A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel category mapping collection
+        /// The task result contains the tvChannel category mapping collection
         /// </returns>
-        protected virtual async Task<IList<TvChannelCategory>> GetTvChannelCategoriesByTvChannelIdAsync(int tvchannelId, int storeId,
+        protected virtual async Task<IList<TvChannelCategory>> GetTvChannelCategoriesByTvChannelIdAsync(int tvChannelId, int storeId,
             bool showHidden = false)
         {
-            if (tvchannelId == 0)
+            if (tvChannelId == 0)
                 return new List<TvChannelCategory>();
 
             var user = await _workContext.GetCurrentUserAsync();
 
-            return await _tvchannelCategoryRepository.GetAllAsync(async query =>
+            return await _tvChannelCategoryRepository.GetAllAsync(async query =>
             {
                 if (!showHidden)
                 {
@@ -103,12 +103,12 @@ namespace TvProgViewer.Services.Catalog
                 }
 
                 return query
-                    .Where(pc => pc.TvChannelId == tvchannelId)
+                    .Where(pc => pc.TvChannelId == tvChannelId)
                     .OrderBy(pc => pc.DisplayOrder)
                     .ThenBy(pc => pc.Id);
 
             }, cache => _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelCategoriesByTvChannelCacheKey,
-                tvchannelId, showHidden, user, storeId));
+                tvChannelId, showHidden, user, storeId));
         }
 
         /// <summary>
@@ -229,8 +229,8 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="overridePublished">
         /// null - process "Published" property according to "showHidden" parameter
-        /// true - load only "Published" tvchannels
-        /// false - load only "Unpublished" tvchannels
+        /// true - load only "Published" tvChannels
+        /// false - load only "Unpublished" tvChannels
         /// </param>
         /// <returns>
         /// Задача представляет асинхронную операцию
@@ -533,17 +533,17 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Deletes a tvchannel category mapping
+        /// Deletes a tvChannel category mapping
         /// </summary>
-        /// <param name="tvchannelCategory">TvChannel category</param>
+        /// <param name="tvChannelCategory">TvChannel category</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelCategoryAsync(TvChannelCategory tvchannelCategory)
+        public virtual async Task DeleteTvChannelCategoryAsync(TvChannelCategory tvChannelCategory)
         {
-            await _tvchannelCategoryRepository.DeleteAsync(tvchannelCategory);
+            await _tvChannelCategoryRepository.DeleteAsync(tvChannelCategory);
         }
 
         /// <summary>
-        /// Gets tvchannel category mapping collection
+        /// Gets tvChannel category mapping collection
         /// </summary>
         /// <param name="categoryId">Category identifier</param>
         /// <param name="pageIndex">Page index</param>
@@ -551,7 +551,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel a category mapping collection
+        /// The task result contains the tvChannel a category mapping collection
         /// </returns>
         public virtual async Task<IPagedList<TvChannelCategory>> GetTvChannelCategoriesByCategoryIdAsync(int categoryId,
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
@@ -559,8 +559,8 @@ namespace TvProgViewer.Services.Catalog
             if (categoryId == 0)
                 return new PagedList<TvChannelCategory>(new List<TvChannelCategory>(), pageIndex, pageSize);
 
-            var query = from pc in _tvchannelCategoryRepository.Table
-                        join p in _tvchannelRepository.Table on pc.TvChannelId equals p.Id
+            var query = from pc in _tvChannelCategoryRepository.Table
+                        join p in _tvChannelRepository.Table on pc.TvChannelId equals p.Id
                         where pc.CategoryId == categoryId && !p.Deleted
                         orderby pc.DisplayOrder, pc.Id
                         select pc;
@@ -584,52 +584,52 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a tvchannel category mapping collection
+        /// Gets a tvChannel category mapping collection
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="showHidden"> A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel category mapping collection
+        /// The task result contains the tvChannel category mapping collection
         /// </returns>
-        public virtual async Task<IList<TvChannelCategory>> GetTvChannelCategoriesByTvChannelIdAsync(int tvchannelId, bool showHidden = false)
+        public virtual async Task<IList<TvChannelCategory>> GetTvChannelCategoriesByTvChannelIdAsync(int tvChannelId, bool showHidden = false)
         {
             var store = await _storeContext.GetCurrentStoreAsync();
 
-            return await GetTvChannelCategoriesByTvChannelIdAsync(tvchannelId, store.Id, showHidden);
+            return await GetTvChannelCategoriesByTvChannelIdAsync(tvChannelId, store.Id, showHidden);
         }
 
         /// <summary>
-        /// Gets a tvchannel category mapping 
+        /// Gets a tvChannel category mapping 
         /// </summary>
-        /// <param name="tvchannelCategoryId">TvChannel category mapping identifier</param>
+        /// <param name="tvChannelCategoryId">TvChannel category mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel category mapping
+        /// The task result contains the tvChannel category mapping
         /// </returns>
-        public virtual async Task<TvChannelCategory> GetTvChannelCategoryByIdAsync(int tvchannelCategoryId)
+        public virtual async Task<TvChannelCategory> GetTvChannelCategoryByIdAsync(int tvChannelCategoryId)
         {
-            return await _tvchannelCategoryRepository.GetByIdAsync(tvchannelCategoryId, cache => default);
+            return await _tvChannelCategoryRepository.GetByIdAsync(tvChannelCategoryId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a tvchannel category mapping
+        /// Inserts a tvChannel category mapping
         /// </summary>
-        /// <param name="tvchannelCategory">>TvChannel category mapping</param>
+        /// <param name="tvChannelCategory">>TvChannel category mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelCategoryAsync(TvChannelCategory tvchannelCategory)
+        public virtual async Task InsertTvChannelCategoryAsync(TvChannelCategory tvChannelCategory)
         {
-            await _tvchannelCategoryRepository.InsertAsync(tvchannelCategory);
+            await _tvChannelCategoryRepository.InsertAsync(tvChannelCategory);
         }
 
         /// <summary>
-        /// Updates the tvchannel category mapping 
+        /// Updates the tvChannel category mapping 
         /// </summary>
-        /// <param name="tvchannelCategory">>TvChannel category mapping</param>
+        /// <param name="tvChannelCategory">>TvChannel category mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelCategoryAsync(TvChannelCategory tvchannelCategory)
+        public virtual async Task UpdateTvChannelCategoryAsync(TvChannelCategory tvChannelCategory)
         {
-            await _tvchannelCategoryRepository.UpdateAsync(tvchannelCategory);
+            await _tvChannelCategoryRepository.UpdateAsync(tvChannelCategory);
         }
 
         /// <summary>
@@ -667,18 +667,18 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get category IDs for tvchannels
+        /// Get category IDs for tvChannels
         /// </summary>
-        /// <param name="tvchannelIds">TvChannels IDs</param>
+        /// <param name="tvChannelIds">TvChannels IDs</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the category IDs for tvchannels
+        /// The task result contains the category IDs for tvChannels
         /// </returns>
-        public virtual async Task<IDictionary<int, int[]>> GetTvChannelCategoryIdsAsync(int[] tvchannelIds)
+        public virtual async Task<IDictionary<int, int[]>> GetTvChannelCategoryIdsAsync(int[] tvChannelIds)
         {
-            var query = _tvchannelCategoryRepository.Table;
+            var query = _tvChannelCategoryRepository.Table;
 
-            return (await query.Where(p => tvchannelIds.Contains(p.TvChannelId))
+            return (await query.Where(p => tvChannelIds.Contains(p.TvChannelId))
                 .Select(p => new { p.TvChannelId, p.CategoryId })
                 .ToListAsync())
                 .GroupBy(a => a.TvChannelId)
@@ -702,14 +702,14 @@ namespace TvProgViewer.Services.Catalog
         /// Returns a TvChannelCategory that has the specified values
         /// </summary>
         /// <param name="source">Source</param>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="categoryId">Category identifier</param>
         /// <returns>A TvChannelCategory that has the specified values; otherwise null</returns>
-        public virtual TvChannelCategory FindTvChannelCategory(IList<TvChannelCategory> source, int tvchannelId, int categoryId)
+        public virtual TvChannelCategory FindTvChannelCategory(IList<TvChannelCategory> source, int tvChannelId, int categoryId)
         {
-            foreach (var tvchannelCategory in source)
-                if (tvchannelCategory.TvChannelId == tvchannelId && tvchannelCategory.CategoryId == categoryId)
-                    return tvchannelCategory;
+            foreach (var tvChannelCategory in source)
+                if (tvChannelCategory.TvChannelId == tvChannelId && tvChannelCategory.CategoryId == categoryId)
+                    return tvChannelCategory;
 
             return null;
         }

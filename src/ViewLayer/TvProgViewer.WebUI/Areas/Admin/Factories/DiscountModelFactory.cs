@@ -41,7 +41,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IManufacturerService _manufacturerService;
         private readonly IOrderService _orderService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IUrlRecordService _urlRecordService;
         private readonly IWebHelper _webHelper;
 
@@ -60,7 +60,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IManufacturerService manufacturerService,
             IOrderService orderService,
             IPriceFormatter priceFormatter,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IUrlRecordService urlRecordService,
             IWebHelper webHelper)
         {
@@ -75,7 +75,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _manufacturerService = manufacturerService;
             _orderService = orderService;
             _priceFormatter = priceFormatter;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _urlRecordService = urlRecordService;
             _webHelper = webHelper;
         }
@@ -108,11 +108,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare discount tvchannel search model
+        /// Prepare discount tvChannel search model
         /// </summary>
-        /// <param name="searchModel">Discount tvchannel search model</param>
+        /// <param name="searchModel">Discount tvChannel search model</param>
         /// <param name="discount">Discount</param>
-        /// <returns>Discount tvchannel search model</returns>
+        /// <returns>Discount tvChannel search model</returns>
         protected virtual DiscountTvChannelSearchModel PrepareDiscountTvChannelSearchModel(DiscountTvChannelSearchModel searchModel, Discount discount)
         {
             if (searchModel == null)
@@ -448,13 +448,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged discount tvchannel list model
+        /// Prepare paged discount tvChannel list model
         /// </summary>
-        /// <param name="searchModel">Discount tvchannel search model</param>
+        /// <param name="searchModel">Discount tvChannel search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the discount tvchannel list model
+        /// The task result contains the discount tvChannel list model
         /// </returns>
         public virtual async Task<DiscountTvChannelListModel> PrepareDiscountTvChannelListModelAsync(DiscountTvChannelSearchModel searchModel, Discount discount)
         {
@@ -464,8 +464,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (discount == null)
                 throw new ArgumentNullException(nameof(discount));
 
-            //get tvchannels with applied discount
-            var discountTvChannels = await _tvchannelService.GetTvChannelsWithAppliedDiscountAsync(discountId: discount.Id,
+            //get tvChannels with applied discount
+            var discountTvChannels = await _tvChannelService.GetTvChannelsWithAppliedDiscountAsync(discountId: discount.Id,
                 showHidden: false,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
@@ -473,11 +473,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             var model = new DiscountTvChannelListModel().PrepareToGrid(searchModel, discountTvChannels, () =>
             {
                 //fill in model values from the entity
-                return discountTvChannels.Select(tvchannel =>
+                return discountTvChannels.Select(tvChannel =>
                 {
-                    var discountTvChannelModel = tvchannel.ToModel<DiscountTvChannelModel>();
-                    discountTvChannelModel.TvChannelId = tvchannel.Id;
-                    discountTvChannelModel.TvChannelName = tvchannel.Name;
+                    var discountTvChannelModel = tvChannel.ToModel<DiscountTvChannelModel>();
+                    discountTvChannelModel.TvChannelId = tvChannel.Id;
+                    discountTvChannelModel.TvChannelName = tvChannel.Name;
 
                     return discountTvChannelModel;
                 });
@@ -487,12 +487,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel search model to add to the discount
+        /// Prepare tvChannel search model to add to the discount
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the discount
+        /// The task result contains the tvChannel search model to add to the discount
         /// </returns>
         public virtual async Task<AddTvChannelToDiscountSearchModel> PrepareAddTvChannelToDiscountSearchModelAsync(AddTvChannelToDiscountSearchModel searchModel)
         {
@@ -511,7 +511,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //prepare available vendors
             await _baseAdminModelFactory.PrepareVendorsAsync(searchModel.AvailableVendors);
 
-            //prepare available tvchannel types
+            //prepare available tvChannel types
             await _baseAdminModelFactory.PrepareTvChannelTypesAsync(searchModel.AvailableTvChannelTypes);
 
             //prepare page parameters
@@ -521,37 +521,37 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged tvchannel list model to add to the discount
+        /// Prepare paged tvChannel list model to add to the discount
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel list model to add to the discount
+        /// The task result contains the tvChannel list model to add to the discount
         /// </returns>
         public virtual async Task<AddTvChannelToDiscountListModel> PrepareAddTvChannelToDiscountListModelAsync(AddTvChannelToDiscountSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get tvchannels
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(showHidden: true,
+            //get tvChannels
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(showHidden: true,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },
                 storeId: searchModel.SearchStoreId,
                 vendorId: searchModel.SearchVendorId,
-                tvchannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
+                tvChannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
                 keywords: searchModel.SearchTvChannelName,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-            var model = await new AddTvChannelToDiscountListModel().PrepareToGridAsync(searchModel, tvchannels, () =>
+            var model = await new AddTvChannelToDiscountListModel().PrepareToGridAsync(searchModel, tvChannels, () =>
             {
-                return tvchannels.SelectAwait(async tvchannel =>
+                return tvChannels.SelectAwait(async tvChannel =>
                 {
-                    var tvchannelModel = tvchannel.ToModel<TvChannelModel>();
-                    tvchannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvchannel, 0, true, false);
+                    var tvChannelModel = tvChannel.ToModel<TvChannelModel>();
+                    tvChannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvChannel, 0, true, false);
 
-                    return tvchannelModel;
+                    return tvChannelModel;
                 });
             });
 

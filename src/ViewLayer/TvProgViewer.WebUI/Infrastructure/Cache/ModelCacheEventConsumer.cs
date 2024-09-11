@@ -39,14 +39,14 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         IConsumer<EntityInsertedEvent<Category>>,
         IConsumer<EntityUpdatedEvent<Category>>,
         IConsumer<EntityDeletedEvent<Category>>,
-        //tvchannel categories
+        //tvChannel categories
         IConsumer<EntityInsertedEvent<TvChannelCategory>>,
         IConsumer<EntityDeletedEvent<TvChannelCategory>>,
-        //tvchannels
+        //tvChannels
         IConsumer<EntityInsertedEvent<TvChannel>>,
         IConsumer<EntityUpdatedEvent<TvChannel>>,
         IConsumer<EntityDeletedEvent<TvChannel>>,
-        //tvchannel tags
+        //tvChannel tags
         IConsumer<EntityInsertedEvent<TvChannelTag>>,
         IConsumer<EntityUpdatedEvent<TvChannelTag>>,
         IConsumer<EntityDeletedEvent<TvChannelTag>>,

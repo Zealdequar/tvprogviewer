@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using FluentMigrator;
 using FluentMigrator.Runner.Processors;
-using Nop.Data.Migrations;
+using TvProgViewer.Data.Migrations;
 
-namespace Nop.Tests
+namespace TvProgViewer.Tests
 {
     /// <summary>
     /// An <see cref="IProcessorAccessor"/> implementation that selects one generator by data settings
     /// </summary>
-    public class TestProcessorAccessor : NopProcessorAccessor
+    public class TestProcessorAccessor : TvProgProcessorAccessor
     {
         #region Ctor
 

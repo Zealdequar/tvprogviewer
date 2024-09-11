@@ -9,7 +9,7 @@ using TvProgViewer.WebUI.Areas.Admin.Controllers;
 
 namespace TvProgViewer.Plugin.Tax.Avalara.Controllers
 {
-    public class AvalaraProductController : BaseAdminController
+    public class AvalaraTvChannelController : BaseAdminController
     {
         #region Fields
 
@@ -23,7 +23,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Controllers
 
         #region Ctor
 
-        public AvalaraProductController(AvalaraTaxManager avalaraTaxManager,
+        public AvalaraTvChannelController(AvalaraTaxManager avalaraTaxManager,
             ILocalizationService localizationService,
             INotificationService notificationService,
             IPermissionService permissionService,
@@ -41,17 +41,17 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Controllers
         #region Methods
 
         [HttpPost]
-        public async Task<IActionResult> ExportProducts(string selectedIds)
+        public async Task<IActionResult> ExportTvChannels(string selectedIds)
         {
             //ensure that Avalara tax provider is active
             if (!await _taxPluginManager.IsPluginActiveAsync(AvalaraTaxDefaults.SystemName))
-                return RedirectToAction("List", "Product");
+                return RedirectToAction("List", "TvChannel");
 
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTaxSettings))
                 return AccessDeniedView();
 
             //export items
-            var exportedItems = await _avalaraTaxManager.ExportProductsAsync(selectedIds);
+            var exportedItems = await _avalaraTaxManager.ExportTvChannelsAsync(selectedIds);
             if (exportedItems.HasValue)
             {
                 if (exportedItems > 0)
@@ -62,7 +62,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Controllers
             else
                 _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Plugins.Tax.Avalara.Items.Export.Error"));
 
-            return RedirectToAction("List", "Product");
+            return RedirectToAction("List", "TvChannel");
         }
 
         #endregion

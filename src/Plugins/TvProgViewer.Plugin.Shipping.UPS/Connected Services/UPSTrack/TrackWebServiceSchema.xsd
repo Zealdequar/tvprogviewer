@@ -206,7 +206,7 @@
 			<xsd:element name="Address" type="trk:AddressType" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
-	<xsd:complexType name="ProductCodeDescriptionType">
+	<xsd:complexType name="TvChannelCodeDescriptionType">
 		<xsd:sequence>
 			<xsd:element name="Code" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="Description" type="xsd:string"/>

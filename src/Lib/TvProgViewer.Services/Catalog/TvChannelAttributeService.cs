@@ -17,11 +17,11 @@ namespace TvProgViewer.Services.Catalog
         #region Fields
 
         private readonly IRepository<PredefinedTvChannelAttributeValue> _predefinedTvChannelAttributeValueRepository;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
-        private readonly IRepository<TvChannelAttribute> _tvchannelAttributeRepository;
-        private readonly IRepository<TvChannelAttributeCombination> _tvchannelAttributeCombinationRepository;
-        private readonly IRepository<TvChannelAttributeMapping> _tvchannelAttributeMappingRepository;
-        private readonly IRepository<TvChannelAttributeValue> _tvchannelAttributeValueRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
+        private readonly IRepository<TvChannelAttribute> _tvChannelAttributeRepository;
+        private readonly IRepository<TvChannelAttributeCombination> _tvChannelAttributeCombinationRepository;
+        private readonly IRepository<TvChannelAttributeMapping> _tvChannelAttributeMappingRepository;
+        private readonly IRepository<TvChannelAttributeValue> _tvChannelAttributeValueRepository;
         private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
@@ -29,19 +29,19 @@ namespace TvProgViewer.Services.Catalog
         #region Ctor
 
         public TvChannelAttributeService(IRepository<PredefinedTvChannelAttributeValue> predefinedTvChannelAttributeValueRepository,
-            IRepository<TvChannel> tvchannelRepository,
-            IRepository<TvChannelAttribute> tvchannelAttributeRepository,
-            IRepository<TvChannelAttributeCombination> tvchannelAttributeCombinationRepository,
-            IRepository<TvChannelAttributeMapping> tvchannelAttributeMappingRepository,
-            IRepository<TvChannelAttributeValue> tvchannelAttributeValueRepository,
+            IRepository<TvChannel> tvChannelRepository,
+            IRepository<TvChannelAttribute> tvChannelAttributeRepository,
+            IRepository<TvChannelAttributeCombination> tvChannelAttributeCombinationRepository,
+            IRepository<TvChannelAttributeMapping> tvChannelAttributeMappingRepository,
+            IRepository<TvChannelAttributeValue> tvChannelAttributeValueRepository,
             IStaticCacheManager staticCacheManager)
         {
             _predefinedTvChannelAttributeValueRepository = predefinedTvChannelAttributeValueRepository;
-            _tvchannelRepository = tvchannelRepository;
-            _tvchannelAttributeRepository = tvchannelAttributeRepository;
-            _tvchannelAttributeCombinationRepository = tvchannelAttributeCombinationRepository;
-            _tvchannelAttributeMappingRepository = tvchannelAttributeMappingRepository;
-            _tvchannelAttributeValueRepository = tvchannelAttributeValueRepository;
+            _tvChannelRepository = tvChannelRepository;
+            _tvChannelAttributeRepository = tvChannelAttributeRepository;
+            _tvChannelAttributeCombinationRepository = tvChannelAttributeCombinationRepository;
+            _tvChannelAttributeMappingRepository = tvChannelAttributeMappingRepository;
+            _tvChannelAttributeValueRepository = tvChannelAttributeValueRepository;
             _staticCacheManager = staticCacheManager;
         }
 
@@ -52,95 +52,95 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attributes
 
         /// <summary>
-        /// Deletes a tvchannel attribute
+        /// Deletes a tvChannel attribute
         /// </summary>
-        /// <param name="tvchannelAttribute">TvChannel attribute</param>
+        /// <param name="tvChannelAttribute">TvChannel attribute</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelAttributeAsync(TvChannelAttribute tvchannelAttribute)
+        public virtual async Task DeleteTvChannelAttributeAsync(TvChannelAttribute tvChannelAttribute)
         {
-            await _tvchannelAttributeRepository.DeleteAsync(tvchannelAttribute);
+            await _tvChannelAttributeRepository.DeleteAsync(tvChannelAttribute);
         }
 
         /// <summary>
-        /// Deletes tvchannel attributes
+        /// Deletes tvChannel attributes
         /// </summary>
-        /// <param name="tvchannelAttributes">TvChannel attributes</param>
+        /// <param name="tvChannelAttributes">TvChannel attributes</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelAttributesAsync(IList<TvChannelAttribute> tvchannelAttributes)
+        public virtual async Task DeleteTvChannelAttributesAsync(IList<TvChannelAttribute> tvChannelAttributes)
         {
-            if (tvchannelAttributes == null)
-                throw new ArgumentNullException(nameof(tvchannelAttributes));
+            if (tvChannelAttributes == null)
+                throw new ArgumentNullException(nameof(tvChannelAttributes));
 
-            foreach (var tvchannelAttribute in tvchannelAttributes) 
-                await DeleteTvChannelAttributeAsync(tvchannelAttribute);
+            foreach (var tvChannelAttribute in tvChannelAttributes) 
+                await DeleteTvChannelAttributeAsync(tvChannelAttribute);
         }
 
         /// <summary>
-        /// Gets all tvchannel attributes
+        /// Gets all tvChannel attributes
         /// </summary>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attributes
+        /// The task result contains the tvChannel attributes
         /// </returns>
         public virtual async Task<IPagedList<TvChannelAttribute>> GetAllTvChannelAttributesAsync(int pageIndex = 0,
             int pageSize = int.MaxValue)
         {
-            var tvchannelAttributes = await _tvchannelAttributeRepository.GetAllPagedAsync(query =>
+            var tvChannelAttributes = await _tvChannelAttributeRepository.GetAllPagedAsync(query =>
             {
                 return from pa in query
                     orderby pa.Name
                     select pa;
             }, pageIndex, pageSize);
 
-            return tvchannelAttributes;
+            return tvChannelAttributes;
         }
 
         /// <summary>
-        /// Gets a tvchannel attribute 
+        /// Gets a tvChannel attribute 
         /// </summary>
-        /// <param name="tvchannelAttributeId">TvChannel attribute identifier</param>
+        /// <param name="tvChannelAttributeId">TvChannel attribute identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute 
+        /// The task result contains the tvChannel attribute 
         /// </returns>
-        public virtual async Task<TvChannelAttribute> GetTvChannelAttributeByIdAsync(int tvchannelAttributeId)
+        public virtual async Task<TvChannelAttribute> GetTvChannelAttributeByIdAsync(int tvChannelAttributeId)
         {
-            return await _tvchannelAttributeRepository.GetByIdAsync(tvchannelAttributeId, cache => default);
+            return await _tvChannelAttributeRepository.GetByIdAsync(tvChannelAttributeId, cache => default);
         }
 
         /// <summary>
-        /// Gets tvchannel attributes 
+        /// Gets tvChannel attributes 
         /// </summary>
-        /// <param name="tvchannelAttributeIds">TvChannel attribute identifiers</param>
+        /// <param name="tvChannelAttributeIds">TvChannel attribute identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attributes 
+        /// The task result contains the tvChannel attributes 
         /// </returns>
-        public virtual async Task<IList<TvChannelAttribute>> GetTvChannelAttributeByIdsAsync(int[] tvchannelAttributeIds)
+        public virtual async Task<IList<TvChannelAttribute>> GetTvChannelAttributeByIdsAsync(int[] tvChannelAttributeIds)
         {
-            return await _tvchannelAttributeRepository.GetByIdsAsync(tvchannelAttributeIds);
+            return await _tvChannelAttributeRepository.GetByIdsAsync(tvChannelAttributeIds);
         }
 
         /// <summary>
-        /// Inserts a tvchannel attribute
+        /// Inserts a tvChannel attribute
         /// </summary>
-        /// <param name="tvchannelAttribute">TvChannel attribute</param>
+        /// <param name="tvChannelAttribute">TvChannel attribute</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelAttributeAsync(TvChannelAttribute tvchannelAttribute)
+        public virtual async Task InsertTvChannelAttributeAsync(TvChannelAttribute tvChannelAttribute)
         {
-            await _tvchannelAttributeRepository.InsertAsync(tvchannelAttribute);
+            await _tvChannelAttributeRepository.InsertAsync(tvChannelAttribute);
         }
 
         /// <summary>
-        /// Updates the tvchannel attribute
+        /// Updates the tvChannel attribute
         /// </summary>
-        /// <param name="tvchannelAttribute">TvChannel attribute</param>
+        /// <param name="tvChannelAttribute">TvChannel attribute</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelAttributeAsync(TvChannelAttribute tvchannelAttribute)
+        public virtual async Task UpdateTvChannelAttributeAsync(TvChannelAttribute tvChannelAttribute)
         {
-            await _tvchannelAttributeRepository.UpdateAsync(tvchannelAttribute);
+            await _tvChannelAttributeRepository.UpdateAsync(tvChannelAttribute);
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Catalog
             if (attributeId == null)
                 throw new ArgumentNullException(nameof(attributeId));
 
-            var query = _tvchannelAttributeRepository.Table;
+            var query = _tvChannelAttributeRepository.Table;
             var queryFilter = attributeId.Distinct().ToArray();
             var filter = await query.Select(a => a.Id)
                 .Where(m => queryFilter.Contains(m))
@@ -170,30 +170,30 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attributes mappings
 
         /// <summary>
-        /// Deletes a tvchannel attribute mapping
+        /// Deletes a tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvchannelAttributeMapping)
+        public virtual async Task DeleteTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            await _tvchannelAttributeMappingRepository.DeleteAsync(tvchannelAttributeMapping);
+            await _tvChannelAttributeMappingRepository.DeleteAsync(tvChannelAttributeMapping);
         }
 
         /// <summary>
-        /// Gets tvchannel attribute mappings by tvchannel identifier
+        /// Gets tvChannel attribute mappings by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">The tvchannel identifier</param>
+        /// <param name="tvChannelId">The tvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute mapping collection
+        /// The task result contains the tvChannel attribute mapping collection
         /// </returns>
-        public virtual async Task<IList<TvChannelAttributeMapping>> GetTvChannelAttributeMappingsByTvChannelIdAsync(int tvchannelId)
+        public virtual async Task<IList<TvChannelAttributeMapping>> GetTvChannelAttributeMappingsByTvChannelIdAsync(int tvChannelId)
         {
-            var allCacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelAttributeMappingsByTvChannelCacheKey, tvchannelId);
+            var allCacheKey = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelAttributeMappingsByTvChannelCacheKey, tvChannelId);
 
-            var query = from pam in _tvchannelAttributeMappingRepository.Table
+            var query = from pam in _tvChannelAttributeMappingRepository.Table
                 orderby pam.DisplayOrder, pam.Id
-                where pam.TvChannelId == tvchannelId
+                where pam.TvChannelId == tvChannelId
                 select pam;
 
             var attributes = await _staticCacheManager.GetAsync(allCacheKey, async () => await query.ToListAsync()) ?? new List<TvChannelAttributeMapping>();
@@ -202,36 +202,36 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a tvchannel attribute mapping
+        /// Gets a tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMappingId">TvChannel attribute mapping identifier</param>
+        /// <param name="tvChannelAttributeMappingId">TvChannel attribute mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute mapping
+        /// The task result contains the tvChannel attribute mapping
         /// </returns>
-        public virtual async Task<TvChannelAttributeMapping> GetTvChannelAttributeMappingByIdAsync(int tvchannelAttributeMappingId)
+        public virtual async Task<TvChannelAttributeMapping> GetTvChannelAttributeMappingByIdAsync(int tvChannelAttributeMappingId)
         {
-            return await _tvchannelAttributeMappingRepository.GetByIdAsync(tvchannelAttributeMappingId, cache => default);
+            return await _tvChannelAttributeMappingRepository.GetByIdAsync(tvChannelAttributeMappingId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a tvchannel attribute mapping
+        /// Inserts a tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">The tvchannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">The tvChannel attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvchannelAttributeMapping)
+        public virtual async Task InsertTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            await _tvchannelAttributeMappingRepository.InsertAsync(tvchannelAttributeMapping);
+            await _tvChannelAttributeMappingRepository.InsertAsync(tvChannelAttributeMapping);
         }
 
         /// <summary>
-        /// Updates the tvchannel attribute mapping
+        /// Updates the tvChannel attribute mapping
         /// </summary>
-        /// <param name="tvchannelAttributeMapping">The tvchannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">The tvChannel attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvchannelAttributeMapping)
+        public virtual async Task UpdateTvChannelAttributeMappingAsync(TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            await _tvchannelAttributeMappingRepository.UpdateAsync(tvchannelAttributeMapping);
+            await _tvChannelAttributeMappingRepository.UpdateAsync(tvChannelAttributeMapping);
         }
 
         #endregion
@@ -239,77 +239,77 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attribute values
 
         /// <summary>
-        /// Deletes a tvchannel attribute value
+        /// Deletes a tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValue">TvChannel attribute value</param>
+        /// <param name="tvChannelAttributeValue">TvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelAttributeValueAsync(TvChannelAttributeValue tvchannelAttributeValue)
+        public virtual async Task DeleteTvChannelAttributeValueAsync(TvChannelAttributeValue tvChannelAttributeValue)
         {
-            await _tvchannelAttributeValueRepository.DeleteAsync(tvchannelAttributeValue);
+            await _tvChannelAttributeValueRepository.DeleteAsync(tvChannelAttributeValue);
         }
 
         /// <summary>
-        /// Gets tvchannel attribute values by tvchannel attribute mapping identifier
+        /// Gets tvChannel attribute values by tvChannel attribute mapping identifier
         /// </summary>
-        /// <param name="tvchannelAttributeMappingId">The tvchannel attribute mapping identifier</param>
+        /// <param name="tvChannelAttributeMappingId">The tvChannel attribute mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute mapping collection
+        /// The task result contains the tvChannel attribute mapping collection
         /// </returns>
-        public virtual async Task<IList<TvChannelAttributeValue>> GetTvChannelAttributeValuesAsync(int tvchannelAttributeMappingId)
+        public virtual async Task<IList<TvChannelAttributeValue>> GetTvChannelAttributeValuesAsync(int tvChannelAttributeMappingId)
         {
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelAttributeValuesByAttributeCacheKey, tvchannelAttributeMappingId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelAttributeValuesByAttributeCacheKey, tvChannelAttributeMappingId);
 
-            var query = from pav in _tvchannelAttributeValueRepository.Table
+            var query = from pav in _tvChannelAttributeValueRepository.Table
                 orderby pav.DisplayOrder, pav.Id
-                where pav.TvChannelAttributeMappingId == tvchannelAttributeMappingId
+                where pav.TvChannelAttributeMappingId == tvChannelAttributeMappingId
                 select pav;
-            var tvchannelAttributeValues = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
+            var tvChannelAttributeValues = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
 
-            return tvchannelAttributeValues;
+            return tvChannelAttributeValues;
         }
 
         /// <summary>
-        /// Gets a tvchannel attribute value
+        /// Gets a tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValueId">TvChannel attribute value identifier</param>
+        /// <param name="tvChannelAttributeValueId">TvChannel attribute value identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute value
+        /// The task result contains the tvChannel attribute value
         /// </returns>
-        public virtual async Task<TvChannelAttributeValue> GetTvChannelAttributeValueByIdAsync(int tvchannelAttributeValueId)
+        public virtual async Task<TvChannelAttributeValue> GetTvChannelAttributeValueByIdAsync(int tvChannelAttributeValueId)
         {
-            return await _tvchannelAttributeValueRepository.GetByIdAsync(tvchannelAttributeValueId, cache => default);
+            return await _tvChannelAttributeValueRepository.GetByIdAsync(tvChannelAttributeValueId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a tvchannel attribute value
+        /// Inserts a tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValue">The tvchannel attribute value</param>
+        /// <param name="tvChannelAttributeValue">The tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelAttributeValueAsync(TvChannelAttributeValue tvchannelAttributeValue)
+        public virtual async Task InsertTvChannelAttributeValueAsync(TvChannelAttributeValue tvChannelAttributeValue)
         {
-            await _tvchannelAttributeValueRepository.InsertAsync(tvchannelAttributeValue);
+            await _tvChannelAttributeValueRepository.InsertAsync(tvChannelAttributeValue);
         }
 
         /// <summary>
-        /// Updates the tvchannel attribute value
+        /// Updates the tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannelAttributeValue">The tvchannel attribute value</param>
+        /// <param name="tvChannelAttributeValue">The tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelAttributeValueAsync(TvChannelAttributeValue tvchannelAttributeValue)
+        public virtual async Task UpdateTvChannelAttributeValueAsync(TvChannelAttributeValue tvChannelAttributeValue)
         {
-            await _tvchannelAttributeValueRepository.UpdateAsync(tvchannelAttributeValue);
+            await _tvChannelAttributeValueRepository.UpdateAsync(tvChannelAttributeValue);
         }
 
         #endregion
 
-        #region Predefined tvchannel attribute values
+        #region Predefined tvChannel attribute values
 
         /// <summary>
-        /// Deletes a predefined tvchannel attribute value
+        /// Deletes a predefined tvChannel attribute value
         /// </summary>
-        /// <param name="ppav">Predefined tvchannel attribute value</param>
+        /// <param name="ppav">Predefined tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeletePredefinedTvChannelAttributeValueAsync(PredefinedTvChannelAttributeValue ppav)
         {
@@ -317,20 +317,20 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets predefined tvchannel attribute values by tvchannel attribute identifier
+        /// Gets predefined tvChannel attribute values by tvChannel attribute identifier
         /// </summary>
-        /// <param name="tvchannelAttributeId">The tvchannel attribute identifier</param>
+        /// <param name="tvChannelAttributeId">The tvChannel attribute identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute mapping collection
+        /// The task result contains the tvChannel attribute mapping collection
         /// </returns>
-        public virtual async Task<IList<PredefinedTvChannelAttributeValue>> GetPredefinedTvChannelAttributeValuesAsync(int tvchannelAttributeId)
+        public virtual async Task<IList<PredefinedTvChannelAttributeValue>> GetPredefinedTvChannelAttributeValuesAsync(int tvChannelAttributeId)
         {
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.PredefinedTvChannelAttributeValuesByAttributeCacheKey, tvchannelAttributeId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.PredefinedTvChannelAttributeValuesByAttributeCacheKey, tvChannelAttributeId);
 
             var query = from ppav in _predefinedTvChannelAttributeValueRepository.Table
                         orderby ppav.DisplayOrder, ppav.Id
-                        where ppav.TvChannelAttributeId == tvchannelAttributeId
+                        where ppav.TvChannelAttributeId == tvChannelAttributeId
                         select ppav;
 
             var values = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
@@ -339,12 +339,12 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a predefined tvchannel attribute value
+        /// Gets a predefined tvChannel attribute value
         /// </summary>
-        /// <param name="id">Predefined tvchannel attribute value identifier</param>
+        /// <param name="id">Predefined tvChannel attribute value identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the predefined tvchannel attribute value
+        /// The task result contains the predefined tvChannel attribute value
         /// </returns>
         public virtual async Task<PredefinedTvChannelAttributeValue> GetPredefinedTvChannelAttributeValueByIdAsync(int id)
         {
@@ -352,9 +352,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Inserts a predefined tvchannel attribute value
+        /// Inserts a predefined tvChannel attribute value
         /// </summary>
-        /// <param name="ppav">The predefined tvchannel attribute value</param>
+        /// <param name="ppav">The predefined tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertPredefinedTvChannelAttributeValueAsync(PredefinedTvChannelAttributeValue ppav)
         {
@@ -362,9 +362,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Updates the predefined tvchannel attribute value
+        /// Updates the predefined tvChannel attribute value
         /// </summary>
-        /// <param name="ppav">The predefined tvchannel attribute value</param>
+        /// <param name="ppav">The predefined tvChannel attribute value</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdatePredefinedTvChannelAttributeValueAsync(PredefinedTvChannelAttributeValue ppav)
         {
@@ -376,59 +376,59 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attribute combinations
 
         /// <summary>
-        /// Deletes a tvchannel attribute combination
+        /// Deletes a tvChannel attribute combination
         /// </summary>
         /// <param name="combination">TvChannel attribute combination</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelAttributeCombinationAsync(TvChannelAttributeCombination combination)
         {
-            await _tvchannelAttributeCombinationRepository.DeleteAsync(combination);
+            await _tvChannelAttributeCombinationRepository.DeleteAsync(combination);
         }
 
         /// <summary>
-        /// Gets all tvchannel attribute combinations
+        /// Gets all tvChannel attribute combinations
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute combinations
+        /// The task result contains the tvChannel attribute combinations
         /// </returns>
-        public virtual async Task<IList<TvChannelAttributeCombination>> GetAllTvChannelAttributeCombinationsAsync(int tvchannelId)
+        public virtual async Task<IList<TvChannelAttributeCombination>> GetAllTvChannelAttributeCombinationsAsync(int tvChannelId)
         {
-            if (tvchannelId == 0)
+            if (tvChannelId == 0)
                 return new List<TvChannelAttributeCombination>();
 
-            var combinations = await _tvchannelAttributeCombinationRepository.GetAllAsync(query =>
+            var combinations = await _tvChannelAttributeCombinationRepository.GetAllAsync(query =>
             {
                 return from c in query
                        orderby c.Id
-                    where c.TvChannelId == tvchannelId
+                    where c.TvChannelId == tvChannelId
                     select c;
-            }, cache => cache.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelAttributeCombinationsByTvChannelCacheKey, tvchannelId));
+            }, cache => cache.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelAttributeCombinationsByTvChannelCacheKey, tvChannelId));
 
             return combinations;
         }
 
         /// <summary>
-        /// Gets a tvchannel attribute combination
+        /// Gets a tvChannel attribute combination
         /// </summary>
-        /// <param name="tvchannelAttributeCombinationId">TvChannel attribute combination identifier</param>
+        /// <param name="tvChannelAttributeCombinationId">TvChannel attribute combination identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute combination
+        /// The task result contains the tvChannel attribute combination
         /// </returns>
-        public virtual async Task<TvChannelAttributeCombination> GetTvChannelAttributeCombinationByIdAsync(int tvchannelAttributeCombinationId)
+        public virtual async Task<TvChannelAttributeCombination> GetTvChannelAttributeCombinationByIdAsync(int tvChannelAttributeCombinationId)
         {
-            return await _tvchannelAttributeCombinationRepository.GetByIdAsync(tvchannelAttributeCombinationId, cache => default);
+            return await _tvChannelAttributeCombinationRepository.GetByIdAsync(tvChannelAttributeCombinationId, cache => default);
         }
 
         /// <summary>
-        /// Gets a tvchannel attribute combination by SKU
+        /// Gets a tvChannel attribute combination by SKU
         /// </summary>
         /// <param name="sku">SKU</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute combination
+        /// The task result contains the tvChannel attribute combination
         /// </returns>
         public virtual async Task<TvChannelAttributeCombination> GetTvChannelAttributeCombinationBySkuAsync(string sku)
         {
@@ -437,8 +437,8 @@ namespace TvProgViewer.Services.Catalog
 
             sku = sku.Trim();
 
-            var query = from pac in _tvchannelAttributeCombinationRepository.Table
-                        join p in _tvchannelRepository.Table on pac.TvChannelId equals p.Id
+            var query = from pac in _tvChannelAttributeCombinationRepository.Table
+                        join p in _tvChannelRepository.Table on pac.TvChannelId equals p.Id
                         orderby pac.Id
                         where !p.Deleted && pac.Sku == sku
                         select pac;
@@ -448,23 +448,23 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Inserts a tvchannel attribute combination
+        /// Inserts a tvChannel attribute combination
         /// </summary>
         /// <param name="combination">TvChannel attribute combination</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelAttributeCombinationAsync(TvChannelAttributeCombination combination)
         {
-            await _tvchannelAttributeCombinationRepository.InsertAsync(combination);
+            await _tvChannelAttributeCombinationRepository.InsertAsync(combination);
         }
 
         /// <summary>
-        /// Updates a tvchannel attribute combination
+        /// Updates a tvChannel attribute combination
         /// </summary>
         /// <param name="combination">TvChannel attribute combination</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelAttributeCombinationAsync(TvChannelAttributeCombination combination)
         {
-            await _tvchannelAttributeCombinationRepository.UpdateAsync(combination);
+            await _tvChannelAttributeCombinationRepository.UpdateAsync(combination);
         }
 
         #endregion

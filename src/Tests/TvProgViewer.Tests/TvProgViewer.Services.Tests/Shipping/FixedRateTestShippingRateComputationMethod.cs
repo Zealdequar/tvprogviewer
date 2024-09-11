@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Nop.Core.Domain.Shipping;
-using Nop.Services.Plugins;
-using Nop.Services.Shipping;
-using Nop.Services.Shipping.Tracking;
+using TvProgViewer.Core.Domain.Shipping;
+using TvProgViewer.Services.Plugins;
+using TvProgViewer.Services.Shipping;
+using TvProgViewer.Services.Shipping.Tracking;
 
-namespace Nop.Tests.Nop.Services.Tests.Shipping
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Shipping
 {
     public class FixedRateTestShippingRateComputationMethod : BasePlugin, IShippingRateComputationMethod
     {

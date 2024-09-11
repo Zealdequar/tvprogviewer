@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.Common;
-using Nop.Web.Validators.Common;
+using TvProgViewer.WebUI.Models.Common;
+using TvProgViewer.WebUI.Validators.Common;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Common
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.Common
 {
     [TestFixture]
-    public class ContactVendorValidatorTests : BaseNopTest
+    public class ContactVendorValidatorTests : BaseTvProgTest
     {
         private ContactVendorValidator _validator;
         

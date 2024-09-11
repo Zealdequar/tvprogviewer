@@ -134,15 +134,15 @@ namespace TvProgViewer.Services.Media
         Task<IPagedList<Picture>> GetPicturesAsync(string virtualPath = "", int pageIndex = 0, int pageSize = int.MaxValue);
 
         /// <summary>
-        /// Gets pictures by tvchannel identifier
+        /// Gets pictures by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="recordsToReturn">Number of records to return. 0 if you want to get all items</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the pictures
         /// </returns>
-        Task<IList<Picture>> GetPicturesByTvChannelIdAsync(int tvchannelId, int recordsToReturn = 0);
+        Task<IList<Picture>> GetPicturesByTvChannelIdAsync(int tvChannelId, int recordsToReturn = 0);
 
         /// <summary>
         /// Inserts a picture
@@ -240,18 +240,18 @@ namespace TvProgViewer.Services.Media
         Task SetIsStoreInDbAsync(bool isStoreInDb);
 
         /// <summary>
-        /// Get tvchannel picture (for shopping cart and order details pages)
+        /// Get tvChannel picture (for shopping cart and order details pages)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes (in XML format)</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the picture
         /// </returns>
-        Task<Picture> GetTvChannelPictureAsync(TvChannel tvchannel, string attributesXml);
+        Task<Picture> GetTvChannelPictureAsync(TvChannel tvChannel, string attributesXml);
 
         /// <summary>
-        /// Get tvchannel picture binary by picture identifier
+        /// Get tvChannel picture binary by picture identifier
         /// </summary>
         /// <param name="pictureId">The picture identifier</param>
         /// <returns>

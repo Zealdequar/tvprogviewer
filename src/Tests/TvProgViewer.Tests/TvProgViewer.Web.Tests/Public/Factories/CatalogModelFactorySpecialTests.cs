@@ -1,15 +1,15 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Vendors;
-using Nop.Services.Catalog;
-using Nop.Services.Configuration;
-using Nop.Web.Factories;
-using Nop.Web.Models.Catalog;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Vendors;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
     public class CatalogModelFactorySpecialTests: WebTest
@@ -36,12 +36,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             
             _catalogSettings = GetService<CatalogSettings>();
 
-            _catalogSettings.AllowProductViewModeChanging = false;
+            _catalogSettings.AllowTvChannelViewModeChanging = false;
             _catalogSettings.CategoryBreadcrumbEnabled = false;
-            _catalogSettings.ShowProductsFromSubcategories = true;
-            _catalogSettings.ShowCategoryProductNumber = true;
-            _catalogSettings.ShowCategoryProductNumberIncludingSubcategories = true;
-            _catalogSettings.NumberOfProductTags = 20;
+            _catalogSettings.ShowTvChannelsFromSubcategories = true;
+            _catalogSettings.ShowCategoryTvChannelNumber = true;
+            _catalogSettings.ShowCategoryTvChannelNumberIncludingSubcategories = true;
+            _catalogSettings.NumberOfTvChannelTags = 20;
 
             await _settingsService.SaveSettingAsync(_catalogSettings);
 
@@ -55,12 +55,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             _vendorSettings.AllowSearchByVendor = false;
             await _settingsService.SaveSettingAsync(_vendorSettings);
 
-            _catalogSettings.AllowProductViewModeChanging = true;
+            _catalogSettings.AllowTvChannelViewModeChanging = true;
             _catalogSettings.CategoryBreadcrumbEnabled = true;
-            _catalogSettings.ShowProductsFromSubcategories = false;
-            _catalogSettings.ShowCategoryProductNumber = false;
-            _catalogSettings.ShowCategoryProductNumberIncludingSubcategories = false;
-            _catalogSettings.NumberOfProductTags = 15;
+            _catalogSettings.ShowTvChannelsFromSubcategories = false;
+            _catalogSettings.ShowCategoryTvChannelNumber = false;
+            _catalogSettings.ShowCategoryTvChannelNumberIncludingSubcategories = false;
+            _catalogSettings.NumberOfTvChannelTags = 15;
             await _settingsService.SaveSettingAsync(_catalogSettings);
         }
 
@@ -77,7 +77,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task PrepareSearchModelShouldDependOnSettings()
         {
-            var model = await _catalogModelFactory.PrepareSearchModelAsync(new SearchModel(), new CatalogProductsCommand());
+            var model = await _catalogModelFactory.PrepareSearchModelAsync(new SearchModel(), new CatalogTvChannelsCommand());
             
             model.AvailableVendors.Any().Should().BeTrue();
             model.AvailableVendors.Count.Should().Be(3);
@@ -86,17 +86,17 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task PrepareCategoryModelShouldDependOnSettings()
         {
-            var model = await _catalogModelFactory.PrepareCategoryModelAsync(_category, new CatalogProductsCommand());
+            var model = await _catalogModelFactory.PrepareCategoryModelAsync(_category, new CatalogTvChannelsCommand());
            
             model.CategoryBreadcrumb.Any().Should().BeFalse();
             model.SubCategories.Count.Should().Be(3);
-            model.CatalogProductsModel.Products.Count.Should().Be(6);
+            model.CatalogTvChannelsModel.TvChannels.Count.Should().Be(6);
         }
         
         [Test]
-        public async Task CanPreparePopularProductTagsModel()
+        public async Task CanPreparePopularTvChannelTagsModel()
         {
-            var model = await _catalogModelFactory.PreparePopularProductTagsModelAsync(_catalogSettings.NumberOfProductTags);
+            var model = await _catalogModelFactory.PreparePopularTvChannelTagsModelAsync(_catalogSettings.NumberOfTvChannelTags);
 
             model.Tags.Count.Should().Be(16);
             model.TotalTags.Should().Be(16);
@@ -105,13 +105,13 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         [Test]
         public async Task PrepareViewModesShouldDependOnSettings()
         {
-            var model = new CatalogProductsModel();
-            await _catalogModelFactory.PrepareViewModesAsync(model, new CatalogProductsCommand
+            var model = new CatalogTvChannelsModel();
+            await _catalogModelFactory.PrepareViewModesAsync(model, new CatalogTvChannelsCommand
             {
                 ViewMode = "list"
             });
 
-            model.AllowProductViewModeChanging.Should().BeFalse();
+            model.AllowTvChannelViewModeChanging.Should().BeFalse();
             model.AvailableViewModes.Count.Should().Be(0);
             model.ViewMode.Should().Be("list");
         }
@@ -121,10 +121,10 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _catalogModelFactory.PrepareCategorySimpleModelsAsync();
 
-            var numberOfProducts = model
-                .FirstOrDefault(p => p.Id == _category.Id)?.NumberOfProducts;
+            var numberOfTvChannels = model
+                .FirstOrDefault(p => p.Id == _category.Id)?.NumberOfTvChannels;
 
-            numberOfProducts.Should().Be(12);
+            numberOfTvChannels.Should().Be(12);
         }
     }
 }

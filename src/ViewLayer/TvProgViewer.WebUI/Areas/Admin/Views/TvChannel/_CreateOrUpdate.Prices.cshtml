@@ -21,7 +21,7 @@
     }
 </script>
 <div class="card-body">
-    <div class="form-group row" id="tvchannel-price-area">
+    <div class="form-group row" id="tvChannel-price-area">
         <div class="col-md-3">
             <tvprog-label asp-for="Price" />
         </div>
@@ -200,7 +200,7 @@
             </script>
         </div>
     </div>
-    <div id="tvchannel-tax-area">
+    <div id="tvChannel-tax-area">
         <div class="form-group row">
             <div class="col-md-3">
                 <tvprog-label asp-for="IsTaxExempt" />
@@ -294,12 +294,12 @@
 
                 <script>
                     function renderPriceColumnEdit(data, type, row, meta) {
-                        return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannel/TierPriceEditPopup/")' + data + '?btnId=btnRefreshTierPrices&formId=tvchannel-form\', 800, 600, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+                        return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannel/TierPriceEditPopup/")' + data + '?btnId=btnRefreshTierPrices&formId=tvChannel-form\', 800, 600, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
                     }
                 </script>
             </div>
             <div class="card-footer">
-                <button type="submit" id="btnAddNewTierPrice" onclick="javascript:OpenWindow('@(Url.Action("TierPriceCreatePopup", "TvChannel", new { tvchannelId = Model.Id, btnId = "btnRefreshTierPrices", formId = "tvchannel-form"}))', 800, 600, true); return false;" class="btn btn-primary">
+                <button type="submit" id="btnAddNewTierPrice" onclick="javascript:OpenWindow('@(Url.Action("TierPriceCreatePopup", "TvChannel", new { tvChannelId = Model.Id, btnId = "btnRefreshTierPrices", formId = "tvChannel-form"}))', 800, 600, true); return false;" class="btn btn-primary">
                     @T("Admin.Catalog.TvChannels.TierPrices.AddNew")
                 </button>
                 <button type="submit" id="btnRefreshTierPrices" style="display: none"></button>

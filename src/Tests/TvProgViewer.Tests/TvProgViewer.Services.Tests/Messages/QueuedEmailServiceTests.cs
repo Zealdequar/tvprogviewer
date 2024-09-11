@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Messages;
-using Nop.Data;
-using Nop.Services.Messages;
+using TvProgViewer.Core.Domain.Messages;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Messages;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Messages
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Messages
 {
     [TestFixture]
-    public class QueuedEmailServiceTests:BaseNopTest
+    public class QueuedEmailServiceTests:BaseTvProgTest
     {
         private IQueuedEmailService _queuedEmailService;
         private IRepository<QueuedEmail> _queuedEmailRepository;
@@ -39,11 +39,11 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         {
             _emails = new List<QueuedEmail>
             {
-                new() {From = NopTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1, SentTries = 5},
-                new() {From = NopTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1},
-                new() {From = NopTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1},
-                new() {From = NopTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1, SentOnUtc = DateTime.UtcNow},
-                new() {From = NopTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1, SentOnUtc = DateTime.UtcNow}
+                new() {From = TvProgTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1, SentTries = 5},
+                new() {From = TvProgTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1},
+                new() {From = TvProgTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1},
+                new() {From = TvProgTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1, SentOnUtc = DateTime.UtcNow},
+                new() {From = TvProgTestsDefaults.AdminEmail, To = _testEmail, EmailAccountId = 1, SentOnUtc = DateTime.UtcNow}
             };
 
             foreach (var queuedEmail in _emails)
@@ -97,7 +97,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
 
             async Task<int> getCountAsync()
             {
-                var emails = await _queuedEmailService.SearchEmailsAsync(NopTestsDefaults.AdminEmail, _testEmail, null,
+                var emails = await _queuedEmailService.SearchEmailsAsync(TvProgTestsDefaults.AdminEmail, _testEmail, null,
                     null, loadNotSentItemsOnly, loadOnlyItemsToBeSent, maxSendTries, loadNewest);
 
                 return emails.Count;

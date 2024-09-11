@@ -35,7 +35,7 @@
             $('#pnlBackorders').hideElement();
             $('#pnlAllowAddingOnlyExistingAttributeCombinations').hideElement();
 
-            $('[data-card-name=tvchannel-stock-quantity-history]').hideElement();
+            $('[data-card-name=tvChannel-stock-quantity-history]').hideElement();
         } else if (selectedManageInventoryMethodId == manageStockId) {
             $('#pnlUseMultipleWarehouses').showElement();
 
@@ -79,7 +79,7 @@
 
             $('#pnlAllowAddingOnlyExistingAttributeCombinations').hideElement();
 
-            $('[data-card-name=tvchannel-stock-quantity-history]').showElement();
+            $('[data-card-name=tvChannel-stock-quantity-history]').showElement();
         } else {
             $('#pnlTvChannelAvailabilityRange').showElement();
             $('#pnlUseMultipleWarehouses').hideElement();
@@ -100,14 +100,14 @@
             $('#pnlBackorders').hideElement();
             $('#pnlAllowAddingOnlyExistingAttributeCombinations').showElement();
 
-            $('[data-card-name=tvchannel-stock-quantity-history]').showElement();
+            $('[data-card-name=tvChannel-stock-quantity-history]').showElement();
         }
     }
 
 </script>
 
 <div class="card-body">
-    <div id="tvchannel-inventory-area">
+    <div id="tvChannel-inventory-area">
         <div class="form-group row">
             <div class="col-md-3">
                 <tvprog-label asp-for="ManageInventoryMethodId" />

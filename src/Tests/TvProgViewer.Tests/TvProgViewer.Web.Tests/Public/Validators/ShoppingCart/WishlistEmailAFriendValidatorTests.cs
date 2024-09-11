@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.ShoppingCart;
-using Nop.Web.Validators.ShoppingCart;
+using TvProgViewer.WebUI.Models.ShoppingCart;
+using TvProgViewer.WebUI.Validators.ShoppingCart;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.ShoppingCart
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.ShoppingCart
 {
     [TestFixture]
-    public class WishlistEmailAFriendValidatorTests : BaseNopTest
+    public class WishlistEmailAFriendValidatorTests : BaseTvProgTest
     {
         private WishlistEmailAFriendValidator _validator;
         

@@ -1,46 +1,46 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Customers;
-using Nop.Services.Security;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Security;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Customers
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Users
 {
     [TestFixture]
-    public class CustomerRegistrationServiceTests : ServiceTest
+    public class UserRegistrationServiceTests : ServiceTest
     {
-        private ICustomerService _customerService;
+        private IUserService _userService;
         private IEncryptionService _encryptionService;
-        private ICustomerRegistrationService _customerRegistrationService;
+        private IUserRegistrationService _userRegistrationService;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            _customerService = GetService<ICustomerService>();
+            _userService = GetService<IUserService>();
             _encryptionService = GetService<IEncryptionService>();
-            _customerRegistrationService = GetService<ICustomerRegistrationService>();
+            _userRegistrationService = GetService<IUserRegistrationService>();
         }
 
-        private async Task<Customer> CreateCustomerAsync(PasswordFormat passwordFormat, bool isRegistered = true)
+        private async Task<User> CreateUserAsync(PasswordFormat passwordFormat, bool isRegistered = true)
         {
-            var customer = new Customer
+            var user = new User
             {
                 Username = "test@test.com",
                 Email = "test@test.com",
                 Active = true
             };
 
-            await _customerService.InsertCustomerAsync(customer);
+            await _userService.InsertUserAsync(user);
 
             var password = "password";
             if (passwordFormat == PasswordFormat.Encrypted)
                 password = _encryptionService.EncryptText(password);
 
-            await _customerService.InsertCustomerPasswordAsync(new CustomerPassword
+            await _userService.InsertUserPasswordAsync(new UserPassword
             {
-                CustomerId = customer.Id,
+                UserId = user.Id,
                 PasswordFormat = passwordFormat,
                 Password = password,
                 CreatedOnUtc = DateTime.UtcNow
@@ -48,83 +48,83 @@ namespace Nop.Tests.Nop.Services.Tests.Customers
 
             if (isRegistered)
             {
-                var registeredRole = await _customerService
-                    .GetCustomerRoleBySystemNameAsync(NopCustomerDefaults.RegisteredRoleName);
-                await _customerService.AddCustomerRoleMappingAsync(new CustomerCustomerRoleMapping
+                var registeredRole = await _userService
+                    .GetUserRoleBySystemNameAsync(TvProgUserDefaults.RegisteredRoleName);
+                await _userService.AddUserRoleMappingAsync(new UserUserRoleMapping
                 {
-                    CustomerId = customer.Id, CustomerRoleId = registeredRole.Id
+                    UserId = user.Id, UserRoleId = registeredRole.Id
                 });
             }
 
-            return customer;
+            return user;
         }
 
-        private async Task DeleteCustomerAsync(Customer customer)
+        private async Task DeleteUserAsync(User user)
         {
-            customer.Username = customer.Email = string.Empty;
-            customer.Active = false;
-            await _customerService.UpdateCustomerAsync(customer);
-            await _customerService.DeleteCustomerAsync(customer);
+            user.Username = user.Email = string.Empty;
+            user.Active = false;
+            await _userService.UpdateUserAsync(user);
+            await _userService.DeleteUserAsync(user);
         }
 
         [Test]
-        public async Task EnsureOnlyRegisteredCustomersCanLogin()
+        public async Task EnsureOnlyRegisteredUsersCanLogin()
         {
-            var result = await _customerRegistrationService.ValidateCustomerAsync(NopTestsDefaults.AdminEmail, NopTestsDefaults.AdminPassword);
-            result.Should().Be(CustomerLoginResults.Successful);
+            var result = await _userRegistrationService.ValidateUserAsync(TvProgTestsDefaults.AdminEmail, TvProgTestsDefaults.AdminPassword);
+            result.Should().Be(UserLoginResults.Successful);
 
-            var customer = await CreateCustomerAsync(PasswordFormat.Clear, false);
+            var user = await CreateUserAsync(PasswordFormat.Clear, false);
 
-            result = await _customerRegistrationService.ValidateCustomerAsync("test@test.com", "password");
-            await DeleteCustomerAsync(customer);
+            result = await _userRegistrationService.ValidateUserAsync("test@test.com", "password");
+            await DeleteUserAsync(user);
 
-            result.Should().Be(CustomerLoginResults.NotRegistered);
+            result.Should().Be(UserLoginResults.NotRegistered);
         }
 
         [Test]
         public async Task CanValidateHashedPassword()
         {
-            var result = await _customerRegistrationService.ValidateCustomerAsync(NopTestsDefaults.AdminEmail, NopTestsDefaults.AdminPassword);
-            result.Should().Be(CustomerLoginResults.Successful);
+            var result = await _userRegistrationService.ValidateUserAsync(TvProgTestsDefaults.AdminEmail, TvProgTestsDefaults.AdminPassword);
+            result.Should().Be(UserLoginResults.Successful);
         }
 
         [Test]
         public async Task CanValidateClearPassword()
         {
-            var customer = await CreateCustomerAsync(PasswordFormat.Clear);
+            var user = await CreateUserAsync(PasswordFormat.Clear);
 
-            var result = await _customerRegistrationService.ValidateCustomerAsync("test@test.com", "password");
-            await DeleteCustomerAsync(customer);
+            var result = await _userRegistrationService.ValidateUserAsync("test@test.com", "password");
+            await DeleteUserAsync(user);
 
-            result.Should().Be(CustomerLoginResults.Successful);
+            result.Should().Be(UserLoginResults.Successful);
         }
 
         [Test]
         public async Task CanValidateEncryptedPassword()
         {
-            var customer = await CreateCustomerAsync(PasswordFormat.Encrypted);
+            var user = await CreateUserAsync(PasswordFormat.Encrypted);
 
-            var result = await _customerRegistrationService.ValidateCustomerAsync("test@test.com", "password");
-            await DeleteCustomerAsync(customer);
+            var result = await _userRegistrationService.ValidateUserAsync("test@test.com", "password");
+            await DeleteUserAsync(user);
 
-            result.Should().Be(CustomerLoginResults.Successful);
+            result.Should().Be(UserLoginResults.Successful);
         }
         
         [Test]
         public async Task CanChangePassword()
         {
-            var customer = await CreateCustomerAsync(PasswordFormat.Encrypted);
+            var user = await CreateUserAsync(PasswordFormat.Encrypted);
 
             var request = new ChangePasswordRequest("test@test.com", true, PasswordFormat.Clear, "password", "password");
-            var unSuccess = await _customerRegistrationService.ChangePasswordAsync(request);
+            var unSuccess = await _userRegistrationService.ChangePasswordAsync(request);
             
             request = new ChangePasswordRequest("test@test.com", true, PasswordFormat.Hashed, "newpassword", "password");
-            var success = await _customerRegistrationService.ChangePasswordAsync(request);
+            var success = await _userRegistrationService.ChangePasswordAsync(request);
 
             unSuccess.Success.Should().BeFalse();
             success.Success.Should().BeTrue();
 
-            await DeleteCustomerAsync(customer);
+            await DeleteUserAsync(user);
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿namespace Nop.Tests
+﻿namespace TvProgViewer.Tests
 {
     /// <summary>
     /// Represents default values related to tests
     /// </summary>
-    public static partial class NopTestsDefaults
+    public static partial class TvProgTestsDefaults
     {
         /// <summary>
         /// Gets the default admin email

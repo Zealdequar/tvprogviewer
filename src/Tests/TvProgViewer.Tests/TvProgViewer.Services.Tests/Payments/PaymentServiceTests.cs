@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Orders;
-using Nop.Services.Payments;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Services.Payments;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Payments
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Payments
 {
     [TestFixture]
     public class PaymentServiceTests : ServiceTest

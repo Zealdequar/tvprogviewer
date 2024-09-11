@@ -49,9 +49,9 @@ namespace TvProgViewer.Services.Orders
         private readonly IPermissionService _permissionService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRepository<ShoppingCartItem> _sciRepository;
         private readonly IShippingService _shippingService;
         private readonly IStaticCacheManager _staticCacheManager;
@@ -82,9 +82,9 @@ namespace TvProgViewer.Services.Orders
             IPermissionService permissionService,
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelAttributeService tvchannelAttributeService,
-            ITvChannelService tvchannelService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
             IRepository<ShoppingCartItem> sciRepository,
             IShippingService shippingService,
             IStaticCacheManager staticCacheManager,
@@ -111,9 +111,9 @@ namespace TvProgViewer.Services.Orders
             _permissionService = permissionService;
             _priceCalculationService = priceCalculationService;
             _priceFormatter = priceFormatter;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelService = tvchannelService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
             _sciRepository = sciRepository;
             _shippingService = shippingService;
             _staticCacheManager = staticCacheManager;
@@ -135,7 +135,7 @@ namespace TvProgViewer.Services.Orders
         /// Determine if the shopping cart item is the same as the one being compared
         /// </summary>
         /// <param name="shoppingCartItem">Shopping cart item</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="userEnteredPrice">Price entered by a user</param>
         /// <param name="rentalStartDate">Rental start date</param>
@@ -145,26 +145,26 @@ namespace TvProgViewer.Services.Orders
         /// The task result contains the shopping cart item is equal
         /// </returns>
         protected virtual async Task<bool> ShoppingCartItemIsEqualAsync(ShoppingCartItem shoppingCartItem,
-            TvChannel tvchannel,
+            TvChannel tvChannel,
             string attributesXml,
             decimal userEnteredPrice,
             DateTime? rentalStartDate,
             DateTime? rentalEndDate)
         {
-            if (shoppingCartItem.TvChannelId != tvchannel.Id)
+            if (shoppingCartItem.TvChannelId != tvChannel.Id)
                 return false;
 
             //attributes
-            var attributesEqual = await _tvchannelAttributeParser.AreTvChannelAttributesEqualAsync(shoppingCartItem.AttributesXml, attributesXml, false, false);
+            var attributesEqual = await _tvChannelAttributeParser.AreTvChannelAttributesEqualAsync(shoppingCartItem.AttributesXml, attributesXml, false, false);
             if (!attributesEqual)
                 return false;
 
             //gift cards
-            if (tvchannel.IsGiftCard)
+            if (tvChannel.IsGiftCard)
             {
-                _tvchannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName1, out var _, out var giftCardSenderName1, out var _, out var _);
+                _tvChannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName1, out var _, out var giftCardSenderName1, out var _, out var _);
 
-                _tvchannelAttributeParser.GetGiftCardAttribute(shoppingCartItem.AttributesXml, out var giftCardRecipientName2, out var _, out var giftCardSenderName2, out var _, out var _);
+                _tvChannelAttributeParser.GetGiftCardAttribute(shoppingCartItem.AttributesXml, out var giftCardRecipientName2, out var _, out var giftCardSenderName2, out var _, out var _);
 
                 var giftCardsAreEqual = giftCardRecipientName1.Equals(giftCardRecipientName2, StringComparison.InvariantCultureIgnoreCase)
                     && giftCardSenderName1.Equals(giftCardSenderName2, StringComparison.InvariantCultureIgnoreCase);
@@ -172,8 +172,8 @@ namespace TvProgViewer.Services.Orders
                     return false;
             }
 
-            //price is the same (for tvchannels which require users to enter a price)
-            if (tvchannel.UserEntersPrice)
+            //price is the same (for tvChannels which require users to enter a price)
+            if (tvChannel.UserEntersPrice)
             {
                 //we use rounding to eliminate errors associated with storing real numbers in memory when comparing
                 var userEnteredPricesEqual = Math.Round(shoppingCartItem.UserEnteredPrice, 2) == Math.Round(userEnteredPrice, 2);
@@ -181,10 +181,10 @@ namespace TvProgViewer.Services.Orders
                     return false;
             }
 
-            if (!tvchannel.IsRental)
+            if (!tvChannel.IsRental)
                 return true;
 
-            //rental tvchannels
+            //rental tvChannels
             var rentalInfoEqual = shoppingCartItem.RentalStartDateUtc == rentalStartDate && shoppingCartItem.RentalEndDateUtc == rentalEndDate;
 
             return rentalInfoEqual;
@@ -201,51 +201,51 @@ namespace TvProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Validates required tvchannels (tvchannels which require some other tvchannels to be added to the cart)
+        /// Validates required tvChannels (tvChannels which require some other tvChannels to be added to the cart)
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="quantity">Quantity</param>
-        /// <param name="addRequiredTvChannels">Whether to add required tvchannels</param>
+        /// <param name="addRequiredTvChannels">Whether to add required tvChannels</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
-        protected virtual async Task<IList<string>> GetRequiredTvChannelWarningsAsync(User user, ShoppingCartType shoppingCartType, TvChannel tvchannel,
+        protected virtual async Task<IList<string>> GetRequiredTvChannelWarningsAsync(User user, ShoppingCartType shoppingCartType, TvChannel tvChannel,
             int storeId, int quantity, bool addRequiredTvChannels, int shoppingCartItemId)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
 
-            //at now we ignore quantities of required tvchannels and use 1
+            //at now we ignore quantities of required tvChannels and use 1
             var requiredTvChannelQuantity = 1;
 
             //get user shopping cart
             var cart = await GetShoppingCartAsync(user, shoppingCartType, storeId);
 
-            var tvchannelsRequiringTvChannel = await GetTvChannelsRequiringTvChannelAsync(cart, tvchannel);
+            var tvChannelsRequiringTvChannel = await GetTvChannelsRequiringTvChannelAsync(cart, tvChannel);
 
-            //whether other cart items require the passed tvchannel
-            var passedTvChannelRequiredQuantity = cart.Where(ci => tvchannelsRequiringTvChannel.Any(p => p.Id == ci.TvChannelId))
+            //whether other cart items require the passed tvChannel
+            var passedTvChannelRequiredQuantity = cart.Where(ci => tvChannelsRequiringTvChannel.Any(p => p.Id == ci.TvChannelId))
                 .Sum(item => item.Quantity * requiredTvChannelQuantity);
 
             if (passedTvChannelRequiredQuantity > quantity)
                 warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.RequiredTvChannelUpdateWarning"), passedTvChannelRequiredQuantity));
 
-            //whether the passed tvchannel requires other tvchannels
-            if (!tvchannel.RequireOtherTvChannels)
+            //whether the passed tvChannel requires other tvChannels
+            if (!tvChannel.RequireOtherTvChannels)
                 return warnings;
 
-            //get these required tvchannels
-            var requiredTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(_tvchannelService.ParseRequiredTvChannelIds(tvchannel));
+            //get these required tvChannels
+            var requiredTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(_tvChannelService.ParseRequiredTvChannelIds(tvChannel));
             if (!requiredTvChannels.Any())
                 return warnings;
 
@@ -254,15 +254,15 @@ namespace TvProgViewer.Services.Orders
             var warningLocale = await _localizationService.GetResourceAsync("ShoppingCart.RequiredTvChannelWarning");
             foreach (var requiredTvChannel in requiredTvChannels)
             {
-                var tvchannelsRequiringRequiredTvChannel = await GetTvChannelsRequiringTvChannelAsync(cart, requiredTvChannel);
+                var tvChannelsRequiringRequiredTvChannel = await GetTvChannelsRequiringTvChannelAsync(cart, requiredTvChannel);
 
-                //get the required quantity of the required tvchannel
+                //get the required quantity of the required tvChannel
                 var requiredTvChannelRequiredQuantity = quantity * requiredTvChannelQuantity +
-                    cart.Where(ci => tvchannelsRequiringRequiredTvChannel.Any(p => p.Id == ci.TvChannelId))
+                    cart.Where(ci => tvChannelsRequiringRequiredTvChannel.Any(p => p.Id == ci.TvChannelId))
                         .Where(item => item.Id != shoppingCartItemId)
                         .Sum(item => item.Quantity * requiredTvChannelQuantity);
 
-                //whether required tvchannel is already in the cart in the required quantity
+                //whether required tvChannel is already in the cart in the required quantity
                 var quantityToAdd = requiredTvChannelRequiredQuantity - (cart.FirstOrDefault(item => item.TvChannelId == requiredTvChannel.Id)?.Quantity ?? 0);
                 if (quantityToAdd <= 0)
                     continue;
@@ -275,12 +275,12 @@ namespace TvProgViewer.Services.Orders
                     : string.Format(warningLocale, requiredTvChannelName, requiredTvChannelRequiredQuantity);
 
                 //add to cart (if possible)
-                if (addRequiredTvChannels && tvchannel.AutomaticallyAddRequiredTvChannels)
+                if (addRequiredTvChannels && tvChannel.AutomaticallyAddRequiredTvChannels)
                 {
-                    //do not add required tvchannels to prevent circular references
+                    //do not add required tvChannels to prevent circular references
                     var addToCartWarnings = await GetShoppingCartItemWarningsAsync(
                         user: user,
-                        tvchannel: requiredTvChannel,
+                        tvChannel: requiredTvChannel,
                         attributesXml: null,
                         userEnteredPrice: decimal.Zero,
                         shoppingCartType: shoppingCartType,
@@ -302,11 +302,11 @@ namespace TvProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Validates a tvchannel for standard properties
+        /// Validates a tvChannel for standard properties
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="userEnteredPrice">User entered price</param>
         /// <param name="quantity">Quantity</param>
@@ -316,62 +316,62 @@ namespace TvProgViewer.Services.Orders
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
-        protected virtual async Task<IList<string>> GetStandardWarningsAsync(User user, ShoppingCartType shoppingCartType, TvChannel tvchannel,
+        protected virtual async Task<IList<string>> GetStandardWarningsAsync(User user, ShoppingCartType shoppingCartType, TvChannel tvChannel,
             string attributesXml, decimal userEnteredPrice, int quantity, int shoppingCartItemId, int storeId)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
 
             //deleted
-            if (tvchannel.Deleted)
+            if (tvChannel.Deleted)
             {
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.TvChannelDeleted"));
                 return warnings;
             }
 
             //published
-            if (!tvchannel.Published)
+            if (!tvChannel.Published)
             {
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.TvChannelUnpublished"));
             }
 
-            //we can add only simple tvchannels
-            if (tvchannel.TvChannelType != TvChannelType.SimpleTvChannel)
+            //we can add only simple tvChannels
+            if (tvChannel.TvChannelType != TvChannelType.SimpleTvChannel)
             {
-                warnings.Add("This is not simple tvchannel");
+                warnings.Add("This is not simple tvChannel");
             }
 
             //ACL
-            if (!await _aclService.AuthorizeAsync(tvchannel, user))
+            if (!await _aclService.AuthorizeAsync(tvChannel, user))
             {
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.TvChannelUnpublished"));
             }
 
             //Store mapping
-            if (!await _storeMappingService.AuthorizeAsync(tvchannel, storeId))
+            if (!await _storeMappingService.AuthorizeAsync(tvChannel, storeId))
             {
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.TvChannelUnpublished"));
             }
 
             //disabled "add to cart" button
-            if (shoppingCartType == ShoppingCartType.ShoppingCart && tvchannel.DisableBuyButton)
+            if (shoppingCartType == ShoppingCartType.ShoppingCart && tvChannel.DisableBuyButton)
             {
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.BuyingDisabled"));
             }
 
             //disabled "add to wishlist" button
-            if (shoppingCartType == ShoppingCartType.Wishlist && tvchannel.DisableWishlistButton)
+            if (shoppingCartType == ShoppingCartType.Wishlist && tvChannel.DisableWishlistButton)
             {
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.WishlistDisabled"));
             }
 
             //call for price
-            if (shoppingCartType == ShoppingCartType.ShoppingCart && tvchannel.CallForPrice &&
+            if (shoppingCartType == ShoppingCartType.ShoppingCart && tvChannel.CallForPrice &&
                 //also check whether the current user is impersonated
                 (!_orderSettings.AllowAdminsToBuyCallForPriceTvChannels || _workContext.OriginalUserIfImpersonated == null))
             {
@@ -379,14 +379,14 @@ namespace TvProgViewer.Services.Orders
             }
 
             //user entered price
-            if (tvchannel.UserEntersPrice)
+            if (tvChannel.UserEntersPrice)
             {
-                if (userEnteredPrice < tvchannel.MinimumUserEnteredPrice ||
-                    userEnteredPrice > tvchannel.MaximumUserEnteredPrice)
+                if (userEnteredPrice < tvChannel.MinimumUserEnteredPrice ||
+                    userEnteredPrice > tvChannel.MaximumUserEnteredPrice)
                 {
                     var currentCurrency = await _workContext.GetWorkingCurrencyAsync();
-                    var minimumUserEnteredPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(tvchannel.MinimumUserEnteredPrice, currentCurrency);
-                    var maximumUserEnteredPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(tvchannel.MaximumUserEnteredPrice, currentCurrency);
+                    var minimumUserEnteredPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(tvChannel.MinimumUserEnteredPrice, currentCurrency);
+                    var maximumUserEnteredPrice = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(tvChannel.MaximumUserEnteredPrice, currentCurrency);
                     warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.UserEnteredPrice.RangeError"),
                         await _priceFormatter.FormatPriceAsync(minimumUserEnteredPrice, false, false),
                         await _priceFormatter.FormatPriceAsync(maximumUserEnteredPrice, false, false)));
@@ -395,19 +395,19 @@ namespace TvProgViewer.Services.Orders
 
             //quantity validation
             var hasQtyWarnings = false;
-            if (quantity < tvchannel.OrderMinimumQuantity)
+            if (quantity < tvChannel.OrderMinimumQuantity)
             {
-                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MinimumQuantity"), tvchannel.OrderMinimumQuantity));
+                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MinimumQuantity"), tvChannel.OrderMinimumQuantity));
                 hasQtyWarnings = true;
             }
 
-            if (quantity > tvchannel.OrderMaximumQuantity)
+            if (quantity > tvChannel.OrderMaximumQuantity)
             {
-                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MaximumQuantity"), tvchannel.OrderMaximumQuantity));
+                warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.MaximumQuantity"), tvChannel.OrderMaximumQuantity));
                 hasQtyWarnings = true;
             }
 
-            var allowedQuantities = _tvchannelService.ParseAllowedQuantities(tvchannel);
+            var allowedQuantities = _tvChannelService.ParseAllowedQuantities(tvChannel);
             if (allowedQuantities.Length > 0 && !allowedQuantities.Contains(quantity))
             {
                 warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AllowedQuantities"), string.Join(", ", allowedQuantities)));
@@ -416,96 +416,96 @@ namespace TvProgViewer.Services.Orders
             var validateOutOfStock = shoppingCartType == ShoppingCartType.ShoppingCart || !_shoppingCartSettings.AllowOutOfStockItemsToBeAddedToWishlist;
             if (validateOutOfStock && !hasQtyWarnings)
             {
-                switch (tvchannel.ManageInventoryMethod)
+                switch (tvChannel.ManageInventoryMethod)
                 {
                     case ManageInventoryMethod.DontManageStock:
                         //do nothing
                         break;
                     case ManageInventoryMethod.ManageStock:
-                        if (tvchannel.BackorderMode == BackorderMode.NoBackorders)
+                        if (tvChannel.BackorderMode == BackorderMode.NoBackorders)
                         {
-                            var maximumQuantityCanBeAdded = await _tvchannelService.GetTotalStockQuantityAsync(tvchannel);
+                            var maximumQuantityCanBeAdded = await _tvChannelService.GetTotalStockQuantityAsync(tvChannel);
 
-                            warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvchannel, quantity, maximumQuantityCanBeAdded));
+                            warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvChannel, quantity, maximumQuantityCanBeAdded));
 
                             if (warnings.Any())
                                 return warnings;
 
-                            //validate tvchannel quantity with non combinable tvchannel attributes
-                            var tvchannelAttributeMappings = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
-                            if (tvchannelAttributeMappings?.Any() == true)
+                            //validate tvChannel quantity with non combinable tvChannel attributes
+                            var tvChannelAttributeMappings = await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
+                            if (tvChannelAttributeMappings?.Any() == true)
                             {
-                                var onlyCombinableAttributes = tvchannelAttributeMappings.All(mapping => !mapping.IsNonCombinable());
+                                var onlyCombinableAttributes = tvChannelAttributeMappings.All(mapping => !mapping.IsNonCombinable());
                                 if (!onlyCombinableAttributes)
                                 {
                                     var cart = await GetShoppingCartAsync(user, shoppingCartType, storeId);
                                     var totalAddedQuantity = cart
-                                        .Where(item => item.TvChannelId == tvchannel.Id && item.Id != shoppingCartItemId)
-                                        .Sum(tvchannel => tvchannel.Quantity);
+                                        .Where(item => item.TvChannelId == tvChannel.Id && item.Id != shoppingCartItemId)
+                                        .Sum(tvChannel => tvChannel.Quantity);
 
                                     totalAddedQuantity += quantity;
 
-                                    //counting a tvchannel into bundles
+                                    //counting a tvChannel into bundles
                                     foreach (var bundle in cart.Where(x => x.Id != shoppingCartItemId && !string.IsNullOrEmpty(x.AttributesXml)))
                                     {
-                                        var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(bundle.AttributesXml);
+                                        var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(bundle.AttributesXml);
                                         foreach (var attributeValue in attributeValues)
                                         {
-                                            if (attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel && attributeValue.AssociatedTvChannelId == tvchannel.Id)
+                                            if (attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel && attributeValue.AssociatedTvChannelId == tvChannel.Id)
                                                 totalAddedQuantity += bundle.Quantity * attributeValue.Quantity;
                                         }
                                     }
 
-                                    warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvchannel, totalAddedQuantity, maximumQuantityCanBeAdded));
+                                    warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvChannel, totalAddedQuantity, maximumQuantityCanBeAdded));
                                 }
                             }
 
                             if (warnings.Any())
                                 return warnings;
 
-                            //validate tvchannel quantity and tvchannel quantity into bundles
+                            //validate tvChannel quantity and tvChannel quantity into bundles
                             if (string.IsNullOrEmpty(attributesXml))
                             {
                                 var cart = await GetShoppingCartAsync(user, shoppingCartType, storeId);
-                                var totalQuantityInCart = cart.Where(item => item.TvChannelId == tvchannel.Id && item.Id != shoppingCartItemId && string.IsNullOrEmpty(item.AttributesXml))
-                                    .Sum(tvchannel => tvchannel.Quantity);
+                                var totalQuantityInCart = cart.Where(item => item.TvChannelId == tvChannel.Id && item.Id != shoppingCartItemId && string.IsNullOrEmpty(item.AttributesXml))
+                                    .Sum(tvChannel => tvChannel.Quantity);
 
                                 totalQuantityInCart += quantity;
 
                                 foreach (var bundle in cart.Where(x => x.Id != shoppingCartItemId && !string.IsNullOrEmpty(x.AttributesXml)))
                                 {
-                                    var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(bundle.AttributesXml);
+                                    var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(bundle.AttributesXml);
                                     foreach (var attributeValue in attributeValues)
                                     {
-                                        if (attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel && attributeValue.AssociatedTvChannelId == tvchannel.Id)
+                                        if (attributeValue.AttributeValueType == AttributeValueType.AssociatedToTvChannel && attributeValue.AssociatedTvChannelId == tvChannel.Id)
                                             totalQuantityInCart += bundle.Quantity * attributeValue.Quantity;
                                     }
                                 }
 
-                                warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvchannel, totalQuantityInCart, maximumQuantityCanBeAdded));
+                                warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvChannel, totalQuantityInCart, maximumQuantityCanBeAdded));
                             }
                         }
 
                         break;
                     case ManageInventoryMethod.ManageStockByAttributes:
-                        var combination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+                        var combination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
                         if (combination != null)
                         {
                             //combination exists
                             //let's check stock level
                             if (!combination.AllowOutOfStockOrders)
-                                warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvchannel, quantity, combination.StockQuantity));
+                                warnings.AddRange(await GetQuantityTvChannelWarningsAsync(tvChannel, quantity, combination.StockQuantity));
                         }
                         else
                         {
                             //combination doesn't exist
-                            if (tvchannel.AllowAddingOnlyExistingAttributeCombinations)
+                            if (tvChannel.AllowAddingOnlyExistingAttributeCombinations)
                             {
-                                //maybe, is it better  to display something like "No such tvchannel/combination" message?
-                                var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvchannel.TvChannelAvailabilityRangeId);
-                                var warning = tvchannelAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
+                                //maybe, is it better  to display something like "No such tvChannel/combination" message?
+                                var tvChannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvChannel.TvChannelAvailabilityRangeId);
+                                var warning = tvChannelAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
                                     : string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AvailabilityRange"),
-                                        await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, range => range.Name));
+                                        await _localizationService.GetLocalizedAsync(tvChannelAvailabilityRange, range => range.Name));
                                 warnings.Add(warning);
                             }
                         }
@@ -518,9 +518,9 @@ namespace TvProgViewer.Services.Orders
 
             //availability dates
             var availableStartDateError = false;
-            if (tvchannel.AvailableStartDateTimeUtc.HasValue)
+            if (tvChannel.AvailableStartDateTimeUtc.HasValue)
             {
-                var availableStartDateTime = DateTime.SpecifyKind(tvchannel.AvailableStartDateTimeUtc.Value, DateTimeKind.Utc);
+                var availableStartDateTime = DateTime.SpecifyKind(tvChannel.AvailableStartDateTimeUtc.Value, DateTimeKind.Utc);
                 if (availableStartDateTime.CompareTo(DateTime.UtcNow) > 0)
                 {
                     warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.NotAvailable"));
@@ -528,10 +528,10 @@ namespace TvProgViewer.Services.Orders
                 }
             }
 
-            if (!tvchannel.AvailableEndDateTimeUtc.HasValue || availableStartDateError)
+            if (!tvChannel.AvailableEndDateTimeUtc.HasValue || availableStartDateError)
                 return warnings;
 
-            var availableEndDateTime = DateTime.SpecifyKind(tvchannel.AvailableEndDateTimeUtc.Value, DateTimeKind.Utc);
+            var availableEndDateTime = DateTime.SpecifyKind(tvChannel.AvailableEndDateTimeUtc.Value, DateTimeKind.Utc);
             if (availableEndDateTime.CompareTo(DateTime.UtcNow) < 0)
             {
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.NotAvailable"));
@@ -541,19 +541,19 @@ namespace TvProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Validates the maximum quantity a tvchannel can be added 
+        /// Validates the maximum quantity a tvChannel can be added 
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="quantity">Quantity</param>
-        /// <param name="maximumQuantityCanBeAdded">The maximum quantity a tvchannel can be added</param>
+        /// <param name="maximumQuantityCanBeAdded">The maximum quantity a tvChannel can be added</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings 
         /// </returns>
-        protected virtual async Task<IList<string>> GetQuantityTvChannelWarningsAsync(TvChannel tvchannel, int quantity, int maximumQuantityCanBeAdded)
+        protected virtual async Task<IList<string>> GetQuantityTvChannelWarningsAsync(TvChannel tvChannel, int quantity, int maximumQuantityCanBeAdded)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
 
@@ -561,10 +561,10 @@ namespace TvProgViewer.Services.Orders
             {
                 if (maximumQuantityCanBeAdded <= 0)
                 {
-                    var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvchannel.TvChannelAvailabilityRangeId);
-                    var warning = tvchannelAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
+                    var tvChannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvChannel.TvChannelAvailabilityRangeId);
+                    var warning = tvChannelAvailabilityRange == null ? await _localizationService.GetResourceAsync("ShoppingCart.OutOfStock")
                         : string.Format(await _localizationService.GetResourceAsync("ShoppingCart.AvailabilityRange"),
-                            await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, range => range.Name));
+                            await _localizationService.GetLocalizedAsync(tvChannelAvailabilityRange, range => range.Name));
                     warnings.Add(warning);
                 }
                 else
@@ -624,20 +624,20 @@ namespace TvProgViewer.Services.Orders
             if (!_catalogSettings.RemoveRequiredTvChannels)
                 return;
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
-            if (!tvchannel?.RequireOtherTvChannels ?? true)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
+            if (!tvChannel?.RequireOtherTvChannels ?? true)
                 return;
 
-            var requiredTvChannelIds = _tvchannelService.ParseRequiredTvChannelIds(tvchannel);
+            var requiredTvChannelIds = _tvChannelService.ParseRequiredTvChannelIds(tvChannel);
             var requiredShoppingCartItems =
                 (await GetShoppingCartAsync(user, shoppingCartType: shoppingCartItem.ShoppingCartType))
                     .Where(item => requiredTvChannelIds.Any(id => id == item.TvChannelId))
                     .ToList();
 
-            //update quantity of required tvchannels in the cart if the main one is removed
+            //update quantity of required tvChannels in the cart if the main one is removed
             foreach (var cartItem in requiredShoppingCartItems)
             {
-                //at now we ignore quantities of required tvchannels and use 1
+                //at now we ignore quantities of required tvChannels and use 1
                 var requiredTvChannelQuantity = 1;
 
                 await UpdateShoppingCartItemAsync(user, cartItem.Id, cartItem.AttributesXml, cartItem.UserEnteredPrice,
@@ -684,32 +684,32 @@ namespace TvProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Get tvchannels from shopping cart whether requiring specific tvchannel
+        /// Get tvChannels from shopping cart whether requiring specific tvChannel
         /// </summary>
         /// <param name="cart">Shopping cart </param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        public virtual async Task<IList<TvChannel>> GetTvChannelsRequiringTvChannelAsync(IList<ShoppingCartItem> cart, TvChannel tvchannel)
+        public virtual async Task<IList<TvChannel>> GetTvChannelsRequiringTvChannelAsync(IList<ShoppingCartItem> cart, TvChannel tvChannel)
         {
             if (cart is null)
                 throw new ArgumentNullException(nameof(cart));
 
-            if (tvchannel is null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel is null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (cart.Count == 0)
                 return new List<TvChannel>();
 
-            var tvchannelIds = cart.Select(ci => ci.TvChannelId).ToArray();
+            var tvChannelIds = cart.Select(ci => ci.TvChannelId).ToArray();
 
-            var cartTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(tvchannelIds);
+            var cartTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(tvChannelIds);
 
             return cartTvChannels.Where(cartTvChannel =>
                 cartTvChannel.RequireOtherTvChannels &&
-                _tvchannelService.ParseRequiredTvChannelIds(cartTvChannel).Contains(tvchannel.Id)).ToList();
+                _tvChannelService.ParseRequiredTvChannelIds(cartTvChannel).Contains(tvChannel.Id)).ToList();
         }
 
         /// <summary>
@@ -718,7 +718,7 @@ namespace TvProgViewer.Services.Orders
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type; pass null to load all records</param>
         /// <param name="storeId">Store identifier; pass 0 to load all records</param>
-        /// <param name="tvchannelId">TvChannel identifier; pass null to load all records</param>
+        /// <param name="tvChannelId">TvChannel identifier; pass null to load all records</param>
         /// <param name="createdFromUtc">Created date from (UTC); pass null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); pass null to load all records</param>
         /// <returns>
@@ -726,7 +726,7 @@ namespace TvProgViewer.Services.Orders
         /// The task result contains the shopping Cart
         /// </returns>
         public virtual async Task<IList<ShoppingCartItem>> GetShoppingCartAsync(User user, ShoppingCartType? shoppingCartType = null,
-            int storeId = 0, int? tvchannelId = null, DateTime? createdFromUtc = null, DateTime? createdToUtc = null)
+            int storeId = 0, int? tvChannelId = null, DateTime? createdFromUtc = null, DateTime? createdToUtc = null)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -741,9 +741,9 @@ namespace TvProgViewer.Services.Orders
             if (storeId > 0 && !_shoppingCartSettings.CartsSharedBetweenStores)
                 items = items.Where(item => item.StoreId == storeId);
 
-            //filter shopping cart items by tvchannel
-            if (tvchannelId > 0)
-                items = items.Where(item => item.TvChannelId == tvchannelId);
+            //filter shopping cart items by tvChannel
+            if (tvChannelId > 0)
+                items = items.Where(item => item.TvChannelId == tvChannelId);
 
             //filter shopping cart items by date
             if (createdFromUtc.HasValue)
@@ -751,7 +751,7 @@ namespace TvProgViewer.Services.Orders
             if (createdToUtc.HasValue)
                 items = items.Where(item => createdToUtc.Value >= item.CreatedOnUtc);
 
-            var key = _staticCacheManager.PrepareKeyForShortTermCache(TvProgOrderDefaults.ShoppingCartItemsAllCacheKey, user, shoppingCartType, storeId, tvchannelId, createdFromUtc, createdToUtc);
+            var key = _staticCacheManager.PrepareKeyForShortTermCache(TvProgOrderDefaults.ShoppingCartItemsAllCacheKey, user, shoppingCartType, storeId, tvChannelId, createdFromUtc, createdToUtc);
 
             return await _staticCacheManager.GetAsync(key, async () => await items.ToListAsync());
         }
@@ -761,12 +761,12 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="quantity">Quantity</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <param name="ignoreConditionMet">A value indicating whether we should ignore filtering by "is condition met" property</param>
-        /// <param name="ignoreBundledTvChannels">A value indicating whether we should ignore bundled (associated) tvchannels</param>
+        /// <param name="ignoreBundledTvChannels">A value indicating whether we should ignore bundled (associated) tvChannels</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
@@ -774,7 +774,7 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         public virtual async Task<IList<string>> GetShoppingCartItemAttributeWarningsAsync(User user,
             ShoppingCartType shoppingCartType,
-            TvChannel tvchannel,
+            TvChannel tvChannel,
             int quantity = 1,
             string attributesXml = "",
             bool ignoreNonCombinableAttributes = false,
@@ -782,13 +782,13 @@ namespace TvProgViewer.Services.Orders
             bool ignoreBundledTvChannels = false,
             int shoppingCartItemId = 0)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
 
             //ensure it's our attributes
-            var attributes1 = await _tvchannelAttributeParser.ParseTvChannelAttributeMappingsAsync(attributesXml);
+            var attributes1 = await _tvChannelAttributeParser.ParseTvChannelAttributeMappingsAsync(attributesXml);
             if (ignoreNonCombinableAttributes)
             {
                 attributes1 = attributes1.Where(x => !x.IsNonCombinable()).ToList();
@@ -802,14 +802,14 @@ namespace TvProgViewer.Services.Orders
                     return warnings;
                 }
 
-                if (attribute.TvChannelId != tvchannel.Id)
+                if (attribute.TvChannelId != tvChannel.Id)
                 {
                     warnings.Add("Attribute error");
                 }
             }
 
-            //validate required tvchannel attributes (whether they're chosen/selected/entered)
-            var attributes2 = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
+            //validate required tvChannel attributes (whether they're chosen/selected/entered)
+            var attributes2 = await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
             if (ignoreNonCombinableAttributes)
             {
                 attributes2 = attributes2.Where(x => !x.IsNonCombinable()).ToList();
@@ -820,7 +820,7 @@ namespace TvProgViewer.Services.Orders
             {
                 attributes2 = await attributes2.WhereAwait(async x =>
                 {
-                    var conditionMet = await _tvchannelAttributeParser.IsConditionMetAsync(x, attributesXml);
+                    var conditionMet = await _tvChannelAttributeParser.IsConditionMetAsync(x, attributesXml);
                     return !conditionMet.HasValue || conditionMet.Value;
                 }).ToListAsync();
             }
@@ -830,13 +830,13 @@ namespace TvProgViewer.Services.Orders
                 if (a2.IsRequired)
                 {
                     var found = false;
-                    //selected tvchannel attributes
+                    //selected tvChannel attributes
                     foreach (var a1 in attributes1)
                     {
                         if (a1.Id != a2.Id)
                             continue;
 
-                        var attributeValuesStr = _tvchannelAttributeParser.ParseValues(attributesXml, a1.Id);
+                        var attributeValuesStr = _tvChannelAttributeParser.ParseValues(attributesXml, a1.Id);
 
                         foreach (var str1 in attributeValuesStr)
                         {
@@ -851,12 +851,12 @@ namespace TvProgViewer.Services.Orders
                     //if not found
                     if (!found)
                     {
-                        var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(a2.TvChannelAttributeId);
+                        var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(a2.TvChannelAttributeId);
 
                         var textPrompt = await _localizationService.GetLocalizedAsync(a2, x => x.TextPrompt);
                         var notFoundWarning = !string.IsNullOrEmpty(textPrompt) ?
                             textPrompt :
-                            string.Format(await _localizationService.GetResourceAsync("ShoppingCart.SelectAttribute"), await _localizationService.GetLocalizedAsync(tvchannelAttribute, a => a.Name));
+                            string.Format(await _localizationService.GetResourceAsync("ShoppingCart.SelectAttribute"), await _localizationService.GetLocalizedAsync(tvChannelAttribute, a => a.Name));
 
                         warnings.Add(notFoundWarning);
                     }
@@ -866,12 +866,12 @@ namespace TvProgViewer.Services.Orders
                     continue;
 
                 //users cannot edit read-only attributes
-                var allowedReadOnlyValueIds = (await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(a2.Id))
+                var allowedReadOnlyValueIds = (await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(a2.Id))
                     .Where(x => x.IsPreSelected)
                     .Select(x => x.Id)
                     .ToArray();
 
-                var selectedReadOnlyValueIds = (await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml))
+                var selectedReadOnlyValueIds = (await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml))
                     .Where(x => x.TvChannelAttributeMappingId == a2.Id)
                     .Select(x => x.Id)
                     .ToArray();
@@ -891,7 +891,7 @@ namespace TvProgViewer.Services.Orders
                 string enteredText;
                 int enteredTextLength;
 
-                var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(pam.TvChannelAttributeId);
+                var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(pam.TvChannelAttributeId);
 
                 //minimum length
                 if (pam.ValidationMinLength.HasValue)
@@ -899,12 +899,12 @@ namespace TvProgViewer.Services.Orders
                     if (pam.AttributeControlType == AttributeControlType.TextBox ||
                         pam.AttributeControlType == AttributeControlType.MultilineTextbox)
                     {
-                        enteredText = _tvchannelAttributeParser.ParseValues(attributesXml, pam.Id).FirstOrDefault();
+                        enteredText = _tvChannelAttributeParser.ParseValues(attributesXml, pam.Id).FirstOrDefault();
                         enteredTextLength = string.IsNullOrEmpty(enteredText) ? 0 : enteredText.Length;
 
                         if (pam.ValidationMinLength.Value > enteredTextLength)
                         {
-                            warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMinimumLength"), await _localizationService.GetLocalizedAsync(tvchannelAttribute, a => a.Name), pam.ValidationMinLength.Value));
+                            warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMinimumLength"), await _localizationService.GetLocalizedAsync(tvChannelAttribute, a => a.Name), pam.ValidationMinLength.Value));
                         }
                     }
                 }
@@ -916,32 +916,32 @@ namespace TvProgViewer.Services.Orders
                 if (pam.AttributeControlType != AttributeControlType.TextBox && pam.AttributeControlType != AttributeControlType.MultilineTextbox)
                     continue;
 
-                enteredText = _tvchannelAttributeParser.ParseValues(attributesXml, pam.Id).FirstOrDefault();
+                enteredText = _tvChannelAttributeParser.ParseValues(attributesXml, pam.Id).FirstOrDefault();
                 enteredTextLength = string.IsNullOrEmpty(enteredText) ? 0 : enteredText.Length;
 
                 if (pam.ValidationMaxLength.Value < enteredTextLength)
                 {
-                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMaximumLength"), await _localizationService.GetLocalizedAsync(tvchannelAttribute, a => a.Name), pam.ValidationMaxLength.Value));
+                    warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.TextboxMaximumLength"), await _localizationService.GetLocalizedAsync(tvChannelAttribute, a => a.Name), pam.ValidationMaxLength.Value));
                 }
             }
 
             if (warnings.Any() || ignoreBundledTvChannels)
                 return warnings;
 
-            //validate bundled tvchannels
-            var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
+            //validate bundled tvChannels
+            var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
             foreach (var attributeValue in attributeValues)
             {
                 if (attributeValue.AttributeValueType != AttributeValueType.AssociatedToTvChannel)
                     continue;
 
-                var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(attributeValue.TvChannelAttributeMappingId);
+                var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(attributeValue.TvChannelAttributeMappingId);
 
-                if (ignoreNonCombinableAttributes && tvchannelAttributeMapping != null && tvchannelAttributeMapping.IsNonCombinable())
+                if (ignoreNonCombinableAttributes && tvChannelAttributeMapping != null && tvChannelAttributeMapping.IsNonCombinable())
                     continue;
 
-                //associated tvchannel (bundle)
-                var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
+                //associated tvChannel (bundle)
+                var associatedTvChannel = await _tvChannelService.GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
                 if (associatedTvChannel != null)
                 {
                     var store = await _storeContext.GetCurrentStoreAsync();
@@ -950,11 +950,11 @@ namespace TvProgViewer.Services.Orders
                         shoppingCartType, associatedTvChannel, store.Id,
                         string.Empty, decimal.Zero, null, null, totalQty, false, shoppingCartItemId);
 
-                    var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(tvchannelAttributeMapping.TvChannelAttributeId);
+                    var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(tvChannelAttributeMapping.TvChannelAttributeId);
 
                     foreach (var associatedTvChannelWarning in associatedTvChannelWarnings)
                     {
-                        var attributeName = await _localizationService.GetLocalizedAsync(tvchannelAttribute, a => a.Name);
+                        var attributeName = await _localizationService.GetLocalizedAsync(tvChannelAttribute, a => a.Name);
                         var attributeValueName = await _localizationService.GetLocalizedAsync(attributeValue, a => a.Name);
                         warnings.Add(string.Format(
                             await _localizationService.GetResourceAsync("ShoppingCart.AssociatedAttributeWarning"),
@@ -963,7 +963,7 @@ namespace TvProgViewer.Services.Orders
                 }
                 else
                 {
-                    warnings.Add($"Associated tvchannel cannot be loaded - {attributeValue.AssociatedTvChannelId}");
+                    warnings.Add($"Associated tvChannel cannot be loaded - {attributeValue.AssociatedTvChannelId}");
                 }
             }
 
@@ -974,30 +974,30 @@ namespace TvProgViewer.Services.Orders
         /// Validates shopping cart item (gift card)
         /// </summary>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetShoppingCartItemGiftCardWarningsAsync(ShoppingCartType shoppingCartType,
-            TvChannel tvchannel, string attributesXml)
+            TvChannel tvChannel, string attributesXml)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
 
             //gift cards
-            if (!tvchannel.IsGiftCard)
+            if (!tvChannel.IsGiftCard)
                 return warnings;
 
-            _tvchannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName, out var giftCardRecipientEmail, out var giftCardSenderName, out var giftCardSenderEmail, out var _);
+            _tvChannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName, out var giftCardRecipientEmail, out var giftCardSenderName, out var giftCardSenderEmail, out var _);
 
             if (string.IsNullOrEmpty(giftCardRecipientName))
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.RecipientNameError"));
 
-            if (tvchannel.GiftCardType == GiftCardType.Virtual)
+            if (tvChannel.GiftCardType == GiftCardType.Virtual)
             {
                 //validate for virtual gift cards only
                 if (string.IsNullOrEmpty(giftCardRecipientEmail) || !CommonHelper.IsValidEmail(giftCardRecipientEmail))
@@ -1007,7 +1007,7 @@ namespace TvProgViewer.Services.Orders
             if (string.IsNullOrEmpty(giftCardSenderName))
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.SenderNameError"));
 
-            if (tvchannel.GiftCardType != GiftCardType.Virtual)
+            if (tvChannel.GiftCardType != GiftCardType.Virtual)
                 return warnings;
 
             //validate for virtual gift cards only
@@ -1018,24 +1018,24 @@ namespace TvProgViewer.Services.Orders
         }
 
         /// <summary>
-        /// Validates shopping cart item for rental tvchannels
+        /// Validates shopping cart item for rental tvChannels
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
-        public virtual async Task<IList<string>> GetRentalTvChannelWarningsAsync(TvChannel tvchannel,
+        public virtual async Task<IList<string>> GetRentalTvChannelWarningsAsync(TvChannel tvChannel,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
 
-            if (!tvchannel.IsRental)
+            if (!tvChannel.IsRental)
                 return warnings;
 
             if (!rentalStartDate.HasValue)
@@ -1080,26 +1080,26 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="user">User</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="userEnteredPrice">User entered price</param>
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <param name="quantity">Quantity</param>
-        /// <param name="addRequiredTvChannels">Whether to add required tvchannels</param>
+        /// <param name="addRequiredTvChannels">Whether to add required tvChannels</param>
         /// <param name="shoppingCartItemId">Shopping cart identifier; pass 0 if it's a new item</param>
-        /// <param name="getStandardWarnings">A value indicating whether we should validate a tvchannel for standard properties</param>
-        /// <param name="getAttributesWarnings">A value indicating whether we should validate tvchannel attributes</param>
+        /// <param name="getStandardWarnings">A value indicating whether we should validate a tvChannel for standard properties</param>
+        /// <param name="getAttributesWarnings">A value indicating whether we should validate tvChannel attributes</param>
         /// <param name="getGiftCardWarnings">A value indicating whether we should validate gift card properties</param>
-        /// <param name="getRequiredTvChannelWarnings">A value indicating whether we should validate required tvchannels (tvchannels which require other tvchannels to be added to the cart)</param>
+        /// <param name="getRequiredTvChannelWarnings">A value indicating whether we should validate required tvChannels (tvChannels which require other tvChannels to be added to the cart)</param>
         /// <param name="getRentalWarnings">A value indicating whether we should validate rental properties</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
         public virtual async Task<IList<string>> GetShoppingCartItemWarningsAsync(User user, ShoppingCartType shoppingCartType,
-            TvChannel tvchannel, int storeId,
+            TvChannel tvChannel, int storeId,
             string attributesXml, decimal userEnteredPrice,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
             int quantity = 1, bool addRequiredTvChannels = true, int shoppingCartItemId = 0,
@@ -1107,30 +1107,30 @@ namespace TvProgViewer.Services.Orders
             bool getGiftCardWarnings = true, bool getRequiredTvChannelWarnings = true,
             bool getRentalWarnings = true)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
 
             //standard properties
             if (getStandardWarnings)
-                warnings.AddRange(await GetStandardWarningsAsync(user, shoppingCartType, tvchannel, attributesXml, userEnteredPrice, quantity, shoppingCartItemId, storeId));
+                warnings.AddRange(await GetStandardWarningsAsync(user, shoppingCartType, tvChannel, attributesXml, userEnteredPrice, quantity, shoppingCartItemId, storeId));
 
             //selected attributes
             if (getAttributesWarnings)
-                warnings.AddRange(await GetShoppingCartItemAttributeWarningsAsync(user, shoppingCartType, tvchannel, quantity, attributesXml, false, false, false, shoppingCartItemId));
+                warnings.AddRange(await GetShoppingCartItemAttributeWarningsAsync(user, shoppingCartType, tvChannel, quantity, attributesXml, false, false, false, shoppingCartItemId));
 
             //gift cards
             if (getGiftCardWarnings)
-                warnings.AddRange(await GetShoppingCartItemGiftCardWarningsAsync(shoppingCartType, tvchannel, attributesXml));
+                warnings.AddRange(await GetShoppingCartItemGiftCardWarningsAsync(shoppingCartType, tvChannel, attributesXml));
 
-            //required tvchannels
+            //required tvChannels
             if (getRequiredTvChannelWarnings)
-                warnings.AddRange(await GetRequiredTvChannelWarningsAsync(user, shoppingCartType, tvchannel, storeId, quantity, addRequiredTvChannels, shoppingCartItemId));
+                warnings.AddRange(await GetRequiredTvChannelWarningsAsync(user, shoppingCartType, tvChannel, storeId, quantity, addRequiredTvChannels, shoppingCartItemId));
 
-            //rental tvchannels
+            //rental tvChannels
             if (getRentalWarnings)
-                warnings.AddRange(await GetRentalTvChannelWarningsAsync(tvchannel, rentalStartDate, rentalEndDate));
+                warnings.AddRange(await GetRentalTvChannelWarningsAsync(tvChannel, rentalStartDate, rentalEndDate));
 
             return warnings;
         }
@@ -1158,20 +1158,20 @@ namespace TvProgViewer.Services.Orders
 
             foreach (var sci in shoppingCart)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
-                if (tvchannel == null)
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(sci.TvChannelId);
+                if (tvChannel == null)
                 {
                     warnings.Add(string.Format(await _localizationService.GetResourceAsync("ShoppingCart.CannotLoadTvChannel"), sci.TvChannelId));
                     return warnings;
                 }
 
-                if (tvchannel.IsRecurring)
+                if (tvChannel.IsRecurring)
                     hasRecurringTvChannels = true;
                 else
                     hasStandartTvChannels = true;
             }
 
-            //don't mix standard and recurring tvchannels
+            //don't mix standard and recurring tvChannels
             if (hasStandartTvChannels && hasRecurringTvChannels)
                 warnings.Add(await _localizationService.GetResourceAsync("ShoppingCart.CannotMixStandardAndAutoshipTvChannels"));
 
@@ -1352,10 +1352,10 @@ namespace TvProgViewer.Services.Orders
                 throw new ArgumentNullException(nameof(shoppingCartItem));
 
             var user = await _userService.GetUserByIdAsync(shoppingCartItem.UserId);
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
             var store = await _storeService.GetStoreByIdAsync(shoppingCartItem.StoreId);
 
-            return await GetUnitPriceAsync(tvchannel,
+            return await GetUnitPriceAsync(tvChannel,
                 user,
                 store,
                 shoppingCartItem.ShoppingCartType,
@@ -1370,21 +1370,21 @@ namespace TvProgViewer.Services.Orders
         /// <summary>
         /// Gets the shopping cart unit price (one item)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <param name="store">Store</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="quantity">Quantity</param>
         /// <param name="attributesXml">TvChannel attributes (XML format)</param>
         /// <param name="userEnteredPrice">User entered price (if specified)</param>
-        /// <param name="rentalStartDate">Rental start date (null for not rental tvchannels)</param>
-        /// <param name="rentalEndDate">Rental end date (null for not rental tvchannels)</param>
+        /// <param name="rentalStartDate">Rental start date (null for not rental tvChannels)</param>
+        /// <param name="rentalEndDate">Rental end date (null for not rental tvChannels)</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for price computation</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the shopping cart unit price (one item). Applied discount amount. Applied discounts
         /// </returns>
-        public virtual async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(TvChannel tvchannel,
+        public virtual async Task<(decimal unitPrice, decimal discountAmount, List<Discount> appliedDiscounts)> GetUnitPriceAsync(TvChannel tvChannel,
             User user,
             Store store,
             ShoppingCartType shoppingCartType,
@@ -1394,8 +1394,8 @@ namespace TvProgViewer.Services.Orders
             DateTime? rentalStartDate, DateTime? rentalEndDate,
             bool includeDiscounts)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
@@ -1405,39 +1405,39 @@ namespace TvProgViewer.Services.Orders
 
             decimal finalPrice;
 
-            var combination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+            var combination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
             if (combination?.OverriddenPrice.HasValue ?? false)
             {
-                (_, finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(tvchannel,
+                (_, finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(tvChannel,
                         user,
                         store,
                         combination.OverriddenPrice.Value,
                         decimal.Zero,
                         includeDiscounts,
                         quantity,
-                        tvchannel.IsRental ? rentalStartDate : null,
-                        tvchannel.IsRental ? rentalEndDate : null);
+                        tvChannel.IsRental ? rentalStartDate : null,
+                        tvChannel.IsRental ? rentalEndDate : null);
             }
             else
             {
                 //summarize price of all attributes
                 var attributesTotalPrice = decimal.Zero;
-                var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
+                var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
                 if (attributeValues != null)
                 {
                     foreach (var attributeValue in attributeValues)
                     {
-                        attributesTotalPrice += await _priceCalculationService.GetTvChannelAttributeValuePriceAdjustmentAsync(tvchannel,
+                        attributesTotalPrice += await _priceCalculationService.GetTvChannelAttributeValuePriceAdjustmentAsync(tvChannel,
                             attributeValue,
                             user,
                             store,
-                            tvchannel.UserEntersPrice ? (decimal?)userEnteredPrice : null,
+                            tvChannel.UserEntersPrice ? (decimal?)userEnteredPrice : null,
                             quantity);
                     }
                 }
 
-                //get price of a tvchannel (with previously calculated price of all attributes)
-                if (tvchannel.UserEntersPrice)
+                //get price of a tvChannel (with previously calculated price of all attributes)
+                if (tvChannel.UserEntersPrice)
                 {
                     finalPrice = userEnteredPrice;
                 }
@@ -1446,9 +1446,9 @@ namespace TvProgViewer.Services.Orders
                     int qty;
                     if (_shoppingCartSettings.GroupTierPricesForDistinctShoppingCartItems)
                     {
-                        //the same tvchannels with distinct tvchannel attributes could be stored as distinct "ShoppingCartItem" records
-                        //so let's find how many of the current tvchannels are in the cart                        
-                        qty = (await GetShoppingCartAsync(user, shoppingCartType: shoppingCartType, tvchannelId: tvchannel.Id))
+                        //the same tvChannels with distinct tvChannel attributes could be stored as distinct "ShoppingCartItem" records
+                        //so let's find how many of the current tvChannels are in the cart                        
+                        qty = (await GetShoppingCartAsync(user, shoppingCartType: shoppingCartType, tvChannelId: tvChannel.Id))
                             .Sum(x => x.Quantity);
 
                         if (qty == 0)
@@ -1461,14 +1461,14 @@ namespace TvProgViewer.Services.Orders
                         qty = quantity;
                     }
 
-                    (_, finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(tvchannel,
+                    (_, finalPrice, discountAmount, appliedDiscounts) = await _priceCalculationService.GetFinalPriceAsync(tvChannel,
                         user,
                         store,
                         attributesTotalPrice,
                         includeDiscounts,
                         qty,
-                        tvchannel.IsRental ? rentalStartDate : null,
-                        tvchannel.IsRental ? rentalEndDate : null);
+                        tvChannel.IsRental ? rentalStartDate : null,
+                        tvChannel.IsRental ? rentalEndDate : null);
                 }
             }
 
@@ -1484,7 +1484,7 @@ namespace TvProgViewer.Services.Orders
         /// </summary>
         /// <param name="shoppingCart">Shopping cart</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="userEnteredPrice">Price entered by a user</param>
         /// <param name="rentalStartDate">Rental start date</param>
@@ -1495,7 +1495,7 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         public virtual async Task<ShoppingCartItem> FindShoppingCartItemInTheCartAsync(IList<ShoppingCartItem> shoppingCart,
             ShoppingCartType shoppingCartType,
-            TvChannel tvchannel,
+            TvChannel tvChannel,
             string attributesXml = "",
             decimal userEnteredPrice = decimal.Zero,
             DateTime? rentalStartDate = null,
@@ -1504,18 +1504,18 @@ namespace TvProgViewer.Services.Orders
             if (shoppingCart == null)
                 throw new ArgumentNullException(nameof(shoppingCart));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             return await shoppingCart.Where(sci => sci.ShoppingCartType == shoppingCartType)
-                .FirstOrDefaultAwaitAsync(async sci => await ShoppingCartItemIsEqualAsync(sci, tvchannel, attributesXml, userEnteredPrice, rentalStartDate, rentalEndDate));
+                .FirstOrDefaultAwaitAsync(async sci => await ShoppingCartItemIsEqualAsync(sci, tvChannel, attributesXml, userEnteredPrice, rentalStartDate, rentalEndDate));
         }
 
         /// <summary>
-        /// Add a tvchannel to shopping cart
+        /// Add a tvChannel to shopping cart
         /// </summary>
         /// <param name="user">User</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="shoppingCartType">Shopping cart type</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="attributesXml">Attributes in XML format</param>
@@ -1523,12 +1523,12 @@ namespace TvProgViewer.Services.Orders
         /// <param name="rentalStartDate">Rental start date</param>
         /// <param name="rentalEndDate">Rental end date</param>
         /// <param name="quantity">Quantity</param>
-        /// <param name="addRequiredTvChannels">Whether to add required tvchannels</param>
+        /// <param name="addRequiredTvChannels">Whether to add required tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the warnings
         /// </returns>
-        public virtual async Task<IList<string>> AddToCartAsync(User user, TvChannel tvchannel,
+        public virtual async Task<IList<string>> AddToCartAsync(User user, TvChannel tvChannel,
             ShoppingCartType shoppingCartType, int storeId, string attributesXml = null,
             decimal userEnteredPrice = decimal.Zero,
             DateTime? rentalStartDate = null, DateTime? rentalEndDate = null,
@@ -1537,8 +1537,8 @@ namespace TvProgViewer.Services.Orders
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var warnings = new List<string>();
             if (shoppingCartType == ShoppingCartType.ShoppingCart && !await _permissionService.AuthorizeAsync(StandardPermissionProvider.EnableShoppingCart, user))
@@ -1571,14 +1571,14 @@ namespace TvProgViewer.Services.Orders
             var cart = await GetShoppingCartAsync(user, shoppingCartType, storeId);
 
             var shoppingCartItem = await FindShoppingCartItemInTheCartAsync(cart,
-                shoppingCartType, tvchannel, attributesXml, userEnteredPrice,
+                shoppingCartType, tvChannel, attributesXml, userEnteredPrice,
                 rentalStartDate, rentalEndDate);
 
             if (shoppingCartItem != null)
             {
                 //update existing shopping cart item
                 var newQuantity = shoppingCartItem.Quantity + quantity;
-                warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartType, tvchannel,
+                warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartType, tvChannel,
                     storeId, attributesXml,
                     userEnteredPrice, rentalStartDate, rentalEndDate,
                     newQuantity, addRequiredTvChannels, shoppingCartItem.Id));
@@ -1600,7 +1600,7 @@ namespace TvProgViewer.Services.Orders
             else
             {
                 //new shopping cart item
-                warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartType, tvchannel,
+                warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartType, tvChannel,
                     storeId, attributesXml, userEnteredPrice,
                     rentalStartDate, rentalEndDate,
                     quantity, addRequiredTvChannels));
@@ -1641,7 +1641,7 @@ namespace TvProgViewer.Services.Orders
                 {
                     ShoppingCartType = shoppingCartType,
                     StoreId = storeId,
-                    TvChannelId = tvchannel.Id,
+                    TvChannelId = tvChannel.Id,
                     AttributesXml = attributesXml,
                     UserEnteredPrice = userEnteredPrice,
                     Quantity = quantity,
@@ -1664,29 +1664,29 @@ namespace TvProgViewer.Services.Orders
 
             async Task addRequiredTvChannelsToCartAsync()
             {
-                //get these required tvchannels
-                var requiredTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(_tvchannelService.ParseRequiredTvChannelIds(tvchannel));
+                //get these required tvChannels
+                var requiredTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(_tvChannelService.ParseRequiredTvChannelIds(tvChannel));
                 if (!requiredTvChannels.Any())
                     return;
 
                 foreach (var requiredTvChannel in requiredTvChannels)
                 {
-                    var tvchannelsRequiringRequiredTvChannel = await GetTvChannelsRequiringTvChannelAsync(cart, requiredTvChannel);
+                    var tvChannelsRequiringRequiredTvChannel = await GetTvChannelsRequiringTvChannelAsync(cart, requiredTvChannel);
 
-                    //get the required quantity of the required tvchannel
+                    //get the required quantity of the required tvChannel
                     var requiredTvChannelRequiredQuantity = quantity +
-                        cart.Where(ci => tvchannelsRequiringRequiredTvChannel.Any(p => p.Id == ci.TvChannelId))
+                        cart.Where(ci => tvChannelsRequiringRequiredTvChannel.Any(p => p.Id == ci.TvChannelId))
                             .Where(item => item.Id != (shoppingCartItem?.Id ?? 0))
                             .Sum(item => item.Quantity);
 
-                    //whether required tvchannel is already in the cart in the required quantity
+                    //whether required tvChannel is already in the cart in the required quantity
                     var quantityToAdd = requiredTvChannelRequiredQuantity - (cart.FirstOrDefault(item => item.TvChannelId == requiredTvChannel.Id)?.Quantity ?? 0);
                     if (quantityToAdd <= 0)
                         continue;
 
-                    if (addRequiredTvChannels && tvchannel.AutomaticallyAddRequiredTvChannels)
+                    if (addRequiredTvChannels && tvChannel.AutomaticallyAddRequiredTvChannels)
                     {
-                        //do not add required tvchannels to prevent circular references
+                        //do not add required tvChannels to prevent circular references
                         var addToCartWarnings = await AddToCartAsync(user, requiredTvChannel, shoppingCartType, storeId,
                             quantity: quantityToAdd, addRequiredTvChannels: requiredTvChannel.AutomaticallyAddRequiredTvChannels);
 
@@ -1737,13 +1737,13 @@ namespace TvProgViewer.Services.Orders
                 await _userService.ResetCheckoutDataAsync(user, shoppingCartItem.StoreId);
             }
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(shoppingCartItem.TvChannelId);
 
             if (quantity > 0)
             {
                 //check warnings
                 warnings.AddRange(await GetShoppingCartItemWarningsAsync(user, shoppingCartItem.ShoppingCartType,
-                    tvchannel, shoppingCartItem.StoreId,
+                    tvChannel, shoppingCartItem.StoreId,
                     attributesXml, userEnteredPrice,
                     rentalStartDate, rentalEndDate, quantity, false, shoppingCartItemId));
                 if (warnings.Any())
@@ -1762,9 +1762,9 @@ namespace TvProgViewer.Services.Orders
             }
             else
             {
-                //check warnings for required tvchannels
+                //check warnings for required tvChannels
                 warnings.AddRange(await GetRequiredTvChannelWarningsAsync(user, shoppingCartItem.ShoppingCartType,
-                    tvchannel, shoppingCartItem.StoreId, quantity, false, shoppingCartItemId));
+                    tvChannel, shoppingCartItem.StoreId, quantity, false, shoppingCartItemId));
                 if (warnings.Any())
                     return warnings;
 
@@ -1798,9 +1798,9 @@ namespace TvProgViewer.Services.Orders
             for (var i = 0; i < fromCart.Count; i++)
             {
                 var sci = fromCart[i];
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(sci.TvChannelId);
 
-                await AddToCartAsync(toUser, tvchannel, sci.ShoppingCartType, sci.StoreId,
+                await AddToCartAsync(toUser, tvChannel, sci.ShoppingCartType, sci.StoreId,
                     sci.AttributesXml, sci.UserEnteredPrice,
                     sci.RentalStartDateUtc, sci.RentalEndDateUtc, sci.Quantity, false);
             }
@@ -1861,7 +1861,7 @@ namespace TvProgViewer.Services.Orders
             if (!shoppingCart.Any())
                 return false;
 
-            return await _tvchannelService.HasAnyRecurringTvChannelAsync(shoppingCart.Select(sci => sci.TvChannelId).ToArray());
+            return await _tvChannelService.HasAnyRecurringTvChannelAsync(shoppingCart.Select(sci => sci.TvChannelId).ToArray());
         }
 
         /// <summary>
@@ -1884,31 +1884,31 @@ namespace TvProgViewer.Services.Orders
 
             foreach (var sci in shoppingCart)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(sci.TvChannelId);
-                if (tvchannel == null)
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(sci.TvChannelId);
+                if (tvChannel == null)
                 {
                     throw new TvProgException($"TvChannel (Id={sci.TvChannelId}) cannot be loaded");
                 }
 
-                if (!tvchannel.IsRecurring)
+                if (!tvChannel.IsRecurring)
                     continue;
 
                 var conflictError = await _localizationService.GetResourceAsync("ShoppingCart.ConflictingShipmentSchedules");
 
                 //cycle length
-                if (cycleLength.HasValue && cycleLength.Value != tvchannel.RecurringCycleLength)
+                if (cycleLength.HasValue && cycleLength.Value != tvChannel.RecurringCycleLength)
                     return (conflictError, rezCycleLength, rezCyclePeriod, rezTotalCycles);
-                cycleLength = tvchannel.RecurringCycleLength;
+                cycleLength = tvChannel.RecurringCycleLength;
 
                 //cycle period
-                if (cyclePeriod.HasValue && cyclePeriod.Value != tvchannel.RecurringCyclePeriod)
+                if (cyclePeriod.HasValue && cyclePeriod.Value != tvChannel.RecurringCyclePeriod)
                     return (conflictError, rezCycleLength, rezCyclePeriod, rezTotalCycles);
-                cyclePeriod = tvchannel.RecurringCyclePeriod;
+                cyclePeriod = tvChannel.RecurringCyclePeriod;
 
                 //total cycles
-                if (totalCycles.HasValue && totalCycles.Value != tvchannel.RecurringTotalCycles)
+                if (totalCycles.HasValue && totalCycles.Value != tvChannel.RecurringTotalCycles)
                     return (conflictError, rezCycleLength, rezCyclePeriod, rezTotalCycles);
-                totalCycles = tvchannel.RecurringTotalCycles;
+                totalCycles = tvChannel.RecurringTotalCycles;
             }
 
             if (!cycleLength.HasValue)

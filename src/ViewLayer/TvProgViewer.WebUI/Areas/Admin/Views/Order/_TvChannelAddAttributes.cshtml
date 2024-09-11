@@ -9,9 +9,9 @@
 {
     //dynamic update support
     var attributeChangeScriptsBuilder = new StringBuilder();
-    var tvchannelId = Convert.ToInt32(ViewData["tvchannelId"]);
+    var tvChannelId = Convert.ToInt32(ViewData["tvChannelId"]);
     var attributesHaveConditions = Model.Any(a => a.HasCondition);
-    var attributeChangeHandlerFuncName = $"attribute_change_handler_{tvchannelId}";
+    var attributeChangeHandlerFuncName = $"attribute_change_handler_{tvChannelId}";
 
     var getAttributeValueName = new Func<AddTvChannelToOrderModel.TvChannelAttributeValueModel, string>((attributeValue) =>
         string.IsNullOrEmpty(attributeValue.PriceAdjustment) ? attributeValue.Name : T("TvChannels.TvChannelAttributes.PriceAdjustment",
@@ -289,23 +289,23 @@
                 function @(attributeChangeHandlerFuncName)() {
                     $.ajax({
                         cache: false,
-                        url: "@Html.Raw(Url.Action("tvchanneldetails_attributechange", "Order", new {tvchannelId = tvchannelId, validateAttributeConditions = attributesHaveConditions}))",
-                        data: $('#tvchannel-details-form').serialize(),
+                        url: "@Html.Raw(Url.Action("tvChanneldetails_attributechange", "Order", new {tvChannelId = tvChannelId, validateAttributeConditions = attributesHaveConditions}))",
+                        data: $('#tvChannel-details-form').serialize(),
                         type: "POST",
                         success: function (data, textStatus, jqXHR) {
                             if (data.enabledattributemappingids) {
                                 for (var i = 0; i < data.enabledattributemappingids.length; i++) {
-                                    $('#tvchannel_attribute_row_' + data.enabledattributemappingids[i]).show();
+                                    $('#tvChannel_attribute_row_' + data.enabledattributemappingids[i]).show();
                                 }
                             }
                             if (data.disabledattributemappingids) {
                                 for (var i = 0; i < data.disabledattributemappingids.length; i++) {
-                                    $('#tvchannel_attribute_row_' + data.disabledattributemappingids[i]).hide();
+                                    $('#tvChannel_attribute_row_' + data.disabledattributemappingids[i]).hide();
                                 }
                             }
                             if (data.message) {
-                                $('#tvchanneldetails_attributechangeMessage-info').text(data.message);
-                                $("#tvchanneldetails_attributechangeMessage").click();
+                                $('#tvChanneldetails_attributechangeMessage-info').text(data.message);
+                                $("#tvChanneldetails_attributechangeMessage").click();
                             }
                         }
                     });
@@ -316,7 +316,7 @@
                     @Html.Raw(attributeChangeScriptsBuilder.ToString())
                 });
             </script>
-            <tvprog-alert asp-alert-id="tvchanneldetails_attributechangeMessage" />
+            <tvprog-alert asp-alert-id="tvChanneldetails_attributechangeMessage" />
         </div>
 
         <script>

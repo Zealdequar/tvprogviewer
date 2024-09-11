@@ -12,6 +12,6 @@
         addToWishlistText = T("TvChannels.Wishlist.AddToWishlist").Text;
     }
     <div class="add-to-wishlist">
-        <button type="button" id="add-to-wishlist-button-@Model.TvChannelId" class="button-2 add-to-wishlist-button" data-tvchannelid="@Model.TvChannelId" onclick="AjaxCart.addtvchanneltocart_details('@Url.RouteUrl("AddTvChannelToCart-Details", new {tvchannelId = Model.TvChannelId, shoppingCartTypeId = (int) ShoppingCartType.Wishlist})', '#tvchannel-details-form');return false;">@addToWishlistText</button>
+        <button type="button" id="add-to-wishlist-button-@Model.TvChannelId" class="button-2 add-to-wishlist-button" data-tvChannelid="@Model.TvChannelId" onclick="AjaxCart.addtvChanneltocart_details('@Url.RouteUrl("AddTvChannelToCart-Details", new {tvChannelId = Model.TvChannelId, shoppingCartTypeId = (int) ShoppingCartType.Wishlist})', '#tvChannel-details-form');return false;">@addToWishlistText</button>
     </div>
 }

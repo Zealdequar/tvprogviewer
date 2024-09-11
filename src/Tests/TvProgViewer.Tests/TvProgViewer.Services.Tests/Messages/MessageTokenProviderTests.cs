@@ -1,14 +1,14 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Messages;
-using Nop.Services.Messages;
+using TvProgViewer.Core.Domain.Messages;
+using TvProgViewer.Services.Messages;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Messages
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Messages
 {
     [TestFixture]
-    public class MessageTemplateServiceTests : BaseNopTest
+    public class MessageTemplateServiceTests : BaseTvProgTest
     {
         private IMessageTemplateService _messageTemplateService;
 

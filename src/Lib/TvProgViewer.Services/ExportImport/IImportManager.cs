@@ -9,7 +9,7 @@ namespace TvProgViewer.Services.ExportImport
     public partial interface IImportManager
     {
         /// <summary>
-        /// Import tvchannels from XLSX file
+        /// Import tvChannels from XLSX file
         /// </summary>
         /// <param name="stream">Stream</param>
         /// <returns>Задача представляет асинхронную операцию</returns>

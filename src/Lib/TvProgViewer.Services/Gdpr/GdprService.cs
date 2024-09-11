@@ -37,7 +37,7 @@ namespace TvProgViewer.Services.Gdpr
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly INewsLetterSubscriptionService _newsLetterSubscriptionService;
         private readonly INewsService _newsService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRepository<GdprConsent> _gdprConsentRepository;
         private readonly IRepository<GdprLog> _gdprLogRepository;
         private readonly IShoppingCartService _shoppingCartService;
@@ -57,7 +57,7 @@ namespace TvProgViewer.Services.Gdpr
             IGenericAttributeService genericAttributeService,
             INewsService newsService,
             INewsLetterSubscriptionService newsLetterSubscriptionService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IRepository<GdprConsent> gdprConsentRepository,
             IRepository<GdprLog> gdprLogRepository,
             IShoppingCartService shoppingCartService,
@@ -73,7 +73,7 @@ namespace TvProgViewer.Services.Gdpr
             _genericAttributeService = genericAttributeService;
             _newsService = newsService;
             _newsLetterSubscriptionService = newsLetterSubscriptionService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _gdprConsentRepository = gdprConsentRepository;
             _gdprLogRepository = gdprLogRepository;
             _shoppingCartService = shoppingCartService;
@@ -283,13 +283,13 @@ namespace TvProgViewer.Services.Gdpr
             foreach (var backInStockSubscription in backInStockSubscriptions)
                 await _backInStockSubscriptionService.DeleteSubscriptionAsync(backInStockSubscription);
 
-            //tvchannel review
-            var tvchannelReviews = await _tvchannelService.GetAllTvChannelReviewsAsync(user.Id);
-            var reviewedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(tvchannelReviews.Select(p => p.TvChannelId).Distinct().ToArray());
-            await _tvchannelService.DeleteTvChannelReviewsAsync(tvchannelReviews);
-            //update tvchannel totals
-            foreach (var tvchannel in reviewedTvChannels) 
-                await _tvchannelService.UpdateTvChannelReviewTotalsAsync(tvchannel);
+            //tvChannel review
+            var tvChannelReviews = await _tvChannelService.GetAllTvChannelReviewsAsync(user.Id);
+            var reviewedTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(tvChannelReviews.Select(p => p.TvChannelId).Distinct().ToArray());
+            await _tvChannelService.DeleteTvChannelReviewsAsync(tvChannelReviews);
+            //update tvChannel totals
+            foreach (var tvChannel in reviewedTvChannels) 
+                await _tvChannelService.UpdateTvChannelReviewTotalsAsync(tvChannel);
 
             //external authentication record
             foreach (var ear in await _externalAuthenticationService.GetUserExternalAuthenticationRecordsAsync(user))

@@ -29,8 +29,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelReviewModelFactory _tvchannelReviewModelFactory;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelReviewModelFactory _tvChannelReviewModelFactory;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IWorkContext _workContext;
         private readonly IWorkflowMessageService _workflowMessageService;
 
@@ -45,8 +45,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             ILocalizationService localizationService,
             INotificationService notificationService,
             IPermissionService permissionService,
-            ITvChannelReviewModelFactory tvchannelReviewModelFactory,
-            ITvChannelService tvchannelService,
+            ITvChannelReviewModelFactory tvChannelReviewModelFactory,
+            ITvChannelService tvChannelService,
             IWorkContext workContext,
             IWorkflowMessageService workflowMessageService)
         {
@@ -57,8 +57,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _localizationService = localizationService;
             _notificationService = notificationService;
             _permissionService = permissionService;
-            _tvchannelReviewModelFactory = tvchannelReviewModelFactory;
-            _tvchannelService = tvchannelService;
+            _tvChannelReviewModelFactory = tvChannelReviewModelFactory;
+            _tvChannelService = tvChannelService;
             _workContext = workContext;
             _workflowMessageService = workflowMessageService;
         }
@@ -78,7 +78,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelReviewModelFactory.PrepareTvChannelReviewSearchModelAsync(new TvChannelReviewSearchModel());
+            var model = await _tvChannelReviewModelFactory.PrepareTvChannelReviewSearchModelAsync(new TvChannelReviewSearchModel());
 
             return View(model);
         }
@@ -90,7 +90,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelReviewModelFactory.PrepareTvChannelReviewListModelAsync(searchModel);
+            var model = await _tvChannelReviewModelFactory.PrepareTvChannelReviewListModelAsync(searchModel);
 
             return Json(model);
         }
@@ -100,18 +100,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannelReviews))
                 return AccessDeniedView();
 
-            //try to get a tvchannel review with the specified id
-            var tvchannelReview = await _tvchannelService.GetTvChannelReviewByIdAsync(id);
-            if (tvchannelReview == null)
+            //try to get a tvChannel review with the specified id
+            var tvChannelReview = await _tvChannelService.GetTvChannelReviewByIdAsync(id);
+            if (tvChannelReview == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && (await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId)).VendorId != currentVendor.Id)
+            if (currentVendor != null && (await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId)).VendorId != currentVendor.Id)
                 return RedirectToAction("List");
 
             //prepare model
-            var model = await _tvchannelReviewModelFactory.PrepareTvChannelReviewModelAsync(null, tvchannelReview);
+            var model = await _tvChannelReviewModelFactory.PrepareTvChannelReviewModelAsync(null, tvChannelReview);
 
             return View(model);
         }
@@ -122,68 +122,68 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannelReviews))
                 return AccessDeniedView();
 
-            //try to get a tvchannel review with the specified id
-            var tvchannelReview = await _tvchannelService.GetTvChannelReviewByIdAsync(model.Id);
-            if (tvchannelReview == null)
+            //try to get a tvChannel review with the specified id
+            var tvChannelReview = await _tvChannelService.GetTvChannelReviewByIdAsync(model.Id);
+            if (tvChannelReview == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && (await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId)).VendorId != currentVendor.Id)
+            if (currentVendor != null && (await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId)).VendorId != currentVendor.Id)
                 return RedirectToAction("List");
 
             if (ModelState.IsValid)
             {
-                var previousIsApproved = tvchannelReview.IsApproved;
+                var previousIsApproved = tvChannelReview.IsApproved;
 
                 //vendor can edit "Reply text" only
                 var isLoggedInAsVendor = currentVendor != null;
                 if (!isLoggedInAsVendor)
                 {
-                    tvchannelReview.Title = model.Title;
-                    tvchannelReview.ReviewText = model.ReviewText;
-                    tvchannelReview.IsApproved = model.IsApproved;
+                    tvChannelReview.Title = model.Title;
+                    tvChannelReview.ReviewText = model.ReviewText;
+                    tvChannelReview.IsApproved = model.IsApproved;
                 }
 
-                tvchannelReview.ReplyText = model.ReplyText;
+                tvChannelReview.ReplyText = model.ReplyText;
 
                 //notify user about reply
-                if (tvchannelReview.IsApproved && !string.IsNullOrEmpty(tvchannelReview.ReplyText)
-                    && _catalogSettings.NotifyUserAboutTvChannelReviewReply && !tvchannelReview.UserNotifiedOfReply)
+                if (tvChannelReview.IsApproved && !string.IsNullOrEmpty(tvChannelReview.ReplyText)
+                    && _catalogSettings.NotifyUserAboutTvChannelReviewReply && !tvChannelReview.UserNotifiedOfReply)
                 {
-                    var user = await _userService.GetUserByIdAsync(tvchannelReview.UserId);
+                    var user = await _userService.GetUserByIdAsync(tvChannelReview.UserId);
                     var userLanguageId = user?.LanguageId ?? 0;
 
-                    var queuedEmailIds = await _workflowMessageService.SendTvChannelReviewReplyUserNotificationMessageAsync(tvchannelReview, userLanguageId);
+                    var queuedEmailIds = await _workflowMessageService.SendTvChannelReviewReplyUserNotificationMessageAsync(tvChannelReview, userLanguageId);
                     if (queuedEmailIds.Any())
-                        tvchannelReview.UserNotifiedOfReply = true;
+                        tvChannelReview.UserNotifiedOfReply = true;
                 }
 
-                await _tvchannelService.UpdateTvChannelReviewAsync(tvchannelReview);
+                await _tvChannelService.UpdateTvChannelReviewAsync(tvChannelReview);
 
                 //activity log
                 await _userActivityService.InsertActivityAsync("EditTvChannelReview",
-                   string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditTvChannelReview"), tvchannelReview.Id), tvchannelReview);
+                   string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditTvChannelReview"), tvChannelReview.Id), tvChannelReview);
 
                 //vendor can edit "Reply text" only
                 if (!isLoggedInAsVendor)
                 {
-                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId);
-                    //update tvchannel totals
-                    await _tvchannelService.UpdateTvChannelReviewTotalsAsync(tvchannel);
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId);
+                    //update tvChannel totals
+                    await _tvChannelService.UpdateTvChannelReviewTotalsAsync(tvChannel);
 
                     //raise event (only if it wasn't approved before and is approved now)
-                    if (!previousIsApproved && tvchannelReview.IsApproved)
-                        await _eventPublisher.PublishAsync(new TvChannelReviewApprovedEvent(tvchannelReview));
+                    if (!previousIsApproved && tvChannelReview.IsApproved)
+                        await _eventPublisher.PublishAsync(new TvChannelReviewApprovedEvent(tvChannelReview));
                 }
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannelReviews.Updated"));
 
-                return continueEditing ? RedirectToAction("Edit", new { id = tvchannelReview.Id }) : RedirectToAction("List");
+                return continueEditing ? RedirectToAction("Edit", new { id = tvChannelReview.Id }) : RedirectToAction("List");
             }
 
             //prepare model
-            model = await _tvchannelReviewModelFactory.PrepareTvChannelReviewModelAsync(model, tvchannelReview, true);
+            model = await _tvChannelReviewModelFactory.PrepareTvChannelReviewModelAsync(model, tvChannelReview, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -195,25 +195,25 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannelReviews))
                 return AccessDeniedView();
 
-            //try to get a tvchannel review with the specified id
-            var tvchannelReview = await _tvchannelService.GetTvChannelReviewByIdAsync(id);
-            if (tvchannelReview == null)
+            //try to get a tvChannel review with the specified id
+            var tvChannelReview = await _tvChannelService.GetTvChannelReviewByIdAsync(id);
+            if (tvChannelReview == null)
                 return RedirectToAction("List");
 
             //a vendor does not have access to this functionality
             if (await _workContext.GetCurrentVendorAsync() != null)
                 return RedirectToAction("List");
 
-            await _tvchannelService.DeleteTvChannelReviewAsync(tvchannelReview);
+            await _tvChannelService.DeleteTvChannelReviewAsync(tvChannelReview);
 
             //activity log
             await _userActivityService.InsertActivityAsync("DeleteTvChannelReview",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannelReview"), tvchannelReview.Id), tvchannelReview);
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannelReview"), tvChannelReview.Id), tvChannelReview);
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId);
 
-            //update tvchannel totals
-            await _tvchannelService.UpdateTvChannelReviewTotalsAsync(tvchannel);
+            //update tvChannel totals
+            await _tvChannelService.UpdateTvChannelReviewTotalsAsync(tvChannel);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannelReviews.Deleted"));
 
@@ -234,20 +234,20 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return NoContent();
 
             //filter not approved reviews
-            var tvchannelReviews = (await _tvchannelService.GetTvChannelReviewsByIdsAsync(selectedIds.ToArray())).Where(review => !review.IsApproved);
+            var tvChannelReviews = (await _tvChannelService.GetTvChannelReviewsByIdsAsync(selectedIds.ToArray())).Where(review => !review.IsApproved);
 
-            foreach (var tvchannelReview in tvchannelReviews)
+            foreach (var tvChannelReview in tvChannelReviews)
             {
-                tvchannelReview.IsApproved = true;
-                await _tvchannelService.UpdateTvChannelReviewAsync(tvchannelReview);
+                tvChannelReview.IsApproved = true;
+                await _tvChannelService.UpdateTvChannelReviewAsync(tvChannelReview);
 
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId);
 
-                //update tvchannel totals
-                await _tvchannelService.UpdateTvChannelReviewTotalsAsync(tvchannel);
+                //update tvChannel totals
+                await _tvChannelService.UpdateTvChannelReviewTotalsAsync(tvChannel);
 
                 //raise event 
-                await _eventPublisher.PublishAsync(new TvChannelReviewApprovedEvent(tvchannelReview));
+                await _eventPublisher.PublishAsync(new TvChannelReviewApprovedEvent(tvChannelReview));
             }
 
             return Json(new { Result = true });
@@ -267,17 +267,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return NoContent();
 
             //filter approved reviews
-            var tvchannelReviews = (await _tvchannelService.GetTvChannelReviewsByIdsAsync(selectedIds.ToArray())).Where(review => review.IsApproved);
+            var tvChannelReviews = (await _tvChannelService.GetTvChannelReviewsByIdsAsync(selectedIds.ToArray())).Where(review => review.IsApproved);
 
-            foreach (var tvchannelReview in tvchannelReviews)
+            foreach (var tvChannelReview in tvChannelReviews)
             {
-                tvchannelReview.IsApproved = false;
-                await _tvchannelService.UpdateTvChannelReviewAsync(tvchannelReview);
+                tvChannelReview.IsApproved = false;
+                await _tvChannelService.UpdateTvChannelReviewAsync(tvChannelReview);
 
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId);
 
-                //update tvchannel totals
-                await _tvchannelService.UpdateTvChannelReviewTotalsAsync(tvchannel);
+                //update tvChannel totals
+                await _tvChannelService.UpdateTvChannelReviewTotalsAsync(tvChannel);
             }
 
             return Json(new { Result = true });
@@ -296,15 +296,15 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (selectedIds == null || selectedIds.Count == 0)
                 return NoContent();
 
-            var tvchannelReviews = await _tvchannelService.GetTvChannelReviewsByIdsAsync(selectedIds.ToArray());
-            var tvchannels = await _tvchannelService.GetTvChannelsByIdsAsync(tvchannelReviews.Select(p => p.TvChannelId).Distinct().ToArray());
+            var tvChannelReviews = await _tvChannelService.GetTvChannelReviewsByIdsAsync(selectedIds.ToArray());
+            var tvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(tvChannelReviews.Select(p => p.TvChannelId).Distinct().ToArray());
 
-            await _tvchannelService.DeleteTvChannelReviewsAsync(tvchannelReviews);
+            await _tvChannelService.DeleteTvChannelReviewsAsync(tvChannelReviews);
 
-            //update tvchannel totals
-            foreach (var tvchannel in tvchannels)
+            //update tvChannel totals
+            foreach (var tvChannel in tvChannels)
             {
-                await _tvchannelService.UpdateTvChannelReviewTotalsAsync(tvchannel);
+                await _tvChannelService.UpdateTvChannelReviewTotalsAsync(tvChannel);
             }
 
             return Json(new { Result = true });
@@ -315,11 +315,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannelReviews))
                 return await AccessDeniedDataTablesJson();
-            var tvchannelReview = await _tvchannelService.GetTvChannelReviewByIdAsync(searchModel.TvChannelReviewId)
-                ?? throw new ArgumentException("No tvchannel review found with the specified id");
+            var tvChannelReview = await _tvChannelService.GetTvChannelReviewByIdAsync(searchModel.TvChannelReviewId)
+                ?? throw new ArgumentException("No tvChannel review found with the specified id");
 
             //prepare model
-            var model = await _tvchannelReviewModelFactory.PrepareTvChannelReviewReviewTypeMappingListModelAsync(searchModel, tvchannelReview);
+            var model = await _tvChannelReviewModelFactory.PrepareTvChannelReviewReviewTypeMappingListModelAsync(searchModel, tvChannelReview);
 
             return Json(model);
         }

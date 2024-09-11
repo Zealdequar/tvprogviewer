@@ -25,9 +25,9 @@ namespace TvProgViewer.Plugin.Payments.CheckMoneyOrder.Models
         public bool AdditionalFeePercentage { get; set; }
         public bool AdditionalFeePercentage_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Plugins.Payment.CheckMoneyOrder.ShippableProductRequired")]
-        public bool ShippableProductRequired { get; set; }
-        public bool ShippableProductRequired_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Plugins.Payment.CheckMoneyOrder.ShippableTvChannelRequired")]
+        public bool ShippableTvChannelRequired { get; set; }
+        public bool ShippableTvChannelRequired_OverrideForStore { get; set; }
 
         public IList<ConfigurationLocalizedModel> Locales { get; set; }
 

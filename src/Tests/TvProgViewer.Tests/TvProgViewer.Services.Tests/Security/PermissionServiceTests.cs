@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Security;
-using Nop.Data;
-using Nop.Services.Security;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Security;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Security;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Security
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Security
 {
     [TestFixture]
     public class PermissionServiceTests : ServiceTest
@@ -83,7 +83,7 @@ namespace Nop.Tests.Nop.Services.Tests.Security
                 return new()
                 {
                     (
-                        NopCustomerDefaults.AdministratorsRoleName,
+                        TvProgUserDefaults.AdministratorsRoleName,
                         new[] {_permissionRecord}
                     )
                 };

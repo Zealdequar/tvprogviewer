@@ -56,44 +56,44 @@ namespace TvProgViewer.Services.Shipping.Date
         #region TvChannel availability ranges
 
         /// <summary>
-        /// Get a tvchannel availability range
+        /// Get a tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRangeId">The tvchannel availability range identifier</param>
+        /// <param name="tvChannelAvailabilityRangeId">The tvChannel availability range identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability range
+        /// The task result contains the tvChannel availability range
         /// </returns>
-        Task<TvChannelAvailabilityRange> GetTvChannelAvailabilityRangeByIdAsync(int tvchannelAvailabilityRangeId);
+        Task<TvChannelAvailabilityRange> GetTvChannelAvailabilityRangeByIdAsync(int tvChannelAvailabilityRangeId);
 
         /// <summary>
-        /// Get all tvchannel availability ranges
+        /// Get all tvChannel availability ranges
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability ranges
+        /// The task result contains the tvChannel availability ranges
         /// </returns>
         Task<IList<TvChannelAvailabilityRange>> GetAllTvChannelAvailabilityRangesAsync();
 
         /// <summary>
-        /// Insert the tvchannel availability range
+        /// Insert the tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task InsertTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
+        Task InsertTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvChannelAvailabilityRange);
 
         /// <summary>
-        /// Update the tvchannel availability range
+        /// Update the tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
+        Task UpdateTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvChannelAvailabilityRange);
 
         /// <summary>
-        /// Delete the tvchannel availability range
+        /// Delete the tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange);
+        Task DeleteTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvChannelAvailabilityRange);
 
         #endregion
     }

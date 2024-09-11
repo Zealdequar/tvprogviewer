@@ -76,7 +76,7 @@ namespace TvProgViewer.Services.Messages
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly IPaymentService _paymentService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRewardPointService _rewardPointService;
         private readonly IShipmentService _shipmentService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -119,7 +119,7 @@ namespace TvProgViewer.Services.Messages
             IPaymentPluginManager paymentPluginManager,
             IPaymentService paymentService,
             IPriceFormatter priceFormatter,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IRewardPointService rewardPointService,
             IShipmentService shipmentService,
             IStateProvinceService stateProvinceService,
@@ -156,7 +156,7 @@ namespace TvProgViewer.Services.Messages
             _paymentPluginManager = paymentPluginManager;
             _paymentService = paymentService;
             _priceFormatter = priceFormatter;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _rewardPointService = rewardPointService;
             _shipmentService = shipmentService;
             _stateProvinceService = stateProvinceService;
@@ -312,7 +312,7 @@ namespace TvProgViewer.Services.Messages
                     "%NewsLetterSubscription.DeactivationUrl%"
                 });
 
-                //tvchannel tokens
+                //tvChannel tokens
                 _allowedTokens.Add(TokenGroupNames.TvChannelTokens, new[]
                 {
                     "%TvChannel.ID%",
@@ -385,7 +385,7 @@ namespace TvProgViewer.Services.Messages
                     "%GiftCard.Message%"
                 });
 
-                //tvchannel review tokens
+                //tvChannel review tokens
                 _allowedTokens.Add(TokenGroupNames.TvChannelReviewTokens, new[]
                 {
                     "%TvChannelReview.TvChannelName%",
@@ -415,7 +415,7 @@ namespace TvProgViewer.Services.Messages
                     "%NewsComment.NewsTitle%"
                 });
 
-                //tvchannel back in stock tokens
+                //tvChannel back in stock tokens
                 _allowedTokens.Add(TokenGroupNames.TvChannelBackInStockTokens, new[]
                 {
                     "%BackInStockSubscription.TvChannelName%",
@@ -472,10 +472,10 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="languageId">Language identifier</param>
-        /// <param name="vendorId">Vendor identifier (used to limit tvchannels by vendor</param>
+        /// <param name="vendorId">Vendor identifier (used to limit tvChannels by vendor</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the hTML table of tvchannels
+        /// The task result contains the hTML table of tvChannels
         /// </returns>
         protected virtual async Task<string> TvChannelListToHtmlTableAsync(Order order, int languageId, int vendorId)
         {
@@ -496,16 +496,16 @@ namespace TvProgViewer.Services.Messages
             {
                 var orderItem = table[i];
 
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                if (tvchannel == null)
+                if (tvChannel == null)
                     continue;
 
                 sb.AppendLine($"<tr style=\"background-color: {_templatesSettings.Color2};text-align: center;\">");
-                //tvchannel name
-                var tvchannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name, languageId);
+                //tvChannel name
+                var tvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name, languageId);
 
-                sb.AppendLine("<td style=\"padding: 0.6em 0.4em;text-align: left;\">" + WebUtility.HtmlEncode(tvchannelName));
+                sb.AppendLine("<td style=\"padding: 0.6em 0.4em;text-align: left;\">" + WebUtility.HtmlEncode(tvChannelName));
 
                 //add download link
                 if (await _orderService.IsDownloadAllowedAsync(orderItem))
@@ -530,12 +530,12 @@ namespace TvProgViewer.Services.Messages
                     sb.AppendLine(orderItem.AttributeDescription);
                 }
                 //rental info
-                if (tvchannel.IsRental)
+                if (tvChannel.IsRental)
                 {
                     var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
                     var rentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                     sb.AppendLine("<br />");
@@ -544,7 +544,7 @@ namespace TvProgViewer.Services.Messages
                 //SKU
                 if (_catalogSettings.ShowSkuOnTvChannelDetailsPage)
                 {
-                    var sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml);
+                    var sku = await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml);
                     if (!string.IsNullOrEmpty(sku))
                     {
                         sb.AppendLine("<br />");
@@ -811,7 +811,7 @@ namespace TvProgViewer.Services.Messages
         /// <param name="languageId">Language identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the hTML table of tvchannels
+        /// The task result contains the hTML table of tvChannels
         /// </returns>
         protected virtual async Task<string> TvChannelListToHtmlTableAsync(Shipment shipment, int languageId)
         {
@@ -832,16 +832,16 @@ namespace TvProgViewer.Services.Messages
                 if (orderItem == null)
                     continue;
 
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                if (tvchannel == null)
+                if (tvChannel == null)
                     continue;
 
                 sb.AppendLine($"<tr style=\"background-color: {_templatesSettings.Color2};text-align: center;\">");
-                //tvchannel name
-                var tvchannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name, languageId);
+                //tvChannel name
+                var tvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name, languageId);
 
-                sb.AppendLine("<td style=\"padding: 0.6em 0.4em;text-align: left;\">" + WebUtility.HtmlEncode(tvchannelName));
+                sb.AppendLine("<td style=\"padding: 0.6em 0.4em;text-align: left;\">" + WebUtility.HtmlEncode(tvChannelName));
 
                 //attributes
                 if (!string.IsNullOrEmpty(orderItem.AttributeDescription))
@@ -851,12 +851,12 @@ namespace TvProgViewer.Services.Messages
                 }
 
                 //rental info
-                if (tvchannel.IsRental)
+                if (tvChannel.IsRental)
                 {
                     var rentalStartDate = orderItem.RentalStartDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalStartDateUtc.Value) : string.Empty;
                     var rentalEndDate = orderItem.RentalEndDateUtc.HasValue
-                        ? _tvchannelService.FormatRentalDate(tvchannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
+                        ? _tvChannelService.FormatRentalDate(tvChannel, orderItem.RentalEndDateUtc.Value) : string.Empty;
                     var rentalInfo = string.Format(await _localizationService.GetResourceAsync("Order.Rental.FormattedDate"),
                         rentalStartDate, rentalEndDate);
                     sb.AppendLine("<br />");
@@ -866,7 +866,7 @@ namespace TvProgViewer.Services.Messages
                 //SKU
                 if (_catalogSettings.ShowSkuOnTvChannelDetailsPage)
                 {
-                    var sku = await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml);
+                    var sku = await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml);
                     if (!string.IsNullOrEmpty(sku))
                     {
                         sb.AppendLine("<br />");
@@ -1142,12 +1142,12 @@ namespace TvProgViewer.Services.Messages
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddReturnRequestTokensAsync(IList<Token> tokens, ReturnRequest returnRequest, OrderItem orderItem, int languageId)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
             tokens.Add(new Token("ReturnRequest.CustomNumber", returnRequest.CustomNumber));
             tokens.Add(new Token("ReturnRequest.OrderId", orderItem.OrderId));
             tokens.Add(new Token("ReturnRequest.TvChannel.Quantity", returnRequest.Quantity));
-            tokens.Add(new Token("ReturnRequest.TvChannel.Name", await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name, languageId)));
+            tokens.Add(new Token("ReturnRequest.TvChannel.Name", await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name, languageId)));
             tokens.Add(new Token("ReturnRequest.Reason", returnRequest.ReasonForReturn));
             tokens.Add(new Token("ReturnRequest.RequestedAction", returnRequest.RequestedAction));
             tokens.Add(new Token("ReturnRequest.UserComment", _htmlFormatter.FormatText(returnRequest.UserComments, false, true, false, false, false, false), true));
@@ -1274,21 +1274,21 @@ namespace TvProgViewer.Services.Messages
         }
 
         /// <summary>
-        /// Add tvchannel review tokens
+        /// Add tvChannel review tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task AddTvChannelReviewTokensAsync(IList<Token> tokens, TvChannelReview tvchannelReview)
+        public virtual async Task AddTvChannelReviewTokensAsync(IList<Token> tokens, TvChannelReview tvChannelReview)
         {
-            tokens.Add(new Token("TvChannelReview.TvChannelName", (await _tvchannelService.GetTvChannelByIdAsync(tvchannelReview.TvChannelId))?.Name));
-            tokens.Add(new Token("TvChannelReview.Title", tvchannelReview.Title));
-            tokens.Add(new Token("TvChannelReview.IsApproved", tvchannelReview.IsApproved));
-            tokens.Add(new Token("TvChannelReview.ReviewText", tvchannelReview.ReviewText));
-            tokens.Add(new Token("TvChannelReview.ReplyText", tvchannelReview.ReplyText));
+            tokens.Add(new Token("TvChannelReview.TvChannelName", (await _tvChannelService.GetTvChannelByIdAsync(tvChannelReview.TvChannelId))?.Name));
+            tokens.Add(new Token("TvChannelReview.Title", tvChannelReview.Title));
+            tokens.Add(new Token("TvChannelReview.IsApproved", tvChannelReview.IsApproved));
+            tokens.Add(new Token("TvChannelReview.ReviewText", tvChannelReview.ReviewText));
+            tokens.Add(new Token("TvChannelReview.ReplyText", tvChannelReview.ReplyText));
 
             //event notification
-            await _eventPublisher.EntityTokensAddedAsync(tvchannelReview, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(tvChannelReview, tokens);
         }
 
         /// <summary>
@@ -1324,29 +1324,29 @@ namespace TvProgViewer.Services.Messages
         }
 
         /// <summary>
-        /// Add tvchannel tokens
+        /// Add tvChannel tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="languageId">Language identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task AddTvChannelTokensAsync(IList<Token> tokens, TvChannel tvchannel, int languageId)
+        public virtual async Task AddTvChannelTokensAsync(IList<Token> tokens, TvChannel tvChannel, int languageId)
         {
-            tokens.Add(new Token("TvChannel.ID", tvchannel.Id));
-            tokens.Add(new Token("TvChannel.Name", await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name, languageId)));
-            tokens.Add(new Token("TvChannel.ShortDescription", await _localizationService.GetLocalizedAsync(tvchannel, x => x.ShortDescription, languageId), true));
-            tokens.Add(new Token("TvChannel.SKU", tvchannel.Sku));
-            tokens.Add(new Token("TvChannel.StockQuantity", await _tvchannelService.GetTotalStockQuantityAsync(tvchannel)));
+            tokens.Add(new Token("TvChannel.ID", tvChannel.Id));
+            tokens.Add(new Token("TvChannel.Name", await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name, languageId)));
+            tokens.Add(new Token("TvChannel.ShortDescription", await _localizationService.GetLocalizedAsync(tvChannel, x => x.ShortDescription, languageId), true));
+            tokens.Add(new Token("TvChannel.SKU", tvChannel.Sku));
+            tokens.Add(new Token("TvChannel.StockQuantity", await _tvChannelService.GetTotalStockQuantityAsync(tvChannel)));
 
-            var tvchannelUrl = await RouteUrlAsync(routeName: "TvChannel", routeValues: new { SeName = await _urlRecordService.GetSeNameAsync(tvchannel) });
-            tokens.Add(new Token("TvChannel.TvChannelURLForUser", tvchannelUrl, true));
+            var tvChannelUrl = await RouteUrlAsync(routeName: "TvChannel", routeValues: new { SeName = await _urlRecordService.GetSeNameAsync(tvChannel) });
+            tokens.Add(new Token("TvChannel.TvChannelURLForUser", tvChannelUrl, true));
 
             //event notification
-            await _eventPublisher.EntityTokensAddedAsync(tvchannel, tokens);
+            await _eventPublisher.EntityTokensAddedAsync(tvChannel, tokens);
         }
 
         /// <summary>
-        /// Add tvchannel attribute combination tokens
+        /// Add tvChannel attribute combination tokens
         /// </summary>
         /// <param name="tokens">List of already added tokens</param>
         /// <param name="combination">TvChannel attribute combination</param>
@@ -1357,20 +1357,20 @@ namespace TvProgViewer.Services.Messages
             //attributes
             //we cannot inject ITvChannelAttributeFormatter into constructor because it'll cause circular references.
             //that's why we resolve it here this way
-            var tvchannelAttributeFormatter = EngineContext.Current.Resolve<ITvChannelAttributeFormatter>();
+            var tvChannelAttributeFormatter = EngineContext.Current.Resolve<ITvChannelAttributeFormatter>();
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(combination.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(combination.TvChannelId);
             var currentUser = await _workContext.GetCurrentUserAsync();
             var currentStore = await _storeContext.GetCurrentStoreAsync();
             
-            var attributes = await tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel,
+            var attributes = await tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel,
                 combination.AttributesXml,
                 currentUser,
                 currentStore,
                 renderPrices: false);
 
             tokens.Add(new Token("AttributeCombination.Formatted", attributes, true));
-            tokens.Add(new Token("AttributeCombination.SKU", await _tvchannelService.FormatSkuAsync(await _tvchannelService.GetTvChannelByIdAsync(combination.TvChannelId), combination.AttributesXml)));
+            tokens.Add(new Token("AttributeCombination.SKU", await _tvChannelService.FormatSkuAsync(await _tvChannelService.GetTvChannelByIdAsync(combination.TvChannelId), combination.AttributesXml)));
             tokens.Add(new Token("AttributeCombination.StockQuantity", combination.StockQuantity));
 
             //event notification
@@ -1478,11 +1478,11 @@ namespace TvProgViewer.Services.Messages
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task AddBackInStockTokensAsync(IList<Token> tokens, BackInStockSubscription subscription)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(subscription.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(subscription.TvChannelId);
 
-            tokens.Add(new Token("BackInStockSubscription.TvChannelName", tvchannel.Name));
-            var tvchannelUrl = await RouteUrlAsync(subscription.StoreId, "TvChannel", new { SeName = await _urlRecordService.GetSeNameAsync(tvchannel) });
-            tokens.Add(new Token("BackInStockSubscription.TvChannelUrl", tvchannelUrl, true));
+            tokens.Add(new Token("BackInStockSubscription.TvChannelName", tvChannel.Name));
+            var tvChannelUrl = await RouteUrlAsync(subscription.StoreId, "TvChannel", new { SeName = await _urlRecordService.GetSeNameAsync(tvChannel) });
+            tokens.Add(new Token("BackInStockSubscription.TvChannelUrl", tvChannelUrl, true));
 
             //event notification
             await _eventPublisher.EntityTokensAddedAsync(subscription, tokens);

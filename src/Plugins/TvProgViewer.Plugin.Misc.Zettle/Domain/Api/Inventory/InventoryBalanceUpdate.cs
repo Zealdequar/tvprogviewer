@@ -49,8 +49,8 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Inventory
             /// <summary>
             /// Gets or sets the unique identifier as UUID version 1
             /// </summary>
-            [JsonProperty(PropertyName = "productUuid")]
-            public string ProductUuid { get; set; }
+            [JsonProperty(PropertyName = "tvChannelUuid")]
+            public string TvChannelUuid { get; set; }
 
             /// <summary>
             /// Gets or sets the unique identifier as UUID version 1

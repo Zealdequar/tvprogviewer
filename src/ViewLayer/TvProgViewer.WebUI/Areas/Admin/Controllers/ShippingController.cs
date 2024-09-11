@@ -113,11 +113,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        protected virtual async Task UpdateLocalesAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange, TvChannelAvailabilityRangeModel model)
+        protected virtual async Task UpdateLocalesAsync(TvChannelAvailabilityRange tvChannelAvailabilityRange, TvChannelAvailabilityRangeModel model)
         {
             foreach (var localized in model.Locales)
             {
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannelAvailabilityRange, x => x.Name, localized.Name, localized.LanguageId);
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannelAvailabilityRange, x => x.Name, localized.Name, localized.LanguageId);
             }
         }
 
@@ -560,15 +560,15 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var tvchannelAvailabilityRange = model.ToEntity<TvChannelAvailabilityRange>();
-                await _dateRangeService.InsertTvChannelAvailabilityRangeAsync(tvchannelAvailabilityRange);
+                var tvChannelAvailabilityRange = model.ToEntity<TvChannelAvailabilityRange>();
+                await _dateRangeService.InsertTvChannelAvailabilityRangeAsync(tvChannelAvailabilityRange);
 
                 //locales
-                await UpdateLocalesAsync(tvchannelAvailabilityRange, model);
+                await UpdateLocalesAsync(tvChannelAvailabilityRange, model);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Added"));
 
-                return continueEditing ? RedirectToAction("EditTvChannelAvailabilityRange", new { id = tvchannelAvailabilityRange.Id }) : RedirectToAction("DatesAndRanges");
+                return continueEditing ? RedirectToAction("EditTvChannelAvailabilityRange", new { id = tvChannelAvailabilityRange.Id }) : RedirectToAction("DatesAndRanges");
             }
 
             //prepare model
@@ -583,13 +583,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
-            //try to get a tvchannel availability range with the specified id
-            var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(id);
-            if (tvchannelAvailabilityRange == null)
+            //try to get a tvChannel availability range with the specified id
+            var tvChannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(id);
+            if (tvChannelAvailabilityRange == null)
                 return RedirectToAction("DatesAndRanges");
 
             //prepare model
-            var model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(null, tvchannelAvailabilityRange);
+            var model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(null, tvChannelAvailabilityRange);
 
             return View(model);
         }
@@ -600,26 +600,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
-            //try to get a tvchannel availability range with the specified id
-            var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(model.Id);
-            if (tvchannelAvailabilityRange == null)
+            //try to get a tvChannel availability range with the specified id
+            var tvChannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(model.Id);
+            if (tvChannelAvailabilityRange == null)
                 return RedirectToAction("DatesAndRanges");
 
             if (ModelState.IsValid)
             {
-                tvchannelAvailabilityRange = model.ToEntity(tvchannelAvailabilityRange);
-                await _dateRangeService.UpdateTvChannelAvailabilityRangeAsync(tvchannelAvailabilityRange);
+                tvChannelAvailabilityRange = model.ToEntity(tvChannelAvailabilityRange);
+                await _dateRangeService.UpdateTvChannelAvailabilityRangeAsync(tvChannelAvailabilityRange);
 
                 //locales
-                await UpdateLocalesAsync(tvchannelAvailabilityRange, model);
+                await UpdateLocalesAsync(tvChannelAvailabilityRange, model);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Updated"));
 
-                return continueEditing ? RedirectToAction("EditTvChannelAvailabilityRange", tvchannelAvailabilityRange.Id) : RedirectToAction("DatesAndRanges");
+                return continueEditing ? RedirectToAction("EditTvChannelAvailabilityRange", tvChannelAvailabilityRange.Id) : RedirectToAction("DatesAndRanges");
             }
 
             //prepare model
-            model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(model, tvchannelAvailabilityRange, true);
+            model = await _shippingModelFactory.PrepareTvChannelAvailabilityRangeModelAsync(model, tvChannelAvailabilityRange, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -631,12 +631,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageShippingSettings))
                 return AccessDeniedView();
 
-            //try to get a tvchannel availability range with the specified id
-            var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(id);
-            if (tvchannelAvailabilityRange == null)
+            //try to get a tvChannel availability range with the specified id
+            var tvChannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(id);
+            if (tvChannelAvailabilityRange == null)
                 return RedirectToAction("DatesAndRanges");
 
-            await _dateRangeService.DeleteTvChannelAvailabilityRangeAsync(tvchannelAvailabilityRange);
+            await _dateRangeService.DeleteTvChannelAvailabilityRangeAsync(tvChannelAvailabilityRange);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Configuration.Shipping.TvChannelAvailabilityRanges.Deleted"));
 

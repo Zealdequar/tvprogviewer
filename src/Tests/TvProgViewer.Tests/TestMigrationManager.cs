@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using FluentMigrator;
 using FluentMigrator.Runner;
-using Nop.Data.Migrations;
+using TvProgViewer.Data.Migrations;
 
-namespace Nop.Tests
+namespace TvProgViewer.Tests
 {
     /// <summary>
     /// Represents the migration manager

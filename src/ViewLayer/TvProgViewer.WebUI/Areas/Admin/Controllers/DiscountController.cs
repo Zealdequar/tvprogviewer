@@ -35,7 +35,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly IManufacturerService _manufacturerService;
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             IManufacturerService manufacturerService,
             INotificationService notificationService,
             IPermissionService permissionService,
-            ITvChannelService tvchannelService)
+            ITvChannelService tvChannelService)
         {
             _catalogSettings = catalogSettings;
             _categoryService = categoryService;
@@ -63,7 +63,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _manufacturerService = manufacturerService;
             _notificationService = notificationService;
             _permissionService = permissionService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
         }
 
         #endregion
@@ -184,7 +184,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     switch (prevDiscountType)
                     {
                         case DiscountType.AssignedToSkus:
-                            await _tvchannelService.ClearDiscountTvChannelMappingAsync(discount);
+                            await _tvChannelService.ClearDiscountTvChannelMappingAsync(discount);
                             break;
                         case DiscountType.AssignedToCategories:
                             await _categoryService.ClearDiscountCategoryMappingAsync(discount);
@@ -227,14 +227,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (discount == null)
                 return RedirectToAction("List");
 
-            //applied to tvchannels
-            var tvchannels = await _tvchannelService.GetTvChannelsWithAppliedDiscountAsync(discount.Id, true);
+            //applied to tvChannels
+            var tvChannels = await _tvChannelService.GetTvChannelsWithAppliedDiscountAsync(discount.Id, true);
 
             await _discountService.DeleteDiscountAsync(discount);
 
             //update "HasDiscountsApplied" properties
-            foreach (var p in tvchannels)
-                await _tvchannelService.UpdateHasDiscountsAppliedAsync(p);
+            foreach (var p in tvChannels)
+                await _tvChannelService.UpdateHasDiscountsAppliedAsync(p);
 
             //activity log
             await _userActivityService.InsertActivityAsync("DeleteDiscount",
@@ -421,7 +421,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Applied to tvchannels
+        #region Applied to tvChannels
 
         [HttpPost]
         public virtual async Task<IActionResult> TvChannelList(DiscountTvChannelSearchModel searchModel)
@@ -439,7 +439,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> TvChannelDelete(int discountId, int tvchannelId)
+        public virtual async Task<IActionResult> TvChannelDelete(int discountId, int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageDiscounts))
                 return AccessDeniedView();
@@ -448,16 +448,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var discount = await _discountService.GetDiscountByIdAsync(discountId)
                 ?? throw new ArgumentException("No discount found with the specified id", nameof(discountId));
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id", nameof(tvchannelId));
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id", nameof(tvChannelId));
 
             //remove discount
-            if (await _tvchannelService.GetDiscountAppliedToTvChannelAsync(tvchannel.Id, discount.Id) is DiscountTvChannelMapping discountTvChannelMapping)
-                await _tvchannelService.DeleteDiscountTvChannelMappingAsync(discountTvChannelMapping);
+            if (await _tvChannelService.GetDiscountAppliedToTvChannelAsync(tvChannel.Id, discount.Id) is DiscountTvChannelMapping discountTvChannelMapping)
+                await _tvChannelService.DeleteDiscountTvChannelMappingAsync(discountTvChannelMapping);
 
-            await _tvchannelService.UpdateTvChannelAsync(tvchannel);
-            await _tvchannelService.UpdateHasDiscountsAppliedAsync(tvchannel);
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
+            await _tvChannelService.UpdateHasDiscountsAppliedAsync(tvChannel);
 
             return new NullJsonResult();
         }
@@ -496,16 +496,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var discount = await _discountService.GetDiscountByIdAsync(model.DiscountId)
                 ?? throw new ArgumentException("No discount found with the specified id");
 
-            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            var selectedTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
             if (selectedTvChannels.Any())
             {
-                foreach (var tvchannel in selectedTvChannels)
+                foreach (var tvChannel in selectedTvChannels)
                 {
-                    if (await _tvchannelService.GetDiscountAppliedToTvChannelAsync(tvchannel.Id, discount.Id) is null)
-                        await _tvchannelService.InsertDiscountTvChannelMappingAsync(new DiscountTvChannelMapping { EntityId = tvchannel.Id, DiscountId = discount.Id });
+                    if (await _tvChannelService.GetDiscountAppliedToTvChannelAsync(tvChannel.Id, discount.Id) is null)
+                        await _tvChannelService.InsertDiscountTvChannelMappingAsync(new DiscountTvChannelMapping { EntityId = tvChannel.Id, DiscountId = discount.Id });
 
-                    await _tvchannelService.UpdateTvChannelAsync(tvchannel);
-                    await _tvchannelService.UpdateHasDiscountsAppliedAsync(tvchannel);
+                    await _tvChannelService.UpdateTvChannelAsync(tvChannel);
+                    await _tvChannelService.UpdateHasDiscountsAppliedAsync(tvChannel);
                 }
             }
 

@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Reports
 {
     /// <summary>
-    /// Represents a never sold tvchannels report list model
+    /// Represents a never sold tvChannels report list model
     /// </summary>
     public partial record NeverSoldReportListModel : BasePagedListModel<NeverSoldReportModel>
     {

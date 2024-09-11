@@ -1,12 +1,12 @@
 ﻿namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel picture mapping
+    /// Represents a tvChannel picture mapping
     /// </summary>
     public partial class TvChannelPicture : BaseEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 

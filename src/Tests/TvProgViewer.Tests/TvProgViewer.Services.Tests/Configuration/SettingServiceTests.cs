@@ -2,16 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Configuration;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Configuration;
-using Nop.Services.Configuration;
+using TvProgViewer.Core.Configuration;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Configuration;
+using TvProgViewer.Services.Configuration;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Configuration
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Configuration
 {
     [TestFixture]
-    public class SettingServiceTests : BaseNopTest
+    public class SettingServiceTests : BaseTvProgTest
     {
         private ISettingService _settingService;
 
@@ -60,7 +60,7 @@ namespace Nop.Tests.Nop.Services.Tests.Configuration
 
             setting.Should().NotBeNull();
             setting.DefaultViewMode.Should().Be("grid");
-            setting.NewProductsPageSizeOptions.Should().Be("6, 3, 9");
+            setting.NewTvChannelsPageSizeOptions.Should().Be("6, 3, 9");
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace Nop.Tests.Nop.Services.Tests.Configuration
         [Test]
         public async Task CanGetTypedSettingValueByKey()
         {
-            var setting = await _settingService.GetSettingByKeyAsync<int>("CatalogSettings.NumberOfProductTags");
+            var setting = await _settingService.GetSettingByKeyAsync<int>("CatalogSettings.NumberOfTvChannelTags");
             setting.Should().Be(15);
         }
 

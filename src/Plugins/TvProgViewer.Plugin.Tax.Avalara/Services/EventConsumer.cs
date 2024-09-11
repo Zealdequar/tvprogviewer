@@ -49,7 +49,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILocalizationService _localizationService;
         private readonly IPermissionService _permissionService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly ITaxPluginManager _taxPluginManager;
         private readonly IWorkContext _workContext;
 
@@ -65,7 +65,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
             IHttpContextAccessor httpContextAccessor,
             ILocalizationService localizationService,
             IPermissionService permissionService,
-            IProductService productService,
+            ITvChannelService tvChannelService,
             ITaxPluginManager taxPluginManager,
             IWorkContext workContext)
         {
@@ -77,7 +77,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
             _httpContextAccessor = httpContextAccessor;
             _localizationService = localizationService;
             _permissionService = permissionService;
-            _productService = productService;
+            _tvChannelService = tvChannelService;
             _taxPluginManager = taxPluginManager;
             _workContext = workContext;
         }
@@ -182,7 +182,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
             {
                 UserModel userModel => (BaseEntity)await _userService.GetUserByIdAsync(userModel.Id),
                 UserRoleModel userRoleModel => await _userService.GetUserRoleByIdAsync(userRoleModel.Id),
-                ProductModel productModel => await _productService.GetProductByIdAsync(productModel.Id),
+                TvChannelModel tvChannelModel => await _tvChannelService.GetTvChannelByIdAsync(tvChannelModel.Id),
                 CheckoutAttributeModel checkoutAttributeModel => await _checkoutAttributeService.GetCheckoutAttributeByIdAsync(checkoutAttributeModel.Id),
                 _ => null
             };

@@ -6,7 +6,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Discounts
 {
     /// <summary>
-    /// Represents a tvchannel search model to add to the discount
+    /// Represents a tvChannel search model to add to the discount
     /// </summary>
     public partial record AddTvChannelToDiscountSearchModel : BaseSearchModel
     {

@@ -1,12 +1,12 @@
 ﻿namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel attribute combination
+    /// Represents a tvChannel attribute combination
     /// </summary>
     public partial class TvChannelAttributeCombination : BaseEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 
@@ -41,7 +41,7 @@
         public string Gtin { get; set; }
 
         /// <summary>
-        /// Gets or sets the attribute combination price. This way a store owner can override the default tvchannel price when this attribute combination is added to the cart. For example, you can give a discount this way.
+        /// Gets or sets the attribute combination price. This way a store owner can override the default tvChannel price when this attribute combination is added to the cart. For example, you can give a discount this way.
         /// </summary>
         public decimal? OverriddenPrice { get; set; }
 

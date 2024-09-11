@@ -12,7 +12,7 @@
 <script>
     $(document).ready(function () {
         $('#@Html.IdFor(model => model.Sku)').on('input change', function () {
-            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvchannelId: @Model.TvChannelId, sku: $(this).val() });
+            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvChannelId: @Model.TvChannelId, sku: $(this).val() });
         });
     });
 </script>

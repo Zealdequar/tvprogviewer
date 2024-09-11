@@ -4,7 +4,7 @@ using TvProgViewer.Services.ScheduleTasks;
 namespace TvProgViewer.Plugin.Misc.Zettle.Services
 {
     /// <summary>
-    /// Represents a schedule task to synchronize products
+    /// Represents a schedule task to synchronize tvChannels
     /// </summary>
     public class ZettleSyncTask : IScheduleTask
     {

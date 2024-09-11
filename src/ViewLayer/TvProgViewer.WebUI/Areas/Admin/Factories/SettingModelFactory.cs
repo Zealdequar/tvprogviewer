@@ -1754,20 +1754,20 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel editor settings model
+        /// Prepare tvChannel editor settings model
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel editor settings model
+        /// The task result contains the tvChannel editor settings model
         /// </returns>
         public virtual async Task<TvChannelEditorSettingsModel> PrepareTvChannelEditorSettingsModelAsync()
         {
             //load settings for a chosen store scope
             var storeId = await _storeContext.GetActiveStoreScopeConfigurationAsync();
-            var tvchannelEditorSettings = await _settingService.LoadSettingAsync<TvChannelEditorSettings>(storeId);
+            var tvChannelEditorSettings = await _settingService.LoadSettingAsync<TvChannelEditorSettings>(storeId);
 
             //fill in model values from the entity
-            var model = tvchannelEditorSettings.ToSettingsModel<TvChannelEditorSettingsModel>();
+            var model = tvChannelEditorSettings.ToSettingsModel<TvChannelEditorSettingsModel>();
 
             return model;
         }

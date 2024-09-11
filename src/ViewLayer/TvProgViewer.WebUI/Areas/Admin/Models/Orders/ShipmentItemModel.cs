@@ -35,7 +35,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
 
         public bool ShipSeparately { get; set; }
 
-        //weight of one item (tvchannel)
+        //weight of one item (tvChannel)
         [TvProgResourceDisplayName("Admin.Orders.Shipments.TvChannels.ItemWeight")]
         public string ItemWeight { get; set; }
 

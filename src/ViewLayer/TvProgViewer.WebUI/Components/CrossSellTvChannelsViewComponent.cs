@@ -15,8 +15,8 @@ namespace TvProgViewer.WebUI.Components
     public partial class CrossSellTvChannelsViewComponent : TvProgViewComponent
     {
         private readonly IAclService _aclService;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IShoppingCartService _shoppingCartService;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
@@ -24,8 +24,8 @@ namespace TvProgViewer.WebUI.Components
         private readonly ShoppingCartSettings _shoppingCartSettings;
 
         public CrossSellTvChannelsViewComponent(IAclService aclService,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
             IShoppingCartService shoppingCartService,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
@@ -33,8 +33,8 @@ namespace TvProgViewer.WebUI.Components
             ShoppingCartSettings shoppingCartSettings)
         {
             _aclService = aclService;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
             _shoppingCartService = shoppingCartService;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
@@ -42,28 +42,28 @@ namespace TvProgViewer.WebUI.Components
             _shoppingCartSettings = shoppingCartSettings;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int? tvchannelThumbPictureSize)
+        public async Task<IViewComponentResult> InvokeAsync(int? tvChannelThumbPictureSize)
         {
             var store = await _storeContext.GetCurrentStoreAsync();
             var cart = await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentUserAsync(), ShoppingCartType.ShoppingCart, store.Id);
 
-            var tvchannels = await (await _tvchannelService.GetCrossSellTvChannelsByShoppingCartAsync(cart, _shoppingCartSettings.CrossSellsNumber))
+            var tvChannels = await (await _tvChannelService.GetCrossSellTvChannelsByShoppingCartAsync(cart, _shoppingCartSettings.CrossSellsNumber))
             //ACL and store mapping
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            .Where(p => _tvchannelService.TvChannelIsAvailable(p))
+            .Where(p => _tvChannelService.TvChannelIsAvailable(p))
             //visible individually
             .Where(p => p.VisibleIndividually).ToListAsync();
 
-            if (!tvchannels.Any())
+            if (!tvChannels.Any())
                 return Content("");
 
-            //Cross-sell tvchannels are displayed on the shopping cart page.
+            //Cross-sell tvChannels are displayed on the shopping cart page.
             //We know that the entire shopping cart page is not refresh
             //even if "ShoppingCartSettings.DisplayCartAfterAddingTvChannel" setting  is enabled.
             //That's why we force page refresh (redirect) in this case
-            var model = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels,
-                    tvchannelThumbPictureSize: tvchannelThumbPictureSize, forceRedirectionAfterAddingToCart: true))
+            var model = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels,
+                    tvChannelThumbPictureSize: tvChannelThumbPictureSize, forceRedirectionAfterAddingToCart: true))
                 .ToList();
 
             return View(model);

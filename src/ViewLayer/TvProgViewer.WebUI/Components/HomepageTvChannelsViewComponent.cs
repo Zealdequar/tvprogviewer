@@ -12,35 +12,35 @@ namespace TvProgViewer.WebUI.Components
     public partial class HomepageTvChannelsViewComponent : TvProgViewComponent
     {
         private readonly IAclService _aclService;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStoreMappingService _storeMappingService;
 
         public HomepageTvChannelsViewComponent(IAclService aclService,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
             IStoreMappingService storeMappingService)
         {
             _aclService = aclService;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
             _storeMappingService = storeMappingService;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int? tvchannelThumbPictureSize)
+        public async Task<IViewComponentResult> InvokeAsync(int? tvChannelThumbPictureSize)
         {
-            var tvchannels = await (await _tvchannelService.GetAllTvChannelsDisplayedOnHomepageAsync())
+            var tvChannels = await (await _tvChannelService.GetAllTvChannelsDisplayedOnHomepageAsync())
             //ACL and store mapping
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            .Where(p => _tvchannelService.TvChannelIsAvailable(p))
+            .Where(p => _tvChannelService.TvChannelIsAvailable(p))
             //visible individually
             .Where(p => p.VisibleIndividually).ToListAsync();
 
-            if (!tvchannels.Any())
+            if (!tvChannels.Any())
                 return Content("");
 
-            var model = (await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels, true, true, tvchannelThumbPictureSize)).ToList();
+            var model = (await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels, true, true, tvChannelThumbPictureSize)).ToList();
 
             return View(model);
         }

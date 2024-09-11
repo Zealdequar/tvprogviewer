@@ -166,12 +166,12 @@
                         function renderColumnTvChannelName(data, type, row, meta) {
                             if (row.TvChannelId > 0) {
                                 var textRenderer = $.fn.dataTable.render.text().display;
-                                var tvchannelInfo = '<a href="@Url.Content("~/Admin/TvChannel/Edit/")' + row.TvChannelId + '">' + textRenderer(row.TvChannelName) + '</a>';
+                                var tvChannelInfo = '<a href="@Url.Content("~/Admin/TvChannel/Edit/")' + row.TvChannelId + '">' + textRenderer(row.TvChannelName) + '</a>';
                                 var attributeInfo = '';
                                 if (row.AttributeInfo && row.AttributeInfo.length > 0) {
                                     attributeInfo = '<div>' + row.AttributeInfo +'</div>';
                                 }
-                                return tvchannelInfo + attributeInfo;
+                                return tvChannelInfo + attributeInfo;
                             } else {
                                 return 'order item is deleted';
                             }

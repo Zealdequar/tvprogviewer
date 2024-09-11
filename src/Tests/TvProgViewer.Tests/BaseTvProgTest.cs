@@ -28,103 +28,103 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Moq;
-using Nop.Core;
-using Nop.Core.Caching;
-using Nop.Core.ComponentModel;
-using Nop.Core.Configuration;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Media;
-using Nop.Core.Events;
-using Nop.Core.Infrastructure;
-using Nop.Data;
-using Nop.Data.Configuration;
-using Nop.Data.Mapping;
-using Nop.Data.Migrations;
-using Nop.Services.Affiliates;
-using Nop.Services.Authentication.External;
-using Nop.Services.Authentication.MultiFactor;
-using Nop.Services.Blogs;
-using Nop.Services.Caching;
-using Nop.Services.Catalog;
-using Nop.Services.Cms;
-using Nop.Services.Common;
-using Nop.Services.Configuration;
-using Nop.Services.Customers;
-using Nop.Services.Directory;
-using Nop.Services.Discounts;
-using Nop.Services.Events;
-using Nop.Services.ExportImport;
-using Nop.Services.Forums;
-using Nop.Services.Gdpr;
-using Nop.Services.Helpers;
-using Nop.Services.Html;
-using Nop.Services.Installation;
-using Nop.Services.Localization;
-using Nop.Services.Logging;
-using Nop.Services.Media;
-using Nop.Services.Messages;
-using Nop.Services.News;
-using Nop.Services.Orders;
-using Nop.Services.Payments;
-using Nop.Services.Plugins;
-using Nop.Services.Polls;
-using Nop.Services.ScheduleTasks;
-using Nop.Services.Security;
-using Nop.Services.Seo;
-using Nop.Services.Shipping;
-using Nop.Services.Shipping.Date;
-using Nop.Services.Shipping.Pickup;
-using Nop.Services.Stores;
-using Nop.Services.Tax;
-using Nop.Services.Themes;
-using Nop.Services.Topics;
-using Nop.Services.Vendors;
-using Nop.Tests.Nop.Services.Tests.ScheduleTasks;
-using Nop.Web.Areas.Admin.Factories;
-using Nop.Web.Framework;
-using Nop.Web.Framework.Factories;
-using Nop.Web.Framework.Models;
-using Nop.Web.Framework.Mvc.Routing;
-using Nop.Web.Framework.Themes;
-using Nop.Web.Framework.UI;
-using Nop.Web.Infrastructure.Installation;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Caching;
+using TvProgViewer.Core.ComponentModel;
+using TvProgViewer.Core.Configuration;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Media;
+using TvProgViewer.Core.Events;
+using TvProgViewer.Core.Infrastructure;
+using TvProgViewer.Data;
+using TvProgViewer.Data.Configuration;
+using TvProgViewer.Data.Mapping;
+using TvProgViewer.Data.Migrations;
+using TvProgViewer.Services.Affiliates;
+using TvProgViewer.Services.Authentication.External;
+using TvProgViewer.Services.Authentication.MultiFactor;
+using TvProgViewer.Services.Blogs;
+using TvProgViewer.Services.Caching;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Cms;
+using TvProgViewer.Services.Common;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Directory;
+using TvProgViewer.Services.Discounts;
+using TvProgViewer.Services.Events;
+using TvProgViewer.Services.ExportImport;
+using TvProgViewer.Services.Forums;
+using TvProgViewer.Services.Gdpr;
+using TvProgViewer.Services.Helpers;
+using TvProgViewer.Services.Html;
+using TvProgViewer.Services.Installation;
+using TvProgViewer.Services.Localization;
+using TvProgViewer.Services.Logging;
+using TvProgViewer.Services.Media;
+using TvProgViewer.Services.Messages;
+using TvProgViewer.Services.News;
+using TvProgViewer.Services.Orders;
+using TvProgViewer.Services.Payments;
+using TvProgViewer.Services.Plugins;
+using TvProgViewer.Services.Polls;
+using TvProgViewer.Services.ScheduleTasks;
+using TvProgViewer.Services.Security;
+using TvProgViewer.Services.Seo;
+using TvProgViewer.Services.Shipping;
+using TvProgViewer.Services.Shipping.Date;
+using TvProgViewer.Services.Shipping.Pickup;
+using TvProgViewer.Services.Stores;
+using TvProgViewer.Services.Tax;
+using TvProgViewer.Services.Themes;
+using TvProgViewer.Services.Topics;
+using TvProgViewer.Services.Vendors;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.ScheduleTasks;
+using TvProgViewer.WebUI.Areas.Admin.Factories;
+using TvProgViewer.Web.Framework;
+using TvProgViewer.Web.Framework.Factories;
+using TvProgViewer.Web.Framework.Models;
+using TvProgViewer.Web.Framework.Mvc.Routing;
+using TvProgViewer.Web.Framework.Themes;
+using TvProgViewer.Web.Framework.UI;
+using TvProgViewer.WebUI.Infrastructure.Installation;
+using TvProgViewer.Services.TvProgMain;
+using TvProgViewer.Core.Domain.TvProgMain;
 using SkiaSharp;
-using IAuthenticationService = Nop.Services.Authentication.IAuthenticationService;
+using IAuthenticationService = TvProgViewer.Services.Authentication.IAuthenticationService;
 using Task = System.Threading.Tasks.Task;
 
-namespace Nop.Tests
+namespace TvProgViewer.Tests
 {
-    public partial class BaseNopTest
+    public partial class BaseTvProgTest
     {
         private static readonly ServiceProvider _serviceProvider;
         private static readonly ResourceManager _resourceManager;
 
-        protected BaseNopTest()
+        protected BaseTvProgTest()
         {
             SetDataProviderType(DataProviderType.Unknown);
         }
 
         private static void Init()
         {
-            
             var dataProvider = _serviceProvider.GetService<IDataProviderManager>().DataProvider;
-            
             dataProvider.CreateDatabase(null);
             dataProvider.InitializeDatabase();
 
             var languagePackInfo = (DownloadUrl: string.Empty, Progress: 0);
             
             _serviceProvider.GetService<IInstallationService>()
-                .InstallRequiredDataAsync(NopTestsDefaults.AdminEmail, NopTestsDefaults.AdminPassword, languagePackInfo, null, null).Wait();
-            _serviceProvider.GetService<IInstallationService>().InstallSampleDataAsync(NopTestsDefaults.AdminEmail).Wait();
+                .InstallRequiredDataAsync(TvProgTestsDefaults.AdminEmail, TvProgTestsDefaults.AdminPassword, languagePackInfo, null, null).Wait();
+            _serviceProvider.GetService<IInstallationService>().InstallSampleDataAsync(TvProgTestsDefaults.AdminEmail).Wait();
 
             var provider = (IPermissionProvider)Activator.CreateInstance(typeof(StandardPermissionProvider));
             EngineContext.Current.Resolve<IPermissionService>().InstallPermissionsAsync(provider).Wait();
         }
         
         protected static T PropertiesShouldEqual<T, Tm>(T entity, Tm model, params string[] filter) where T : BaseEntity
-        where Tm : BaseNopModel
+        where Tm : BaseTvProgModel
         {
             var objectProperties = typeof(T).GetProperties();
             var modelProperties = typeof(Tm).GetProperties();
@@ -150,7 +150,7 @@ namespace Nop.Tests
             return entity;
         }
 
-        static BaseNopTest()
+        static BaseTvProgTest()
         {
             _resourceManager = Connections.ResourceManager;
             SetDataProviderType(DataProviderType.Unknown);
@@ -178,7 +178,7 @@ namespace Nop.Tests
                 .FindClassesOfType<IConfig>()
                 .Select(configType => (IConfig)Activator.CreateInstance(configType))
                 .ToList();
-            
+
             var appSettings = new AppSettings(configurations);
             appSettings.Update(new List<IConfig> { Singleton<DataConfig>.Instance });
             Singleton<AppSettings>.Instance = appSettings;
@@ -189,22 +189,22 @@ namespace Nop.Tests
 
             var rootPath =
                 new DirectoryInfo(
-                        $"{Directory.GetCurrentDirectory().Split("bin")[0]}{Path.Combine(@"\..\..\Presentation\Nop.Web".Split('\\', '/').ToArray())}")
+                        $"{Directory.GetCurrentDirectory().Split("bin")[0]}{Path.Combine(@"\..\..\ViewLayer\TvProgViewer.WebUI".Split('\\', '/').ToArray())}")
                     .FullName;
 
-            //Presentation\Nop.Web\wwwroot
+            //ViewLayer\TvProgViewer.WebUIUI\wwwroot
             var webHostEnvironment = new Mock<IWebHostEnvironment>();
             webHostEnvironment.Setup(p => p.WebRootPath).Returns(Path.Combine(rootPath, "wwwroot"));
             webHostEnvironment.Setup(p => p.ContentRootPath).Returns(rootPath);
             webHostEnvironment.Setup(p => p.EnvironmentName).Returns("test");
-            webHostEnvironment.Setup(p => p.ApplicationName).Returns("nopCommerce");
+            webHostEnvironment.Setup(p => p.ApplicationName).Returns("TvProgViewer");
             services.AddSingleton(webHostEnvironment.Object);
 
             services.AddWebEncoders();
 
             var httpContext = new DefaultHttpContext
             {
-                Request = { Headers = { { HeaderNames.Host, NopTestsDefaults.HostIpAddress } } }
+                Request = { Headers = { { HeaderNames.Host, TvProgTestsDefaults.HostIpAddress } } }
             };
 
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -219,7 +219,7 @@ namespace Nop.Tests
             services.AddSingleton(actionContextAccessor.Object);
 
             var urlHelperFactory = new Mock<IUrlHelperFactory>();
-            var urlHelper = new NopTestUrlHelper(actionContextAccessor.Object.ActionContext);
+            var urlHelper = new TvProgTestUrlHelper(actionContextAccessor.Object.ActionContext);
 
             urlHelperFactory.Setup(x => x.GetUrlHelper(It.IsAny<ActionContext>()))
                 .Returns(urlHelper);
@@ -238,8 +238,8 @@ namespace Nop.Tests
             Singleton<ITypeFinder>.Instance = typeFinder;
 
             //file provider
-            services.AddTransient<INopFileProvider, NopFileProvider>();
-            CommonHelper.DefaultFileProvider = new NopFileProvider(webHostEnvironment.Object);
+            services.AddTransient<ITvProgFileProvider, TvProgFileProvider>();
+            CommonHelper.DefaultFileProvider = new TvProgFileProvider(webHostEnvironment.Object);
 
             //web helper
             services.AddTransient<IWebHelper, WebHelper>();
@@ -251,7 +251,7 @@ namespace Nop.Tests
             services.AddTransient<IDataProviderManager, TestDataProviderManager>();
             services.AddTransient(serviceProvider =>
                 serviceProvider.GetRequiredService<IDataProviderManager>().DataProvider);
-            services.AddTransient<IMappingEntityAccessor>(x => x.GetRequiredService<INopDataProvider>());
+            services.AddTransient<IMappingEntityAccessor>(x => x.GetRequiredService<ITvProgDataProvider>());
 
             //repositories
             services.AddTransient(typeof(IRepository<>), typeof(EntityRepository<>));
@@ -259,31 +259,35 @@ namespace Nop.Tests
             //plugins
             services.AddTransient<IPluginService, PluginService>();
 
+            services.AddSingleton<CacheKeyManager>();
             services.AddSingleton<IMemoryCache>(memoryCache);
             services.AddSingleton<IStaticCacheManager, MemoryCacheManager>();
-            services.AddSingleton<ILocker, MemoryCacheManager>();
+            services.AddSingleton<ILocker, MemoryCacheLocker>();
+            services.AddSingleton<MemoryCacheLocker>();
 
-            services.AddSingleton<IDistributedCache>(new MemoryDistributedCache(new TestMemoryDistributedCacheoptions()));
+            var memoryDistributedCache = new MemoryDistributedCache(new TestMemoryDistributedCacheoptions());
+            services.AddSingleton<IDistributedCache>(memoryDistributedCache);
             services.AddTransient<MemoryDistributedCacheManager>();
+            services.AddSingleton(new DistributedCacheLocker(memoryDistributedCache));
             
             //services
             services.AddTransient<IBackInStockSubscriptionService, BackInStockSubscriptionService>();
             services.AddTransient<ICategoryService, CategoryService>();
-            services.AddTransient<ICompareProductsService, CompareProductsService>();
-            services.AddTransient<IRecentlyViewedProductsService, RecentlyViewedProductsService>();
+            services.AddTransient<ICompareTvChannelsService, CompareTvChannelsService>();
+            services.AddTransient<IRecentlyViewedTvChannelsService, RecentlyViewedTvChannelsService>();
             services.AddTransient<IManufacturerService, ManufacturerService>();
             services.AddTransient<IPriceFormatter, PriceFormatter>();
-            services.AddTransient<IProductAttributeFormatter, ProductAttributeFormatter>();
-            services.AddTransient<IProductAttributeParser, ProductAttributeParser>();
-            services.AddTransient<IProductAttributeService, ProductAttributeService>();
-            services.AddTransient<IProductService, ProductService>();
-            services.AddTransient<ICopyProductService, CopyProductService>();
+            services.AddTransient<ITvChannelAttributeFormatter, TvChannelAttributeFormatter>();
+            services.AddTransient<ITvChannelAttributeParser, TvChannelAttributeParser>();
+            services.AddTransient<ITvChannelAttributeService, TvChannelAttributeService>();
+            services.AddTransient<ITvChannelService, TvChannelService>();
+            services.AddTransient<ICopyTvChannelService, CopyTvChannelService>();
             services.AddTransient<ISpecificationAttributeService, SpecificationAttributeService>();
-            services.AddTransient<IProductTemplateService, ProductTemplateService>();
+            services.AddTransient<ITvChannelTemplateService, TvChannelTemplateService>();
             services.AddTransient<ICategoryTemplateService, CategoryTemplateService>();
             services.AddTransient<IManufacturerTemplateService, ManufacturerTemplateService>();
             services.AddTransient<ITopicTemplateService, TopicTemplateService>();
-            services.AddTransient<IProductTagService, ProductTagService>();
+            services.AddTransient<ITvChannelTagService, TvChannelTagService>();
             services.AddTransient<IAddressAttributeFormatter, AddressAttributeFormatter>();
             services.AddTransient<IAddressAttributeParser, AddressAttributeParser>();
             services.AddTransient<IAddressAttributeService, AddressAttributeService>();
@@ -296,12 +300,12 @@ namespace Nop.Tests
             services.AddTransient<ISearchTermService, SearchTermService>();
             services.AddTransient<IGenericAttributeService, GenericAttributeService>();
             services.AddTransient<IMaintenanceService, MaintenanceService>();
-            services.AddTransient<ICustomerAttributeFormatter, CustomerAttributeFormatter>();
-            services.AddTransient<ICustomerAttributeParser, CustomerAttributeParser>();
-            services.AddTransient<ICustomerAttributeService, CustomerAttributeService>();
-            services.AddTransient<ICustomerService, CustomerService>();
-            services.AddTransient<ICustomerRegistrationService, CustomerRegistrationService>();
-            services.AddTransient<ICustomerReportService, CustomerReportService>();
+            services.AddTransient<IUserAttributeFormatter, UserAttributeFormatter>();
+            services.AddTransient<IUserAttributeParser, UserAttributeParser>();
+            services.AddTransient<IUserAttributeService, UserAttributeService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserRegistrationService, UserRegistrationService>();
+            services.AddTransient<IUserReportService, UserReportService>();
             services.AddTransient<IPermissionService, PermissionService>();
             services.AddTransient<IAclService, AclService>();
             services.AddTransient<IPriceCalculationService, PriceCalculationService>();
@@ -352,7 +356,7 @@ namespace Nop.Tests
             services.AddTransient<ITaxCategoryService, TaxCategoryService>();
             services.AddTransient<ITaxService, TaxService>();
             services.AddTransient<ILogger, DefaultLogger>();
-            services.AddTransient<ICustomerActivityService, CustomerActivityService>();
+            services.AddTransient<IUserActivityService, UserActivityService>();
             services.AddTransient<IForumService, ForumService>();
             services.AddTransient<IGdprService, GdprService>();
             services.AddTransient<IPollService, PollService>();
@@ -390,7 +394,7 @@ namespace Nop.Tests
 
             services.AddTransient<IPictureService, TestPictureService>();
             services.AddScoped<IVideoService, VideoService>();
-            services.AddScoped<INopUrlHelper, NopUrlHelper>();
+            services.AddScoped<ITvProgUrlHelper, TvProgUrlHelper>();
 
             //register all settings
             var settings = typeFinder.FindClassesOfType(typeof(ISettings), false).ToList();
@@ -420,7 +424,7 @@ namespace Nop.Tests
                 // set accessor for the connection string
                 .AddScoped<IConnectionStringAccessor>(_ => DataSettingsManager.LoadSettings())
                 .AddScoped<IMigrationManager, TestMigrationManager>()
-                .AddSingleton<IConventionSet, NopTestConventionSet>()
+                .AddSingleton<IConventionSet, TvProgTestConventionSet>()
                 .ConfigureRunner(rb =>
                     rb.WithVersionTable(new MigrationVersionInfo()).AddSqlServer().AddMySql5().AddPostgres().AddSQLite()
                         // define the assembly containing the migrations
@@ -429,9 +433,12 @@ namespace Nop.Tests
             services.AddTransient<IStoreContext, WebStoreContext>();
             services.AddTransient<Lazy<IStoreContext>>();
             services.AddTransient<IWorkContext, WebWorkContext>();
+            services.AddTransient<ProgrammeSettings>();
+            services.AddTransient<IProgrammeService, ProgrammeService>();
+            services.AddTransient<IChannelService, ChannelService>();
             services.AddTransient<IThemeContext, ThemeContext>();
 
-            services.AddTransient<INopHtmlHelper, NopHtmlHelper>();
+            services.AddTransient<ITvProgHtmlHelper, TvProgHtmlHelper>();
 
             //schedule tasks
             services.AddSingleton<ITaskScheduler, TestTaskScheduler>();
@@ -458,9 +465,9 @@ namespace Nop.Tests
             services.AddTransient<ICommonModelFactory, CommonModelFactory>();
             services.AddTransient<ICountryModelFactory, CountryModelFactory>();
             services.AddTransient<ICurrencyModelFactory, CurrencyModelFactory>();
-            services.AddTransient<ICustomerAttributeModelFactory, CustomerAttributeModelFactory>();
-            services.AddTransient<ICustomerModelFactory, CustomerModelFactory>();
-            services.AddTransient<ICustomerRoleModelFactory, CustomerRoleModelFactory>();
+            services.AddTransient<IUserAttributeModelFactory, UserAttributeModelFactory>();
+            services.AddTransient<IUserModelFactory, UserModelFactory>();
+            services.AddTransient<IUserRoleModelFactory, UserRoleModelFactory>();
             services.AddTransient<IDiscountModelFactory, DiscountModelFactory>();
             services.AddTransient<IEmailAccountModelFactory, EmailAccountModelFactory>();
             services
@@ -479,9 +486,9 @@ namespace Nop.Tests
             services.AddTransient<IPaymentModelFactory, PaymentModelFactory>();
             services.AddTransient<IPluginModelFactory, PluginModelFactory>();
             services.AddTransient<IPollModelFactory, PollModelFactory>();
-            services.AddTransient<IProductModelFactory, ProductModelFactory>();
-            services.AddTransient<IProductAttributeModelFactory, ProductAttributeModelFactory>();
-            services.AddTransient<IProductReviewModelFactory, ProductReviewModelFactory>();
+            services.AddTransient<ITvChannelModelFactory, TvChannelModelFactory>();
+            services.AddTransient<ITvChannelAttributeModelFactory, TvChannelAttributeModelFactory>();
+            services.AddTransient<ITvChannelReviewModelFactory, TvChannelReviewModelFactory>();
             services.AddTransient<IReportModelFactory, ReportModelFactory>();
             services.AddTransient<IQueuedEmailModelFactory, QueuedEmailModelFactory>();
             services.AddTransient<IRecurringPaymentModelFactory, RecurringPaymentModelFactory>();
@@ -502,35 +509,35 @@ namespace Nop.Tests
             services.AddTransient<IWidgetModelFactory, WidgetModelFactory>();
 
             //factories
-            services.AddTransient<Web.Factories.IAddressModelFactory, Web.Factories.AddressModelFactory>();
-            services.AddTransient<Web.Factories.IBlogModelFactory, Web.Factories.BlogModelFactory>();
-            services.AddTransient<Web.Factories.ICatalogModelFactory, Web.Factories.CatalogModelFactory>();
-            services.AddTransient<Web.Factories.ICheckoutModelFactory, Web.Factories.CheckoutModelFactory>();
-            services.AddTransient<Web.Factories.ICommonModelFactory, Web.Factories.CommonModelFactory>();
-            services.AddTransient<Web.Factories.ICountryModelFactory, Web.Factories.CountryModelFactory>();
-            services.AddTransient<Web.Factories.ICustomerModelFactory, Web.Factories.CustomerModelFactory>();
-            services.AddTransient<Web.Factories.IForumModelFactory, Web.Factories.ForumModelFactory>();
+            services.AddTransient<WebUI.Factories.IAddressModelFactory, WebUI.Factories.AddressModelFactory>();
+            services.AddTransient<WebUI.Factories.IBlogModelFactory, WebUI.Factories.BlogModelFactory>();
+            services.AddTransient<WebUI.Factories.ICatalogModelFactory, WebUI.Factories.CatalogModelFactory>();
+            services.AddTransient<WebUI.Factories.ICheckoutModelFactory, WebUI.Factories.CheckoutModelFactory>();
+            services.AddTransient<WebUI.Factories.ICommonModelFactory, WebUI.Factories.CommonModelFactory>();
+            services.AddTransient<WebUI.Factories.ICountryModelFactory, WebUI.Factories.CountryModelFactory>();
+            services.AddTransient<WebUI.Factories.IUserModelFactory, WebUI.Factories.UserModelFactory>();
+            services.AddTransient<WebUI.Factories.IForumModelFactory, WebUI.Factories.ForumModelFactory>();
             services
-                .AddTransient<Web.Factories.IExternalAuthenticationModelFactory,
-                    Web.Factories.ExternalAuthenticationModelFactory>();
-            services.AddTransient<Web.Factories.INewsModelFactory, Web.Factories.NewsModelFactory>();
-            services.AddTransient<Web.Factories.INewsletterModelFactory, Web.Factories.NewsletterModelFactory>();
-            services.AddTransient<Web.Factories.IOrderModelFactory, Web.Factories.OrderModelFactory>();
-            services.AddTransient<Web.Factories.IPollModelFactory, Web.Factories.PollModelFactory>();
+                .AddTransient<WebUI.Factories.IExternalAuthenticationModelFactory,
+                    WebUI.Factories.ExternalAuthenticationModelFactory>();
+            services.AddTransient<WebUI.Factories.INewsModelFactory, WebUI.Factories.NewsModelFactory>();
+            services.AddTransient<WebUI.Factories.INewsletterModelFactory, WebUI.Factories.NewsletterModelFactory>();
+            services.AddTransient<WebUI.Factories.IOrderModelFactory, WebUI.Factories.OrderModelFactory>();
+            services.AddTransient<WebUI.Factories.IPollModelFactory, WebUI.Factories.PollModelFactory>();
             services
-                .AddTransient<Web.Factories.IPrivateMessagesModelFactory, Web.Factories.PrivateMessagesModelFactory>();
-            services.AddTransient<Web.Factories.IProductModelFactory, Web.Factories.ProductModelFactory>();
-            services.AddTransient<Web.Factories.IProfileModelFactory, Web.Factories.ProfileModelFactory>();
-            services.AddTransient<Web.Factories.IReturnRequestModelFactory, Web.Factories.ReturnRequestModelFactory>();
-            services.AddTransient<Web.Factories.IShoppingCartModelFactory, Web.Factories.ShoppingCartModelFactory>();
-            services.AddTransient<Web.Factories.ISitemapModelFactory, Web.Factories.SitemapModelFactory>();
-            services.AddTransient<Web.Factories.ITopicModelFactory, Web.Factories.TopicModelFactory>();
-            services.AddTransient<Web.Factories.IVendorModelFactory, Web.Factories.VendorModelFactory>();
-            services.AddTransient<Web.Factories.IWidgetModelFactory, Web.Factories.WidgetModelFactory>();
+                .AddTransient<WebUI.Factories.IPrivateMessagesModelFactory, WebUI.Factories.PrivateMessagesModelFactory>();
+            services.AddTransient<WebUI.Factories.ITvChannelModelFactory, WebUI.Factories.TvChannelModelFactory>();
+            services.AddTransient<WebUI.Factories.IProfileModelFactory, WebUI.Factories.ProfileModelFactory>();
+            services.AddTransient<WebUI.Factories.IReturnRequestModelFactory, WebUI.Factories.ReturnRequestModelFactory>();
+            services.AddTransient<WebUI.Factories.IShoppingCartModelFactory, WebUI.Factories.ShoppingCartModelFactory>();
+            services.AddTransient<WebUI.Factories.ISitemapModelFactory, WebUI.Factories.SitemapModelFactory>();
+            services.AddTransient<WebUI.Factories.ITopicModelFactory, WebUI.Factories.TopicModelFactory>();
+            services.AddTransient<WebUI.Factories.IVendorModelFactory, WebUI.Factories.VendorModelFactory>();
+            services.AddTransient<WebUI.Factories.IWidgetModelFactory, WebUI.Factories.WidgetModelFactory>();
 
             _serviceProvider = services.BuildServiceProvider();
 
-            EngineContext.Replace(new NopTestEngine(_serviceProvider));
+            EngineContext.Replace(new TvProgTestEngine(_serviceProvider));
 
             Init();
         }
@@ -565,7 +572,7 @@ namespace Nop.Tests
 
             await insert(baseEntity);
             baseEntity.Id.Should().BeGreaterThan(0);
-            
+
             updateEntity.Id = baseEntity.Id;
             await update(updateEntity);
 
@@ -621,9 +628,9 @@ namespace Nop.Tests
 
         #region Nested classes
 
-        protected class NopTestUrlHelper : UrlHelperBase
+        protected class TvProgTestUrlHelper : UrlHelperBase
         {
-            public NopTestUrlHelper(ActionContext actionContext) : base(actionContext)
+            public TvProgTestUrlHelper(ActionContext actionContext) : base(actionContext)
             {
             }
 
@@ -638,18 +645,18 @@ namespace Nop.Tests
             }
         }
 
-        protected class NopTestConventionSet : NopConventionSet
+        protected class TvProgTestConventionSet : TvProgConventionSet
         {
-            public NopTestConventionSet(INopDataProvider dataProvider) : base(dataProvider)
+            public TvProgTestConventionSet(ITvProgDataProvider dataProvider) : base(dataProvider)
             {
             }
         }
 
-        public partial class NopTestEngine : NopEngine
+        public partial class TvProgTestEngine : TvProgEngine
         {
             protected readonly IServiceProvider _internalServiceProvider;
 
-            public NopTestEngine(IServiceProvider serviceProvider)
+            public TvProgTestEngine(IServiceProvider serviceProvider)
             {
                 _internalServiceProvider = serviceProvider;
             }
@@ -659,7 +666,7 @@ namespace Nop.Tests
 
         public class TestAuthenticationService : IAuthenticationService
         {
-            public Task SignInAsync(Customer customer, bool isPersistent)
+            public Task SignInAsync(User user, bool isPersistent)
             {
                 return Task.CompletedTask;
             }
@@ -669,22 +676,22 @@ namespace Nop.Tests
                 return Task.CompletedTask;
             }
 
-            public async Task<Customer> GetAuthenticatedCustomerAsync()
+            public async Task<User> GetAuthenticatedUserAsync()
             {
-                return await _serviceProvider.GetService<ICustomerService>().GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+                return await _serviceProvider.GetService<IUserService>().GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
             }
         }
 
         protected class TestPictureService : PictureService
         {
             public TestPictureService(IDownloadService downloadService,
-                IHttpContextAccessor httpContextAccessor, ILogger logger, INopFileProvider fileProvider,
-                IProductAttributeParser productAttributeParser, IRepository<Picture> pictureRepository,
+                IHttpContextAccessor httpContextAccessor, ILogger logger, ITvProgFileProvider fileProvider,
+                ITvChannelAttributeParser tvChannelAttributeParser, IRepository<Picture> pictureRepository,
                 IRepository<PictureBinary> pictureBinaryRepository,
-                IRepository<ProductPicture> productPictureRepository, ISettingService settingService,
+                IRepository<TvChannelPicture> tvChannelPictureRepository, ISettingService settingService,
                 IUrlRecordService urlRecordService, IWebHelper webHelper, MediaSettings mediaSettings) : base(
-                downloadService, httpContextAccessor, logger, fileProvider, productAttributeParser,
-                pictureRepository, pictureBinaryRepository, productPictureRepository, settingService, urlRecordService,
+                downloadService, httpContextAccessor, logger, fileProvider, tvChannelAttributeParser,
+                pictureRepository, pictureBinaryRepository, tvChannelPictureRepository, settingService, urlRecordService,
                 webHelper, mediaSettings)
             {
             }

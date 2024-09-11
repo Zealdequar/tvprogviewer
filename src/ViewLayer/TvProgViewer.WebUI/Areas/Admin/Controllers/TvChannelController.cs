@@ -67,12 +67,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly IPdfService _pdfService;
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
-        private readonly ITvChannelAttributeFormatter _tvchannelAttributeFormatter;
-        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
-        private readonly ITvChannelTagService _tvchannelTagService;
+        private readonly ITvChannelAttributeFormatter _tvChannelAttributeFormatter;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
+        private readonly ITvChannelTagService _tvChannelTagService;
         private readonly ISettingService _settingService;
         private readonly IShippingService _shippingService;
         private readonly IShoppingCartService _shoppingCartService;
@@ -109,12 +109,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             IPdfService pdfService,
             IPermissionService permissionService,
             IPictureService pictureService,
-            ITvChannelAttributeFormatter tvchannelAttributeFormatter,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelAttributeService tvchannelAttributeService,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
-            ITvChannelTagService tvchannelTagService,
+            ITvChannelAttributeFormatter tvChannelAttributeFormatter,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
+            ITvChannelTagService tvChannelTagService,
             ISettingService settingService,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
@@ -147,12 +147,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _pdfService = pdfService;
             _permissionService = permissionService;
             _pictureService = pictureService;
-            _tvchannelAttributeFormatter = tvchannelAttributeFormatter;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
-            _tvchannelTagService = tvchannelTagService;
+            _tvChannelAttributeFormatter = tvChannelAttributeFormatter;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
+            _tvChannelTagService = tvChannelTagService;
             _settingService = settingService;
             _shippingService = shippingService;
             _shoppingCartService = shoppingCartService;
@@ -169,52 +169,52 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #region Utilities
 
-        protected virtual async Task UpdateLocalesAsync(TvChannel tvchannel, TvChannelModel model)
+        protected virtual async Task UpdateLocalesAsync(TvChannel tvChannel, TvChannelModel model)
         {
             foreach (var localized in model.Locales)
             {
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel,
                     x => x.Name,
                     localized.Name,
                     localized.LanguageId);
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel,
                     x => x.ShortDescription,
                     localized.ShortDescription,
                     localized.LanguageId);
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel,
                     x => x.FullDescription,
                     localized.FullDescription,
                     localized.LanguageId);
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel,
                     x => x.MetaKeywords,
                     localized.MetaKeywords,
                     localized.LanguageId);
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel,
                     x => x.MetaDescription,
                     localized.MetaDescription,
                     localized.LanguageId);
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannel,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannel,
                     x => x.MetaTitle,
                     localized.MetaTitle,
                     localized.LanguageId);
 
                 //search engine name
-                var seName = await _urlRecordService.ValidateSeNameAsync(tvchannel, localized.SeName, localized.Name, false);
-                await _urlRecordService.SaveSlugAsync(tvchannel, seName, localized.LanguageId);
+                var seName = await _urlRecordService.ValidateSeNameAsync(tvChannel, localized.SeName, localized.Name, false);
+                await _urlRecordService.SaveSlugAsync(tvChannel, seName, localized.LanguageId);
             }
         }
 
-        protected virtual async Task UpdateLocalesAsync(TvChannelTag tvchannelTag, TvChannelTagModel model)
+        protected virtual async Task UpdateLocalesAsync(TvChannelTag tvChannelTag, TvChannelTagModel model)
         {
             foreach (var localized in model.Locales)
             {
-                await _localizedEntityService.SaveLocalizedValueAsync(tvchannelTag,
+                await _localizedEntityService.SaveLocalizedValueAsync(tvChannelTag,
                     x => x.Name,
                     localized.Name,
                     localized.LanguageId);
 
-                var seName = await _urlRecordService.ValidateSeNameAsync(tvchannelTag, string.Empty, localized.Name, false);
-                await _urlRecordService.SaveSlugAsync(tvchannelTag, seName, localized.LanguageId);
+                var seName = await _urlRecordService.ValidateSeNameAsync(tvChannelTag, string.Empty, localized.Name, false);
+                await _urlRecordService.SaveSlugAsync(tvChannelTag, seName, localized.LanguageId);
             }
         }
 
@@ -244,18 +244,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        protected virtual async Task UpdatePictureSeoNamesAsync(TvChannel tvchannel)
+        protected virtual async Task UpdatePictureSeoNamesAsync(TvChannel tvChannel)
         {
-            foreach (var pp in await _tvchannelService.GetTvChannelPicturesByTvChannelIdAsync(tvchannel.Id))
-                await _pictureService.SetSeoFilenameAsync(pp.PictureId, await _pictureService.GetPictureSeNameAsync(tvchannel.Name));
+            foreach (var pp in await _tvChannelService.GetTvChannelPicturesByTvChannelIdAsync(tvChannel.Id))
+                await _pictureService.SetSeoFilenameAsync(pp.PictureId, await _pictureService.GetPictureSeNameAsync(tvChannel.Name));
         }
 
-        protected virtual async Task SaveTvChannelAclAsync(TvChannel tvchannel, TvChannelModel model)
+        protected virtual async Task SaveTvChannelAclAsync(TvChannel tvChannel, TvChannelModel model)
         {
-            tvchannel.SubjectToAcl = model.SelectedUserRoleIds.Any();
-            await _tvchannelService.UpdateTvChannelAsync(tvchannel);
+            tvChannel.SubjectToAcl = model.SelectedUserRoleIds.Any();
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
-            var existingAclRecords = await _aclService.GetAclRecordsAsync(tvchannel);
+            var existingAclRecords = await _aclService.GetAclRecordsAsync(tvChannel);
             var allUserRoles = await _userService.GetAllUserRolesAsync(true);
             foreach (var userRole in allUserRoles)
             {
@@ -263,7 +263,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 {
                     //new role
                     if (!existingAclRecords.Any(acl => acl.UserRoleId == userRole.Id))
-                        await _aclService.InsertAclRecordAsync(tvchannel, userRole.Id);
+                        await _aclService.InsertAclRecordAsync(tvChannel, userRole.Id);
                 }
                 else
                 {
@@ -275,9 +275,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        protected virtual async Task SaveCategoryMappingsAsync(TvChannel tvchannel, TvChannelModel model)
+        protected virtual async Task SaveCategoryMappingsAsync(TvChannel tvChannel, TvChannelModel model)
         {
-            var existingTvChannelCategories = await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvchannel.Id, true);
+            var existingTvChannelCategories = await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel.Id, true);
 
             //delete categories
             foreach (var existingTvChannelCategory in existingTvChannelCategories)
@@ -287,7 +287,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             //add categories
             foreach (var categoryId in model.SelectedCategoryIds)
             {
-                if (_categoryService.FindTvChannelCategory(existingTvChannelCategories, tvchannel.Id, categoryId) == null)
+                if (_categoryService.FindTvChannelCategory(existingTvChannelCategories, tvChannel.Id, categoryId) == null)
                 {
                     //find next display order
                     var displayOrder = 1;
@@ -296,7 +296,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         displayOrder = existingCategoryMapping.Max(x => x.DisplayOrder) + 1;
                     await _categoryService.InsertTvChannelCategoryAsync(new TvChannelCategory
                     {
-                        TvChannelId = tvchannel.Id,
+                        TvChannelId = tvChannel.Id,
                         CategoryId = categoryId,
                         DisplayOrder = displayOrder
                     });
@@ -304,9 +304,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        protected virtual async Task SaveManufacturerMappingsAsync(TvChannel tvchannel, TvChannelModel model)
+        protected virtual async Task SaveManufacturerMappingsAsync(TvChannel tvChannel, TvChannelModel model)
         {
-            var existingTvChannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvchannel.Id, true);
+            var existingTvChannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvChannel.Id, true);
 
             //delete manufacturers
             foreach (var existingTvChannelManufacturer in existingTvChannelManufacturers)
@@ -316,7 +316,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             //add manufacturers
             foreach (var manufacturerId in model.SelectedManufacturerIds)
             {
-                if (_manufacturerService.FindTvChannelManufacturer(existingTvChannelManufacturers, tvchannel.Id, manufacturerId) == null)
+                if (_manufacturerService.FindTvChannelManufacturer(existingTvChannelManufacturers, tvChannel.Id, manufacturerId) == null)
                 {
                     //find next display order
                     var displayOrder = 1;
@@ -325,7 +325,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         displayOrder = existingManufacturerMapping.Max(x => x.DisplayOrder) + 1;
                     await _manufacturerService.InsertTvChannelManufacturerAsync(new TvChannelManufacturer
                     {
-                        TvChannelId = tvchannel.Id,
+                        TvChannelId = tvChannel.Id,
                         ManufacturerId = manufacturerId,
                         DisplayOrder = displayOrder
                     });
@@ -333,7 +333,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        protected virtual async Task SaveDiscountMappingsAsync(TvChannel tvchannel, TvChannelModel model)
+        protected virtual async Task SaveDiscountMappingsAsync(TvChannel tvChannel, TvChannelModel model)
         {
             var allDiscounts = await _discountService.GetAllDiscountsAsync(DiscountType.AssignedToSkus, showHidden: true, isActive: null);
 
@@ -342,28 +342,28 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 if (model.SelectedDiscountIds != null && model.SelectedDiscountIds.Contains(discount.Id))
                 {
                     //new discount
-                    if (await _tvchannelService.GetDiscountAppliedToTvChannelAsync(tvchannel.Id, discount.Id) is null)
-                        await _tvchannelService.InsertDiscountTvChannelMappingAsync(new DiscountTvChannelMapping { EntityId = tvchannel.Id, DiscountId = discount.Id });
+                    if (await _tvChannelService.GetDiscountAppliedToTvChannelAsync(tvChannel.Id, discount.Id) is null)
+                        await _tvChannelService.InsertDiscountTvChannelMappingAsync(new DiscountTvChannelMapping { EntityId = tvChannel.Id, DiscountId = discount.Id });
                 }
                 else
                 {
                     //remove discount
-                    if (await _tvchannelService.GetDiscountAppliedToTvChannelAsync(tvchannel.Id, discount.Id) is DiscountTvChannelMapping discountTvChannelMapping)
-                        await _tvchannelService.DeleteDiscountTvChannelMappingAsync(discountTvChannelMapping);
+                    if (await _tvChannelService.GetDiscountAppliedToTvChannelAsync(tvChannel.Id, discount.Id) is DiscountTvChannelMapping discountTvChannelMapping)
+                        await _tvChannelService.DeleteDiscountTvChannelMappingAsync(discountTvChannelMapping);
                 }
             }
 
-            await _tvchannelService.UpdateTvChannelAsync(tvchannel);
-            await _tvchannelService.UpdateHasDiscountsAppliedAsync(tvchannel);
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
+            await _tvChannelService.UpdateHasDiscountsAppliedAsync(tvChannel);
         }
 
-        protected virtual async Task<string> GetAttributesXmlForTvChannelAttributeCombinationAsync(IFormCollection form, List<string> warnings, int tvchannelId)
+        protected virtual async Task<string> GetAttributesXmlForTvChannelAttributeCombinationAsync(IFormCollection form, List<string> warnings, int tvChannelId)
         {
             var attributesXml = string.Empty;
 
-            //get tvchannel attribute mappings (exclude non-combinable attributes)
-            var attributes = (await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannelId))
-                .Where(tvchannelAttributeMapping => !tvchannelAttributeMapping.IsNonCombinable()).ToList();
+            //get tvChannel attribute mappings (exclude non-combinable attributes)
+            var attributes = (await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannelId))
+                .Where(tvChannelAttributeMapping => !tvChannelAttributeMapping.IsNonCombinable()).ToList();
 
             foreach (var attribute in attributes)
             {
@@ -381,7 +381,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         {
                             var selectedAttributeId = int.Parse(ctrlAttributes);
                             if (selectedAttributeId > 0)
-                                attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
+                                attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(attributesXml,
                                     attribute, selectedAttributeId.ToString());
                         }
 
@@ -395,7 +395,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                             {
                                 var selectedAttributeId = int.Parse(item);
                                 if (selectedAttributeId > 0)
-                                    attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
+                                    attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(attributesXml,
                                         attribute, selectedAttributeId.ToString());
                             }
                         }
@@ -403,13 +403,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         break;
                     case AttributeControlType.ReadonlyCheckboxes:
                         //load read-only (already server-side selected) values
-                        var attributeValues = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(attribute.Id);
+                        var attributeValues = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(attribute.Id);
                         foreach (var selectedAttributeId in attributeValues
                             .Where(v => v.IsPreSelected)
                             .Select(v => v.Id)
                             .ToList())
                         {
-                            attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
+                            attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(attributesXml,
                                 attribute, selectedAttributeId.ToString());
                         }
 
@@ -420,7 +420,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         if (!string.IsNullOrEmpty(ctrlAttributes))
                         {
                             var enteredText = ctrlAttributes.ToString().Trim();
-                            attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
+                            attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(attributesXml,
                                 attribute, enteredText);
                         }
 
@@ -441,7 +441,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
                         if (selectedDate.HasValue)
                         {
-                            attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
+                            attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(attributesXml,
                                 attribute, selectedDate.Value.ToString("D"));
                         }
 
@@ -481,7 +481,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                                 await _downloadService.InsertDownloadAsync(download);
 
                                 //save attribute
-                                attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
+                                attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(attributesXml,
                                     attribute, download.DownloadGuid.ToString());
                             }
                         }
@@ -495,23 +495,23 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             //validate conditional attributes (if specified)
             foreach (var attribute in attributes)
             {
-                var conditionMet = await _tvchannelAttributeParser.IsConditionMetAsync(attribute, attributesXml);
+                var conditionMet = await _tvChannelAttributeParser.IsConditionMetAsync(attribute, attributesXml);
                 if (conditionMet.HasValue && !conditionMet.Value)
                 {
-                    attributesXml = _tvchannelAttributeParser.RemoveTvChannelAttribute(attributesXml, attribute);
+                    attributesXml = _tvChannelAttributeParser.RemoveTvChannelAttribute(attributesXml, attribute);
                 }
             }
 
             return attributesXml;
         }
 
-        protected virtual string[] ParseTvChannelTags(string tvchannelTags)
+        protected virtual string[] ParseTvChannelTags(string tvChannelTags)
         {
             var result = new List<string>();
-            if (string.IsNullOrWhiteSpace(tvchannelTags))
+            if (string.IsNullOrWhiteSpace(tvChannelTags))
                 return result.ToArray();
 
-            var values = tvchannelTags.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var values = tvChannelTags.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var val in values)
                 if (!string.IsNullOrEmpty(val.Trim()))
                     result.Add(val.Trim());
@@ -519,10 +519,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             return result.ToArray();
         }
 
-        protected virtual async Task SaveTvChannelWarehouseInventoryAsync(TvChannel tvchannel, TvChannelModel model)
+        protected virtual async Task SaveTvChannelWarehouseInventoryAsync(TvChannel tvChannel, TvChannelModel model)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (model.ManageInventoryMethodId != (int)ManageInventoryMethod.ManageStock)
                 return;
@@ -569,7 +569,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 //quantity change history message
                 var message = $"{await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.MultipleWarehouses")} {await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Edit")}";
 
-                var existingPwI = (await _tvchannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(tvchannel.Id)).FirstOrDefault(x => x.WarehouseId == warehouse.Id);
+                var existingPwI = (await _tvChannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(tvChannel.Id)).FirstOrDefault(x => x.WarehouseId == warehouse.Id);
                 if (existingPwI != null)
                 {
                     if (used)
@@ -579,19 +579,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         //update existing record
                         existingPwI.StockQuantity = stockQuantity;
                         existingPwI.ReservedQuantity = reservedQuantity;
-                        await _tvchannelService.UpdateTvChannelWarehouseInventoryAsync(existingPwI);
+                        await _tvChannelService.UpdateTvChannelWarehouseInventoryAsync(existingPwI);
 
                         //quantity change history
-                        await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, existingPwI.StockQuantity - previousStockQuantity, existingPwI.StockQuantity,
+                        await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, existingPwI.StockQuantity - previousStockQuantity, existingPwI.StockQuantity,
                             existingPwI.WarehouseId, message);
                     }
                     else
                     {
                         //delete. no need to store record for qty 0
-                        await _tvchannelService.DeleteTvChannelWarehouseInventoryAsync(existingPwI);
+                        await _tvChannelService.DeleteTvChannelWarehouseInventoryAsync(existingPwI);
 
                         //quantity change history
-                        await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, -existingPwI.StockQuantity, 0, existingPwI.WarehouseId, message);
+                        await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, -existingPwI.StockQuantity, 0, existingPwI.WarehouseId, message);
                     }
                 }
                 else
@@ -603,27 +603,27 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     existingPwI = new TvChannelWarehouseInventory
                     {
                         WarehouseId = warehouse.Id,
-                        TvChannelId = tvchannel.Id,
+                        TvChannelId = tvChannel.Id,
                         StockQuantity = stockQuantity,
                         ReservedQuantity = reservedQuantity
                     };
 
-                    await _tvchannelService.InsertTvChannelWarehouseInventoryAsync(existingPwI);
+                    await _tvChannelService.InsertTvChannelWarehouseInventoryAsync(existingPwI);
 
                     //quantity change history
-                    await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, existingPwI.StockQuantity, existingPwI.StockQuantity,
+                    await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, existingPwI.StockQuantity, existingPwI.StockQuantity,
                         existingPwI.WarehouseId, message);
                 }
             }
         }
 
-        protected virtual async Task SaveConditionAttributesAsync(TvChannelAttributeMapping tvchannelAttributeMapping,
+        protected virtual async Task SaveConditionAttributesAsync(TvChannelAttributeMapping tvChannelAttributeMapping,
             TvChannelAttributeConditionModel model, IFormCollection form)
         {
             string attributesXml = null;
             if (model.EnableCondition)
             {
-                var attribute = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(model.SelectedTvChannelAttributeId);
+                var attribute = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(model.SelectedTvChannelAttributeId);
                 if (attribute != null)
                 {
                     var controlId = $"{TvProgCatalogDefaults.TvChannelAttributePrefix}{attribute.Id}";
@@ -640,7 +640,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                                 //for conditions we should empty values save even when nothing is selected
                                 //otherwise "attributesXml" will be empty
                                 //hence we won't be able to find a selected attribute
-                                attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(null, attribute,
+                                attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(null, attribute,
                                     selectedAttributeId > 0 ? selectedAttributeId.ToString() : string.Empty);
                             }
                             else
@@ -648,7 +648,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                                 //for conditions we should empty values save even when nothing is selected
                                 //otherwise "attributesXml" will be empty
                                 //hence we won't be able to find a selected attribute
-                                attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(null,
+                                attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(null,
                                     attribute, string.Empty);
                             }
 
@@ -665,7 +665,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                                     if (selectedAttributeId <= 0)
                                         continue;
 
-                                    attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(attributesXml,
+                                    attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(attributesXml,
                                         attribute, selectedAttributeId.ToString());
                                     anyValueSelected = true;
                                 }
@@ -675,7 +675,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                                     //for conditions we should save empty values even when nothing is selected
                                     //otherwise "attributesXml" will be empty
                                     //hence we won't be able to find a selected attribute
-                                    attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(null,
+                                    attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(null,
                                         attribute, string.Empty);
                                 }
                             }
@@ -684,7 +684,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                                 //for conditions we should save empty values even when nothing is selected
                                 //otherwise "attributesXml" will be empty
                                 //hence we won't be able to find a selected attribute
-                                attributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(null,
+                                attributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(null,
                                     attribute, string.Empty);
                             }
 
@@ -701,16 +701,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 }
             }
 
-            tvchannelAttributeMapping.ConditionAttributeXml = attributesXml;
-            await _tvchannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvchannelAttributeMapping);
+            tvChannelAttributeMapping.ConditionAttributeXml = attributesXml;
+            await _tvChannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvChannelAttributeMapping);
         }
 
-        protected virtual async Task GenerateAttributeCombinationsAsync(TvChannel tvchannel, IList<int> allowedAttributeIds = null)
+        protected virtual async Task GenerateAttributeCombinationsAsync(TvChannel tvChannel, IList<int> allowedAttributeIds = null)
         {
-            var allAttributesXml = await _tvchannelAttributeParser.GenerateAllCombinationsAsync(tvchannel, true, allowedAttributeIds);
+            var allAttributesXml = await _tvChannelAttributeParser.GenerateAllCombinationsAsync(tvChannel, true, allowedAttributeIds);
             foreach (var attributesXml in allAttributesXml)
             {
-                var existingCombination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+                var existingCombination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
 
                 //already exists?
                 if (existingCombination != null)
@@ -719,14 +719,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 //new one
                 var warnings = new List<string>();
                 warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(await _workContext.GetCurrentUserAsync(),
-                    ShoppingCartType.ShoppingCart, tvchannel, 1, attributesXml, true, true, true));
+                    ShoppingCartType.ShoppingCart, tvChannel, 1, attributesXml, true, true, true));
                 if (warnings.Count != 0)
                     continue;
 
                 //save combination
                 var combination = new TvChannelAttributeCombination
                 {
-                    TvChannelId = tvchannel.Id,
+                    TvChannelId = tvChannel.Id,
                     AttributesXml = attributesXml,
                     StockQuantity = 0,
                     AllowOutOfStockOrders = false,
@@ -737,7 +737,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     NotifyAdminForQuantityBelow = 1,
                     PictureId = 0
                 };
-                await _tvchannelAttributeService.InsertTvChannelAttributeCombinationAsync(combination);
+                await _tvChannelAttributeService.InsertTvChannelAttributeCombinationAsync(combination);
             }
         }
 
@@ -766,7 +766,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelSearchModelAsync(new TvChannelSearchModel());
+            var model = await _tvChannelModelFactory.PrepareTvChannelSearchModelAsync(new TvChannelSearchModel());
 
             return View(model);
         }
@@ -778,21 +778,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelListModelAsync(searchModel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelListModelAsync(searchModel);
 
             return Json(model);
         }
 
         [HttpPost, ActionName("List")]
-        [FormValueRequired("go-to-tvchannel-by-sku")]
+        [FormValueRequired("go-to-tvChannel-by-sku")]
         public virtual async Task<IActionResult> GoToSku(TvChannelSearchModel searchModel)
         {
-            //try to load a tvchannel entity, if not found, then try to load a tvchannel attribute combination
-            var tvchannelId = (await _tvchannelService.GetTvChannelBySkuAsync(searchModel.GoDirectlyToSku))?.Id
-                ?? (await _tvchannelAttributeService.GetTvChannelAttributeCombinationBySkuAsync(searchModel.GoDirectlyToSku))?.TvChannelId;
+            //try to load a tvChannel entity, if not found, then try to load a tvChannel attribute combination
+            var tvChannelId = (await _tvChannelService.GetTvChannelBySkuAsync(searchModel.GoDirectlyToSku))?.Id
+                ?? (await _tvChannelAttributeService.GetTvChannelAttributeCombinationBySkuAsync(searchModel.GoDirectlyToSku))?.TvChannelId;
 
-            if (tvchannelId != null)
-                return RedirectToAction("Edit", "TvChannel", new { id = tvchannelId });
+            if (tvChannelId != null)
+                return RedirectToAction("Edit", "TvChannel", new { id = tvChannelId });
 
             //not found
             return await List();
@@ -803,10 +803,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //validate maximum number of tvchannels per vendor
+            //validate maximum number of tvChannels per vendor
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (_vendorSettings.MaximumTvChannelNumber > 0 && currentVendor != null
-                && await _tvchannelService.GetNumberOfTvChannelsByVendorIdAsync(currentVendor.Id) >= _vendorSettings.MaximumTvChannelNumber)
+                && await _tvChannelService.GetNumberOfTvChannelsByVendorIdAsync(currentVendor.Id) >= _vendorSettings.MaximumTvChannelNumber)
             {
                 _notificationService.ErrorNotification(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.ExceededMaximumNumber"),
                     _vendorSettings.MaximumTvChannelNumber));
@@ -814,7 +814,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelModelAsync(new TvChannelModel(), null);
+            var model = await _tvChannelModelFactory.PrepareTvChannelModelAsync(new TvChannelModel(), null);
 
             //show configuration tour
             if (showtour)
@@ -836,10 +836,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //validate maximum number of tvchannels per vendor
+            //validate maximum number of tvChannels per vendor
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (_vendorSettings.MaximumTvChannelNumber > 0 && currentVendor != null
-                && await _tvchannelService.GetNumberOfTvChannelsByVendorIdAsync(currentVendor.Id) >= _vendorSettings.MaximumTvChannelNumber)
+                && await _tvChannelService.GetNumberOfTvChannelsByVendorIdAsync(currentVendor.Id) >= _vendorSettings.MaximumTvChannelNumber)
             {
                 _notificationService.ErrorNotification(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.ExceededMaximumNumber"),
                     _vendorSettings.MaximumTvChannelNumber));
@@ -848,7 +848,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                //a vendor should have access only to his tvchannels
+                //a vendor should have access only to his tvChannels
                 if (currentVendor != null)
                     model.VendorId = currentVendor.Id;
 
@@ -856,58 +856,58 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 if (currentVendor != null && model.ShowOnHomepage)
                     model.ShowOnHomepage = false;
 
-                //tvchannel
-                var tvchannel = model.ToEntity<TvChannel>();
-                tvchannel.CreatedOnUtc = DateTime.UtcNow;
-                tvchannel.UpdatedOnUtc = DateTime.UtcNow;
-                await _tvchannelService.InsertTvChannelAsync(tvchannel);
+                //tvChannel
+                var tvChannel = model.ToEntity<TvChannel>();
+                tvChannel.CreatedOnUtc = DateTime.UtcNow;
+                tvChannel.UpdatedOnUtc = DateTime.UtcNow;
+                await _tvChannelService.InsertTvChannelAsync(tvChannel);
 
                 //search engine name
-                model.SeName = await _urlRecordService.ValidateSeNameAsync(tvchannel, model.SeName, tvchannel.Name, true);
-                await _urlRecordService.SaveSlugAsync(tvchannel, model.SeName, 0);
+                model.SeName = await _urlRecordService.ValidateSeNameAsync(tvChannel, model.SeName, tvChannel.Name, true);
+                await _urlRecordService.SaveSlugAsync(tvChannel, model.SeName, 0);
 
                 //locales
-                await UpdateLocalesAsync(tvchannel, model);
+                await UpdateLocalesAsync(tvChannel, model);
 
                 //categories
-                await SaveCategoryMappingsAsync(tvchannel, model);
+                await SaveCategoryMappingsAsync(tvChannel, model);
 
                 //manufacturers
-                await SaveManufacturerMappingsAsync(tvchannel, model);
+                await SaveManufacturerMappingsAsync(tvChannel, model);
 
                 //ACL (user roles)
-                await SaveTvChannelAclAsync(tvchannel, model);
+                await SaveTvChannelAclAsync(tvChannel, model);
 
                 //stores
-                await _tvchannelService.UpdateTvChannelStoreMappingsAsync(tvchannel, model.SelectedStoreIds);
+                await _tvChannelService.UpdateTvChannelStoreMappingsAsync(tvChannel, model.SelectedStoreIds);
 
                 //discounts
-                await SaveDiscountMappingsAsync(tvchannel, model);
+                await SaveDiscountMappingsAsync(tvChannel, model);
 
                 //tags
-                await _tvchannelTagService.UpdateTvChannelTagsAsync(tvchannel, ParseTvChannelTags(model.TvChannelTags));
+                await _tvChannelTagService.UpdateTvChannelTagsAsync(tvChannel, ParseTvChannelTags(model.TvChannelTags));
 
                 //warehouses
-                await SaveTvChannelWarehouseInventoryAsync(tvchannel, model);
+                await SaveTvChannelWarehouseInventoryAsync(tvChannel, model);
 
                 //quantity change history
-                await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, tvchannel.StockQuantity, tvchannel.StockQuantity, tvchannel.WarehouseId,
+                await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, tvChannel.StockQuantity, tvChannel.StockQuantity, tvChannel.WarehouseId,
                     await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Edit"));
 
                 //activity log
                 await _userActivityService.InsertActivityAsync("AddNewTvChannel",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewTvChannel"), tvchannel.Name), tvchannel);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.AddNewTvChannel"), tvChannel.Name), tvChannel);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Added"));
 
                 if (!continueEditing)
                     return RedirectToAction("List");
 
-                return RedirectToAction("Edit", new { id = tvchannel.Id });
+                return RedirectToAction("Edit", new { id = tvChannel.Id });
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTvChannelModelAsync(model, null, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelModelAsync(model, null, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -918,18 +918,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(id);
-            if (tvchannel == null || tvchannel.Deleted)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(id);
+            if (tvChannel == null || tvChannel.Deleted)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelModelAsync(null, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelModelAsync(null, tvChannel);
 
             return View(model);
         }
@@ -940,110 +940,110 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.Id);
-            if (tvchannel == null || tvchannel.Deleted)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.Id);
+            if (tvChannel == null || tvChannel.Deleted)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List");
 
-            //check if the tvchannel quantity has been changed while we were editing the tvchannel
+            //check if the tvChannel quantity has been changed while we were editing the tvChannel
             //and if it has been changed then we show error notification
             //and redirect on the editing page without data saving
-            if (tvchannel.StockQuantity != model.LastStockQuantity)
+            if (tvChannel.StockQuantity != model.LastStockQuantity)
             {
                 _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Fields.StockQuantity.ChangedWarning"));
-                return RedirectToAction("Edit", new { id = tvchannel.Id });
+                return RedirectToAction("Edit", new { id = tvChannel.Id });
             }
 
             if (ModelState.IsValid)
             {
-                //a vendor should have access only to his tvchannels
+                //a vendor should have access only to his tvChannels
                 if (currentVendor != null)
                     model.VendorId = currentVendor.Id;
 
-                //we do not validate maximum number of tvchannels per vendor when editing existing tvchannels (only during creation of new tvchannels)
+                //we do not validate maximum number of tvChannels per vendor when editing existing tvChannels (only during creation of new tvChannels)
                 //vendors cannot edit "Show on home page" property
-                if (currentVendor != null && model.ShowOnHomepage != tvchannel.ShowOnHomepage)
-                    model.ShowOnHomepage = tvchannel.ShowOnHomepage;
+                if (currentVendor != null && model.ShowOnHomepage != tvChannel.ShowOnHomepage)
+                    model.ShowOnHomepage = tvChannel.ShowOnHomepage;
 
                 //some previously used values
-                var prevTotalStockQuantity = await _tvchannelService.GetTotalStockQuantityAsync(tvchannel);
-                var prevDownloadId = tvchannel.DownloadId;
-                var prevSampleDownloadId = tvchannel.SampleDownloadId;
-                var previousStockQuantity = tvchannel.StockQuantity;
-                var previousWarehouseId = tvchannel.WarehouseId;
-                var previousTvChannelType = tvchannel.TvChannelType;
+                var prevTotalStockQuantity = await _tvChannelService.GetTotalStockQuantityAsync(tvChannel);
+                var prevDownloadId = tvChannel.DownloadId;
+                var prevSampleDownloadId = tvChannel.SampleDownloadId;
+                var previousStockQuantity = tvChannel.StockQuantity;
+                var previousWarehouseId = tvChannel.WarehouseId;
+                var previousTvChannelType = tvChannel.TvChannelType;
 
-                //tvchannel
-                tvchannel = model.ToEntity(tvchannel);
+                //tvChannel
+                tvChannel = model.ToEntity(tvChannel);
 
-                tvchannel.UpdatedOnUtc = DateTime.UtcNow;
-                await _tvchannelService.UpdateTvChannelAsync(tvchannel);
+                tvChannel.UpdatedOnUtc = DateTime.UtcNow;
+                await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
-                //remove associated tvchannels
-                if (previousTvChannelType == TvChannelType.GroupedTvChannel && tvchannel.TvChannelType == TvChannelType.SimpleTvChannel)
+                //remove associated tvChannels
+                if (previousTvChannelType == TvChannelType.GroupedTvChannel && tvChannel.TvChannelType == TvChannelType.SimpleTvChannel)
                 {
                     var store = await _storeContext.GetCurrentStoreAsync();
                     var storeId = store?.Id ?? 0;
                     var vendorId = currentVendor?.Id ?? 0;
 
-                    var associatedTvChannels = await _tvchannelService.GetAssociatedTvChannelsAsync(tvchannel.Id, storeId, vendorId);
+                    var associatedTvChannels = await _tvChannelService.GetAssociatedTvChannelsAsync(tvChannel.Id, storeId, vendorId);
                     foreach (var associatedTvChannel in associatedTvChannels)
                     {
                         associatedTvChannel.ParentGroupedTvChannelId = 0;
-                        await _tvchannelService.UpdateTvChannelAsync(associatedTvChannel);
+                        await _tvChannelService.UpdateTvChannelAsync(associatedTvChannel);
                     }
                 }
 
                 //search engine name
-                model.SeName = await _urlRecordService.ValidateSeNameAsync(tvchannel, model.SeName, tvchannel.Name, true);
-                await _urlRecordService.SaveSlugAsync(tvchannel, model.SeName, 0);
+                model.SeName = await _urlRecordService.ValidateSeNameAsync(tvChannel, model.SeName, tvChannel.Name, true);
+                await _urlRecordService.SaveSlugAsync(tvChannel, model.SeName, 0);
 
                 //locales
-                await UpdateLocalesAsync(tvchannel, model);
+                await UpdateLocalesAsync(tvChannel, model);
 
                 //tags
-                await _tvchannelTagService.UpdateTvChannelTagsAsync(tvchannel, ParseTvChannelTags(model.TvChannelTags));
+                await _tvChannelTagService.UpdateTvChannelTagsAsync(tvChannel, ParseTvChannelTags(model.TvChannelTags));
 
                 //warehouses
-                await SaveTvChannelWarehouseInventoryAsync(tvchannel, model);
+                await SaveTvChannelWarehouseInventoryAsync(tvChannel, model);
 
                 //categories
-                await SaveCategoryMappingsAsync(tvchannel, model);
+                await SaveCategoryMappingsAsync(tvChannel, model);
 
                 //manufacturers
-                await SaveManufacturerMappingsAsync(tvchannel, model);
+                await SaveManufacturerMappingsAsync(tvChannel, model);
 
                 //ACL (user roles)
-                await SaveTvChannelAclAsync(tvchannel, model);
+                await SaveTvChannelAclAsync(tvChannel, model);
 
                 //stores
-                await _tvchannelService.UpdateTvChannelStoreMappingsAsync(tvchannel, model.SelectedStoreIds);
+                await _tvChannelService.UpdateTvChannelStoreMappingsAsync(tvChannel, model.SelectedStoreIds);
 
                 //discounts
-                await SaveDiscountMappingsAsync(tvchannel, model);
+                await SaveDiscountMappingsAsync(tvChannel, model);
 
                 //picture seo names
-                await UpdatePictureSeoNamesAsync(tvchannel);
+                await UpdatePictureSeoNamesAsync(tvChannel);
 
                 //back in stock notifications
-                if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
-                    tvchannel.BackorderMode == BackorderMode.NoBackorders &&
-                    tvchannel.AllowBackInStockSubscriptions &&
-                    await _tvchannelService.GetTotalStockQuantityAsync(tvchannel) > 0 &&
+                if (tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                    tvChannel.BackorderMode == BackorderMode.NoBackorders &&
+                    tvChannel.AllowBackInStockSubscriptions &&
+                    await _tvChannelService.GetTotalStockQuantityAsync(tvChannel) > 0 &&
                     prevTotalStockQuantity <= 0 &&
-                    tvchannel.Published &&
-                    !tvchannel.Deleted)
+                    tvChannel.Published &&
+                    !tvChannel.Deleted)
                 {
-                    await _backInStockSubscriptionService.SendNotificationsToSubscribersAsync(tvchannel);
+                    await _backInStockSubscriptionService.SendNotificationsToSubscribersAsync(tvChannel);
                 }
 
                 //delete an old "download" file (if deleted or updated)
-                if (prevDownloadId > 0 && prevDownloadId != tvchannel.DownloadId)
+                if (prevDownloadId > 0 && prevDownloadId != tvChannel.DownloadId)
                 {
                     var prevDownload = await _downloadService.GetDownloadByIdAsync(prevDownloadId);
                     if (prevDownload != null)
@@ -1051,7 +1051,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 }
 
                 //delete an old "sample download" file (if deleted or updated)
-                if (prevSampleDownloadId > 0 && prevSampleDownloadId != tvchannel.SampleDownloadId)
+                if (prevSampleDownloadId > 0 && prevSampleDownloadId != tvChannel.SampleDownloadId)
                 {
                     var prevSampleDownload = await _downloadService.GetDownloadByIdAsync(prevSampleDownloadId);
                     if (prevSampleDownload != null)
@@ -1059,7 +1059,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 }
 
                 //quantity change history
-                if (previousWarehouseId != tvchannel.WarehouseId)
+                if (previousWarehouseId != tvChannel.WarehouseId)
                 {
                     //warehouse is changed 
                     //compose a message
@@ -1072,9 +1072,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     }
 
                     var newWarehouseMessage = string.Empty;
-                    if (tvchannel.WarehouseId > 0)
+                    if (tvChannel.WarehouseId > 0)
                     {
-                        var newWarehouse = await _shippingService.GetWarehouseByIdAsync(tvchannel.WarehouseId);
+                        var newWarehouse = await _shippingService.GetWarehouseByIdAsync(tvChannel.WarehouseId);
                         if (newWarehouse != null)
                             newWarehouseMessage = string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.EditWarehouse.New"), newWarehouse.Name);
                     }
@@ -1082,29 +1082,29 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     var message = string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.EditWarehouse"), oldWarehouseMessage, newWarehouseMessage);
 
                     //record history
-                    await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, -previousStockQuantity, 0, previousWarehouseId, message);
-                    await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, tvchannel.StockQuantity, tvchannel.StockQuantity, tvchannel.WarehouseId, message);
+                    await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, -previousStockQuantity, 0, previousWarehouseId, message);
+                    await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, tvChannel.StockQuantity, tvChannel.StockQuantity, tvChannel.WarehouseId, message);
                 }
                 else
                 {
-                    await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, tvchannel.StockQuantity - previousStockQuantity, tvchannel.StockQuantity,
-                        tvchannel.WarehouseId, await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Edit"));
+                    await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, tvChannel.StockQuantity - previousStockQuantity, tvChannel.StockQuantity,
+                        tvChannel.WarehouseId, await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Edit"));
                 }
 
                 //activity log
                 await _userActivityService.InsertActivityAsync("EditTvChannel",
-                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditTvChannel"), tvchannel.Name), tvchannel);
+                    string.Format(await _localizationService.GetResourceAsync("ActivityLog.EditTvChannel"), tvChannel.Name), tvChannel);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Updated"));
 
                 if (!continueEditing)
                     return RedirectToAction("List");
 
-                return RedirectToAction("Edit", new { id = tvchannel.Id });
+                return RedirectToAction("Edit", new { id = tvChannel.Id });
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTvChannelModelAsync(model, tvchannel, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelModelAsync(model, tvChannel, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -1116,21 +1116,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(id);
-            if (tvchannel == null)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(id);
+            if (tvChannel == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List");
 
-            await _tvchannelService.DeleteTvChannelAsync(tvchannel);
+            await _tvChannelService.DeleteTvChannelAsync(tvChannel);
 
             //activity log
             await _userActivityService.InsertActivityAsync("DeleteTvChannel",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannel"), tvchannel.Name), tvchannel);
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.DeleteTvChannel"), tvChannel.Name), tvChannel);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Deleted"));
 
@@ -1147,7 +1147,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return NoContent();
 
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            await _tvchannelService.DeleteTvChannelsAsync((await _tvchannelService.GetTvChannelsByIdsAsync(selectedIds.ToArray()))
+            await _tvChannelService.DeleteTvChannelsAsync((await _tvChannelService.GetTvChannelsByIdsAsync(selectedIds.ToArray()))
                 .Where(p => currentVendor == null || p.VendorId == currentVendor.Id).ToList());
 
             return Json(new { Result = true });
@@ -1162,9 +1162,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var copyModel = model.CopyTvChannelModel;
             try
             {
-                var originalTvChannel = await _tvchannelService.GetTvChannelByIdAsync(copyModel.Id);
+                var originalTvChannel = await _tvChannelService.GetTvChannelByIdAsync(copyModel.Id);
 
-                //a vendor should have access only to his tvchannels
+                //a vendor should have access only to his tvChannels
                 var currentVendor = await _workContext.GetCurrentVendorAsync();
                 if (currentVendor != null && originalTvChannel.VendorId != currentVendor.Id)
                     return RedirectToAction("List");
@@ -1183,49 +1183,49 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         }
 
         //action displaying notification (warning) to a store owner that entered SKU already exists
-        public virtual async Task<IActionResult> SkuReservedWarning(int tvchannelId, string sku)
+        public virtual async Task<IActionResult> SkuReservedWarning(int tvChannelId, string sku)
         {
             string message;
 
-            //check whether tvchannel with passed SKU already exists
-            var tvchannelBySku = await _tvchannelService.GetTvChannelBySkuAsync(sku);
-            if (tvchannelBySku != null)
+            //check whether tvChannel with passed SKU already exists
+            var tvChannelBySku = await _tvChannelService.GetTvChannelBySkuAsync(sku);
+            if (tvChannelBySku != null)
             {
-                if (tvchannelBySku.Id == tvchannelId)
+                if (tvChannelBySku.Id == tvChannelId)
                     return Json(new { Result = string.Empty });
 
-                message = string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Fields.Sku.Reserved"), tvchannelBySku.Name);
+                message = string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Fields.Sku.Reserved"), tvChannelBySku.Name);
                 return Json(new { Result = message });
             }
 
             //check whether combination with passed SKU already exists
-            var combinationBySku = await _tvchannelAttributeService.GetTvChannelAttributeCombinationBySkuAsync(sku);
+            var combinationBySku = await _tvChannelAttributeService.GetTvChannelAttributeCombinationBySkuAsync(sku);
             if (combinationBySku == null)
                 return Json(new { Result = string.Empty });
 
             message = string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Fields.Sku.Reserved"),
-                (await _tvchannelService.GetTvChannelByIdAsync(combinationBySku.TvChannelId))?.Name);
+                (await _tvChannelService.GetTvChannelByIdAsync(combinationBySku.TvChannelId))?.Name);
 
             return Json(new { Result = message });
         }
 
         #endregion
 
-        #region Required tvchannels
+        #region Required tvChannels
 
         [HttpPost]
-        public virtual async Task<IActionResult> LoadTvChannelFriendlyNames(string tvchannelIds)
+        public virtual async Task<IActionResult> LoadTvChannelFriendlyNames(string tvChannelIds)
         {
             var result = string.Empty;
 
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return Json(new { Text = result });
 
-            if (string.IsNullOrWhiteSpace(tvchannelIds))
+            if (string.IsNullOrWhiteSpace(tvChannelIds))
                 return Json(new { Text = result });
 
             var ids = new List<int>();
-            var rangeArray = tvchannelIds
+            var rangeArray = tvChannelIds
                 .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim())
                 .ToList();
@@ -1236,11 +1236,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     ids.Add(tmp1);
             }
 
-            var tvchannels = await _tvchannelService.GetTvChannelsByIdsAsync(ids.ToArray());
-            for (var i = 0; i <= tvchannels.Count - 1; i++)
+            var tvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(ids.ToArray());
+            for (var i = 0; i <= tvChannels.Count - 1; i++)
             {
-                result += tvchannels[i].Name;
-                if (i != tvchannels.Count - 1)
+                result += tvChannels[i].Name;
+                if (i != tvChannels.Count - 1)
                     result += ", ";
             }
 
@@ -1253,7 +1253,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddRequiredTvChannelSearchModelAsync(new AddRequiredTvChannelSearchModel());
+            var model = await _tvChannelModelFactory.PrepareAddRequiredTvChannelSearchModelAsync(new AddRequiredTvChannelSearchModel());
 
             return View(model);
         }
@@ -1265,14 +1265,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddRequiredTvChannelListModelAsync(searchModel);
+            var model = await _tvChannelModelFactory.PrepareAddRequiredTvChannelListModelAsync(searchModel);
 
             return Json(model);
         }
 
         #endregion
 
-        #region Related tvchannels
+        #region Related tvChannels
 
         [HttpPost]
         public virtual async Task<IActionResult> RelatedTvChannelList(RelatedTvChannelSearchModel searchModel)
@@ -1280,17 +1280,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareRelatedTvChannelListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareRelatedTvChannelListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -1301,21 +1301,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a related tvchannel with the specified id
-            var relatedTvChannel = await _tvchannelService.GetRelatedTvChannelByIdAsync(model.Id)
-                ?? throw new ArgumentException("No related tvchannel found with the specified id");
+            //try to get a related tvChannel with the specified id
+            var relatedTvChannel = await _tvChannelService.GetRelatedTvChannelByIdAsync(model.Id)
+                ?? throw new ArgumentException("No related tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(relatedTvChannel.TvChannelId1);
-                if (tvchannel != null && tvchannel.VendorId != currentVendor.Id)
-                    return Content("This is not your tvchannel");
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(relatedTvChannel.TvChannelId1);
+                if (tvChannel != null && tvChannel.VendorId != currentVendor.Id)
+                    return Content("This is not your tvChannel");
             }
 
             relatedTvChannel.DisplayOrder = model.DisplayOrder;
-            await _tvchannelService.UpdateRelatedTvChannelAsync(relatedTvChannel);
+            await _tvChannelService.UpdateRelatedTvChannelAsync(relatedTvChannel);
 
             return new NullJsonResult();
         }
@@ -1326,33 +1326,33 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a related tvchannel with the specified id
-            var relatedTvChannel = await _tvchannelService.GetRelatedTvChannelByIdAsync(id)
-                ?? throw new ArgumentException("No related tvchannel found with the specified id");
+            //try to get a related tvChannel with the specified id
+            var relatedTvChannel = await _tvChannelService.GetRelatedTvChannelByIdAsync(id)
+                ?? throw new ArgumentException("No related tvChannel found with the specified id");
 
-            var tvchannelId = relatedTvChannel.TvChannelId1;
+            var tvChannelId = relatedTvChannel.TvChannelId1;
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-                if (tvchannel != null && tvchannel.VendorId != currentVendor.Id)
-                    return Content("This is not your tvchannel");
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+                if (tvChannel != null && tvChannel.VendorId != currentVendor.Id)
+                    return Content("This is not your tvChannel");
             }
 
-            await _tvchannelService.DeleteRelatedTvChannelAsync(relatedTvChannel);
+            await _tvChannelService.DeleteRelatedTvChannelAsync(relatedTvChannel);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> RelatedTvChannelAddPopup(int tvchannelId)
+        public virtual async Task<IActionResult> RelatedTvChannelAddPopup(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddRelatedTvChannelSearchModelAsync(new AddRelatedTvChannelSearchModel());
+            var model = await _tvChannelModelFactory.PrepareAddRelatedTvChannelSearchModelAsync(new AddRelatedTvChannelSearchModel());
 
             return View(model);
         }
@@ -1364,7 +1364,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddRelatedTvChannelListModelAsync(searchModel);
+            var model = await _tvChannelModelFactory.PrepareAddRelatedTvChannelListModelAsync(searchModel);
 
             return Json(model);
         }
@@ -1376,24 +1376,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            var selectedTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
             if (selectedTvChannels.Any())
             {
-                var existingRelatedTvChannels = await _tvchannelService.GetRelatedTvChannelsByTvChannelId1Async(model.TvChannelId, showHidden: true);
+                var existingRelatedTvChannels = await _tvChannelService.GetRelatedTvChannelsByTvChannelId1Async(model.TvChannelId, showHidden: true);
                 var currentVendor = await _workContext.GetCurrentVendorAsync();
-                foreach (var tvchannel in selectedTvChannels)
+                foreach (var tvChannel in selectedTvChannels)
                 {
-                    //a vendor should have access only to his tvchannels
-                    if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+                    //a vendor should have access only to his tvChannels
+                    if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                         continue;
 
-                    if (_tvchannelService.FindRelatedTvChannel(existingRelatedTvChannels, model.TvChannelId, tvchannel.Id) != null)
+                    if (_tvChannelService.FindRelatedTvChannel(existingRelatedTvChannels, model.TvChannelId, tvChannel.Id) != null)
                         continue;
 
-                    await _tvchannelService.InsertRelatedTvChannelAsync(new RelatedTvChannel
+                    await _tvChannelService.InsertRelatedTvChannelAsync(new RelatedTvChannel
                     {
                         TvChannelId1 = model.TvChannelId,
-                        TvChannelId2 = tvchannel.Id,
+                        TvChannelId2 = tvChannel.Id,
                         DisplayOrder = 1
                     });
                 }
@@ -1406,7 +1406,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Cross-sell tvchannels
+        #region Cross-sell tvChannels
 
         [HttpPost]
         public virtual async Task<IActionResult> CrossSellTvChannelList(CrossSellTvChannelSearchModel searchModel)
@@ -1414,17 +1414,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareCrossSellTvChannelListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareCrossSellTvChannelListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -1435,31 +1435,31 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a cross-sell tvchannel with the specified id
-            var crossSellTvChannel = await _tvchannelService.GetCrossSellTvChannelByIdAsync(id)
-                ?? throw new ArgumentException("No cross-sell tvchannel found with the specified id");
+            //try to get a cross-sell tvChannel with the specified id
+            var crossSellTvChannel = await _tvChannelService.GetCrossSellTvChannelByIdAsync(id)
+                ?? throw new ArgumentException("No cross-sell tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(crossSellTvChannel.TvChannelId1);
-                if (tvchannel != null && tvchannel.VendorId != currentVendor.Id)
-                    return Content("This is not your tvchannel");
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(crossSellTvChannel.TvChannelId1);
+                if (tvChannel != null && tvChannel.VendorId != currentVendor.Id)
+                    return Content("This is not your tvChannel");
             }
 
-            await _tvchannelService.DeleteCrossSellTvChannelAsync(crossSellTvChannel);
+            await _tvChannelService.DeleteCrossSellTvChannelAsync(crossSellTvChannel);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> CrossSellTvChannelAddPopup(int tvchannelId)
+        public virtual async Task<IActionResult> CrossSellTvChannelAddPopup(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddCrossSellTvChannelSearchModelAsync(new AddCrossSellTvChannelSearchModel());
+            var model = await _tvChannelModelFactory.PrepareAddCrossSellTvChannelSearchModelAsync(new AddCrossSellTvChannelSearchModel());
 
             return View(model);
         }
@@ -1471,7 +1471,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddCrossSellTvChannelListModelAsync(searchModel);
+            var model = await _tvChannelModelFactory.PrepareAddCrossSellTvChannelListModelAsync(searchModel);
 
             return Json(model);
         }
@@ -1483,24 +1483,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            var selectedTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
             if (selectedTvChannels.Any())
             {
-                var existingCrossSellTvChannels = await _tvchannelService.GetCrossSellTvChannelsByTvChannelId1Async(model.TvChannelId, showHidden: true);
+                var existingCrossSellTvChannels = await _tvChannelService.GetCrossSellTvChannelsByTvChannelId1Async(model.TvChannelId, showHidden: true);
                 var currentVendor = await _workContext.GetCurrentVendorAsync();
-                foreach (var tvchannel in selectedTvChannels)
+                foreach (var tvChannel in selectedTvChannels)
                 {
-                    //a vendor should have access only to his tvchannels
-                    if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+                    //a vendor should have access only to his tvChannels
+                    if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                         continue;
 
-                    if (_tvchannelService.FindCrossSellTvChannel(existingCrossSellTvChannels, model.TvChannelId, tvchannel.Id) != null)
+                    if (_tvChannelService.FindCrossSellTvChannel(existingCrossSellTvChannels, model.TvChannelId, tvChannel.Id) != null)
                         continue;
 
-                    await _tvchannelService.InsertCrossSellTvChannelAsync(new CrossSellTvChannel
+                    await _tvChannelService.InsertCrossSellTvChannelAsync(new CrossSellTvChannel
                     {
                         TvChannelId1 = model.TvChannelId,
-                        TvChannelId2 = tvchannel.Id
+                        TvChannelId2 = tvChannel.Id
                     });
                 }
             }
@@ -1512,7 +1512,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         #endregion
 
-        #region Associated tvchannels
+        #region Associated tvChannels
 
         [HttpPost]
         public virtual async Task<IActionResult> AssociatedTvChannelList(AssociatedTvChannelSearchModel searchModel)
@@ -1520,17 +1520,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAssociatedTvChannelListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareAssociatedTvChannelListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -1541,17 +1541,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get an associated tvchannel with the specified id
-            var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(model.Id)
-                ?? throw new ArgumentException("No associated tvchannel found with the specified id");
+            //try to get an associated tvChannel with the specified id
+            var associatedTvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.Id)
+                ?? throw new ArgumentException("No associated tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null && associatedTvChannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+                return Content("This is not your tvChannel");
 
             associatedTvChannel.DisplayOrder = model.DisplayOrder;
-            await _tvchannelService.UpdateTvChannelAsync(associatedTvChannel);
+            await _tvChannelService.UpdateTvChannelAsync(associatedTvChannel);
 
             return new NullJsonResult();
         }
@@ -1562,28 +1562,28 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get an associated tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(id)
-                ?? throw new ArgumentException("No associated tvchannel found with the specified id");
+            //try to get an associated tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(id)
+                ?? throw new ArgumentException("No associated tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
-            tvchannel.ParentGroupedTvChannelId = 0;
-            await _tvchannelService.UpdateTvChannelAsync(tvchannel);
+            tvChannel.ParentGroupedTvChannelId = 0;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> AssociatedTvChannelAddPopup(int tvchannelId)
+        public virtual async Task<IActionResult> AssociatedTvChannelAddPopup(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddAssociatedTvChannelSearchModelAsync(new AddAssociatedTvChannelSearchModel());
+            var model = await _tvChannelModelFactory.PrepareAddAssociatedTvChannelSearchModelAsync(new AddAssociatedTvChannelSearchModel());
 
             return View(model);
         }
@@ -1595,7 +1595,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAddAssociatedTvChannelListModelAsync(searchModel);
+            var model = await _tvChannelModelFactory.PrepareAddAssociatedTvChannelListModelAsync(searchModel);
 
             return Json(model);
         }
@@ -1607,7 +1607,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var selectedTvChannels = await _tvchannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
+            var selectedTvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(model.SelectedTvChannelIds.ToArray());
 
             var tryToAddSelfGroupedTvChannel = selectedTvChannels
                 .Select(p => p.Id)
@@ -1615,18 +1615,18 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             if (selectedTvChannels.Any())
             {
-                foreach (var tvchannel in selectedTvChannels)
+                foreach (var tvChannel in selectedTvChannels)
                 {
-                    if (tvchannel.Id == model.TvChannelId)
+                    if (tvChannel.Id == model.TvChannelId)
                         continue;
 
-                    //a vendor should have access only to his tvchannels
+                    //a vendor should have access only to his tvChannels
                     var currentVendor = await _workContext.GetCurrentVendorAsync();
-                    if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+                    if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                         continue;
 
-                    tvchannel.ParentGroupedTvChannelId = model.TvChannelId;
-                    await _tvchannelService.UpdateTvChannelAsync(tvchannel);
+                    tvChannel.ParentGroupedTvChannelId = model.TvChannelId;
+                    await _tvChannelService.UpdateTvChannelAsync(tvChannel);
                 }
             }
 
@@ -1634,8 +1634,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             {
                 _notificationService.WarningNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.AssociatedTvChannels.TryToAddSelfGroupedTvChannel"));
 
-                var addAssociatedTvChannelSearchModel = await _tvchannelModelFactory.PrepareAddAssociatedTvChannelSearchModelAsync(new AddAssociatedTvChannelSearchModel());
-                //set current tvchannel id
+                var addAssociatedTvChannelSearchModel = await _tvChannelModelFactory.PrepareAddAssociatedTvChannelSearchModelAsync(new AddAssociatedTvChannelSearchModel());
+                //set current tvChannel id
                 addAssociatedTvChannelSearchModel.TvChannelId = model.TvChannelId;
 
                 ViewBag.RefreshPage = true;
@@ -1656,25 +1656,25 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
         [HttpPost]
         [IgnoreAntiforgeryToken]
-        public virtual async Task<IActionResult> TvChannelPictureAdd(int tvchannelId, IFormCollection form)
+        public virtual async Task<IActionResult> TvChannelPictureAdd(int tvChannelId, IFormCollection form)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            if (tvchannelId == 0)
+            if (tvChannelId == 0)
                 throw new ArgumentException();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
             var files = form.Files.ToList();
             if (!files.Any())
                 return Json(new { success = false });
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List");
             try
             {
@@ -1683,12 +1683,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     //insert picture
                     var picture = await _pictureService.InsertPictureAsync(file);
 
-                    await _pictureService.SetSeoFilenameAsync(picture.Id, await _pictureService.GetPictureSeNameAsync(tvchannel.Name));
+                    await _pictureService.SetSeoFilenameAsync(picture.Id, await _pictureService.GetPictureSeNameAsync(tvChannel.Name));
 
-                    await _tvchannelService.InsertTvChannelPictureAsync(new TvChannelPicture
+                    await _tvChannelService.InsertTvChannelPictureAsync(new TvChannelPicture
                     {
                         PictureId = picture.Id,
-                        TvChannelId = tvchannel.Id,
+                        TvChannelId = tvChannel.Id,
                         DisplayOrder = 0
                     });
                 }
@@ -1711,17 +1711,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelPictureListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelPictureListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -1732,21 +1732,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel picture with the specified id
-            var tvchannelPicture = await _tvchannelService.GetTvChannelPictureByIdAsync(model.Id)
-                ?? throw new ArgumentException("No tvchannel picture found with the specified id");
+            //try to get a tvChannel picture with the specified id
+            var tvChannelPicture = await _tvChannelService.GetTvChannelPictureByIdAsync(model.Id)
+                ?? throw new ArgumentException("No tvChannel picture found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelPicture.TvChannelId);
-                if (tvchannel != null && tvchannel.VendorId != currentVendor.Id)
-                    return Content("This is not your tvchannel");
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelPicture.TvChannelId);
+                if (tvChannel != null && tvChannel.VendorId != currentVendor.Id)
+                    return Content("This is not your tvChannel");
             }
 
             //try to get a picture with the specified id
-            var picture = await _pictureService.GetPictureByIdAsync(tvchannelPicture.PictureId)
+            var picture = await _pictureService.GetPictureByIdAsync(tvChannelPicture.PictureId)
                 ?? throw new ArgumentException("No picture found with the specified id");
 
             await _pictureService.UpdatePictureAsync(picture.Id,
@@ -1756,8 +1756,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 model.OverrideAltAttribute,
                 model.OverrideTitleAttribute);
 
-            tvchannelPicture.DisplayOrder = model.DisplayOrder;
-            await _tvchannelService.UpdateTvChannelPictureAsync(tvchannelPicture);
+            tvChannelPicture.DisplayOrder = model.DisplayOrder;
+            await _tvChannelService.UpdateTvChannelPictureAsync(tvChannelPicture);
 
             return new NullJsonResult();
         }
@@ -1768,21 +1768,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel picture with the specified id
-            var tvchannelPicture = await _tvchannelService.GetTvChannelPictureByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel picture found with the specified id");
+            //try to get a tvChannel picture with the specified id
+            var tvChannelPicture = await _tvChannelService.GetTvChannelPictureByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel picture found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelPicture.TvChannelId);
-                if (tvchannel != null && tvchannel.VendorId != currentVendor.Id)
-                    return Content("This is not your tvchannel");
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelPicture.TvChannelId);
+                if (tvChannel != null && tvChannel.VendorId != currentVendor.Id)
+                    return Content("This is not your tvChannel");
             }
 
-            var pictureId = tvchannelPicture.PictureId;
-            await _tvchannelService.DeleteTvChannelPictureAsync(tvchannelPicture);
+            var pictureId = tvChannelPicture.PictureId;
+            await _tvChannelService.DeleteTvChannelPictureAsync(tvChannelPicture);
 
             //try to get a picture with the specified id
             var picture = await _pictureService.GetPictureByIdAsync(pictureId)
@@ -1798,17 +1798,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         #region TvChannel videos
 
         [HttpPost]
-        public virtual async Task<IActionResult> TvChannelVideoAdd(int tvchannelId, [Validate] TvChannelVideoModel model)
+        public virtual async Task<IActionResult> TvChannelVideoAdd(int tvChannelId, [Validate] TvChannelVideoModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            if (tvchannelId == 0)
+            if (tvChannelId == 0)
                 throw new ArgumentException();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
             var videoUrl = model.VideoUrl.TrimStart('~');
 
@@ -1828,9 +1828,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!ModelState.IsValid) 
                 return ErrorJson(ModelState.SerializeErrors());
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List");
             try
             {
@@ -1842,10 +1842,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 //insert video
                 await _videoService.InsertVideoAsync(video);
 
-                await _tvchannelService.InsertTvChannelVideoAsync(new TvChannelVideo
+                await _tvChannelService.InsertTvChannelVideoAsync(new TvChannelVideo
                 {
                     VideoId = video.Id,
-                    TvChannelId = tvchannel.Id,
+                    TvChannelId = tvChannel.Id,
                     DisplayOrder = model.DisplayOrder
                 });
             }
@@ -1867,17 +1867,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelVideoListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelVideoListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -1888,21 +1888,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel picture with the specified id
-            var tvchannelVideo = await _tvchannelService.GetTvChannelVideoByIdAsync(model.Id)
-                ?? throw new ArgumentException("No tvchannel video found with the specified id");
+            //try to get a tvChannel picture with the specified id
+            var tvChannelVideo = await _tvChannelService.GetTvChannelVideoByIdAsync(model.Id)
+                ?? throw new ArgumentException("No tvChannel video found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelVideo.TvChannelId);
-                if (tvchannel != null && tvchannel.VendorId != currentVendor.Id)
-                    return Content("This is not your tvchannel");
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelVideo.TvChannelId);
+                if (tvChannel != null && tvChannel.VendorId != currentVendor.Id)
+                    return Content("This is not your tvChannel");
             }
 
             //try to get a video with the specified id
-            var video = await _videoService.GetVideoByIdAsync(tvchannelVideo.VideoId)
+            var video = await _videoService.GetVideoByIdAsync(tvChannelVideo.VideoId)
                 ?? throw new ArgumentException("No video found with the specified id");
 
             var videoUrl = model.VideoUrl.TrimStart('~');
@@ -1924,8 +1924,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             await _videoService.UpdateVideoAsync(video);
 
-            tvchannelVideo.DisplayOrder = model.DisplayOrder;
-            await _tvchannelService.UpdateTvChannelVideoAsync(tvchannelVideo);
+            tvChannelVideo.DisplayOrder = model.DisplayOrder;
+            await _tvChannelService.UpdateTvChannelVideoAsync(tvChannelVideo);
 
             return new NullJsonResult();
         }
@@ -1936,21 +1936,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel video with the specified id
-            var tvchannelVideo = await _tvchannelService.GetTvChannelVideoByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel video found with the specified id");
+            //try to get a tvChannel video with the specified id
+            var tvChannelVideo = await _tvChannelService.GetTvChannelVideoByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel video found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelVideo.TvChannelId);
-                if (tvchannel != null && tvchannel.VendorId != currentVendor.Id)
-                    return Content("This is not your tvchannel");
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelVideo.TvChannelId);
+                if (tvChannel != null && tvChannel.VendorId != currentVendor.Id)
+                    return Content("This is not your tvChannel");
             }
 
-            var videoId = tvchannelVideo.VideoId;
-            await _tvchannelService.DeleteTvChannelVideoAsync(tvchannelVideo);
+            var videoId = tvChannelVideo.VideoId;
+            await _tvChannelService.DeleteTvChannelVideoAsync(tvChannelVideo);
 
             //try to get a video with the specified id
             var video = await _videoService.GetVideoByIdAsync(videoId)
@@ -1971,16 +1971,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId);
-            if (tvchannel == null)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId);
+            if (tvChannel == null)
             {
-                _notificationService.ErrorNotification("No tvchannel found with the specified id");
+                _notificationService.ErrorNotification("No tvChannel found with the specified id");
                 return RedirectToAction("List");
             }
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
             {
                 return RedirectToAction("List");
             }
@@ -2034,10 +2034,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             if (continueEditing)
                 return RedirectToAction("TvChannelSpecAttributeAddOrEdit",
-                    new { tvchannelId = psa.TvChannelId, specificationId = psa.Id });
+                    new { tvChannelId = psa.TvChannelId, specificationId = psa.Id });
 
             //select an appropriate card
-            SaveSelectedCardName("tvchannel-specification-attributes");
+            SaveSelectedCardName("tvChannel-specification-attributes");
             return RedirectToAction("Edit", new { id = model.TvChannelId });
         }
 
@@ -2047,17 +2047,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelSpecificationAttributeListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelSpecificationAttributeListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -2068,23 +2068,23 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel specification attribute with the specified id
+            //try to get a tvChannel specification attribute with the specified id
             var psa = await _specificationAttributeService.GetTvChannelSpecificationAttributeByIdAsync(model.SpecificationId);
             if (psa == null)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvchannel-specification-attributes");
-                _notificationService.ErrorNotification("No tvchannel specification attribute found with the specified id");
+                SaveSelectedCardName("tvChannel-specification-attributes");
+                _notificationService.ErrorNotification("No tvChannel specification attribute found with the specified id");
 
                 return RedirectToAction("Edit", new { id = model.TvChannelId });
             }
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null
-                && (await _tvchannelService.GetTvChannelByIdAsync(psa.TvChannelId)).VendorId != currentVendor.Id)
+                && (await _tvChannelService.GetTvChannelByIdAsync(psa.TvChannelId)).VendorId != currentVendor.Id)
             {
-                _notificationService.ErrorNotification("This is not your tvchannel");
+                _notificationService.ErrorNotification("This is not your tvChannel");
 
                 return RedirectToAction("List");
             }
@@ -2133,30 +2133,30 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (continueEditing)
             {
                 return RedirectToAction("TvChannelSpecAttributeAddOrEdit",
-                    new { tvchannelId = psa.TvChannelId, specificationId = model.SpecificationId });
+                    new { tvChannelId = psa.TvChannelId, specificationId = model.SpecificationId });
             }
 
             //select an appropriate card
-            SaveSelectedCardName("tvchannel-specification-attributes");
+            SaveSelectedCardName("tvChannel-specification-attributes");
 
             return RedirectToAction("Edit", new { id = psa.TvChannelId });
         }
 
-        public virtual async Task<IActionResult> TvChannelSpecAttributeAddOrEdit(int tvchannelId, int? specificationId)
+        public virtual async Task<IActionResult> TvChannelSpecAttributeAddOrEdit(int tvChannelId, int? specificationId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            if (await _tvchannelService.GetTvChannelByIdAsync(tvchannelId) == null)
+            if (await _tvChannelService.GetTvChannelByIdAsync(tvChannelId) == null)
             {
-                _notificationService.ErrorNotification("No tvchannel found with the specified id");
+                _notificationService.ErrorNotification("No tvChannel found with the specified id");
                 return RedirectToAction("List");
             }
 
-            //try to get a tvchannel specification attribute with the specified id
+            //try to get a tvChannel specification attribute with the specified id
             try
             {
-                var model = await _tvchannelModelFactory.PrepareAddSpecificationAttributeModelAsync(tvchannelId, specificationId);
+                var model = await _tvChannelModelFactory.PrepareAddSpecificationAttributeModelAsync(tvChannelId, specificationId);
                 return View(model);
             }
             catch (Exception ex)
@@ -2164,8 +2164,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 await _notificationService.ErrorNotificationAsync(ex);
 
                 //select an appropriate card
-                SaveSelectedCardName("tvchannel-specification-attributes");
-                return RedirectToAction("Edit", new { id = tvchannelId });
+                SaveSelectedCardName("tvChannel-specification-attributes");
+                return RedirectToAction("Edit", new { id = tvChannelId });
             }
         }
 
@@ -2175,28 +2175,28 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel specification attribute with the specified id
+            //try to get a tvChannel specification attribute with the specified id
             var psa = await _specificationAttributeService.GetTvChannelSpecificationAttributeByIdAsync(model.SpecificationId);
             if (psa == null)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvchannel-specification-attributes");
-                _notificationService.ErrorNotification("No tvchannel specification attribute found with the specified id");
+                SaveSelectedCardName("tvChannel-specification-attributes");
+                _notificationService.ErrorNotification("No tvChannel specification attribute found with the specified id");
                 return RedirectToAction("Edit", new { id = model.TvChannelId });
             }
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && (await _tvchannelService.GetTvChannelByIdAsync(psa.TvChannelId)).VendorId != currentVendor.Id)
+            if (currentVendor != null && (await _tvChannelService.GetTvChannelByIdAsync(psa.TvChannelId)).VendorId != currentVendor.Id)
             {
-                _notificationService.ErrorNotification("This is not your tvchannel");
+                _notificationService.ErrorNotification("This is not your tvChannel");
                 return RedirectToAction("List", new { id = model.TvChannelId });
             }
 
             await _specificationAttributeService.DeleteTvChannelSpecificationAttributeAsync(psa);
 
             //select an appropriate card
-            SaveSelectedCardName("tvchannel-specification-attributes");
+            SaveSelectedCardName("tvChannel-specification-attributes");
 
             return RedirectToAction("Edit", new { id = psa.TvChannelId });
         }
@@ -2211,7 +2211,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelTagSearchModelAsync(new TvChannelTagSearchModel());
+            var model = await _tvChannelModelFactory.PrepareTvChannelTagSearchModelAsync(new TvChannelTagSearchModel());
 
             return View(model);
         }
@@ -2223,7 +2223,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelTagListModelAsync(searchModel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelTagListModelAsync(searchModel);
 
             return Json(model);
         }
@@ -2234,11 +2234,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannelTags))
                 return AccessDeniedView();
 
-            //try to get a tvchannel tag with the specified id
-            var tag = await _tvchannelTagService.GetTvChannelTagByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel tag found with the specified id");
+            //try to get a tvChannel tag with the specified id
+            var tag = await _tvChannelTagService.GetTvChannelTagByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel tag found with the specified id");
 
-            await _tvchannelTagService.DeleteTvChannelTagAsync(tag);
+            await _tvChannelTagService.DeleteTvChannelTagAsync(tag);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannelTags.Deleted"));
 
@@ -2254,8 +2254,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (selectedIds == null || selectedIds.Count == 0)
                 return NoContent();
 
-            var tags = await _tvchannelTagService.GetTvChannelTagsByIdsAsync(selectedIds.ToArray());
-            await _tvchannelTagService.DeleteTvChannelTagsAsync(tags);
+            var tags = await _tvChannelTagService.GetTvChannelTagsByIdsAsync(selectedIds.ToArray());
+            await _tvChannelTagService.DeleteTvChannelTagsAsync(tags);
 
             return Json(new { Result = true });
         }
@@ -2265,13 +2265,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannelTags))
                 return AccessDeniedView();
 
-            //try to get a tvchannel tag with the specified id
-            var tvchannelTag = await _tvchannelTagService.GetTvChannelTagByIdAsync(id);
-            if (tvchannelTag == null)
+            //try to get a tvChannel tag with the specified id
+            var tvChannelTag = await _tvChannelTagService.GetTvChannelTagByIdAsync(id);
+            if (tvChannelTag == null)
                 return RedirectToAction("List");
 
             //prepare tag model
-            var model = await _tvchannelModelFactory.PrepareTvChannelTagModelAsync(null, tvchannelTag);
+            var model = await _tvChannelModelFactory.PrepareTvChannelTagModelAsync(null, tvChannelTag);
 
             return View(model);
         }
@@ -2282,26 +2282,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannelTags))
                 return AccessDeniedView();
 
-            //try to get a tvchannel tag with the specified id
-            var tvchannelTag = await _tvchannelTagService.GetTvChannelTagByIdAsync(model.Id);
-            if (tvchannelTag == null)
+            //try to get a tvChannel tag with the specified id
+            var tvChannelTag = await _tvChannelTagService.GetTvChannelTagByIdAsync(model.Id);
+            if (tvChannelTag == null)
                 return RedirectToAction("List");
 
             if (ModelState.IsValid)
             {
-                tvchannelTag.Name = model.Name;
-                await _tvchannelTagService.UpdateTvChannelTagAsync(tvchannelTag);
+                tvChannelTag.Name = model.Name;
+                await _tvChannelTagService.UpdateTvChannelTagAsync(tvChannelTag);
 
                 //locales
-                await UpdateLocalesAsync(tvchannelTag, model);
+                await UpdateLocalesAsync(tvChannelTag, model);
 
                 _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannelTags.Updated"));
 
-                return continueEditing ? RedirectToAction("EditTvChannelTag", new { id = tvchannelTag.Id }) : RedirectToAction("TvChannelTags");
+                return continueEditing ? RedirectToAction("EditTvChannelTag", new { id = tvChannelTag.Id }) : RedirectToAction("TvChannelTags");
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTvChannelTagModelAsync(model, tvchannelTag, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelTagModelAsync(model, tvChannelTag, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -2317,17 +2317,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelOrderListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelOrderListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -2343,7 +2343,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
@@ -2364,13 +2364,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             else if (model.SearchPublishedId == 2)
                 overridePublished = false;
 
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0,
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0,
                 categoryIds: categoryIds,
                 manufacturerIds: new List<int> { model.SearchManufacturerId },
                 storeId: model.SearchStoreId,
                 vendorId: model.SearchVendorId,
                 warehouseId: model.SearchWarehouseId,
-                tvchannelType: model.SearchTvChannelTypeId > 0 ? (TvChannelType?)model.SearchTvChannelTypeId : null,
+                tvChannelType: model.SearchTvChannelTypeId > 0 ? (TvChannelType?)model.SearchTvChannelTypeId : null,
                 keywords: model.SearchTvChannelName,
                 showHidden: true,
                 overridePublished: overridePublished);
@@ -2380,7 +2380,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 byte[] bytes;
                 await using (var stream = new MemoryStream())
                 {
-                    await _pdfService.PrintTvChannelsToPdfAsync(stream, tvchannels);
+                    await _pdfService.PrintTvChannelsToPdfAsync(stream, tvChannels);
                     bytes = stream.ToArray();
                 }
 
@@ -2400,7 +2400,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
@@ -2421,22 +2421,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             else if (model.SearchPublishedId == 2)
                 overridePublished = false;
 
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0,
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0,
                 categoryIds: categoryIds,
                 manufacturerIds: new List<int> { model.SearchManufacturerId },
                 storeId: model.SearchStoreId,
                 vendorId: model.SearchVendorId,
                 warehouseId: model.SearchWarehouseId,
-                tvchannelType: model.SearchTvChannelTypeId > 0 ? (TvChannelType?)model.SearchTvChannelTypeId : null,
+                tvChannelType: model.SearchTvChannelTypeId > 0 ? (TvChannelType?)model.SearchTvChannelTypeId : null,
                 keywords: model.SearchTvChannelName,
                 showHidden: true,
                 overridePublished: overridePublished);
 
             try
             {
-                var xml = await _exportManager.ExportTvChannelsToXmlAsync(tvchannels);
+                var xml = await _exportManager.ExportTvChannelsToXmlAsync(tvChannels);
 
-                return File(Encoding.UTF8.GetBytes(xml), MimeTypes.ApplicationXml, "tvchannels.xml");
+                return File(Encoding.UTF8.GetBytes(xml), MimeTypes.ApplicationXml, "tvChannels.xml");
             }
             catch (Exception exc)
             {
@@ -2451,26 +2451,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var tvchannels = new List<TvChannel>();
+            var tvChannels = new List<TvChannel>();
             if (selectedIds != null)
             {
                 var ids = selectedIds
                     .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => Convert.ToInt32(x))
                     .ToArray();
-                tvchannels.AddRange(await _tvchannelService.GetTvChannelsByIdsAsync(ids));
+                tvChannels.AddRange(await _tvChannelService.GetTvChannelsByIdsAsync(ids));
             }
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                tvchannels = tvchannels.Where(p => p.VendorId == currentVendor.Id).ToList();
+                tvChannels = tvChannels.Where(p => p.VendorId == currentVendor.Id).ToList();
             }
 
             try
             {
-                var xml = await _exportManager.ExportTvChannelsToXmlAsync(tvchannels);
-                return File(Encoding.UTF8.GetBytes(xml), MimeTypes.ApplicationXml, "tvchannels.xml");
+                var xml = await _exportManager.ExportTvChannelsToXmlAsync(tvChannels);
+                return File(Encoding.UTF8.GetBytes(xml), MimeTypes.ApplicationXml, "tvChannels.xml");
             }
             catch (Exception exc)
             {
@@ -2486,7 +2486,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
@@ -2507,22 +2507,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             else if (model.SearchPublishedId == 2)
                 overridePublished = false;
 
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0,
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0,
                 categoryIds: categoryIds,
                 manufacturerIds: new List<int> { model.SearchManufacturerId },
                 storeId: model.SearchStoreId,
                 vendorId: model.SearchVendorId,
                 warehouseId: model.SearchWarehouseId,
-                tvchannelType: model.SearchTvChannelTypeId > 0 ? (TvChannelType?)model.SearchTvChannelTypeId : null,
+                tvChannelType: model.SearchTvChannelTypeId > 0 ? (TvChannelType?)model.SearchTvChannelTypeId : null,
                 keywords: model.SearchTvChannelName,
                 showHidden: true,
                 overridePublished: overridePublished);
 
             try
             {
-                var bytes = await _exportManager.ExportTvChannelsToXlsxAsync(tvchannels);
+                var bytes = await _exportManager.ExportTvChannelsToXlsxAsync(tvChannels);
 
-                return File(bytes, MimeTypes.TextXlsx, "tvchannels.xlsx");
+                return File(bytes, MimeTypes.TextXlsx, "tvChannels.xlsx");
             }
             catch (Exception exc)
             {
@@ -2538,27 +2538,27 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var tvchannels = new List<TvChannel>();
+            var tvChannels = new List<TvChannel>();
             if (selectedIds != null)
             {
                 var ids = selectedIds
                     .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => Convert.ToInt32(x))
                     .ToArray();
-                tvchannels.AddRange(await _tvchannelService.GetTvChannelsByIdsAsync(ids));
+                tvChannels.AddRange(await _tvChannelService.GetTvChannelsByIdsAsync(ids));
             }
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
-                tvchannels = tvchannels.Where(p => p.VendorId == currentVendor.Id).ToList();
+                tvChannels = tvChannels.Where(p => p.VendorId == currentVendor.Id).ToList();
             }
 
             try
             {
-                var bytes = await _exportManager.ExportTvChannelsToXlsxAsync(tvchannels);
+                var bytes = await _exportManager.ExportTvChannelsToXlsxAsync(tvChannels);
 
-                return File(bytes, MimeTypes.TextXlsx, "tvchannels.xlsx");
+                return File(bytes, MimeTypes.TextXlsx, "tvChannels.xlsx");
             }
             catch (Exception exc)
             {
@@ -2574,7 +2574,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             if (await _workContext.GetCurrentVendorAsync() != null && !_vendorSettings.AllowVendorsToImportTvChannels)
-                //a vendor can not import tvchannels
+                //a vendor can not import tvChannels
                 return AccessDeniedView();
 
             try
@@ -2612,32 +2612,32 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTierPriceListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTierPriceListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> TierPriceCreatePopup(int tvchannelId)
+        public virtual async Task<IActionResult> TierPriceCreatePopup(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTierPriceModelAsync(new TierPriceModel(), tvchannel, null);
+            var model = await _tvChannelModelFactory.PrepareTierPriceModelAsync(new TierPriceModel(), tvChannel, null);
 
             return View(model);
         }
@@ -2649,26 +2649,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             if (ModelState.IsValid)
             {
                 //fill entity from model
                 var tierPrice = model.ToEntity<TierPrice>();
-                tierPrice.TvChannelId = tvchannel.Id;
+                tierPrice.TvChannelId = tvChannel.Id;
                 tierPrice.UserRoleId = model.UserRoleId > 0 ? model.UserRoleId : (int?)null;
 
-                await _tvchannelService.InsertTierPriceAsync(tierPrice);
+                await _tvChannelService.InsertTierPriceAsync(tierPrice);
 
                 //update "HasTierPrices" property
-                await _tvchannelService.UpdateHasTierPricesPropertyAsync(tvchannel);
+                await _tvChannelService.UpdateHasTierPricesPropertyAsync(tvChannel);
 
                 ViewBag.RefreshPage = true;
 
@@ -2676,7 +2676,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTierPriceModelAsync(model, tvchannel, null, true);
+            model = await _tvChannelModelFactory.PrepareTierPriceModelAsync(model, tvChannel, null, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -2688,21 +2688,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //try to get a tier price with the specified id
-            var tierPrice = await _tvchannelService.GetTierPriceByIdAsync(id);
+            var tierPrice = await _tvChannelService.GetTierPriceByIdAsync(id);
             if (tierPrice == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tierPrice.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tierPrice.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTierPriceModelAsync(null, tvchannel, tierPrice);
+            var model = await _tvChannelModelFactory.PrepareTierPriceModelAsync(null, tvChannel, tierPrice);
 
             return View(model);
         }
@@ -2714,17 +2714,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //try to get a tier price with the specified id
-            var tierPrice = await _tvchannelService.GetTierPriceByIdAsync(model.Id);
+            var tierPrice = await _tvChannelService.GetTierPriceByIdAsync(model.Id);
             if (tierPrice == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tierPrice.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tierPrice.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             if (ModelState.IsValid)
@@ -2732,7 +2732,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 //fill entity from model
                 tierPrice = model.ToEntity(tierPrice);
                 tierPrice.UserRoleId = model.UserRoleId > 0 ? model.UserRoleId : (int?)null;
-                await _tvchannelService.UpdateTierPriceAsync(tierPrice);
+                await _tvChannelService.UpdateTierPriceAsync(tierPrice);
 
                 ViewBag.RefreshPage = true;
 
@@ -2740,7 +2740,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTierPriceModelAsync(model, tvchannel, tierPrice, true);
+            model = await _tvChannelModelFactory.PrepareTierPriceModelAsync(model, tvChannel, tierPrice, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -2753,22 +2753,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //try to get a tier price with the specified id
-            var tierPrice = await _tvchannelService.GetTierPriceByIdAsync(id)
+            var tierPrice = await _tvChannelService.GetTierPriceByIdAsync(id)
                 ?? throw new ArgumentException("No tier price found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tierPrice.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tierPrice.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
-            await _tvchannelService.DeleteTierPriceAsync(tierPrice);
+            await _tvChannelService.DeleteTierPriceAsync(tierPrice);
 
             //update "HasTierPrices" property
-            await _tvchannelService.UpdateHasTierPricesPropertyAsync(tvchannel);
+            await _tvChannelService.UpdateHasTierPricesPropertyAsync(tvChannel);
 
             return new NullJsonResult();
         }
@@ -2783,40 +2783,40 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeMappingListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeMappingListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> TvChannelAttributeMappingCreate(int tvchannelId)
+        public virtual async Task<IActionResult> TvChannelAttributeMappingCreate(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
             {
-                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvchannel"));
+                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvChannel"));
                 return RedirectToAction("List");
             }
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(new TvChannelAttributeMappingModel(), tvchannel, null);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(new TvChannelAttributeMappingModel(), tvChannel, null);
 
             return View(model);
         }
@@ -2827,43 +2827,43 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
             {
-                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvchannel"));
+                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvChannel"));
                 return RedirectToAction("List");
             }
 
             //ensure this attribute is not mapped yet
-            if ((await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id))
+            if ((await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id))
                 .Any(x => x.TvChannelAttributeId == model.TvChannelAttributeId))
             {
                 //redisplay form
                 _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AlreadyExists"));
 
-                model = await _tvchannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(model, tvchannel, null, true);
+                model = await _tvChannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(model, tvChannel, null, true);
 
                 return View(model);
             }
 
             //insert mapping
-            var tvchannelAttributeMapping = model.ToEntity<TvChannelAttributeMapping>();
+            var tvChannelAttributeMapping = model.ToEntity<TvChannelAttributeMapping>();
 
-            await _tvchannelAttributeService.InsertTvChannelAttributeMappingAsync(tvchannelAttributeMapping);
-            await UpdateLocalesAsync(tvchannelAttributeMapping, model);
+            await _tvChannelAttributeService.InsertTvChannelAttributeMappingAsync(tvChannelAttributeMapping);
+            await UpdateLocalesAsync(tvChannelAttributeMapping, model);
 
             //predefined values
-            var predefinedValues = await _tvchannelAttributeService.GetPredefinedTvChannelAttributeValuesAsync(model.TvChannelAttributeId);
+            var predefinedValues = await _tvChannelAttributeService.GetPredefinedTvChannelAttributeValuesAsync(model.TvChannelAttributeId);
             foreach (var predefinedValue in predefinedValues)
             {
                 var pav = new TvChannelAttributeValue
                 {
-                    TvChannelAttributeMappingId = tvchannelAttributeMapping.Id,
+                    TvChannelAttributeMappingId = tvChannelAttributeMapping.Id,
                     AttributeValueType = AttributeValueType.Simple,
                     Name = predefinedValue.Name,
                     PriceAdjustment = predefinedValue.PriceAdjustment,
@@ -2873,7 +2873,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     IsPreSelected = predefinedValue.IsPreSelected,
                     DisplayOrder = predefinedValue.DisplayOrder
                 };
-                await _tvchannelAttributeService.InsertTvChannelAttributeValueAsync(pav);
+                await _tvChannelAttributeService.InsertTvChannelAttributeValueAsync(pav);
 
                 //locales
                 var languages = await _languageService.GetAllLanguagesAsync(true);
@@ -2892,11 +2892,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!continueEditing)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvchannel-tvchannel-attributes");
-                return RedirectToAction("Edit", new { id = tvchannel.Id });
+                SaveSelectedCardName("tvChannel-tvChannel-attributes");
+                return RedirectToAction("Edit", new { id = tvChannel.Id });
             }
 
-            return RedirectToAction("TvChannelAttributeMappingEdit", new { id = tvchannelAttributeMapping.Id });
+            return RedirectToAction("TvChannelAttributeMappingEdit", new { id = tvChannelAttributeMapping.Id });
         }
 
         public virtual async Task<IActionResult> TvChannelAttributeMappingEdit(int id)
@@ -2904,24 +2904,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel attribute mapping found with the specified id");
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel attribute mapping found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
             {
-                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvchannel"));
+                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvChannel"));
                 return RedirectToAction("List");
             }
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(null, tvchannel, tvchannelAttributeMapping);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(null, tvChannel, tvChannelAttributeMapping);
 
             return View(model);
         }
@@ -2932,52 +2932,52 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(model.Id)
-                ?? throw new ArgumentException("No tvchannel attribute mapping found with the specified id");
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(model.Id)
+                ?? throw new ArgumentException("No tvChannel attribute mapping found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
             {
-                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvchannel"));
+                _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("This is not your tvChannel"));
                 return RedirectToAction("List");
             }
 
             //ensure this attribute is not mapped yet
-            if ((await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id))
-                .Any(x => x.TvChannelAttributeId == model.TvChannelAttributeId && x.Id != tvchannelAttributeMapping.Id))
+            if ((await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id))
+                .Any(x => x.TvChannelAttributeId == model.TvChannelAttributeId && x.Id != tvChannelAttributeMapping.Id))
             {
                 //redisplay form
                 _notificationService.ErrorNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AlreadyExists"));
 
-                model = await _tvchannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(model, tvchannel, tvchannelAttributeMapping, true);
+                model = await _tvChannelModelFactory.PrepareTvChannelAttributeMappingModelAsync(model, tvChannel, tvChannelAttributeMapping, true);
 
                 return View(model);
             }
 
             //fill entity from model
-            tvchannelAttributeMapping = model.ToEntity(tvchannelAttributeMapping);
-            await _tvchannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvchannelAttributeMapping);
+            tvChannelAttributeMapping = model.ToEntity(tvChannelAttributeMapping);
+            await _tvChannelAttributeService.UpdateTvChannelAttributeMappingAsync(tvChannelAttributeMapping);
 
-            await UpdateLocalesAsync(tvchannelAttributeMapping, model);
+            await UpdateLocalesAsync(tvChannelAttributeMapping, model);
 
-            await SaveConditionAttributesAsync(tvchannelAttributeMapping, model.ConditionModel, form);
+            await SaveConditionAttributesAsync(tvChannelAttributeMapping, model.ConditionModel, form);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Updated"));
 
             if (!continueEditing)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvchannel-tvchannel-attributes");
-                return RedirectToAction("Edit", new { id = tvchannel.Id });
+                SaveSelectedCardName("tvChannel-tvChannel-attributes");
+                return RedirectToAction("Edit", new { id = tvChannel.Id });
             }
 
-            return RedirectToAction("TvChannelAttributeMappingEdit", new { id = tvchannelAttributeMapping.Id });
+            return RedirectToAction("TvChannelAttributeMappingEdit", new { id = tvChannelAttributeMapping.Id });
         }
 
         [HttpPost]
@@ -2986,46 +2986,46 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel attribute mapping found with the specified id");
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel attribute mapping found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //check if existed combinations contains the specified attribute
-            var existedCombinations = await _tvchannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvchannel.Id);
+            var existedCombinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
             if (existedCombinations?.Any() == true)
             {
                 foreach (var combination in existedCombinations)
                 {
-                    var mappings = await _tvchannelAttributeParser
+                    var mappings = await _tvChannelAttributeParser
                         .ParseTvChannelAttributeMappingsAsync(combination.AttributesXml);
                     
-                    if (mappings?.Any(m => m.Id == tvchannelAttributeMapping.Id) == true)
+                    if (mappings?.Any(m => m.Id == tvChannelAttributeMapping.Id) == true)
                     {
                         _notificationService.ErrorNotification(
                             string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AlreadyExistsInCombination"),
-                                await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, combination.AttributesXml, await _workContext.GetCurrentUserAsync(), await _storeContext.GetCurrentStoreAsync(), ", ")));
+                                await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel, combination.AttributesXml, await _workContext.GetCurrentUserAsync(), await _storeContext.GetCurrentStoreAsync(), ", ")));
 
-                        return RedirectToAction("TvChannelAttributeMappingEdit", new { id = tvchannelAttributeMapping.Id });
+                        return RedirectToAction("TvChannelAttributeMappingEdit", new { id = tvChannelAttributeMapping.Id });
                     }
                 }
             }
 
-            await _tvchannelAttributeService.DeleteTvChannelAttributeMappingAsync(tvchannelAttributeMapping);
+            await _tvChannelAttributeService.DeleteTvChannelAttributeMappingAsync(tvChannelAttributeMapping);
 
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Deleted"));
 
             //select an appropriate card
-            SaveSelectedCardName("tvchannel-tvchannel-attributes");
-            return RedirectToAction("Edit", new { id = tvchannelAttributeMapping.TvChannelId });
+            SaveSelectedCardName("tvChannel-tvChannel-attributes");
+            return RedirectToAction("Edit", new { id = tvChannelAttributeMapping.TvChannelId });
         }
 
         [HttpPost]
@@ -3034,45 +3034,45 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(searchModel.TvChannelAttributeMappingId)
-                ?? throw new ArgumentException("No tvchannel attribute mapping found with the specified id");
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(searchModel.TvChannelAttributeMappingId)
+                ?? throw new ArgumentException("No tvChannel attribute mapping found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeValueListModelAsync(searchModel, tvchannelAttributeMapping);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeValueListModelAsync(searchModel, tvChannelAttributeMapping);
 
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> TvChannelAttributeValueCreatePopup(int tvchannelAttributeMappingId)
+        public virtual async Task<IActionResult> TvChannelAttributeValueCreatePopup(int tvChannelAttributeMappingId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvchannelAttributeMappingId)
-                ?? throw new ArgumentException("No tvchannel attribute mapping found with the specified id");
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvChannelAttributeMappingId)
+                ?? throw new ArgumentException("No tvChannel attribute mapping found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeValueModelAsync(new TvChannelAttributeValueModel(), tvchannelAttributeMapping, null);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeValueModelAsync(new TvChannelAttributeValueModel(), tvChannelAttributeMapping, null);
 
             return View(model);
         }
@@ -3083,21 +3083,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(model.TvChannelAttributeMappingId);
-            if (tvchannelAttributeMapping == null)
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(model.TvChannelAttributeMappingId);
+            if (tvChannelAttributeMapping == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
-            if (tvchannelAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
+            if (tvChannelAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
             {
                 //ensure valid color is chosen/entered
                 if (string.IsNullOrEmpty(model.ColorSquaresRgb))
@@ -3114,7 +3114,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //ensure a picture is uploaded
-            if (tvchannelAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
+            if (tvChannelAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
             {
                 ModelState.AddModelError(string.Empty, "Image is required");
             }
@@ -3126,7 +3126,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
                 pav.Quantity = model.UserEntersQty ? 1 : model.Quantity;
 
-                await _tvchannelAttributeService.InsertTvChannelAttributeValueAsync(pav);
+                await _tvChannelAttributeService.InsertTvChannelAttributeValueAsync(pav);
                 await UpdateLocalesAsync(pav, model);
 
                 ViewBag.RefreshPage = true;
@@ -3135,7 +3135,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTvChannelAttributeValueModelAsync(model, tvchannelAttributeMapping, null, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelAttributeValueModelAsync(model, tvChannelAttributeMapping, null, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -3146,27 +3146,27 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute value with the specified id
-            var tvchannelAttributeValue = await _tvchannelAttributeService.GetTvChannelAttributeValueByIdAsync(id);
-            if (tvchannelAttributeValue == null)
+            //try to get a tvChannel attribute value with the specified id
+            var tvChannelAttributeValue = await _tvChannelAttributeService.GetTvChannelAttributeValueByIdAsync(id);
+            if (tvChannelAttributeValue == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvchannelAttributeValue.TvChannelAttributeMappingId);
-            if (tvchannelAttributeMapping == null)
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvChannelAttributeValue.TvChannelAttributeMappingId);
+            if (tvChannelAttributeMapping == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeValueModelAsync(null, tvchannelAttributeMapping, tvchannelAttributeValue);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeValueModelAsync(null, tvChannelAttributeMapping, tvChannelAttributeValue);
 
             return View(model);
         }
@@ -3177,26 +3177,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute value with the specified id
-            var tvchannelAttributeValue = await _tvchannelAttributeService.GetTvChannelAttributeValueByIdAsync(model.Id);
-            if (tvchannelAttributeValue == null)
+            //try to get a tvChannel attribute value with the specified id
+            var tvChannelAttributeValue = await _tvChannelAttributeService.GetTvChannelAttributeValueByIdAsync(model.Id);
+            if (tvChannelAttributeValue == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvchannelAttributeValue.TvChannelAttributeMappingId);
-            if (tvchannelAttributeMapping == null)
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvChannelAttributeValue.TvChannelAttributeMappingId);
+            if (tvChannelAttributeMapping == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
-            if (tvchannelAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
+            if (tvChannelAttributeMapping.AttributeControlType == AttributeControlType.ColorSquares)
             {
                 //ensure valid color is chosen/entered
                 if (string.IsNullOrEmpty(model.ColorSquaresRgb))
@@ -3213,7 +3213,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //ensure a picture is uploaded
-            if (tvchannelAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
+            if (tvChannelAttributeMapping.AttributeControlType == AttributeControlType.ImageSquares && model.ImageSquaresPictureId == 0)
             {
                 ModelState.AddModelError(string.Empty, "Image is required");
             }
@@ -3221,11 +3221,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 //fill entity from model
-                tvchannelAttributeValue = model.ToEntity(tvchannelAttributeValue);
-                tvchannelAttributeValue.Quantity = model.UserEntersQty ? 1 : model.Quantity;
-                await _tvchannelAttributeService.UpdateTvChannelAttributeValueAsync(tvchannelAttributeValue);
+                tvChannelAttributeValue = model.ToEntity(tvChannelAttributeValue);
+                tvChannelAttributeValue.Quantity = model.UserEntersQty ? 1 : model.Quantity;
+                await _tvChannelAttributeService.UpdateTvChannelAttributeValueAsync(tvChannelAttributeValue);
 
-                await UpdateLocalesAsync(tvchannelAttributeValue, model);
+                await UpdateLocalesAsync(tvChannelAttributeValue, model);
 
                 ViewBag.RefreshPage = true;
 
@@ -3233,7 +3233,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTvChannelAttributeValueModelAsync(model, tvchannelAttributeMapping, tvchannelAttributeValue, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelAttributeValueModelAsync(model, tvChannelAttributeMapping, tvChannelAttributeValue, true);
 
             //if we got this far, something failed, redisplay form
             return View(model);
@@ -3245,40 +3245,40 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel attribute value with the specified id
-            var tvchannelAttributeValue = await _tvchannelAttributeService.GetTvChannelAttributeValueByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel attribute value found with the specified id");
+            //try to get a tvChannel attribute value with the specified id
+            var tvChannelAttributeValue = await _tvChannelAttributeService.GetTvChannelAttributeValueByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel attribute value found with the specified id");
 
-            //try to get a tvchannel attribute mapping with the specified id
-            var tvchannelAttributeMapping = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvchannelAttributeValue.TvChannelAttributeMappingId)
-                ?? throw new ArgumentException("No tvchannel attribute mapping found with the specified id");
+            //try to get a tvChannel attribute mapping with the specified id
+            var tvChannelAttributeMapping = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(tvChannelAttributeValue.TvChannelAttributeMappingId)
+                ?? throw new ArgumentException("No tvChannel attribute mapping found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelAttributeMapping.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelAttributeMapping.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //check if existed combinations contains the specified attribute value
-            var existedCombinations = await _tvchannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvchannel.Id);
+            var existedCombinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
             if (existedCombinations?.Any() == true)
             {
                 foreach (var combination in existedCombinations)
                 {
-                    var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(combination.AttributesXml);
+                    var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(combination.AttributesXml);
                     
                     if (attributeValues.Where(attribute => attribute.Id == id).Any())
                     {
                         return Conflict(string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.AlreadyExistsInCombination"),
-                            await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, combination.AttributesXml, await _workContext.GetCurrentUserAsync(), await _storeContext.GetCurrentStoreAsync(), ", ")));
+                            await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel, combination.AttributesXml, await _workContext.GetCurrentUserAsync(), await _storeContext.GetCurrentStoreAsync(), ", ")));
                     }
                 }
             }
 
-            await _tvchannelAttributeService.DeleteTvChannelAttributeValueAsync(tvchannelAttributeValue);
+            await _tvChannelAttributeService.DeleteTvChannelAttributeValueAsync(tvChannelAttributeValue);
 
             return new NullJsonResult();
         }
@@ -3289,7 +3289,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAssociateTvChannelToAttributeValueSearchModelAsync(new AssociateTvChannelToAttributeValueSearchModel());
+            var model = await _tvChannelModelFactory.PrepareAssociateTvChannelToAttributeValueSearchModelAsync(new AssociateTvChannelToAttributeValueSearchModel());
 
             return View(model);
         }
@@ -3301,7 +3301,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return await AccessDeniedDataTablesJson();
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareAssociateTvChannelToAttributeValueListModelAsync(searchModel);
+            var model = await _tvChannelModelFactory.PrepareAssociateTvChannelToAttributeValueListModelAsync(searchModel);
 
             return Json(model);
         }
@@ -3313,32 +3313,32 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(model.AssociatedToTvChannelId);
+            //try to get a tvChannel with the specified id
+            var associatedTvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.AssociatedToTvChannelId);
             if (associatedTvChannel == null)
-                return Content("Cannot load a tvchannel");
+                return Content("Cannot load a tvChannel");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null && associatedTvChannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+                return Content("This is not your tvChannel");
 
             ViewBag.RefreshPage = true;
-            ViewBag.tvchannelId = associatedTvChannel.Id;
-            ViewBag.tvchannelName = associatedTvChannel.Name;
+            ViewBag.tvChannelId = associatedTvChannel.Id;
+            ViewBag.tvChannelName = associatedTvChannel.Name;
 
             return View(new AssociateTvChannelToAttributeValueSearchModel());
         }
 
-        //action displaying notification (warning) to a store owner when associating some tvchannel
-        public virtual async Task<IActionResult> AssociatedTvChannelGetWarnings(int tvchannelId)
+        //action displaying notification (warning) to a store owner when associating some tvChannel
+        public virtual async Task<IActionResult> AssociatedTvChannelGetWarnings(int tvChannelId)
         {
-            var associatedTvChannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
+            var associatedTvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
             if (associatedTvChannel == null)
                 return Json(new { Result = string.Empty });
 
             //attributes
-            if (await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(associatedTvChannel.Id) is IList<TvChannelAttributeMapping> mapping && mapping.Any())
+            if (await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(associatedTvChannel.Id) is IList<TvChannelAttributeMapping> mapping && mapping.Any())
             {
                 if (mapping.Any(attribute => attribute.IsRequired))
                     return Json(new { Result = await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.AssociatedTvChannel.HasRequiredAttributes") });
@@ -3352,7 +3352,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return Json(new { Result = await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.AssociatedTvChannel.GiftCard") });
             }
 
-            //downloadable tvchannel
+            //downloadable tvChannel
             if (associatedTvChannel.IsDownload)
             {
                 return Json(new { Result = await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.AssociatedTvChannel.Downloadable") });
@@ -3371,17 +3371,17 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeCombinationListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeCombinationListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }
@@ -3393,73 +3393,73 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //try to get a combination with the specified id
-            var combination = await _tvchannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(id)
-                ?? throw new ArgumentException("No tvchannel attribute combination found with the specified id");
+            var combination = await _tvChannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(id)
+                ?? throw new ArgumentException("No tvChannel attribute combination found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(combination.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(combination.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
-            await _tvchannelAttributeService.DeleteTvChannelAttributeCombinationAsync(combination);
+            await _tvChannelAttributeService.DeleteTvChannelAttributeCombinationAsync(combination);
 
             return new NullJsonResult();
         }
 
-        public virtual async Task<IActionResult> TvChannelAttributeCombinationCreatePopup(int tvchannelId)
+        public virtual async Task<IActionResult> TvChannelAttributeCombinationCreatePopup(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(new TvChannelAttributeCombinationModel(), tvchannel, null);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(new TvChannelAttributeCombinationModel(), tvChannel, null);
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> TvChannelAttributeCombinationCreatePopup(int tvchannelId, TvChannelAttributeCombinationModel model, IFormCollection form)
+        public virtual async Task<IActionResult> TvChannelAttributeCombinationCreatePopup(int tvChannelId, TvChannelAttributeCombinationModel model, IFormCollection form)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //attributes
             var warnings = new List<string>();
-            var attributesXml = await GetAttributesXmlForTvChannelAttributeCombinationAsync(form, warnings, tvchannel.Id);
+            var attributesXml = await GetAttributesXmlForTvChannelAttributeCombinationAsync(form, warnings, tvChannel.Id);
 
             //check whether the attribute value is specified
             if (string.IsNullOrEmpty(attributesXml))
                 warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Alert.FailedValue"));
 
             warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(await _workContext.GetCurrentUserAsync(),
-                ShoppingCartType.ShoppingCart, tvchannel, 1, attributesXml, true));
+                ShoppingCartType.ShoppingCart, tvChannel, 1, attributesXml, true));
 
             //check whether the same attribute combination already exists
-            var existingCombination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+            var existingCombination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
             if (existingCombination != null)
                 warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.AlreadyExists"));
 
@@ -3471,10 +3471,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 //fill attributes
                 combination.AttributesXml = attributesXml;
 
-                await _tvchannelAttributeService.InsertTvChannelAttributeCombinationAsync(combination);
+                await _tvChannelAttributeService.InsertTvChannelAttributeCombinationAsync(combination);
 
                 //quantity change history
-                await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, combination.StockQuantity, combination.StockQuantity,
+                await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, combination.StockQuantity, combination.StockQuantity,
                     message: await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Combination.Edit"), combinationId: combination.Id);
 
                 ViewBag.RefreshPage = true;
@@ -3483,30 +3483,30 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(model, tvchannel, null, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(model, tvChannel, null, true);
             model.Warnings = warnings;
 
             //if we got this far, something failed, redisplay form
             return View(model);
         }
 
-        public virtual async Task<IActionResult> TvChannelAttributeCombinationGeneratePopup(int tvchannelId)
+        public virtual async Task<IActionResult> TvChannelAttributeCombinationGeneratePopup(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(new TvChannelAttributeCombinationModel(), tvchannel, null);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(new TvChannelAttributeCombinationModel(), tvChannel, null);
 
             return View(model);
         }
@@ -3517,23 +3517,23 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId);
-            if (tvchannel == null)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId);
+            if (tvChannel == null)
                 return RedirectToAction("List", "TvChannel");
 
             var allowedAttributeIds = form.Keys.Where(key => key.Contains("attribute_value_"))
                 .Select(key => int.TryParse(form[key], out var id) ? id : 0).Where(id => id > 0).ToList();
 
-            var requiredAttributeNames = await (await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id))
+            var requiredAttributeNames = await (await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id))
                 .Where(pam => pam.IsRequired)
                 .Where(pam => !pam.IsNonCombinable())
-                .WhereAwait(async pam => !(await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(pam.Id)).Any(v => allowedAttributeIds.Any(id => id == v.Id)))
-                .SelectAwait(async pam => (await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(pam.TvChannelAttributeId)).Name).ToListAsync();
+                .WhereAwait(async pam => !(await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(pam.Id)).Any(v => allowedAttributeIds.Any(id => id == v.Id)))
+                .SelectAwait(async pam => (await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(pam.TvChannelAttributeId)).Name).ToListAsync();
 
             if (requiredAttributeNames.Any())
             {
-                model = await _tvchannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(model, tvchannel, null, true);
+                model = await _tvChannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(model, tvChannel, null, true);
                 var pavModels = model.TvChannelAttributes.SelectMany(pa => pa.Values)
                     .Where(v => allowedAttributeIds.Any(id => id == v.Id))
                     .ToList();
@@ -3547,7 +3547,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return View(model);
             }
 
-            await GenerateAttributeCombinationsAsync(tvchannel, allowedAttributeIds);
+            await GenerateAttributeCombinationsAsync(tvChannel, allowedAttributeIds);
 
             ViewBag.RefreshPage = true;
 
@@ -3560,22 +3560,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //try to get a combination with the specified id
-            var combination = await _tvchannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(id);
+            var combination = await _tvChannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(id);
             if (combination == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(combination.TvChannelId);
-            if (tvchannel == null)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(combination.TvChannelId);
+            if (tvChannel == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(null, tvchannel, combination);
+            var model = await _tvChannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(null, tvChannel, combination);
 
             return View(model);
         }
@@ -3587,33 +3587,33 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 return AccessDeniedView();
 
             //try to get a combination with the specified id
-            var combination = await _tvchannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(model.Id);
+            var combination = await _tvChannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(model.Id);
             if (combination == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(combination.TvChannelId);
-            if (tvchannel == null)
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(combination.TvChannelId);
+            if (tvChannel == null)
                 return RedirectToAction("List", "TvChannel");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
                 return RedirectToAction("List", "TvChannel");
 
             //attributes
             var warnings = new List<string>();
-            var attributesXml = await GetAttributesXmlForTvChannelAttributeCombinationAsync(form, warnings, tvchannel.Id);
+            var attributesXml = await GetAttributesXmlForTvChannelAttributeCombinationAsync(form, warnings, tvChannel.Id);
 
             //check whether the attribute value is specified
             if (string.IsNullOrEmpty(attributesXml))
                 warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.Alert.FailedValue"));
 
             warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(await _workContext.GetCurrentUserAsync(),
-                ShoppingCartType.ShoppingCart, tvchannel, 1, attributesXml, true));
+                ShoppingCartType.ShoppingCart, tvChannel, 1, attributesXml, true));
 
             //check whether the same attribute combination already exists
-            var existingCombination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+            var existingCombination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
             if (existingCombination != null && existingCombination.Id != model.Id && existingCombination.AttributesXml.Equals(attributesXml))
                 warnings.Add(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.AlreadyExists"));
 
@@ -3626,10 +3626,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 combination = model.ToEntity(combination);
                 combination.AttributesXml = attributesXml;
 
-                await _tvchannelAttributeService.UpdateTvChannelAttributeCombinationAsync(combination);
+                await _tvChannelAttributeService.UpdateTvChannelAttributeCombinationAsync(combination);
 
                 //quantity change history
-                await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannel, combination.StockQuantity - previousStockQuantity, combination.StockQuantity,
+                await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannel, combination.StockQuantity - previousStockQuantity, combination.StockQuantity,
                     message: await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.Combination.Edit"), combinationId: combination.Id);
 
                 ViewBag.RefreshPage = true;
@@ -3638,7 +3638,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //prepare model
-            model = await _tvchannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(model, tvchannel, combination, true);
+            model = await _tvChannelModelFactory.PrepareTvChannelAttributeCombinationModelAsync(model, tvChannel, combination, true);
             model.Warnings = warnings;
 
             //if we got this far, something failed, redisplay form
@@ -3646,21 +3646,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> GenerateAllAttributeCombinations(int tvchannelId)
+        public virtual async Task<IActionResult> GenerateAllAttributeCombinations(int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
-            await GenerateAttributeCombinationsAsync(tvchannel);
+            await GenerateAttributeCombinationsAsync(tvChannel);
 
             return Json(new { Success = true });
         }
@@ -3679,11 +3679,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (await _workContext.GetCurrentVendorAsync() != null)
                 return RedirectToAction("List");
 
-            var tvchannelEditorSettings = await _settingService.LoadSettingAsync<TvChannelEditorSettings>();
-            tvchannelEditorSettings = model.TvChannelEditorSettingsModel.ToSettings(tvchannelEditorSettings);
-            await _settingService.SaveSettingAsync(tvchannelEditorSettings);
+            var tvChannelEditorSettings = await _settingService.LoadSettingAsync<TvChannelEditorSettings>();
+            tvChannelEditorSettings = model.TvChannelEditorSettingsModel.ToSettings(tvChannelEditorSettings);
+            await _settingService.SaveSettingAsync(tvChannelEditorSettings);
 
-            //tvchannel list
+            //tvChannel list
             if (string.IsNullOrEmpty(returnUrl))
                 return RedirectToAction("List");
 
@@ -3704,16 +3704,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(searchModel.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
-            if (currentVendor != null && tvchannel.VendorId != currentVendor.Id)
-                return Content("This is not your tvchannel");
+            if (currentVendor != null && tvChannel.VendorId != currentVendor.Id)
+                return Content("This is not your tvChannel");
 
             //prepare model
-            var model = await _tvchannelModelFactory.PrepareStockQuantityHistoryListModelAsync(searchModel, tvchannel);
+            var model = await _tvChannelModelFactory.PrepareStockQuantityHistoryListModelAsync(searchModel, tvChannel);
 
             return Json(model);
         }

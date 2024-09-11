@@ -78,7 +78,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IPaymentPluginManager _paymentPluginManager;
         private readonly IPickupPluginManager _pickupPluginManager;
         private readonly IPluginService _pluginService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IReturnRequestService _returnRequestService;
         private readonly ISearchTermService _searchTermService;
         private readonly IServiceCollection _serviceCollection;
@@ -123,7 +123,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IPaymentPluginManager paymentPluginManager,
             IPickupPluginManager pickupPluginManager,
             IPluginService pluginService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IReturnRequestService returnRequestService,
             ISearchTermService searchTermService,
             IServiceCollection serviceCollection,
@@ -164,7 +164,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _paymentPluginManager = paymentPluginManager;
             _pickupPluginManager = pickupPluginManager;
             _pluginService = pluginService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _returnRequestService = returnRequestService;
             _searchTermService = searchTermService;
             _serviceCollection = serviceCollection;
@@ -1005,7 +1005,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                         case "manufacturer":
                             detailsUrl = urlHelper.Action("Edit", "Manufacturer", new { id = urlRecord.EntityId });
                             break;
-                        case "tvchannel":
+                        case "tvChannel":
                             detailsUrl = urlHelper.Action("Edit", "TvChannel", new { id = urlRecord.EntityId });
                             break;
                         case "newsitem":
@@ -1119,8 +1119,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 pageIndex: 0, pageSize: 1, getOnlyTotalCount: true)).TotalCount;
 
             model.NumberOfLowStockTvChannels =
-                (await _tvchannelService.GetLowStockTvChannelsAsync(getOnlyTotalCount: true)).TotalCount +
-                (await _tvchannelService.GetLowStockTvChannelCombinationsAsync(getOnlyTotalCount: true)).TotalCount;
+                (await _tvChannelService.GetLowStockTvChannelsAsync(getOnlyTotalCount: true)).TotalCount +
+                (await _tvChannelService.GetLowStockTvChannelCombinationsAsync(getOnlyTotalCount: true)).TotalCount;
 
             return model;
         }

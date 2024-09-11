@@ -13,7 +13,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int StoreId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 

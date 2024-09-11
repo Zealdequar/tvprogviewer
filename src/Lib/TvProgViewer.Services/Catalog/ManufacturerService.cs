@@ -28,9 +28,9 @@ namespace TvProgViewer.Services.Catalog
         private readonly IUserService _userService;
         private readonly IRepository<DiscountManufacturerMapping> _discountManufacturerMappingRepository;
         private readonly IRepository<Manufacturer> _manufacturerRepository;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
-        private readonly IRepository<TvChannelManufacturer> _tvchannelManufacturerRepository;
-        private readonly IRepository<TvChannelCategory> _tvchannelCategoryRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
+        private readonly IRepository<TvChannelManufacturer> _tvChannelManufacturerRepository;
+        private readonly IRepository<TvChannelCategory> _tvChannelCategoryRepository;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
         private readonly IStoreMappingService _storeMappingService;
@@ -46,9 +46,9 @@ namespace TvProgViewer.Services.Catalog
             IUserService userService,
             IRepository<DiscountManufacturerMapping> discountManufacturerMappingRepository,
             IRepository<Manufacturer> manufacturerRepository,
-            IRepository<TvChannel> tvchannelRepository,
-            IRepository<TvChannelManufacturer> tvchannelManufacturerRepository,
-            IRepository<TvChannelCategory> tvchannelCategoryRepository,
+            IRepository<TvChannel> tvChannelRepository,
+            IRepository<TvChannelManufacturer> tvChannelManufacturerRepository,
+            IRepository<TvChannelCategory> tvChannelCategoryRepository,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             IStoreMappingService storeMappingService,
@@ -60,9 +60,9 @@ namespace TvProgViewer.Services.Catalog
             _userService = userService;
             _discountManufacturerMappingRepository = discountManufacturerMappingRepository;
             _manufacturerRepository = manufacturerRepository;
-            _tvchannelRepository = tvchannelRepository;
-            _tvchannelManufacturerRepository = tvchannelManufacturerRepository;
-            _tvchannelCategoryRepository = tvchannelCategoryRepository;
+            _tvChannelRepository = tvChannelRepository;
+            _tvChannelManufacturerRepository = tvChannelManufacturerRepository;
+            _tvChannelCategoryRepository = tvChannelCategoryRepository;
             _staticCacheManager = staticCacheManager;
             _storeContext = storeContext;
             _storeMappingService = storeMappingService;
@@ -118,8 +118,8 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="overridePublished">
         /// null - process "Published" property according to "showHidden" parameter
-        /// true - load only "Published" tvchannels
-        /// false - load only "Unpublished" tvchannels
+        /// true - load only "Published" tvChannels
+        /// false - load only "Unpublished" tvChannels
         /// </param>
         /// <returns>
         /// Задача представляет асинхронную операцию
@@ -241,9 +241,9 @@ namespace TvProgViewer.Services.Catalog
             if (categoryId <= 0)
                 return new List<Manufacturer>();
 
-            // get available tvchannels in category
-            var tvchannelsQuery =
-                from p in _tvchannelRepository.Table
+            // get available tvChannels in category
+            var tvChannelsQuery =
+                from p in _tvChannelRepository.Table
                 where !p.Deleted && p.Published &&
                       (p.ParentGroupedTvChannelId == 0 || p.VisibleIndividually) &&
                       (!p.AvailableStartDateTimeUtc.HasValue || p.AvailableStartDateTimeUtc <= DateTime.UtcNow) &&
@@ -254,27 +254,27 @@ namespace TvProgViewer.Services.Catalog
             var currentUser = await _workContext.GetCurrentUserAsync();
 
             //apply store mapping constraints
-            tvchannelsQuery = await _storeMappingService.ApplyStoreMapping(tvchannelsQuery, store.Id);
+            tvChannelsQuery = await _storeMappingService.ApplyStoreMapping(tvChannelsQuery, store.Id);
 
             //apply ACL constraints
-            tvchannelsQuery = await _aclService.ApplyAcl(tvchannelsQuery, currentUser);
+            tvChannelsQuery = await _aclService.ApplyAcl(tvChannelsQuery, currentUser);
 
             var subCategoryIds = _catalogSettings.ShowTvChannelsFromSubcategories
                 ? await _categoryService.GetChildCategoryIdsAsync(categoryId, store.Id)
                 : null;
 
-            var tvchannelCategoryQuery =
-                from pc in _tvchannelCategoryRepository.Table
+            var tvChannelCategoryQuery =
+                from pc in _tvChannelCategoryRepository.Table
                 where (pc.CategoryId == categoryId || (_catalogSettings.ShowTvChannelsFromSubcategories && subCategoryIds.Contains(pc.CategoryId))) &&
                       (_catalogSettings.IncludeFeaturedTvChannelsInNormalLists || !pc.IsFeaturedTvChannel)
                 select pc;
 
-            // get manufacturers of the tvchannels
+            // get manufacturers of the tvChannels
             var manufacturersQuery =
                 from m in _manufacturerRepository.Table
-                join pm in _tvchannelManufacturerRepository.Table on m.Id equals pm.ManufacturerId
-                join p in tvchannelsQuery on pm.TvChannelId equals p.Id
-                join pc in tvchannelCategoryQuery on p.Id equals pc.TvChannelId
+                join pm in _tvChannelManufacturerRepository.Table on m.Id equals pm.ManufacturerId
+                join p in tvChannelsQuery on pm.TvChannelId equals p.Id
+                join pc in tvChannelCategoryQuery on p.Id equals pc.TvChannelId
                 where !m.Deleted
                 orderby
                    m.DisplayOrder, m.Name
@@ -320,17 +320,17 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Deletes a tvchannel manufacturer mapping
+        /// Deletes a tvChannel manufacturer mapping
         /// </summary>
-        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
+        /// <param name="tvChannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer)
+        public virtual async Task DeleteTvChannelManufacturerAsync(TvChannelManufacturer tvChannelManufacturer)
         {
-            await _tvchannelManufacturerRepository.DeleteAsync(tvchannelManufacturer);
+            await _tvChannelManufacturerRepository.DeleteAsync(tvChannelManufacturer);
         }
 
         /// <summary>
-        /// Gets tvchannel manufacturer collection
+        /// Gets tvChannel manufacturer collection
         /// </summary>
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <param name="pageIndex">Page index</param>
@@ -338,7 +338,7 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel manufacturer collection
+        /// The task result contains the tvChannel manufacturer collection
         /// </returns>
         public virtual async Task<IPagedList<TvChannelManufacturer>> GetTvChannelManufacturersByManufacturerIdAsync(int manufacturerId,
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false)
@@ -346,8 +346,8 @@ namespace TvProgViewer.Services.Catalog
             if (manufacturerId == 0)
                 return new PagedList<TvChannelManufacturer>(new List<TvChannelManufacturer>(), pageIndex, pageSize);
 
-            var query = from pm in _tvchannelManufacturerRepository.Table
-                        join p in _tvchannelRepository.Table on pm.TvChannelId equals p.Id
+            var query = from pm in _tvChannelManufacturerRepository.Table
+                        join p in _tvChannelRepository.Table on pm.TvChannelId equals p.Id
                         where pm.ManufacturerId == manufacturerId && !p.Deleted
                         orderby pm.DisplayOrder, pm.Id
                         select pm;
@@ -371,29 +371,29 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a tvchannel manufacturer mapping collection
+        /// Gets a tvChannel manufacturer mapping collection
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel manufacturer mapping collection
+        /// The task result contains the tvChannel manufacturer mapping collection
         /// </returns>
-        public virtual async Task<IList<TvChannelManufacturer>> GetTvChannelManufacturersByTvChannelIdAsync(int tvchannelId,
+        public virtual async Task<IList<TvChannelManufacturer>> GetTvChannelManufacturersByTvChannelIdAsync(int tvChannelId,
             bool showHidden = false)
         {
-            if (tvchannelId == 0)
+            if (tvChannelId == 0)
                 return new List<TvChannelManufacturer>();
 
             var store = await _storeContext.GetCurrentStoreAsync();
             var user = await _workContext.GetCurrentUserAsync();
 
             var key = _staticCacheManager
-                .PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelManufacturersByTvChannelCacheKey, tvchannelId, showHidden, user, store);
+                .PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelManufacturersByTvChannelCacheKey, tvChannelId, showHidden, user, store);
 
-            var query = from pm in _tvchannelManufacturerRepository.Table
+            var query = from pm in _tvChannelManufacturerRepository.Table
                         join m in _manufacturerRepository.Table on pm.ManufacturerId equals m.Id
-                        where pm.TvChannelId == tvchannelId && !m.Deleted
+                        where pm.TvChannelId == tvChannelId && !m.Deleted
                         orderby pm.DisplayOrder, pm.Id
                         select pm;
 
@@ -414,51 +414,51 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a tvchannel manufacturer mapping 
+        /// Gets a tvChannel manufacturer mapping 
         /// </summary>
-        /// <param name="tvchannelManufacturerId">TvChannel manufacturer mapping identifier</param>
+        /// <param name="tvChannelManufacturerId">TvChannel manufacturer mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel manufacturer mapping
+        /// The task result contains the tvChannel manufacturer mapping
         /// </returns>
-        public virtual async Task<TvChannelManufacturer> GetTvChannelManufacturerByIdAsync(int tvchannelManufacturerId)
+        public virtual async Task<TvChannelManufacturer> GetTvChannelManufacturerByIdAsync(int tvChannelManufacturerId)
         {
-            return await _tvchannelManufacturerRepository.GetByIdAsync(tvchannelManufacturerId, cache => default);
+            return await _tvChannelManufacturerRepository.GetByIdAsync(tvChannelManufacturerId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a tvchannel manufacturer mapping
+        /// Inserts a tvChannel manufacturer mapping
         /// </summary>
-        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
+        /// <param name="tvChannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer)
+        public virtual async Task InsertTvChannelManufacturerAsync(TvChannelManufacturer tvChannelManufacturer)
         {
-            await _tvchannelManufacturerRepository.InsertAsync(tvchannelManufacturer);
+            await _tvChannelManufacturerRepository.InsertAsync(tvChannelManufacturer);
         }
 
         /// <summary>
-        /// Updates the tvchannel manufacturer mapping
+        /// Updates the tvChannel manufacturer mapping
         /// </summary>
-        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
+        /// <param name="tvChannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer)
+        public virtual async Task UpdateTvChannelManufacturerAsync(TvChannelManufacturer tvChannelManufacturer)
         {
-            await _tvchannelManufacturerRepository.UpdateAsync(tvchannelManufacturer);
+            await _tvChannelManufacturerRepository.UpdateAsync(tvChannelManufacturer);
         }
 
         /// <summary>
-        /// Get manufacturer IDs for tvchannels
+        /// Get manufacturer IDs for tvChannels
         /// </summary>
-        /// <param name="tvchannelIds">TvChannels IDs</param>
+        /// <param name="tvChannelIds">TvChannels IDs</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the manufacturer IDs for tvchannels
+        /// The task result contains the manufacturer IDs for tvChannels
         /// </returns>
-        public virtual async Task<IDictionary<int, int[]>> GetTvChannelManufacturerIdsAsync(int[] tvchannelIds)
+        public virtual async Task<IDictionary<int, int[]>> GetTvChannelManufacturerIdsAsync(int[] tvChannelIds)
         {
-            var query = _tvchannelManufacturerRepository.Table;
+            var query = _tvChannelManufacturerRepository.Table;
 
-            return (await query.Where(p => tvchannelIds.Contains(p.TvChannelId))
+            return (await query.Where(p => tvChannelIds.Contains(p.TvChannelId))
                 .Select(p => new { p.TvChannelId, p.ManufacturerId })
                 .ToListAsync())
                 .GroupBy(a => a.TvChannelId)
@@ -500,14 +500,14 @@ namespace TvProgViewer.Services.Catalog
         /// Returns a TvChannelManufacturer that has the specified values
         /// </summary>
         /// <param name="source">Source</param>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <returns>A TvChannelManufacturer that has the specified values; otherwise null</returns>
-        public virtual TvChannelManufacturer FindTvChannelManufacturer(IList<TvChannelManufacturer> source, int tvchannelId, int manufacturerId)
+        public virtual TvChannelManufacturer FindTvChannelManufacturer(IList<TvChannelManufacturer> source, int tvChannelId, int manufacturerId)
         {
-            foreach (var tvchannelManufacturer in source)
-                if (tvchannelManufacturer.TvChannelId == tvchannelId && tvchannelManufacturer.ManufacturerId == manufacturerId)
-                    return tvchannelManufacturer;
+            foreach (var tvChannelManufacturer in source)
+                if (tvChannelManufacturer.TvChannelId == tvChannelId && tvChannelManufacturer.ManufacturerId == manufacturerId)
+                    return tvChannelManufacturer;
 
             return null;
         }

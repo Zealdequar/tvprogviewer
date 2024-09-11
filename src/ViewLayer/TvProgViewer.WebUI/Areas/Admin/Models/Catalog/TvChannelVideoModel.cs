@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel video model
+    /// Represents a tvChannel video model
     /// </summary>
     public partial record TvChannelVideoModel : BaseTvProgEntityModel
     {

@@ -58,9 +58,9 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Models
         public bool DisplayButtonsOnShoppingCart { get; set; }
         public bool DisplayButtonsOnShoppingCart_OverrideForStore { get; set; }
 
-        [TvProgResourceDisplayName("Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnProductDetails")]
-        public bool DisplayButtonsOnProductDetails { get; set; }
-        public bool DisplayButtonsOnProductDetails_OverrideForStore { get; set; }
+        [TvProgResourceDisplayName("Plugins.Payments.PayPalViewer.Fields.DisplayButtonsOnTvChannelDetails")]
+        public bool DisplayButtonsOnTvChannelDetails { get; set; }
+        public bool DisplayButtonsOnTvChannelDetails_OverrideForStore { get; set; }
 
         [TvProgResourceDisplayName("Plugins.Payments.PayPalViewer.Fields.DisplayLogoInHeaderLinks")]
         public bool DisplayLogoInHeaderLinks { get; set; }

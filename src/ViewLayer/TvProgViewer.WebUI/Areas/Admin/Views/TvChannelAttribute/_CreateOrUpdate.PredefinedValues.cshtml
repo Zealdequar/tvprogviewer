@@ -8,7 +8,7 @@
         </p>
         @await Html.PartialAsync("Table", new DataTablesModel
         {
-            Name = "tvchannelattributevalues-grid",
+            Name = "tvChannelattributevalues-grid",
             UrlRead = new DataUrl("PredefinedTvChannelAttributeValueList", "TvChannelAttribute", new RouteValueDictionary { [nameof(Model.PredefinedTvChannelAttributeValueSearchModel.TvChannelAttributeId)] = Model.PredefinedTvChannelAttributeValueSearchModel.TvChannelAttributeId }),
             UrlDelete = new DataUrl("PredefinedTvChannelAttributeValueDelete", "TvChannelAttribute", null),
             Length = Model.PredefinedTvChannelAttributeValueSearchModel.PageSize,
@@ -62,12 +62,12 @@
     
         <script>
             function renderColumnEdit(data, type, row, meta) {
-                return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannelAttribute/PredefinedTvChannelAttributeValueEditPopup/")' + data + '?btnId=btnRefresh&formId=tvchannelattribute-form\', 800, 750, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+                return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannelAttribute/PredefinedTvChannelAttributeValueEditPopup/")' + data + '?btnId=btnRefresh&formId=tvChannelattribute-form\', 800, 750, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
             }
         </script>
     </div>
     <div class="card-footer">
-        <button type="submit" id="btnAddNewValue" onclick="javascript:OpenWindow('@(Url.Action("PredefinedTvChannelAttributeValueCreatePopup", "TvChannelAttribute", new { tvchannelAttributeId = Model.Id, btnId = "btnRefresh", formId = "tvchannelattribute-form" }))', 800, 550, true); return false;" class="btn btn-primary">
+        <button type="submit" id="btnAddNewValue" onclick="javascript:OpenWindow('@(Url.Action("PredefinedTvChannelAttributeValueCreatePopup", "TvChannelAttribute", new { tvChannelAttributeId = Model.Id, btnId = "btnRefresh", formId = "tvChannelattribute-form" }))', 800, 550, true); return false;" class="btn btn-primary">
             @T("Admin.Catalog.Attributes.TvChannelAttributes.PredefinedValues.AddNew")
         </button>
         <button type="submit" id="btnRefresh" style="display: none"></button>
@@ -75,7 +75,7 @@
             $(document).ready(function () {
                 $('#btnRefresh').click(function () {
                     //refresh grid
-                    updateTable('#tvchannelattributevalues-grid');
+                    updateTable('#tvChannelattributevalues-grid');
 
                     //return false to don't reload a page
                     return false;

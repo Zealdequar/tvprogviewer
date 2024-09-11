@@ -56,21 +56,21 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannelReviewReviewTypeMapping
 
         /// <summary>
-        /// Get tvchannel review and review type mappings by tvchannel review identifier
+        /// Get tvChannel review and review type mappings by tvChannel review identifier
         /// </summary>
-        /// <param name="tvchannelReviewId">The tvchannel review identifier</param>
+        /// <param name="tvChannelReviewId">The tvChannel review identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review and review type mapping collection
+        /// The task result contains the tvChannel review and review type mapping collection
         /// </returns>
-        Task<IList<TvChannelReviewReviewTypeMapping>> GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(int tvchannelReviewId);
+        Task<IList<TvChannelReviewReviewTypeMapping>> GetTvChannelReviewReviewTypeMappingsByTvChannelReviewIdAsync(int tvChannelReviewId);
 
         /// <summary>
-        /// Inserts a tvchannel review and review type mapping
+        /// Inserts a tvChannel review and review type mapping
         /// </summary>
-        /// <param name="tvchannelReviewReviewType">TvChannel review and review type mapping</param>
+        /// <param name="tvChannelReviewReviewType">TvChannel review and review type mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task InsertTvChannelReviewReviewTypeMappingsAsync(TvChannelReviewReviewTypeMapping tvchannelReviewReviewType);
+        Task InsertTvChannelReviewReviewTypeMappingsAsync(TvChannelReviewReviewTypeMapping tvChannelReviewReviewType);
 
         #endregion
     }

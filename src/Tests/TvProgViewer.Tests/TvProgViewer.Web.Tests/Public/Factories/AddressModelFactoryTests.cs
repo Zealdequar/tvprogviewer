@@ -2,19 +2,19 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core;
-using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Common;
-using Nop.Services.Directory;
-using Nop.Web.Factories;
-using Nop.Web.Models.Common;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Domain.Common;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Services.Common;
+using TvProgViewer.Services.Directory;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.Common;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
-    public class AddressModelFactoryTests: BaseNopTest
+    public class AddressModelFactoryTests: BaseTvProgTest
     {
         private IAddressModelFactory _addressModelFactory;
         private IGenericAttributeService _genericAttributeService;
@@ -100,13 +100,13 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         }
 
         [Test]
-        public void PrepareAddressModelShouldRaiseExceptionIfPrePopulateWithCustomerFieldsFlagEnabledButCustomerNotPassed()
+        public void PrepareAddressModelShouldRaiseExceptionIfPrePopulateWithUserFieldsFlagEnabledButUserNotPassed()
         {
             var model = new AddressModel();
 
             Assert.Throws<AggregateException>(() =>
                 _addressModelFactory.PrepareAddressModelAsync(model, null, false, _addressSettings,
-                    prePopulateWithCustomerFields: true).Wait());
+                    prePopulateWithUserFields: true).Wait());
         }
 
         [Test]
@@ -130,25 +130,25 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         }
 
         [Test]
-        public async Task PrepareAddressModelShouldFillCustomersInfoIfPrePopulateWithCustomerFieldsFlagEnabledAndCustomerPassed()
+        public async Task PrepareAddressModelShouldFillUsersInfoIfPrePopulateWithUserFieldsFlagEnabledAndUserPassed()
         {
             var model = new AddressModel();
-            var customer = await GetService<IWorkContext>().GetCurrentCustomerAsync();
+            var user = await GetService<IWorkContext>().GetCurrentUserAsync();
             await _addressModelFactory.PrepareAddressModelAsync(model, null, false, _addressSettings,
-                prePopulateWithCustomerFields: true, customer: customer);
+                prePopulateWithUserFields: true, user: user);
 
-            model.Email.Should().Be(customer.Email);
-            model.FirstName.Should().Be(customer.FirstName);
-            model.LastName.Should().Be(customer.LastName);
+            model.Email.Should().Be(user.Email);
+            model.FirstName.Should().Be(user.FirstName);
+            model.LastName.Should().Be(user.LastName);
 
-            model.Company.Should().Be(customer.Company);
-            model.Address1.Should().Be(customer.StreetAddress);
-            model.Address2.Should().Be(customer.StreetAddress2);
-            model.ZipPostalCode.Should().Be(customer.ZipPostalCode);
-            model.City.Should().Be(customer.City);
-            model.County.Should().Be(customer.County);
-            model.PhoneNumber.Should().Be(customer.Phone);
-            model.FaxNumber.Should().Be(customer.Fax);
+            model.Company.Should().Be(user.Company);
+            model.Address1.Should().Be(user.StreetAddress);
+            model.Address2.Should().Be(user.StreetAddress2);
+            model.ZipPostalCode.Should().Be(user.ZipPostalCode);
+            model.City.Should().Be(user.City);
+            model.County.Should().Be(user.County);
+            model.PhoneNumber.Should().Be(user.SmartPhone);
+            model.FaxNumber.Should().Be(user.Fax);
         }
     }
 }

@@ -18,7 +18,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         private readonly ICategoryTemplateService _categoryTemplateService;
         private readonly IManufacturerTemplateService _manufacturerTemplateService;
-        private readonly ITvChannelTemplateService _tvchannelTemplateService;
+        private readonly ITvChannelTemplateService _tvChannelTemplateService;
         private readonly ITopicTemplateService _topicTemplateService;
 
         #endregion
@@ -27,12 +27,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
 
         public TemplateModelFactory(ICategoryTemplateService categoryTemplateService,
             IManufacturerTemplateService manufacturerTemplateService,
-            ITvChannelTemplateService tvchannelTemplateService,
+            ITvChannelTemplateService tvChannelTemplateService,
             ITopicTemplateService topicTemplateService)
         {
             _categoryTemplateService = categoryTemplateService;
             _manufacturerTemplateService = manufacturerTemplateService;
-            _tvchannelTemplateService = tvchannelTemplateService;
+            _tvChannelTemplateService = tvChannelTemplateService;
             _topicTemplateService = topicTemplateService;
         }
 
@@ -109,24 +109,24 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
         
         /// <summary>
-        /// Prepare paged tvchannel template list model
+        /// Prepare paged tvChannel template list model
         /// </summary>
         /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel template list model
+        /// The task result contains the tvChannel template list model
         /// </returns>
         public virtual async Task<TvChannelTemplateListModel> PrepareTvChannelTemplateListModelAsync(TvChannelTemplateSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get tvchannel templates
-            var tvchannelTemplates = (await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync()).ToPagedList(searchModel);
+            //get tvChannel templates
+            var tvChannelTemplates = (await _tvChannelTemplateService.GetAllTvChannelTemplatesAsync()).ToPagedList(searchModel);
 
             //prepare grid model
-            var model = new TvChannelTemplateListModel().PrepareToGrid(searchModel, tvchannelTemplates,
-                () => tvchannelTemplates.Select(template => template.ToModel<TvChannelTemplateModel>()));
+            var model = new TvChannelTemplateListModel().PrepareToGrid(searchModel, tvChannelTemplates,
+                () => tvChannelTemplates.Select(template => template.ToModel<TvChannelTemplateModel>()));
 
             return model;
         }
@@ -193,12 +193,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel template search model
+        /// Prepare tvChannel template search model
         /// </summary>
         /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel template search model
+        /// The task result contains the tvChannel template search model
         /// </returns>
         public virtual Task<TvChannelTemplateSearchModel> PrepareTvChannelTemplateSearchModelAsync(TvChannelTemplateSearchModel searchModel)
         {

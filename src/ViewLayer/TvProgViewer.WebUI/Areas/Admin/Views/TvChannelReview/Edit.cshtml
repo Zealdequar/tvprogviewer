@@ -28,7 +28,7 @@
             @if (!Model.IsLoggedInAsVendor)
             {
                 //this button is not visible to vendors
-                <span id="tvchannelreview-delete" class="btn bg-red">
+                <span id="tvChannelreview-delete" class="btn bg-red">
                     <i class="far fa-trash-alt"></i>
                     @T("Admin.Common.Delete")
                 </span>
@@ -41,5 +41,5 @@
 @if (!Model.IsLoggedInAsVendor)
 {
     //this button is not visible to vendors
-    <tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvchannelreview-delete" />
+    <tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvChannelreview-delete" />
 }

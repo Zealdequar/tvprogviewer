@@ -21,14 +21,14 @@ namespace TvProgViewer.Services.Vendors
         Task<Vendor> GetVendorByIdAsync(int vendorId);
 
         /// <summary>
-        /// Gets a vendors by tvchannel identifiers
+        /// Gets a vendors by tvChannel identifiers
         /// </summary>
-        /// <param name="tvchannelIds">Array of tvchannel identifiers</param>
+        /// <param name="tvChannelIds">Array of tvChannel identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the vendors
         /// </returns>
-        Task<IList<Vendor>> GetVendorsByTvChannelIdsAsync(int[] tvchannelIds);
+        Task<IList<Vendor>> GetVendorsByTvChannelIdsAsync(int[] tvChannelIds);
 
         /// <summary>
         /// Gets a vendors by users identifiers
@@ -41,14 +41,14 @@ namespace TvProgViewer.Services.Vendors
         Task<IList<Vendor>> GetVendorsByUserIdsAsync(int[] userIds);
 
         /// <summary>
-        /// Gets a vendor by tvchannel identifier
+        /// Gets a vendor by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the vendor
         /// </returns>
-        Task<Vendor> GetVendorByTvChannelIdAsync(int tvchannelId);
+        Task<Vendor> GetVendorByTvChannelIdAsync(int tvChannelId);
 
         /// <summary>
         /// Delete a vendor

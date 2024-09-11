@@ -26,7 +26,7 @@
                 <i class="far fa-save"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
-            <span id="tvchannel-availability-range-delete" class="btn btn-danger">
+            <span id="tvChannel-availability-range-delete" class="btn btn-danger">
                 <i class="far fa-trash-alt"></i>
                 @T("Admin.Common.Delete")
             </span>
@@ -35,4 +35,4 @@
     </div>
     @await Html.PartialAsync("_CreateOrUpdateTvChannelAvailabilityRange", Model)
 </form>
-<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvchannel-availability-range-delete" asp-action="DeleteTvChannelAvailabilityRange" />
+<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvChannel-availability-range-delete" asp-action="DeleteTvChannelAvailabilityRange" />

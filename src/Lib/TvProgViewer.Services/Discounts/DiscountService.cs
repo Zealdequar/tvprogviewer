@@ -26,7 +26,7 @@ namespace TvProgViewer.Services.Discounts
         private readonly IUserService _userService;
         private readonly IDiscountPluginManager _discountPluginManager;
         private readonly ILocalizationService _localizationService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRepository<Discount> _discountRepository;
         private readonly IRepository<DiscountRequirement> _discountRequirementRepository;
         private readonly IRepository<DiscountUsageHistory> _discountUsageHistoryRepository;
@@ -41,7 +41,7 @@ namespace TvProgViewer.Services.Discounts
         public DiscountService(IUserService userService,
             IDiscountPluginManager discountPluginManager,
             ILocalizationService localizationService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IRepository<Discount> discountRepository,
             IRepository<DiscountRequirement> discountRequirementRepository,
             IRepository<DiscountUsageHistory> discountUsageHistoryRepository,
@@ -52,7 +52,7 @@ namespace TvProgViewer.Services.Discounts
             _userService = userService;
             _discountPluginManager = discountPluginManager;
             _localizationService = localizationService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _discountRepository = discountRepository;
             _discountRequirementRepository = discountRequirementRepository;
             _discountUsageHistoryRepository = discountUsageHistoryRepository;
@@ -545,7 +545,7 @@ namespace TvProgViewer.Services.Discounts
 
                 var cartTvChannelIds = cart.Select(ci => ci.TvChannelId).ToArray();
                 
-                if (await _tvchannelService.HasAnyGiftCardTvChannelAsync(cartTvChannelIds))
+                if (await _tvChannelService.HasAnyGiftCardTvChannelAsync(cartTvChannelIds))
                 {
                     result.Errors = new List<string> {await _localizationService.GetResourceAsync("ShoppingCart.Discount.CannotBeUsedWithGiftCards") };
                     return result;

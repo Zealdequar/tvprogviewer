@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Nop.Core;
+using TvProgViewer.Core;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests
 {
     [TestFixture]
-    public class WebHelperTests : BaseNopTest
+    public class WebHelperTests : BaseTvProgTest
     {
         private HttpContext _httpContext;
         private IWebHelper _webHelper;
@@ -33,32 +33,32 @@ namespace Nop.Tests.Nop.Core.Tests
         [Test]
         public void CanGetStoreHostWithoutSsl()
         {
-            _webHelper.GetStoreHost(false).Should().Be($"http://{NopTestsDefaults.HostIpAddress}/");
+            _webHelper.GetStoreHost(false).Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/");
         }
 
         [Test]
         public void CanGetStoreHostWithSsl()
         {
-            _webHelper.GetStoreHost(true).Should().Be($"https://{NopTestsDefaults.HostIpAddress}/");
+            _webHelper.GetStoreHost(true).Should().Be($"https://{TvProgTestsDefaults.HostIpAddress}/");
         }
 
         [Test]
         public void CanGetStoreLocationWithoutSsl()
         {
-            _webHelper.GetStoreLocation(false).Should().Be($"http://{NopTestsDefaults.HostIpAddress}/");
+            _webHelper.GetStoreLocation(false).Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/");
         }
 
         [Test]
         public void CanGetStoreLocationWithSsl()
         {
-            _webHelper.GetStoreLocation(true).Should().Be($"https://{NopTestsDefaults.HostIpAddress}/");
+            _webHelper.GetStoreLocation(true).Should().Be($"https://{TvProgTestsDefaults.HostIpAddress}/");
         }
 
         [Test]
         public void CanGetStoreLocationInVirtualDirectory()
         {
             _httpContext.Request.PathBase = "/nopCommercepath";
-            _webHelper.GetStoreLocation(false).Should().Be($"http://{NopTestsDefaults.HostIpAddress}/nopCommercepath/");
+            _webHelper.GetStoreLocation(false).Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/nopCommercepath/");
             _httpContext.Request.PathBase = string.Empty;
         }
 
@@ -76,27 +76,27 @@ namespace Nop.Tests.Nop.Core.Tests
             //empty URL
             _webHelper.RemoveQueryString(null, null).Should().Be(string.Empty);
             //empty key
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/", null).Should().Be($"http://{NopTestsDefaults.HostIpAddress}/");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/", null).Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/");
             //non-existing param with fragment
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/#fragment", "param").Should().Be($"http://{NopTestsDefaults.HostIpAddress}/#fragment");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/#fragment", "param").Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/#fragment");
             //first param (?)
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param1")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param2=value1");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param1")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param2=value1");
             //second param (&)
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param2")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param2")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1");
             //non-existing param
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param3")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param3")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1");
             //with fragment
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1#fragment", "param1")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param2=value1#fragment");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1#fragment", "param1")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param2=value1#fragment");
             //specific value
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param1=value2&param2=value1", "param1", "value1")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value2&param2=value1");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param1=value2&param2=value1", "param1", "value1")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value2&param2=value1");
             //all values
-            _webHelper.RemoveQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param1=value2&param2=value1", "param1")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param2=value1");
+            _webHelper.RemoveQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param1=value2&param2=value1", "param1")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param2=value1");
         }
 
         [Test]
@@ -105,24 +105,24 @@ namespace Nop.Tests.Nop.Core.Tests
             //empty URL
             _webHelper.ModifyQueryString(null, null).Should().Be(string.Empty);
             //empty key
-            _webHelper.ModifyQueryString($"http://{NopTestsDefaults.HostIpAddress}/", null).Should().Be($"http://{NopTestsDefaults.HostIpAddress}/");
+            _webHelper.ModifyQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/", null).Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/");
             //empty value
-            _webHelper.ModifyQueryString($"http://{NopTestsDefaults.HostIpAddress}/", "param").Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param=");
+            _webHelper.ModifyQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/", "param").Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param=");
             //first param (?)
-            _webHelper.ModifyQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "Param1", "value2")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value2&param2=value1");
+            _webHelper.ModifyQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "Param1", "value2")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value2&param2=value1");
             //second param (&)
-            _webHelper.ModifyQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param2", "value2")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value2");
+            _webHelper.ModifyQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param2", "value2")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value2");
             //non-existing param
-            _webHelper.ModifyQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param3", "value1")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1&param3=value1");
+            _webHelper.ModifyQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param3", "value1")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1&param3=value1");
             //multiple values
-            _webHelper.ModifyQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param1", "value1", "value2", "value3")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1,value2,value3&param2=value1");
+            _webHelper.ModifyQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1", "param1", "value1", "value2", "value3")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1,value2,value3&param2=value1");
             //with fragment
-            _webHelper.ModifyQueryString($"http://{NopTestsDefaults.HostIpAddress}/?param1=value1&param2=value1#fragment", "param1", "value2")
-                .Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?param1=value2&param2=value1#fragment");
+            _webHelper.ModifyQueryString($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value1&param2=value1#fragment", "param1", "value2")
+                .Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?param1=value2&param2=value1#fragment");
         }
 
         [Test]

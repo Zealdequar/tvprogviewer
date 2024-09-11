@@ -1,35 +1,35 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Customers;
-using Nop.Web.Framework.Validators;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Web.Framework.Validators;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators
 {
     [TestFixture]
     public class PhoneNumberValidatorTests
     {
         private TestValidator _validator;
-        private CustomerSettings _customerSettings;
+        private UserSettings _userSettings;
 
         [OneTimeSetUp]
         public void Setup()
         {
-            _customerSettings = new CustomerSettings
+            _userSettings = new UserSettings
             {
                 PhoneNumberValidationRule = "^[0-9]{1,14}?$",
                 PhoneNumberValidationEnabled = true,
                 PhoneNumberValidationUseRegex = false
             };
 
-            _validator = new TestValidator { v => v.RuleFor(x => x.PhoneNumber).IsPhoneNumber(_customerSettings) };
+            _validator = new TestValidator { v => v.RuleFor(x => x.PhoneNumber).IsPhoneNumber(_userSettings) };
         }
 
         [Test]
         public async Task IsValidTests()
         {
             //optional value is not valid
-            _customerSettings.PhoneRequired = true;
+            _userSettings.SmartPhoneRequired = true;
             var result = await _validator.ValidateAsync(new Person { PhoneNumber = null });
             result.IsValid.Should().BeFalse();
             result = await _validator.ValidateAsync(new Person { PhoneNumber = string.Empty });
@@ -46,12 +46,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
             result.IsValid.Should().BeTrue();
 
             //validation with regex
-            _customerSettings.PhoneNumberValidationUseRegex = true;
+            _userSettings.PhoneNumberValidationUseRegex = true;
             result = await _validator.ValidateAsync(new Person { PhoneNumber = "test_phone_number" });
             result.IsValid.Should().BeFalse();
             result = await _validator.ValidateAsync(new Person { PhoneNumber = "123456789" });
             result.IsValid.Should().BeTrue();
-            _customerSettings.PhoneRequired = false;
+            _userSettings.SmartPhoneRequired = false;
             result = await _validator.ValidateAsync(new Person { PhoneNumber = string.Empty });
             result.IsValid.Should().BeTrue();
             result = await _validator.ValidateAsync(new Person { PhoneNumber = "+123456789" });

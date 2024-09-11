@@ -16,47 +16,47 @@ namespace TvProgViewer.WebUI.Components
     {
         private readonly CatalogSettings _catalogSettings;
         private readonly IAclService _aclService;
-        private readonly ITvChannelModelFactory _tvchannelModelFactory;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelModelFactory _tvChannelModelFactory;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRecentlyViewedTvChannelsService _recentlyViewedTvChannelsService;
         private readonly IStoreMappingService _storeMappingService;
 
         public RecentlyViewedTvChannelsBlockViewComponent(CatalogSettings catalogSettings,
             IAclService aclService,
-            ITvChannelModelFactory tvchannelModelFactory,
-            ITvChannelService tvchannelService,
+            ITvChannelModelFactory tvChannelModelFactory,
+            ITvChannelService tvChannelService,
             IRecentlyViewedTvChannelsService recentlyViewedTvChannelsService,
             IStoreMappingService storeMappingService)
         {
             _catalogSettings = catalogSettings;
             _aclService = aclService;
-            _tvchannelModelFactory = tvchannelModelFactory;
-            _tvchannelService = tvchannelService;
+            _tvChannelModelFactory = tvChannelModelFactory;
+            _tvChannelService = tvChannelService;
             _recentlyViewedTvChannelsService = recentlyViewedTvChannelsService;
             _storeMappingService = storeMappingService;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(int? tvchannelThumbPictureSize, bool? preparePriceModel)
+        public async Task<IViewComponentResult> InvokeAsync(int? tvChannelThumbPictureSize, bool? preparePriceModel)
         {
             if (!_catalogSettings.RecentlyViewedTvChannelsEnabled)
                 return Content("");
 
-            var preparePictureModel = tvchannelThumbPictureSize.HasValue;
-            var tvchannels = await (await _recentlyViewedTvChannelsService.GetRecentlyViewedTvChannelsAsync(_catalogSettings.RecentlyViewedTvChannelsNumber))
+            var preparePictureModel = tvChannelThumbPictureSize.HasValue;
+            var tvChannels = await (await _recentlyViewedTvChannelsService.GetRecentlyViewedTvChannelsAsync(_catalogSettings.RecentlyViewedTvChannelsNumber))
             //ACL and store mapping
             .WhereAwait(async p => await _aclService.AuthorizeAsync(p) && await _storeMappingService.AuthorizeAsync(p))
             //availability dates
-            .Where(p => _tvchannelService.TvChannelIsAvailable(p)).ToListAsync();
+            .Where(p => _tvChannelService.TvChannelIsAvailable(p)).ToListAsync();
 
-            if (!tvchannels.Any())
+            if (!tvChannels.Any())
                 return Content("");
 
             //prepare model
             var model = new List<TvChannelOverviewModel>();
-            model.AddRange(await _tvchannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvchannels,
+            model.AddRange(await _tvChannelModelFactory.PrepareTvChannelOverviewModelsAsync(tvChannels,
                 preparePriceModel.GetValueOrDefault(),
                 preparePictureModel,
-                tvchannelThumbPictureSize));
+                tvChannelThumbPictureSize));
 
             return View(model);
         }

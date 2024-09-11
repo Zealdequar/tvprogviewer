@@ -28,25 +28,25 @@
         if (selectedDiscountTypeId == @(((int) DiscountType.AssignedToCategories).ToString())) {
             $('[data-card-name=discount-applied-to-categories]').showElement();
             $('[data-card-name=discount-applied-to-manufacturers]').hideElement();
-            $('[data-card-name=discount-applied-to-tvchannels]').hideElement();
+            $('[data-card-name=discount-applied-to-tvChannels]').hideElement();
             $('#pnlMaximumDiscountedQuantity').showElement();
             $('#pnlAppliedToSubCategories').showElement();
     } else if (selectedDiscountTypeId == @(((int) DiscountType.AssignedToManufacturers).ToString())) {
             $('[data-card-name=discount-applied-to-categories]').hideElement();
             $('[data-card-name=discount-applied-to-manufacturers]').showElement();
-            $('[data-card-name=discount-applied-to-tvchannels]').hideElement();
+            $('[data-card-name=discount-applied-to-tvChannels]').hideElement();
             $('#pnlMaximumDiscountedQuantity').showElement();
             $('#pnlAppliedToSubCategories').hideElement();
     } else if (selectedDiscountTypeId == @(((int) DiscountType.AssignedToSkus).ToString())) {
             $('[data-card-name=discount-applied-to-categories]').hideElement();
             $('[data-card-name=discount-applied-to-manufacturers]').hideElement();
-            $('[data-card-name=discount-applied-to-tvchannels]').showElement();
+            $('[data-card-name=discount-applied-to-tvChannels]').showElement();
             $('#pnlMaximumDiscountedQuantity').showElement();
             $('#pnlAppliedToSubCategories').hideElement();
     } else {
             $('[data-card-name=discount-applied-to-categories]').hideElement();
             $('[data-card-name=discount-applied-to-manufacturers]').hideElement();
-            $('[data-card-name=discount-applied-to-tvchannels]').hideElement();
+            $('[data-card-name=discount-applied-to-tvChannels]').hideElement();
             $('#pnlMaximumDiscountedQuantity').hideElement();
             $('#pnlAppliedToSubCategories').hideElement();
     }

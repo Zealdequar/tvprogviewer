@@ -25,17 +25,17 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannels
 
         /// <summary>
-        /// Gets a template of tvchannel name on copying
+        /// Gets a template of tvChannel name on copying
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel name
+        /// {0} : tvChannel name
         /// </remarks>
         public static string TvChannelCopyNameTemplate => "Copy of {0}";
 
         /// <summary>
-        /// Gets default prefix for tvchannel
+        /// Gets default prefix for tvChannel
         /// </summary>
-        public static string TvChannelAttributePrefix => "tvchannel_attribute_";
+        public static string TvChannelAttributePrefix => "tvChannel_attribute_";
 
         #endregion
 
@@ -130,17 +130,17 @@ namespace TvProgViewer.Services.Catalog
         /// Gets a key for caching
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// {1} : show hidden records?
         /// {2} : current user ID
         /// {3} : store ID
         /// </remarks>
-        public static CacheKey TvChannelCategoriesByTvChannelCacheKey => new("TvProg.tvchannelcategory.bytvchannel.{0}-{1}-{2}-{3}", TvChannelCategoriesByTvChannelPrefix);
+        public static CacheKey TvChannelCategoriesByTvChannelCacheKey => new("TvProg.tvChannelcategory.bytvChannel.{0}-{1}-{2}-{3}", TvChannelCategoriesByTvChannelPrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
-        public static string TvChannelCategoriesByTvChannelPrefix => "TvProg.tvchannelcategory.bytvchannel.{0}";
+        public static string TvChannelCategoriesByTvChannelPrefix => "TvProg.tvChannelcategory.bytvChannel.{0}";
 
         /// <summary>
         /// Key for caching
@@ -150,12 +150,12 @@ namespace TvProgViewer.Services.Catalog
         /// {1} : current store ID
         /// {2} : categories ID hash
         /// </remarks>
-        public static CacheKey CategoryTvChannelsNumberCacheKey => new("TvProg.tvchannelcategory.tvchannels.number.{0}-{1}-{2}", CategoryTvChannelsNumberPrefix);
+        public static CacheKey CategoryTvChannelsNumberCacheKey => new("TvProg.tvChannelcategory.tvChannels.number.{0}-{1}-{2}", CategoryTvChannelsNumberPrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
-        public static string CategoryTvChannelsNumberPrefix => "TvProg.tvchannelcategory.tvchannels.number.";
+        public static string CategoryTvChannelsNumberPrefix => "TvProg.tvChannelcategory.tvChannels.number.";
 
         #endregion
 
@@ -165,20 +165,20 @@ namespace TvProgViewer.Services.Catalog
         /// Gets a key for caching
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// {1} : show hidden records?
         /// {2} : current user ID
         /// {3} : store ID
         /// </remarks>
-        public static CacheKey TvChannelManufacturersByTvChannelCacheKey => new("TvProg.tvchannelmanufacturer.bytvchannel.{0}-{1}-{2}-{3}", TvChannelManufacturersByTvChannelPrefix);
+        public static CacheKey TvChannelManufacturersByTvChannelCacheKey => new("TvProg.tvChannelmanufacturer.bytvChannel.{0}-{1}-{2}-{3}", TvChannelManufacturersByTvChannelPrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// </remarks>
-        public static string TvChannelManufacturersByTvChannelPrefix => "TvProg.tvchannelmanufacturer.bytvchannel.{0}";
+        public static string TvChannelManufacturersByTvChannelPrefix => "TvProg.tvChannelmanufacturer.bytvChannel.{0}";
 
         /// <summary>
         /// Gets a key for caching
@@ -198,98 +198,98 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannels
 
         /// <summary>
-        /// Key for "related" tvchannel displayed on the tvchannel details page
+        /// Key for "related" tvChannel displayed on the tvChannel details page
         /// </summary>
         /// <remarks>
-        /// {0} : current tvchannel id
+        /// {0} : current tvChannel id
         /// {1} : show hidden records?
         /// </remarks>
-        public static CacheKey RelatedTvChannelsCacheKey => new("TvProg.relatedtvchannel.bytvchannel.{0}-{1}", RelatedTvChannelsPrefix);
+        public static CacheKey RelatedTvChannelsCacheKey => new("TvProg.relatedtvChannel.bytvChannel.{0}-{1}", RelatedTvChannelsPrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// </remarks>
-        public static string RelatedTvChannelsPrefix => "TvProg.relatedtvchannel.bytvchannel.{0}";
+        public static string RelatedTvChannelsPrefix => "TvProg.relatedtvChannel.bytvChannel.{0}";
 
         /// <summary>
-        /// Key for "related" tvchannel identifiers displayed on the tvchannel details page
+        /// Key for "related" tvChannel identifiers displayed on the tvChannel details page
         /// </summary>
         /// <remarks>
-        /// {0} : current tvchannel id
+        /// {0} : current tvChannel id
         /// </remarks>
-        public static CacheKey TierPricesByTvChannelCacheKey => new("TvProg.tierprice.bytvchannel.{0}");
+        public static CacheKey TierPricesByTvChannelCacheKey => new("TvProg.tierprice.bytvChannel.{0}");
 
         /// <summary>
         /// Gets a key for caching
         /// </summary>
-        public static CacheKey TvChannelsHomepageCacheKey => new("TvProg.tvchannel.homepage.");
+        public static CacheKey TvChannelsHomepageCacheKey => new("TvProg.tvChannel.homepage.");
 
         /// <summary>
-        /// Key for caching identifiers of category featured tvchannels
+        /// Key for caching identifiers of category featured tvChannels
         /// </summary>
         /// <remarks>
         /// {0} : category id
         /// {1} : user role Ids
         /// {2} : current store ID
         /// </remarks>
-        public static CacheKey CategoryFeaturedTvChannelsIdsKey => new("TvProg.tvchannel.featured.bycategory.{0}-{1}-{2}", CategoryFeaturedTvChannelsIdsPrefix, FeaturedTvChannelIdsPrefix);
-        public static string CategoryFeaturedTvChannelsIdsPrefix => "TvProg.tvchannel.featured.bycategory.{0}";
+        public static CacheKey CategoryFeaturedTvChannelsIdsKey => new("TvProg.tvChannel.featured.bycategory.{0}-{1}-{2}", CategoryFeaturedTvChannelsIdsPrefix, FeaturedTvChannelIdsPrefix);
+        public static string CategoryFeaturedTvChannelsIdsPrefix => "TvProg.tvChannel.featured.bycategory.{0}";
 
         /// <summary>
-        /// Key for caching of a value indicating whether a manufacturer has featured tvchannels
+        /// Key for caching of a value indicating whether a manufacturer has featured tvChannels
         /// </summary>
         /// <remarks>
         /// {0} : manufacturer id
         /// {1} : user role Ids
         /// {2} : current store ID
         /// </remarks>
-        public static CacheKey ManufacturerFeaturedTvChannelIdsKey => new("TvProg.tvchannel.featured.bymanufacturer.{0}-{1}-{2}", ManufacturerFeaturedTvChannelIdsPrefix, FeaturedTvChannelIdsPrefix);
-        public static string ManufacturerFeaturedTvChannelIdsPrefix => "TvProg.tvchannel.featured.bymanufacturer.{0}";
+        public static CacheKey ManufacturerFeaturedTvChannelIdsKey => new("TvProg.tvChannel.featured.bymanufacturer.{0}-{1}-{2}", ManufacturerFeaturedTvChannelIdsPrefix, FeaturedTvChannelIdsPrefix);
+        public static string ManufacturerFeaturedTvChannelIdsPrefix => "TvProg.tvChannel.featured.bymanufacturer.{0}";
 
-        public static string FeaturedTvChannelIdsPrefix => "TvProg.tvchannel.featured.";
+        public static string FeaturedTvChannelIdsPrefix => "TvProg.tvChannel.featured.";
 
         /// <summary>
-        /// Gets a key for tvchannel prices
+        /// Gets a key for tvChannel prices
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel id
-        /// {1} : overridden tvchannel price
+        /// {0} : tvChannel id
+        /// {1} : overridden tvChannel price
         /// {2} : additional charge
         /// {3} : include discounts (true, false)
         /// {4} : quantity
         /// {5} : roles of the current user
         /// {6} : current store ID
         /// </remarks>
-        public static CacheKey TvChannelPriceCacheKey => new("TvProg.totals.tvchannelprice.{0}-{1}-{2}-{3}-{4}-{5}-{6}", TvChannelPricePrefix);
+        public static CacheKey TvChannelPriceCacheKey => new("TvProg.totals.tvChannelprice.{0}-{1}-{2}-{3}-{4}-{5}-{6}", TvChannelPricePrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel id
+        /// {0} : tvChannel id
         /// </remarks>
-        public static string TvChannelPricePrefix => "TvProg.totals.tvchannelprice.{0}";
+        public static string TvChannelPricePrefix => "TvProg.totals.tvChannelprice.{0}";
 
         /// <summary>
-        /// Gets a key for tvchannel multiple prices
+        /// Gets a key for tvChannel multiple prices
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel id
+        /// {0} : tvChannel id
         /// {1} : user role ids
         /// {2} : store id
         /// </remarks>
-        public static CacheKey TvChannelMultiplePriceCacheKey => new("TvProg.totals.tvchannelprice.multiple.{0}-{1}-{2}", TvChannelMultiplePricePrefix);
+        public static CacheKey TvChannelMultiplePriceCacheKey => new("TvProg.totals.tvChannelprice.multiple.{0}-{1}-{2}", TvChannelMultiplePricePrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel id
+        /// {0} : tvChannel id
         /// </remarks>
-        public static string TvChannelMultiplePricePrefix => "TvProg.totals.tvchannelprice.multiple.{0}";
+        public static string TvChannelMultiplePricePrefix => "TvProg.totals.tvChannelprice.multiple.{0}";
 
         #endregion
 
@@ -299,25 +299,25 @@ namespace TvProgViewer.Services.Catalog
         /// Gets a key for caching
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// </remarks>
-        public static CacheKey TvChannelAttributeMappingsByTvChannelCacheKey => new("TvProg.tvchannelattributemapping.bytvchannel.{0}");
+        public static CacheKey TvChannelAttributeMappingsByTvChannelCacheKey => new("TvProg.tvChannelattributemapping.bytvChannel.{0}");
 
         /// <summary>
         /// Gets a key for caching
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel attribute mapping ID
+        /// {0} : tvChannel attribute mapping ID
         /// </remarks>
-        public static CacheKey TvChannelAttributeValuesByAttributeCacheKey => new("TvProg.tvchannelattributevalue.byattribute.{0}");
+        public static CacheKey TvChannelAttributeValuesByAttributeCacheKey => new("TvProg.tvChannelattributevalue.byattribute.{0}");
 
         /// <summary>
         /// Gets a key for caching
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// </remarks>
-        public static CacheKey TvChannelAttributeCombinationsByTvChannelCacheKey => new("TvProg.tvchannelattributecombination.bytvchannel.{0}");
+        public static CacheKey TvChannelAttributeCombinationsByTvChannelCacheKey => new("TvProg.tvChannelattributecombination.bytvChannel.{0}");
 
         /// <summary>
         /// Gets a key for caching
@@ -325,7 +325,7 @@ namespace TvProgViewer.Services.Catalog
         /// <remarks>
         /// {0} : TvChannel attribute ID
         /// </remarks>
-        public static CacheKey PredefinedTvChannelAttributeValuesByAttributeCacheKey => new("TvProg.predefinedtvchannelattributevalue.byattribute.{0}");
+        public static CacheKey PredefinedTvChannelAttributeValuesByAttributeCacheKey => new("TvProg.predefinedtvChannelattributevalue.byattribute.{0}");
 
         #endregion
 
@@ -339,27 +339,27 @@ namespace TvProgViewer.Services.Catalog
         /// {1} : hash of list of user roles IDs
         /// {2} : show hidden records?
         /// </remarks>
-        public static CacheKey TvChannelTagCountCacheKey => new("TvProg.tvchanneltag.count.{0}-{1}-{2}", TvProgEntityCacheDefaults<TvChannelTag>.Prefix);
+        public static CacheKey TvChannelTagCountCacheKey => new("TvProg.tvChanneltag.count.{0}-{1}-{2}", TvProgEntityCacheDefaults<TvChannelTag>.Prefix);
 
         /// <summary>
         /// Gets a key for caching
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// </remarks>
-        public static CacheKey TvChannelTagsByTvChannelCacheKey => new("TvProg.tvchanneltag.bytvchannel.{0}", TvProgEntityCacheDefaults<TvChannelTag>.Prefix);
+        public static CacheKey TvChannelTagsByTvChannelCacheKey => new("TvProg.tvChanneltag.bytvChannel.{0}", TvProgEntityCacheDefaults<TvChannelTag>.Prefix);
 
         #endregion
 
         #region Review type
 
         /// <summary>
-        /// Key for caching tvchannel review and review type mapping
+        /// Key for caching tvChannel review and review type mapping
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel review ID
+        /// {0} : tvChannel review ID
         /// </remarks>
-        public static CacheKey TvChannelReviewTypeMappingByReviewTypeCacheKey => new("TvProg.tvchannelreviewreviewtypemapping.byreviewtype.{0}");
+        public static CacheKey TvChannelReviewTypeMappingByReviewTypeCacheKey => new("TvProg.tvChannelreviewreviewtypemapping.byreviewtype.{0}");
 
         #endregion
 
@@ -369,21 +369,21 @@ namespace TvProgViewer.Services.Catalog
         /// Gets a key for caching
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// {1} : specification attribute option ID
         /// {2} : allow filtering
-        /// {3} : show on tvchannel page
+        /// {3} : show on tvChannel page
         /// {4} : specification attribute group ID
         /// </remarks>
-        public static CacheKey TvChannelSpecificationAttributeByTvChannelCacheKey => new("TvProg.tvchannelspecificationattribute.bytvchannel.{0}-{1}-{2}-{3}-{4}", TvChannelSpecificationAttributeByTvChannelPrefix, TvChannelSpecificationAttributeAllByTvChannelPrefix);
+        public static CacheKey TvChannelSpecificationAttributeByTvChannelCacheKey => new("TvProg.tvChannelspecificationattribute.bytvChannel.{0}-{1}-{2}-{3}-{4}", TvChannelSpecificationAttributeByTvChannelPrefix, TvChannelSpecificationAttributeAllByTvChannelPrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// </remarks>
-        public static string TvChannelSpecificationAttributeByTvChannelPrefix => "TvProg.tvchannelspecificationattribute.bytvchannel.{0}";
+        public static string TvChannelSpecificationAttributeByTvChannelPrefix => "TvProg.tvChannelspecificationattribute.bytvChannel.{0}";
 
         /// <summary>
         /// Gets a key pattern to clear cache
@@ -391,10 +391,10 @@ namespace TvProgViewer.Services.Catalog
         /// <remarks>
         /// {1} (not 0, see the <ref>TvChannelSpecificationAttributeAllByTvChannelIdCacheKey</ref>) :specification attribute option ID
         /// </remarks>
-        public static string TvChannelSpecificationAttributeAllByTvChannelPrefix => "TvProg.tvchannelspecificationattribute.bytvchannel.";
+        public static string TvChannelSpecificationAttributeAllByTvChannelPrefix => "TvProg.tvChannelspecificationattribute.bytvChannel.";
 
         /// <summary>
-        /// Key for specification attributes caching (tvchannel details page)
+        /// Key for specification attributes caching (tvChannel details page)
         /// </summary>
         public static CacheKey SpecificationAttributesWithOptionsCacheKey => new("TvProg.specificationattribute.withoptions.");
 
@@ -428,17 +428,17 @@ namespace TvProgViewer.Services.Catalog
         public static string FilterableSpecificationAttributeOptionsPrefix => "TvProg.specificationattributeoption";
 
         /// <summary>
-        /// Gets a key for specification attribute groups caching by tvchannel id
+        /// Gets a key for specification attribute groups caching by tvChannel id
         /// </summary>
         /// <remarks>
-        /// {0} : tvchannel ID
+        /// {0} : tvChannel ID
         /// </remarks>
-        public static CacheKey SpecificationAttributeGroupByTvChannelCacheKey => new("TvProg.specificationattributegroup.bytvchannel.{0}", SpecificationAttributeGroupByTvChannelPrefix);
+        public static CacheKey SpecificationAttributeGroupByTvChannelCacheKey => new("TvProg.specificationattributegroup.bytvChannel.{0}", SpecificationAttributeGroupByTvChannelPrefix);
 
         /// <summary>
         /// Gets a key pattern to clear cache
         /// </summary>
-        public static string SpecificationAttributeGroupByTvChannelPrefix => "TvProg.specificationattributegroup.bytvchannel.";
+        public static string SpecificationAttributeGroupByTvChannelPrefix => "TvProg.specificationattributegroup.bytvChannel.";
 
         #endregion
 

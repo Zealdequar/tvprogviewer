@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Discounts
 {
     /// <summary>
-    /// Represents a discount tvchannel search model
+    /// Represents a discount tvChannel search model
     /// </summary>
     public partial record DiscountTvChannelSearchModel : BaseSearchModel
     {

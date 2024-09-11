@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Shipping
 {
     /// <summary>
-    /// Represents a tvchannel availability range list model
+    /// Represents a tvChannel availability range list model
     /// </summary>
     public partial record TvChannelAvailabilityRangeListModel : BasePagedListModel<TvChannelAvailabilityRangeModel>
     {

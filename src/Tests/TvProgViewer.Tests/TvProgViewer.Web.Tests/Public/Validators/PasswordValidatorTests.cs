@@ -1,16 +1,16 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Directory;
-using Nop.Services.Localization;
-using Nop.Web.Framework.Validators;
-using Nop.Web.Models.Customer;
-using Nop.Web.Validators.Customer;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Services.Directory;
+using TvProgViewer.Services.Localization;
+using TvProgViewer.Web.Framework.Validators;
+using TvProgViewer.WebUI.Models.User;
+using TvProgViewer.WebUI.Validators.User;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators
 {
     [TestFixture]
-    public class PasswordValidatorTests : BaseNopTest
+    public class PasswordValidatorTests : BaseTvProgTest
     {
         private Person _person;
         private ChangePasswordValidator _changePasswordValidator;
@@ -18,12 +18,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
         private RegisterValidator _registerValidator;
         private ILocalizationService _localizationService;
         private IStateProvinceService _stateProvinceService;
-        private CustomerSettings _customerSettings;
+        private UserSettings _userSettings;
 
         [OneTimeSetUp]
         public void Setup()
         {
-            _customerSettings = new CustomerSettings
+            _userSettings = new UserSettings
             {
                 PasswordMinLength = 8,
                 PasswordRequireUppercase = true,
@@ -34,9 +34,9 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
 
             _localizationService = GetService<ILocalizationService>();
             _stateProvinceService = GetService<IStateProvinceService>();
-            _changePasswordValidator = new ChangePasswordValidator(_localizationService, _customerSettings);
-            _registerValidator = new RegisterValidator(_localizationService, _stateProvinceService, _customerSettings);
-            _passwordRecoveryConfirmValidator = new PasswordRecoveryConfirmValidator(_localizationService, _customerSettings);
+            _changePasswordValidator = new ChangePasswordValidator(_localizationService, _userSettings);
+            _registerValidator = new RegisterValidator(_localizationService, _stateProvinceService, _userSettings);
+            _passwordRecoveryConfirmValidator = new PasswordRecoveryConfirmValidator(_localizationService, _userSettings);
 
             _person = new Person();
         }
@@ -46,7 +46,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
         {
             var validator = new TestValidator();
 
-            var cs = new CustomerSettings
+            var cs = new UserSettings
             {
                 PasswordMinLength = 3,
                 PasswordRequireLowercase = true
@@ -68,7 +68,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
         {
             var validator = new TestValidator();
 
-            var cs = new CustomerSettings
+            var cs = new UserSettings
             {
                 PasswordMinLength = 3,
                 PasswordRequireUppercase = true                
@@ -90,7 +90,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
         {
             var validator = new TestValidator();
 
-            var cs = new CustomerSettings
+            var cs = new UserSettings
             {
                 PasswordMinLength = 3,
                 PasswordRequireDigit = true
@@ -112,7 +112,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
         {
             var validator = new TestValidator();
 
-            var cs = new CustomerSettings
+            var cs = new UserSettings
             {
                 PasswordMinLength = 3,
                 PasswordRequireNonAlphanumeric = true
@@ -135,7 +135,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators
             var validator = new TestValidator();
 
             //Example:  (?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$
-            validator.RuleFor(x => x.Password).IsPassword(_localizationService, _customerSettings);
+            validator.RuleFor(x => x.Password).IsPassword(_localizationService, _userSettings);
 
             //ShouldHaveValidationError
             _person.Password = string.Empty;

@@ -6436,7 +6436,7 @@ namespace UPSRate
                 result.Security.Mode = System.ServiceModel.BasicHttpSecurityMode.Transport;
                 return result;
             }
-            if ((endpointConfiguration == EndpointConfiguration.ProductionRatePort))
+            if ((endpointConfiguration == EndpointConfiguration.TvChannelionRatePort))
             {
                 System.ServiceModel.BasicHttpBinding result = new System.ServiceModel.BasicHttpBinding();
                 result.MaxBufferSize = int.MaxValue;
@@ -6455,7 +6455,7 @@ namespace UPSRate
             {
                 return new System.ServiceModel.EndpointAddress("https://wwwcie.ups.com/webservices/Rate");
             }
-            if ((endpointConfiguration == EndpointConfiguration.ProductionRatePort))
+            if ((endpointConfiguration == EndpointConfiguration.TvChannelionRatePort))
             {
                 return new System.ServiceModel.EndpointAddress("https://onlinetools.ups.com/webservices/Rate");
             }
@@ -6467,7 +6467,7 @@ namespace UPSRate
             
             RatePort,
             
-            ProductionRatePort,
+            TvChannelionRatePort,
         }
     }
 }

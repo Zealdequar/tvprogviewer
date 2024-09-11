@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Services.Themes;
+using TvProgViewer.Services.Themes;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Themes
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Themes
 {
     [TestFixture]
-    public class ThemeProviderTests : BaseNopTest
+    public class ThemeProviderTests : BaseTvProgTest
     {
         private IThemeProvider _themeProvider;
 

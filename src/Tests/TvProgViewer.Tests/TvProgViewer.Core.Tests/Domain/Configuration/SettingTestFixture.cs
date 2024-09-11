@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using Nop.Core.Domain.Configuration;
+using TvProgViewer.Core.Domain.Configuration;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests.Domain.Configuration
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests.Domain.Configuration
 {
     [TestFixture]
     public class SettingTestFixture

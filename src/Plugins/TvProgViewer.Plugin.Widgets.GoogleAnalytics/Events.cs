@@ -33,7 +33,7 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger _logger;
         private readonly IOrderService _orderService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly ISettingService _settingService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
@@ -47,7 +47,7 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics
             IHttpClientFactory httpClientFactory,
             ILogger logger,
             IOrderService orderService,
-            IProductService productService,
+            ITvChannelService tvChannelService,
             ISettingService settingService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
@@ -61,7 +61,7 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _orderService = orderService;
-            _productService = productService;
+            _tvChannelService = tvChannelService;
             _settingService = settingService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
@@ -127,9 +127,9 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics
 
                 foreach (var item in await _orderService.GetOrderItemsAsync(order.Id))
                 {
-                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
                     //get category
-                    var category = (await _categoryService.GetCategoryByIdAsync((await _categoryService.GetProductCategoriesByProductIdAsync(product.Id)).FirstOrDefault()?.CategoryId ?? 0))?.Name;
+                    var category = (await _categoryService.GetCategoryByIdAsync((await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel.Id)).FirstOrDefault()?.CategoryId ?? 0))?.Name;
                     if (string.IsNullOrEmpty(category))
                         category = "No category";
 
@@ -138,18 +138,18 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics
                     if (!add)
                         qty = -qty;
 
-                    var sku = await _productService.FormatSkuAsync(product, item.AttributesXml);
+                    var sku = await _tvChannelService.FormatSkuAsync(tvChannel, item.AttributesXml);
                     if (string.IsNullOrEmpty(sku))
-                        sku = product.Id.ToString();
+                        sku = tvChannel.Id.ToString();
 
-                    var productItem = new TransactionItem(FixIllegalJavaScriptChars(orderId),
+                    var tvChannelItem = new TransactionItem(FixIllegalJavaScriptChars(orderId),
                       FixIllegalJavaScriptChars(sku),
-                      FixIllegalJavaScriptChars(product.Name),
+                      FixIllegalJavaScriptChars(tvChannel.Name),
                       unitPrice,
                       qty,
                       FixIllegalJavaScriptChars(category));
 
-                    trans.Items.Add(productItem);
+                    trans.Items.Add(tvChannelItem);
                 }
 
                 await request.SendRequest(trans, _httpClientFactory.CreateClient(TvProgHttpDefaults.DefaultHttpClient));

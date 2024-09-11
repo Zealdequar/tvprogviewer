@@ -1,15 +1,15 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Messages;
-using Nop.Data;
-using Nop.Services.Messages;
+using TvProgViewer.Core.Domain.Messages;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Messages;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Messages
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Messages
 {
     [TestFixture]
-    public class CampaignServiceTests : BaseNopTest
+    public class CampaignServiceTests : BaseTvProgTest
     {
         private ICampaignService _campaignService;
         private IRepository<Campaign> _campaignRepository;
@@ -87,7 +87,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
             var emailAccount = new EmailAccount
             {
                 Id = 1,
-                Email = NopTestsDefaults.AdminEmail,
+                Email = TvProgTestsDefaults.AdminEmail,
                 DisplayName = "Test name",
                 Host = "smtp.test.com",
                 Port = 25,
@@ -102,7 +102,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
             await _campaignService.SendCampaignAsync(campaign, emailAccount, new[] {subscription});
             _cueuedEmailRepository.Table.Count().Should().Be(1);
 
-            await _campaignService.SendCampaignAsync(campaign, emailAccount, NopTestsDefaults.AdminEmail);
+            await _campaignService.SendCampaignAsync(campaign, emailAccount, TvProgTestsDefaults.AdminEmail);
             TestSmtpBuilder.TestSmtpClient.MessageIsSent.Should().BeTrue();
         }
     }

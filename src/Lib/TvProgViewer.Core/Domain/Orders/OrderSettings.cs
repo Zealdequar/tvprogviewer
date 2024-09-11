@@ -159,17 +159,17 @@ namespace TvProgViewer.Core.Domain.Orders
         public string CustomOrderNumberMask { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the orders need to be exported with their tvchannels
+        /// Gets or sets a value indicating whether the orders need to be exported with their tvChannels
         /// </summary>
         public bool ExportWithTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether administrators (in impersonation mode) are allowed to buy tvchannels marked as "Call for price"
+        /// Gets or sets a value indicating whether administrators (in impersonation mode) are allowed to buy tvChannels marked as "Call for price"
         /// </summary>
         public bool AllowAdminsToBuyCallForPriceTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show tvchannel thumbnail in order details page"
+        /// Gets or sets a value indicating whether to show tvChannel thumbnail in order details page"
         /// </summary>
         public bool ShowTvChannelThumbnailInOrderDetailsPage { get; set; }
 

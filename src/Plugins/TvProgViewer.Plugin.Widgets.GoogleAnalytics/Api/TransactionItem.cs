@@ -10,28 +10,28 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics.Api
         private readonly string _utmt = "item";
 
         private string _utmtid;     //OrderId
-        private string _utmipc;     //Product code
-        private string _utmipn;     //Product name
-        private string _utmipr;     //Product price (unit price)
+        private string _utmipc;     //TvChannel code
+        private string _utmipn;     //TvChannel name
+        private string _utmipr;     //TvChannel price (unit price)
         private string _utmiqt;     //Quantity
-        private string _utmiva;     //Product category
+        private string _utmiva;     //TvChannel category
 
         /// <summary>
         /// Create a new TransactionItem
         /// </summary>
         /// <param name="orderId">Order number</param>
-        /// <param name="productName">Product name</param>
-        /// <param name="productPrice">Unit price</param>
+        /// <param name="tvChannelName">TvChannel name</param>
+        /// <param name="tvChannelPrice">Unit price</param>
         /// <param name="quantity">Quantity</param>
-        /// <param name="category">The product category</param>
-        public TransactionItem(string orderId, string productCode, string productName, decimal productPrice, int quantity, string category)
+        /// <param name="category">The tvChannel category</param>
+        public TransactionItem(string orderId, string tvChannelCode, string tvChannelName, decimal tvChannelPrice, int quantity, string category)
         {
             var usCulture = new CultureInfo("en-US");
 
             _utmtid = Uri.EscapeDataString(orderId);
-            _utmipc = Uri.EscapeDataString(productCode);
-            _utmipn = Uri.EscapeDataString(productName);
-            _utmipr = productPrice.ToString("0.00", usCulture);
+            _utmipc = Uri.EscapeDataString(tvChannelCode);
+            _utmipn = Uri.EscapeDataString(tvChannelName);
+            _utmipr = tvChannelPrice.ToString("0.00", usCulture);
             _utmiqt = quantity.ToString();
             _utmiva = Uri.EscapeDataString(category);
         }

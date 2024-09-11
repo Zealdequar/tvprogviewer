@@ -241,7 +241,7 @@ var runtimeBind = function( args, cldr, fn, runtimeArgs ) {
 		locale = cldr.locale;
 
 	// If name of the function is not available, this is most likely due to uglification,
-	// which most likely means we are in tvchannelion, and runtimeBind here is not necessary.
+	// which most likely means we are in tvChannelion, and runtimeBind here is not necessary.
 	if ( !fnName ) {
 		return fn;
 	}

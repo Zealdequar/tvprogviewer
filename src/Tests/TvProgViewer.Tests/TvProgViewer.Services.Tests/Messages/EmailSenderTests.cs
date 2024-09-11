@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Messages;
-using Nop.Services.Messages;
+using TvProgViewer.Core.Domain.Messages;
+using TvProgViewer.Services.Messages;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Messages
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Messages
 {
     [TestFixture]
-    public class EmailSenderTests : BaseNopTest
+    public class EmailSenderTests : BaseTvProgTest
     {
         private IEmailSender _emailSender;
 
@@ -25,7 +25,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
             var emailAccount = new EmailAccount
             {
                 Id = 1,
-                Email = NopTestsDefaults.AdminEmail,
+                Email = TvProgTestsDefaults.AdminEmail,
                 DisplayName = "Test name",
                 Host = "smtp.test.com",
                 Port = 25,
@@ -37,14 +37,14 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
 
             var subject = "Test subject";
             var body = "Test body";
-            var fromAddress = NopTestsDefaults.AdminEmail;
+            var fromAddress = TvProgTestsDefaults.AdminEmail;
             var fromName = "From name";
             var toAddress = "test@test.com";
             var toName = "To name";
-            var replyToAddress = NopTestsDefaults.AdminEmail;
+            var replyToAddress = TvProgTestsDefaults.AdminEmail;
             var replyToName = "Reply to name";
-            var bcc = new[] {NopTestsDefaults.AdminEmail};
-            var cc = new[] { NopTestsDefaults.AdminEmail };
+            var bcc = new[] {TvProgTestsDefaults.AdminEmail};
+            var cc = new[] { TvProgTestsDefaults.AdminEmail };
 
             await _emailSender.SendEmailAsync(emailAccount, subject, body,
                 fromAddress, fromName, toAddress, toName,

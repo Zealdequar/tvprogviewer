@@ -6,7 +6,7 @@ namespace TvProgViewer.Core.Domain.Media
     public enum PictureType
     {
         /// <summary>
-        /// Entities (tvchannels, categories, manufacturers)
+        /// Entities (tvChannels, categories, manufacturers)
         /// </summary>
         Entity = 1,
 

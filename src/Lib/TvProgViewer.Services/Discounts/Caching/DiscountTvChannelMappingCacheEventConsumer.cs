@@ -6,7 +6,7 @@ using TvProgViewer.Services.Caching;
 namespace TvProgViewer.Services.Discounts.Caching
 {
     /// <summary>
-    /// Represents a discount-tvchannel mapping cache event consumer
+    /// Represents a discount-tvChannel mapping cache event consumer
     /// </summary>
     public partial class DiscountTvChannelMappingCacheEventConsumer : CacheEventConsumer<DiscountTvChannelMapping>
     {

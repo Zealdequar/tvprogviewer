@@ -554,8 +554,8 @@
                     </div>
                 </div>
             }
-            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageBeforetvchannels, additionalData = Model })
-            <div class="section tvchannels">
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageBeforetvChannels, additionalData = Model })
+            <div class="section tvChannels">
                 <div class="title">
                     <strong>@T("Order.TvChannel(s)")</strong>
                 </div>
@@ -630,7 +630,7 @@
                                             <a href="@(Url.RouteUrl<TvChannel>(new {SeName = item.TvChannelSeName}))"><img alt="@item.Picture.AlternateText" src="@item.Picture.ImageUrl" title="@item.Picture.Title" /></a>
                                         </td>
                                     }
-                                    <td class="tvchannel">
+                                    <td class="tvChannel">
                                         @if (!Model.PrintMode)
                                         {
                                             <em><a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))">@item.TvChannelName</a></em>
@@ -674,15 +674,15 @@
                                     }
                                     <td class="unit-price">
                                         <label class="td-title">@T("Order.TvChannel(s).Price"):</label>
-                                        <span class="tvchannel-unit-price">@item.UnitPrice</span>
+                                        <span class="tvChannel-unit-price">@item.UnitPrice</span>
                                     </td>
                                     <td class="quantity">
                                         <label class="td-title">@T("Order.TvChannel(s).Quantity"):</label>
-                                        <span class="tvchannel-quantity">@item.Quantity</span>
+                                        <span class="tvChannel-quantity">@item.Quantity</span>
                                     </td>
                                     <td class="total">
                                         <label class="td-title">@T("Order.TvChannel(s).Total"):</label>
-                                        <span class="tvchannel-subtotal">@item.SubTotal</span>
+                                        <span class="tvChannel-subtotal">@item.SubTotal</span>
                                     </td>
                                 </tr>
                             }
@@ -699,7 +699,7 @@
                     </div>
                 }
             </div>
-            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageAftertvchannels, additionalData = Model })
+            @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.OrderDetailsPageAftertvChannels, additionalData = Model })
             <div class="section options">
                 @if (!string.IsNullOrEmpty(Model.CheckoutAttributeInfo))
                 {

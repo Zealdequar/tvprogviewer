@@ -5,7 +5,7 @@ using TvProgViewer.Web.Framework.UI.Paging;
 namespace TvProgViewer.WebUI.Models.Catalog
 {
     /// <summary>
-    /// Represents a model to get the catalog tvchannels
+    /// Represents a model to get the catalog tvChannels
     /// </summary>
     public partial record CatalogTvChannelsCommand : BasePageableModel
     {
@@ -34,7 +34,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
         public int? OrderBy { get; set; }
 
         /// <summary>
-        /// Gets or sets a tvchannel sorting
+        /// Gets or sets a tvChannel sorting
         /// </summary>
         public string ViewMode { get; set; }
 

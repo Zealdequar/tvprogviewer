@@ -44,6 +44,7 @@ using TvProgViewer.Services.Shipping.Date;
 using TvProgViewer.Services.Stores;
 using TvProgViewer.Services.Tax;
 using TvProgViewer.Services.Vendors;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TvProgViewer.Services.ExportImport
 {
@@ -81,10 +82,10 @@ namespace TvProgViewer.Services.ExportImport
         private readonly IOrderService _orderService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly ITvChannelService _tvchannelService;
-        private readonly ITvChannelTagService _tvchannelTagService;
-        private readonly ITvChannelTemplateService _tvchannelTemplateService;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
+        private readonly ITvChannelTagService _tvChannelTagService;
+        private readonly ITvChannelTemplateService _tvChannelTemplateService;
         private readonly IShipmentService _shipmentService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly IStateProvinceService _stateProvinceService;
@@ -95,7 +96,7 @@ namespace TvProgViewer.Services.ExportImport
         private readonly IVendorService _vendorService;
         private readonly IWorkContext _workContext;
         private readonly OrderSettings _orderSettings;
-        private readonly TvChannelEditorSettings _tvchannelEditorSettings;
+        private readonly TvChannelEditorSettings _tvChannelEditorSettings;
 
         #endregion
 
@@ -128,10 +129,10 @@ namespace TvProgViewer.Services.ExportImport
             IOrderService orderService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            ITvChannelAttributeService tvchannelAttributeService,
-            ITvChannelService tvchannelService,
-            ITvChannelTagService tvchannelTagService,
-            ITvChannelTemplateService tvchannelTemplateService,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
+            ITvChannelTagService tvChannelTagService,
+            ITvChannelTemplateService tvChannelTemplateService,
             IShipmentService shipmentService,
             ISpecificationAttributeService specificationAttributeService,
             IStateProvinceService stateProvinceService,
@@ -142,7 +143,7 @@ namespace TvProgViewer.Services.ExportImport
             IVendorService vendorService,
             IWorkContext workContext,
             OrderSettings orderSettings,
-            TvChannelEditorSettings tvchannelEditorSettings)
+            TvChannelEditorSettings tvChannelEditorSettings)
         {
             _addressSettings = addressSettings;
             _catalogSettings = catalogSettings;
@@ -171,10 +172,10 @@ namespace TvProgViewer.Services.ExportImport
             _orderService = orderService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelService = tvchannelService;
-            _tvchannelTagService = tvchannelTagService;
-            _tvchannelTemplateService = tvchannelTemplateService;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
+            _tvChannelTagService = tvChannelTagService;
+            _tvChannelTemplateService = tvChannelTemplateService;
             _shipmentService = shipmentService;
             _specificationAttributeService = specificationAttributeService;
             _stateProvinceService = stateProvinceService;
@@ -185,7 +186,7 @@ namespace TvProgViewer.Services.ExportImport
             _vendorService = vendorService;
             _workContext = workContext;
             _orderSettings = orderSettings;
-            _tvchannelEditorSettings = tvchannelEditorSettings;
+            _tvChannelEditorSettings = tvChannelEditorSettings;
         }
 
         #endregion
@@ -234,19 +235,19 @@ namespace TvProgViewer.Services.ExportImport
                 await xmlWriter.WriteStringAsync("UpdatedOnUtc", category.UpdatedOnUtc, await IgnoreExportCategoryPropertyAsync());
 
                 await xmlWriter.WriteStartElementAsync("TvChannels");
-                var tvchannelCategories = await _categoryService.GetTvChannelCategoriesByCategoryIdAsync(category.Id, showHidden: true);
-                foreach (var tvchannelCategory in tvchannelCategories)
+                var tvChannelCategories = await _categoryService.GetTvChannelCategoriesByCategoryIdAsync(category.Id, showHidden: true);
+                foreach (var tvChannelCategory in tvChannelCategories)
                 {
-                    var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelCategory.TvChannelId);
-                    if (tvchannel == null || tvchannel.Deleted)
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelCategory.TvChannelId);
+                    if (tvChannel == null || tvChannel.Deleted)
                         continue;
 
                     await xmlWriter.WriteStartElementAsync("TvChannelCategory");
-                    await xmlWriter.WriteStringAsync("TvChannelCategoryId", tvchannelCategory.Id);
-                    await xmlWriter.WriteStringAsync("TvChannelId", tvchannelCategory.TvChannelId);
-                    await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.Name, xmlWriter, languages, overriddenNodeName: "TvChannelName");
-                    await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvchannelCategory.IsFeaturedTvChannel);
-                    await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelCategory.DisplayOrder);
+                    await xmlWriter.WriteStringAsync("TvChannelCategoryId", tvChannelCategory.Id);
+                    await xmlWriter.WriteStringAsync("TvChannelId", tvChannelCategory.TvChannelId);
+                    await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.Name, xmlWriter, languages, overriddenNodeName: "TvChannelName");
+                    await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvChannelCategory.IsFeaturedTvChannel);
+                    await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelCategory.DisplayOrder);
                     await xmlWriter.WriteEndElementAsync();
                 }
 
@@ -277,17 +278,17 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <summary>
-        /// Returns the list of categories for a tvchannel separated by a ";"
+        /// Returns the list of categories for a tvChannel separated by a ";"
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the list of categories
         /// </returns>
-        protected virtual async Task<object> GetCategoriesAsync(TvChannel tvchannel)
+        protected virtual async Task<object> GetCategoriesAsync(TvChannel tvChannel)
         {
             string categoryNames = null;
-            foreach (var pc in await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvchannel.Id, true))
+            foreach (var pc in await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel.Id, true))
             {
                 if (_catalogSettings.ExportImportRelatedEntitiesByName)
                 {
@@ -308,17 +309,17 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <summary>
-        /// Returns the list of manufacturer for a tvchannel separated by a ";"
+        /// Returns the list of manufacturer for a tvChannel separated by a ";"
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the list of manufacturer
         /// </returns>
-        protected virtual async Task<object> GetManufacturersAsync(TvChannel tvchannel)
+        protected virtual async Task<object> GetManufacturersAsync(TvChannel tvChannel)
         {
             string manufacturerNames = null;
-            foreach (var pm in await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvchannel.Id, true))
+            foreach (var pm in await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvChannel.Id, true))
             {
                 if (_catalogSettings.ExportImportRelatedEntitiesByName)
                 {
@@ -337,17 +338,17 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <summary>
-        /// Returns the list of limited to stores for a tvchannel separated by a ";"
+        /// Returns the list of limited to stores for a tvChannel separated by a ";"
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the list of store
         /// </returns>
-        protected virtual async Task<object> GetLimitedToStoresAsync(TvChannel tvchannel)
+        protected virtual async Task<object> GetLimitedToStoresAsync(TvChannel tvChannel)
         {
             string limitedToStores = null;
-            foreach (var storeMapping in await _storeMappingService.GetStoreMappingsAsync(tvchannel))
+            foreach (var storeMapping in await _storeMappingService.GetStoreMappingsAsync(tvChannel))
             {
                 var store = await _storeService.GetStoreByIdAsync(storeMapping.StoreId);
 
@@ -360,48 +361,48 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <summary>
-        /// Returns the list of tvchannel tag for a tvchannel separated by a ";"
+        /// Returns the list of tvChannel tag for a tvChannel separated by a ";"
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list of tvchannel tag
+        /// The task result contains the list of tvChannel tag
         /// </returns>
-        protected virtual async Task<object> GetTvChannelTagsAsync(TvChannel tvchannel)
+        protected virtual async Task<object> GetTvChannelTagsAsync(TvChannel tvChannel)
         {
-            string tvchannelTagNames = null;
+            string tvChannelTagNames = null;
 
-            var tvchannelTags = await _tvchannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvchannel.Id);
+            var tvChannelTags = await _tvChannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvChannel.Id);
 
-            if (!tvchannelTags?.Any() ?? true)
+            if (!tvChannelTags?.Any() ?? true)
                 return null;
 
-            foreach (var tvchannelTag in tvchannelTags)
+            foreach (var tvChannelTag in tvChannelTags)
             {
-                tvchannelTagNames += _catalogSettings.ExportImportRelatedEntitiesByName
-                    ? tvchannelTag.Name
-                    : tvchannelTag.Id.ToString();
+                tvChannelTagNames += _catalogSettings.ExportImportRelatedEntitiesByName
+                    ? tvChannelTag.Name
+                    : tvChannelTag.Id.ToString();
 
-                tvchannelTagNames += ";";
+                tvChannelTagNames += ";";
             }
 
-            return tvchannelTagNames;
+            return tvChannelTagNames;
         }
 
         /// <summary>
-        /// Returns the image at specified index associated with the tvchannel
+        /// Returns the image at specified index associated with the tvChannel
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="pictureIndex">Picture index to get</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the image thumb local path
         /// </returns>
-        protected virtual async Task<string> GetPictureAsync(TvChannel tvchannel, short pictureIndex)
+        protected virtual async Task<string> GetPictureAsync(TvChannel tvChannel, short pictureIndex)
         {
             // we need only the picture at a specific index, no need to get more pictures than that
             var recordsToReturn = pictureIndex + 1;
-            var pictures = await _pictureService.GetPicturesByTvChannelIdAsync(tvchannel.Id, recordsToReturn);
+            var pictures = await _pictureService.GetPicturesByTvChannelIdAsync(tvChannel.Id, recordsToReturn);
 
             return pictures.Count > pictureIndex ? await _pictureService.GetThumbLocalPathAsync(pictures[pictureIndex]) : null;
         }
@@ -409,16 +410,16 @@ namespace TvProgViewer.Services.ExportImport
         /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<bool> IgnoreExportTvChannelPropertyAsync(Func<TvChannelEditorSettings, bool> func)
         {
-            var tvchannelAdvancedMode = true;
+            var tvChannelAdvancedMode = true;
             try
             {
-                tvchannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvchannel-advanced-mode");
+                tvChannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvChannel-advanced-mode");
             }
             catch (ArgumentNullException)
             {
             }
 
-            return !tvchannelAdvancedMode && !func(_tvchannelEditorSettings);
+            return !tvChannelAdvancedMode && !func(_tvChannelEditorSettings);
         }
 
         /// <returns>Задача представляет асинхронную операцию</returns>
@@ -507,11 +508,11 @@ namespace TvProgViewer.Services.ExportImport
             var localizedProperties = new[]
             {
                 new PropertyByName<ExportTvChannelAttribute, Language>("DefaultValue", async (p, l) =>
-                    await GetLocalizedAsync(await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(p.AttributeMappingId), x => x.DefaultValue, l)),
+                    await GetLocalizedAsync(await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(p.AttributeMappingId), x => x.DefaultValue, l)),
                 new PropertyByName<ExportTvChannelAttribute, Language>("AttributeTextPrompt", async (p, l) =>
-                    await GetLocalizedAsync(await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(p.AttributeMappingId), x => x.TextPrompt, l)),
+                    await GetLocalizedAsync(await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(p.AttributeMappingId), x => x.TextPrompt, l)),
                 new PropertyByName<ExportTvChannelAttribute, Language>("ValueName", async (p, l) =>
-                    await GetLocalizedAsync(await _tvchannelAttributeService.GetTvChannelAttributeValueByIdAsync(p.Id), x => x.Name, l)),
+                    await GetLocalizedAsync(await _tvChannelAttributeService.GetTvChannelAttributeValueByIdAsync(p.Id), x => x.Name, l)),
             };
 
             return new PropertyManager<ExportTvChannelAttribute, Language>(attributeProperties, _catalogSettings, localizedProperties, languages);
@@ -549,7 +550,7 @@ namespace TvProgViewer.Services.ExportImport
         /// <returns>Задача представляет асинхронную операцию</returns>
         private async Task<byte[]> ExportTvChannelsToXlsxWithAttributesAsync(PropertyByName<TvChannel, Language>[] properties, PropertyByName<TvChannel, Language>[] localizedProperties, IEnumerable<TvChannel> itemsToExport, IList<Language> languages)
         {
-            var tvchannelAttributeManager = await GetTvChannelAttributeManagerAsync(languages);
+            var tvChannelAttributeManager = await GetTvChannelAttributeManagerAsync(languages);
             var specificationAttributeManager = await GetSpecificationAttributeManagerAsync(languages);
 
             await using var stream = new MemoryStream();
@@ -598,7 +599,7 @@ namespace TvProgViewer.Services.ExportImport
                     row++;
 
                     if (_catalogSettings.ExportImportTvChannelAttributes)
-                        row = await ExportTvChannelAttributesAsync(item, tvchannelAttributeManager, worksheet, localizedWorksheets, row, fbaWorksheet);
+                        row = await ExportTvChannelAttributesAsync(item, tvChannelAttributeManager, worksheet, localizedWorksheets, row, fbaWorksheet);
 
                     if (_catalogSettings.ExportImportTvChannelSpecificationAttributes)
                         row = await ExportSpecificationAttributesAsync(item, specificationAttributeManager, worksheet, localizedWorksheets, row, fsaWorksheet);
@@ -614,19 +615,19 @@ namespace TvProgViewer.Services.ExportImport
         private async Task<int> ExportTvChannelAttributesAsync(TvChannel item, PropertyManager<ExportTvChannelAttribute, Language> attributeManager,
             IXLWorksheet worksheet, IList<(Language Language, IXLWorksheet Worksheet)> localizedWorksheets, int row, IXLWorksheet faWorksheet)
         {
-            var attributes = await (await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(item.Id))
+            var attributes = await (await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(item.Id))
                 .SelectManyAwait(async pam =>
                 {
-                    var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(pam.TvChannelAttributeId);
+                    var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(pam.TvChannelAttributeId);
 
-                    var values = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(pam.Id);
+                    var values = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(pam.Id);
 
                     if (values?.Any() ?? false)
                         return values.Select(pav =>
                             new ExportTvChannelAttribute
                             {
-                                AttributeId = tvchannelAttribute.Id,
-                                AttributeName = tvchannelAttribute.Name,
+                                AttributeId = tvChannelAttribute.Id,
+                                AttributeName = tvChannelAttribute.Name,
                                 AttributeTextPrompt = pam.TextPrompt,
                                 AttributeIsRequired = pam.IsRequired,
                                 AttributeControlTypeId = pam.AttributeControlTypeId,
@@ -651,8 +652,8 @@ namespace TvProgViewer.Services.ExportImport
 
                     var attribute = new ExportTvChannelAttribute
                     {
-                        AttributeId = tvchannelAttribute.Id,
-                        AttributeName = tvchannelAttribute.Name,
+                        AttributeId = tvChannelAttribute.Id,
+                        AttributeName = tvChannelAttribute.Name,
                         AttributeTextPrompt = pam.TextPrompt,
                         AttributeIsRequired = pam.IsRequired,
                         AttributeControlTypeId = pam.AttributeControlTypeId,
@@ -756,8 +757,8 @@ namespace TvProgViewer.Services.ExportImport
             var orderItemProperties = new[]
             {
                 new PropertyByName<OrderItem, Language>("OrderItemGuid", (oi, l) => oi.OrderItemGuid),
-                new PropertyByName<OrderItem, Language>("Name", async (oi, l) => (await _tvchannelService.GetTvChannelByIdAsync(oi.TvChannelId)).Name),
-                new PropertyByName<OrderItem, Language>("Sku", async (oi, l) => await _tvchannelService.FormatSkuAsync(await _tvchannelService.GetTvChannelByIdAsync(oi.TvChannelId), oi.AttributesXml)),
+                new PropertyByName<OrderItem, Language>("Name", async (oi, l) => (await _tvChannelService.GetTvChannelByIdAsync(oi.TvChannelId)).Name),
+                new PropertyByName<OrderItem, Language>("Sku", async (oi, l) => await _tvChannelService.FormatSkuAsync(await _tvChannelService.GetTvChannelByIdAsync(oi.TvChannelId), oi.AttributesXml)),
                 new PropertyByName<OrderItem, Language>("PriceExclTax", (oi, l) => oi.UnitPriceExclTax),
                 new PropertyByName<OrderItem, Language>("PriceInclTax", (oi, l) => oi.UnitPriceInclTax),
                 new PropertyByName<OrderItem, Language>("Quantity", (oi, l) => oi.Quantity),
@@ -792,7 +793,7 @@ namespace TvProgViewer.Services.ExportImport
                     manager.CurrentObject = order;
                     await manager.WriteDefaultToXlsxAsync(worksheet, row++);
 
-                    //a vendor should have access only to his tvchannels
+                    //a vendor should have access only to his tvChannels
                     var vendor = await _workContext.GetCurrentVendorAsync();
                     var orderItems = await _orderService.GetOrderItemsAsync(order.Id, vendorId: vendor?.Id ?? 0);
 
@@ -957,21 +958,21 @@ namespace TvProgViewer.Services.ExportImport
                 await xmlWriter.WriteStringAsync("UpdatedOnUtc", manufacturer.UpdatedOnUtc, await IgnoreExportManufacturerPropertyAsync());
 
                 await xmlWriter.WriteStartElementAsync("TvChannels");
-                var tvchannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByManufacturerIdAsync(manufacturer.Id, showHidden: true);
-                if (tvchannelManufacturers != null)
+                var tvChannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByManufacturerIdAsync(manufacturer.Id, showHidden: true);
+                if (tvChannelManufacturers != null)
                 {
-                    foreach (var tvchannelManufacturer in tvchannelManufacturers)
+                    foreach (var tvChannelManufacturer in tvChannelManufacturers)
                     {
-                        var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelManufacturer.TvChannelId);
-                        if (tvchannel == null || tvchannel.Deleted)
+                        var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelManufacturer.TvChannelId);
+                        if (tvChannel == null || tvChannel.Deleted)
                             continue;
 
                         await xmlWriter.WriteStartElementAsync("TvChannelManufacturer");
-                        await xmlWriter.WriteStringAsync("TvChannelManufacturerId", tvchannelManufacturer.Id);
-                        await xmlWriter.WriteStringAsync("TvChannelId", tvchannelManufacturer.TvChannelId);
-                        await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.Name, xmlWriter, languages, overriddenNodeName: "TvChannelName");
-                        await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvchannelManufacturer.IsFeaturedTvChannel);
-                        await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelManufacturer.DisplayOrder);
+                        await xmlWriter.WriteStringAsync("TvChannelManufacturerId", tvChannelManufacturer.Id);
+                        await xmlWriter.WriteStringAsync("TvChannelId", tvChannelManufacturer.TvChannelId);
+                        await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.Name, xmlWriter, languages, overriddenNodeName: "TvChannelName");
+                        await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvChannelManufacturer.IsFeaturedTvChannel);
+                        await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelManufacturer.DisplayOrder);
                         await xmlWriter.WriteEndElementAsync();
                     }
                 }
@@ -1137,14 +1138,14 @@ namespace TvProgViewer.Services.ExportImport
         }
 
         /// <summary>
-        /// Export tvchannel list to XML
+        /// Export tvChannel list to XML
         /// </summary>
-        /// <param name="tvchannels">TvChannels</param>
+        /// <param name="tvChannels">TvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result in XML format
         /// </returns>
-        public virtual async Task<string> ExportTvChannelsToXmlAsync(IList<TvChannel> tvchannels)
+        public virtual async Task<string> ExportTvChannelsToXmlAsync(IList<TvChannel> tvChannels)
         {
             var settings = new XmlWriterSettings
             {
@@ -1162,113 +1163,113 @@ namespace TvProgViewer.Services.ExportImport
 
             var languages = await _languageService.GetAllLanguagesAsync(showHidden: true);
 
-            foreach (var tvchannel in tvchannels)
+            foreach (var tvChannel in tvChannels)
             {
                 await xmlWriter.WriteStartElementAsync("TvChannel");
 
-                await xmlWriter.WriteStringAsync("TvChannelId", tvchannel.Id);
-                await xmlWriter.WriteStringAsync("TvChannelTypeId", tvchannel.TvChannelTypeId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelType));
-                await xmlWriter.WriteStringAsync("ParentGroupedTvChannelId", tvchannel.ParentGroupedTvChannelId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelType));
-                await xmlWriter.WriteStringAsync("VisibleIndividually", tvchannel.VisibleIndividually, await IgnoreExportTvChannelPropertyAsync(p => p.VisibleIndividually));
-                await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.Name, xmlWriter, languages);
-                await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.ShortDescription, xmlWriter, languages);
-                await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.FullDescription, xmlWriter, languages);
-                await xmlWriter.WriteStringAsync("AdminComment", tvchannel.AdminComment, await IgnoreExportTvChannelPropertyAsync(p => p.AdminComment));
+                await xmlWriter.WriteStringAsync("TvChannelId", tvChannel.Id);
+                await xmlWriter.WriteStringAsync("TvChannelTypeId", tvChannel.TvChannelTypeId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelType));
+                await xmlWriter.WriteStringAsync("ParentGroupedTvChannelId", tvChannel.ParentGroupedTvChannelId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelType));
+                await xmlWriter.WriteStringAsync("VisibleIndividually", tvChannel.VisibleIndividually, await IgnoreExportTvChannelPropertyAsync(p => p.VisibleIndividually));
+                await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.Name, xmlWriter, languages);
+                await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.ShortDescription, xmlWriter, languages);
+                await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.FullDescription, xmlWriter, languages);
+                await xmlWriter.WriteStringAsync("AdminComment", tvChannel.AdminComment, await IgnoreExportTvChannelPropertyAsync(p => p.AdminComment));
                 //vendor can't change this field
-                await xmlWriter.WriteStringAsync("VendorId", tvchannel.VendorId, await IgnoreExportTvChannelPropertyAsync(p => p.Vendor) || currentVendor != null);
-                await xmlWriter.WriteStringAsync("TvChannelTemplateId", tvchannel.TvChannelTemplateId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelTemplate));
+                await xmlWriter.WriteStringAsync("VendorId", tvChannel.VendorId, await IgnoreExportTvChannelPropertyAsync(p => p.Vendor) || currentVendor != null);
+                await xmlWriter.WriteStringAsync("TvChannelTemplateId", tvChannel.TvChannelTemplateId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelTemplate));
                 //vendor can't change this field
-                await xmlWriter.WriteStringAsync("ShowOnHomepage", tvchannel.ShowOnHomepage, await IgnoreExportTvChannelPropertyAsync(p => p.ShowOnHomepage) || currentVendor != null);
+                await xmlWriter.WriteStringAsync("ShowOnHomepage", tvChannel.ShowOnHomepage, await IgnoreExportTvChannelPropertyAsync(p => p.ShowOnHomepage) || currentVendor != null);
                 //vendor can't change this field
-                await xmlWriter.WriteStringAsync("DisplayOrder", tvchannel.DisplayOrder, await IgnoreExportTvChannelPropertyAsync(p => p.ShowOnHomepage) || currentVendor != null);
-                await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.MetaKeywords, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
-                await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.MetaDescription, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
-                await WriteLocalizedPropertyXmlAsync(tvchannel, p => p.MetaTitle, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
-                await WriteLocalizedSeNameXmlAsync(tvchannel, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
-                await xmlWriter.WriteStringAsync("AllowUserReviews", tvchannel.AllowUserReviews, await IgnoreExportTvChannelPropertyAsync(p => p.AllowUserReviews));
-                await xmlWriter.WriteStringAsync("SKU", tvchannel.Sku);
-                await xmlWriter.WriteStringAsync("ManufacturerPartNumber", tvchannel.ManufacturerPartNumber, await IgnoreExportTvChannelPropertyAsync(p => p.ManufacturerPartNumber));
-                await xmlWriter.WriteStringAsync("Gtin", tvchannel.Gtin, await IgnoreExportTvChannelPropertyAsync(p => p.GTIN));
-                await xmlWriter.WriteStringAsync("IsGiftCard", tvchannel.IsGiftCard, await IgnoreExportTvChannelPropertyAsync(p => p.IsGiftCard));
-                await xmlWriter.WriteStringAsync("GiftCardType", tvchannel.GiftCardType, await IgnoreExportTvChannelPropertyAsync(p => p.IsGiftCard));
-                await xmlWriter.WriteStringAsync("OverriddenGiftCardAmount", tvchannel.OverriddenGiftCardAmount, await IgnoreExportTvChannelPropertyAsync(p => p.IsGiftCard));
-                await xmlWriter.WriteStringAsync("RequireOtherTvChannels", tvchannel.RequireOtherTvChannels, await IgnoreExportTvChannelPropertyAsync(p => p.RequireOtherTvChannelsAddedToCart));
-                await xmlWriter.WriteStringAsync("RequiredTvChannelIds", tvchannel.RequiredTvChannelIds, await IgnoreExportTvChannelPropertyAsync(p => p.RequireOtherTvChannelsAddedToCart));
-                await xmlWriter.WriteStringAsync("AutomaticallyAddRequiredTvChannels", tvchannel.AutomaticallyAddRequiredTvChannels, await IgnoreExportTvChannelPropertyAsync(p => p.RequireOtherTvChannelsAddedToCart));
-                await xmlWriter.WriteStringAsync("IsDownload", tvchannel.IsDownload, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("DownloadId", tvchannel.DownloadId, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("UnlimitedDownloads", tvchannel.UnlimitedDownloads, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("MaxNumberOfDownloads", tvchannel.MaxNumberOfDownloads, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("DownloadExpirationDays", tvchannel.DownloadExpirationDays, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("DownloadActivationType", tvchannel.DownloadActivationType, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("HasSampleDownload", tvchannel.HasSampleDownload, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("SampleDownloadId", tvchannel.SampleDownloadId, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("HasUserAgreement", tvchannel.HasUserAgreement, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("UserAgreementText", tvchannel.UserAgreementText, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
-                await xmlWriter.WriteStringAsync("IsRecurring", tvchannel.IsRecurring, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
-                await xmlWriter.WriteStringAsync("RecurringCycleLength", tvchannel.RecurringCycleLength, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
-                await xmlWriter.WriteStringAsync("RecurringCyclePeriodId", tvchannel.RecurringCyclePeriodId, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
-                await xmlWriter.WriteStringAsync("RecurringTotalCycles", tvchannel.RecurringTotalCycles, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
-                await xmlWriter.WriteStringAsync("IsRental", tvchannel.IsRental, await IgnoreExportTvChannelPropertyAsync(p => p.IsRental));
-                await xmlWriter.WriteStringAsync("RentalPriceLength", tvchannel.RentalPriceLength, await IgnoreExportTvChannelPropertyAsync(p => p.IsRental));
-                await xmlWriter.WriteStringAsync("RentalPricePeriodId", tvchannel.RentalPricePeriodId, await IgnoreExportTvChannelPropertyAsync(p => p.IsRental));
-                await xmlWriter.WriteStringAsync("IsShipEnabled", tvchannel.IsShipEnabled);
-                await xmlWriter.WriteStringAsync("IsFreeShipping", tvchannel.IsFreeShipping, await IgnoreExportTvChannelPropertyAsync(p => p.FreeShipping));
-                await xmlWriter.WriteStringAsync("ShipSeparately", tvchannel.ShipSeparately, await IgnoreExportTvChannelPropertyAsync(p => p.ShipSeparately));
-                await xmlWriter.WriteStringAsync("AdditionalShippingCharge", tvchannel.AdditionalShippingCharge, await IgnoreExportTvChannelPropertyAsync(p => p.AdditionalShippingCharge));
-                await xmlWriter.WriteStringAsync("DeliveryDateId", tvchannel.DeliveryDateId, await IgnoreExportTvChannelPropertyAsync(p => p.DeliveryDate));
-                await xmlWriter.WriteStringAsync("IsTaxExempt", tvchannel.IsTaxExempt);
-                await xmlWriter.WriteStringAsync("TaxCategoryId", tvchannel.TaxCategoryId);
-                await xmlWriter.WriteStringAsync("IsTelecommunicationsOrBroadcastingOrElectronicServices", tvchannel.IsTelecommunicationsOrBroadcastingOrElectronicServices, await IgnoreExportTvChannelPropertyAsync(p => p.TelecommunicationsBroadcastingElectronicServices));
-                await xmlWriter.WriteStringAsync("ManageInventoryMethodId", tvchannel.ManageInventoryMethodId);
-                await xmlWriter.WriteStringAsync("TvChannelAvailabilityRangeId", tvchannel.TvChannelAvailabilityRangeId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelAvailabilityRange));
-                await xmlWriter.WriteStringAsync("UseMultipleWarehouses", tvchannel.UseMultipleWarehouses, await IgnoreExportTvChannelPropertyAsync(p => p.UseMultipleWarehouses));
-                await xmlWriter.WriteStringAsync("WarehouseId", tvchannel.WarehouseId, await IgnoreExportTvChannelPropertyAsync(p => p.Warehouse));
-                await xmlWriter.WriteStringAsync("StockQuantity", tvchannel.StockQuantity);
-                await xmlWriter.WriteStringAsync("DisplayStockAvailability", tvchannel.DisplayStockAvailability, await IgnoreExportTvChannelPropertyAsync(p => p.DisplayStockAvailability));
-                await xmlWriter.WriteStringAsync("DisplayStockQuantity", tvchannel.DisplayStockQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.DisplayStockAvailability));
-                await xmlWriter.WriteStringAsync("MinStockQuantity", tvchannel.MinStockQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.MinimumStockQuantity));
-                await xmlWriter.WriteStringAsync("LowStockActivityId", tvchannel.LowStockActivityId, await IgnoreExportTvChannelPropertyAsync(p => p.LowStockActivity));
-                await xmlWriter.WriteStringAsync("NotifyAdminForQuantityBelow", tvchannel.NotifyAdminForQuantityBelow, await IgnoreExportTvChannelPropertyAsync(p => p.NotifyAdminForQuantityBelow));
-                await xmlWriter.WriteStringAsync("BackorderModeId", tvchannel.BackorderModeId, await IgnoreExportTvChannelPropertyAsync(p => p.Backorders));
-                await xmlWriter.WriteStringAsync("AllowBackInStockSubscriptions", tvchannel.AllowBackInStockSubscriptions, await IgnoreExportTvChannelPropertyAsync(p => p.AllowBackInStockSubscriptions));
-                await xmlWriter.WriteStringAsync("OrderMinimumQuantity", tvchannel.OrderMinimumQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.MinimumCartQuantity));
-                await xmlWriter.WriteStringAsync("OrderMaximumQuantity", tvchannel.OrderMaximumQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.MaximumCartQuantity));
-                await xmlWriter.WriteStringAsync("AllowedQuantities", tvchannel.AllowedQuantities, await IgnoreExportTvChannelPropertyAsync(p => p.AllowedQuantities));
-                await xmlWriter.WriteStringAsync("AllowAddingOnlyExistingAttributeCombinations", tvchannel.AllowAddingOnlyExistingAttributeCombinations, await IgnoreExportTvChannelPropertyAsync(p => p.AllowAddingOnlyExistingAttributeCombinations));
-                await xmlWriter.WriteStringAsync("NotReturnable", tvchannel.NotReturnable, await IgnoreExportTvChannelPropertyAsync(p => p.NotReturnable));
-                await xmlWriter.WriteStringAsync("DisableBuyButton", tvchannel.DisableBuyButton, await IgnoreExportTvChannelPropertyAsync(p => p.DisableBuyButton));
-                await xmlWriter.WriteStringAsync("DisableWishlistButton", tvchannel.DisableWishlistButton, await IgnoreExportTvChannelPropertyAsync(p => p.DisableWishlistButton));
-                await xmlWriter.WriteStringAsync("AvailableForPreOrder", tvchannel.AvailableForPreOrder, await IgnoreExportTvChannelPropertyAsync(p => p.AvailableForPreOrder));
-                await xmlWriter.WriteStringAsync("PreOrderAvailabilityStartDateTimeUtc", tvchannel.PreOrderAvailabilityStartDateTimeUtc, await IgnoreExportTvChannelPropertyAsync(p => p.AvailableForPreOrder));
-                await xmlWriter.WriteStringAsync("CallForPrice", tvchannel.CallForPrice, await IgnoreExportTvChannelPropertyAsync(p => p.CallForPrice));
-                await xmlWriter.WriteStringAsync("Price", tvchannel.Price);
-                await xmlWriter.WriteStringAsync("OldPrice", tvchannel.OldPrice, await IgnoreExportTvChannelPropertyAsync(p => p.OldPrice));
-                await xmlWriter.WriteStringAsync("TvChannelCost", tvchannel.TvChannelCost, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelCost));
-                await xmlWriter.WriteStringAsync("UserEntersPrice", tvchannel.UserEntersPrice, await IgnoreExportTvChannelPropertyAsync(p => p.UserEntersPrice));
-                await xmlWriter.WriteStringAsync("MinimumUserEnteredPrice", tvchannel.MinimumUserEnteredPrice, await IgnoreExportTvChannelPropertyAsync(p => p.UserEntersPrice));
-                await xmlWriter.WriteStringAsync("MaximumUserEnteredPrice", tvchannel.MaximumUserEnteredPrice, await IgnoreExportTvChannelPropertyAsync(p => p.UserEntersPrice));
-                await xmlWriter.WriteStringAsync("BasepriceEnabled", tvchannel.BasepriceEnabled, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
-                await xmlWriter.WriteStringAsync("BasepriceAmount", tvchannel.BasepriceAmount, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
-                await xmlWriter.WriteStringAsync("BasepriceUnitId", tvchannel.BasepriceUnitId, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
-                await xmlWriter.WriteStringAsync("BasepriceBaseAmount", tvchannel.BasepriceBaseAmount, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
-                await xmlWriter.WriteStringAsync("BasepriceBaseUnitId", tvchannel.BasepriceBaseUnitId, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
-                await xmlWriter.WriteStringAsync("MarkAsNew", tvchannel.MarkAsNew, await IgnoreExportTvChannelPropertyAsync(p => p.MarkAsNew));
-                await xmlWriter.WriteStringAsync("MarkAsNewStartDateTimeUtc", tvchannel.MarkAsNewStartDateTimeUtc, await IgnoreExportTvChannelPropertyAsync(p => p.MarkAsNew));
-                await xmlWriter.WriteStringAsync("MarkAsNewEndDateTimeUtc", tvchannel.MarkAsNewEndDateTimeUtc, await IgnoreExportTvChannelPropertyAsync(p => p.MarkAsNew));
-                await xmlWriter.WriteStringAsync("Weight", tvchannel.Weight, await IgnoreExportTvChannelPropertyAsync(p => p.Weight));
-                await xmlWriter.WriteStringAsync("Length", tvchannel.Length, await IgnoreExportTvChannelPropertyAsync(p => p.Dimensions));
-                await xmlWriter.WriteStringAsync("Width", tvchannel.Width, await IgnoreExportTvChannelPropertyAsync(p => p.Dimensions));
-                await xmlWriter.WriteStringAsync("Height", tvchannel.Height, await IgnoreExportTvChannelPropertyAsync(p => p.Dimensions));
-                await xmlWriter.WriteStringAsync("Published", tvchannel.Published, await IgnoreExportTvChannelPropertyAsync(p => p.Published));
-                await xmlWriter.WriteStringAsync("CreatedOnUtc", tvchannel.CreatedOnUtc);
-                await xmlWriter.WriteStringAsync("UpdatedOnUtc", tvchannel.UpdatedOnUtc);
+                await xmlWriter.WriteStringAsync("DisplayOrder", tvChannel.DisplayOrder, await IgnoreExportTvChannelPropertyAsync(p => p.ShowOnHomepage) || currentVendor != null);
+                await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.MetaKeywords, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
+                await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.MetaDescription, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
+                await WriteLocalizedPropertyXmlAsync(tvChannel, p => p.MetaTitle, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
+                await WriteLocalizedSeNameXmlAsync(tvChannel, xmlWriter, languages, await IgnoreExportTvChannelPropertyAsync(p => p.Seo));
+                await xmlWriter.WriteStringAsync("AllowUserReviews", tvChannel.AllowUserReviews, await IgnoreExportTvChannelPropertyAsync(p => p.AllowUserReviews));
+                await xmlWriter.WriteStringAsync("SKU", tvChannel.Sku);
+                await xmlWriter.WriteStringAsync("ManufacturerPartNumber", tvChannel.ManufacturerPartNumber, await IgnoreExportTvChannelPropertyAsync(p => p.ManufacturerPartNumber));
+                await xmlWriter.WriteStringAsync("Gtin", tvChannel.Gtin, await IgnoreExportTvChannelPropertyAsync(p => p.GTIN));
+                await xmlWriter.WriteStringAsync("IsGiftCard", tvChannel.IsGiftCard, await IgnoreExportTvChannelPropertyAsync(p => p.IsGiftCard));
+                await xmlWriter.WriteStringAsync("GiftCardType", tvChannel.GiftCardType, await IgnoreExportTvChannelPropertyAsync(p => p.IsGiftCard));
+                await xmlWriter.WriteStringAsync("OverriddenGiftCardAmount", tvChannel.OverriddenGiftCardAmount, await IgnoreExportTvChannelPropertyAsync(p => p.IsGiftCard));
+                await xmlWriter.WriteStringAsync("RequireOtherTvChannels", tvChannel.RequireOtherTvChannels, await IgnoreExportTvChannelPropertyAsync(p => p.RequireOtherTvChannelsAddedToCart));
+                await xmlWriter.WriteStringAsync("RequiredTvChannelIds", tvChannel.RequiredTvChannelIds, await IgnoreExportTvChannelPropertyAsync(p => p.RequireOtherTvChannelsAddedToCart));
+                await xmlWriter.WriteStringAsync("AutomaticallyAddRequiredTvChannels", tvChannel.AutomaticallyAddRequiredTvChannels, await IgnoreExportTvChannelPropertyAsync(p => p.RequireOtherTvChannelsAddedToCart));
+                await xmlWriter.WriteStringAsync("IsDownload", tvChannel.IsDownload, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("DownloadId", tvChannel.DownloadId, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("UnlimitedDownloads", tvChannel.UnlimitedDownloads, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("MaxNumberOfDownloads", tvChannel.MaxNumberOfDownloads, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("DownloadExpirationDays", tvChannel.DownloadExpirationDays, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("DownloadActivationType", tvChannel.DownloadActivationType, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("HasSampleDownload", tvChannel.HasSampleDownload, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("SampleDownloadId", tvChannel.SampleDownloadId, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("HasUserAgreement", tvChannel.HasUserAgreement, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("UserAgreementText", tvChannel.UserAgreementText, await IgnoreExportTvChannelPropertyAsync(p => p.DownloadableTvChannel));
+                await xmlWriter.WriteStringAsync("IsRecurring", tvChannel.IsRecurring, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
+                await xmlWriter.WriteStringAsync("RecurringCycleLength", tvChannel.RecurringCycleLength, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
+                await xmlWriter.WriteStringAsync("RecurringCyclePeriodId", tvChannel.RecurringCyclePeriodId, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
+                await xmlWriter.WriteStringAsync("RecurringTotalCycles", tvChannel.RecurringTotalCycles, await IgnoreExportTvChannelPropertyAsync(p => p.RecurringTvChannel));
+                await xmlWriter.WriteStringAsync("IsRental", tvChannel.IsRental, await IgnoreExportTvChannelPropertyAsync(p => p.IsRental));
+                await xmlWriter.WriteStringAsync("RentalPriceLength", tvChannel.RentalPriceLength, await IgnoreExportTvChannelPropertyAsync(p => p.IsRental));
+                await xmlWriter.WriteStringAsync("RentalPricePeriodId", tvChannel.RentalPricePeriodId, await IgnoreExportTvChannelPropertyAsync(p => p.IsRental));
+                await xmlWriter.WriteStringAsync("IsShipEnabled", tvChannel.IsShipEnabled);
+                await xmlWriter.WriteStringAsync("IsFreeShipping", tvChannel.IsFreeShipping, await IgnoreExportTvChannelPropertyAsync(p => p.FreeShipping));
+                await xmlWriter.WriteStringAsync("ShipSeparately", tvChannel.ShipSeparately, await IgnoreExportTvChannelPropertyAsync(p => p.ShipSeparately));
+                await xmlWriter.WriteStringAsync("AdditionalShippingCharge", tvChannel.AdditionalShippingCharge, await IgnoreExportTvChannelPropertyAsync(p => p.AdditionalShippingCharge));
+                await xmlWriter.WriteStringAsync("DeliveryDateId", tvChannel.DeliveryDateId, await IgnoreExportTvChannelPropertyAsync(p => p.DeliveryDate));
+                await xmlWriter.WriteStringAsync("IsTaxExempt", tvChannel.IsTaxExempt);
+                await xmlWriter.WriteStringAsync("TaxCategoryId", tvChannel.TaxCategoryId);
+                await xmlWriter.WriteStringAsync("IsTelecommunicationsOrBroadcastingOrElectronicServices", tvChannel.IsTelecommunicationsOrBroadcastingOrElectronicServices, await IgnoreExportTvChannelPropertyAsync(p => p.TelecommunicationsBroadcastingElectronicServices));
+                await xmlWriter.WriteStringAsync("ManageInventoryMethodId", tvChannel.ManageInventoryMethodId);
+                await xmlWriter.WriteStringAsync("TvChannelAvailabilityRangeId", tvChannel.TvChannelAvailabilityRangeId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelAvailabilityRange));
+                await xmlWriter.WriteStringAsync("UseMultipleWarehouses", tvChannel.UseMultipleWarehouses, await IgnoreExportTvChannelPropertyAsync(p => p.UseMultipleWarehouses));
+                await xmlWriter.WriteStringAsync("WarehouseId", tvChannel.WarehouseId, await IgnoreExportTvChannelPropertyAsync(p => p.Warehouse));
+                await xmlWriter.WriteStringAsync("StockQuantity", tvChannel.StockQuantity);
+                await xmlWriter.WriteStringAsync("DisplayStockAvailability", tvChannel.DisplayStockAvailability, await IgnoreExportTvChannelPropertyAsync(p => p.DisplayStockAvailability));
+                await xmlWriter.WriteStringAsync("DisplayStockQuantity", tvChannel.DisplayStockQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.DisplayStockAvailability));
+                await xmlWriter.WriteStringAsync("MinStockQuantity", tvChannel.MinStockQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.MinimumStockQuantity));
+                await xmlWriter.WriteStringAsync("LowStockActivityId", tvChannel.LowStockActivityId, await IgnoreExportTvChannelPropertyAsync(p => p.LowStockActivity));
+                await xmlWriter.WriteStringAsync("NotifyAdminForQuantityBelow", tvChannel.NotifyAdminForQuantityBelow, await IgnoreExportTvChannelPropertyAsync(p => p.NotifyAdminForQuantityBelow));
+                await xmlWriter.WriteStringAsync("BackorderModeId", tvChannel.BackorderModeId, await IgnoreExportTvChannelPropertyAsync(p => p.Backorders));
+                await xmlWriter.WriteStringAsync("AllowBackInStockSubscriptions", tvChannel.AllowBackInStockSubscriptions, await IgnoreExportTvChannelPropertyAsync(p => p.AllowBackInStockSubscriptions));
+                await xmlWriter.WriteStringAsync("OrderMinimumQuantity", tvChannel.OrderMinimumQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.MinimumCartQuantity));
+                await xmlWriter.WriteStringAsync("OrderMaximumQuantity", tvChannel.OrderMaximumQuantity, await IgnoreExportTvChannelPropertyAsync(p => p.MaximumCartQuantity));
+                await xmlWriter.WriteStringAsync("AllowedQuantities", tvChannel.AllowedQuantities, await IgnoreExportTvChannelPropertyAsync(p => p.AllowedQuantities));
+                await xmlWriter.WriteStringAsync("AllowAddingOnlyExistingAttributeCombinations", tvChannel.AllowAddingOnlyExistingAttributeCombinations, await IgnoreExportTvChannelPropertyAsync(p => p.AllowAddingOnlyExistingAttributeCombinations));
+                await xmlWriter.WriteStringAsync("NotReturnable", tvChannel.NotReturnable, await IgnoreExportTvChannelPropertyAsync(p => p.NotReturnable));
+                await xmlWriter.WriteStringAsync("DisableBuyButton", tvChannel.DisableBuyButton, await IgnoreExportTvChannelPropertyAsync(p => p.DisableBuyButton));
+                await xmlWriter.WriteStringAsync("DisableWishlistButton", tvChannel.DisableWishlistButton, await IgnoreExportTvChannelPropertyAsync(p => p.DisableWishlistButton));
+                await xmlWriter.WriteStringAsync("AvailableForPreOrder", tvChannel.AvailableForPreOrder, await IgnoreExportTvChannelPropertyAsync(p => p.AvailableForPreOrder));
+                await xmlWriter.WriteStringAsync("PreOrderAvailabilityStartDateTimeUtc", tvChannel.PreOrderAvailabilityStartDateTimeUtc, await IgnoreExportTvChannelPropertyAsync(p => p.AvailableForPreOrder));
+                await xmlWriter.WriteStringAsync("CallForPrice", tvChannel.CallForPrice, await IgnoreExportTvChannelPropertyAsync(p => p.CallForPrice));
+                await xmlWriter.WriteStringAsync("Price", tvChannel.Price);
+                await xmlWriter.WriteStringAsync("OldPrice", tvChannel.OldPrice, await IgnoreExportTvChannelPropertyAsync(p => p.OldPrice));
+                await xmlWriter.WriteStringAsync("TvChannelCost", tvChannel.TvChannelCost, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelCost));
+                await xmlWriter.WriteStringAsync("UserEntersPrice", tvChannel.UserEntersPrice, await IgnoreExportTvChannelPropertyAsync(p => p.UserEntersPrice));
+                await xmlWriter.WriteStringAsync("MinimumUserEnteredPrice", tvChannel.MinimumUserEnteredPrice, await IgnoreExportTvChannelPropertyAsync(p => p.UserEntersPrice));
+                await xmlWriter.WriteStringAsync("MaximumUserEnteredPrice", tvChannel.MaximumUserEnteredPrice, await IgnoreExportTvChannelPropertyAsync(p => p.UserEntersPrice));
+                await xmlWriter.WriteStringAsync("BasepriceEnabled", tvChannel.BasepriceEnabled, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
+                await xmlWriter.WriteStringAsync("BasepriceAmount", tvChannel.BasepriceAmount, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
+                await xmlWriter.WriteStringAsync("BasepriceUnitId", tvChannel.BasepriceUnitId, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
+                await xmlWriter.WriteStringAsync("BasepriceBaseAmount", tvChannel.BasepriceBaseAmount, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
+                await xmlWriter.WriteStringAsync("BasepriceBaseUnitId", tvChannel.BasepriceBaseUnitId, await IgnoreExportTvChannelPropertyAsync(p => p.PAngV));
+                await xmlWriter.WriteStringAsync("MarkAsNew", tvChannel.MarkAsNew, await IgnoreExportTvChannelPropertyAsync(p => p.MarkAsNew));
+                await xmlWriter.WriteStringAsync("MarkAsNewStartDateTimeUtc", tvChannel.MarkAsNewStartDateTimeUtc, await IgnoreExportTvChannelPropertyAsync(p => p.MarkAsNew));
+                await xmlWriter.WriteStringAsync("MarkAsNewEndDateTimeUtc", tvChannel.MarkAsNewEndDateTimeUtc, await IgnoreExportTvChannelPropertyAsync(p => p.MarkAsNew));
+                await xmlWriter.WriteStringAsync("Weight", tvChannel.Weight, await IgnoreExportTvChannelPropertyAsync(p => p.Weight));
+                await xmlWriter.WriteStringAsync("Length", tvChannel.Length, await IgnoreExportTvChannelPropertyAsync(p => p.Dimensions));
+                await xmlWriter.WriteStringAsync("Width", tvChannel.Width, await IgnoreExportTvChannelPropertyAsync(p => p.Dimensions));
+                await xmlWriter.WriteStringAsync("Height", tvChannel.Height, await IgnoreExportTvChannelPropertyAsync(p => p.Dimensions));
+                await xmlWriter.WriteStringAsync("Published", tvChannel.Published, await IgnoreExportTvChannelPropertyAsync(p => p.Published));
+                await xmlWriter.WriteStringAsync("CreatedOnUtc", tvChannel.CreatedOnUtc);
+                await xmlWriter.WriteStringAsync("UpdatedOnUtc", tvChannel.UpdatedOnUtc);
 
                 if (!await IgnoreExportTvChannelPropertyAsync(p => p.Discounts))
                 {
                     await xmlWriter.WriteStartElementAsync("TvChannelDiscounts");
 
-                    foreach (var discount in await _discountService.GetAppliedDiscountsAsync(tvchannel))
+                    foreach (var discount in await _discountService.GetAppliedDiscountsAsync(tvChannel))
                     {
                         await xmlWriter.WriteStartElementAsync("Discount");
                         await xmlWriter.WriteStringAsync("DiscountId", discount.Id);
@@ -1282,7 +1283,7 @@ namespace TvProgViewer.Services.ExportImport
                 if (!await IgnoreExportTvChannelPropertyAsync(p => p.TierPrices))
                 {
                     await xmlWriter.WriteStartElementAsync("TierPrices");
-                    var tierPrices = await _tvchannelService.GetTierPricesByTvChannelAsync(tvchannel.Id);
+                    var tierPrices = await _tvChannelService.GetTierPricesByTvChannelAsync(tvChannel.Id);
                     foreach (var tierPrice in tierPrices)
                     {
                         await xmlWriter.WriteStartElementAsync("TierPrice");
@@ -1302,72 +1303,72 @@ namespace TvProgViewer.Services.ExportImport
                 if (!await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelAttributes))
                 {
                     await xmlWriter.WriteStartElementAsync("TvChannelAttributes");
-                    var tvchannelAttributMappings =
-                        await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
-                    foreach (var tvchannelAttributeMapping in tvchannelAttributMappings)
+                    var tvChannelAttributMappings =
+                        await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
+                    foreach (var tvChannelAttributeMapping in tvChannelAttributMappings)
                     {
-                        var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(tvchannelAttributeMapping.TvChannelAttributeId);
+                        var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(tvChannelAttributeMapping.TvChannelAttributeId);
 
                         await xmlWriter.WriteStartElementAsync("TvChannelAttributeMapping");
-                        await xmlWriter.WriteStringAsync("TvChannelAttributeMappingId", tvchannelAttributeMapping.Id);
-                        await xmlWriter.WriteStringAsync("TvChannelAttributeId", tvchannelAttributeMapping.TvChannelAttributeId);
-                        await xmlWriter.WriteStringAsync("TvChannelAttributeName", tvchannelAttribute.Name);
-                        await WriteLocalizedPropertyXmlAsync(tvchannelAttributeMapping, pam => pam.TextPrompt, xmlWriter, languages, overriddenNodeName: "TextPrompt");
-                        await xmlWriter.WriteStringAsync("IsRequired", tvchannelAttributeMapping.IsRequired);
-                        await xmlWriter.WriteStringAsync("AttributeControlTypeId", tvchannelAttributeMapping.AttributeControlTypeId);
-                        await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelAttributeMapping.DisplayOrder);
+                        await xmlWriter.WriteStringAsync("TvChannelAttributeMappingId", tvChannelAttributeMapping.Id);
+                        await xmlWriter.WriteStringAsync("TvChannelAttributeId", tvChannelAttributeMapping.TvChannelAttributeId);
+                        await xmlWriter.WriteStringAsync("TvChannelAttributeName", tvChannelAttribute.Name);
+                        await WriteLocalizedPropertyXmlAsync(tvChannelAttributeMapping, pam => pam.TextPrompt, xmlWriter, languages, overriddenNodeName: "TextPrompt");
+                        await xmlWriter.WriteStringAsync("IsRequired", tvChannelAttributeMapping.IsRequired);
+                        await xmlWriter.WriteStringAsync("AttributeControlTypeId", tvChannelAttributeMapping.AttributeControlTypeId);
+                        await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelAttributeMapping.DisplayOrder);
                         //validation rules
-                        if (tvchannelAttributeMapping.ValidationRulesAllowed())
+                        if (tvChannelAttributeMapping.ValidationRulesAllowed())
                         {
-                            if (tvchannelAttributeMapping.ValidationMinLength.HasValue)
+                            if (tvChannelAttributeMapping.ValidationMinLength.HasValue)
                             {
                                 await xmlWriter.WriteStringAsync("ValidationMinLength",
-                                    tvchannelAttributeMapping.ValidationMinLength.Value);
+                                    tvChannelAttributeMapping.ValidationMinLength.Value);
                             }
 
-                            if (tvchannelAttributeMapping.ValidationMaxLength.HasValue)
+                            if (tvChannelAttributeMapping.ValidationMaxLength.HasValue)
                             {
                                 await xmlWriter.WriteStringAsync("ValidationMaxLength",
-                                    tvchannelAttributeMapping.ValidationMaxLength.Value);
+                                    tvChannelAttributeMapping.ValidationMaxLength.Value);
                             }
 
-                            if (string.IsNullOrEmpty(tvchannelAttributeMapping.ValidationFileAllowedExtensions))
+                            if (string.IsNullOrEmpty(tvChannelAttributeMapping.ValidationFileAllowedExtensions))
                             {
                                 await xmlWriter.WriteStringAsync("ValidationFileAllowedExtensions",
-                                    tvchannelAttributeMapping.ValidationFileAllowedExtensions);
+                                    tvChannelAttributeMapping.ValidationFileAllowedExtensions);
                             }
 
-                            if (tvchannelAttributeMapping.ValidationFileMaximumSize.HasValue)
+                            if (tvChannelAttributeMapping.ValidationFileMaximumSize.HasValue)
                             {
                                 await xmlWriter.WriteStringAsync("ValidationFileMaximumSize",
-                                    tvchannelAttributeMapping.ValidationFileMaximumSize.Value);
+                                    tvChannelAttributeMapping.ValidationFileMaximumSize.Value);
                             }
 
-                            await WriteLocalizedPropertyXmlAsync(tvchannelAttributeMapping, pam => pam.DefaultValue, xmlWriter, languages, overriddenNodeName: "DefaultValue");
+                            await WriteLocalizedPropertyXmlAsync(tvChannelAttributeMapping, pam => pam.DefaultValue, xmlWriter, languages, overriddenNodeName: "DefaultValue");
                         }
                         //conditions
-                        await xmlWriter.WriteElementStringAsync("ConditionAttributeXml", tvchannelAttributeMapping.ConditionAttributeXml);
+                        await xmlWriter.WriteElementStringAsync("ConditionAttributeXml", tvChannelAttributeMapping.ConditionAttributeXml);
 
                         await xmlWriter.WriteStartElementAsync("TvChannelAttributeValues");
-                        var tvchannelAttributeValues = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(tvchannelAttributeMapping.Id);
-                        foreach (var tvchannelAttributeValue in tvchannelAttributeValues)
+                        var tvChannelAttributeValues = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(tvChannelAttributeMapping.Id);
+                        foreach (var tvChannelAttributeValue in tvChannelAttributeValues)
                         {
                             await xmlWriter.WriteStartElementAsync("TvChannelAttributeValue");
-                            await xmlWriter.WriteStringAsync("TvChannelAttributeValueId", tvchannelAttributeValue.Id);
-                            await WriteLocalizedPropertyXmlAsync(tvchannelAttributeValue, pav => pav.Name, xmlWriter, languages, overriddenNodeName: "Name");
-                            await xmlWriter.WriteStringAsync("AttributeValueTypeId", tvchannelAttributeValue.AttributeValueTypeId);
-                            await xmlWriter.WriteStringAsync("AssociatedTvChannelId", tvchannelAttributeValue.AssociatedTvChannelId);
-                            await xmlWriter.WriteStringAsync("ColorSquaresRgb", tvchannelAttributeValue.ColorSquaresRgb);
-                            await xmlWriter.WriteStringAsync("ImageSquaresPictureId", tvchannelAttributeValue.ImageSquaresPictureId);
-                            await xmlWriter.WriteStringAsync("PriceAdjustment", tvchannelAttributeValue.PriceAdjustment);
-                            await xmlWriter.WriteStringAsync("PriceAdjustmentUsePercentage", tvchannelAttributeValue.PriceAdjustmentUsePercentage);
-                            await xmlWriter.WriteStringAsync("WeightAdjustment", tvchannelAttributeValue.WeightAdjustment);
-                            await xmlWriter.WriteStringAsync("Cost", tvchannelAttributeValue.Cost);
-                            await xmlWriter.WriteStringAsync("UserEntersQty", tvchannelAttributeValue.UserEntersQty);
-                            await xmlWriter.WriteStringAsync("Quantity", tvchannelAttributeValue.Quantity);
-                            await xmlWriter.WriteStringAsync("IsPreSelected", tvchannelAttributeValue.IsPreSelected);
-                            await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelAttributeValue.DisplayOrder);
-                            await xmlWriter.WriteStringAsync("PictureId", tvchannelAttributeValue.PictureId);
+                            await xmlWriter.WriteStringAsync("TvChannelAttributeValueId", tvChannelAttributeValue.Id);
+                            await WriteLocalizedPropertyXmlAsync(tvChannelAttributeValue, pav => pav.Name, xmlWriter, languages, overriddenNodeName: "Name");
+                            await xmlWriter.WriteStringAsync("AttributeValueTypeId", tvChannelAttributeValue.AttributeValueTypeId);
+                            await xmlWriter.WriteStringAsync("AssociatedTvChannelId", tvChannelAttributeValue.AssociatedTvChannelId);
+                            await xmlWriter.WriteStringAsync("ColorSquaresRgb", tvChannelAttributeValue.ColorSquaresRgb);
+                            await xmlWriter.WriteStringAsync("ImageSquaresPictureId", tvChannelAttributeValue.ImageSquaresPictureId);
+                            await xmlWriter.WriteStringAsync("PriceAdjustment", tvChannelAttributeValue.PriceAdjustment);
+                            await xmlWriter.WriteStringAsync("PriceAdjustmentUsePercentage", tvChannelAttributeValue.PriceAdjustmentUsePercentage);
+                            await xmlWriter.WriteStringAsync("WeightAdjustment", tvChannelAttributeValue.WeightAdjustment);
+                            await xmlWriter.WriteStringAsync("Cost", tvChannelAttributeValue.Cost);
+                            await xmlWriter.WriteStringAsync("UserEntersQty", tvChannelAttributeValue.UserEntersQty);
+                            await xmlWriter.WriteStringAsync("Quantity", tvChannelAttributeValue.Quantity);
+                            await xmlWriter.WriteStringAsync("IsPreSelected", tvChannelAttributeValue.IsPreSelected);
+                            await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelAttributeValue.DisplayOrder);
+                            await xmlWriter.WriteStringAsync("PictureId", tvChannelAttributeValue.PictureId);
                             await xmlWriter.WriteEndElementAsync();
                         }
 
@@ -1379,29 +1380,29 @@ namespace TvProgViewer.Services.ExportImport
                 }
 
                 await xmlWriter.WriteStartElementAsync("TvChannelPictures");
-                var tvchannelPictures = await _tvchannelService.GetTvChannelPicturesByTvChannelIdAsync(tvchannel.Id);
-                foreach (var tvchannelPicture in tvchannelPictures)
+                var tvChannelPictures = await _tvChannelService.GetTvChannelPicturesByTvChannelIdAsync(tvChannel.Id);
+                foreach (var tvChannelPicture in tvChannelPictures)
                 {
                     await xmlWriter.WriteStartElementAsync("TvChannelPicture");
-                    await xmlWriter.WriteStringAsync("TvChannelPictureId", tvchannelPicture.Id);
-                    await xmlWriter.WriteStringAsync("PictureId", tvchannelPicture.PictureId);
-                    await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelPicture.DisplayOrder);
+                    await xmlWriter.WriteStringAsync("TvChannelPictureId", tvChannelPicture.Id);
+                    await xmlWriter.WriteStringAsync("PictureId", tvChannelPicture.PictureId);
+                    await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelPicture.DisplayOrder);
                     await xmlWriter.WriteEndElementAsync();
                 }
 
                 await xmlWriter.WriteEndElementAsync();
 
                 await xmlWriter.WriteStartElementAsync("TvChannelCategories");
-                var tvchannelCategories = await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvchannel.Id, true);
-                if (tvchannelCategories != null)
+                var tvChannelCategories = await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel.Id, true);
+                if (tvChannelCategories != null)
                 {
-                    foreach (var tvchannelCategory in tvchannelCategories)
+                    foreach (var tvChannelCategory in tvChannelCategories)
                     {
                         await xmlWriter.WriteStartElementAsync("TvChannelCategory");
-                        await xmlWriter.WriteStringAsync("TvChannelCategoryId", tvchannelCategory.Id);
-                        await xmlWriter.WriteStringAsync("CategoryId", tvchannelCategory.CategoryId);
-                        await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvchannelCategory.IsFeaturedTvChannel);
-                        await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelCategory.DisplayOrder);
+                        await xmlWriter.WriteStringAsync("TvChannelCategoryId", tvChannelCategory.Id);
+                        await xmlWriter.WriteStringAsync("CategoryId", tvChannelCategory.CategoryId);
+                        await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvChannelCategory.IsFeaturedTvChannel);
+                        await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelCategory.DisplayOrder);
                         await xmlWriter.WriteEndElementAsync();
                     }
                 }
@@ -1411,16 +1412,16 @@ namespace TvProgViewer.Services.ExportImport
                 if (!await IgnoreExportTvChannelPropertyAsync(p => p.Manufacturers))
                 {
                     await xmlWriter.WriteStartElementAsync("TvChannelManufacturers");
-                    var tvchannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvchannel.Id);
-                    if (tvchannelManufacturers != null)
+                    var tvChannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvChannel.Id);
+                    if (tvChannelManufacturers != null)
                     {
-                        foreach (var tvchannelManufacturer in tvchannelManufacturers)
+                        foreach (var tvChannelManufacturer in tvChannelManufacturers)
                         {
                             await xmlWriter.WriteStartElementAsync("TvChannelManufacturer");
-                            await xmlWriter.WriteStringAsync("TvChannelManufacturerId", tvchannelManufacturer.Id);
-                            await xmlWriter.WriteStringAsync("ManufacturerId", tvchannelManufacturer.ManufacturerId);
-                            await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvchannelManufacturer.IsFeaturedTvChannel);
-                            await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelManufacturer.DisplayOrder);
+                            await xmlWriter.WriteStringAsync("TvChannelManufacturerId", tvChannelManufacturer.Id);
+                            await xmlWriter.WriteStringAsync("ManufacturerId", tvChannelManufacturer.ManufacturerId);
+                            await xmlWriter.WriteStringAsync("IsFeaturedTvChannel", tvChannelManufacturer.IsFeaturedTvChannel);
+                            await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelManufacturer.DisplayOrder);
                             await xmlWriter.WriteEndElementAsync();
                         }
                     }
@@ -1431,16 +1432,16 @@ namespace TvProgViewer.Services.ExportImport
                 if (!await IgnoreExportTvChannelPropertyAsync(p => p.SpecificationAttributes))
                 {
                     await xmlWriter.WriteStartElementAsync("TvChannelSpecificationAttributes");
-                    var tvchannelSpecificationAttributes = await _specificationAttributeService.GetTvChannelSpecificationAttributesAsync(tvchannel.Id);
-                    foreach (var tvchannelSpecificationAttribute in tvchannelSpecificationAttributes)
+                    var tvChannelSpecificationAttributes = await _specificationAttributeService.GetTvChannelSpecificationAttributesAsync(tvChannel.Id);
+                    foreach (var tvChannelSpecificationAttribute in tvChannelSpecificationAttributes)
                     {
                         await xmlWriter.WriteStartElementAsync("TvChannelSpecificationAttribute");
-                        await xmlWriter.WriteStringAsync("TvChannelSpecificationAttributeId", tvchannelSpecificationAttribute.Id);
-                        await xmlWriter.WriteStringAsync("SpecificationAttributeOptionId", tvchannelSpecificationAttribute.SpecificationAttributeOptionId);
-                        await xmlWriter.WriteStringAsync("CustomValue", tvchannelSpecificationAttribute.CustomValue);
-                        await xmlWriter.WriteStringAsync("AllowFiltering", tvchannelSpecificationAttribute.AllowFiltering);
-                        await xmlWriter.WriteStringAsync("ShowOnTvChannelPage", tvchannelSpecificationAttribute.ShowOnTvChannelPage);
-                        await xmlWriter.WriteStringAsync("DisplayOrder", tvchannelSpecificationAttribute.DisplayOrder);
+                        await xmlWriter.WriteStringAsync("TvChannelSpecificationAttributeId", tvChannelSpecificationAttribute.Id);
+                        await xmlWriter.WriteStringAsync("SpecificationAttributeOptionId", tvChannelSpecificationAttribute.SpecificationAttributeOptionId);
+                        await xmlWriter.WriteStringAsync("CustomValue", tvChannelSpecificationAttribute.CustomValue);
+                        await xmlWriter.WriteStringAsync("AllowFiltering", tvChannelSpecificationAttribute.AllowFiltering);
+                        await xmlWriter.WriteStringAsync("ShowOnTvChannelPage", tvChannelSpecificationAttribute.ShowOnTvChannelPage);
+                        await xmlWriter.WriteStringAsync("DisplayOrder", tvChannelSpecificationAttribute.DisplayOrder);
                         await xmlWriter.WriteEndElementAsync();
                     }
 
@@ -1450,12 +1451,12 @@ namespace TvProgViewer.Services.ExportImport
                 if (!await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelTags))
                 {
                     await xmlWriter.WriteStartElementAsync("TvChannelTags");
-                    var tvchannelTags = await _tvchannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvchannel.Id);
-                    foreach (var tvchannelTag in tvchannelTags)
+                    var tvChannelTags = await _tvChannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvChannel.Id);
+                    foreach (var tvChannelTag in tvChannelTags)
                     {
                         await xmlWriter.WriteStartElementAsync("TvChannelTag");
-                        await xmlWriter.WriteStringAsync("Id", tvchannelTag.Id);
-                        await xmlWriter.WriteStringAsync("Name", tvchannelTag.Name);
+                        await xmlWriter.WriteStringAsync("Id", tvChannelTag.Id);
+                        await xmlWriter.WriteStringAsync("Name", tvChannelTag.Name);
                         await xmlWriter.WriteEndElementAsync();
                     }
 
@@ -1471,17 +1472,17 @@ namespace TvProgViewer.Services.ExportImport
 
             //activity log
             await _userActivityService.InsertActivityAsync("ExportTvChannels",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.ExportTvChannels"), tvchannels.Count));
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.ExportTvChannels"), tvChannels.Count));
 
             return stringWriter.ToString();
         }
 
         /// <summary>
-        /// Export tvchannels to XLSX
+        /// Export tvChannels to XLSX
         /// </summary>
-        /// <param name="tvchannels">TvChannels</param>
+        /// <param name="tvChannels">TvChannels</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task<byte[]> ExportTvChannelsToXlsxAsync(IEnumerable<TvChannel> tvchannels)
+        public virtual async Task<byte[]> ExportTvChannelsToXlsxAsync(IEnumerable<TvChannel> tvChannels)
         {
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             var languages = await _languageService.GetAllLanguagesAsync(showHidden: true);
@@ -1518,7 +1519,7 @@ namespace TvProgViewer.Services.ExportImport
                 },
                 new PropertyByName<TvChannel, Language>("TvChannelTemplate", (p, l) => p.TvChannelTemplateId, await IgnoreExportTvChannelPropertyAsync(p => p.TvChannelTemplate))
                 {
-                    DropDownElements = (await _tvchannelTemplateService.GetAllTvChannelTemplatesAsync()).Select(pt => pt as BaseEntity).ToSelectList(p => (p as TvChannelTemplate)?.Name ?? string.Empty)
+                    DropDownElements = (await _tvChannelTemplateService.GetAllTvChannelTemplatesAsync()).Select(pt => pt as BaseEntity).ToSelectList(p => (p as TvChannelTemplate)?.Name ?? string.Empty)
                 },
                 //vendor can't change this field
                 new PropertyByName<TvChannel, Language>("ShowOnHomepage", (p, l) => p.ShowOnHomepage, await IgnoreExportTvChannelPropertyAsync(p => p.ShowOnHomepage) || currentVendor != null),
@@ -1656,28 +1657,28 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<TvChannel, Language>("Picture3", async (p, l) => await GetPictureAsync(p, 2))
             };
 
-            var tvchannelList = tvchannels.ToList();
+            var tvChannelList = tvChannels.ToList();
 
-            var tvchannelAdvancedMode = true;
+            var tvChannelAdvancedMode = true;
             try
             {
-                tvchannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvchannel-advanced-mode");
+                tvChannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvChannel-advanced-mode");
             }
             catch (ArgumentNullException)
             {
             }
 
             if (!_catalogSettings.ExportImportTvChannelAttributes && !_catalogSettings.ExportImportTvChannelSpecificationAttributes)
-                return await new PropertyManager<TvChannel, Language>(properties, _catalogSettings).ExportToXlsxAsync(tvchannelList);
+                return await new PropertyManager<TvChannel, Language>(properties, _catalogSettings).ExportToXlsxAsync(tvChannelList);
 
             //activity log
             await _userActivityService.InsertActivityAsync("ExportTvChannels",
-                string.Format(await _localizationService.GetResourceAsync("ActivityLog.ExportTvChannels"), tvchannelList.Count));
+                string.Format(await _localizationService.GetResourceAsync("ActivityLog.ExportTvChannels"), tvChannelList.Count));
 
-            if (tvchannelAdvancedMode || _tvchannelEditorSettings.TvChannelAttributes)
-                return await ExportTvChannelsToXlsxWithAttributesAsync(properties, localizedProperties, tvchannelList, languages);
+            if (tvChannelAdvancedMode || _tvChannelEditorSettings.TvChannelAttributes)
+                return await ExportTvChannelsToXlsxWithAttributesAsync(properties, localizedProperties, tvChannelList, languages);
 
-            return await new PropertyManager<TvChannel, Language>(properties, _catalogSettings, localizedProperties, languages).ExportToXlsxAsync(tvchannelList);
+            return await new PropertyManager<TvChannel, Language>(properties, _catalogSettings, localizedProperties, languages).ExportToXlsxAsync(tvChannelList);
         }
 
         /// <summary>
@@ -1762,7 +1763,7 @@ namespace TvProgViewer.Services.ExportImport
 
                 if (_orderSettings.ExportWithTvChannels)
                 {
-                    //a vendor should have access only to his tvchannels
+                    //a vendor should have access only to his tvChannels
                     var orderItems = await _orderService.GetOrderItemsAsync(order.Id, vendorId: currentVendor?.Id ?? 0);
 
                     if (orderItems.Any())
@@ -1770,13 +1771,13 @@ namespace TvProgViewer.Services.ExportImport
                         await xmlWriter.WriteStartElementAsync("OrderItems");
                         foreach (var orderItem in orderItems)
                         {
-                            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                             await xmlWriter.WriteStartElementAsync("OrderItem");
                             await xmlWriter.WriteStringAsync("Id", orderItem.Id);
                             await xmlWriter.WriteStringAsync("OrderItemGuid", orderItem.OrderItemGuid);
-                            await xmlWriter.WriteStringAsync("Name", tvchannel.Name);
-                            await xmlWriter.WriteStringAsync("Sku", await _tvchannelService.FormatSkuAsync(tvchannel, orderItem.AttributesXml));
+                            await xmlWriter.WriteStringAsync("Name", tvChannel.Name);
+                            await xmlWriter.WriteStringAsync("Sku", await _tvChannelService.FormatSkuAsync(tvChannel, orderItem.AttributesXml));
                             await xmlWriter.WriteStringAsync("PriceExclTax", orderItem.UnitPriceExclTax);
                             await xmlWriter.WriteStringAsync("PriceInclTax", orderItem.UnitPriceInclTax);
                             await xmlWriter.WriteStringAsync("Quantity", orderItem.Quantity);
@@ -1989,6 +1990,7 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<User, Language>("FirstName", (p, l) => p.FirstName, !_userSettings.FirstNameEnabled),
                 new PropertyByName<User, Language>("LastName", (p, l) => p.LastName, !_userSettings.LastNameEnabled),
                 new PropertyByName<User, Language>("MiddleName", (p, l) => p.MiddleName, !_userSettings.MiddleNameEnabled),
+                new PropertyByName<User, Language>("BirthDate", (p, l) => p.BirthDate, !_userSettings.BirthDateEnabled),
                 new PropertyByName<User, Language>("Gender", (p, l) => p.Gender, !_userSettings.GenderEnabled),
                 new PropertyByName<User, Language>("Company", (p, l) => p.Company, !_userSettings.CompanyEnabled),
                 new PropertyByName<User, Language>("StreetAddress", (p, l) => p.StreetAddress, !_userSettings.StreetAddressEnabled),
@@ -1999,6 +2001,7 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<User, Language>("Country",  async (p, l) => await getCountry(p), !_userSettings.CountryEnabled),
                 new PropertyByName<User, Language>("StateProvince",  async (p, l) => await getStateProvince(p), !_userSettings.StateProvinceEnabled),
                 new PropertyByName<User, Language>("SmartPhone", (p, l) => p.SmartPhone, !_userSettings.SmartPhoneEnabled),
+                new PropertyByName<User, Language>("PersonalDataAggree", (p, l) => p.PersonalDataAggree, !_userSettings.AcceptPersonalDataAgreementEnabled),
                 new PropertyByName<User, Language>("Fax", (p, l) => p.Fax, !_userSettings.FaxEnabled),
                 new PropertyByName<User, Language>("VatNumber", (p, l) => p.VatNumber),
                 new PropertyByName<User, Language>("VatNumberStatusId", (p, l) => p.VatNumberStatusId),
@@ -2010,7 +2013,7 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<User, Language>("AvatarPictureId", async (p, l) => await _genericAttributeService.GetAttributeAsync<int>(p, TvProgUserDefaults.AvatarPictureIdAttribute), !_userSettings.AllowUsersToUploadAvatars),
                 new PropertyByName<User, Language>("ForumPostCount", async (p, l) => await _genericAttributeService.GetAttributeAsync<int>(p, TvProgUserDefaults.ForumPostCountAttribute)),
                 new PropertyByName<User, Language>("Signature", async (p, l) => await _genericAttributeService.GetAttributeAsync<string>(p, TvProgUserDefaults.SignatureAttribute)),
-                new PropertyByName<User, Language>("CustomUserAttributes", async (p, l) => await GetCustomUserAttributesAsync(p))
+                new PropertyByName<User, Language>("CustomUserAttributes", async (p, l) => await GetCustomUserAttributesAsync(p)),
             }, _catalogSettings);
 
             //activity log
@@ -2065,6 +2068,8 @@ namespace TvProgViewer.Services.ExportImport
                 await xmlWriter.WriteElementStringAsync("LastName", null, user.LastName);
                 await xmlWriter.WriteElementStringAsync("FirstName", null, user.FirstName);
                 await xmlWriter.WriteElementStringAsync("MiddleName", null, user.MiddleName);
+                await xmlWriter.WriteElementStringAsync("BirthDate", null, user.BirthDate.HasValue ? user.BirthDate.Value.ToString(CultureInfo.InvariantCulture) : null);
+                await xmlWriter.WriteElementStringAsync("SmartPhone", null, user.SmartPhone);
                 await xmlWriter.WriteElementStringAsync("Gender", null, user.Gender);
                 await xmlWriter.WriteElementStringAsync("Company", null, user.Company);
 
@@ -2079,6 +2084,7 @@ namespace TvProgViewer.Services.ExportImport
                 await xmlWriter.WriteElementStringAsync("Fax", null, user.Fax);
                 await xmlWriter.WriteElementStringAsync("VatNumber", null, user.VatNumber);
                 await xmlWriter.WriteElementStringAsync("VatNumberStatusId", null, user.VatNumberStatusId.ToString());
+                await xmlWriter.WriteElementStringAsync("PersonalDataAggree", null, user.PersonalDataAggree.ToString());
                 await xmlWriter.WriteElementStringAsync("GmtZone", null, user.GmtZone);
 
                 foreach (var store in await _storeService.GetAllStoresAsync())
@@ -2226,7 +2232,6 @@ namespace TvProgViewer.Services.ExportImport
                 new PropertyByName<User, Language>("County", (p, l) => p.County, !_userSettings.CountyEnabled),
                 new PropertyByName<User, Language>("Country", async (p, l) => (await _countryService.GetCountryByIdAsync(p.CountryId))?.Name ?? string.Empty, !_userSettings.CountryEnabled),
                 new PropertyByName<User, Language>("State province", async (p, l) => (await _stateProvinceService.GetStateProvinceByIdAsync(p.StateProvinceId))?.Name ?? string.Empty, !(_userSettings.StateProvinceEnabled && _userSettings.CountryEnabled)),
-                new PropertyByName<User, Language>("SmartPhone", (p, l) => p.SmartPhone, !_userSettings.SmartPhoneEnabled),
                 new PropertyByName<User, Language>("Fax", (p, l) => p.Fax, !_userSettings.FaxEnabled),
                 new PropertyByName<User, Language>("User attributes",  async (p, l) => await GetCustomUserAttributesAsync(p))
             }, _catalogSettings);
@@ -2273,8 +2278,8 @@ namespace TvProgViewer.Services.ExportImport
 
             var orderItemsManager = new PropertyManager<OrderItem, Language>(new[]
             {
-                new PropertyByName<OrderItem, Language>("SKU", async (oi, l) => await _tvchannelService.FormatSkuAsync(await _tvchannelService.GetTvChannelByIdAsync(oi.TvChannelId), oi.AttributesXml)),
-                new PropertyByName<OrderItem, Language>("Name", async (oi, l) => await _localizationService.GetLocalizedAsync(await _tvchannelService.GetTvChannelByIdAsync(oi.TvChannelId), p => p.Name)),
+                new PropertyByName<OrderItem, Language>("SKU", async (oi, l) => await _tvChannelService.FormatSkuAsync(await _tvChannelService.GetTvChannelByIdAsync(oi.TvChannelId), oi.AttributesXml)),
+                new PropertyByName<OrderItem, Language>("Name", async (oi, l) => await _localizationService.GetLocalizedAsync(await _tvChannelService.GetTvChannelByIdAsync(oi.TvChannelId), p => p.Name)),
                 new PropertyByName<OrderItem, Language>("Price", async (oi, l) => await _priceFormatter.FormatPriceAsync(_currencyService.ConvertCurrency((await _orderService.GetOrderByIdAsync(oi.OrderId)).UserTaxDisplayType == TaxDisplayType.IncludingTax ? oi.UnitPriceInclTax : oi.UnitPriceExclTax, (await _orderService.GetOrderByIdAsync(oi.OrderId)).CurrencyRate), true, (await _orderService.GetOrderByIdAsync(oi.OrderId)).UserCurrencyCode, false, currentLanguage.Id)),
                 new PropertyByName<OrderItem, Language>("Quantity", (oi, l) => oi.Quantity),
                 new PropertyByName<OrderItem, Language>("Total", async (oi, l) => await _priceFormatter.FormatPriceAsync((await _orderService.GetOrderByIdAsync(oi.OrderId)).UserTaxDisplayType == TaxDisplayType.IncludingTax ? oi.PriceInclTax : oi.PriceExclTax))
@@ -2382,7 +2387,7 @@ namespace TvProgViewer.Services.ExportImport
                         orderManager.CurrentObject = order;
                         await orderManager.WriteDefaultToXlsxAsync(ordersWorksheet, orderRow);
 
-                        //tvchannels
+                        //tvChannels
                         var orederItems = await _orderService.GetOrderItemsAsync(order.Id);
 
                         if (!orederItems.Any())

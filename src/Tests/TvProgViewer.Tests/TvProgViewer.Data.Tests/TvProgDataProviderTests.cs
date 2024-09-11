@@ -4,24 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Gdpr;
-using Nop.Data;
-using Nop.Web.Models.Install;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Gdpr;
+using TvProgViewer.Data;
+using TvProgViewer.WebUI.Models.Install;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Data.Tests
+namespace TvProgViewer.Tests.TvProgViewer.Data.Tests
 {
     [TestFixture]
-    public class NopDataProviderTests : BaseNopTest
+    public class TvProgDataProviderTests : BaseTvProgTest
     {
         [TearDown]
         public async Task TearDown()
         {
             try
             {
-                var dataProvider = GetService<INopDataProvider>();
+                var dataProvider = GetService<ITvProgDataProvider>();
                 await dataProvider.TruncateAsync<GdprConsent>(true);
             }
             catch
@@ -42,7 +42,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var foreignTable = "foreignTable";
             var foreignColumn = "foreignColumn";
@@ -79,7 +79,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var targetTable = "targetTable";
             var targetColumn = "targetColumn";
@@ -113,15 +113,15 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
-            var productRepository = GetService<IRepository<Product>>();
+            var dataProvider = GetService<ITvProgDataProvider>();
+            var tvChannelRepository = GetService<IRepository<TvChannel>>();
 
             var tableName = "TestTempDataTable".ToLower();
 
             await using var data = await dataProvider.CreateTempDataStorageAsync(tableName,
-                productRepository.Table.Select(p => new { p.Name, p.Id, p.Deleted }));
+                tvChannelRepository.Table.Select(p => new { p.Name, p.Id, p.Deleted }));
 
-            data.Count().Should().Be(productRepository.GetAll(query => query).Count);
+            data.Count().Should().Be(tvChannelRepository.GetAll(query => query).Count);
 
             var rez = await dataProvider.QueryAsync<object>($"select * from {tableName}");
 
@@ -138,7 +138,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
             await dataProvider.TruncateAsync<GdprConsent>();
@@ -162,7 +162,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
             await dataProvider.TruncateAsync<GdprConsent>();
@@ -190,7 +190,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
             await dataProvider.TruncateAsync<GdprConsent>();
@@ -221,7 +221,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
             await dataProvider.TruncateAsync<GdprConsent>();
@@ -242,7 +242,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
             await dataProvider.TruncateAsync<GdprConsent>();
@@ -267,7 +267,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
 
@@ -288,7 +288,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
             await dataProvider.TruncateAsync<GdprConsent>();
@@ -309,7 +309,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var gdprConsent = new GdprConsent { DisplayOrder = 10, Message = "Test message 1" };
             await dataProvider.TruncateAsync<GdprConsent>(true);
@@ -348,7 +348,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             var connStr = dataProvider.BuildConnectionString(new InstallModel
             {
@@ -384,7 +384,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (type == DataProviderType.SqlServer)
                 return;
 
-            Assert.Throws<NopException>(() => dataProvider.BuildConnectionString(new InstallModel()
+            Assert.Throws<TvProgException>(() => dataProvider.BuildConnectionString(new InstallModel()
             {
                 IntegratedSecurity = true
             }));
@@ -400,7 +400,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             await dataProvider.TruncateAsync<GdprConsent>(true);
             dataProvider.GetTable<GdprConsent>().Count().Should().Be(0);
@@ -424,15 +424,15 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             if (type != DataProviderType.PostgreSQL)
             {
-                var rez = await dataProvider.ExecuteNonQueryAsync("select * from Product");
+                var rez = await dataProvider.ExecuteNonQueryAsync("select * from TvChannel");
                 rez.Should().Be(-1);
 
                 rez = await dataProvider.ExecuteNonQueryAsync(
-                    "insert into GdprConsent(Message, IsRequired, RequiredMessage, DisplayDuringRegistration, DisplayOnCustomerInfoPage, DisplayOrder) values('test value', 0,'',0,0,1)");
+                    "insert into GdprConsent(Message, IsRequired, RequiredMessage, DisplayDuringRegistration, DisplayOnUserInfoPage, DisplayOrder) values('test value', 0,'',0,0,1)");
                 rez.Should().Be(1);
 
                 rez = await dataProvider.ExecuteNonQueryAsync("delete from GdprConsent where Id=0");
@@ -440,11 +440,11 @@ namespace Nop.Tests.Nop.Data.Tests
             }
             else
             {
-                var rez = await dataProvider.ExecuteNonQueryAsync("select * from \"Product\"");
+                var rez = await dataProvider.ExecuteNonQueryAsync("select * from \"TvChannel\"");
                 rez.Should().Be(-1);
 
                 rez = await dataProvider.ExecuteNonQueryAsync(
-                    "insert into \"GdprConsent\"(\"Message\", \"IsRequired\", \"RequiredMessage\", \"DisplayDuringRegistration\", \"DisplayOnCustomerInfoPage\", \"DisplayOrder\") values('test value', false,'',false,false,1)");
+                    "insert into \"GdprConsent\"(\"Message\", \"IsRequired\", \"RequiredMessage\", \"DisplayDuringRegistration\", \"DisplayOnUserInfoPage\", \"DisplayOrder\") values('test value', false,'',false,false,1)");
                 rez.Should().Be(1);
 
                 rez = await dataProvider.ExecuteNonQueryAsync("delete from \"GdprConsent\" where \"Id\"=0");
@@ -464,16 +464,16 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             if (type != DataProviderType.PostgreSQL)
             {
-                var rez = await dataProvider.QueryAsync<Product>("select * from Product");
+                var rez = await dataProvider.QueryAsync<TvChannel>("select * from TvChannel");
                 rez.Count.Should().BeGreaterThan(40);
             }
             else
             {
-                var rez = await dataProvider.QueryAsync<Product>("select * from \"Product\"");
+                var rez = await dataProvider.QueryAsync<TvChannel>("select * from \"TvChannel\"");
                 rez.Count.Should().BeGreaterThan(40);
             }
         }
@@ -488,7 +488,7 @@ namespace Nop.Tests.Nop.Data.Tests
             if (!SetDataProviderType(type))
                 return;
 
-            var dataProvider = GetService<INopDataProvider>();
+            var dataProvider = GetService<ITvProgDataProvider>();
 
             await dataProvider.TruncateAsync<GdprConsent>();
             dataProvider.InsertEntity(new GdprConsent { DisplayOrder = 10, Message = "Test message 1" });

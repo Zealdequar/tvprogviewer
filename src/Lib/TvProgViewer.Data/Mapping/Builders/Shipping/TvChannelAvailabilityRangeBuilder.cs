@@ -4,7 +4,7 @@ using TvProgViewer.Core.Domain.Shipping;
 namespace TvProgViewer.Data.Mapping.Builders.Shipping
 {
     /// <summary>
-    /// Represents a tvchannel availability range entity builder
+    /// Represents a tvChannel availability range entity builder
     /// </summary>
     public partial class TvChannelAvailabilityRangeBuilder : TvProgEntityBuilder<TvChannelAvailabilityRange>
     {

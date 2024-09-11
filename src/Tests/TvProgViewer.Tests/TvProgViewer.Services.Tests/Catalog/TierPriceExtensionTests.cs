@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Services.Catalog;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Services.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Catalog
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Catalog
 {
     [TestFixture]
     public class TierPriceExtensionTests

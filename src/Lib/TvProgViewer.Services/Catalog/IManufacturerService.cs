@@ -50,8 +50,8 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="overridePublished">
         /// null - process "Published" property according to "showHidden" parameter
-        /// true - load only "Published" tvchannels
-        /// false - load only "Unpublished" tvchannels
+        /// true - load only "Published" tvChannels
+        /// false - load only "Unpublished" tvChannels
         /// </param>
         /// <returns>
         /// Задача представляет асинхронную операцию
@@ -134,14 +134,14 @@ namespace TvProgViewer.Services.Catalog
         Task UpdateManufacturerAsync(Manufacturer manufacturer);
 
         /// <summary>
-        /// Deletes a tvchannel manufacturer mapping
+        /// Deletes a tvChannel manufacturer mapping
         /// </summary>
-        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
+        /// <param name="tvChannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer);
+        Task DeleteTvChannelManufacturerAsync(TvChannelManufacturer tvChannelManufacturer);
 
         /// <summary>
-        /// Gets tvchannel manufacturer collection
+        /// Gets tvChannel manufacturer collection
         /// </summary>
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <param name="pageIndex">Page index</param>
@@ -149,55 +149,55 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel manufacturer collection
+        /// The task result contains the tvChannel manufacturer collection
         /// </returns>
         Task<IPagedList<TvChannelManufacturer>> GetTvChannelManufacturersByManufacturerIdAsync(int manufacturerId,
             int pageIndex = 0, int pageSize = int.MaxValue, bool showHidden = false);
 
         /// <summary>
-        /// Gets a tvchannel manufacturer mapping collection
+        /// Gets a tvChannel manufacturer mapping collection
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel manufacturer mapping collection
+        /// The task result contains the tvChannel manufacturer mapping collection
         /// </returns>
-        Task<IList<TvChannelManufacturer>> GetTvChannelManufacturersByTvChannelIdAsync(int tvchannelId, bool showHidden = false);
+        Task<IList<TvChannelManufacturer>> GetTvChannelManufacturersByTvChannelIdAsync(int tvChannelId, bool showHidden = false);
 
         /// <summary>
-        /// Gets a tvchannel manufacturer mapping 
+        /// Gets a tvChannel manufacturer mapping 
         /// </summary>
-        /// <param name="tvchannelManufacturerId">TvChannel manufacturer mapping identifier</param>
+        /// <param name="tvChannelManufacturerId">TvChannel manufacturer mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel manufacturer mapping
+        /// The task result contains the tvChannel manufacturer mapping
         /// </returns>
-        Task<TvChannelManufacturer> GetTvChannelManufacturerByIdAsync(int tvchannelManufacturerId);
+        Task<TvChannelManufacturer> GetTvChannelManufacturerByIdAsync(int tvChannelManufacturerId);
 
         /// <summary>
-        /// Inserts a tvchannel manufacturer mapping
+        /// Inserts a tvChannel manufacturer mapping
         /// </summary>
-        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
+        /// <param name="tvChannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task InsertTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer);
+        Task InsertTvChannelManufacturerAsync(TvChannelManufacturer tvChannelManufacturer);
 
         /// <summary>
-        /// Updates the tvchannel manufacturer mapping
+        /// Updates the tvChannel manufacturer mapping
         /// </summary>
-        /// <param name="tvchannelManufacturer">TvChannel manufacturer mapping</param>
+        /// <param name="tvChannelManufacturer">TvChannel manufacturer mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelManufacturerAsync(TvChannelManufacturer tvchannelManufacturer);
+        Task UpdateTvChannelManufacturerAsync(TvChannelManufacturer tvChannelManufacturer);
 
         /// <summary>
-        /// Get manufacturer IDs for tvchannels
+        /// Get manufacturer IDs for tvChannels
         /// </summary>
-        /// <param name="tvchannelIds">TvChannels IDs</param>
+        /// <param name="tvChannelIds">TvChannels IDs</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the manufacturer IDs for tvchannels
+        /// The task result contains the manufacturer IDs for tvChannels
         /// </returns>
-        Task<IDictionary<int, int[]>> GetTvChannelManufacturerIdsAsync(int[] tvchannelIds);
+        Task<IDictionary<int, int[]>> GetTvChannelManufacturerIdsAsync(int[] tvChannelIds);
 
         /// <summary>
         /// Returns a list of names of not existing manufacturers
@@ -213,10 +213,10 @@ namespace TvProgViewer.Services.Catalog
         /// Returns a TvChannelManufacturer that has the specified values
         /// </summary>
         /// <param name="source">Source</param>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <returns>A TvChannelManufacturer that has the specified values; otherwise null</returns>
-        TvChannelManufacturer FindTvChannelManufacturer(IList<TvChannelManufacturer> source, int tvchannelId, int manufacturerId);
+        TvChannelManufacturer FindTvChannelManufacturer(IList<TvChannelManufacturer> source, int tvChannelId, int manufacturerId);
 
         /// <summary>
         /// Get a discount-manufacturer mapping record

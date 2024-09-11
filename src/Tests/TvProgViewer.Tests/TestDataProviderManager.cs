@@ -1,10 +1,10 @@
-﻿using Nop.Core;
-using Nop.Core.Infrastructure;
-using Nop.Data;
-using Nop.Data.Configuration;
-using Nop.Data.DataProviders;
+﻿using TvProgViewer.Core;
+using TvProgViewer.Core.Infrastructure;
+using TvProgViewer.Data;
+using TvProgViewer.Data.Configuration;
+using TvProgViewer.Data.DataProviders;
 
-namespace Nop.Tests
+namespace TvProgViewer.Tests
 {
     /// <summary>
     /// Represents the data provider manager
@@ -16,17 +16,17 @@ namespace Nop.Tests
         /// <summary>
         /// Gets data provider
         /// </summary>
-        public INopDataProvider DataProvider
+        public ITvProgDataProvider DataProvider
         {
             get
             {
                 return Singleton<DataConfig>.Instance.DataProvider switch
                 {
-                    DataProviderType.SqlServer => new MsSqlNopDataProvider(),
-                    DataProviderType.MySql => new MySqlNopDataProvider(),
+                    DataProviderType.SqlServer => new MsSqlTvProgDataProvider(),
+                    DataProviderType.MySql => new MySqlTvProgDataProvider(),
                     DataProviderType.PostgreSQL => new PostgreSqlDataProvider(),
-                    DataProviderType.Unknown => new SqLiteNopDataProvider(),
-                    _ => throw new NopException($"Unknown [{Singleton<DataConfig>.Instance.DataProvider}] DataProvider")
+                    DataProviderType.Unknown => new SqLiteTvProgDataProvider(),
+                    _ => throw new TvProgException($"Unknown [{Singleton<DataConfig>.Instance.DataProvider}] DataProvider")
                 };
             }
         }

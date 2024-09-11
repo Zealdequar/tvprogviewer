@@ -4,7 +4,7 @@
 
 @if (Model.Count > 0)
 {
-    <div class="block block-recently-viewed-tvchannels">
+    <div class="block block-recently-viewed-tvChannels">
         <div class="title">
             <strong>@T("TvChannels.RecentlyViewedTvChannels")</strong>
         </div>
@@ -12,16 +12,16 @@
             <ul class="list">
                 @for (var i = 0; i < Model.Count; i++)
                 {
-                    var tvchannel = Model[i];
-                    var picture = tvchannel.PictureModels.FirstOrDefault();
+                    var tvChannel = Model[i];
+                    var picture = tvChannel.PictureModels.FirstOrDefault();
                     <li @(i == Model.Count - 1 ? @Html.Raw(" class=\"last\"") : null)>
                         @if (picture != null && !string.IsNullOrEmpty(picture.ImageUrl))
                         {
-                            <a class="tvchannel-picture" href="@(Url.RouteUrl<TvChannel>(new { SeName = tvchannel.SeName }))" title="@picture.Title">
+                            <a class="tvChannel-picture" href="@(Url.RouteUrl<TvChannel>(new { SeName = tvChannel.SeName }))" title="@picture.Title">
                                 <img alt="@picture.AlternateText" src="@picture.ImageUrl" title="@picture.Title" />
                             </a>
                         }
-                        <a class="tvchannel-name" href="@(Url.RouteUrl<TvChannel>(new { SeName = tvchannel.SeName }))">@tvchannel.Name</a>
+                        <a class="tvChannel-name" href="@(Url.RouteUrl<TvChannel>(new { SeName = tvChannel.SeName }))">@tvChannel.Name</a>
                     </li>
                 }
             </ul>

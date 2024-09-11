@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel review and review type mapping search model
+    /// Represents a tvChannel review and review type mapping search model
     /// </summary>
     public partial record TvChannelReviewReviewTypeMappingSearchModel : BaseSearchModel
     {

@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Templates
 {
     /// <summary>
-    /// Represents a tvchannel template model
+    /// Represents a tvChannel template model
     /// </summary>
     public partial record TvChannelTemplateModel : BaseTvProgEntityModel
     {

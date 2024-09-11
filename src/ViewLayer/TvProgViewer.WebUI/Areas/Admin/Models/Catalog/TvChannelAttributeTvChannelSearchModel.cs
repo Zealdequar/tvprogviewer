@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a search model of tvchannels that use the tvchannel attribute
+    /// Represents a search model of tvChannels that use the tvChannel attribute
     /// </summary>
     public partial record TvChannelAttributeTvChannelSearchModel : BaseSearchModel
     {

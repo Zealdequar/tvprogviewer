@@ -24,7 +24,7 @@ namespace TvProgViewer.Services.Shipping
         private readonly IRepository<Address> _addressRepository;
         private readonly IRepository<Order> _orderRepository;
         private readonly IRepository<OrderItem> _orderItemRepository;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
         private readonly IRepository<Shipment> _shipmentRepository;
         private readonly IRepository<ShipmentItem> _siRepository;
         private readonly IShippingPluginManager _shippingPluginManager;
@@ -37,7 +37,7 @@ namespace TvProgViewer.Services.Shipping
             IRepository<Address> addressRepository,
             IRepository<Order> orderRepository,
             IRepository<OrderItem> orderItemRepository,
-            IRepository<TvChannel> tvchannelRepository,
+            IRepository<TvChannel> tvChannelRepository,
             IRepository<Shipment> shipmentRepository,
             IRepository<ShipmentItem> siRepository,
             IShippingPluginManager shippingPluginManager)
@@ -46,7 +46,7 @@ namespace TvProgViewer.Services.Shipping
             _addressRepository = addressRepository;
             _orderRepository = orderRepository;
             _orderItemRepository = orderItemRepository;
-            _tvchannelRepository = tvchannelRepository;
+            _tvChannelRepository = tvChannelRepository;
             _shipmentRepository = shipmentRepository;
             _siRepository = siRepository;
             _shippingPluginManager = shippingPluginManager;
@@ -70,7 +70,7 @@ namespace TvProgViewer.Services.Shipping
         /// Search shipments
         /// </summary>
         /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
-        /// <param name="warehouseId">Warehouse identifier, only shipments with tvchannels from a specified warehouse will be loaded; 0 to load all orders</param>
+        /// <param name="warehouseId">Warehouse identifier, only shipments with tvChannels from a specified warehouse will be loaded; 0 to load all orders</param>
         /// <param name="shippingCountryId">Shipping country identifier; 0 to load all records</param>
         /// <param name="shippingStateId">Shipping state identifier; 0 to load all records</param>
         /// <param name="shippingCounty">Shipping county; null to load all records</param>
@@ -172,7 +172,7 @@ namespace TvProgViewer.Services.Shipping
                 if (vendorId > 0)
                 {
                     var queryVendorOrderItems = from orderItem in _orderItemRepository.Table
-                        join p in _tvchannelRepository.Table on orderItem.TvChannelId equals p.Id
+                        join p in _tvChannelRepository.Table on orderItem.TvChannelId equals p.Id
                         where p.VendorId == vendorId
                         select orderItem.Id;
 
@@ -337,7 +337,7 @@ namespace TvProgViewer.Services.Shipping
         /// <summary>
         /// Get quantity in shipments. For example, get planned quantity to be shipped
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="warehouseId">Warehouse identifier</param>
         /// <param name="ignoreShipped">Ignore already shipped shipments</param>
         /// <param name="ignoreDelivered">Ignore already delivered shipments</param>
@@ -345,16 +345,16 @@ namespace TvProgViewer.Services.Shipping
         /// Задача представляет асинхронную операцию
         /// The task result contains the quantity
         /// </returns>
-        public virtual async Task<int> GetQuantityInShipmentsAsync(TvChannel tvchannel, int warehouseId,
+        public virtual async Task<int> GetQuantityInShipmentsAsync(TvChannel tvChannel, int warehouseId,
             bool ignoreShipped, bool ignoreDelivered)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            //only tvchannels with "use multiple warehouses" are handled this way
-            if (tvchannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock)
+            //only tvChannels with "use multiple warehouses" are handled this way
+            if (tvChannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock)
                 return 0;
-            if (!tvchannel.UseMultipleWarehouses)
+            if (!tvChannel.UseMultipleWarehouses)
                 return 0;
 
             const int cancelledOrderStatusId = (int)OrderStatus.Cancelled;
@@ -388,7 +388,7 @@ namespace TvProgViewer.Services.Shipping
             }
 
             var queryTvChannelOrderItems = from orderItem in _orderItemRepository.Table
-                                         where orderItem.TvChannelId == tvchannel.Id
+                                         where orderItem.TvChannelId == tvChannel.Id
                                          select orderItem.Id;
             query = from si in query
                     where queryTvChannelOrderItems.Any(orderItemId => orderItemId == si.OrderItemId)

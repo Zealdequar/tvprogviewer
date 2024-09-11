@@ -112,10 +112,10 @@
             </div>
         }
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.CategoryDetailsBeforeFeaturedTvChannels, additionalData = Model })
-        @*featured tvchannels*@
+        @*featured tvChannels*@
         @if (Model.FeaturedTvChannels.Count > 0)
         {
-            <div class="tvchannel-grid featured-tvchannel-grid">
+            <div class="tvChannel-grid featured-tvChannel-grid">
                 <div class="title">
                     <strong>@T("TvChannels.FeaturedTvChannels")</strong>
                 </div>

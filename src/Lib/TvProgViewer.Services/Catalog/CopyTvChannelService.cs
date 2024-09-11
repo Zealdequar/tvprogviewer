@@ -29,10 +29,10 @@ namespace TvProgViewer.Services.Catalog
         private readonly ILocalizedEntityService _localizedEntityService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IPictureService _pictureService;
-        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly ITvChannelService _tvchannelService;
-        private readonly ITvChannelTagService _tvchannelTagService;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
+        private readonly ITvChannelTagService _tvChannelTagService;
         private readonly ISpecificationAttributeService _specificationAttributeService;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IUrlRecordService _urlRecordService;
@@ -50,10 +50,10 @@ namespace TvProgViewer.Services.Catalog
             ILocalizedEntityService localizedEntityService,
             IManufacturerService manufacturerService,
             IPictureService pictureService,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelAttributeService tvchannelAttributeService,
-            ITvChannelService tvchannelService,
-            ITvChannelTagService tvchannelTagService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
+            ITvChannelTagService tvChannelTagService,
             ISpecificationAttributeService specificationAttributeService,
             IStoreMappingService storeMappingService,
             IUrlRecordService urlRecordService,
@@ -67,10 +67,10 @@ namespace TvProgViewer.Services.Catalog
             _localizedEntityService = localizedEntityService;
             _manufacturerService = manufacturerService;
             _pictureService = pictureService;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelService = tvchannelService;
-            _tvchannelTagService = tvchannelTagService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
+            _tvChannelTagService = tvChannelTagService;
             _specificationAttributeService = specificationAttributeService;
             _storeMappingService = storeMappingService;
             _urlRecordService = urlRecordService;
@@ -84,55 +84,55 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Copy discount mappings
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyDiscountsMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyDiscountsMappingAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
-            foreach (var discountMapping in await _tvchannelService.GetAllDiscountsAppliedToTvChannelAsync(tvchannel.Id))
+            foreach (var discountMapping in await _tvChannelService.GetAllDiscountsAppliedToTvChannelAsync(tvChannel.Id))
             {
-                await _tvchannelService.InsertDiscountTvChannelMappingAsync(new DiscountTvChannelMapping { EntityId = tvchannelCopy.Id, DiscountId = discountMapping.DiscountId });
-                await _tvchannelService.UpdateTvChannelAsync(tvchannelCopy);
+                await _tvChannelService.InsertDiscountTvChannelMappingAsync(new DiscountTvChannelMapping { EntityId = tvChannelCopy.Id, DiscountId = discountMapping.DiscountId });
+                await _tvChannelService.UpdateTvChannelAsync(tvChannelCopy);
             }
         }
 
         /// <summary>
-        /// Copy associated tvchannels
+        /// Copy associated tvChannels
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="isPublished">A value indicating whether they should be published</param>
         /// <param name="copyMultimedia">A value indicating whether to copy images and videos</param>
-        /// <param name="copyAssociatedTvChannels">A value indicating whether to copy associated tvchannels</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="copyAssociatedTvChannels">A value indicating whether to copy associated tvChannels</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyAssociatedTvChannelsAsync(TvChannel tvchannel, bool isPublished, bool copyMultimedia, bool copyAssociatedTvChannels, TvChannel tvchannelCopy)
+        protected virtual async Task CopyAssociatedTvChannelsAsync(TvChannel tvChannel, bool isPublished, bool copyMultimedia, bool copyAssociatedTvChannels, TvChannel tvChannelCopy)
         {
             if (!copyAssociatedTvChannels)
                 return;
 
-            var associatedTvChannels = await _tvchannelService.GetAssociatedTvChannelsAsync(tvchannel.Id, showHidden: true);
+            var associatedTvChannels = await _tvChannelService.GetAssociatedTvChannelsAsync(tvChannel.Id, showHidden: true);
             foreach (var associatedTvChannel in associatedTvChannels)
             {
                 var associatedTvChannelCopy = await CopyTvChannelAsync(associatedTvChannel,
                     string.Format(TvProgCatalogDefaults.TvChannelCopyNameTemplate, associatedTvChannel.Name),
                     isPublished, copyMultimedia, false);
-                associatedTvChannelCopy.ParentGroupedTvChannelId = tvchannelCopy.Id;
-                await _tvchannelService.UpdateTvChannelAsync(associatedTvChannelCopy);
+                associatedTvChannelCopy.ParentGroupedTvChannelId = tvChannelCopy.Id;
+                await _tvChannelService.UpdateTvChannelAsync(associatedTvChannelCopy);
             }
         }
 
         /// <summary>
         /// Copy tier prices
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyTierPricesAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyTierPricesAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
-            foreach (var tierPrice in await _tvchannelService.GetTierPricesByTvChannelAsync(tvchannel.Id))
-                await _tvchannelService.InsertTierPriceAsync(new TierPrice
+            foreach (var tierPrice in await _tvChannelService.GetTierPricesByTvChannelAsync(tvChannel.Id))
+                await _tvChannelService.InsertTierPriceAsync(new TierPrice
                 {
-                    TvChannelId = tvchannelCopy.Id,
+                    TvChannelId = tvChannelCopy.Id,
                     StoreId = tierPrice.StoreId,
                     UserRoleId = tierPrice.UserRoleId,
                     Quantity = tierPrice.Quantity,
@@ -145,11 +145,11 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Copy attributes mapping
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <param name="originalNewPictureIdentifiers">Identifiers of pictures</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyAttributesMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy, Dictionary<int, int> originalNewPictureIdentifiers)
+        protected virtual async Task CopyAttributesMappingAsync(TvChannel tvChannel, TvChannel tvChannelCopy, Dictionary<int, int> originalNewPictureIdentifiers)
         {
             var associatedAttributes = new Dictionary<int, int>();
             var associatedAttributeValues = new Dictionary<int, int>();
@@ -157,77 +157,77 @@ namespace TvProgViewer.Services.Catalog
             //attribute mapping with condition attributes
             var oldCopyWithConditionAttributes = new List<TvChannelAttributeMapping>();
 
-            //all tvchannel attribute mapping copies
-            var tvchannelAttributeMappingCopies = new Dictionary<int, TvChannelAttributeMapping>();
+            //all tvChannel attribute mapping copies
+            var tvChannelAttributeMappingCopies = new Dictionary<int, TvChannelAttributeMapping>();
 
             var languages = await _languageService.GetAllLanguagesAsync(true);
 
-            foreach (var tvchannelAttributeMapping in await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id))
+            foreach (var tvChannelAttributeMapping in await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id))
             {
-                var tvchannelAttributeMappingCopy = new TvChannelAttributeMapping
+                var tvChannelAttributeMappingCopy = new TvChannelAttributeMapping
                 {
-                    TvChannelId = tvchannelCopy.Id,
-                    TvChannelAttributeId = tvchannelAttributeMapping.TvChannelAttributeId,
-                    TextPrompt = tvchannelAttributeMapping.TextPrompt,
-                    IsRequired = tvchannelAttributeMapping.IsRequired,
-                    AttributeControlTypeId = tvchannelAttributeMapping.AttributeControlTypeId,
-                    DisplayOrder = tvchannelAttributeMapping.DisplayOrder,
-                    ValidationMinLength = tvchannelAttributeMapping.ValidationMinLength,
-                    ValidationMaxLength = tvchannelAttributeMapping.ValidationMaxLength,
-                    ValidationFileAllowedExtensions = tvchannelAttributeMapping.ValidationFileAllowedExtensions,
-                    ValidationFileMaximumSize = tvchannelAttributeMapping.ValidationFileMaximumSize,
-                    DefaultValue = tvchannelAttributeMapping.DefaultValue
+                    TvChannelId = tvChannelCopy.Id,
+                    TvChannelAttributeId = tvChannelAttributeMapping.TvChannelAttributeId,
+                    TextPrompt = tvChannelAttributeMapping.TextPrompt,
+                    IsRequired = tvChannelAttributeMapping.IsRequired,
+                    AttributeControlTypeId = tvChannelAttributeMapping.AttributeControlTypeId,
+                    DisplayOrder = tvChannelAttributeMapping.DisplayOrder,
+                    ValidationMinLength = tvChannelAttributeMapping.ValidationMinLength,
+                    ValidationMaxLength = tvChannelAttributeMapping.ValidationMaxLength,
+                    ValidationFileAllowedExtensions = tvChannelAttributeMapping.ValidationFileAllowedExtensions,
+                    ValidationFileMaximumSize = tvChannelAttributeMapping.ValidationFileMaximumSize,
+                    DefaultValue = tvChannelAttributeMapping.DefaultValue
                 };
-                await _tvchannelAttributeService.InsertTvChannelAttributeMappingAsync(tvchannelAttributeMappingCopy);
+                await _tvChannelAttributeService.InsertTvChannelAttributeMappingAsync(tvChannelAttributeMappingCopy);
                 //localization
                 foreach (var lang in languages)
                 {
-                    var textPrompt = await _localizationService.GetLocalizedAsync(tvchannelAttributeMapping, x => x.TextPrompt, lang.Id, false, false);
+                    var textPrompt = await _localizationService.GetLocalizedAsync(tvChannelAttributeMapping, x => x.TextPrompt, lang.Id, false, false);
                     if (!string.IsNullOrEmpty(textPrompt))
-                        await _localizedEntityService.SaveLocalizedValueAsync(tvchannelAttributeMappingCopy, x => x.TextPrompt, textPrompt,
+                        await _localizedEntityService.SaveLocalizedValueAsync(tvChannelAttributeMappingCopy, x => x.TextPrompt, textPrompt,
                             lang.Id);
                 }
 
-                tvchannelAttributeMappingCopies.Add(tvchannelAttributeMappingCopy.Id, tvchannelAttributeMappingCopy);
+                tvChannelAttributeMappingCopies.Add(tvChannelAttributeMappingCopy.Id, tvChannelAttributeMappingCopy);
 
-                if (!string.IsNullOrEmpty(tvchannelAttributeMapping.ConditionAttributeXml))
+                if (!string.IsNullOrEmpty(tvChannelAttributeMapping.ConditionAttributeXml))
                 {
-                    oldCopyWithConditionAttributes.Add(tvchannelAttributeMapping);
+                    oldCopyWithConditionAttributes.Add(tvChannelAttributeMapping);
                 }
 
                 //save associated value (used for combinations copying)
-                associatedAttributes.Add(tvchannelAttributeMapping.Id, tvchannelAttributeMappingCopy.Id);
+                associatedAttributes.Add(tvChannelAttributeMapping.Id, tvChannelAttributeMappingCopy.Id);
 
-                // tvchannel attribute values
-                var tvchannelAttributeValues = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(tvchannelAttributeMapping.Id);
-                foreach (var tvchannelAttributeValue in tvchannelAttributeValues)
+                // tvChannel attribute values
+                var tvChannelAttributeValues = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(tvChannelAttributeMapping.Id);
+                foreach (var tvChannelAttributeValue in tvChannelAttributeValues)
                 {
                     var attributeValuePictureId = 0;
-                    if (originalNewPictureIdentifiers.ContainsKey(tvchannelAttributeValue.PictureId)) 
-                        attributeValuePictureId = originalNewPictureIdentifiers[tvchannelAttributeValue.PictureId];
+                    if (originalNewPictureIdentifiers.ContainsKey(tvChannelAttributeValue.PictureId)) 
+                        attributeValuePictureId = originalNewPictureIdentifiers[tvChannelAttributeValue.PictureId];
 
                     var attributeValueCopy = new TvChannelAttributeValue
                     {
-                        TvChannelAttributeMappingId = tvchannelAttributeMappingCopy.Id,
-                        AttributeValueTypeId = tvchannelAttributeValue.AttributeValueTypeId,
-                        AssociatedTvChannelId = tvchannelAttributeValue.AssociatedTvChannelId,
-                        Name = tvchannelAttributeValue.Name,
-                        ColorSquaresRgb = tvchannelAttributeValue.ColorSquaresRgb,
-                        PriceAdjustment = tvchannelAttributeValue.PriceAdjustment,
-                        PriceAdjustmentUsePercentage = tvchannelAttributeValue.PriceAdjustmentUsePercentage,
-                        WeightAdjustment = tvchannelAttributeValue.WeightAdjustment,
-                        Cost = tvchannelAttributeValue.Cost,
-                        UserEntersQty = tvchannelAttributeValue.UserEntersQty,
-                        Quantity = tvchannelAttributeValue.Quantity,
-                        IsPreSelected = tvchannelAttributeValue.IsPreSelected,
-                        DisplayOrder = tvchannelAttributeValue.DisplayOrder,
+                        TvChannelAttributeMappingId = tvChannelAttributeMappingCopy.Id,
+                        AttributeValueTypeId = tvChannelAttributeValue.AttributeValueTypeId,
+                        AssociatedTvChannelId = tvChannelAttributeValue.AssociatedTvChannelId,
+                        Name = tvChannelAttributeValue.Name,
+                        ColorSquaresRgb = tvChannelAttributeValue.ColorSquaresRgb,
+                        PriceAdjustment = tvChannelAttributeValue.PriceAdjustment,
+                        PriceAdjustmentUsePercentage = tvChannelAttributeValue.PriceAdjustmentUsePercentage,
+                        WeightAdjustment = tvChannelAttributeValue.WeightAdjustment,
+                        Cost = tvChannelAttributeValue.Cost,
+                        UserEntersQty = tvChannelAttributeValue.UserEntersQty,
+                        Quantity = tvChannelAttributeValue.Quantity,
+                        IsPreSelected = tvChannelAttributeValue.IsPreSelected,
+                        DisplayOrder = tvChannelAttributeValue.DisplayOrder,
                         PictureId = attributeValuePictureId,
                     };
                     //picture associated to "iamge square" attribute type (if exists)
-                    if (tvchannelAttributeValue.ImageSquaresPictureId > 0)
+                    if (tvChannelAttributeValue.ImageSquaresPictureId > 0)
                     {
                         var origImageSquaresPicture =
-                            await _pictureService.GetPictureByIdAsync(tvchannelAttributeValue.ImageSquaresPictureId);
+                            await _pictureService.GetPictureByIdAsync(tvChannelAttributeValue.ImageSquaresPictureId);
                         if (origImageSquaresPicture != null)
                         {
                             //copy the picture
@@ -241,15 +241,15 @@ namespace TvProgViewer.Services.Catalog
                         }
                     }
 
-                    await _tvchannelAttributeService.InsertTvChannelAttributeValueAsync(attributeValueCopy);
+                    await _tvChannelAttributeService.InsertTvChannelAttributeValueAsync(attributeValueCopy);
 
                     //save associated value (used for combinations copying)
-                    associatedAttributeValues.Add(tvchannelAttributeValue.Id, attributeValueCopy.Id);
+                    associatedAttributeValues.Add(tvChannelAttributeValue.Id, attributeValueCopy.Id);
 
                     //localization
                     foreach (var lang in languages)
                     {
-                        var name = await _localizationService.GetLocalizedAsync(tvchannelAttributeValue, x => x.Name, lang.Id, false, false);
+                        var name = await _localizationService.GetLocalizedAsync(tvChannelAttributeValue, x => x.Name, lang.Id, false, false);
                         if (!string.IsNullOrEmpty(name))
                             await _localizedEntityService.SaveLocalizedValueAsync(attributeValueCopy, x => x.Name, name, lang.Id);
                     }
@@ -257,56 +257,56 @@ namespace TvProgViewer.Services.Catalog
             }
 
             //copy attribute conditions
-            foreach (var tvchannelAttributeMapping in oldCopyWithConditionAttributes)
+            foreach (var tvChannelAttributeMapping in oldCopyWithConditionAttributes)
             {
-                var oldConditionAttributeMapping = (await _tvchannelAttributeParser
-                    .ParseTvChannelAttributeMappingsAsync(tvchannelAttributeMapping.ConditionAttributeXml)).FirstOrDefault();
+                var oldConditionAttributeMapping = (await _tvChannelAttributeParser
+                    .ParseTvChannelAttributeMappingsAsync(tvChannelAttributeMapping.ConditionAttributeXml)).FirstOrDefault();
 
                 if (oldConditionAttributeMapping == null)
                     continue;
 
-                var oldConditionValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(
-                    tvchannelAttributeMapping.ConditionAttributeXml,
+                var oldConditionValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(
+                    tvChannelAttributeMapping.ConditionAttributeXml,
                     oldConditionAttributeMapping.Id);
 
                 if (!oldConditionValues.Any())
                     continue;
 
                 var newAttributeMappingId = associatedAttributes[oldConditionAttributeMapping.Id];
-                var newConditionAttributeMapping = tvchannelAttributeMappingCopies[newAttributeMappingId];
+                var newConditionAttributeMapping = tvChannelAttributeMappingCopies[newAttributeMappingId];
 
                 var newConditionAttributeXml = string.Empty;
 
                 foreach (var oldConditionValue in oldConditionValues)
                 {
-                    newConditionAttributeXml = _tvchannelAttributeParser.AddTvChannelAttribute(newConditionAttributeXml,
+                    newConditionAttributeXml = _tvChannelAttributeParser.AddTvChannelAttribute(newConditionAttributeXml,
                         newConditionAttributeMapping, associatedAttributeValues[oldConditionValue.Id].ToString());
                 }
 
-                var attributeMappingId = associatedAttributes[tvchannelAttributeMapping.Id];
-                var conditionAttribute = tvchannelAttributeMappingCopies[attributeMappingId];
+                var attributeMappingId = associatedAttributes[tvChannelAttributeMapping.Id];
+                var conditionAttribute = tvChannelAttributeMappingCopies[attributeMappingId];
                 conditionAttribute.ConditionAttributeXml = newConditionAttributeXml;
 
-                await _tvchannelAttributeService.UpdateTvChannelAttributeMappingAsync(conditionAttribute);
+                await _tvChannelAttributeService.UpdateTvChannelAttributeMappingAsync(conditionAttribute);
             }
 
             //attribute combinations
-            foreach (var combination in await _tvchannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvchannel.Id))
+            foreach (var combination in await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id))
             {
                 //generate new AttributesXml according to new value IDs
                 var newAttributesXml = string.Empty;
-                var parsedTvChannelAttributes = await _tvchannelAttributeParser.ParseTvChannelAttributeMappingsAsync(combination.AttributesXml);
+                var parsedTvChannelAttributes = await _tvChannelAttributeParser.ParseTvChannelAttributeMappingsAsync(combination.AttributesXml);
                 foreach (var oldAttribute in parsedTvChannelAttributes)
                 {
                     if (!associatedAttributes.ContainsKey(oldAttribute.Id))
                         continue;
 
-                    var newAttribute = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(associatedAttributes[oldAttribute.Id]);
+                    var newAttribute = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(associatedAttributes[oldAttribute.Id]);
 
                     if (newAttribute == null)
                         continue;
 
-                    var oldAttributeValuesStr = _tvchannelAttributeParser.ParseValues(combination.AttributesXml, oldAttribute.Id);
+                    var oldAttributeValuesStr = _tvChannelAttributeParser.ParseValues(combination.AttributesXml, oldAttribute.Id);
 
                     foreach (var oldAttributeValueStr in oldAttributeValuesStr)
                     {
@@ -317,18 +317,18 @@ namespace TvProgViewer.Services.Catalog
                             if (!associatedAttributeValues.ContainsKey(oldAttributeValue))
                                 continue;
 
-                            var newAttributeValue = await _tvchannelAttributeService.GetTvChannelAttributeValueByIdAsync(associatedAttributeValues[oldAttributeValue]);
+                            var newAttributeValue = await _tvChannelAttributeService.GetTvChannelAttributeValueByIdAsync(associatedAttributeValues[oldAttributeValue]);
 
                             if (newAttributeValue != null)
                             {
-                                newAttributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(newAttributesXml,
+                                newAttributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(newAttributesXml,
                                     newAttribute, newAttributeValue.Id.ToString());
                             }
                         }
                         else
                         {
                             //just a text
-                            newAttributesXml = _tvchannelAttributeParser.AddTvChannelAttribute(newAttributesXml,
+                            newAttributesXml = _tvChannelAttributeParser.AddTvChannelAttribute(newAttributesXml,
                                 newAttribute, oldAttributeValueStr);
                         }
                     }
@@ -339,7 +339,7 @@ namespace TvProgViewer.Services.Catalog
 
                 var combinationCopy = new TvChannelAttributeCombination
                 {
-                    TvChannelId = tvchannelCopy.Id,
+                    TvChannelId = tvChannelCopy.Id,
                     AttributesXml = newAttributesXml,
                     StockQuantity = combination.StockQuantity,
                     MinStockQuantity = combination.MinStockQuantity,
@@ -351,43 +351,43 @@ namespace TvProgViewer.Services.Catalog
                     NotifyAdminForQuantityBelow = combination.NotifyAdminForQuantityBelow,
                     PictureId = combinationPictureId
                 };
-                await _tvchannelAttributeService.InsertTvChannelAttributeCombinationAsync(combinationCopy);
+                await _tvChannelAttributeService.InsertTvChannelAttributeCombinationAsync(combinationCopy);
 
                 //quantity change history
-                await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannelCopy, combination.StockQuantity,
+                await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannelCopy, combination.StockQuantity,
                     combination.StockQuantity,
-                    message: string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyTvChannel"), tvchannel.Id), combinationId: combination.Id);
+                    message: string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyTvChannel"), tvChannel.Id), combinationId: combination.Id);
             }
         }
 
         /// <summary>
-        /// Copy tvchannel specifications
+        /// Copy tvChannel specifications
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyTvChannelSpecificationsAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyTvChannelSpecificationsAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
             var allLanguages = await _languageService.GetAllLanguagesAsync();
 
-            foreach (var tvchannelSpecificationAttribute in await _specificationAttributeService.GetTvChannelSpecificationAttributesAsync(tvchannel.Id))
+            foreach (var tvChannelSpecificationAttribute in await _specificationAttributeService.GetTvChannelSpecificationAttributesAsync(tvChannel.Id))
             {
                 var psaCopy = new TvChannelSpecificationAttribute
                 {
-                    TvChannelId = tvchannelCopy.Id,
-                    AttributeTypeId = tvchannelSpecificationAttribute.AttributeTypeId,
-                    SpecificationAttributeOptionId = tvchannelSpecificationAttribute.SpecificationAttributeOptionId,
-                    CustomValue = tvchannelSpecificationAttribute.CustomValue,
-                    AllowFiltering = tvchannelSpecificationAttribute.AllowFiltering,
-                    ShowOnTvChannelPage = tvchannelSpecificationAttribute.ShowOnTvChannelPage,
-                    DisplayOrder = tvchannelSpecificationAttribute.DisplayOrder
+                    TvChannelId = tvChannelCopy.Id,
+                    AttributeTypeId = tvChannelSpecificationAttribute.AttributeTypeId,
+                    SpecificationAttributeOptionId = tvChannelSpecificationAttribute.SpecificationAttributeOptionId,
+                    CustomValue = tvChannelSpecificationAttribute.CustomValue,
+                    AllowFiltering = tvChannelSpecificationAttribute.AllowFiltering,
+                    ShowOnTvChannelPage = tvChannelSpecificationAttribute.ShowOnTvChannelPage,
+                    DisplayOrder = tvChannelSpecificationAttribute.DisplayOrder
                 };
 
                 await _specificationAttributeService.InsertTvChannelSpecificationAttributeAsync(psaCopy);
                 
                 foreach (var language in allLanguages)
                 {
-                    var customValue = await _localizationService.GetLocalizedAsync(tvchannelSpecificationAttribute, x => x.CustomValue, language.Id, false, false);
+                    var customValue = await _localizationService.GetLocalizedAsync(tvChannelSpecificationAttribute, x => x.CustomValue, language.Id, false, false);
                     if (!string.IsNullOrEmpty(customValue))
                         await _localizedEntityService.SaveLocalizedValueAsync(psaCopy, x => x.CustomValue, customValue, language.Id);
                 }
@@ -397,33 +397,33 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Copy crosssell mapping
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyCrossSellsMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyCrossSellsMappingAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
-            foreach (var csTvChannel in await _tvchannelService.GetCrossSellTvChannelsByTvChannelId1Async(tvchannel.Id, true))
-                await _tvchannelService.InsertCrossSellTvChannelAsync(
+            foreach (var csTvChannel in await _tvChannelService.GetCrossSellTvChannelsByTvChannelId1Async(tvChannel.Id, true))
+                await _tvChannelService.InsertCrossSellTvChannelAsync(
                     new CrossSellTvChannel
                     {
-                        TvChannelId1 = tvchannelCopy.Id,
+                        TvChannelId1 = tvChannelCopy.Id,
                         TvChannelId2 = csTvChannel.TvChannelId2
                     });
         }
 
         /// <summary>
-        /// Copy related tvchannels mapping
+        /// Copy related tvChannels mapping
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyRelatedTvChannelsMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyRelatedTvChannelsMappingAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
-            foreach (var relatedTvChannel in await _tvchannelService.GetRelatedTvChannelsByTvChannelId1Async(tvchannel.Id, true))
-                await _tvchannelService.InsertRelatedTvChannelAsync(
+            foreach (var relatedTvChannel in await _tvChannelService.GetRelatedTvChannelsByTvChannelId1Async(tvChannel.Id, true))
+                await _tvChannelService.InsertRelatedTvChannelAsync(
                     new RelatedTvChannel
                     {
-                        TvChannelId1 = tvchannelCopy.Id,
+                        TvChannelId1 = tvChannelCopy.Id,
                         TvChannelId2 = relatedTvChannel.TvChannelId2,
                         DisplayOrder = relatedTvChannel.DisplayOrder
                     });
@@ -432,106 +432,106 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Copy manufacturer mapping
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyManufacturersMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyManufacturersMappingAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
-            foreach (var tvchannelManufacturers in await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvchannel.Id, true))
+            foreach (var tvChannelManufacturers in await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(tvChannel.Id, true))
             {
-                var tvchannelManufacturerCopy = new TvChannelManufacturer
+                var tvChannelManufacturerCopy = new TvChannelManufacturer
                 {
-                    TvChannelId = tvchannelCopy.Id,
-                    ManufacturerId = tvchannelManufacturers.ManufacturerId,
-                    IsFeaturedTvChannel = tvchannelManufacturers.IsFeaturedTvChannel,
-                    DisplayOrder = tvchannelManufacturers.DisplayOrder
+                    TvChannelId = tvChannelCopy.Id,
+                    ManufacturerId = tvChannelManufacturers.ManufacturerId,
+                    IsFeaturedTvChannel = tvChannelManufacturers.IsFeaturedTvChannel,
+                    DisplayOrder = tvChannelManufacturers.DisplayOrder
                 };
 
-                await _manufacturerService.InsertTvChannelManufacturerAsync(tvchannelManufacturerCopy);
+                await _manufacturerService.InsertTvChannelManufacturerAsync(tvChannelManufacturerCopy);
             }
         }
 
         /// <summary>
         /// Copy category mapping
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyCategoriesMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyCategoriesMappingAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
-            foreach (var tvchannelCategory in await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvchannel.Id, showHidden: true))
+            foreach (var tvChannelCategory in await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(tvChannel.Id, showHidden: true))
             {
-                var tvchannelCategoryCopy = new TvChannelCategory
+                var tvChannelCategoryCopy = new TvChannelCategory
                 {
-                    TvChannelId = tvchannelCopy.Id,
-                    CategoryId = tvchannelCategory.CategoryId,
-                    IsFeaturedTvChannel = tvchannelCategory.IsFeaturedTvChannel,
-                    DisplayOrder = tvchannelCategory.DisplayOrder
+                    TvChannelId = tvChannelCopy.Id,
+                    CategoryId = tvChannelCategory.CategoryId,
+                    IsFeaturedTvChannel = tvChannelCategory.IsFeaturedTvChannel,
+                    DisplayOrder = tvChannelCategory.DisplayOrder
                 };
 
-                await _categoryService.InsertTvChannelCategoryAsync(tvchannelCategoryCopy);
+                await _categoryService.InsertTvChannelCategoryAsync(tvChannelCategoryCopy);
             }
         }
 
         /// <summary>
         /// Copy warehouse mapping
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyWarehousesMappingAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyWarehousesMappingAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
-            foreach (var pwi in await _tvchannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(tvchannel.Id))
+            foreach (var pwi in await _tvChannelService.GetAllTvChannelWarehouseInventoryRecordsAsync(tvChannel.Id))
             {
-                await _tvchannelService.InsertTvChannelWarehouseInventoryAsync(
+                await _tvChannelService.InsertTvChannelWarehouseInventoryAsync(
                     new TvChannelWarehouseInventory
                     {
-                        TvChannelId = tvchannelCopy.Id,
+                        TvChannelId = tvChannelCopy.Id,
                         WarehouseId = pwi.WarehouseId,
                         StockQuantity = pwi.StockQuantity,
                         ReservedQuantity = 0
                     });
 
                 //quantity change history
-                var message = $"{await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.MultipleWarehouses")} {string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyTvChannel"), tvchannel.Id)}";
-                await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannelCopy, pwi.StockQuantity, pwi.StockQuantity, pwi.WarehouseId, message);
+                var message = $"{await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.MultipleWarehouses")} {string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyTvChannel"), tvChannel.Id)}";
+                await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannelCopy, pwi.StockQuantity, pwi.StockQuantity, pwi.WarehouseId, message);
             }
 
-            await _tvchannelService.UpdateTvChannelAsync(tvchannelCopy);
+            await _tvChannelService.UpdateTvChannelAsync(tvChannelCopy);
         }
 
         /// <summary>
-        /// Copy tvchannel pictures
+        /// Copy tvChannel pictures
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="newName">New tvchannel name</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="newName">New tvChannel name</param>
         /// <param name="copyMultimedia"></param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the identifiers of old and new pictures
         /// </returns>
-        protected virtual async Task<Dictionary<int, int>> CopyTvChannelPicturesAsync(TvChannel tvchannel, string newName, bool copyMultimedia, TvChannel tvchannelCopy)
+        protected virtual async Task<Dictionary<int, int>> CopyTvChannelPicturesAsync(TvChannel tvChannel, string newName, bool copyMultimedia, TvChannel tvChannelCopy)
         {
             //variable to store original and new picture identifiers
             var originalNewPictureIdentifiers = new Dictionary<int, int>();
             if (!copyMultimedia)
                 return originalNewPictureIdentifiers;
 
-            foreach (var tvchannelPicture in await _tvchannelService.GetTvChannelPicturesByTvChannelIdAsync(tvchannel.Id))
+            foreach (var tvChannelPicture in await _tvChannelService.GetTvChannelPicturesByTvChannelIdAsync(tvChannel.Id))
             {
-                var picture = await _pictureService.GetPictureByIdAsync(tvchannelPicture.PictureId);
+                var picture = await _pictureService.GetPictureByIdAsync(tvChannelPicture.PictureId);
                 var pictureCopy = await _pictureService.InsertPictureAsync(
                     await _pictureService.LoadPictureBinaryAsync(picture),
                     picture.MimeType,
                     await _pictureService.GetPictureSeNameAsync(newName),
                     picture.AltAttribute,
                     picture.TitleAttribute);
-                await _tvchannelService.InsertTvChannelPictureAsync(new TvChannelPicture
+                await _tvChannelService.InsertTvChannelPictureAsync(new TvChannelPicture
                 {
-                    TvChannelId = tvchannelCopy.Id,
+                    TvChannelId = tvChannelCopy.Id,
                     PictureId = pictureCopy.Id,
-                    DisplayOrder = tvchannelPicture.DisplayOrder
+                    DisplayOrder = tvChannelPicture.DisplayOrder
                 });
                 originalNewPictureIdentifiers.Add(picture.Id, pictureCopy.Id);
             }
@@ -540,25 +540,25 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Copy tvchannel videos
+        /// Copy tvChannel videos
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="copyVideos"></param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyTvChannelVideosAsync(TvChannel tvchannel, bool copyVideos, TvChannel tvchannelCopy)
+        protected virtual async Task CopyTvChannelVideosAsync(TvChannel tvChannel, bool copyVideos, TvChannel tvChannelCopy)
         {
             if (copyVideos)
             {
-                foreach (var tvchannelVideo in await _tvchannelService.GetTvChannelVideosByTvChannelIdAsync(tvchannel.Id))
+                foreach (var tvChannelVideo in await _tvChannelService.GetTvChannelVideosByTvChannelIdAsync(tvChannel.Id))
                 {
-                    var video = await _videoService.GetVideoByIdAsync(tvchannelVideo.VideoId);
+                    var video = await _videoService.GetVideoByIdAsync(tvChannelVideo.VideoId);
                     var videoCopy = await _videoService.InsertVideoAsync(video);
-                    await _tvchannelService.InsertTvChannelVideoAsync(new TvChannelVideo
+                    await _tvChannelService.InsertTvChannelVideoAsync(new TvChannelVideo
                     {
-                        TvChannelId = tvchannelCopy.Id,
+                        TvChannelId = tvChannelCopy.Id,
                         VideoId = videoCopy.Id,
-                        DisplayOrder = tvchannelVideo.DisplayOrder
+                        DisplayOrder = tvChannelVideo.DisplayOrder
                     });
                 }
             }
@@ -567,63 +567,63 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Copy localization data
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelCopy">New tvchannel</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelCopy">New tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task CopyLocalizationDataAsync(TvChannel tvchannel, TvChannel tvchannelCopy)
+        protected virtual async Task CopyLocalizationDataAsync(TvChannel tvChannel, TvChannel tvChannelCopy)
         {
             var languages = await _languageService.GetAllLanguagesAsync(true);
 
             //localization
             foreach (var lang in languages)
             {
-                var name = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name, lang.Id, false, false);
+                var name = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name, lang.Id, false, false);
                 if (!string.IsNullOrEmpty(name))
-                    await _localizedEntityService.SaveLocalizedValueAsync(tvchannelCopy, x => x.Name, name, lang.Id);
+                    await _localizedEntityService.SaveLocalizedValueAsync(tvChannelCopy, x => x.Name, name, lang.Id);
 
-                var shortDescription = await _localizationService.GetLocalizedAsync(tvchannel, x => x.ShortDescription, lang.Id, false, false);
+                var shortDescription = await _localizationService.GetLocalizedAsync(tvChannel, x => x.ShortDescription, lang.Id, false, false);
                 if (!string.IsNullOrEmpty(shortDescription))
-                    await _localizedEntityService.SaveLocalizedValueAsync(tvchannelCopy, x => x.ShortDescription, shortDescription, lang.Id);
+                    await _localizedEntityService.SaveLocalizedValueAsync(tvChannelCopy, x => x.ShortDescription, shortDescription, lang.Id);
 
-                var fullDescription = await _localizationService.GetLocalizedAsync(tvchannel, x => x.FullDescription, lang.Id, false, false);
+                var fullDescription = await _localizationService.GetLocalizedAsync(tvChannel, x => x.FullDescription, lang.Id, false, false);
                 if (!string.IsNullOrEmpty(fullDescription))
-                    await _localizedEntityService.SaveLocalizedValueAsync(tvchannelCopy, x => x.FullDescription, fullDescription, lang.Id);
+                    await _localizedEntityService.SaveLocalizedValueAsync(tvChannelCopy, x => x.FullDescription, fullDescription, lang.Id);
 
-                var metaKeywords = await _localizationService.GetLocalizedAsync(tvchannel, x => x.MetaKeywords, lang.Id, false, false);
+                var metaKeywords = await _localizationService.GetLocalizedAsync(tvChannel, x => x.MetaKeywords, lang.Id, false, false);
                 if (!string.IsNullOrEmpty(metaKeywords))
-                    await _localizedEntityService.SaveLocalizedValueAsync(tvchannelCopy, x => x.MetaKeywords, metaKeywords, lang.Id);
+                    await _localizedEntityService.SaveLocalizedValueAsync(tvChannelCopy, x => x.MetaKeywords, metaKeywords, lang.Id);
 
-                var metaDescription = await _localizationService.GetLocalizedAsync(tvchannel, x => x.MetaDescription, lang.Id, false, false);
+                var metaDescription = await _localizationService.GetLocalizedAsync(tvChannel, x => x.MetaDescription, lang.Id, false, false);
                 if (!string.IsNullOrEmpty(metaDescription))
-                    await _localizedEntityService.SaveLocalizedValueAsync(tvchannelCopy, x => x.MetaDescription, metaDescription, lang.Id);
+                    await _localizedEntityService.SaveLocalizedValueAsync(tvChannelCopy, x => x.MetaDescription, metaDescription, lang.Id);
 
-                var metaTitle = await _localizationService.GetLocalizedAsync(tvchannel, x => x.MetaTitle, lang.Id, false, false);
+                var metaTitle = await _localizationService.GetLocalizedAsync(tvChannel, x => x.MetaTitle, lang.Id, false, false);
                 if (!string.IsNullOrEmpty(metaTitle))
-                    await _localizedEntityService.SaveLocalizedValueAsync(tvchannelCopy, x => x.MetaTitle, metaTitle, lang.Id);
+                    await _localizedEntityService.SaveLocalizedValueAsync(tvChannelCopy, x => x.MetaTitle, metaTitle, lang.Id);
 
                 //search engine name
-                await _urlRecordService.SaveSlugAsync(tvchannelCopy, await _urlRecordService.ValidateSeNameAsync(tvchannelCopy, string.Empty, name, false), lang.Id);
+                await _urlRecordService.SaveSlugAsync(tvChannelCopy, await _urlRecordService.ValidateSeNameAsync(tvChannelCopy, string.Empty, name, false), lang.Id);
             }
         }
 
         /// <summary>
-        /// Copy tvchannel
+        /// Copy tvChannel
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="newName">New tvchannel name</param>
-        /// <param name="isPublished">A value indicating whether a new tvchannel is published</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="newName">New tvChannel name</param>
+        /// <param name="isPublished">A value indicating whether a new tvChannel is published</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
-        protected virtual async Task<TvChannel> CopyBaseTvChannelDataAsync(TvChannel tvchannel, string newName, bool isPublished)
+        protected virtual async Task<TvChannel> CopyBaseTvChannelDataAsync(TvChannel tvChannel, string newName, bool isPublished)
         {
-            //tvchannel download & sample download
-            var downloadId = tvchannel.DownloadId;
-            var sampleDownloadId = tvchannel.SampleDownloadId;
-            if (tvchannel.IsDownload)
+            //tvChannel download & sample download
+            var downloadId = tvChannel.DownloadId;
+            var sampleDownloadId = tvChannel.SampleDownloadId;
+            if (tvChannel.IsDownload)
             {
-                var download = await _downloadService.GetDownloadByIdAsync(tvchannel.DownloadId);
+                var download = await _downloadService.GetDownloadByIdAsync(tvChannel.DownloadId);
                 if (download != null)
                 {
                     var downloadCopy = new Download
@@ -641,9 +641,9 @@ namespace TvProgViewer.Services.Catalog
                     downloadId = downloadCopy.Id;
                 }
 
-                if (tvchannel.HasSampleDownload)
+                if (tvChannel.HasSampleDownload)
                 {
-                    var sampleDownload = await _downloadService.GetDownloadByIdAsync(tvchannel.SampleDownloadId);
+                    var sampleDownload = await _downloadService.GetDownloadByIdAsync(tvChannel.SampleDownloadId);
                     if (sampleDownload != null)
                     {
                         var sampleDownloadCopy = new Download
@@ -663,118 +663,118 @@ namespace TvProgViewer.Services.Catalog
                 }
             }
 
-            var newSku = !string.IsNullOrWhiteSpace(tvchannel.Sku)
-                ? string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Copy.SKU.New"), tvchannel.Sku)
-                : tvchannel.Sku;
-            // tvchannel
-            var tvchannelCopy = new TvChannel
+            var newSku = !string.IsNullOrWhiteSpace(tvChannel.Sku)
+                ? string.Format(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.Copy.SKU.New"), tvChannel.Sku)
+                : tvChannel.Sku;
+            // tvChannel
+            var tvChannelCopy = new TvChannel
             {
-                TvChannelTypeId = tvchannel.TvChannelTypeId,
-                ParentGroupedTvChannelId = tvchannel.ParentGroupedTvChannelId,
-                VisibleIndividually = tvchannel.VisibleIndividually,
+                TvChannelTypeId = tvChannel.TvChannelTypeId,
+                ParentGroupedTvChannelId = tvChannel.ParentGroupedTvChannelId,
+                VisibleIndividually = tvChannel.VisibleIndividually,
                 Name = newName,
-                ShortDescription = tvchannel.ShortDescription,
-                FullDescription = tvchannel.FullDescription,
-                VendorId = tvchannel.VendorId,
-                TvChannelTemplateId = tvchannel.TvChannelTemplateId,
-                AdminComment = tvchannel.AdminComment,
-                ShowOnHomepage = tvchannel.ShowOnHomepage,
-                MetaKeywords = tvchannel.MetaKeywords,
-                MetaDescription = tvchannel.MetaDescription,
-                MetaTitle = tvchannel.MetaTitle,
-                AllowUserReviews = tvchannel.AllowUserReviews,
-                LimitedToStores = tvchannel.LimitedToStores,
-                SubjectToAcl = tvchannel.SubjectToAcl,
+                ShortDescription = tvChannel.ShortDescription,
+                FullDescription = tvChannel.FullDescription,
+                VendorId = tvChannel.VendorId,
+                TvChannelTemplateId = tvChannel.TvChannelTemplateId,
+                AdminComment = tvChannel.AdminComment,
+                ShowOnHomepage = tvChannel.ShowOnHomepage,
+                MetaKeywords = tvChannel.MetaKeywords,
+                MetaDescription = tvChannel.MetaDescription,
+                MetaTitle = tvChannel.MetaTitle,
+                AllowUserReviews = tvChannel.AllowUserReviews,
+                LimitedToStores = tvChannel.LimitedToStores,
+                SubjectToAcl = tvChannel.SubjectToAcl,
                 Sku = newSku,
-                ManufacturerPartNumber = tvchannel.ManufacturerPartNumber,
-                Gtin = tvchannel.Gtin,
-                IsGiftCard = tvchannel.IsGiftCard,
-                GiftCardType = tvchannel.GiftCardType,
-                OverriddenGiftCardAmount = tvchannel.OverriddenGiftCardAmount,
-                RequireOtherTvChannels = tvchannel.RequireOtherTvChannels,
-                RequiredTvChannelIds = tvchannel.RequiredTvChannelIds,
-                AutomaticallyAddRequiredTvChannels = tvchannel.AutomaticallyAddRequiredTvChannels,
-                IsDownload = tvchannel.IsDownload,
+                ManufacturerPartNumber = tvChannel.ManufacturerPartNumber,
+                Gtin = tvChannel.Gtin,
+                IsGiftCard = tvChannel.IsGiftCard,
+                GiftCardType = tvChannel.GiftCardType,
+                OverriddenGiftCardAmount = tvChannel.OverriddenGiftCardAmount,
+                RequireOtherTvChannels = tvChannel.RequireOtherTvChannels,
+                RequiredTvChannelIds = tvChannel.RequiredTvChannelIds,
+                AutomaticallyAddRequiredTvChannels = tvChannel.AutomaticallyAddRequiredTvChannels,
+                IsDownload = tvChannel.IsDownload,
                 DownloadId = downloadId,
-                UnlimitedDownloads = tvchannel.UnlimitedDownloads,
-                MaxNumberOfDownloads = tvchannel.MaxNumberOfDownloads,
-                DownloadExpirationDays = tvchannel.DownloadExpirationDays,
-                DownloadActivationType = tvchannel.DownloadActivationType,
-                HasSampleDownload = tvchannel.HasSampleDownload,
+                UnlimitedDownloads = tvChannel.UnlimitedDownloads,
+                MaxNumberOfDownloads = tvChannel.MaxNumberOfDownloads,
+                DownloadExpirationDays = tvChannel.DownloadExpirationDays,
+                DownloadActivationType = tvChannel.DownloadActivationType,
+                HasSampleDownload = tvChannel.HasSampleDownload,
                 SampleDownloadId = sampleDownloadId,
-                HasUserAgreement = tvchannel.HasUserAgreement,
-                UserAgreementText = tvchannel.UserAgreementText,
-                IsRecurring = tvchannel.IsRecurring,
-                RecurringCycleLength = tvchannel.RecurringCycleLength,
-                RecurringCyclePeriod = tvchannel.RecurringCyclePeriod,
-                RecurringTotalCycles = tvchannel.RecurringTotalCycles,
-                IsRental = tvchannel.IsRental,
-                RentalPriceLength = tvchannel.RentalPriceLength,
-                RentalPricePeriod = tvchannel.RentalPricePeriod,
-                IsShipEnabled = tvchannel.IsShipEnabled,
-                IsFreeShipping = tvchannel.IsFreeShipping,
-                ShipSeparately = tvchannel.ShipSeparately,
-                AdditionalShippingCharge = tvchannel.AdditionalShippingCharge,
-                DeliveryDateId = tvchannel.DeliveryDateId,
-                IsTaxExempt = tvchannel.IsTaxExempt,
-                TaxCategoryId = tvchannel.TaxCategoryId,
+                HasUserAgreement = tvChannel.HasUserAgreement,
+                UserAgreementText = tvChannel.UserAgreementText,
+                IsRecurring = tvChannel.IsRecurring,
+                RecurringCycleLength = tvChannel.RecurringCycleLength,
+                RecurringCyclePeriod = tvChannel.RecurringCyclePeriod,
+                RecurringTotalCycles = tvChannel.RecurringTotalCycles,
+                IsRental = tvChannel.IsRental,
+                RentalPriceLength = tvChannel.RentalPriceLength,
+                RentalPricePeriod = tvChannel.RentalPricePeriod,
+                IsShipEnabled = tvChannel.IsShipEnabled,
+                IsFreeShipping = tvChannel.IsFreeShipping,
+                ShipSeparately = tvChannel.ShipSeparately,
+                AdditionalShippingCharge = tvChannel.AdditionalShippingCharge,
+                DeliveryDateId = tvChannel.DeliveryDateId,
+                IsTaxExempt = tvChannel.IsTaxExempt,
+                TaxCategoryId = tvChannel.TaxCategoryId,
                 IsTelecommunicationsOrBroadcastingOrElectronicServices =
-                    tvchannel.IsTelecommunicationsOrBroadcastingOrElectronicServices,
-                ManageInventoryMethod = tvchannel.ManageInventoryMethod,
-                TvChannelAvailabilityRangeId = tvchannel.TvChannelAvailabilityRangeId,
-                UseMultipleWarehouses = tvchannel.UseMultipleWarehouses,
-                WarehouseId = tvchannel.WarehouseId,
-                StockQuantity = tvchannel.StockQuantity,
-                DisplayStockAvailability = tvchannel.DisplayStockAvailability,
-                DisplayStockQuantity = tvchannel.DisplayStockQuantity,
-                MinStockQuantity = tvchannel.MinStockQuantity,
-                LowStockActivityId = tvchannel.LowStockActivityId,
-                NotifyAdminForQuantityBelow = tvchannel.NotifyAdminForQuantityBelow,
-                BackorderMode = tvchannel.BackorderMode,
-                AllowBackInStockSubscriptions = tvchannel.AllowBackInStockSubscriptions,
-                OrderMinimumQuantity = tvchannel.OrderMinimumQuantity,
-                OrderMaximumQuantity = tvchannel.OrderMaximumQuantity,
-                AllowedQuantities = tvchannel.AllowedQuantities,
-                AllowAddingOnlyExistingAttributeCombinations = tvchannel.AllowAddingOnlyExistingAttributeCombinations,
-                NotReturnable = tvchannel.NotReturnable,
-                DisableBuyButton = tvchannel.DisableBuyButton,
-                DisableWishlistButton = tvchannel.DisableWishlistButton,
-                AvailableForPreOrder = tvchannel.AvailableForPreOrder,
-                PreOrderAvailabilityStartDateTimeUtc = tvchannel.PreOrderAvailabilityStartDateTimeUtc,
-                CallForPrice = tvchannel.CallForPrice,
-                Price = tvchannel.Price,
-                OldPrice = tvchannel.OldPrice,
-                TvChannelCost = tvchannel.TvChannelCost,
-                UserEntersPrice = tvchannel.UserEntersPrice,
-                MinimumUserEnteredPrice = tvchannel.MinimumUserEnteredPrice,
-                MaximumUserEnteredPrice = tvchannel.MaximumUserEnteredPrice,
-                BasepriceEnabled = tvchannel.BasepriceEnabled,
-                BasepriceAmount = tvchannel.BasepriceAmount,
-                BasepriceUnitId = tvchannel.BasepriceUnitId,
-                BasepriceBaseAmount = tvchannel.BasepriceBaseAmount,
-                BasepriceBaseUnitId = tvchannel.BasepriceBaseUnitId,
-                MarkAsNew = tvchannel.MarkAsNew,
-                MarkAsNewStartDateTimeUtc = tvchannel.MarkAsNewStartDateTimeUtc,
-                MarkAsNewEndDateTimeUtc = tvchannel.MarkAsNewEndDateTimeUtc,
-                Weight = tvchannel.Weight,
-                Length = tvchannel.Length,
-                Width = tvchannel.Width,
-                Height = tvchannel.Height,
-                AvailableStartDateTimeUtc = tvchannel.AvailableStartDateTimeUtc,
-                AvailableEndDateTimeUtc = tvchannel.AvailableEndDateTimeUtc,
-                DisplayOrder = tvchannel.DisplayOrder,
+                    tvChannel.IsTelecommunicationsOrBroadcastingOrElectronicServices,
+                ManageInventoryMethod = tvChannel.ManageInventoryMethod,
+                TvChannelAvailabilityRangeId = tvChannel.TvChannelAvailabilityRangeId,
+                UseMultipleWarehouses = tvChannel.UseMultipleWarehouses,
+                WarehouseId = tvChannel.WarehouseId,
+                StockQuantity = tvChannel.StockQuantity,
+                DisplayStockAvailability = tvChannel.DisplayStockAvailability,
+                DisplayStockQuantity = tvChannel.DisplayStockQuantity,
+                MinStockQuantity = tvChannel.MinStockQuantity,
+                LowStockActivityId = tvChannel.LowStockActivityId,
+                NotifyAdminForQuantityBelow = tvChannel.NotifyAdminForQuantityBelow,
+                BackorderMode = tvChannel.BackorderMode,
+                AllowBackInStockSubscriptions = tvChannel.AllowBackInStockSubscriptions,
+                OrderMinimumQuantity = tvChannel.OrderMinimumQuantity,
+                OrderMaximumQuantity = tvChannel.OrderMaximumQuantity,
+                AllowedQuantities = tvChannel.AllowedQuantities,
+                AllowAddingOnlyExistingAttributeCombinations = tvChannel.AllowAddingOnlyExistingAttributeCombinations,
+                NotReturnable = tvChannel.NotReturnable,
+                DisableBuyButton = tvChannel.DisableBuyButton,
+                DisableWishlistButton = tvChannel.DisableWishlistButton,
+                AvailableForPreOrder = tvChannel.AvailableForPreOrder,
+                PreOrderAvailabilityStartDateTimeUtc = tvChannel.PreOrderAvailabilityStartDateTimeUtc,
+                CallForPrice = tvChannel.CallForPrice,
+                Price = tvChannel.Price,
+                OldPrice = tvChannel.OldPrice,
+                TvChannelCost = tvChannel.TvChannelCost,
+                UserEntersPrice = tvChannel.UserEntersPrice,
+                MinimumUserEnteredPrice = tvChannel.MinimumUserEnteredPrice,
+                MaximumUserEnteredPrice = tvChannel.MaximumUserEnteredPrice,
+                BasepriceEnabled = tvChannel.BasepriceEnabled,
+                BasepriceAmount = tvChannel.BasepriceAmount,
+                BasepriceUnitId = tvChannel.BasepriceUnitId,
+                BasepriceBaseAmount = tvChannel.BasepriceBaseAmount,
+                BasepriceBaseUnitId = tvChannel.BasepriceBaseUnitId,
+                MarkAsNew = tvChannel.MarkAsNew,
+                MarkAsNewStartDateTimeUtc = tvChannel.MarkAsNewStartDateTimeUtc,
+                MarkAsNewEndDateTimeUtc = tvChannel.MarkAsNewEndDateTimeUtc,
+                Weight = tvChannel.Weight,
+                Length = tvChannel.Length,
+                Width = tvChannel.Width,
+                Height = tvChannel.Height,
+                AvailableStartDateTimeUtc = tvChannel.AvailableStartDateTimeUtc,
+                AvailableEndDateTimeUtc = tvChannel.AvailableEndDateTimeUtc,
+                DisplayOrder = tvChannel.DisplayOrder,
                 Published = isPublished,
-                Deleted = tvchannel.Deleted,
+                Deleted = tvChannel.Deleted,
                 CreatedOnUtc = DateTime.UtcNow,
                 UpdatedOnUtc = DateTime.UtcNow
             };
 
             //validate search engine name
-            await _tvchannelService.InsertTvChannelAsync(tvchannelCopy);
+            await _tvChannelService.InsertTvChannelAsync(tvChannelCopy);
 
             //search engine name
-            await _urlRecordService.SaveSlugAsync(tvchannelCopy, await _urlRecordService.ValidateSeNameAsync(tvchannelCopy, string.Empty, tvchannelCopy.Name, true), 0);
-            return tvchannelCopy;
+            await _urlRecordService.SaveSlugAsync(tvChannelCopy, await _urlRecordService.ValidateSeNameAsync(tvChannelCopy, string.Empty, tvChannelCopy.Name, true), 0);
+            return tvChannelCopy;
         }
 
         #endregion
@@ -782,86 +782,86 @@ namespace TvProgViewer.Services.Catalog
         #region Methods
 
         /// <summary>
-        /// Create a copy of tvchannel with all depended data
+        /// Create a copy of tvChannel with all depended data
         /// </summary>
-        /// <param name="tvchannel">The tvchannel to copy</param>
-        /// <param name="newName">The name of tvchannel duplicate</param>
-        /// <param name="isPublished">A value indicating whether the tvchannel duplicate should be published</param>
-        /// <param name="copyMultimedia">A value indicating whether the tvchannel images and videos should be copied</param>
-        /// <param name="copyAssociatedTvChannels">A value indicating whether the copy associated tvchannels</param>
+        /// <param name="tvChannel">The tvChannel to copy</param>
+        /// <param name="newName">The name of tvChannel duplicate</param>
+        /// <param name="isPublished">A value indicating whether the tvChannel duplicate should be published</param>
+        /// <param name="copyMultimedia">A value indicating whether the tvChannel images and videos should be copied</param>
+        /// <param name="copyAssociatedTvChannels">A value indicating whether the copy associated tvChannels</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel copy
+        /// The task result contains the tvChannel copy
         /// </returns>
-        public virtual async Task<TvChannel> CopyTvChannelAsync(TvChannel tvchannel, string newName,
+        public virtual async Task<TvChannel> CopyTvChannelAsync(TvChannel tvChannel, string newName,
             bool isPublished = true, bool copyMultimedia = true, bool copyAssociatedTvChannels = true)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (string.IsNullOrEmpty(newName))
                 throw new ArgumentException("TvChannel name is required");
 
-            var tvchannelCopy = await CopyBaseTvChannelDataAsync(tvchannel, newName, isPublished);
+            var tvChannelCopy = await CopyBaseTvChannelDataAsync(tvChannel, newName, isPublished);
 
             //localization
-            await CopyLocalizationDataAsync(tvchannel, tvchannelCopy);
+            await CopyLocalizationDataAsync(tvChannel, tvChannelCopy);
 
-            //copy tvchannel tags
-            foreach (var tvchannelTag in await _tvchannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvchannel.Id)) 
-                await _tvchannelTagService.InsertTvChannelTvChannelTagMappingAsync(new TvChannelTvChannelTagMapping { TvChannelTagId = tvchannelTag.Id, TvChannelId = tvchannelCopy.Id });
+            //copy tvChannel tags
+            foreach (var tvChannelTag in await _tvChannelTagService.GetAllTvChannelTagsByTvChannelIdAsync(tvChannel.Id)) 
+                await _tvChannelTagService.InsertTvChannelTvChannelTagMappingAsync(new TvChannelTvChannelTagMapping { TvChannelTagId = tvChannelTag.Id, TvChannelId = tvChannelCopy.Id });
 
-            await _tvchannelService.UpdateTvChannelAsync(tvchannelCopy);
+            await _tvChannelService.UpdateTvChannelAsync(tvChannelCopy);
 
-            //copy tvchannel pictures
-            var originalNewPictureIdentifiers = await CopyTvChannelPicturesAsync(tvchannel, newName, copyMultimedia, tvchannelCopy);
+            //copy tvChannel pictures
+            var originalNewPictureIdentifiers = await CopyTvChannelPicturesAsync(tvChannel, newName, copyMultimedia, tvChannelCopy);
 
-            //copy tvchannel videos
-            await CopyTvChannelVideosAsync(tvchannel, copyMultimedia, tvchannelCopy);
+            //copy tvChannel videos
+            await CopyTvChannelVideosAsync(tvChannel, copyMultimedia, tvChannelCopy);
 
             //quantity change history
-            await _tvchannelService.AddStockQuantityHistoryEntryAsync(tvchannelCopy, tvchannel.StockQuantity, tvchannel.StockQuantity, tvchannel.WarehouseId,
-                string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyTvChannel"), tvchannel.Id));
+            await _tvChannelService.AddStockQuantityHistoryEntryAsync(tvChannelCopy, tvChannel.StockQuantity, tvChannel.StockQuantity, tvChannel.WarehouseId,
+                string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.CopyTvChannel"), tvChannel.Id));
 
-            //tvchannel specifications
-            await CopyTvChannelSpecificationsAsync(tvchannel, tvchannelCopy);
+            //tvChannel specifications
+            await CopyTvChannelSpecificationsAsync(tvChannel, tvChannelCopy);
 
-            //tvchannel <-> warehouses mappings
-            await CopyWarehousesMappingAsync(tvchannel, tvchannelCopy);
-            //tvchannel <-> categories mappings
-            await CopyCategoriesMappingAsync(tvchannel, tvchannelCopy);
-            //tvchannel <-> manufacturers mappings
-            await CopyManufacturersMappingAsync(tvchannel, tvchannelCopy);
-            //tvchannel <-> related tvchannels mappings
-            await CopyRelatedTvChannelsMappingAsync(tvchannel, tvchannelCopy);
-            //tvchannel <-> cross sells mappings
-            await CopyCrossSellsMappingAsync(tvchannel, tvchannelCopy);
-            //tvchannel <-> attributes mappings
-            await CopyAttributesMappingAsync(tvchannel, tvchannelCopy, originalNewPictureIdentifiers);
-            //tvchannel <-> discounts mapping
-            await CopyDiscountsMappingAsync(tvchannel, tvchannelCopy);
+            //tvChannel <-> warehouses mappings
+            await CopyWarehousesMappingAsync(tvChannel, tvChannelCopy);
+            //tvChannel <-> categories mappings
+            await CopyCategoriesMappingAsync(tvChannel, tvChannelCopy);
+            //tvChannel <-> manufacturers mappings
+            await CopyManufacturersMappingAsync(tvChannel, tvChannelCopy);
+            //tvChannel <-> related tvChannels mappings
+            await CopyRelatedTvChannelsMappingAsync(tvChannel, tvChannelCopy);
+            //tvChannel <-> cross sells mappings
+            await CopyCrossSellsMappingAsync(tvChannel, tvChannelCopy);
+            //tvChannel <-> attributes mappings
+            await CopyAttributesMappingAsync(tvChannel, tvChannelCopy, originalNewPictureIdentifiers);
+            //tvChannel <-> discounts mapping
+            await CopyDiscountsMappingAsync(tvChannel, tvChannelCopy);
 
             //store mapping
-            var selectedStoreIds = await _storeMappingService.GetStoresIdsWithAccessAsync(tvchannel);
+            var selectedStoreIds = await _storeMappingService.GetStoresIdsWithAccessAsync(tvChannel);
             foreach (var id in selectedStoreIds) 
-                await _storeMappingService.InsertStoreMappingAsync(tvchannelCopy, id);
+                await _storeMappingService.InsertStoreMappingAsync(tvChannelCopy, id);
 
             //user role mapping
-            var userRoleIds = await _aclService.GetUserRoleIdsWithAccessAsync(tvchannel);
+            var userRoleIds = await _aclService.GetUserRoleIdsWithAccessAsync(tvChannel);
             foreach (var id in userRoleIds)
-                await _aclService.InsertAclRecordAsync(tvchannelCopy, id);
+                await _aclService.InsertAclRecordAsync(tvChannelCopy, id);
 
             //tier prices
-            await CopyTierPricesAsync(tvchannel, tvchannelCopy);
+            await CopyTierPricesAsync(tvChannel, tvChannelCopy);
 
             //update "HasTierPrices" and "HasDiscountsApplied" properties
-            await _tvchannelService.UpdateHasTierPricesPropertyAsync(tvchannelCopy);
-            await _tvchannelService.UpdateHasDiscountsAppliedAsync(tvchannelCopy);
+            await _tvChannelService.UpdateHasTierPricesPropertyAsync(tvChannelCopy);
+            await _tvChannelService.UpdateHasDiscountsAppliedAsync(tvChannelCopy);
 
-            //associated tvchannels
-            await CopyAssociatedTvChannelsAsync(tvchannel, isPublished, copyMultimedia, copyAssociatedTvChannels, tvchannelCopy);
+            //associated tvChannels
+            await CopyAssociatedTvChannelsAsync(tvChannel, isPublished, copyMultimedia, copyAssociatedTvChannels, tvChannelCopy);
 
-            return tvchannelCopy;
+            return tvChannelCopy;
         }
 
         #endregion

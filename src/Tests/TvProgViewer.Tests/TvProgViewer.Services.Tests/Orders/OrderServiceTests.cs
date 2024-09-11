@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Orders;
-using Nop.Data;
-using Nop.Services.Orders;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Orders;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Orders {
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Orders {
     
     [TestFixture]
     public class OrderServiceTests : ServiceTest 
@@ -94,7 +94,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders {
             var order = new Order
             {
                 CustomOrderNumber = string.Empty,
-                CustomerId = 1,
+                UserId = 1,
                 BillingAddressId = 1
             };
 

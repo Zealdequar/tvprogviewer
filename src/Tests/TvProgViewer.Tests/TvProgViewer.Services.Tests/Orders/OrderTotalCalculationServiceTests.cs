@@ -3,32 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Discounts;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Stores;
-using Nop.Core.Domain.Tax;
-using Nop.Data;
-using Nop.Services.Catalog;
-using Nop.Services.Common;
-using Nop.Services.Configuration;
-using Nop.Services.Customers;
-using Nop.Services.Discounts;
-using Nop.Services.Orders;
-using Nop.Services.Stores;
-using Nop.Tests.Nop.Services.Tests.Payments;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Discounts;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Core.Domain.Shipping;
+using TvProgViewer.Core.Domain.Stores;
+using TvProgViewer.Core.Domain.Tax;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Common;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Discounts;
+using TvProgViewer.Services.Orders;
+using TvProgViewer.Services.Stores;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.Payments;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Orders
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Orders
 {
     [TestFixture]
     public class OrderTotalCalculationServiceTests : ServiceTest
     {
         private IOrderTotalCalculationService _orderTotalCalcService;
-        private IProductService _productService;
-        private ICustomerService _customerService;
+        private ITvChannelService _tvChannelService;
+        private IUserService _userService;
         private IDiscountService _discountService;
         private TaxSettings _taxSettings;
         private ISettingService _settingService;
@@ -40,31 +40,31 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
 
 
         private Discount _discount;
-        private Customer _customer;
+        private User _user;
         private Store _store;
         private string _checkoutAttrXml;
 
         #region Utilities
 
-        private async Task<ShoppingCartItem> CreateTestShopCartItemAsync(decimal productPrice, int quantity = 1)
+        private async Task<ShoppingCartItem> CreateTestShopCartItemAsync(decimal tvChannelPrice, int quantity = 1)
         {
             //shopping cart
-            var product = new Product
+            var tvChannel = new TvChannel
             {
-                Name = "Product name 1",
-                Price = productPrice,
-                CustomerEntersPrice = false,
+                Name = "TvChannel name 1",
+                Price = tvChannelPrice,
+                UserEntersPrice = false,
                 Published = true,
                 //set HasTierPrices property
                 HasTierPrices = true
             };
 
-            await _productService.InsertProductAsync(product);
+            await _tvChannelService.InsertTvChannelAsync(tvChannel);
 
             var shoppingCartItem = new ShoppingCartItem
             {
-                CustomerId = _customer.Id,
-                ProductId = product.Id,
+                UserId = _user.Id,
+                TvChannelId = tvChannel.Id,
                 StoreId = _store.Id,
                 Quantity = quantity
             };
@@ -74,21 +74,21 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
 
         private async Task<List<ShoppingCartItem>> GetShoppingCartAsync()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
             var sci1 = new ShoppingCartItem
             {
-                ProductId = product.Id, Quantity = 2
+                TvChannelId = tvChannel.Id, Quantity = 2
             };
-            product = await _productService.GetProductBySkuAsync("FIRST_PRP");
+            tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FIRST_PRP");
             var sci2 = new ShoppingCartItem
             {
-                ProductId = product.Id, Quantity = 3
+                TvChannelId = tvChannel.Id, Quantity = 3
             };
 
             var cart = new List<ShoppingCartItem> {sci1, sci2};
             foreach(var sci in cart)
             {
-                sci.CustomerId = _customer.Id;
+                sci.UserId = _user.Id;
             }
 
             return cart;
@@ -110,8 +110,8 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             await _settingService.SaveSettingAsync(_taxSettings);
 
             _orderTotalCalcService = GetService<IOrderTotalCalculationService>();
-            _productService = GetService<IProductService>();
-            _customerService = GetService<ICustomerService>();
+            _tvChannelService = GetService<ITvChannelService>();
+            _userService = GetService<IUserService>();
             _discountService = GetService<IDiscountService>();
             _shoppingCartService = GetService<IShoppingCartService>();
             _shoppingCartSettings = GetService<ShoppingCartSettings>();
@@ -138,11 +138,11 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
                 DiscountLimitation = DiscountLimitationType.Unlimited
             };
 
-            _customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+            _user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
             _store = (await _storeService.GetAllStoresAsync()).First();
             
-            await GetService<IGenericAttributeService>().SaveAttributeAsync(_customer,
-                NopCustomerDefaults.SelectedPaymentMethodAttribute, "Payments.TestMethod", 1);
+            await GetService<IGenericAttributeService>().SaveAttributeAsync(_user,
+                TvProgUserDefaults.SelectedPaymentMethodAttribute, "Payments.TestMethod", 1);
         }
 
         [OneTimeTearDown]
@@ -159,24 +159,24 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             await settingService.SaveSettingAsync(shippingSettings);
             await settingService.SaveSettingAsync(_taxSettings);
 
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.AdditionalShippingCharge = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.AdditionalShippingCharge = 0M;
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
-            product = await _productService.GetProductBySkuAsync("FIRST_PRP");
-            product.AdditionalShippingCharge = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FIRST_PRP");
+            tvChannel.AdditionalShippingCharge = 0M;
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
-            await GetService<IGenericAttributeService>().SaveAttributeAsync<string>(_customer, NopCustomerDefaults.SelectedPaymentMethodAttribute, null, 1);
+            await GetService<IGenericAttributeService>().SaveAttributeAsync<string>(_user, TvProgUserDefaults.SelectedPaymentMethodAttribute, null, 1);
             
             foreach (var item in GetService<IRepository<Discount>>().Table.Where(d => d.Name == "Discount 1").ToList()) 
                 await _discountService.DeleteDiscountAsync(item);
 
-            await _productService.DeleteProductsAsync(GetService<IRepository<Product>>().Table.Where(p => p.Name == "Product name 1").ToList());
+            await _tvChannelService.DeleteTvChannelsAsync(GetService<IRepository<TvChannel>>().Table.Where(p => p.Name == "TvChannel name 1").ToList());
 
-            await _genericAttributeService.SaveAttributeAsync<string>(_customer, NopCustomerDefaults.CheckoutAttributes, null, _store.Id);
+            await _genericAttributeService.SaveAttributeAsync<string>(_user, TvProgUserDefaults.CheckoutAttributes, null, _store.Id);
         }
 
         [Test]
@@ -243,7 +243,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             taxRates.ContainsKey(10).Should().BeTrue();
             taxRates[10].Should().Be(20.7M);
 
-            await _genericAttributeService.SaveAttributeAsync(_customer, NopCustomerDefaults.CheckoutAttributes, _checkoutAttrXml, _store.Id);
+            await _genericAttributeService.SaveAttributeAsync(_user, TvProgUserDefaults.CheckoutAttributes, _checkoutAttrXml, _store.Id);
 
             (_, _, _, subTotalWithoutDiscountInclTax, subTotalWithoutDiscountExclTax, subTotalWithDiscountInclTax, subTotalWithDiscountExclTax, taxRates) = await _orderTotalCalcService.GetShoppingCartSubTotalsAsync(await GetShoppingCartAsync());
 
@@ -253,7 +253,7 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             subTotalWithoutDiscountInclTax.Should().Be(238.7M);
             subTotalWithDiscountInclTax.Should().Be(238.7M);
 
-            await _genericAttributeService.SaveAttributeAsync<string>(_customer, NopCustomerDefaults.CheckoutAttributes, null, _store.Id);
+            await _genericAttributeService.SaveAttributeAsync<string>(_user, TvProgUserDefaults.CheckoutAttributes, null, _store.Id);
         }
 
         [Test]
@@ -328,13 +328,13 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             await TearDown();
             await SetUp();
 
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
-            await _productService.GetProductBySkuAsync("FIRST_PRP");
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            await _tvChannelService.GetTvChannelBySkuAsync("FIRST_PRP");
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             var isFreeShipping = await _orderTotalCalcService.IsFreeShippingAsync(await GetShoppingCartAsync());
             isFreeShipping.Should().BeTrue();
@@ -343,46 +343,46 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
         [Test]
         public async Task ShippingShouldNotBeFreeWhenSomeOfShoppingCartItemsAreNotMarkedAsFreeShipping()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
             var isFreeShipping = await _orderTotalCalcService.IsFreeShippingAsync(await GetShoppingCartAsync());
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
             isFreeShipping.Should().BeFalse();
         }
 
         [Test]
-        public async Task ShippingShouldBeFreeWhenCustomerIsInRoleWithFreeShipping()
+        public async Task ShippingShouldBeFreeWhenUserIsInRoleWithFreeShipping()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
-            var role = await _customerService.GetCustomerRoleBySystemNameAsync(NopCustomerDefaults.AdministratorsRoleName);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
+            var role = await _userService.GetUserRoleBySystemNameAsync(TvProgUserDefaults.AdministratorsRoleName);
             role.FreeShipping = true;
-            await _customerService.UpdateCustomerRoleAsync(role);
+            await _userService.UpdateUserRoleAsync(role);
             var isFreeShipping = await _orderTotalCalcService.IsFreeShippingAsync(await GetShoppingCartAsync());
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
             role.FreeShipping = false;
-            await _customerService.UpdateCustomerRoleAsync(role);
+            await _userService.UpdateUserRoleAsync(role);
             isFreeShipping.Should().BeTrue();
         }
 
         [Test]
         public async Task CanGetShippingTotalWithFixedShippingRateExcludingTax()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.AdditionalShippingCharge = 21.25M;
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.AdditionalShippingCharge = 21.25M;
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             var (shipping, taxRate, appliedDiscounts) =
                 await _orderTotalCalcService.GetShoppingCartShippingTotalAsync(await GetShoppingCartAsync(), false);
 
-            product.AdditionalShippingCharge = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.AdditionalShippingCharge = 0M;
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             shipping.Should().NotBeNull();
             //10 - default fixed shipping rate, 42.5 - additional shipping change
@@ -395,17 +395,17 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
         [Test]
         public async Task CanGetShippingTotalWithFixedShippingRateIncludingTax()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.AdditionalShippingCharge = 21.25M;
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.AdditionalShippingCharge = 21.25M;
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             var (shipping, taxRate, appliedDiscounts) =
                 await _orderTotalCalcService.GetShoppingCartShippingTotalAsync(await GetShoppingCartAsync(), true);
 
-            product.AdditionalShippingCharge = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.AdditionalShippingCharge = 0M;
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             shipping.Should().NotBeNull();
             //10 - default fixed shipping rate, 42.5 - additional shipping change
@@ -418,17 +418,17 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
         [Test]
         public async Task CanGetShippingTotalsWithFixedShippingRate()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.AdditionalShippingCharge = 21.25M;
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.AdditionalShippingCharge = 21.25M;
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             var (shippingInclTax, shippingExclTax, taxRate, appliedDiscounts) =
                 await _orderTotalCalcService.GetShoppingCartShippingTotalsAsync(await GetShoppingCartAsync());
 
-            product.AdditionalShippingCharge = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.AdditionalShippingCharge = 0M;
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             shippingInclTax.Should().NotBeNull();
             //10 - default fixed shipping rate, 42.5 - additional shipping change
@@ -445,10 +445,10 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
         [Test]
         public async Task CanGetShippingTotalDiscountExcludingTax()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.AdditionalShippingCharge = 21.25M;
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.AdditionalShippingCharge = 21.25M;
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             _discount.DiscountType = DiscountType.AssignedToShipping;
             await _discountService.InsertDiscountAsync(_discount);
@@ -458,9 +458,9 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
 
             await _discountService.DeleteDiscountAsync(_discount);
             _discount.DiscountType = DiscountType.AssignedToOrderSubTotal;
-            product.AdditionalShippingCharge = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.AdditionalShippingCharge = 0M;
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             appliedDiscounts.Count.Should().Be(1);
             appliedDiscounts.First().Name.Should().Be("Discount 1");
@@ -474,10 +474,10 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
         [Test]
         public async Task CanGetShippingTotalDiscountIncludingTax()
         {
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.AdditionalShippingCharge = 21.25M;
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.AdditionalShippingCharge = 21.25M;
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             _discount.DiscountType = DiscountType.AssignedToShipping;
             await _discountService.InsertDiscountAsync(_discount);
@@ -487,9 +487,9 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
 
             await _discountService.DeleteDiscountAsync(_discount);
             _discount.DiscountType = DiscountType.AssignedToOrderSubTotal;
-            product.AdditionalShippingCharge = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.AdditionalShippingCharge = 0M;
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             appliedDiscounts.Count.Should().Be(1);
             appliedDiscounts.First().Name.Should().Be("Discount 1");
@@ -506,9 +506,9 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             //207 - items, 10 - shipping (fixed), 20 - payment fee
 
             TestPaymentMethod.AdditionalHandlingFee = 20M;
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             //1. shipping is taxable, payment fee is taxable
             _taxSettings.ShippingIsTaxable = true;
@@ -559,9 +559,9 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             taxRates[10].Should().Be(20.7M);
 
             TestPaymentMethod.AdditionalHandlingFee = 0M;
-            product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
         }
 
         [Test]
@@ -595,9 +595,9 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
 
             await _settingService.SaveSettingAsync(_taxSettings);
 
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             TestPaymentMethod.AdditionalHandlingFee = 20M;
 
@@ -607,8 +607,8 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             cartTotal.Should().Be(260.7M);
 
             TestPaymentMethod.AdditionalHandlingFee = 0M;
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
         }
 
         [Test]
@@ -682,9 +682,9 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
 
             TestPaymentMethod.AdditionalHandlingFee = 20M;
 
-            var product = await _productService.GetProductBySkuAsync("FR_451_RB");
-            product.IsFreeShipping = false;
-            await _productService.UpdateProductAsync(product);
+            var tvChannel = await _tvChannelService.GetTvChannelBySkuAsync("FR_451_RB");
+            tvChannel.IsFreeShipping = false;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             //207 - items, 10 - shipping (fixed), 20 - payment fee, 23.7 - tax, [-3] - discount
             var (scTotal, discountAmount, appliedDiscounts, _, _, _) = await GetService<IOrderTotalCalculationService>().GetShoppingCartTotalAsync(await GetShoppingCartAsync());
@@ -692,8 +692,8 @@ namespace Nop.Tests.Nop.Services.Tests.Orders
             _discount.DiscountType = DiscountType.AssignedToOrderSubTotal;
             TestPaymentMethod.AdditionalHandlingFee = 0M;
 
-            product.IsFreeShipping = true;
-            await _productService.UpdateProductAsync(product);
+            tvChannel.IsFreeShipping = true;
+            await _tvChannelService.UpdateTvChannelAsync(tvChannel);
 
             scTotal.Should().Be(257.7M);
             discountAmount.Should().Be(3);

@@ -6,7 +6,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
 {
     /// <summary>
-    /// Represents a tvchannel search model to add to the order
+    /// Represents a tvChannel search model to add to the order
     /// </summary>
     public partial record AddTvChannelToOrderSearchModel : BaseSearchModel
     {

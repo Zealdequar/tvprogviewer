@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Payments;
-using Nop.Services.Payments;
-using Nop.Services.Plugins;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Core.Domain.Payments;
+using TvProgViewer.Services.Payments;
+using TvProgViewer.Services.Plugins;
 
-namespace Nop.Tests.Nop.Services.Tests.Payments
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Payments
 {
     public class TestPaymentMethod : BasePlugin, IPaymentMethod
     {
@@ -66,7 +66,7 @@ namespace Nop.Tests.Nop.Services.Tests.Payments
         }
         
         /// <summary>
-        /// Gets a value indicating whether customers can complete a payment after order is placed but not completed (for redirection payment methods)
+        /// Gets a value indicating whether users can complete a payment after order is placed but not completed (for redirection payment methods)
         /// </summary>
         /// <param name="order">Order</param>
         /// <returns>Result</returns>

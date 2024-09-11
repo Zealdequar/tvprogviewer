@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.Boards;
-using Nop.Web.Validators.Boards;
+using TvProgViewer.WebUI.Models.Boards;
+using TvProgViewer.WebUI.Validators.Boards;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Boards
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.Boards
 {
     [TestFixture]
-    public class EditForumPostValidatorTests : BaseNopTest
+    public class EditForumPostValidatorTests : BaseTvProgTest
     {
         private EditForumPostValidator _validator;
         

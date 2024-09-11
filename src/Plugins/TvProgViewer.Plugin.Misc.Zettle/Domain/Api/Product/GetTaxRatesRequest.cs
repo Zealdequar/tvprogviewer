@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
     /// Represents request to get all tax rates
     /// </summary>
-    public class GetTaxRatesRequest : ProductApiRequest
+    public class GetTaxRatesRequest : TvChannelApiRequest
     {
         /// <summary>
         /// Gets the request path

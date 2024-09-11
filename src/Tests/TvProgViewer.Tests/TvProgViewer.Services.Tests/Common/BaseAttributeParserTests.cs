@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Xml;
 using FluentAssertions;
-using Nop.Services.Common;
+using TvProgViewer.Services.Common;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Common
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Common
 {
     [TestFixture]
     public class BaseAttributeParserTests : BaseAttributeParser

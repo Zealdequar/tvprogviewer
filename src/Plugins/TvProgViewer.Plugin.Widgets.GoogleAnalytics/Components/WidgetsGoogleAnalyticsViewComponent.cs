@@ -32,7 +32,7 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics.Components
         private readonly IGenericAttributeService _genericAttributeService;
         private readonly ILogger _logger;
         private readonly IOrderService _orderService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly ISettingService _settingService;
         private readonly IStoreContext _storeContext;
         private readonly IWorkContext _workContext;
@@ -49,7 +49,7 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics.Components
             IGenericAttributeService genericAttributeService,
             ILogger logger,
             IOrderService orderService,
-            IProductService productService,
+            ITvChannelService tvChannelService,
             ISettingService settingService,
             IStoreContext storeContext,
             IWorkContext workContext)
@@ -62,7 +62,7 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics.Components
             _genericAttributeService = genericAttributeService;
             _logger = logger;
             _orderService = orderService;
-            _productService = productService;
+            _tvChannelService = tvChannelService;
             _settingService = settingService;
             _storeContext = storeContext;
             _workContext = workContext;
@@ -154,16 +154,16 @@ namespace TvProgViewer.Plugin.Widgets.GoogleAnalytics.Components
                     }
                     ";
 
-                    var product = await _productService.GetProductByIdAsync(item.ProductId);
+                    var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(item.TvChannelId);
 
-                    var sku = await _productService.FormatSkuAsync(product, item.AttributesXml);
+                    var sku = await _tvChannelService.FormatSkuAsync(tvChannel, item.AttributesXml);
 
                     if (string.IsNullOrEmpty(sku))
-                        sku = product.Id.ToString();
+                        sku = tvChannel.Id.ToString();
 
                     analyticsEcommerceDetailScript = analyticsEcommerceDetailScript.Replace("{PRODUCTSKU}", FixIllegalJavaScriptChars(sku));
-                    analyticsEcommerceDetailScript = analyticsEcommerceDetailScript.Replace("{PRODUCTNAME}", FixIllegalJavaScriptChars(product.Name));
-                    var category = (await _categoryService.GetCategoryByIdAsync((await _categoryService.GetProductCategoriesByProductIdAsync(item.ProductId)).FirstOrDefault()?.CategoryId ?? 0))?.Name;
+                    analyticsEcommerceDetailScript = analyticsEcommerceDetailScript.Replace("{PRODUCTNAME}", FixIllegalJavaScriptChars(tvChannel.Name));
+                    var category = (await _categoryService.GetCategoryByIdAsync((await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(item.TvChannelId)).FirstOrDefault()?.CategoryId ?? 0))?.Name;
                     analyticsEcommerceDetailScript = analyticsEcommerceDetailScript.Replace("{CATEGORYNAME}", FixIllegalJavaScriptChars(category));
                     analyticsEcommerceDetailScript = analyticsEcommerceDetailScript.Replace("{LISTPOSITION}", listingPosition.ToString());
                     var unitPrice = googleAnalyticsSettings.IncludingTax ? item.UnitPriceInclTax : item.UnitPriceExclTax;

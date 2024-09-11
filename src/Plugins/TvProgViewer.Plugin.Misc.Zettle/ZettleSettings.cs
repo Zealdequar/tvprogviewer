@@ -34,32 +34,32 @@ namespace TvProgViewer.Plugin.Misc.Zettle
         public int AutoSyncPeriod { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to delete library items before importing products
+        /// Gets or sets a value indicating whether to delete library items before importing tvChannels
         /// </summary>
         public bool DeleteBeforeImport { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to sync products by default
+        /// Gets or sets a value indicating whether to sync tvChannels by default
         /// </summary>
         public bool SyncEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to sync price for products by default
+        /// Gets or sets a value indicating whether to sync price for tvChannels by default
         /// </summary>
         public bool PriceSyncEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to sync images for products by default
+        /// Gets or sets a value indicating whether to sync images for tvChannels by default
         /// </summary>
         public bool ImageSyncEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to track inventory for products by default
+        /// Gets or sets a value indicating whether to track inventory for tvChannels by default
         /// </summary>
         public bool InventoryTrackingEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to import products with default sales tax rate or VAT rate
+        /// Gets or sets a value indicating whether to import tvChannels with default sales tax rate or VAT rate
         /// </summary>
         public bool DefaultTaxEnabled { get; set; }
 
@@ -86,9 +86,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle
         public string ImportId { get; set; }
 
         /// <summary>
-        /// Gets or sets the number of products to import in one request (up to 2000 products per request)
+        /// Gets or sets the number of tvChannels to import in one request (up to 2000 tvChannels per request)
         /// </summary>
-        public int ImportProductsNumber { get; set; }
+        public int ImportTvChannelsNumber { get; set; }
 
         /// <summary>
         /// Gets or sets a period (in seconds) before the request times out
@@ -106,7 +106,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle
         public bool LogSyncMessages { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to sync products with categories
+        /// Gets or sets a value indicating whether to sync tvChannels with categories
         /// </summary>
         public bool CategorySyncEnabled { get; set; }
 

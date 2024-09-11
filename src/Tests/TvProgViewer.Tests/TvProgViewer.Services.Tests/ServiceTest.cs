@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Hosting;
 using Moq;
-using Nop.Core;
-using Nop.Core.Infrastructure;
-using Nop.Data.Configuration;
-using Nop.Services.Plugins;
-using Nop.Tests.Nop.Services.Tests.Directory;
-using Nop.Tests.Nop.Services.Tests.Discounts;
-using Nop.Tests.Nop.Services.Tests.Payments;
-using Nop.Tests.Nop.Services.Tests.Shipping;
-using Nop.Tests.Nop.Services.Tests.Tax;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Infrastructure;
+using TvProgViewer.Data.Configuration;
+using TvProgViewer.Services.Plugins;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.Directory;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.Discounts;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.Payments;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.Shipping;
+using TvProgViewer.Tests.TvProgViewer.Services.Tests.Tax;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests
 {
     [TestFixture]
-    public abstract class ServiceTest : BaseNopTest
+    public abstract class ServiceTest : BaseTvProgTest
     {
         protected ServiceTest()
         {
@@ -29,7 +29,7 @@ namespace Nop.Tests.Nop.Services.Tests
             var webHostEnvironment = new Mock<IWebHostEnvironment>();
             webHostEnvironment.Setup(x => x.ContentRootPath).Returns(System.Reflection.Assembly.GetExecutingAssembly().Location);
             webHostEnvironment.Setup(x => x.WebRootPath).Returns(System.IO.Directory.GetCurrentDirectory());
-            CommonHelper.DefaultFileProvider = new NopFileProvider(webHostEnvironment.Object);
+            CommonHelper.DefaultFileProvider = new TvProgFileProvider(webHostEnvironment.Object);
             
             Environment.SetEnvironmentVariable("ConnectionStrings", Singleton<DataConfig>.Instance.ConnectionString);
 

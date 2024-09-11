@@ -9,12 +9,12 @@ namespace TvProgViewer.Core.Domain.Orders
     public partial class BestsellersReportLine
     {
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel name
+        /// Gets or sets the tvChannel name
         /// </summary>
         public string TvChannelName { get; set; }
 

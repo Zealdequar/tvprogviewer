@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using MailKit;
 using MailKit.Net.Smtp;
 using MimeKit;
-using Nop.Core.Domain.Messages;
-using Nop.Services.Messages;
+using TvProgViewer.Core.Domain.Messages;
+using TvProgViewer.Services.Messages;
 
-namespace Nop.Tests
+namespace TvProgViewer.Tests
 {
     public class TestSmtpBuilder : SmtpBuilder
     {

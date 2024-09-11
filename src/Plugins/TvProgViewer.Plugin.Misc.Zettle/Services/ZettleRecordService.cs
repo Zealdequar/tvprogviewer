@@ -17,9 +17,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         #region Fields
 
         private readonly IRepository<Category> _categoryRepository;
-        private readonly IRepository<ProductAttributeCombination> _productAttributeCombinationRepository;
-        private readonly IRepository<ProductCategory> _productCategoryRepository;
-        private readonly IRepository<Product> _productRepository;
+        private readonly IRepository<TvChannelAttributeCombination> _tvChannelAttributeCombinationRepository;
+        private readonly IRepository<TvChannelCategory> _tvChannelCategoryRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
         private readonly IRepository<ZettleRecord> _repository;
         private readonly ZettleSettings _zettleSettings;
 
@@ -28,16 +28,16 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         #region Ctor
 
         public ZettleRecordService(IRepository<Category> categoryRepository,
-            IRepository<ProductAttributeCombination> productAttributeCombinationRepository,
-            IRepository<ProductCategory> productCategoryRepository,
-            IRepository<Product> productRepository,
+            IRepository<TvChannelAttributeCombination> tvChannelAttributeCombinationRepository,
+            IRepository<TvChannelCategory> tvChannelCategoryRepository,
+            IRepository<TvChannel> tvChannelRepository,
             IRepository<ZettleRecord> repository,
             ZettleSettings zettleSettings)
         {
             _categoryRepository = categoryRepository;
-            _productAttributeCombinationRepository = productAttributeCombinationRepository;
-            _productCategoryRepository = productCategoryRepository;
-            _productRepository = productRepository;
+            _tvChannelAttributeCombinationRepository = tvChannelAttributeCombinationRepository;
+            _tvChannelCategoryRepository = tvChannelCategoryRepository;
+            _tvChannelRepository = tvChannelRepository;
             _repository = repository;
             _zettleSettings = zettleSettings;
         }
@@ -49,23 +49,23 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// <summary>
         /// Prepare records to add
         /// </summary>
-        /// <param name="productIds">Product identifiers</param>
+        /// <param name="tvChannelIds">TvChannel identifiers</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the prepared records; the number of products that were not added
+        /// The task result contains the prepared records; the number of tvChannels that were not added
         /// </returns>
-        private async Task<(List<ZettleRecord> Records, int InvalidProducts)> PrepareRecordsToAddAsync(List<int> productIds)
+        private async Task<(List<ZettleRecord> Records, int InvalidTvChannels)> PrepareRecordsToAddAsync(List<int> tvChannelIds)
         {
-            var products = await _productRepository.GetByIdsAsync(productIds, null, false);
-            var productsWithSku = products.Where(product => !string.IsNullOrEmpty(product.Sku)).ToList();
-            var invalidProducts = products.Where(product => string.IsNullOrEmpty(product.Sku)).Count();
-            var records = await productsWithSku.SelectManyAwait(async product =>
+            var tvChannels = await _tvChannelRepository.GetByIdsAsync(tvChannelIds, null, false);
+            var tvChannelsWithSku = tvChannels.Where(tvChannel => !string.IsNullOrEmpty(tvChannel.Sku)).ToList();
+            var invalidTvChannels = tvChannels.Where(tvChannel => string.IsNullOrEmpty(tvChannel.Sku)).Count();
+            var records = await tvChannelsWithSku.SelectManyAwait(async tvChannel =>
             {
                 var uuid = GuidGenerator.GenerateTimeBasedGuid().ToString();
-                var productRecord = new ZettleRecord
+                var tvChannelRecord = new ZettleRecord
                 {
                     Active = _zettleSettings.SyncEnabled,
-                    ProductId = product.Id,
+                    TvChannelId = tvChannel.Id,
                     Uuid = uuid,
                     VariantUuid = GuidGenerator.GenerateTimeBasedGuid().ToString(),
                     PriceSyncEnabled = _zettleSettings.PriceSyncEnabled,
@@ -74,12 +74,12 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                     OperationType = OperationType.Create
                 };
 
-                var combinations = await _productAttributeCombinationRepository
-                    .GetAllAsync(query => query.Where(combination => combination.ProductId == product.Id && !string.IsNullOrEmpty(combination.Sku)), null);
+                var combinations = await _tvChannelAttributeCombinationRepository
+                    .GetAllAsync(query => query.Where(combination => combination.TvChannelId == tvChannel.Id && !string.IsNullOrEmpty(combination.Sku)), null);
                 var combinationsRecords = combinations.Select(combination => new ZettleRecord
                 {
                     Active = _zettleSettings.SyncEnabled,
-                    ProductId = product.Id,
+                    TvChannelId = tvChannel.Id,
                     CombinationId = combination.Id,
                     Uuid = uuid,
                     VariantUuid = GuidGenerator.GenerateTimeBasedGuid().ToString(),
@@ -89,10 +89,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                     OperationType = OperationType.Create
                 }).ToList();
 
-                return new List<ZettleRecord> { productRecord }.Union(combinationsRecords);
+                return new List<ZettleRecord> { tvChannelRecord }.Union(combinationsRecords);
             }).ToListAsync();
 
-            return (records, invalidProducts);
+            return (records, invalidTvChannels);
         }
 
         #endregion
@@ -196,24 +196,24 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// <summary>
         /// Get all records for synchronization
         /// </summary>
-        /// <param name="productOnly">Whether to load only product records</param>
+        /// <param name="tvChannelOnly">Whether to load only tvChannel records</param>
         /// <param name="active">Whether to load only active records; true - active only, false - inactive only, null - all records</param>
         /// <param name="operationTypes">Operation types; pass null to load all records</param>
-        /// <param name="productUuid">Product unique identifier; pass null to load all records</param>
+        /// <param name="tvChannelUuid">TvChannel unique identifier; pass null to load all records</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains the records for synchronization
         /// </returns>
-        public async Task<IPagedList<ZettleRecord>> GetAllRecordsAsync(bool productOnly = false,
-            bool? active = null, List<OperationType> operationTypes = null, string productUuid = null,
+        public async Task<IPagedList<ZettleRecord>> GetAllRecordsAsync(bool tvChannelOnly = false,
+            bool? active = null, List<OperationType> operationTypes = null, string tvChannelUuid = null,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
             return await _repository.GetAllPagedAsync(query =>
             {
-                if (productOnly)
-                    query = query.Where(record => record.ProductId > 0 && record.CombinationId == 0);
+                if (tvChannelOnly)
+                    query = query.Where(record => record.TvChannelId > 0 && record.CombinationId == 0);
 
                 if (active.HasValue)
                     query = query.Where(record => record.Active == active.Value);
@@ -221,8 +221,8 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                 if (operationTypes?.Any() ?? false)
                     query = query.Where(record => operationTypes.Contains((OperationType)record.OperationTypeId));
 
-                if (!string.IsNullOrEmpty(productUuid))
-                    query = query.Where(record => record.Uuid == productUuid);
+                if (!string.IsNullOrEmpty(tvChannelUuid))
+                    query = query.Where(record => record.Uuid == tvChannelUuid);
 
                 query = query.OrderBy(record => record.Id);
 
@@ -234,16 +234,16 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// Create or update a record for synchronization
         /// </summary>
         /// <param name="operationType">Operation type</param>
-        /// <param name="productId">Product identifier</param>
-        /// <param name="attributeCombinationId">Product attribute combination identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
+        /// <param name="attributeCombinationId">TvChannel attribute combination identifier</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task CreateOrUpdateRecordAsync(OperationType operationType, int productId, int attributeCombinationId = 0)
+        public async Task CreateOrUpdateRecordAsync(OperationType operationType, int tvChannelId, int attributeCombinationId = 0)
         {
-            if (productId == 0 && attributeCombinationId == 0)
+            if (tvChannelId == 0 && attributeCombinationId == 0)
                 return;
 
             var existingRecord = _repository.Table.
-                FirstOrDefault(record => record.ProductId == productId && record.CombinationId == attributeCombinationId);
+                FirstOrDefault(record => record.TvChannelId == tvChannelId && record.CombinationId == attributeCombinationId);
 
             if (existingRecord is null)
             {
@@ -255,18 +255,18 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
 
                 if (attributeCombinationId == 0)
                 {
-                    var (records, _) = await PrepareRecordsToAddAsync(new List<int> { productId });
+                    var (records, _) = await PrepareRecordsToAddAsync(new List<int> { tvChannelId });
                     await InsertRecordsAsync(records);
                 }
                 else
                 {
-                    var productRecord = _repository.Table.FirstOrDefault(record => record.ProductId == productId);
+                    var tvChannelRecord = _repository.Table.FirstOrDefault(record => record.TvChannelId == tvChannelId);
                     await InsertRecordAsync(new()
                     {
                         Active = _zettleSettings.SyncEnabled,
-                        ProductId = productId,
+                        TvChannelId = tvChannelId,
                         CombinationId = attributeCombinationId,
-                        Uuid = productRecord.Uuid,
+                        Uuid = tvChannelRecord.Uuid,
                         VariantUuid = GuidGenerator.GenerateTimeBasedGuid().ToString(),
                         PriceSyncEnabled = _zettleSettings.PriceSyncEnabled,
                         ImageSyncEnabled = _zettleSettings.ImageSyncEnabled,
@@ -312,24 +312,24 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// <summary>
         /// Add records for synchronization
         /// </summary>
-        /// <param name="productIds">Product identifiers</param>
+        /// <param name="tvChannelIds">TvChannel identifiers</param>
         /// <returns>
         /// A task that represents the asynchronous operation
-        /// The task result contains the number of products that were not added
+        /// The task result contains the number of tvChannels that were not added
         /// </returns>
-        public async Task<int?> AddRecordsAsync(List<int> productIds)
+        public async Task<int?> AddRecordsAsync(List<int> tvChannelIds)
         {
-            if (!productIds?.Any() ?? true)
+            if (!tvChannelIds?.Any() ?? true)
                 return null;
 
-            var newProductIds = productIds.Except(_repository.Table.Select(record => record.ProductId)).ToList();
-            if (!newProductIds.Any())
+            var newTvChannelIds = tvChannelIds.Except(_repository.Table.Select(record => record.TvChannelId)).ToList();
+            if (!newTvChannelIds.Any())
                 return null;
 
-            var (records, invalidProducts) = await PrepareRecordsToAddAsync(newProductIds);
+            var (records, invalidTvChannels) = await PrepareRecordsToAddAsync(newTvChannelIds);
             await InsertRecordsAsync(records);
 
-            return invalidProducts;
+            return invalidTvChannels;
         }
 
         /// <summary>
@@ -337,41 +337,41 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// </summary>
         /// <param name="records">Records</param>
         /// <returns>Records ready for synchronization</returns>
-        public List<ProductToSync> PrepareToSyncRecords(List<ZettleRecord> records)
+        public List<TvChannelToSync> PrepareToSyncRecords(List<ZettleRecord> records)
         {
             var recordIds = records.Select(record => record.Id).ToList();
-            var productToSync = _repository.Table
+            var tvChannelToSync = _repository.Table
                 .Where(record => recordIds.Contains(record.Id))
-                .Join(_productCategoryRepository.Table,
-                    record => record.ProductId,
-                    pc => pc.ProductId,
-                    (record, pc) => new { Record = record, ProductCategory = pc })
-                .Join(_productRepository.Table,
-                    item => item.ProductCategory.ProductId,
-                    product => product.Id,
-                    (item, product) => new { Product = product, Record = item.Record, ProductCategory = item.ProductCategory })
+                .Join(_tvChannelCategoryRepository.Table,
+                    record => record.TvChannelId,
+                    pc => pc.TvChannelId,
+                    (record, pc) => new { Record = record, TvChannelCategory = pc })
+                .Join(_tvChannelRepository.Table,
+                    item => item.TvChannelCategory.TvChannelId,
+                    tvChannel => tvChannel.Id,
+                    (item, tvChannel) => new { TvChannel = tvChannel, Record = item.Record, TvChannelCategory = item.TvChannelCategory })
                 .Join(_categoryRepository.Table,
-                    item => item.ProductCategory.CategoryId,
+                    item => item.TvChannelCategory.CategoryId,
                     category => category.Id,
-                    (item, category) => new { Category = category, Product = item.Product, Record = item.Record, ProductCategory = item.ProductCategory })
+                    (item, category) => new { Category = category, TvChannel = item.TvChannel, Record = item.Record, TvChannelCategory = item.TvChannelCategory })
                 .Select(item => new
                 {
-                    Id = item.Product.Id,
+                    Id = item.TvChannel.Id,
                     Uuid = item.Record.Uuid,
                     VariantUuid = item.Record.VariantUuid,
-                    Name = item.Product.Name,
-                    Sku = item.Product.Sku,
-                    Description = item.Product.ShortDescription,
-                    Price = item.Product.Price,
+                    Name = item.TvChannel.Name,
+                    Sku = item.TvChannel.Sku,
+                    Description = item.TvChannel.ShortDescription,
+                    Price = item.TvChannel.Price,
                     CategoryName = item.Category.Name,
                     ImageUrl = item.Record.ImageUrl,
                     ImageSyncEnabled = item.Record.ImageSyncEnabled,
                     PriceSyncEnabled = item.Record.PriceSyncEnabled,
-                    ProductCategoryId = item.ProductCategory.Id,
-                    ProductCategoryDisplayOrder = item.ProductCategory.DisplayOrder
+                    TvChannelCategoryId = item.TvChannelCategory.Id,
+                    TvChannelCategoryDisplayOrder = item.TvChannelCategory.DisplayOrder
                 })
                 .GroupBy(item => item.Id)
-                .Select(group => new ProductToSync
+                .Select(group => new TvChannelToSync
                 {
                     Id = group.Key,
                     Uuid = group.FirstOrDefault().Uuid,
@@ -381,8 +381,8 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                     Description = group.FirstOrDefault().Description,
                     Price = group.FirstOrDefault().Price,
                     CategoryName = group
-                        .OrderBy(item => item.ProductCategoryDisplayOrder)
-                        .ThenBy(item => item.ProductCategoryId)
+                        .OrderBy(item => item.TvChannelCategoryDisplayOrder)
+                        .ThenBy(item => item.TvChannelCategoryId)
                         .Select(item => item.CategoryName)
                         .FirstOrDefault(),
                     ImageUrl = group.FirstOrDefault().ImageUrl,
@@ -391,7 +391,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                 })
                 .ToList();
 
-            return productToSync;
+            return tvChannelToSync;
         }
 
         #endregion

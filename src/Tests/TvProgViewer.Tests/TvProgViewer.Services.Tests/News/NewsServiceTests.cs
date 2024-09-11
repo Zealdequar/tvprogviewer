@@ -1,10 +1,10 @@
 ﻿using System;
 using FluentAssertions;
-using Nop.Core.Domain.News;
-using Nop.Services.News;
+using TvProgViewer.Core.Domain.News;
+using TvProgViewer.Services.News;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.News
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.News
 {
     [TestFixture]
     public class NewsServiceTests : ServiceTest

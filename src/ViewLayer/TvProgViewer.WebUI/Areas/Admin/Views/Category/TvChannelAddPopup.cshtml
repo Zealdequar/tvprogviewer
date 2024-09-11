@@ -91,7 +91,7 @@ else
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
+                                        <button type="button" id="search-tvChannels" class="btn btn-primary btn-search">
                                             <i class="fas fa-search"></i>
                                             @T("Admin.Common.Search")
                                         </button>
@@ -104,9 +104,9 @@ else
                             <div class="card-body">
                                 @await Html.PartialAsync("Table", new DataTablesModel
                                 {
-                                    Name = "tvchannels-grid",
+                                    Name = "tvChannels-grid",
                                     UrlRead = new DataUrl("TvChannelAddPopupList", "Category", null),
-                                    SearchButtonId = "search-tvchannels",
+                                    SearchButtonId = "search-tvChannels",
                                     Length = Model.PageSize,
                                     LengthMenu = Model.AvailablePageSizes,
                                     Filters = new List<FilterParameter>

@@ -8,7 +8,7 @@
     //title
     TvProgHtml.AddTitleParts(T("PageTitle.CompareTvChannels").Text);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-compare-tvchannels-page");
+    TvProgHtml.AppendPageCssClassParts("html-compare-tvChannels-page");
 }
 @{
     var columnWidth = "";
@@ -24,7 +24,7 @@
             uniqueGroupes.Add(group);
     }
 }
-<div class="page compare-tvchannels-page">
+<div class="page compare-tvChannels-page">
     <div class="page-title">
         <h1>@T("TvChannels.Compare.Title")</h1>
     </div>
@@ -33,46 +33,46 @@
         {
             <a href="#" onclick="setLocation('@Url.RouteUrl("ClearCompareList")')" class="clear-list">@T("TvChannels.Compare.Clear")</a>
             <div class="table-wrapper">
-                <table class="compare-tvchannels-table">
+                <table class="compare-tvChannels-table">
                     <tbody>
-                        <tr class="remove-tvchannel">
+                        <tr class="remove-tvChannel">
                             <td class="empty">&nbsp;</td>
-                            @foreach (var tvchannel in Model.TvChannels)
+                            @foreach (var tvChannel in Model.TvChannels)
                             {
                                 <td style="width: @columnWidth;">
-                                    <button type="button" class="button-2 remove-button" onclick="setLocation('@Url.RouteUrl("RemoveTvChannelFromCompareList", new { tvchannelId = tvchannel.Id })')">@T("Common.Remove")</button>
+                                    <button type="button" class="button-2 remove-button" onclick="setLocation('@Url.RouteUrl("RemoveTvChannelFromCompareList", new { tvChannelId = tvChannel.Id })')">@T("Common.Remove")</button>
                                 </td>
                             }
                         </tr>
-                        <tr class="tvchannel-picture">
+                        <tr class="tvChannel-picture">
                             <td class="empty">&nbsp;</td>
-                            @foreach (var tvchannel in Model.TvChannels)
+                            @foreach (var tvChannel in Model.TvChannels)
                             {
-                                var picture = tvchannel.PictureModels.FirstOrDefault();
+                                var picture = tvChannel.PictureModels.FirstOrDefault();
                                 <td style="width: @columnWidth;">
-                                    <a class="picture" href="@(Url.RouteUrl<TvChannel>(new { SeName = tvchannel.SeName }))"><img alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" /></a>
+                                    <a class="picture" href="@(Url.RouteUrl<TvChannel>(new { SeName = tvChannel.SeName }))"><img alt="@picture?.AlternateText" src="@picture?.ImageUrl" title="@picture?.Title" /></a>
                                 </td>
                             }
                         </tr>
-                        <tr class="tvchannel-name">
+                        <tr class="tvChannel-name">
                             <td>
                                 <label>@T("TvChannels.Compare.Name")</label>
                             </td>
-                            @foreach (var tvchannel in Model.TvChannels)
+                            @foreach (var tvChannel in Model.TvChannels)
                             {
                                 <td style="width: @columnWidth;">
-                                    <a href="@(Url.RouteUrl<TvChannel>(new { SeName = tvchannel.SeName }))">@tvchannel.Name</a>
+                                    <a href="@(Url.RouteUrl<TvChannel>(new { SeName = tvChannel.SeName }))">@tvChannel.Name</a>
                                 </td>
                             }
                         </tr>
-                        <tr class="tvchannel-price">
+                        <tr class="tvChannel-price">
                             <td>
                                 <label>@T("TvChannels.Compare.Price")</label>
                             </td>
-                            @foreach (var tvchannel in Model.TvChannels)
+                            @foreach (var tvChannel in Model.TvChannels)
                             {
                                 <td style="width: @columnWidth;">
-                                    @tvchannel.TvChannelPrice.Price
+                                    @tvChannel.TvChannelPrice.Price
                                 </td>
                             }
                         </tr>
@@ -82,10 +82,10 @@
                                 <td>
                                     <label>@T("TvChannels.Compare.ShortDescription")</label>
                                 </td>
-                                @foreach (var tvchannel in Model.TvChannels)
+                                @foreach (var tvChannel in Model.TvChannels)
                                 {
                                     <td style="width: @columnWidth;">
-                                        @Html.Raw(tvchannel.ShortDescription)
+                                        @Html.Raw(tvChannel.ShortDescription)
                                     </td>
                                 }
                             </tr>
@@ -96,10 +96,10 @@
                                 <td>
                                     <label>@T("TvChannels.Compare.FullDescription")</label>
                                 </td>
-                                @foreach (var tvchannel in Model.TvChannels)
+                                @foreach (var tvChannel in Model.TvChannels)
                                 {
                                     <td style="width: @columnWidth;">
-                                        @Html.Raw(tvchannel.FullDescription)
+                                        @Html.Raw(tvChannel.FullDescription)
                                     </td>
                                 }
                             </tr>
@@ -129,9 +129,9 @@
                                         <td>
                                             <label>@specificationAttribute.Name</label>
                                         </td>
-                                        @foreach (var tvchannel in Model.TvChannels)
+                                        @foreach (var tvChannel in Model.TvChannels)
                                         {
-                                            var foundTvChannelSpec = tvchannel.TvChannelSpecificationModel.Groups
+                                            var foundTvChannelSpec = tvChannel.TvChannelSpecificationModel.Groups
                                                 .Where(g => g.Id == group.Id)
                                                 .SelectMany(g => g.Attributes)
                                                 .FirstOrDefault(sa => sa.Id == specificationAttribute.Id);

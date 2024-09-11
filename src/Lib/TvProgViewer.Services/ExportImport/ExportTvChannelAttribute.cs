@@ -43,7 +43,7 @@
         public int AttributeControlTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel attribute mapping identifier
+        /// Gets or sets the tvChannel attribute mapping identifier
         /// </summary>
         public int AttributeMappingId { get; set; }
 
@@ -53,7 +53,7 @@
         public int AttributeValueTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets the associated tvchannel identifier (used only with AttributeValueType.AssociatedToTvChannel)
+        /// Gets or sets the associated tvChannel identifier (used only with AttributeValueType.AssociatedToTvChannel)
         /// </summary>
         public int AssociatedTvChannelId { get; set; }
 
@@ -78,12 +78,12 @@
         public decimal WeightAdjustment { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the user can enter the quantity of associated tvchannel (used only with AttributeValueType.AssociatedToTvChannel)
+        /// Gets or sets a value indicating whether the user can enter the quantity of associated tvChannel (used only with AttributeValueType.AssociatedToTvChannel)
         /// </summary>
         public bool UserEntersQty { get; set; }
 
         /// <summary>
-        /// Gets or sets the quantity of associated tvchannel (used only with AttributeValueType.AssociatedToTvChannel)
+        /// Gets or sets the quantity of associated tvChannel (used only with AttributeValueType.AssociatedToTvChannel)
         /// </summary>
         public int Quantity { get; set; }
 

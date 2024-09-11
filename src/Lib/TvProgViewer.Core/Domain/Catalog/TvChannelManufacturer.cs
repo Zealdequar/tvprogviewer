@@ -1,12 +1,12 @@
 ﻿namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel manufacturer mapping
+    /// Represents a tvChannel manufacturer mapping
     /// </summary>
     public partial class TvChannelManufacturer : BaseEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 
@@ -16,7 +16,7 @@
         public int ManufacturerId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel is featured
+        /// Gets or sets a value indicating whether the tvChannel is featured
         /// </summary>
         public bool IsFeaturedTvChannel { get; set; }
 

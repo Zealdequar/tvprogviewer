@@ -55,8 +55,8 @@ namespace TvProgViewer.WebUI.Factories
         private readonly INewsService _newsService;
         private readonly ITvProgFileProvider _nopFileProvider;
         private readonly ITvProgUrlHelper _nopUrlHelper;
-        private readonly ITvChannelService _tvchannelService;
-        private readonly ITvChannelTagService _tvchannelTagService;
+        private readonly ITvChannelService _tvChannelService;
+        private readonly ITvChannelTagService _tvChannelTagService;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreContext _storeContext;
         private readonly ITopicService _topicService;
@@ -87,8 +87,8 @@ namespace TvProgViewer.WebUI.Factories
             INewsService newsService,
             ITvProgFileProvider nopFileProvider,
             ITvProgUrlHelper nopUrlHelper,
-            ITvChannelService tvchannelService,
-            ITvChannelTagService tvchannelTagService,
+            ITvChannelService tvChannelService,
+            ITvChannelTagService tvChannelTagService,
             IStaticCacheManager staticCacheManager,
             IStoreContext storeContext,
             ITopicService topicService,
@@ -115,8 +115,8 @@ namespace TvProgViewer.WebUI.Factories
             _newsService = newsService;
             _nopFileProvider = nopFileProvider;
             _nopUrlHelper = nopUrlHelper;
-            _tvchannelService = tvchannelService;
-            _tvchannelTagService = tvchannelTagService;
+            _tvChannelService = tvChannelService;
+            _tvChannelTagService = tvChannelTagService;
             _staticCacheManager = staticCacheManager;
             _storeContext = storeContext;
             _topicService = topicService;
@@ -171,7 +171,7 @@ namespace TvProgViewer.WebUI.Factories
                 //home page
                 await PrepareLocalizedSitemapUrlAsync("Homepage"),
 
-                //search tvchannels
+                //search tvChannels
                 await PrepareLocalizedSitemapUrlAsync("TvSearch"),
 
                 //contact us
@@ -198,11 +198,11 @@ namespace TvProgViewer.WebUI.Factories
             if (_sitemapXmlSettings.SitemapXmlIncludeManufacturers)
                 sitemapUrls.AddRange(await GetManufacturerUrlsAsync());
 
-            //tvchannels
+            //tvChannels
             if (_sitemapXmlSettings.SitemapXmlIncludeTvChannels)
                 sitemapUrls.AddRange(await GetTvChannelUrlsAsync());
 
-            //tvchannel tags
+            //tvChannel tags
             if (_sitemapXmlSettings.SitemapXmlIncludeTvChannelTags)
                 sitemapUrls.AddRange(await GetTvChannelTagUrlsAsync());
 
@@ -276,7 +276,7 @@ namespace TvProgViewer.WebUI.Factories
         }
 
         /// <summary>
-        /// Get tvchannel URLs for the sitemap
+        /// Get tvChannel URLs for the sitemap
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
@@ -286,13 +286,13 @@ namespace TvProgViewer.WebUI.Factories
         {
             var store = await _storeContext.GetCurrentStoreAsync();
 
-            return await (await _tvchannelService.SearchTvChannelsAsync(0, storeId: store.Id,
+            return await (await _tvChannelService.SearchTvChannelsAsync(0, storeId: store.Id,
                 visibleIndividuallyOnly: true, orderBy: TvChannelSortingEnum.CreatedOn))
-                .SelectAwait(async tvchannel => await PrepareLocalizedSitemapUrlAsync("TvChannel", GetSeoRouteParamsAwait(tvchannel), tvchannel.UpdatedOnUtc)).ToListAsync();
+                .SelectAwait(async tvChannel => await PrepareLocalizedSitemapUrlAsync("TvChannel", GetSeoRouteParamsAwait(tvChannel), tvChannel.UpdatedOnUtc)).ToListAsync();
         }
 
         /// <summary>
-        /// Get tvchannel tag URLs for the sitemap
+        /// Get tvChannel tag URLs for the sitemap
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
@@ -300,8 +300,8 @@ namespace TvProgViewer.WebUI.Factories
         /// </returns>
         protected virtual async Task<IEnumerable<SitemapUrlModel>> GetTvChannelTagUrlsAsync()
         {
-            return await (await _tvchannelTagService.GetAllTvChannelTagsAsync())
-                .SelectAwait(async tvchannelTag => await PrepareLocalizedSitemapUrlAsync("TvChannelsByTag", GetSeoRouteParamsAwait(tvchannelTag))).ToListAsync();
+            return await (await _tvChannelTagService.GetAllTvChannelTagsAsync())
+                .SelectAwait(async tvChannelTag => await PrepareLocalizedSitemapUrlAsync("TvChannelsByTag", GetSeoRouteParamsAwait(tvChannelTag))).ToListAsync();
         }
 
         /// <summary>
@@ -711,29 +711,29 @@ namespace TvProgViewer.WebUI.Factories
                     }).ToListAsync());
                 }
 
-                //tvchannels
+                //tvChannels
                 if (_sitemapSettings.SitemapIncludeTvChannels)
                 {
-                    var tvchannelsGroupTitle = await _localizationService.GetResourceAsync("Sitemap.TvChannels");
-                    var tvchannels = await _tvchannelService.SearchTvChannelsAsync(0, storeId: store.Id, visibleIndividuallyOnly: true);
-                    model.Items.AddRange(await tvchannels.SelectAwait(async tvchannel => new SitemapModel.SitemapItemModel
+                    var tvChannelsGroupTitle = await _localizationService.GetResourceAsync("Sitemap.TvChannels");
+                    var tvChannels = await _tvChannelService.SearchTvChannelsAsync(0, storeId: store.Id, visibleIndividuallyOnly: true);
+                    model.Items.AddRange(await tvChannels.SelectAwait(async tvChannel => new SitemapModel.SitemapItemModel
                     {
-                        GroupTitle = tvchannelsGroupTitle,
-                        Name = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name),
-                        Url = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = await _urlRecordService.GetSeNameAsync(tvchannel) })
+                        GroupTitle = tvChannelsGroupTitle,
+                        Name = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name),
+                        Url = await _nopUrlHelper.RouteGenericUrlAsync<TvChannel>(new { SeName = await _urlRecordService.GetSeNameAsync(tvChannel) })
                     }).ToListAsync());
                 }
 
-                //tvchannel tags
+                //tvChannel tags
                 if (_sitemapSettings.SitemapIncludeTvChannelTags)
                 {
-                    var tvchannelTagsGroupTitle = await _localizationService.GetResourceAsync("Sitemap.TvChannelTags");
-                    var tvchannelTags = await _tvchannelTagService.GetAllTvChannelTagsAsync();
-                    model.Items.AddRange(await tvchannelTags.SelectAwait(async tvchannelTag => new SitemapModel.SitemapItemModel
+                    var tvChannelTagsGroupTitle = await _localizationService.GetResourceAsync("Sitemap.TvChannelTags");
+                    var tvChannelTags = await _tvChannelTagService.GetAllTvChannelTagsAsync();
+                    model.Items.AddRange(await tvChannelTags.SelectAwait(async tvChannelTag => new SitemapModel.SitemapItemModel
                     {
-                        GroupTitle = tvchannelTagsGroupTitle,
-                        Name = await _localizationService.GetLocalizedAsync(tvchannelTag, x => x.Name),
-                        Url = await _nopUrlHelper.RouteGenericUrlAsync<TvChannelTag>(new { SeName = await _urlRecordService.GetSeNameAsync(tvchannelTag) })
+                        GroupTitle = tvChannelTagsGroupTitle,
+                        Name = await _localizationService.GetLocalizedAsync(tvChannelTag, x => x.Name),
+                        Url = await _nopUrlHelper.RouteGenericUrlAsync<TvChannelTag>(new { SeName = await _urlRecordService.GetSeNameAsync(tvChannelTag) })
                     }).ToListAsync());
                 }
 

@@ -62,7 +62,7 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
         #region Utilities
 
         /// <summary>
-        /// Generate a URL for a tvchannel with the specified route values
+        /// Generate a URL for a tvChannel with the specified route values
         /// </summary>
         /// <param name="urlHelper">URL helper</param>
         /// <param name="values">An object that contains route values</param>
@@ -90,14 +90,14 @@ namespace TvProgViewer.Web.Framework.Mvc.Routing
             var catalogSeName = string.Empty;
             if (_catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.CategoryTvChannel)
             {
-                var tvchannelCategory = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var category = await _categoryService.GetCategoryByIdAsync(tvchannelCategory?.CategoryId ?? 0);
+                var tvChannelCategory = (await _categoryService.GetTvChannelCategoriesByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var category = await _categoryService.GetCategoryByIdAsync(tvChannelCategory?.CategoryId ?? 0);
                 catalogSeName = category is not null ? await _urlRecordService.GetSeNameAsync(category) : string.Empty;
             }
             if (_catalogSettings.TvChannelUrlStructureTypeId == (int)TvChannelUrlStructureType.ManufacturerTvChannel)
             {
-                var tvchannelManufacturer = (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
-                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(tvchannelManufacturer?.ManufacturerId ?? 0);
+                var tvChannelManufacturer = (await _manufacturerService.GetTvChannelManufacturersByTvChannelIdAsync(urlRecord.EntityId)).FirstOrDefault();
+                var manufacturer = await _manufacturerService.GetManufacturerByIdAsync(tvChannelManufacturer?.ManufacturerId ?? 0);
                 catalogSeName = manufacturer is not null ? await _urlRecordService.GetSeNameAsync(manufacturer) : string.Empty;
             }
             if (string.IsNullOrEmpty(catalogSeName))

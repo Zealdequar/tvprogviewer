@@ -28,8 +28,8 @@ namespace TvProgViewer.Services.Catalog
         private readonly ICurrencyService _currencyService;
         private readonly IDownloadService _downloadService;
         private readonly ILocalizationService _localizationService;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly IRepository<TvChannelAttributeValue> _tvchannelAttributeValueRepository;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly IRepository<TvChannelAttributeValue> _tvChannelAttributeValueRepository;
         private readonly IWorkContext _workContext;
 
         #endregion
@@ -39,14 +39,14 @@ namespace TvProgViewer.Services.Catalog
         public TvChannelAttributeParser(ICurrencyService currencyService,
             IDownloadService downloadService,
             ILocalizationService localizationService,
-            ITvChannelAttributeService tvchannelAttributeService,
-            IRepository<TvChannelAttributeValue> tvchannelAttributeValueRepository,
+            ITvChannelAttributeService tvChannelAttributeService,
+            IRepository<TvChannelAttributeValue> tvChannelAttributeValueRepository,
             IWorkContext workContext)
         {
             _currencyService = currencyService;
             _downloadService = downloadService;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelAttributeValueRepository = tvchannelAttributeValueRepository;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelAttributeValueRepository = tvChannelAttributeValueRepository;
             _workContext = workContext;
             _localizationService = localizationService;
         }
@@ -91,12 +91,12 @@ namespace TvProgViewer.Services.Catalog
         }
         
         /// <summary>
-        /// Gets selected tvchannel attribute values with the quantity entered by the user
+        /// Gets selected tvChannel attribute values with the quantity entered by the user
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="tvchannelAttributeMappingId">TvChannel attribute mapping identifier</param>
-        /// <returns>Collections of pairs of tvchannel attribute values and their quantity</returns>
-        protected IList<Tuple<string, string>> ParseValuesWithQuantity(string attributesXml, int tvchannelAttributeMappingId)
+        /// <param name="tvChannelAttributeMappingId">TvChannel attribute mapping identifier</param>
+        /// <returns>Collections of pairs of tvChannel attribute values and their quantity</returns>
+        protected IList<Tuple<string, string>> ParseValuesWithQuantity(string attributesXml, int tvChannelAttributeMappingId)
         {
             var selectedValues = new List<Tuple<string, string>>();
             if (string.IsNullOrEmpty(attributesXml))
@@ -113,7 +113,7 @@ namespace TvProgViewer.Services.Catalog
                         continue;
 
                     if (!int.TryParse(attributeNode.Attributes["ID"].InnerText.Trim(), out var attributeId) ||
-                        attributeId != tvchannelAttributeMappingId)
+                        attributeId != tvChannelAttributeMappingId)
                         continue;
 
                     foreach (XmlNode attributeValue in attributeNode.SelectNodes("TvChannelAttributeValue"))
@@ -135,12 +135,12 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Adds gift cards attributes in XML format
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="form">Form</param>
         /// <param name="attributesXml">Attributes in XML format</param>
-        protected virtual void AddGiftCardsAttributesXml(TvChannel tvchannel, IFormCollection form, ref string attributesXml)
+        protected virtual void AddGiftCardsAttributesXml(TvChannel tvChannel, IFormCollection form, ref string attributesXml)
         {
-            if (!tvchannel.IsGiftCard)
+            if (!tvChannel.IsGiftCard)
                 return;
 
             var recipientName = "";
@@ -150,27 +150,27 @@ namespace TvProgViewer.Services.Catalog
             var giftCardMessage = "";
             foreach (var formKey in form.Keys)
             {
-                if (formKey.Equals($"giftcard_{tvchannel.Id}.RecipientName", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"giftcard_{tvChannel.Id}.RecipientName", StringComparison.InvariantCultureIgnoreCase))
                 {
                     recipientName = form[formKey];
                     continue;
                 }
-                if (formKey.Equals($"giftcard_{tvchannel.Id}.RecipientEmail", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"giftcard_{tvChannel.Id}.RecipientEmail", StringComparison.InvariantCultureIgnoreCase))
                 {
                     recipientEmail = form[formKey];
                     continue;
                 }
-                if (formKey.Equals($"giftcard_{tvchannel.Id}.SenderName", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"giftcard_{tvChannel.Id}.SenderName", StringComparison.InvariantCultureIgnoreCase))
                 {
                     senderName = form[formKey];
                     continue;
                 }
-                if (formKey.Equals($"giftcard_{tvchannel.Id}.SenderEmail", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"giftcard_{tvChannel.Id}.SenderEmail", StringComparison.InvariantCultureIgnoreCase))
                 {
                     senderEmail = form[formKey];
                     continue;
                 }
-                if (formKey.Equals($"giftcard_{tvchannel.Id}.Message", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"giftcard_{tvChannel.Id}.Message", StringComparison.InvariantCultureIgnoreCase))
                 {
                     giftCardMessage = form[formKey];
                 }
@@ -180,20 +180,20 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets tvchannel attributes in XML format
+        /// Gets tvChannel attributes in XML format
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="form">Form</param>
         /// <param name="errors">Errors</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the attributes in XML format
         /// </returns>
-        protected virtual async Task<string> GetTvChannelAttributesXmlAsync(TvChannel tvchannel, IFormCollection form, List<string> errors)
+        protected virtual async Task<string> GetTvChannelAttributesXmlAsync(TvChannel tvChannel, IFormCollection form, List<string> errors)
         {
             var attributesXml = string.Empty;
-            var tvchannelAttributes = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
-            foreach (var attribute in tvchannelAttributes)
+            var tvChannelAttributes = await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
+            foreach (var attribute in tvChannelAttributes)
             {
                 var controlId = $"{TvProgCatalogDefaults.TvChannelAttributePrefix}{attribute.Id}";
                 switch (attribute.AttributeControlType)
@@ -250,7 +250,7 @@ namespace TvProgViewer.Services.Catalog
                     case AttributeControlType.ReadonlyCheckboxes:
                         {
                             //load read-only (already server-side selected) values
-                            var attributeValues = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(attribute.Id);
+                            var attributeValues = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(attribute.Id);
                             foreach (var selectedAttributeId in attributeValues
                                 .Where(v => v.IsPreSelected)
                                 .Select(v => v.Id)
@@ -312,7 +312,7 @@ namespace TvProgViewer.Services.Catalog
                 }
             }
             //validate conditional attributes (if specified)
-            foreach (var attribute in tvchannelAttributes)
+            foreach (var attribute in tvChannelAttributes)
             {
                 var conditionMet = await IsConditionMetAsync(attribute, attributesXml);
                 if (conditionMet.HasValue && !conditionMet.Value)
@@ -328,12 +328,12 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel attributes
 
         /// <summary>
-        /// Gets selected tvchannel attribute mappings
+        /// Gets selected tvChannel attribute mappings
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the selected tvchannel attribute mappings
+        /// The task result contains the selected tvChannel attribute mappings
         /// </returns>
         public virtual async Task<IList<TvChannelAttributeMapping>> ParseTvChannelAttributeMappingsAsync(string attributesXml)
         {
@@ -344,7 +344,7 @@ namespace TvProgViewer.Services.Catalog
             var ids = ParseAttributeIds(attributesXml);
             foreach (var id in ids)
             {
-                var attribute = await _tvchannelAttributeService.GetTvChannelAttributeMappingByIdAsync(id);
+                var attribute = await _tvChannelAttributeService.GetTvChannelAttributeMappingByIdAsync(id);
                 if (attribute != null) 
                     result.Add(attribute);
             }
@@ -353,15 +353,15 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// /// Get tvchannel attribute values
+        /// /// Get tvChannel attribute values
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="tvchannelAttributeMappingId">TvChannel attribute mapping identifier; pass 0 to load all values</param>
+        /// <param name="tvChannelAttributeMappingId">TvChannel attribute mapping identifier; pass 0 to load all values</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel attribute values
+        /// The task result contains the tvChannel attribute values
         /// </returns>
-        public virtual async Task<IList<TvChannelAttributeValue>> ParseTvChannelAttributeValuesAsync(string attributesXml, int tvchannelAttributeMappingId = 0)
+        public virtual async Task<IList<TvChannelAttributeValue>> ParseTvChannelAttributeValuesAsync(string attributesXml, int tvChannelAttributeMappingId = 0)
         {
             var values = new List<TvChannelAttributeValue>();
             if (string.IsNullOrEmpty(attributesXml))
@@ -369,9 +369,9 @@ namespace TvProgViewer.Services.Catalog
 
             var attributes = await ParseTvChannelAttributeMappingsAsync(attributesXml);
 
-            //to load values only for the passed tvchannel attribute mapping
-            if (tvchannelAttributeMappingId > 0)
-                attributes = attributes.Where(attribute => attribute.Id == tvchannelAttributeMappingId).ToList();
+            //to load values only for the passed tvChannel attribute mapping
+            if (tvChannelAttributeMappingId > 0)
+                attributes = attributes.Where(attribute => attribute.Id == tvChannelAttributeMappingId).ToList();
 
             foreach (var attribute in attributes)
             {
@@ -383,7 +383,7 @@ namespace TvProgViewer.Services.Catalog
                     if (string.IsNullOrEmpty(attributeValue.Item1) || !int.TryParse(attributeValue.Item1, out var attributeValueId))
                         continue;
 
-                    var value = await _tvchannelAttributeService.GetTvChannelAttributeValueByIdAsync(attributeValueId);
+                    var value = await _tvChannelAttributeService.GetTvChannelAttributeValueByIdAsync(attributeValueId);
                     if (value == null)
                         continue;
 
@@ -391,7 +391,7 @@ namespace TvProgViewer.Services.Catalog
                     {
                         //if user enters quantity, use new entity with new quantity
 
-                        var oldValue = await _tvchannelAttributeValueRepository.LoadOriginalCopyAsync(value);
+                        var oldValue = await _tvChannelAttributeValueRepository.LoadOriginalCopyAsync(value);
 
                         oldValue.TvChannelAttributeMappingId = attribute.Id;
                         oldValue.Quantity = quantity;
@@ -406,12 +406,12 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets selected tvchannel attribute values
+        /// Gets selected tvChannel attribute values
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="tvchannelAttributeMappingId">TvChannel attribute mapping identifier</param>
+        /// <param name="tvChannelAttributeMappingId">TvChannel attribute mapping identifier</param>
         /// <returns>TvChannel attribute values</returns>
-        public virtual IList<string> ParseValues(string attributesXml, int tvchannelAttributeMappingId)
+        public virtual IList<string> ParseValues(string attributesXml, int tvChannelAttributeMappingId)
         {
             var selectedValues = new List<string>();
             if (string.IsNullOrEmpty(attributesXml))
@@ -432,7 +432,7 @@ namespace TvProgViewer.Services.Catalog
                     if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != tvchannelAttributeMappingId)
+                    if (id != tvChannelAttributeMappingId)
                         continue;
 
                     var nodeList2 = node1.SelectNodes(@"TvChannelAttributeValue/Value");
@@ -455,11 +455,11 @@ namespace TvProgViewer.Services.Catalog
         /// Adds an attribute
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <param name="value">Value</param>
         /// <param name="quantity">Quantity (used with AttributeValueType.AssociatedToTvChannel to specify the quantity entered by the user)</param>
         /// <returns>Updated result (XML format)</returns>
-        public virtual string AddTvChannelAttribute(string attributesXml, TvChannelAttributeMapping tvchannelAttributeMapping, string value, int? quantity = null)
+        public virtual string AddTvChannelAttribute(string attributesXml, TvChannelAttributeMapping tvChannelAttributeMapping, string value, int? quantity = null)
         {
             var result = string.Empty;
             try
@@ -489,7 +489,7 @@ namespace TvProgViewer.Services.Catalog
                     if (!int.TryParse(str1, out var id))
                         continue;
 
-                    if (id != tvchannelAttributeMapping.Id)
+                    if (id != tvChannelAttributeMapping.Id)
                         continue;
 
                     attributeElement = (XmlElement)node1;
@@ -500,7 +500,7 @@ namespace TvProgViewer.Services.Catalog
                 if (attributeElement == null)
                 {
                     attributeElement = xmlDoc.CreateElement("TvChannelAttribute");
-                    attributeElement.SetAttribute("ID", tvchannelAttributeMapping.Id.ToString());
+                    attributeElement.SetAttribute("ID", tvChannelAttributeMapping.Id.ToString());
                     rootElement.AppendChild(attributeElement);
                 }
 
@@ -533,18 +533,18 @@ namespace TvProgViewer.Services.Catalog
         /// Remove an attribute
         /// </summary>
         /// <param name="attributesXml">Attributes in XML format</param>
-        /// <param name="tvchannelAttributeMapping">TvChannel attribute mapping</param>
+        /// <param name="tvChannelAttributeMapping">TvChannel attribute mapping</param>
         /// <returns>Updated result (XML format)</returns>
-        public virtual string RemoveTvChannelAttribute(string attributesXml, TvChannelAttributeMapping tvchannelAttributeMapping)
+        public virtual string RemoveTvChannelAttribute(string attributesXml, TvChannelAttributeMapping tvChannelAttributeMapping)
         {
-            return RemoveAttribute(attributesXml, tvchannelAttributeMapping.Id);
+            return RemoveAttribute(attributesXml, tvChannelAttributeMapping.Id);
         }
 
         /// <summary>
         /// Are attributes equal
         /// </summary>
-        /// <param name="attributesXml1">The attributes of the first tvchannel</param>
-        /// <param name="attributesXml2">The attributes of the second tvchannel</param>
+        /// <param name="attributesXml1">The attributes of the first tvChannel</param>
+        /// <param name="attributesXml2">The attributes of the second tvChannel</param>
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <param name="ignoreQuantity">A value indicating whether we should ignore the quantity of attribute value entered by the user</param>
         /// <returns>
@@ -667,26 +667,26 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Finds a tvchannel attribute combination by attributes stored in XML 
+        /// Finds a tvChannel attribute combination by attributes stored in XML 
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the found tvchannel attribute combination
+        /// The task result contains the found tvChannel attribute combination
         /// </returns>
-        public virtual async Task<TvChannelAttributeCombination> FindTvChannelAttributeCombinationAsync(TvChannel tvchannel,
+        public virtual async Task<TvChannelAttributeCombination> FindTvChannelAttributeCombinationAsync(TvChannel tvChannel,
             string attributesXml, bool ignoreNonCombinableAttributes = true)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             //anyway combination cannot contains non combinable attributes
             if (string.IsNullOrEmpty(attributesXml))
                 return null;
 
-            var combinations = await _tvchannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvchannel.Id);
+            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
             return await combinations.FirstOrDefaultAwaitAsync(async x =>
                 await AreTvChannelAttributesEqualAsync(x.AttributesXml, attributesXml, ignoreNonCombinableAttributes));
         }
@@ -694,19 +694,19 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Generate all combinations
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="ignoreNonCombinableAttributes">A value indicating whether we should ignore non-combinable attributes</param>
         /// <param name="allowedAttributeIds">List of allowed attribute identifiers. If null or empty then all attributes would be used.</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the attribute combinations in XML format
         /// </returns>
-        public virtual async Task<IList<string>> GenerateAllCombinationsAsync(TvChannel tvchannel, bool ignoreNonCombinableAttributes = false, IList<int> allowedAttributeIds = null)
+        public virtual async Task<IList<string>> GenerateAllCombinationsAsync(TvChannel tvChannel, bool ignoreNonCombinableAttributes = false, IList<int> allowedAttributeIds = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            var allTvChannelAttributeMappings = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
+            var allTvChannelAttributeMappings = await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
             
             if (ignoreNonCombinableAttributes) 
                 allTvChannelAttributeMappings = allTvChannelAttributeMappings.Where(x => !x.IsNonCombinable()).ToList();
@@ -719,23 +719,23 @@ namespace TvProgViewer.Services.Catalog
             foreach (var combination in allPossibleAttributeCombinations)
             {
                 var attributesXml = new List<string>();
-                foreach (var tvchannelAttributeMapping in combination)
+                foreach (var tvChannelAttributeMapping in combination)
                 {
-                    if (!tvchannelAttributeMapping.ShouldHaveValues())
+                    if (!tvChannelAttributeMapping.ShouldHaveValues())
                         continue;
 
-                    //get tvchannel attribute values
-                    var attributeValues = await _tvchannelAttributeService.GetTvChannelAttributeValuesAsync(tvchannelAttributeMapping.Id);
+                    //get tvChannel attribute values
+                    var attributeValues = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(tvChannelAttributeMapping.Id);
 
-                    //filter tvchannel attribute values
+                    //filter tvChannel attribute values
                     if (allowedAttributeIds?.Any() ?? false) 
                         attributeValues = attributeValues.Where(attributeValue => allowedAttributeIds.Contains(attributeValue.Id)).ToList();
 
                     if (!attributeValues.Any())
                         continue;
 
-                    var isCheckbox = tvchannelAttributeMapping.AttributeControlType == AttributeControlType.Checkboxes ||
-                                     tvchannelAttributeMapping.AttributeControlType ==
+                    var isCheckbox = tvChannelAttributeMapping.AttributeControlType == AttributeControlType.Checkboxes ||
+                                     tvChannelAttributeMapping.AttributeControlType ==
                                      AttributeControlType.ReadonlyCheckboxes;
 
                     var currentAttributesXml = new List<string>();
@@ -751,7 +751,7 @@ namespace TvProgViewer.Services.Catalog
                             {
                                 var newXml = oldXml;
                                 foreach (var checkboxValue in checkboxCombination) 
-                                    newXml = AddTvChannelAttribute(newXml, tvchannelAttributeMapping, checkboxValue.Id.ToString());
+                                    newXml = AddTvChannelAttribute(newXml, tvChannelAttributeMapping, checkboxValue.Id.ToString());
 
                                 if (!string.IsNullOrEmpty(newXml)) 
                                     currentAttributesXml.Add(newXml);
@@ -765,7 +765,7 @@ namespace TvProgViewer.Services.Catalog
                         foreach (var oldXml in attributesXml.Any() ? attributesXml : new List<string> { string.Empty })
                         {
                             currentAttributesXml.AddRange(attributeValues.Select(attributeValue =>
-                                AddTvChannelAttribute(oldXml, tvchannelAttributeMapping, attributeValue.Id.ToString())));
+                                AddTvChannelAttribute(oldXml, tvChannelAttributeMapping, attributeValue.Id.ToString())));
                         }
                     }
 
@@ -795,26 +795,26 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Parse a user entered price of the tvchannel
+        /// Parse a user entered price of the tvChannel
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="form">Form</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the user entered price of the tvchannel
+        /// The task result contains the user entered price of the tvChannel
         /// </returns>
-        public virtual async Task<decimal> ParseUserEnteredPriceAsync(TvChannel tvchannel, IFormCollection form)
+        public virtual async Task<decimal> ParseUserEnteredPriceAsync(TvChannel tvChannel, IFormCollection form)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
             if (form == null)
                 throw new ArgumentNullException(nameof(form));
 
             var userEnteredPriceConverted = decimal.Zero;
-            if (tvchannel.UserEntersPrice)
+            if (tvChannel.UserEntersPrice)
                 foreach (var formKey in form.Keys)
                 {
-                    if (formKey.Equals($"addtocart_{tvchannel.Id}.UserEnteredPrice", StringComparison.InvariantCultureIgnoreCase))
+                    if (formKey.Equals($"addtocart_{tvChannel.Id}.UserEnteredPrice", StringComparison.InvariantCultureIgnoreCase))
                     {
                         if (decimal.TryParse(form[formKey], out var userEnteredPrice))
                             userEnteredPriceConverted = await _currencyService.ConvertToPrimaryStoreCurrencyAsync(userEnteredPrice, await _workContext.GetWorkingCurrencyAsync());
@@ -826,21 +826,21 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Parse a entered quantity of the tvchannel
+        /// Parse a entered quantity of the tvChannel
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="form">Form</param>
-        /// <returns>User entered price of the tvchannel</returns>
-        public virtual int ParseEnteredQuantity(TvChannel tvchannel, IFormCollection form)
+        /// <returns>User entered price of the tvChannel</returns>
+        public virtual int ParseEnteredQuantity(TvChannel tvChannel, IFormCollection form)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
             if (form == null)
                 throw new ArgumentNullException(nameof(form));
 
             var quantity = 1;
             foreach (var formKey in form.Keys)
-                if (formKey.Equals($"addtocart_{tvchannel.Id}.EnteredQuantity", StringComparison.InvariantCultureIgnoreCase))
+                if (formKey.Equals($"addtocart_{tvChannel.Id}.EnteredQuantity", StringComparison.InvariantCultureIgnoreCase))
                 {
                     _ = int.TryParse(form[formKey], out quantity);
                     break;
@@ -850,26 +850,26 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Parse tvchannel rental dates on the tvchannel details page
+        /// Parse tvChannel rental dates on the tvChannel details page
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="form">Form</param>
         /// <param name="startDate">Start date</param>
         /// <param name="endDate">End date</param>
-        public virtual void ParseRentalDates(TvChannel tvchannel, IFormCollection form, out DateTime? startDate, out DateTime? endDate)
+        public virtual void ParseRentalDates(TvChannel tvChannel, IFormCollection form, out DateTime? startDate, out DateTime? endDate)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
             if (form == null)
                 throw new ArgumentNullException(nameof(form));
 
             startDate = null;
             endDate = null;
 
-            if (tvchannel.IsRental)
+            if (tvChannel.IsRental)
             {
-                var ctrlStartDate = form[$"rental_start_date_{tvchannel.Id}"];
-                var ctrlEndDate = form[$"rental_end_date_{tvchannel.Id}"];
+                var ctrlStartDate = form[$"rental_start_date_{tvChannel.Id}"];
+                var ctrlEndDate = form[$"rental_end_date_{tvChannel.Id}"];
                 try
                 {
                     startDate = DateTime.ParseExact(ctrlStartDate, 
@@ -887,27 +887,27 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get tvchannel attributes from the passed form
+        /// Get tvChannel attributes from the passed form
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="form">Form values</param>
         /// <param name="errors">Errors</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the attributes in XML format
         /// </returns>
-        public virtual async Task<string> ParseTvChannelAttributesAsync(TvChannel tvchannel, IFormCollection form, List<string> errors)
+        public virtual async Task<string> ParseTvChannelAttributesAsync(TvChannel tvChannel, IFormCollection form, List<string> errors)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
             if (form == null)
                 throw new ArgumentNullException(nameof(form));
 
-            //tvchannel attributes
-            var attributesXml = await GetTvChannelAttributesXmlAsync(tvchannel, form, errors);
+            //tvChannel attributes
+            var attributesXml = await GetTvChannelAttributesXmlAsync(tvChannel, form, errors);
 
             //gift cards
-            AddGiftCardsAttributesXml(tvchannel, form, ref attributesXml);
+            AddGiftCardsAttributesXml(tvChannel, form, ref attributesXml);
 
             return attributesXml;
         }

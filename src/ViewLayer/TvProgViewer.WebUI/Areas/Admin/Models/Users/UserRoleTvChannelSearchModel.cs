@@ -6,7 +6,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
 {
     /// <summary>
-    /// Represents a user role tvchannel search model
+    /// Represents a user role tvChannel search model
     /// </summary>
     public partial record UserRoleTvChannelSearchModel : BaseSearchModel
     {

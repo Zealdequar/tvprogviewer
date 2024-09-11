@@ -8,8 +8,8 @@
 }
 
 <form asp-controller="UserRole" asp-action="AssociateTvChannelToUserRolePopup"
-      asp-route-tvchannelIdInput="@Context.Request.Query["tvchannelIdInput"]"
-      asp-route-tvchannelNameInput="@Context.Request.Query["tvchannelNameInput"]"
+      asp-route-tvChannelIdInput="@Context.Request.Query["tvChannelIdInput"]"
+      asp-route-tvChannelNameInput="@Context.Request.Query["tvChannelNameInput"]"
       asp-route-btnId="@Context.Request.Query["btnId"]">
     <div class="content-header clearfix">
         <h1 class="float-left">
@@ -24,8 +24,8 @@
     {
         <script>
             try {
-                window.opener.document.getElementById('@(Context.Request.Query["tvchannelIdInput"])').value = '@(ViewBag.tvchannelId)';
-                window.opener.document.getElementById('@(Context.Request.Query["tvchannelNameInput"])').innerHTML = '@(ViewBag.tvchannelName)';
+                window.opener.document.getElementById('@(Context.Request.Query["tvChannelIdInput"])').value = '@(ViewBag.tvChannelId)';
+                window.opener.document.getElementById('@(Context.Request.Query["tvChannelNameInput"])').innerHTML = '@(ViewBag.tvChannelName)';
                 window.opener.document.getElementById('@(Context.Request.Query["btnId"])').click();
             }
             catch (e){}
@@ -98,7 +98,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
+                                            <button type="button" id="search-tvChannels" class="btn btn-primary btn-search">
                                                 <i class="fas fa-search"></i>
                                                 @T("Admin.Common.Search")
                                             </button>
@@ -110,9 +110,9 @@
                                 <div class="card-body">
                                     @await Html.PartialAsync("Table", new DataTablesModel
                                     {
-                                        Name = "tvchannels-grid",
+                                        Name = "tvChannels-grid",
                                         UrlRead = new DataUrl("AssociateTvChannelToUserRolePopupList", "UserRole", null),
-                                        SearchButtonId = "search-tvchannels",
+                                        SearchButtonId = "search-tvChannels",
                                         Length = Model.PageSize,
                                         LengthMenu = Model.AvailablePageSizes,
                                         Filters = new List<FilterParameter>
@@ -150,8 +150,8 @@
                                         function renderColumnSelectTvChannel(data, type, row, meta) {
                                             return '<button type="button" onclick="selectAssociatedTvChannel(' + row.Id + ' )" class="btn btn-default">@T("Admin.Common.Select").Text</button>';
                                         }
-                                        function selectAssociatedTvChannel(tvchannelid) {
-                                            $("#@Html.IdFor(model => model.AddTvChannelToUserRoleModel.AssociatedToTvChannelId)").val(tvchannelid);
+                                        function selectAssociatedTvChannel(tvChannelid) {
+                                            $("#@Html.IdFor(model => model.AddTvChannelToUserRoleModel.AssociatedToTvChannelId)").val(tvChannelid);
                                             $('#save').click();
                                         }
                                     </script>

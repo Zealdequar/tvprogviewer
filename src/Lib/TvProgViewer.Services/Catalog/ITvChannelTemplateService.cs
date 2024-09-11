@@ -10,43 +10,43 @@ namespace TvProgViewer.Services.Catalog
     public partial interface ITvChannelTemplateService
     {
         /// <summary>
-        /// Delete tvchannel template
+        /// Delete tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplate">TvChannel template</param>
+        /// <param name="tvChannelTemplate">TvChannel template</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task DeleteTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate);
+        Task DeleteTvChannelTemplateAsync(TvChannelTemplate tvChannelTemplate);
 
         /// <summary>
-        /// Gets all tvchannel templates
+        /// Gets all tvChannel templates
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel templates
+        /// The task result contains the tvChannel templates
         /// </returns>
         Task<IList<TvChannelTemplate>> GetAllTvChannelTemplatesAsync();
 
         /// <summary>
-        /// Gets a tvchannel template
+        /// Gets a tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplateId">TvChannel template identifier</param>
+        /// <param name="tvChannelTemplateId">TvChannel template identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel template
+        /// The task result contains the tvChannel template
         /// </returns>
-        Task<TvChannelTemplate> GetTvChannelTemplateByIdAsync(int tvchannelTemplateId);
+        Task<TvChannelTemplate> GetTvChannelTemplateByIdAsync(int tvChannelTemplateId);
 
         /// <summary>
-        /// Inserts tvchannel template
+        /// Inserts tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplate">TvChannel template</param>
+        /// <param name="tvChannelTemplate">TvChannel template</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task InsertTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate);
+        Task InsertTvChannelTemplateAsync(TvChannelTemplate tvChannelTemplate);
 
         /// <summary>
-        /// Updates the tvchannel template
+        /// Updates the tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplate">TvChannel template</param>
+        /// <param name="tvChannelTemplate">TvChannel template</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task UpdateTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate);
+        Task UpdateTvChannelTemplateAsync(TvChannelTemplate tvChannelTemplate);
     }
 }

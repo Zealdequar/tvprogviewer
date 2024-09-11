@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents an associated tvchannel list model
+    /// Represents an associated tvChannel list model
     /// </summary>
     public partial record AssociatedTvChannelListModel : BasePagedListModel<AssociatedTvChannelModel>
     {

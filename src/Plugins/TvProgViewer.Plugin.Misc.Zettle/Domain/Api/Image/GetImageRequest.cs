@@ -17,7 +17,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Image
         /// <summary>
         /// Gets the request path
         /// </summary>
-        public override string Path => $"v2/images/organizations/self/product/{ImageLookupKey}";
+        public override string Path => $"v2/images/organizations/self/tvChannel/{ImageLookupKey}";
 
         /// <summary>
         /// Gets the request method

@@ -1,7 +1,7 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a recurring tvchannel cycle period
+    /// Represents a recurring tvChannel cycle period
     /// </summary>
     public enum RecurringTvChannelCyclePeriod
     {

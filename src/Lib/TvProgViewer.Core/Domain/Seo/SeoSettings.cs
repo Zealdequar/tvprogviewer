@@ -19,7 +19,7 @@ namespace TvProgViewer.Core.Domain.Seo
         public PageTitleSeoAdjustment PageTitleSeoAdjustment { get; set; }
         
         /// <summary>
-        /// A value indicating whether tvchannel META descriptions will be generated automatically (if not entered)
+        /// A value indicating whether tvChannel META descriptions will be generated automatically (if not entered)
         /// </summary>
         public bool GenerateTvChannelMetaDescription { get; set; }
 

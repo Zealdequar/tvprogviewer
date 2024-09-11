@@ -1,7 +1,7 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel template
+    /// Represents a tvChannel template
     /// </summary>
     public partial class TvChannelTemplate : BaseEntity
     {
@@ -21,7 +21,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int DisplayOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets a comma-separated list of tvchannel type identifiers NOT supported by this template
+        /// Gets or sets a comma-separated list of tvChannel type identifiers NOT supported by this template
         /// </summary>
         public string IgnoredTvChannelTypes { get; set; }
     }

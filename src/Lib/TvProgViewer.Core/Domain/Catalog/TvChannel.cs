@@ -9,24 +9,24 @@ using TvProgViewer.Core.Domain.Stores;
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel
+    /// Represents a tvChannel
     /// </summary>
     public partial class TvChannel : BaseEntity, ILocalizedEntity, ISlugSupported, IAclSupported, IStoreMappingSupported, IDiscountSupported<DiscountTvChannelMapping>, ISoftDeletedEntity
     {
         /// <summary>
-        /// Gets or sets the tvchannel type identifier
+        /// Gets or sets the tvChannel type identifier
         /// </summary>
         public int TvChannelTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets the parent tvchannel identifier. It's used to identify associated tvchannels (only with "grouped" tvchannels)
+        /// Gets or sets the parent tvChannel identifier. It's used to identify associated tvChannels (only with "grouped" tvChannels)
         /// </summary>
         public int ParentGroupedTvChannelId { get; set; }
 
         /// <summary>
-        /// Gets or sets the values indicating whether this tvchannel is visible in catalog or search results.
-        /// It's used when this tvchannel is associated to some "grouped" one
-        /// This way associated tvchannels could be accessed/added/etc only from a grouped tvchannel details page
+        /// Gets or sets the values indicating whether this tvChannel is visible in catalog or search results.
+        /// It's used when this tvChannel is associated to some "grouped" one
+        /// This way associated tvChannels could be accessed/added/etc only from a grouped tvChannel details page
         /// </summary>
         public bool VisibleIndividually { get; set; }
 
@@ -51,7 +51,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public string AdminComment { get; set; }
 
         /// <summary>
-        /// Gets or sets a value of used tvchannel template identifier
+        /// Gets or sets a value of used tvChannel template identifier
         /// </summary>
         public int TvChannelTemplateId { get; set; }
 
@@ -61,7 +61,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int VendorId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to show the tvchannel on home page
+        /// Gets or sets a value indicating whether to show the tvChannel on home page
         /// </summary>
         public bool ShowOnHomepage { get; set; }
 
@@ -81,7 +81,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public string MetaTitle { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel allows user reviews
+        /// Gets or sets a value indicating whether the tvChannel allows user reviews
         /// </summary>
         public bool AllowUserReviews { get; set; }
 
@@ -136,7 +136,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public string Gtin { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel is gift card
+        /// Gets or sets a value indicating whether the tvChannel is gift card
         /// </summary>
         public bool IsGiftCard { get; set; }
 
@@ -146,27 +146,27 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int GiftCardTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets gift card amount that can be used after purchase. If not specified, then tvchannel price will be used.
+        /// Gets or sets gift card amount that can be used after purchase. If not specified, then tvChannel price will be used.
         /// </summary>
         public decimal? OverriddenGiftCardAmount { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel requires that other tvchannels are added to the cart (TvChannel X requires TvChannel Y)
+        /// Gets or sets a value indicating whether the tvChannel requires that other tvChannels are added to the cart (TvChannel X requires TvChannel Y)
         /// </summary>
         public bool RequireOtherTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a required tvchannel identifiers (comma separated)
+        /// Gets or sets a required tvChannel identifiers (comma separated)
         /// </summary>
         public string RequiredTvChannelIds { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether required tvchannels are automatically added to the cart
+        /// Gets or sets a value indicating whether required tvChannels are automatically added to the cart
         /// </summary>
         public bool AutomaticallyAddRequiredTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel is download
+        /// Gets or sets a value indicating whether the tvChannel is download
         /// </summary>
         public bool IsDownload { get; set; }
 
@@ -176,7 +176,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int DownloadId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this downloadable tvchannel can be downloaded unlimited number of times
+        /// Gets or sets a value indicating whether this downloadable tvChannel can be downloaded unlimited number of times
         /// </summary>
         public bool UnlimitedDownloads { get; set; }
 
@@ -196,7 +196,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int DownloadActivationTypeId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel has a sample download file
+        /// Gets or sets a value indicating whether the tvChannel has a sample download file
         /// </summary>
         public bool HasSampleDownload { get; set; }
 
@@ -206,7 +206,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int SampleDownloadId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel has user agreement
+        /// Gets or sets a value indicating whether the tvChannel has user agreement
         /// </summary>
         public bool HasUserAgreement { get; set; }
 
@@ -216,7 +216,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public string UserAgreementText { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel is recurring
+        /// Gets or sets a value indicating whether the tvChannel is recurring
         /// </summary>
         public bool IsRecurring { get; set; }
 
@@ -236,7 +236,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int RecurringTotalCycles { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel is rental
+        /// Gets or sets a value indicating whether the tvChannel is rental
         /// </summary>
         public bool IsRental { get; set; }
 
@@ -261,7 +261,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool IsFreeShipping { get; set; }
 
         /// <summary>
-        /// Gets or sets a value this tvchannel should be shipped separately (each item)
+        /// Gets or sets a value this tvChannel should be shipped separately (each item)
         /// </summary>
         public bool ShipSeparately { get; set; }
 
@@ -276,7 +276,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int DeliveryDateId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel is marked as tax exempt
+        /// Gets or sets a value indicating whether the tvChannel is marked as tax exempt
         /// </summary>
         public bool IsTaxExempt { get; set; }
 
@@ -286,7 +286,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int TaxCategoryId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the tvchannel is telecommunications or broadcasting or electronic services
+        /// Gets or sets a value indicating whether the tvChannel is telecommunications or broadcasting or electronic services
         /// </summary>
         public bool IsTelecommunicationsOrBroadcastingOrElectronicServices { get; set; }
 
@@ -296,12 +296,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int ManageInventoryMethodId { get; set; }
 
         /// <summary>
-        /// Gets or sets a tvchannel availability range identifier
+        /// Gets or sets a tvChannel availability range identifier
         /// </summary>
         public int TvChannelAvailabilityRangeId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether multiple warehouses are used for this tvchannel
+        /// Gets or sets a value indicating whether multiple warehouses are used for this tvChannel
         /// </summary>
         public bool UseMultipleWarehouses { get; set; }
 
@@ -367,12 +367,12 @@ namespace TvProgViewer.Core.Domain.Catalog
 
         /// <summary>
         /// Gets or sets a value indicating whether we allow adding to the cart/wishlist only attribute combinations that exist and have stock greater than zero.
-        /// This option is used only when we have "manage inventory" set to "track inventory by tvchannel attributes"
+        /// This option is used only when we have "manage inventory" set to "track inventory by tvChannel attributes"
         /// </summary>
         public bool AllowAddingOnlyExistingAttributeCombinations { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this tvchannel is returnable (a user is allowed to submit return request with this tvchannel)
+        /// Gets or sets a value indicating whether this tvChannel is returnable (a user is allowed to submit return request with this tvChannel)
         /// </summary>
         public bool NotReturnable { get; set; }
 
@@ -392,7 +392,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool AvailableForPreOrder { get; set; }
 
         /// <summary>
-        /// Gets or sets the start date and time of the tvchannel availability (for pre-order tvchannels)
+        /// Gets or sets the start date and time of the tvChannel availability (for pre-order tvChannels)
         /// </summary>
         public DateTime? PreOrderAvailabilityStartDateTimeUtc { get; set; }
 
@@ -412,7 +412,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public decimal OldPrice { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel cost
+        /// Gets or sets the tvChannel cost
         /// </summary>
         public decimal TvChannelCost { get; set; }
 
@@ -437,12 +437,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool BasepriceEnabled { get; set; }
 
         /// <summary>
-        /// Gets or sets an amount in tvchannel for PAngV
+        /// Gets or sets an amount in tvChannel for PAngV
         /// </summary>
         public decimal BasepriceAmount { get; set; }
 
         /// <summary>
-        /// Gets or sets a unit of tvchannel for PAngV (MeasureWeight entity)
+        /// Gets or sets a unit of tvChannel for PAngV (MeasureWeight entity)
         /// </summary>
         public int BasepriceUnitId { get; set; }
 
@@ -457,22 +457,22 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int BasepriceBaseUnitId { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this tvchannel is marked as new
+        /// Gets or sets a value indicating whether this tvChannel is marked as new
         /// </summary>
         public bool MarkAsNew { get; set; }
 
         /// <summary>
-        /// Gets or sets the start date and time of the new tvchannel (set tvchannel as "New" from date). Leave empty to ignore this property
+        /// Gets or sets the start date and time of the new tvChannel (set tvChannel as "New" from date). Leave empty to ignore this property
         /// </summary>
         public DateTime? MarkAsNewStartDateTimeUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the end date and time of the new tvchannel (set tvchannel as "New" to date). Leave empty to ignore this property
+        /// Gets or sets the end date and time of the new tvChannel (set tvChannel as "New" to date). Leave empty to ignore this property
         /// </summary>
         public DateTime? MarkAsNewEndDateTimeUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this tvchannel has tier prices configured
+        /// Gets or sets a value indicating whether this tvChannel has tier prices configured
         /// <remarks>The same as if we run TierPrices.Count > 0
         /// We use this property for performance optimization:
         /// if this property is set to false, then we do not need to load tier prices navigation property
@@ -481,7 +481,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool HasTierPrices { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this tvchannel has discounts applied
+        /// Gets or sets a value indicating whether this tvChannel has discounts applied
         /// <remarks>The same as if we run AppliedDiscounts.Count > 0
         /// We use this property for performance optimization:
         /// if this property is set to false, then we do not need to load Applied Discounts navigation property
@@ -521,8 +521,8 @@ namespace TvProgViewer.Core.Domain.Catalog
 
         /// <summary>
         /// Gets or sets a display order.
-        /// This value is used when sorting associated tvchannels (used with "grouped" tvchannels)
-        /// This value is used when sorting home page tvchannels
+        /// This value is used when sorting associated tvChannels (used with "grouped" tvChannels)
+        /// This value is used when sorting home page tvChannels
         /// </summary>
         public int DisplayOrder { get; set; }
 
@@ -537,17 +537,17 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool Deleted { get; set; }
 
         /// <summary>
-        /// Gets or sets the date and time of tvchannel creation
+        /// Gets or sets the date and time of tvChannel creation
         /// </summary>
         public DateTime CreatedOnUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the date and time of tvchannel update
+        /// Gets or sets the date and time of tvChannel update
         /// </summary>
         public DateTime UpdatedOnUtc { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel type
+        /// Gets or sets the tvChannel type
         /// </summary>
         public TvChannelType TvChannelType
         {
@@ -601,7 +601,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         }
 
         /// <summary>
-        /// Gets or sets the cycle period for recurring tvchannels
+        /// Gets or sets the cycle period for recurring tvChannels
         /// </summary>
         public RecurringTvChannelCyclePeriod RecurringCyclePeriod
         {
@@ -610,7 +610,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         }
 
         /// <summary>
-        /// Gets or sets the period for rental tvchannels
+        /// Gets or sets the period for rental tvChannels
         /// </summary>
         public RentalPricePeriod RentalPricePeriod
         {

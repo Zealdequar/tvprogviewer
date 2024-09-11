@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Areas.Admin.Models.Catalog;
-using Nop.Web.Areas.Admin.Validators.Catalog;
+using TvProgViewer.WebUI.Areas.Admin.Models.Catalog;
+using TvProgViewer.WebUI.Areas.Admin.Validators.Catalog;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Admin.Validators.Catalog
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Admin.Validators.Catalog
 {
     [TestFixture]
-    public class CategoryValidatorTests : BaseNopTest
+    public class CategoryValidatorTests : BaseTvProgTest
     {
         private CategoryValidator _validator;
 

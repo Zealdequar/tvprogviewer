@@ -46,7 +46,7 @@
         public static string SubscriptionTokens => "Newsletter subscription tokens";
 
         /// <summary>
-        /// Represents tokens with information about the tvchannel
+        /// Represents tokens with information about the tvChannel
         /// </summary>
         public static string TvChannelTokens => "TvChannel tokens";
 
@@ -86,7 +86,7 @@
         public static string GiftCardTokens => "Gift card tokens";
 
         /// <summary>
-        /// Represents tokens with information about the tvchannel review
+        /// Represents tokens with information about the tvChannel review
         /// </summary>
         public static string TvChannelReviewTokens => "TvChannel review tokens";
 
@@ -106,7 +106,7 @@
         public static string NewsCommentTokens => "News comment tokens";
 
         /// <summary>
-        /// Represents tokens with information that tvchannel is in stock
+        /// Represents tokens with information that tvChannel is in stock
         /// </summary>
         public static string TvChannelBackInStockTokens => "Back in stock tokens";
 

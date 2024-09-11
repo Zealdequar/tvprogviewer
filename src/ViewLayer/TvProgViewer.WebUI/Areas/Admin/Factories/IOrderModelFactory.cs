@@ -68,38 +68,38 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<UploadLicenseModel> PrepareUploadLicenseModelAsync(UploadLicenseModel model, Order order, OrderItem orderItem);
 
         /// <summary>
-        /// Prepare tvchannel search model to add to the order
+        /// Prepare tvChannel search model to add to the order
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the order
+        /// The task result contains the tvChannel search model to add to the order
         /// </returns>
         Task<AddTvChannelToOrderSearchModel> PrepareAddTvChannelToOrderSearchModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order);
 
         /// <summary>
-        /// Prepare paged tvchannel list model to add to the order
+        /// Prepare paged tvChannel list model to add to the order
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the order</param>
         /// <param name="order">Order</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the order
+        /// The task result contains the tvChannel search model to add to the order
         /// </returns>
         Task<AddTvChannelToOrderListModel> PrepareAddTvChannelToOrderListModelAsync(AddTvChannelToOrderSearchModel searchModel, Order order);
 
         /// <summary>
-        /// Prepare tvchannel model to add to the order
+        /// Prepare tvChannel model to add to the order
         /// </summary>
         /// <param name="model">TvChannel model to add to the order</param>
         /// <param name="order">Order</param>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel model to add to the order
+        /// The task result contains the tvChannel model to add to the order
         /// </returns>
-        Task<AddTvChannelToOrderModel> PrepareAddTvChannelToOrderModelAsync(AddTvChannelToOrderModel model, Order order, TvChannel tvchannel);
+        Task<AddTvChannelToOrderModel> PrepareAddTvChannelToOrderModelAsync(AddTvChannelToOrderModel model, Order order, TvChannel tvChannel);
 
         /// <summary>
         /// Prepare order address model

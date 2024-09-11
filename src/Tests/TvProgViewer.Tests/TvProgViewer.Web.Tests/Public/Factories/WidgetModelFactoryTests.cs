@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Routing;
-using Nop.Core.Domain.Cms;
-using Nop.Services.Configuration;
-using Nop.Web.Factories;
+using TvProgViewer.Core.Domain.Cms;
+using TvProgViewer.Services.Configuration;
+using TvProgViewer.WebUI.Factories;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
     public class WidgetModelFactoryTests : WebTest

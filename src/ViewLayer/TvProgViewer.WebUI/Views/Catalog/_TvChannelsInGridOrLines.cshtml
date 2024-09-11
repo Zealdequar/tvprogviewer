@@ -9,12 +9,12 @@
 
 @if (Model.TvChannels.Count > 0)
 {
-    <div class="@(Model.ViewMode == "list" ? "tvchannel-list" : "tvchannel-grid")">
+    <div class="@(Model.ViewMode == "list" ? "tvChannel-list" : "tvChannel-grid")">
         <div class="item-grid">
-            @foreach (var tvchannel in Model.TvChannels)
+            @foreach (var tvChannel in Model.TvChannels)
             {
                 <div class="item-box">
-                    @await Html.PartialAsync("_TvChannelBox", tvchannel)
+                    @await Html.PartialAsync("_TvChannelBox", tvChannel)
                 </div>
             }
         </div>

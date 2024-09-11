@@ -6,7 +6,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a related tvchannel search model to add to the tvchannel
+    /// Represents a related tvChannel search model to add to the tvChannel
     /// </summary>
     public partial record AddRelatedTvChannelSearchModel : BaseSearchModel
     {

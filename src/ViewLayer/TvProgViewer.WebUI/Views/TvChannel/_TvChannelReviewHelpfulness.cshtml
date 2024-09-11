@@ -1,5 +1,5 @@
 ﻿@model TvChannelReviewHelpfulnessModel
-<div class="tvchannel-review-helpfulness">
+<div class="tvChannel-review-helpfulness">
     <span class="question">@T("Reviews.Helpfulness.WasHelpful?")</span>
     <span class="vote-options">
         <span id="vote-yes-@(Model.TvChannelReviewId)" class="vote">@T("Common.Yes")</span>
@@ -22,7 +22,7 @@
 
         function setTvChannelReviewHelpfulness@(Model.TvChannelReviewId)(wasHelpful) {
             var postData = {
-                "tvchannelReviewId": @(Model.TvChannelReviewId),
+                "tvChannelReviewId": @(Model.TvChannelReviewId),
                 "washelpful": wasHelpful
             };
             addAntiForgeryToken(postData);

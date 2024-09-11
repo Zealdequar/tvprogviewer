@@ -1,12 +1,12 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Web.Models.Blogs;
-using Nop.Web.Validators.Blogs;
+using TvProgViewer.WebUI.Models.Blogs;
+using TvProgViewer.WebUI.Validators.Blogs;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Blogs
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.Blogs
 {
     [TestFixture]
-    public class BlogPostValidatorTests : BaseNopTest
+    public class BlogPostValidatorTests : BaseTvProgTest
     {
         private BlogPostValidator _validator;
         

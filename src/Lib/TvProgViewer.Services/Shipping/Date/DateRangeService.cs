@@ -14,17 +14,17 @@ namespace TvProgViewer.Services.Shipping.Date
         #region Fields
 
         private readonly IRepository<DeliveryDate> _deliveryDateRepository;
-        private readonly IRepository<TvChannelAvailabilityRange> _tvchannelAvailabilityRangeRepository;
+        private readonly IRepository<TvChannelAvailabilityRange> _tvChannelAvailabilityRangeRepository;
 
         #endregion
 
         #region Ctor
 
         public DateRangeService(IRepository<DeliveryDate> deliveryDateRepository,
-            IRepository<TvChannelAvailabilityRange> tvchannelAvailabilityRangeRepository)
+            IRepository<TvChannelAvailabilityRange> tvChannelAvailabilityRangeRepository)
         {
             _deliveryDateRepository = deliveryDateRepository;
-            _tvchannelAvailabilityRangeRepository = tvchannelAvailabilityRangeRepository;
+            _tvChannelAvailabilityRangeRepository = tvChannelAvailabilityRangeRepository;
         }
 
         #endregion
@@ -100,28 +100,28 @@ namespace TvProgViewer.Services.Shipping.Date
         #region TvChannel availability ranges
 
         /// <summary>
-        /// Get a tvchannel availability range
+        /// Get a tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRangeId">The tvchannel availability range identifier</param>
+        /// <param name="tvChannelAvailabilityRangeId">The tvChannel availability range identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability range
+        /// The task result contains the tvChannel availability range
         /// </returns>
-        public virtual async Task<TvChannelAvailabilityRange> GetTvChannelAvailabilityRangeByIdAsync(int tvchannelAvailabilityRangeId)
+        public virtual async Task<TvChannelAvailabilityRange> GetTvChannelAvailabilityRangeByIdAsync(int tvChannelAvailabilityRangeId)
         {
-            return tvchannelAvailabilityRangeId != 0 ? await _tvchannelAvailabilityRangeRepository.GetByIdAsync(tvchannelAvailabilityRangeId, cache => default) : null;
+            return tvChannelAvailabilityRangeId != 0 ? await _tvChannelAvailabilityRangeRepository.GetByIdAsync(tvChannelAvailabilityRangeId, cache => default) : null;
         }
 
         /// <summary>
-        /// Get all tvchannel availability ranges
+        /// Get all tvChannel availability ranges
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel availability ranges
+        /// The task result contains the tvChannel availability ranges
         /// </returns>
         public virtual async Task<IList<TvChannelAvailabilityRange>> GetAllTvChannelAvailabilityRangesAsync()
         {
-            return await _tvchannelAvailabilityRangeRepository.GetAllAsync(query =>
+            return await _tvChannelAvailabilityRangeRepository.GetAllAsync(query =>
             {
                 return from par in query
                     orderby par.DisplayOrder, par.Id
@@ -130,33 +130,33 @@ namespace TvProgViewer.Services.Shipping.Date
         }
 
         /// <summary>
-        /// Insert the tvchannel availability range
+        /// Insert the tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange)
+        public virtual async Task InsertTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvChannelAvailabilityRange)
         {
-            await _tvchannelAvailabilityRangeRepository.InsertAsync(tvchannelAvailabilityRange);
+            await _tvChannelAvailabilityRangeRepository.InsertAsync(tvChannelAvailabilityRange);
         }
 
         /// <summary>
-        /// Update the tvchannel availability range
+        /// Update the tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange)
+        public virtual async Task UpdateTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvChannelAvailabilityRange)
         {
-            await _tvchannelAvailabilityRangeRepository.UpdateAsync(tvchannelAvailabilityRange);
+            await _tvChannelAvailabilityRangeRepository.UpdateAsync(tvChannelAvailabilityRange);
         }
 
         /// <summary>
-        /// Delete the tvchannel availability range
+        /// Delete the tvChannel availability range
         /// </summary>
-        /// <param name="tvchannelAvailabilityRange">TvChannel availability range</param>
+        /// <param name="tvChannelAvailabilityRange">TvChannel availability range</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvchannelAvailabilityRange)
+        public virtual async Task DeleteTvChannelAvailabilityRangeAsync(TvChannelAvailabilityRange tvChannelAvailabilityRange)
         {
-            await _tvchannelAvailabilityRangeRepository.DeleteAsync(tvchannelAvailabilityRange);
+            await _tvChannelAvailabilityRangeRepository.DeleteAsync(tvChannelAvailabilityRange);
         }
 
         #endregion

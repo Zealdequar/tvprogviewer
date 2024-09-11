@@ -17,7 +17,7 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets the final price
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="user">The user</param>
         /// <param name="store">Store</param>
         /// <param name="additionalCharge">Additional charge</param>
@@ -27,7 +27,7 @@ namespace TvProgViewer.Services.Catalog
         /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
-        Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
+        Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvChannel,
             User user,
             Store store,
             decimal additionalCharge = 0,
@@ -37,19 +37,19 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets the final price
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="user">The user</param>
         /// <param name="store">Store</param>
         /// <param name="additionalCharge">Additional charge</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for final price computation</param>
         /// <param name="quantity">Shopping cart item quantity</param>
-        /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
-        /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
+        /// <param name="rentalStartDate">Rental period start date (for rental tvChannels)</param>
+        /// <param name="rentalEndDate">Rental period end date (for rental tvChannels)</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
-        Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
+        Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvChannel,
             User user,
             Store store,
             decimal additionalCharge,
@@ -61,20 +61,20 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets the final price
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="user">The user</param>
         /// <param name="store">Store</param>
-        /// <param name="overriddenTvChannelPrice">Overridden tvchannel price. If specified, then it'll be used instead of a tvchannel price. For example, used with tvchannel attribute combinations</param>
+        /// <param name="overriddenTvChannelPrice">Overridden tvChannel price. If specified, then it'll be used instead of a tvChannel price. For example, used with tvChannel attribute combinations</param>
         /// <param name="additionalCharge">Additional charge</param>
         /// <param name="includeDiscounts">A value indicating whether include discounts or not for final price computation</param>
         /// <param name="quantity">Shopping cart item quantity</param>
-        /// <param name="rentalStartDate">Rental period start date (for rental tvchannels)</param>
-        /// <param name="rentalEndDate">Rental period end date (for rental tvchannels)</param>
+        /// <param name="rentalStartDate">Rental period start date (for rental tvChannels)</param>
+        /// <param name="rentalEndDate">Rental period end date (for rental tvChannels)</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the final price without discounts, Final price, Applied discount amount, Applied discounts
         /// </returns>
-        Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvchannel,
+        Task<(decimal priceWithoutDiscounts, decimal finalPrice, decimal appliedDiscountAmount, List<Discount> appliedDiscounts)> GetFinalPriceAsync(TvChannel tvChannel,
             User user,
             Store store,
             decimal? overriddenTvChannelPrice,
@@ -85,38 +85,38 @@ namespace TvProgViewer.Services.Catalog
             DateTime? rentalEndDate);
 
         /// <summary>
-        /// Gets the tvchannel cost (one item)
+        /// Gets the tvChannel cost (one item)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Shopping cart item attributes in XML</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel cost (one item)
+        /// The task result contains the tvChannel cost (one item)
         /// </returns>
-        Task<decimal> GetTvChannelCostAsync(TvChannel tvchannel, string attributesXml);
+        Task<decimal> GetTvChannelCostAsync(TvChannel tvChannel, string attributesXml);
 
         /// <summary>
-        /// Get a price adjustment of a tvchannel attribute value
+        /// Get a price adjustment of a tvChannel attribute value
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="value">TvChannel attribute value</param>
         /// <param name="user">User</param>
         /// <param name="store">Store</param>
-        /// <param name="tvchannelPrice">TvChannel price (null for using the base tvchannel price)</param>
+        /// <param name="tvChannelPrice">TvChannel price (null for using the base tvChannel price)</param>
         /// <param name="quantity">Shopping cart item quantity</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the price adjustment
         /// </returns>
-        Task<decimal> GetTvChannelAttributeValuePriceAdjustmentAsync(TvChannel tvchannel,
+        Task<decimal> GetTvChannelAttributeValuePriceAdjustmentAsync(TvChannel tvChannel,
             TvChannelAttributeValue value,
             User user,
             Store store,
-            decimal? tvchannelPrice = null,
+            decimal? tvChannelPrice = null,
             int quantity = 1);
 
         /// <summary>
-        /// Round a tvchannel or order total for the currency
+        /// Round a tvChannel or order total for the currency
         /// </summary>
         /// <param name="value">Value to round</param>
         /// <param name="currency">Currency; pass null to use the primary store currency</param>

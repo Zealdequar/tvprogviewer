@@ -494,11 +494,11 @@ namespace TvProgViewer.WebUI.Controllers
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
                 List<GdChannel> channelList = await _channelService.GetAllChannels();
-                var tvchannelObj = new
+                var tvChannelObj = new
                 {
-                    tvchannels = channelList
+                    tvChannels = channelList
                 };
-                return Json(tvchannelObj);
+                return Json(tvChannelObj);
             }
             return Json("{}");
         }

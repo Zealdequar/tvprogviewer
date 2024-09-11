@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Nop.Core;
+using TvProgViewer.Core;
 
-namespace Nop.Tests
+namespace TvProgViewer.Tests
 {
     public class BaseEntityEqualityComparer<T> : IEqualityComparer<T> where T : BaseEntity
     {

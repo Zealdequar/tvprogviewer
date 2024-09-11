@@ -4,11 +4,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Caching.Memory;
 using TvProgViewer.Core;
 using TvProgViewer.Core.Caching;
 using TvProgViewer.Core.Configuration;
-using TvProgViewer.Core.Domain.Media;
 using TvProgViewer.Core.Events;
 using TvProgViewer.Core.Infrastructure;
 using TvProgViewer.Data;
@@ -59,7 +58,6 @@ using TvProgViewer.Web.Framework.Mvc.Routing;
 using TvProgViewer.Web.Framework.Themes;
 using TvProgViewer.Web.Framework.UI;
 using TvProgViewer.Services.TvProgMain;
-using System.Linq;
 
 namespace TvProgViewer.Web.Framework.Infrastructure
 {
@@ -91,27 +89,39 @@ namespace TvProgViewer.Web.Framework.Infrastructure
             //static cache manager
             var appSettings = Singleton<AppSettings>.Instance;
             var distributedCacheConfig = appSettings.Get<DistributedCacheConfig>();
+            var cacheKeyManager = new CacheKeyManager();
+            services.AddSingleton<CacheKeyManager>(cacheKeyManager);
             if (distributedCacheConfig.Enabled)
             {
                 switch (distributedCacheConfig.DistributedCacheType)
                 {
                     case DistributedCacheType.Memory:
-                        services.AddScoped<ILocker, MemoryDistributedCacheManager>();
                         services.AddScoped<IStaticCacheManager, MemoryDistributedCacheManager>();
                         break;
                     case DistributedCacheType.SqlServer:
-                        services.AddScoped<ILocker, MsSqlServerCacheManager>();
                         services.AddScoped<IStaticCacheManager, MsSqlServerCacheManager>();
                         break;
                     case DistributedCacheType.Redis:
-                        services.AddScoped<ILocker, RedisCacheManager>();
+                        services.AddSingleton<RedisConnectionWrapper>();
                         services.AddScoped<IStaticCacheManager, RedisCacheManager>();
                         break;
+                    case DistributedCacheType.RedisSynchronizedMemory:
+                        services.AddSingleton<RedisConnectionWrapper>();
+                        services.AddSingleton<IStaticCacheManager, MemoryCacheManager>(services =>
+                            new MemoryCacheManager(
+                                appSettings,
+                                new RedisSynchronizedMemoryCache(
+                                    services.GetRequiredService<IMemoryCache>(),
+                                    services.GetRequiredService<RedisConnectionWrapper>(),
+                                    cacheKeyManager),
+                                cacheKeyManager));
+                        break;
                 }
+                services.AddSingleton<ILocker, DistributedCacheLocker>();
             }
             else
             {
-                services.AddSingleton<ILocker, MemoryCacheManager>();
+                services.AddSingleton<ILocker, MemoryCacheLocker>();
                 services.AddSingleton<IStaticCacheManager, MemoryCacheManager>();
             }
 

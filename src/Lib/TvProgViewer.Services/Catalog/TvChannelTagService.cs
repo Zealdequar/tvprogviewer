@@ -22,9 +22,9 @@ namespace TvProgViewer.Services.Catalog
 
         private readonly IAclService _aclService;
         private readonly IUserService _userService;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
-        private readonly IRepository<TvChannelTvChannelTagMapping> _tvchannelTvChannelTagMappingRepository;
-        private readonly IRepository<TvChannelTag> _tvchannelTagRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
+        private readonly IRepository<TvChannelTvChannelTagMapping> _tvChannelTvChannelTagMappingRepository;
+        private readonly IRepository<TvChannelTag> _tvChannelTagRepository;
         private readonly IStaticCacheManager _staticCacheManager;
         private readonly IStoreMappingService _storeMappingService;
         private readonly IUrlRecordService _urlRecordService;
@@ -37,9 +37,9 @@ namespace TvProgViewer.Services.Catalog
         public TvChannelTagService(
             IAclService aclService,
             IUserService userService,
-            IRepository<TvChannel> tvchannelRepository,
-            IRepository<TvChannelTvChannelTagMapping> tvchannelTvChannelTagMappingRepository,
-            IRepository<TvChannelTag> tvchannelTagRepository,
+            IRepository<TvChannel> tvChannelRepository,
+            IRepository<TvChannelTvChannelTagMapping> tvChannelTvChannelTagMappingRepository,
+            IRepository<TvChannelTag> tvChannelTagRepository,
             IStaticCacheManager staticCacheManager,
             IStoreMappingService storeMappingService,
             IUrlRecordService urlRecordService,
@@ -47,9 +47,9 @@ namespace TvProgViewer.Services.Catalog
         {
             _aclService = aclService;
             _userService = userService;
-            _tvchannelRepository = tvchannelRepository;
-            _tvchannelTvChannelTagMappingRepository = tvchannelTvChannelTagMappingRepository;
-            _tvchannelTagRepository = tvchannelTagRepository;
+            _tvChannelRepository = tvChannelRepository;
+            _tvChannelTvChannelTagMappingRepository = tvChannelTvChannelTagMappingRepository;
+            _tvChannelTagRepository = tvChannelTagRepository;
             _staticCacheManager = staticCacheManager;
             _storeMappingService = storeMappingService;
             _urlRecordService = urlRecordService;
@@ -61,66 +61,66 @@ namespace TvProgViewer.Services.Catalog
         #region Utilities
 
         /// <summary>
-        /// Delete a tvchannel-tvchannel tag mapping
+        /// Delete a tvChannel-tvChannel tag mapping
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
-        /// <param name="tvchannelTagId">TvChannel tag identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
+        /// <param name="tvChannelTagId">TvChannel tag identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task DeleteTvChannelTvChannelTagMappingAsync(int tvchannelId, int tvchannelTagId)
+        protected virtual async Task DeleteTvChannelTvChannelTagMappingAsync(int tvChannelId, int tvChannelTagId)
         {
-            var mappingRecord = await _tvchannelTvChannelTagMappingRepository.Table
-                .FirstOrDefaultAsync(pptm => pptm.TvChannelId == tvchannelId && pptm.TvChannelTagId == tvchannelTagId);
+            var mappingRecord = await _tvChannelTvChannelTagMappingRepository.Table
+                .FirstOrDefaultAsync(pptm => pptm.TvChannelId == tvChannelId && pptm.TvChannelTagId == tvChannelTagId);
 
             if (mappingRecord is null)
                 throw new Exception("Mapping record not found");
 
-            await _tvchannelTvChannelTagMappingRepository.DeleteAsync(mappingRecord);
+            await _tvChannelTvChannelTagMappingRepository.DeleteAsync(mappingRecord);
         }
 
         /// <summary>
-        /// Indicates whether a tvchannel tag exists
+        /// Indicates whether a tvChannel tag exists
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelTagId">TvChannel tag identifier</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelTagId">TvChannel tag identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        protected virtual async Task<bool> TvChannelTagExistsAsync(TvChannel tvchannel, int tvchannelTagId)
+        protected virtual async Task<bool> TvChannelTagExistsAsync(TvChannel tvChannel, int tvChannelTagId)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            return await _tvchannelTvChannelTagMappingRepository.Table
-                .AnyAsync(pptm => pptm.TvChannelId == tvchannel.Id && pptm.TvChannelTagId == tvchannelTagId);
+            return await _tvChannelTvChannelTagMappingRepository.Table
+                .AnyAsync(pptm => pptm.TvChannelId == tvChannel.Id && pptm.TvChannelTagId == tvChannelTagId);
         }
 
         /// <summary>
-        /// Gets tvchannel tag by name
+        /// Gets tvChannel tag by name
         /// </summary>
         /// <param name="name">TvChannel tag name</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tag
+        /// The task result contains the tvChannel tag
         /// </returns>
         protected virtual async Task<TvChannelTag> GetTvChannelTagByNameAsync(string name)
         {
-            var query = from pt in _tvchannelTagRepository.Table
+            var query = from pt in _tvChannelTagRepository.Table
                 where pt.Name == name
                 select pt;
 
-            var tvchannelTag = await query.FirstOrDefaultAsync();
-            return tvchannelTag;
+            var tvChannelTag = await query.FirstOrDefaultAsync();
+            return tvChannelTag;
         }
 
         /// <summary>
-        /// Inserts a tvchannel tag
+        /// Inserts a tvChannel tag
         /// </summary>
-        /// <param name="tvchannelTag">TvChannel tag</param>
+        /// <param name="tvChannelTag">TvChannel tag</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task InsertTvChannelTagAsync(TvChannelTag tvchannelTag)
+        protected virtual async Task InsertTvChannelTagAsync(TvChannelTag tvChannelTag)
         {
-            await _tvchannelTagRepository.InsertAsync(tvchannelTag);
+            await _tvChannelTagRepository.InsertAsync(tvChannelTag);
         }
 
         #endregion
@@ -128,40 +128,40 @@ namespace TvProgViewer.Services.Catalog
         #region Methods
 
         /// <summary>
-        /// Delete a tvchannel tag
+        /// Delete a tvChannel tag
         /// </summary>
-        /// <param name="tvchannelTag">TvChannel tag</param>
+        /// <param name="tvChannelTag">TvChannel tag</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelTagAsync(TvChannelTag tvchannelTag)
+        public virtual async Task DeleteTvChannelTagAsync(TvChannelTag tvChannelTag)
         {
-            await _tvchannelTagRepository.DeleteAsync(tvchannelTag);
+            await _tvChannelTagRepository.DeleteAsync(tvChannelTag);
         }
 
         /// <summary>
-        /// Delete tvchannel tags
+        /// Delete tvChannel tags
         /// </summary>
-        /// <param name="tvchannelTags">TvChannel tags</param>
+        /// <param name="tvChannelTags">TvChannel tags</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelTagsAsync(IList<TvChannelTag> tvchannelTags)
+        public virtual async Task DeleteTvChannelTagsAsync(IList<TvChannelTag> tvChannelTags)
         {
-            if (tvchannelTags == null)
-                throw new ArgumentNullException(nameof(tvchannelTags));
+            if (tvChannelTags == null)
+                throw new ArgumentNullException(nameof(tvChannelTags));
 
-            foreach (var tvchannelTag in tvchannelTags)
-                await DeleteTvChannelTagAsync(tvchannelTag);
+            foreach (var tvChannelTag in tvChannelTags)
+                await DeleteTvChannelTagAsync(tvChannelTag);
         }
 
         /// <summary>
-        /// Gets all tvchannel tags
+        /// Gets all tvChannel tags
         /// </summary>
         /// <param name="tagName">Tag name</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tags
+        /// The task result contains the tvChannel tags
         /// </returns>
         public virtual async Task<IList<TvChannelTag>> GetAllTvChannelTagsAsync(string tagName = null)
         {
-            var allTvChannelTags = await _tvchannelTagRepository.GetAllAsync(query => query, getCacheKey: cache => default);
+            var allTvChannelTags = await _tvChannelTagRepository.GetAllAsync(query => query, getCacheKey: cache => default);
 
             if (!string.IsNullOrEmpty(tagName))
                 allTvChannelTags = allTvChannelTags.Where(tag => tag.Name.Contains(tagName)).ToList();
@@ -170,22 +170,22 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets all tvchannel tags by tvchannel identifier
+        /// Gets all tvChannel tags by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tags
+        /// The task result contains the tvChannel tags
         /// </returns>
-        public virtual async Task<IList<TvChannelTag>> GetAllTvChannelTagsByTvChannelIdAsync(int tvchannelId)
+        public virtual async Task<IList<TvChannelTag>> GetAllTvChannelTagsByTvChannelIdAsync(int tvChannelId)
         {
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelTagsByTvChannelCacheKey, tvchannelId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelTagsByTvChannelCacheKey, tvChannelId);
 
             return await _staticCacheManager.GetAsync(key, async () =>
             {
-                var tagMapping = from ptm in _tvchannelTvChannelTagMappingRepository.Table
-                                 join pt in _tvchannelTagRepository.Table on ptm.TvChannelTagId equals pt.Id
-                                 where ptm.TvChannelId == tvchannelId
+                var tagMapping = from ptm in _tvChannelTvChannelTagMappingRepository.Table
+                                 join pt in _tvChannelTagRepository.Table on ptm.TvChannelTagId equals pt.Id
+                                 where ptm.TvChannelId == tvChannelId
                                  orderby pt.Id
                                  select pt;
 
@@ -194,84 +194,84 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets tvchannel tag
+        /// Gets tvChannel tag
         /// </summary>
-        /// <param name="tvchannelTagId">TvChannel tag identifier</param>
+        /// <param name="tvChannelTagId">TvChannel tag identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tag
+        /// The task result contains the tvChannel tag
         /// </returns>
-        public virtual async Task<TvChannelTag> GetTvChannelTagByIdAsync(int tvchannelTagId)
+        public virtual async Task<TvChannelTag> GetTvChannelTagByIdAsync(int tvChannelTagId)
         {
-            return await _tvchannelTagRepository.GetByIdAsync(tvchannelTagId, cache => default);
+            return await _tvChannelTagRepository.GetByIdAsync(tvChannelTagId, cache => default);
         }
 
         /// <summary>
-        /// Gets tvchannel tags
+        /// Gets tvChannel tags
         /// </summary>
-        /// <param name="tvchannelTagIds">TvChannel tags identifiers</param>
+        /// <param name="tvChannelTagIds">TvChannel tags identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel tags
+        /// The task result contains the tvChannel tags
         /// </returns>
-        public virtual async Task<IList<TvChannelTag>> GetTvChannelTagsByIdsAsync(int[] tvchannelTagIds)
+        public virtual async Task<IList<TvChannelTag>> GetTvChannelTagsByIdsAsync(int[] tvChannelTagIds)
         {
-            return await _tvchannelTagRepository.GetByIdsAsync(tvchannelTagIds);
+            return await _tvChannelTagRepository.GetByIdsAsync(tvChannelTagIds);
         }
         
         /// <summary>
-        /// Inserts a tvchannel-tvchannel tag mapping
+        /// Inserts a tvChannel-tvChannel tag mapping
         /// </summary>
-        /// <param name="tagMapping">TvChannel-tvchannel tag mapping</param>
+        /// <param name="tagMapping">TvChannel-tvChannel tag mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelTvChannelTagMappingAsync(TvChannelTvChannelTagMapping tagMapping)
         {
-            await _tvchannelTvChannelTagMappingRepository.InsertAsync(tagMapping);
+            await _tvChannelTvChannelTagMappingRepository.InsertAsync(tagMapping);
         }
         
         /// <summary>
-        /// Updates the tvchannel tag
+        /// Updates the tvChannel tag
         /// </summary>
-        /// <param name="tvchannelTag">TvChannel tag</param>
+        /// <param name="tvChannelTag">TvChannel tag</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelTagAsync(TvChannelTag tvchannelTag)
+        public virtual async Task UpdateTvChannelTagAsync(TvChannelTag tvChannelTag)
         {
-            if (tvchannelTag == null)
-                throw new ArgumentNullException(nameof(tvchannelTag));
+            if (tvChannelTag == null)
+                throw new ArgumentNullException(nameof(tvChannelTag));
 
-            await _tvchannelTagRepository.UpdateAsync(tvchannelTag);
+            await _tvChannelTagRepository.UpdateAsync(tvChannelTag);
 
-            var seName = await _urlRecordService.ValidateSeNameAsync(tvchannelTag, string.Empty, tvchannelTag.Name, true);
-            await _urlRecordService.SaveSlugAsync(tvchannelTag, seName, 0);
+            var seName = await _urlRecordService.ValidateSeNameAsync(tvChannelTag, string.Empty, tvChannelTag.Name, true);
+            await _urlRecordService.SaveSlugAsync(tvChannelTag, seName, 0);
         }
 
         /// <summary>
-        /// Get tvchannels quantity linked to a passed tag identifier
+        /// Get tvChannels quantity linked to a passed tag identifier
         /// </summary>
-        /// <param name="tvchannelTagId">TvChannel tag identifier</param>
+        /// <param name="tvChannelTagId">TvChannel tag identifier</param>
         /// <param name="storeId">Store identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the number of tvchannels
+        /// The task result contains the number of tvChannels
         /// </returns>
-        public virtual async Task<int> GetTvChannelCountByTvChannelTagIdAsync(int tvchannelTagId, int storeId, bool showHidden = false)
+        public virtual async Task<int> GetTvChannelCountByTvChannelTagIdAsync(int tvChannelTagId, int storeId, bool showHidden = false)
         {
             var dictionary = await GetTvChannelCountAsync(storeId, showHidden);
-            if (dictionary.ContainsKey(tvchannelTagId))
-                return dictionary[tvchannelTagId];
+            if (dictionary.ContainsKey(tvChannelTagId))
+                return dictionary[tvChannelTagId];
 
             return 0;
         }
 
         /// <summary>
-        /// Get tvchannel count for every linked tag
+        /// Get tvChannel count for every linked tag
         /// </summary>
         /// <param name="storeId">Store identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the dictionary of "tvchannel tag ID : tvchannel count"
+        /// The task result contains the dictionary of "tvChannel tag ID : tvChannel count"
         /// </returns>
         public virtual async Task<Dictionary<int, int>> GetTvChannelCountAsync(int storeId, bool showHidden = false)
         {
@@ -282,22 +282,22 @@ namespace TvProgViewer.Services.Catalog
 
             return await _staticCacheManager.GetAsync(key, async () =>
             {
-                var query = _tvchannelTvChannelTagMappingRepository.Table;
+                var query = _tvChannelTvChannelTagMappingRepository.Table;
 
                 if (!showHidden)
                 {
-                    var tvchannelsQuery = _tvchannelRepository.Table.Where(p => p.Published);
+                    var tvChannelsQuery = _tvChannelRepository.Table.Where(p => p.Published);
 
                     //apply store mapping constraints
-                    tvchannelsQuery = await _storeMappingService.ApplyStoreMapping(tvchannelsQuery, storeId);
+                    tvChannelsQuery = await _storeMappingService.ApplyStoreMapping(tvChannelsQuery, storeId);
 
                     //apply ACL constraints
-                    tvchannelsQuery = await _aclService.ApplyAcl(tvchannelsQuery, userRoleIds);
+                    tvChannelsQuery = await _aclService.ApplyAcl(tvChannelsQuery, userRoleIds);
 
-                    query = query.Where(pc => tvchannelsQuery.Any(p => !p.Deleted && pc.TvChannelId == p.Id));
+                    query = query.Where(pc => tvChannelsQuery.Any(p => !p.Deleted && pc.TvChannelId == p.Id));
                 }
 
-                var pTagCount = from pt in _tvchannelTagRepository.Table
+                var pTagCount = from pt in _tvChannelTagRepository.Table
                                 join ptm in query on pt.Id equals ptm.TvChannelTagId
                                 group ptm by ptm.TvChannelTagId into ptmGrouped
                                 select new
@@ -311,23 +311,23 @@ namespace TvProgViewer.Services.Catalog
         }
         
         /// <summary>
-        /// Update tvchannel tags
+        /// Update tvChannel tags
         /// </summary>
-        /// <param name="tvchannel">TvChannel for update</param>
-        /// <param name="tvchannelTags">TvChannel tags</param>
+        /// <param name="tvChannel">TvChannel for update</param>
+        /// <param name="tvChannelTags">TvChannel tags</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelTagsAsync(TvChannel tvchannel, string[] tvchannelTags)
+        public virtual async Task UpdateTvChannelTagsAsync(TvChannel tvChannel, string[] tvChannelTags)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            //tvchannel tags
-            var existingTvChannelTags = await GetAllTvChannelTagsByTvChannelIdAsync(tvchannel.Id);
-            var tvchannelTagsToRemove = new List<TvChannelTag>();
+            //tvChannel tags
+            var existingTvChannelTags = await GetAllTvChannelTagsByTvChannelIdAsync(tvChannel.Id);
+            var tvChannelTagsToRemove = new List<TvChannelTag>();
             foreach (var existingTvChannelTag in existingTvChannelTags)
             {
                 var found = false;
-                foreach (var newTvChannelTag in tvchannelTags)
+                foreach (var newTvChannelTag in tvChannelTags)
                 {
                     if (!existingTvChannelTag.Name.Equals(newTvChannelTag, StringComparison.InvariantCultureIgnoreCase))
                         continue;
@@ -337,33 +337,33 @@ namespace TvProgViewer.Services.Catalog
                 }
 
                 if (!found)
-                    tvchannelTagsToRemove.Add(existingTvChannelTag);
+                    tvChannelTagsToRemove.Add(existingTvChannelTag);
             }
 
-            foreach (var tvchannelTag in tvchannelTagsToRemove)
-                await DeleteTvChannelTvChannelTagMappingAsync(tvchannel.Id, tvchannelTag.Id);
+            foreach (var tvChannelTag in tvChannelTagsToRemove)
+                await DeleteTvChannelTvChannelTagMappingAsync(tvChannel.Id, tvChannelTag.Id);
 
-            foreach (var tvchannelTagName in tvchannelTags)
+            foreach (var tvChannelTagName in tvChannelTags)
             {
-                TvChannelTag tvchannelTag;
-                var tvchannelTag2 = await GetTvChannelTagByNameAsync(tvchannelTagName);
-                if (tvchannelTag2 == null)
+                TvChannelTag tvChannelTag;
+                var tvChannelTag2 = await GetTvChannelTagByNameAsync(tvChannelTagName);
+                if (tvChannelTag2 == null)
                 {
-                    //add new tvchannel tag
-                    tvchannelTag = new TvChannelTag
+                    //add new tvChannel tag
+                    tvChannelTag = new TvChannelTag
                     {
-                        Name = tvchannelTagName
+                        Name = tvChannelTagName
                     };
-                    await InsertTvChannelTagAsync(tvchannelTag);
+                    await InsertTvChannelTagAsync(tvChannelTag);
                 }
                 else
-                    tvchannelTag = tvchannelTag2;
+                    tvChannelTag = tvChannelTag2;
 
-                if (!await TvChannelTagExistsAsync(tvchannel, tvchannelTag.Id))
-                    await InsertTvChannelTvChannelTagMappingAsync(new TvChannelTvChannelTagMapping { TvChannelTagId = tvchannelTag.Id, TvChannelId = tvchannel.Id });
+                if (!await TvChannelTagExistsAsync(tvChannel, tvChannelTag.Id))
+                    await InsertTvChannelTvChannelTagMappingAsync(new TvChannelTvChannelTagMapping { TvChannelTagId = tvChannelTag.Id, TvChannelId = tvChannel.Id });
 
-                var seName = await _urlRecordService.ValidateSeNameAsync(tvchannelTag, string.Empty, tvchannelTag.Name, true);
-                await _urlRecordService.SaveSlugAsync(tvchannelTag, seName, 0);
+                var seName = await _urlRecordService.ValidateSeNameAsync(tvChannelTag, string.Empty, tvChannelTag.Name, true);
+                await _urlRecordService.SaveSlugAsync(tvChannelTag, seName, 0);
             }
 
             //cache

@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using Nop.Web.Models.Polls;
+using TvProgViewer.WebUI.Models.Polls;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Models.Polls
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Models.Polls
 {
     [TestFixture]
     public class PollModelTests

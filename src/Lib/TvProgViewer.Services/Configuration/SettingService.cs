@@ -14,18 +14,18 @@ using TvProgViewer.Data;
 namespace TvProgViewer.Services.Configuration
 {
     /// <summary>
-    /// Setting manager
+    /// Менеджер настроек
     /// </summary>
     public partial class SettingService : ISettingService
     {
-        #region Fields
+        #region Поля
 
         private readonly IRepository<Setting> _settingRepository;
         private readonly IStaticCacheManager _staticCacheManager;
 
         #endregion
 
-        #region Ctor
+        #region Конструктор
 
         public SettingService(IRepository<Setting> settingRepository,
             IStaticCacheManager staticCacheManager)
@@ -36,7 +36,7 @@ namespace TvProgViewer.Services.Configuration
 
         #endregion
 
-        #region Utilities
+        #region Утилиты
 
         /// <summary>
         /// Gets all settings
@@ -118,13 +118,13 @@ namespace TvProgViewer.Services.Configuration
         }
 
         /// <summary>
-        /// Set setting value
+        /// Установить значение настройки
         /// </summary>
-        /// <param name="type">Type</param>
-        /// <param name="key">Key</param>
-        /// <param name="value">Value</param>
-        /// <param name="storeId">Store identifier</param>
-        /// <param name="clearCache">A value indicating whether to clear cache after setting update</param>
+        /// <param name="type">Тип</param>
+        /// <param name="key">Ключ</param>
+        /// <param name="value">Значение</param>
+        /// <param name="storeId">Идентификатор хранилища</param>
+        /// <param name="clearCache">Значение определяющее надо ли очистить кэш после обновления настройки</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task SetSettingAsync(Type type, string key, object value, int storeId = 0, bool clearCache = true)
         {
@@ -134,18 +134,18 @@ namespace TvProgViewer.Services.Configuration
             var valueStr = TypeDescriptor.GetConverter(type).ConvertToInvariantString(value);
 
             var allSettings = await GetAllSettingsDictionaryAsync();
-            var settingForCaching = allSettings.ContainsKey(key) ?
-                allSettings[key].FirstOrDefault(x => x.StoreId == storeId) : null;
+            var settingForCaching = allSettings.TryGetValue(key, out var settings) ?
+                settings.FirstOrDefault(x => x.StoreId == storeId) : null;
             if (settingForCaching != null)
             {
-                //update
+                // Обновление:
                 var setting = await GetSettingByIdAsync(settingForCaching.Id);
                 setting.Value = valueStr;
                 await UpdateSettingAsync(setting, clearCache);
             }
             else
             {
-                //insert
+                // Вставка
                 var setting = new Setting
                 {
                     Name = key,
@@ -157,13 +157,13 @@ namespace TvProgViewer.Services.Configuration
         }
 
         /// <summary>
-        /// Set setting value
+        /// Установить значение настройки
         /// </summary>
-        /// <param name="type">Type</param>
-        /// <param name="key">Key</param>
-        /// <param name="value">Value</param>
-        /// <param name="storeId">Store identifier</param>
-        /// <param name="clearCache">A value indicating whether to clear cache after setting update</param>
+        /// <param name="type">Тип</param>
+        /// <param name="key">Ключ</param>
+        /// <param name="value">Значение</param>
+        /// <param name="storeId">Идентификатор хранилища</param>
+        /// <param name="clearCache">Значение определяющее нужно ли очистить кэш после обновления настройки</param>
         protected virtual void SetSetting(Type type, string key, object value, int storeId = 0, bool clearCache = true)
         {
             if (key == null)
@@ -172,18 +172,18 @@ namespace TvProgViewer.Services.Configuration
             var valueStr = TypeDescriptor.GetConverter(type).ConvertToInvariantString(value);
 
             var allSettings = GetAllSettingsDictionary();
-            var settingForCaching = allSettings.ContainsKey(key) ?
-                allSettings[key].FirstOrDefault(x => x.StoreId == storeId) : null;
+            var settingForCaching = allSettings.TryGetValue(key, out var settings) ?
+                settings.FirstOrDefault(x => x.StoreId == storeId) : null;
             if (settingForCaching != null)
             {
-                //update
+                // Обновление:
                 var setting = GetSettingById(settingForCaching.Id);
                 setting.Value = valueStr;
                 UpdateSetting(setting, clearCache);
             }
             else
             {
-                //insert
+                // Вставка:
                 var setting = new Setting
                 {
                     Name = key,
@@ -196,7 +196,7 @@ namespace TvProgViewer.Services.Configuration
 
         #endregion
 
-        #region Methods
+        #region Методы
 
         /// <summary>
         /// Adds a setting
@@ -831,8 +831,8 @@ namespace TvProgViewer.Services.Configuration
             key = key.Trim().ToLowerInvariant();
 
             var allSettings = await GetAllSettingsDictionaryAsync();
-            var settingForCaching = allSettings.ContainsKey(key) ?
-                allSettings[key].FirstOrDefault(x => x.StoreId == storeId) : null;
+            var settingForCaching = allSettings.TryGetValue(key, out var settings_) ?
+                settings_.FirstOrDefault(x => x.StoreId == storeId) : null;
             if (settingForCaching == null) 
                 return;
 

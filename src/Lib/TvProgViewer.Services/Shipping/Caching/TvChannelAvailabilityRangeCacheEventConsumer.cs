@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace TvProgViewer.Services.Shipping.Caching
 {
     /// <summary>
-    /// Represents a tvchannel availability range cache event consumer
+    /// Represents a tvChannel availability range cache event consumer
     /// </summary>
     public partial class TvChannelAvailabilityRangeCacheEventConsumer : CacheEventConsumer<TvChannelAvailabilityRange>
     {

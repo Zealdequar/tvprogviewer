@@ -5,7 +5,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Shipping
 {
     /// <summary>
-    /// Represents a tvchannel availability range model
+    /// Represents a tvChannel availability range model
     /// </summary>
     public partial record TvChannelAvailabilityRangeModel : BaseTvProgEntityModel, ILocalizedModel<TvChannelAvailabilityRangeLocalizedModel>
     {

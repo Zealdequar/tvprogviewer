@@ -6,7 +6,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Catalog
 {
     /// <summary>
-    /// Represents a cross-sell tvchannel search model to add to the tvchannel
+    /// Represents a cross-sell tvChannel search model to add to the tvChannel
     /// </summary>
     public partial record AddCrossSellTvChannelSearchModel : BaseSearchModel
     {

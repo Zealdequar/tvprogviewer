@@ -9,7 +9,7 @@
     TvProgHtml.SetActiveMenuItemSystemName("TvChannels");
 }
 
-<form asp-controller="TvChannel" asp-action="Edit" method="post" id="tvchannel-form">
+<form asp-controller="TvChannel" asp-action="Edit" method="post" id="tvChannel-form">
     <div class="content-header clearfix">
         <h1 class="float-left">
             @T("Admin.Catalog.TvChannels.EditTvChannelDetails") - @Model.Name
@@ -31,11 +31,11 @@
                 <i class="far fa-save"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
-            <button type="button" name="copytvchannel" class="btn bg-olive" data-toggle="modal" data-target="#copytvchannel-window">
+            <button type="button" name="copytvChannel" class="btn bg-olive" data-toggle="modal" data-target="#copytvChannel-window">
                 <i class="far fa-clone"></i>
                 @T("Admin.Catalog.TvChannels.Copy")
             </button>
-            <span id="tvchannel-delete" class="btn btn-danger">
+            <span id="tvChannel-delete" class="btn btn-danger">
                 <i class="far fa-trash-alt"></i>
                 @T("Admin.Common.Delete")
             </span>
@@ -44,20 +44,20 @@
     </div>
     @await Html.PartialAsync("_CreateOrUpdate", Model)
 </form>
-<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvchannel-delete" />
+<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvChannel-delete" />
 
 @if (!Model.IsLoggedInAsVendor)
 {
-    //tvchannel editor settings modal
+    //tvChannel editor settings modal
     @await Html.PartialAsync("_TvChannelEditorSettingsModal", Model)
 }
 
-@*copy tvchannel form*@
-<div id="copytvchannel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="copytvchannel-window-title">
+@*copy tvChannel form*@
+<div id="copytvChannel-window" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="copytvChannel-window-title">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="copytvchannel-window-title">@T("Admin.Catalog.TvChannels.Copy")</h4>
+                <h4 class="modal-title" id="copytvChannel-window-title">@T("Admin.Catalog.TvChannels.Copy")</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <form asp-controller="TvChannel" asp-action="CopyTvChannel" method="post">

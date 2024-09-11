@@ -3,7 +3,7 @@
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Users
 {
     /// <summary>
-    /// Represents a tvchannel model to add to the user role 
+    /// Represents a tvChannel model to add to the user role 
     /// </summary>
     public partial record AddTvChannelToUserRoleModel : BaseTvProgEntityModel
     {

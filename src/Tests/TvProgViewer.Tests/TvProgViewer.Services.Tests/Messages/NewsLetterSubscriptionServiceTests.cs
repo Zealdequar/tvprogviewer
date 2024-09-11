@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Messages;
-using Nop.Core.Events;
-using Nop.Services.Events;
-using Nop.Services.Messages;
+using TvProgViewer.Core.Domain.Messages;
+using TvProgViewer.Core.Events;
+using TvProgViewer.Services.Events;
+using TvProgViewer.Services.Messages;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Messages 
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Messages 
 {
     [TestFixture]
     public class NewsLetterSubscriptionServiceTests : ServiceTest
@@ -74,7 +74,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
             var subscription = new NewsLetterSubscription
             {
                 Active = true,
-                Email = NopTestsDefaults.AdminEmail,
+                Email = TvProgTestsDefaults.AdminEmail,
                 NewsLetterSubscriptionGuid = guid
             };
 
@@ -89,7 +89,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
 
             subscription =
                 await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(
-                    NopTestsDefaults.AdminEmail, 0);
+                    TvProgTestsDefaults.AdminEmail, 0);
             subscription.Should().NotBeNull();
 
             await _newsLetterSubscriptionService.DeleteNewsLetterSubscriptionAsync(subscription);
@@ -97,7 +97,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
             subscription.Should().BeNull();
             subscription =
                 await _newsLetterSubscriptionService.GetNewsLetterSubscriptionByEmailAndStoreIdAsync(
-                    NopTestsDefaults.AdminEmail, 1);
+                    TvProgTestsDefaults.AdminEmail, 1);
             subscription.Should().BeNull();
         }
 
@@ -109,25 +109,25 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
             var subscription = new NewsLetterSubscription
             {
                 Active = true,
-                Email = NopTestsDefaults.AdminEmail,
+                Email = TvProgTestsDefaults.AdminEmail,
                 NewsLetterSubscriptionGuid = guid
             };
             await _newsLetterSubscriptionService.InsertNewsLetterSubscriptionAsync(subscription);
 
             var subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync();
             subscriptions.Count.Should().Be(1);
-            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(NopTestsDefaults.AdminEmail);
+            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(TvProgTestsDefaults.AdminEmail);
             subscriptions.Count.Should().Be(1);
             subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(isActive: true);
             subscriptions.Count.Should().Be(1);
             subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(isActive: false);
             subscriptions.Count.Should().Be(0);
 
-            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(customerRoleId: 1);
+            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(userRoleId: 1);
             subscriptions.Count.Should().Be(1);
-            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(customerRoleId: 1, storeId: 1);
+            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(userRoleId: 1, storeId: 1);
             subscriptions.Count.Should().Be(0);
-            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(NopTestsDefaults.AdminEmail, customerRoleId: 4);
+            subscriptions = await _newsLetterSubscriptionService.GetAllNewsLetterSubscriptionsAsync(TvProgTestsDefaults.AdminEmail, userRoleId: 4);
             subscriptions.Count.Should().Be(0);
 
 

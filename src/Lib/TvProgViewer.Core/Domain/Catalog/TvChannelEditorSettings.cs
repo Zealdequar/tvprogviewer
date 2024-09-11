@@ -118,7 +118,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool PAngV { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether 'Require other tvchannels added to the cart' field is shown
+        /// Gets or sets a value indicating whether 'Require other tvChannels added to the cart' field is shown
         /// </summary>
         public bool RequireOtherTvChannelsAddedToCart { get; set; }
 
@@ -128,12 +128,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool IsGiftCard { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether 'Downloadable tvchannel' field is shown
+        /// Gets or sets a value indicating whether 'Downloadable tvChannel' field is shown
         /// </summary>
         public bool DownloadableTvChannel { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether 'Recurring tvchannel' field is shown
+        /// Gets or sets a value indicating whether 'Recurring tvChannel' field is shown
         /// </summary>
         public bool RecurringTvChannel { get; set; }
 
@@ -268,12 +268,12 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool Published { get; set; }
         
         /// <summary>
-        /// Gets or sets a value indicating whether 'Related tvchannels' block is shown
+        /// Gets or sets a value indicating whether 'Related tvChannels' block is shown
         /// </summary>
         public bool RelatedTvChannels { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether 'Cross-sells tvchannels' block is shown
+        /// Gets or sets a value indicating whether 'Cross-sells tvChannels' block is shown
         /// </summary>
         public bool CrossSellsTvChannels { get; set; }
 

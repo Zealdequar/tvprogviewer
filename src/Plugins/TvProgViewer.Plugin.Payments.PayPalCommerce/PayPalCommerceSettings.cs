@@ -73,9 +73,9 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer
         public bool DisplayButtonsOnShoppingCart { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether to display buttons on a product details page
+        /// Gets or sets a value indicating whether to display buttons on a tvChannel details page
         /// </summary>
-        public bool DisplayButtonsOnProductDetails { get; set; }
+        public bool DisplayButtonsOnTvChannelDetails { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to display logo in header links

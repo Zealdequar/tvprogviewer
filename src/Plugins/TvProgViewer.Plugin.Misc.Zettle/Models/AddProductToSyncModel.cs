@@ -4,22 +4,22 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.Plugin.Misc.Zettle.Models
 {
     /// <summary>
-    /// Represents a product model to add for synchronization
+    /// Represents a tvChannel model to add for synchronization
     /// </summary>
-    public record AddProductToSyncModel : BaseTvProgModel
+    public record AddTvChannelToSyncModel : BaseTvProgModel
     {
         #region Ctor
 
-        public AddProductToSyncModel()
+        public AddTvChannelToSyncModel()
         {
-            SelectedProductIds = new List<int>();
+            SelectedTvChannelIds = new List<int>();
         }
 
         #endregion
 
         #region Properties
 
-        public IList<int> SelectedProductIds { get; set; }
+        public IList<int> SelectedTvChannelIds { get; set; }
 
         #endregion
     }

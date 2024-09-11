@@ -30,22 +30,22 @@
                 <label asp-for="EnteredQuantity" asp-postfix=":" class="qty-label"></label>
                 @if (Model.AllowedQuantities.Count > 0)
                 {
-                    <select asp-for="EnteredQuantity" asp-items="Model.AllowedQuantities" id="tvchannel_enteredQuantity_@Model.TvChannelId" class="qty-dropdown" aria-label=@T("TvChannels.Qty.AriaLabel")></select>
+                    <select asp-for="EnteredQuantity" asp-items="Model.AllowedQuantities" id="tvChannel_enteredQuantity_@Model.TvChannelId" class="qty-dropdown" aria-label=@T("TvChannels.Qty.AriaLabel")></select>
                     <script asp-location="Footer">
                         $(document).ready(function () {
-                            $("#tvchannel_enteredQuantity_@Model.TvChannelId").on("change", function () {
+                            $("#tvChannel_enteredQuantity_@Model.TvChannelId").on("change", function () {
                                 var data = {
-                                    tvchannelId: @Model.TvChannelId,
-                                    quantity: $('#tvchannel_enteredQuantity_@Model.TvChannelId').find(":selected").text()
+                                    tvChannelId: @Model.TvChannelId,
+                                    quantity: $('#tvChannel_enteredQuantity_@Model.TvChannelId').find(":selected").text()
                                 };
-                                $(document).trigger({ type: "tvchannel_quantity_changed", changedData: data });
+                                $(document).trigger({ type: "tvChannel_quantity_changed", changedData: data });
                             });
                         });
                     </script>
                 }
                 else
                 {
-                    <input asp-for="EnteredQuantity" id="tvchannel_enteredQuantity_@Model.TvChannelId" class="qty-input" type="text" aria-label=@T("TvChannels.Qty.AriaLabel")/>
+                    <input asp-for="EnteredQuantity" id="tvChannel_enteredQuantity_@Model.TvChannelId" class="qty-input" type="text" aria-label=@T("TvChannels.Qty.AriaLabel")/>
                     <script asp-location="Footer">
                         //when a user clicks 'Enter' button we submit the "add to cart" button (if visible)
                         $(document).ready(function() {
@@ -56,12 +56,12 @@
                                 }
                             });
 
-                            $("#tvchannel_enteredQuantity_@Model.TvChannelId").on("input propertychange paste", function () {
+                            $("#tvChannel_enteredQuantity_@Model.TvChannelId").on("input propertychange paste", function () {
                                 var data = {
-                                    tvchannelId: @Model.TvChannelId,
-                                    quantity: $('#tvchannel_enteredQuantity_@Model.TvChannelId').val()
+                                    tvChannelId: @Model.TvChannelId,
+                                    quantity: $('#tvChannel_enteredQuantity_@Model.TvChannelId').val()
                                 };
-                                $(document).trigger({ type: "tvchannel_quantity_changed", changedData: data });
+                                $(document).trigger({ type: "tvChannel_quantity_changed", changedData: data });
                             });
                         });
                     </script>
@@ -84,7 +84,7 @@
                             addToCartText = T("ShoppingCart.PreOrder").Text;
                         }
                     }
-                    <button type="button" id="add-to-cart-button-@Model.TvChannelId" class="button-1 add-to-cart-button" data-tvchannelid="@Model.TvChannelId" onclick="AjaxCart.addtvchanneltocart_details('@Url.RouteUrl("AddTvChannelToCart-Details", new {tvchannelId = Model.TvChannelId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#tvchannel-details-form');return false;">@addToCartText</button>
+                    <button type="button" id="add-to-cart-button-@Model.TvChannelId" class="button-1 add-to-cart-button" data-tvChannelid="@Model.TvChannelId" onclick="AjaxCart.addtvChanneltocart_details('@Url.RouteUrl("AddTvChannelToCart-Details", new {tvChannelId = Model.TvChannelId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#tvChannel-details-form');return false;">@addToCartText</button>
                 }
             </div>
             if (!string.IsNullOrEmpty(Model.PreOrderAvailabilityStartDateTimeUserTime))

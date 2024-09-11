@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Blogs;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Forums;
-using Nop.Core.Domain.Messages;
-using Nop.Core.Domain.News;
-using Nop.Core.Domain.Orders;
-using Nop.Core.Domain.Shipping;
-using Nop.Core.Domain.Vendors;
-using Nop.Data;
-using Nop.Services.Blogs;
-using Nop.Services.Catalog;
-using Nop.Services.Customers;
-using Nop.Services.Forums;
-using Nop.Services.Messages;
-using Nop.Services.News;
-using Nop.Services.Orders;
-using Nop.Services.Shipping;
-using Nop.Services.Vendors;
+using TvProgViewer.Core.Domain.Blogs;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Forums;
+using TvProgViewer.Core.Domain.Messages;
+using TvProgViewer.Core.Domain.News;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Core.Domain.Shipping;
+using TvProgViewer.Core.Domain.Vendors;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Blogs;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Forums;
+using TvProgViewer.Services.Messages;
+using TvProgViewer.Services.News;
+using TvProgViewer.Services.Orders;
+using TvProgViewer.Services.Shipping;
+using TvProgViewer.Services.Vendors;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Messages
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Messages
 {
     [TestFixture]
     public class WorkflowMessageServiceTests : ServiceTest
@@ -33,7 +33,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
 
         private readonly List<int> _notActiveTempletes = new();
         private readonly IMessageTemplateService _messageTemplateService;
-        private Customer _customer;
+        private User _user;
         private readonly IRepository<QueuedEmail> _queuedEmailRepository;
         private Order _order;
         private Vendor _vendor;
@@ -42,14 +42,14 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         private OrderNote _orderNote;
         private RecurringPayment _recurringPayment;
         private NewsLetterSubscription _subscription;
-        private Product _product;
+        private TvChannel _tvChannel;
         private OrderItem _orderItem;
         private ReturnRequest _returnRequest;
         private Forum _forum;
         private ForumTopic _forumTopic;
         private ForumPost _forumPost;
         private PrivateMessage _privateMessage;
-        private ProductReview _productReview;
+        private TvChannelReview _tvChannelReview;
         private GiftCard _giftCard;
         private BlogComment _blogComment;
         private NewsComment _newsComment;
@@ -67,40 +67,40 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
         {
-            var customerService = GetService<ICustomerService>();
+            var userService = GetService<IUserService>();
             var orderService = GetService<IOrderService>();
             var vendorService = GetService<IVendorService>();
             var shipmentService = GetService<IShipmentService>();
-            var productService = GetService<IProductService>();
+            var tvChannelService = GetService<ITvChannelService>();
             var giftCardService = GetService<IGiftCardService>();
             var blogService = GetService<IBlogService>();
             var newsService = GetService<INewsService>();
 
             _order = await orderService.GetOrderByIdAsync(1);
             _orderItem = (await orderService.GetOrderItemsAsync(1)).First();
-            _customer = await customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+            _user = await userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
             _vendor = await vendorService.GetVendorByIdAsync(1);
             _shipment = await shipmentService.GetShipmentByIdAsync(1);
             _orderNote = await orderService.GetOrderNoteByIdAsync(1);
             _recurringPayment = new RecurringPayment {InitialOrderId = _order.Id, IsActive = true};
-            _subscription = new NewsLetterSubscription {Active = true, Email = NopTestsDefaults.AdminEmail};
-            _product = await productService.GetProductByIdAsync(1);
-            _returnRequest = new ReturnRequest {CustomerId = _customer.Id, OrderItemId = _orderItem.Id};
+            _subscription = new NewsLetterSubscription {Active = true, Email = TvProgTestsDefaults.AdminEmail};
+            _tvChannel = await tvChannelService.GetTvChannelByIdAsync(1);
+            _returnRequest = new ReturnRequest {UserId = _user.Id, OrderItemId = _orderItem.Id};
             _forum = await _forumService.GetForumByIdAsync(1);
-            _forumTopic = new ForumTopic {CustomerId = _customer.Id, ForumId = _forum.Id, Subject = "Subject"};
+            _forumTopic = new ForumTopic {UserId = _user.Id, ForumId = _forum.Id, Subject = "Subject"};
             await _forumService.InsertTopicAsync(_forumTopic, false);
-            _forumPost = new ForumPost { CustomerId = _customer.Id, TopicId = _forumTopic.Id, Text = "Text"};
+            _forumPost = new ForumPost { UserId = _user.Id, TopicId = _forumTopic.Id, Text = "Text"};
             await _forumService.InsertPostAsync(_forumPost, false);
 
             _privateMessage = new PrivateMessage
             {
-                FromCustomerId = 1, ToCustomerId = 2, Subject = string.Empty, Text = string.Empty
+                FromUserId = 1, ToUserId = 2, Subject = string.Empty, Text = string.Empty
             };
-            _productReview = (await productService.GetAllProductReviewsAsync()).FirstOrDefault();
+            _tvChannelReview = (await tvChannelService.GetAllTvChannelReviewsAsync()).FirstOrDefault();
             _giftCard = await giftCardService.GetGiftCardByIdAsync(1);
             _blogComment = await blogService.GetBlogCommentByIdAsync(1);
             _newsComment = await newsService.GetNewsCommentByIdAsync(1);
-            _backInStockSubscription = new BackInStockSubscription {ProductId = _product.Id, CustomerId = _customer.Id};
+            _backInStockSubscription = new BackInStockSubscription {TvChannelId = _tvChannel.Id, UserId = _user.Id};
 
             _allMessageTemplates = await _messageTemplateService.GetAllMessageTemplatesAsync(0);
 
@@ -144,42 +144,42 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
             queuedEmails.Count.Should().Be(emailIds.Count);
         }
 
-        #region Customer workflow
+        #region User workflow
 
         [Test]
-        public async Task CanSendCustomerRegisteredNotificationMessage()
+        public async Task CanSendUserRegisteredNotificationMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendCustomerRegisteredStoreOwnerNotificationMessageAsync(_customer, 1));
+                await _workflowMessageService.SendUserRegisteredStoreOwnerNotificationMessageAsync(_user, 1));
         }
 
         [Test]
-        public async Task CanSendCustomerWelcomeMessage()
+        public async Task CanSendUserWelcomeMessage()
         {
             await CheckData(async () => 
-                await _workflowMessageService.SendCustomerWelcomeMessageAsync(_customer, 1));
+                await _workflowMessageService.SendUserWelcomeMessageAsync(_user, 1));
         }
 
         [Test]
-        public async Task CanSendCustomerEmailValidationMessage()
+        public async Task CanSendUserEmailValidationMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendCustomerEmailValidationMessageAsync(_customer, 1));
+                await _workflowMessageService.SendUserEmailValidationMessageAsync(_user, 1));
         }
 
         [Test]
-        public async Task CanSendCustomerEmailRevalidationMessage()
+        public async Task CanSendUserEmailRevalidationMessage()
         {
-            _customer.EmailToRevalidate = NopTestsDefaults.AdminEmail;
+            _user.EmailToRevalidate = TvProgTestsDefaults.AdminEmail;
             await CheckData(async () =>
-                await _workflowMessageService.SendCustomerEmailRevalidationMessageAsync(_customer, 1));
+                await _workflowMessageService.SendUserEmailRevalidationMessageAsync(_user, 1));
         }
 
         [Test]
-        public async Task CanSendCustomerPasswordRecoveryMessage()
+        public async Task CanSendUserPasswordRecoveryMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendCustomerPasswordRecoveryMessageAsync(_customer, 1));
+                await _workflowMessageService.SendUserPasswordRecoveryMessageAsync(_user, 1));
         }
 
         #endregion
@@ -216,10 +216,10 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         }
 
         [Test]
-        public async Task CanSendOrderPaidCustomerNotification()
+        public async Task CanSendOrderPaidUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendOrderPaidCustomerNotificationAsync(_order, 1));
+                await _workflowMessageService.SendOrderPaidUserNotificationAsync(_order, 1));
         }
 
         [Test]
@@ -238,37 +238,37 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         }
 
         [Test]
-        public async Task CanSendOrderPlacedCustomerNotification()
+        public async Task CanSendOrderPlacedUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendOrderPlacedCustomerNotificationAsync(_order, 1));
+                await _workflowMessageService.SendOrderPlacedUserNotificationAsync(_order, 1));
         }
 
         [Test]
-        public async Task CanSendShipmentSentCustomerNotification()
+        public async Task CanSendShipmentSentUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendShipmentSentCustomerNotificationAsync(_shipment, 1));
+                await _workflowMessageService.SendShipmentSentUserNotificationAsync(_shipment, 1));
         }
         [Test]
-        public async Task CanSendShipmentDeliveredCustomerNotification()
+        public async Task CanSendShipmentDeliveredUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendShipmentDeliveredCustomerNotificationAsync(_shipment, 1));
-        }
-
-        [Test]
-        public async Task CanSendOrderCompletedCustomerNotification()
-        {
-            await CheckData(async () =>
-                await _workflowMessageService.SendOrderCompletedCustomerNotificationAsync(_order, 1));
+                await _workflowMessageService.SendShipmentDeliveredUserNotificationAsync(_shipment, 1));
         }
 
         [Test]
-        public async Task CanSendOrderCancelledCustomerNotification()
+        public async Task CanSendOrderCompletedUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendOrderCancelledCustomerNotificationAsync(_order, 1));
+                await _workflowMessageService.SendOrderCompletedUserNotificationAsync(_order, 1));
+        }
+
+        [Test]
+        public async Task CanSendOrderCancelledUserNotification()
+        {
+            await CheckData(async () =>
+                await _workflowMessageService.SendOrderCancelledUserNotificationAsync(_order, 1));
         }
 
         [Test]
@@ -279,17 +279,17 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         }
 
         [Test]
-        public async Task CanSendOrderRefundedCustomerNotification()
+        public async Task CanSendOrderRefundedUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendOrderRefundedCustomerNotificationAsync(_order, 1M, 1));
+                await _workflowMessageService.SendOrderRefundedUserNotificationAsync(_order, 1M, 1));
         }
 
         [Test]
-        public async Task CanSendNewOrderNoteAddedCustomerNotification()
+        public async Task CanSendNewOrderNoteAddedUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendNewOrderNoteAddedCustomerNotificationAsync(_orderNote, 1));
+                await _workflowMessageService.SendNewOrderNoteAddedUserNotificationAsync(_orderNote, 1));
         }
 
         [Test]
@@ -300,17 +300,17 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         }
 
         [Test]
-        public async Task CanSendRecurringPaymentCancelledCustomerNotification()
+        public async Task CanSendRecurringPaymentCancelledUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendRecurringPaymentCancelledCustomerNotificationAsync(_recurringPayment, 1));
+                await _workflowMessageService.SendRecurringPaymentCancelledUserNotificationAsync(_recurringPayment, 1));
         }
 
         [Test]
-        public async Task CanSendRecurringPaymentFailedCustomerNotification()
+        public async Task CanSendRecurringPaymentFailedUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendRecurringPaymentFailedCustomerNotificationAsync(_recurringPayment, 1));
+                await _workflowMessageService.SendRecurringPaymentFailedUserNotificationAsync(_recurringPayment, 1));
         }
 
         #endregion
@@ -336,17 +336,17 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         #region Send a message to a friend
 
         [Test]
-        public async Task CanSendProductEmailAFriendMessage()
+        public async Task CanSendTvChannelEmailAFriendMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendProductEmailAFriendMessageAsync(_customer, 1, _product, NopTestsDefaults.AdminEmail, NopTestsDefaults.AdminEmail, string.Empty));
+                await _workflowMessageService.SendTvChannelEmailAFriendMessageAsync(_user, 1, _tvChannel, TvProgTestsDefaults.AdminEmail, TvProgTestsDefaults.AdminEmail, string.Empty));
         }
 
         [Test]
         public async Task CanSendWishlistEmailAFriendMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendWishlistEmailAFriendMessageAsync(_customer, 1, NopTestsDefaults.AdminEmail, NopTestsDefaults.AdminEmail, string.Empty));
+                await _workflowMessageService.SendWishlistEmailAFriendMessageAsync(_user, 1, TvProgTestsDefaults.AdminEmail, TvProgTestsDefaults.AdminEmail, string.Empty));
         }
 
         #endregion
@@ -361,17 +361,17 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         }
 
         [Test]
-        public async Task CanSendNewReturnRequestCustomerNotification()
+        public async Task CanSendNewReturnRequestUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendNewReturnRequestCustomerNotificationAsync(_returnRequest, _orderItem, _order));
+                await _workflowMessageService.SendNewReturnRequestUserNotificationAsync(_returnRequest, _orderItem, _order));
         }
 
         [Test]
-        public async Task CanSendReturnRequestStatusChangedCustomerNotification()
+        public async Task CanSendReturnRequestStatusChangedUserNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendReturnRequestStatusChangedCustomerNotificationAsync(_returnRequest, _orderItem, _order));
+                await _workflowMessageService.SendReturnRequestStatusChangedUserNotificationAsync(_returnRequest, _orderItem, _order));
         }
 
         #endregion
@@ -382,14 +382,14 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         public async Task CanSendNewForumTopicMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendNewForumTopicMessageAsync(_customer, _forumTopic, _forum, 1));
+                await _workflowMessageService.SendNewForumTopicMessageAsync(_user, _forumTopic, _forum, 1));
         }
 
         [Test]
         public async Task CanSendNewForumPostMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendNewForumPostMessageAsync(_customer, _forumPost, _forumTopic, _forum, 1, 1));
+                await _workflowMessageService.SendNewForumPostMessageAsync(_user, _forumPost, _forumTopic, _forum, 1, 1));
         }
 
         [Test]
@@ -407,7 +407,7 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         public async Task CanSendNewVendorAccountApplyStoreOwnerNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendNewVendorAccountApplyStoreOwnerNotificationAsync(_customer, _vendor, 1));
+                await _workflowMessageService.SendNewVendorAccountApplyStoreOwnerNotificationAsync(_user, _vendor, 1));
         }
 
         [Test]
@@ -418,17 +418,17 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         }
 
         [Test]
-        public async Task CanSendProductReviewNotificationMessage()
+        public async Task CanSendTvChannelReviewNotificationMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendProductReviewStoreOwnerNotificationMessageAsync(_productReview, 1));
+                await _workflowMessageService.SendTvChannelReviewStoreOwnerNotificationMessageAsync(_tvChannelReview, 1));
         }
 
         [Test]
-        public async Task CanSendProductReviewReplyCustomerNotificationMessage()
+        public async Task CanSendTvChannelReviewReplyUserNotificationMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendProductReviewReplyCustomerNotificationMessageAsync(_productReview, 1));
+                await _workflowMessageService.SendTvChannelReviewReplyUserNotificationMessageAsync(_tvChannelReview, 1));
         }
 
         [Test]
@@ -442,14 +442,14 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         public async Task CanSendQuantityBelowStoreOwnerNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendQuantityBelowStoreOwnerNotificationAsync(_product, 1));
+                await _workflowMessageService.SendQuantityBelowStoreOwnerNotificationAsync(_tvChannel, 1));
         }
         
         [Test]
         public async Task CanSendNewVatSubmittedStoreOwnerNotification()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendNewVatSubmittedStoreOwnerNotificationAsync(_customer, "vat name", "vat address", 1));
+                await _workflowMessageService.SendNewVatSubmittedStoreOwnerNotificationAsync(_user, "vat name", "vat address", 1));
         }
 
         [Test]
@@ -477,14 +477,14 @@ namespace Nop.Tests.Nop.Services.Tests.Messages
         public async Task CanSendContactUsMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendContactUsMessageAsync(1, NopTestsDefaults.AdminEmail, "sender name", "subject", "body"));
+                await _workflowMessageService.SendContactUsMessageAsync(1, TvProgTestsDefaults.AdminEmail, "sender name", "subject", "body"));
         }
 
         [Test]
         public async Task CanSendContactVendorMessage()
         {
             await CheckData(async () =>
-                await _workflowMessageService.SendContactVendorMessageAsync(_vendor, 1, NopTestsDefaults.AdminEmail, "sender name", "subject", "body"));
+                await _workflowMessageService.SendContactVendorMessageAsync(_vendor, 1, TvProgTestsDefaults.AdminEmail, "sender name", "subject", "body"));
         }
 
         #endregion

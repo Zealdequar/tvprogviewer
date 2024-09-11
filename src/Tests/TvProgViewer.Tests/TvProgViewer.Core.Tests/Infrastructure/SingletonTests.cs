@@ -1,9 +1,9 @@
 ﻿using System;
 using FluentAssertions;
-using Nop.Core.Infrastructure;
+using TvProgViewer.Core.Infrastructure;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests.Infrastructure
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests.Infrastructure
 {
     [TestFixture]
     public class SingletonTests

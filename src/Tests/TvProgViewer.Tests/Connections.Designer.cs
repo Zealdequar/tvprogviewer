@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Nop.Tests {
+namespace TvProgViewer.Tests {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Nop.Tests {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Nop.Tests.Connections", typeof(Connections).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TvProgViewer.Tests.Connections", typeof(Connections).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

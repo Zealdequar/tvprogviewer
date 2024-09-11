@@ -85,10 +85,10 @@ namespace TvProgViewer.Plugin.Payments.CheckMoneyOrder
         public async Task<bool> HidePaymentMethodAsync(IList<ShoppingCartItem> cart)
         {
             //you can put any logic here
-            //for example, hide this payment method if all products in the cart are downloadable
+            //for example, hide this payment method if all tvChannels in the cart are downloadable
             //or hide this payment method if current user is from certain country
 
-            if (_checkMoneyOrderPaymentSettings.ShippableProductRequired && !await _shoppingCartService.ShoppingCartRequiresShippingAsync(cart))
+            if (_checkMoneyOrderPaymentSettings.ShippableTvChannelRequired && !await _shoppingCartService.ShoppingCartRequiresShippingAsync(cart))
                 return true;
 
             return false;
@@ -256,8 +256,8 @@ namespace TvProgViewer.Plugin.Payments.CheckMoneyOrder
                 ["Plugins.Payment.CheckMoneyOrder.DescriptionText"] = "Description",
                 ["Plugins.Payment.CheckMoneyOrder.DescriptionText.Hint"] = "Enter info that will be shown to users during checkout",
                 ["Plugins.Payment.CheckMoneyOrder.PaymentMethodDescription"] = "Pay by cheque or money order",
-                ["Plugins.Payment.CheckMoneyOrder.ShippableProductRequired"] = "Shippable product required",
-                ["Plugins.Payment.CheckMoneyOrder.ShippableProductRequired.Hint"] = "An option indicating whether shippable products are required in order to display this payment method during checkout."
+                ["Plugins.Payment.CheckMoneyOrder.ShippableTvChannelRequired"] = "Shippable tvChannel required",
+                ["Plugins.Payment.CheckMoneyOrder.ShippableTvChannelRequired.Hint"] = "An option indicating whether shippable tvChannels are required in order to display this payment method during checkout."
             });
 
             await base.InstallAsync();

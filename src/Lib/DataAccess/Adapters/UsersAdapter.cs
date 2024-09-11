@@ -321,8 +321,8 @@ namespace TvProgViewer.DataAccess.Adapters
                         SmartPhone = su.MobPhoneNumber,
                         StreetAddress = su.StreetAddress,
                         GmtZone = su.GmtZone,
-                        Status = su.Status,
-                        Catalog = su.Catalog
+                        /*Status = su.Status,
+                        Catalog = su.Catalog*/
                     };
                     return user;
                 }

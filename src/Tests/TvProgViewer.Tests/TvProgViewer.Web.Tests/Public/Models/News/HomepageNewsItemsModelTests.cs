@@ -1,9 +1,9 @@
 ﻿using System;
 using FluentAssertions;
-using Nop.Web.Models.News;
+using TvProgViewer.WebUI.Models.News;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Models.News
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Models.News
 {
     [TestFixture]
     public class HomepageNewsItemsModelTests
@@ -36,9 +36,9 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Models.News
             newsItemModel1.Comments.Add(new NewsCommentModel
             {
                 Id = 3,
-                CustomerId = 4,
-                CustomerName = "CustomerName 1",
-                CustomerAvatarUrl = "CustomerAvatarUrl 1",
+                UserId = 4,
+                UserName = "UserName 1",
+                UserAvatarUrl = "UserAvatarUrl 1",
                 CommentTitle = "CommentTitle 1",
                 CommentText = "CommentText 1",
                 CreatedOn = new DateTime(2010, 01, 02),
@@ -63,9 +63,9 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Models.News
             newsItemModel2.Comments.Should().NotBeNull();
             newsItemModel2.Comments.Count.Should().Be(1);
             newsItemModel2.Comments[0].Id.Should().Be(3);
-            newsItemModel2.Comments[0].CustomerId.Should().Be(4);
-            newsItemModel2.Comments[0].CustomerName.Should().Be("CustomerName 1");
-            newsItemModel2.Comments[0].CustomerAvatarUrl.Should().Be("CustomerAvatarUrl 1");
+            newsItemModel2.Comments[0].UserId.Should().Be(4);
+            newsItemModel2.Comments[0].UserName.Should().Be("UserName 1");
+            newsItemModel2.Comments[0].UserAvatarUrl.Should().Be("UserAvatarUrl 1");
             newsItemModel2.Comments[0].CommentTitle.Should().Be("CommentTitle 1");
             newsItemModel2.Comments[0].CommentText.Should().Be("CommentText 1");
             newsItemModel2.Comments[0].CreatedOn.Should().Be(new DateTime(2010, 01, 02));

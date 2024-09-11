@@ -40,7 +40,7 @@ namespace TvProgViewer.Services.Orders
         /// {0} : user ID
         /// {1} : shopping cart type
         /// {2} : store ID
-        /// {3} : tvchannel ID
+        /// {3} : tvChannel ID
         /// {4} : created from date
         /// {5} : created to date
         /// </remarks>

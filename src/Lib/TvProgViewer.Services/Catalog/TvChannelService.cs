@@ -38,26 +38,26 @@ namespace TvProgViewer.Services.Catalog
         protected readonly IDateRangeService _dateRangeService;
         protected readonly ILanguageService _languageService;
         protected readonly ILocalizationService _localizationService;
-        protected readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        protected readonly ITvChannelAttributeService _tvchannelAttributeService;
+        protected readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        protected readonly ITvChannelAttributeService _tvChannelAttributeService;
         protected readonly IRepository<Category> _categoryRepository;
         protected readonly IRepository<CrossSellTvChannel> _crossSellTvChannelRepository;
         protected readonly IRepository<DiscountTvChannelMapping> _discountTvChannelMappingRepository;
         protected readonly IRepository<LocalizedProperty> _localizedPropertyRepository;
         protected readonly IRepository<Manufacturer> _manufacturerRepository;
-        protected readonly IRepository<TvChannel> _tvchannelRepository;
-        protected readonly IRepository<TvChannelAttributeCombination> _tvchannelAttributeCombinationRepository;
-        protected readonly IRepository<TvChannelAttributeMapping> _tvchannelAttributeMappingRepository;
-        protected readonly IRepository<TvChannelCategory> _tvchannelCategoryRepository;
-        protected readonly IRepository<TvChannelManufacturer> _tvchannelManufacturerRepository;
-        protected readonly IRepository<TvChannelPicture> _tvchannelPictureRepository;
-        protected readonly IRepository<TvChannelTvChannelTagMapping> _tvchannelTagMappingRepository;
-        protected readonly IRepository<TvChannelReview> _tvchannelReviewRepository;
-        protected readonly IRepository<TvChannelReviewHelpfulness> _tvchannelReviewHelpfulnessRepository;
-        protected readonly IRepository<TvChannelSpecificationAttribute> _tvchannelSpecificationAttributeRepository;
-        protected readonly IRepository<TvChannelTag> _tvchannelTagRepository;
-        protected readonly IRepository<TvChannelVideo> _tvchannelVideoRepository;
-        protected readonly IRepository<TvChannelWarehouseInventory> _tvchannelWarehouseInventoryRepository;
+        protected readonly IRepository<TvChannel> _tvChannelRepository;
+        protected readonly IRepository<TvChannelAttributeCombination> _tvChannelAttributeCombinationRepository;
+        protected readonly IRepository<TvChannelAttributeMapping> _tvChannelAttributeMappingRepository;
+        protected readonly IRepository<TvChannelCategory> _tvChannelCategoryRepository;
+        protected readonly IRepository<TvChannelManufacturer> _tvChannelManufacturerRepository;
+        protected readonly IRepository<TvChannelPicture> _tvChannelPictureRepository;
+        protected readonly IRepository<TvChannelTvChannelTagMapping> _tvChannelTagMappingRepository;
+        protected readonly IRepository<TvChannelReview> _tvChannelReviewRepository;
+        protected readonly IRepository<TvChannelReviewHelpfulness> _tvChannelReviewHelpfulnessRepository;
+        protected readonly IRepository<TvChannelSpecificationAttribute> _tvChannelSpecificationAttributeRepository;
+        protected readonly IRepository<TvChannelTag> _tvChannelTagRepository;
+        protected readonly IRepository<TvChannelVideo> _tvChannelVideoRepository;
+        protected readonly IRepository<TvChannelWarehouseInventory> _tvChannelWarehouseInventoryRepository;
         protected readonly IRepository<RelatedTvChannel> _relatedTvChannelRepository;
         protected readonly IRepository<Shipment> _shipmentRepository;
         protected readonly IRepository<StockQuantityHistory> _stockQuantityHistoryRepository;
@@ -80,26 +80,26 @@ namespace TvProgViewer.Services.Catalog
             IDateRangeService dateRangeService,
             ILanguageService languageService,
             ILocalizationService localizationService,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelAttributeService tvchannelAttributeService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
             IRepository<Category> categoryRepository,
             IRepository<CrossSellTvChannel> crossSellTvChannelRepository,
             IRepository<DiscountTvChannelMapping> discountTvChannelMappingRepository,
             IRepository<LocalizedProperty> localizedPropertyRepository,
             IRepository<Manufacturer> manufacturerRepository,
-            IRepository<TvChannel> tvchannelRepository,
-            IRepository<TvChannelAttributeCombination> tvchannelAttributeCombinationRepository,
-            IRepository<TvChannelAttributeMapping> tvchannelAttributeMappingRepository,
-            IRepository<TvChannelCategory> tvchannelCategoryRepository,
-            IRepository<TvChannelManufacturer> tvchannelManufacturerRepository,
-            IRepository<TvChannelPicture> tvchannelPictureRepository,
-            IRepository<TvChannelTvChannelTagMapping> tvchannelTagMappingRepository,
-            IRepository<TvChannelReview> tvchannelReviewRepository,
-            IRepository<TvChannelReviewHelpfulness> tvchannelReviewHelpfulnessRepository,
-            IRepository<TvChannelSpecificationAttribute> tvchannelSpecificationAttributeRepository,
-            IRepository<TvChannelTag> tvchannelTagRepository,
-            IRepository<TvChannelVideo> tvchannelVideoRepository,
-            IRepository<TvChannelWarehouseInventory> tvchannelWarehouseInventoryRepository,
+            IRepository<TvChannel> tvChannelRepository,
+            IRepository<TvChannelAttributeCombination> tvChannelAttributeCombinationRepository,
+            IRepository<TvChannelAttributeMapping> tvChannelAttributeMappingRepository,
+            IRepository<TvChannelCategory> tvChannelCategoryRepository,
+            IRepository<TvChannelManufacturer> tvChannelManufacturerRepository,
+            IRepository<TvChannelPicture> tvChannelPictureRepository,
+            IRepository<TvChannelTvChannelTagMapping> tvChannelTagMappingRepository,
+            IRepository<TvChannelReview> tvChannelReviewRepository,
+            IRepository<TvChannelReviewHelpfulness> tvChannelReviewHelpfulnessRepository,
+            IRepository<TvChannelSpecificationAttribute> tvChannelSpecificationAttributeRepository,
+            IRepository<TvChannelTag> tvChannelTagRepository,
+            IRepository<TvChannelVideo> tvChannelVideoRepository,
+            IRepository<TvChannelWarehouseInventory> tvChannelWarehouseInventoryRepository,
             IRepository<RelatedTvChannel> relatedTvChannelRepository,
             IRepository<Shipment> shipmentRepository,
             IRepository<StockQuantityHistory> stockQuantityHistoryRepository,
@@ -118,26 +118,26 @@ namespace TvProgViewer.Services.Catalog
             _dateRangeService = dateRangeService;
             _languageService = languageService;
             _localizationService = localizationService;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelAttributeService = tvchannelAttributeService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
             _categoryRepository = categoryRepository;
             _crossSellTvChannelRepository = crossSellTvChannelRepository;
             _discountTvChannelMappingRepository = discountTvChannelMappingRepository;
             _localizedPropertyRepository = localizedPropertyRepository;
             _manufacturerRepository = manufacturerRepository;
-            _tvchannelRepository = tvchannelRepository;
-            _tvchannelAttributeCombinationRepository = tvchannelAttributeCombinationRepository;
-            _tvchannelAttributeMappingRepository = tvchannelAttributeMappingRepository;
-            _tvchannelCategoryRepository = tvchannelCategoryRepository;
-            _tvchannelManufacturerRepository = tvchannelManufacturerRepository;
-            _tvchannelPictureRepository = tvchannelPictureRepository;
-            _tvchannelTagMappingRepository = tvchannelTagMappingRepository;
-            _tvchannelReviewRepository = tvchannelReviewRepository;
-            _tvchannelReviewHelpfulnessRepository = tvchannelReviewHelpfulnessRepository;
-            _tvchannelSpecificationAttributeRepository = tvchannelSpecificationAttributeRepository;
-            _tvchannelTagRepository = tvchannelTagRepository;
-            _tvchannelVideoRepository = tvchannelVideoRepository;
-            _tvchannelWarehouseInventoryRepository = tvchannelWarehouseInventoryRepository;
+            _tvChannelRepository = tvChannelRepository;
+            _tvChannelAttributeCombinationRepository = tvChannelAttributeCombinationRepository;
+            _tvChannelAttributeMappingRepository = tvChannelAttributeMappingRepository;
+            _tvChannelCategoryRepository = tvChannelCategoryRepository;
+            _tvChannelManufacturerRepository = tvChannelManufacturerRepository;
+            _tvChannelPictureRepository = tvChannelPictureRepository;
+            _tvChannelTagMappingRepository = tvChannelTagMappingRepository;
+            _tvChannelReviewRepository = tvChannelReviewRepository;
+            _tvChannelReviewHelpfulnessRepository = tvChannelReviewHelpfulnessRepository;
+            _tvChannelSpecificationAttributeRepository = tvChannelSpecificationAttributeRepository;
+            _tvChannelTagRepository = tvChannelTagRepository;
+            _tvChannelVideoRepository = tvChannelVideoRepository;
+            _tvChannelWarehouseInventoryRepository = tvChannelWarehouseInventoryRepository;
             _relatedTvChannelRepository = relatedTvChannelRepository;
             _shipmentRepository = shipmentRepository;
             _stockQuantityHistoryRepository = stockQuantityHistoryRepository;
@@ -155,29 +155,29 @@ namespace TvProgViewer.Services.Catalog
         #region Utilities
 
         /// <summary>
-        /// Applies the low stock activity to specified tvchannel by the total stock quantity
+        /// Applies the low stock activity to specified tvChannel by the total stock quantity
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="totalStock">Total stock</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task ApplyLowStockActivityAsync(TvChannel tvchannel, int totalStock)
+        protected virtual async Task ApplyLowStockActivityAsync(TvChannel tvChannel, int totalStock)
         {
-            var isMinimumStockReached = totalStock <= tvchannel.MinStockQuantity;
+            var isMinimumStockReached = totalStock <= tvChannel.MinStockQuantity;
 
             if (!isMinimumStockReached && !_catalogSettings.PublishBackTvChannelWhenCancellingOrders)
                 return;
 
-            switch (tvchannel.LowStockActivity)
+            switch (tvChannel.LowStockActivity)
             {
                 case LowStockActivity.DisableBuyButton:
-                    tvchannel.DisableBuyButton = isMinimumStockReached;
-                    tvchannel.DisableWishlistButton = isMinimumStockReached;
-                    await UpdateTvChannelAsync(tvchannel);
+                    tvChannel.DisableBuyButton = isMinimumStockReached;
+                    tvChannel.DisableWishlistButton = isMinimumStockReached;
+                    await UpdateTvChannelAsync(tvChannel);
                     break;
 
                 case LowStockActivity.Unpublish:
-                    tvchannel.Published = !isMinimumStockReached;
-                    await UpdateTvChannelAsync(tvchannel);
+                    tvChannel.Published = !isMinimumStockReached;
+                    await UpdateTvChannelAsync(tvChannel);
                     break;
 
                 default:
@@ -188,27 +188,27 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets SKU, Manufacturer part number and GTIN
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the sKU, Manufacturer part number, GTIN
         /// </returns>
-        protected virtual async Task<(string sku, string manufacturerPartNumber, string gtin)> GetSkuMpnGtinAsync(TvChannel tvchannel, string attributesXml)
+        protected virtual async Task<(string sku, string manufacturerPartNumber, string gtin)> GetSkuMpnGtinAsync(TvChannel tvChannel, string attributesXml)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             string sku = null;
             string manufacturerPartNumber = null;
             string gtin = null;
 
             if (!string.IsNullOrEmpty(attributesXml) &&
-                tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStockByAttributes)
+                tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStockByAttributes)
             {
                 //manage stock by attribute combinations
                 //let's find appropriate record
-                var combination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+                var combination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
                 if (combination != null)
                 {
                     sku = combination.Sku;
@@ -218,41 +218,41 @@ namespace TvProgViewer.Services.Catalog
             }
 
             if (string.IsNullOrEmpty(sku))
-                sku = tvchannel.Sku;
+                sku = tvChannel.Sku;
             if (string.IsNullOrEmpty(manufacturerPartNumber))
-                manufacturerPartNumber = tvchannel.ManufacturerPartNumber;
+                manufacturerPartNumber = tvChannel.ManufacturerPartNumber;
             if (string.IsNullOrEmpty(gtin))
-                gtin = tvchannel.Gtin;
+                gtin = tvChannel.Gtin;
 
             return (sku, manufacturerPartNumber, gtin);
         }
 
         /// <summary>
-        /// Get stock message for a tvchannel with attributes
+        /// Get stock message for a tvChannel with attributes
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the message
         /// </returns>
-        protected virtual async Task<string> GetStockMessageForAttributesAsync(TvChannel tvchannel, string attributesXml)
+        protected virtual async Task<string> GetStockMessageForAttributesAsync(TvChannel tvChannel, string attributesXml)
         {
-            if (!tvchannel.DisplayStockAvailability)
+            if (!tvChannel.DisplayStockAvailability)
                 return string.Empty;
 
             string stockMessage;
 
-            var combination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+            var combination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
             if (combination != null)
             {
                 //combination exists
                 var stockQuantity = combination.StockQuantity;
                 if (stockQuantity > 0)
                 {
-                    if (tvchannel.MinStockQuantity >= stockQuantity && tvchannel.LowStockActivity == LowStockActivity.Nothing)
+                    if (tvChannel.MinStockQuantity >= stockQuantity && tvChannel.LowStockActivity == LowStockActivity.Nothing)
                     {
-                        stockMessage = tvchannel.DisplayStockQuantity
+                        stockMessage = tvChannel.DisplayStockQuantity
                         ?
                         //display "low stock" with stock quantity
                         string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.LowStockWithQuantity"), stockQuantity)
@@ -262,7 +262,7 @@ namespace TvProgViewer.Services.Catalog
                     }
                     else
                     {
-                        stockMessage = tvchannel.DisplayStockQuantity
+                        stockMessage = tvChannel.DisplayStockQuantity
                         ?
                         //display "in stock" with stock quantity
                         string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.InStockWithQuantity"), stockQuantity)
@@ -279,22 +279,22 @@ namespace TvProgViewer.Services.Catalog
                     }
                     else
                     {
-                        var tvchannelAvailabilityRange = await
-                            _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvchannel.TvChannelAvailabilityRangeId);
-                        stockMessage = tvchannelAvailabilityRange == null
+                        var tvChannelAvailabilityRange = await
+                            _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvChannel.TvChannelAvailabilityRangeId);
+                        stockMessage = tvChannelAvailabilityRange == null
                             ? await _localizationService.GetResourceAsync("TvChannels.Availability.OutOfStock")
                             : string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.AvailabilityRange"),
-                                await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, range => range.Name));
+                                await _localizationService.GetLocalizedAsync(tvChannelAvailabilityRange, range => range.Name));
                     }
                 }
             }
             else
             {
                 //no combination configured
-                if (tvchannel.AllowAddingOnlyExistingAttributeCombinations)
+                if (tvChannel.AllowAddingOnlyExistingAttributeCombinations)
                 {
-                    var allIds = (await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id)).Where(pa => pa.IsRequired).Select(pa => pa.Id).ToList();
-                    var exIds = (await _tvchannelAttributeParser.ParseTvChannelAttributeMappingsAsync(attributesXml)).Select(pa => pa.Id).ToList();
+                    var allIds = (await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id)).Where(pa => pa.IsRequired).Select(pa => pa.Id).ToList();
+                    var exIds = (await _tvChannelAttributeParser.ParseTvChannelAttributeMappingsAsync(attributesXml)).Select(pa => pa.Id).ToList();
 
                     var selectedIds = allIds.Intersect(exIds).ToList();
 
@@ -303,11 +303,11 @@ namespace TvProgViewer.Services.Catalog
                             return await _localizationService.GetResourceAsync("TvChannels.Availability.SelectRequiredAttributes");
                         else
                         {
-                            var combinations = await _tvchannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvchannel.Id);
+                            var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
 
                             combinations = combinations.Where(p => p.StockQuantity >= 0 || p.AllowOutOfStockOrders).ToList();
 
-                            var attributes = await combinations.SelectAwait(async c => await _tvchannelAttributeParser.ParseTvChannelAttributeMappingsAsync(c.AttributesXml)).ToListAsync();
+                            var attributes = await combinations.SelectAwait(async c => await _tvChannelAttributeParser.ParseTvChannelAttributeMappingsAsync(c.AttributesXml)).ToListAsync();
 
                             var flag = attributes.SelectMany(a => a).Any(a => selectedIds.Contains(a.Id));
 
@@ -315,12 +315,12 @@ namespace TvProgViewer.Services.Catalog
                                 return await _localizationService.GetResourceAsync("TvChannels.Availability.SelectRequiredAttributes");
                         }
 
-                    var tvchannelAvailabilityRange = await
-                        _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvchannel.TvChannelAvailabilityRangeId);
-                    stockMessage = tvchannelAvailabilityRange == null
+                    var tvChannelAvailabilityRange = await
+                        _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvChannel.TvChannelAvailabilityRangeId);
+                    stockMessage = tvChannelAvailabilityRange == null
                         ? await _localizationService.GetResourceAsync("TvChannels.Availability.OutOfStock")
                         : string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.AvailabilityRange"),
-                            await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, range => range.Name));
+                            await _localizationService.GetLocalizedAsync(tvChannelAvailabilityRange, range => range.Name));
                 }
                 else
                 {
@@ -334,24 +334,24 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Get stock message
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the message
         /// </returns>
-        protected virtual async Task<string> GetStockMessageAsync(TvChannel tvchannel)
+        protected virtual async Task<string> GetStockMessageAsync(TvChannel tvChannel)
         {
-            if (!tvchannel.DisplayStockAvailability)
+            if (!tvChannel.DisplayStockAvailability)
                 return string.Empty;
 
             var stockMessage = string.Empty;
-            var stockQuantity = await GetTotalStockQuantityAsync(tvchannel);
+            var stockQuantity = await GetTotalStockQuantityAsync(tvChannel);
 
             if (stockQuantity > 0)
             {
-                if (tvchannel.MinStockQuantity >= stockQuantity && tvchannel.LowStockActivity == LowStockActivity.Nothing)
+                if (tvChannel.MinStockQuantity >= stockQuantity && tvChannel.LowStockActivity == LowStockActivity.Nothing)
                 {
-                    stockMessage = tvchannel.DisplayStockQuantity
+                    stockMessage = tvChannel.DisplayStockQuantity
                         ?
                         //display "low stock" with stock quantity
                         string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.LowStockWithQuantity"), stockQuantity)
@@ -361,7 +361,7 @@ namespace TvProgViewer.Services.Catalog
                 }
                 else
                 {
-                    stockMessage = tvchannel.DisplayStockQuantity
+                    stockMessage = tvChannel.DisplayStockQuantity
                         ?
                         //display "in stock" with stock quantity
                         string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.InStockWithQuantity"), stockQuantity)
@@ -373,23 +373,23 @@ namespace TvProgViewer.Services.Catalog
             else
             {
                 //out of stock
-                var tvchannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvchannel.TvChannelAvailabilityRangeId);
-                switch (tvchannel.BackorderMode)
+                var tvChannelAvailabilityRange = await _dateRangeService.GetTvChannelAvailabilityRangeByIdAsync(tvChannel.TvChannelAvailabilityRangeId);
+                switch (tvChannel.BackorderMode)
                 {
                     case BackorderMode.NoBackorders:
-                        stockMessage = tvchannelAvailabilityRange == null
+                        stockMessage = tvChannelAvailabilityRange == null
                             ? await _localizationService.GetResourceAsync("TvChannels.Availability.OutOfStock")
                             : string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.AvailabilityRange"),
-                                await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, range => range.Name));
+                                await _localizationService.GetLocalizedAsync(tvChannelAvailabilityRange, range => range.Name));
                         break;
                     case BackorderMode.AllowQtyBelow0:
                         stockMessage = await _localizationService.GetResourceAsync("TvChannels.Availability.InStock");
                         break;
                     case BackorderMode.AllowQtyBelow0AndNotifyUser:
-                        stockMessage = tvchannelAvailabilityRange == null
+                        stockMessage = tvChannelAvailabilityRange == null
                             ? await _localizationService.GetResourceAsync("TvChannels.Availability.Backordering")
                             : string.Format(await _localizationService.GetResourceAsync("TvChannels.Availability.BackorderingWithDate"),
-                                await _localizationService.GetLocalizedAsync(tvchannelAvailabilityRange, range => range.Name));
+                                await _localizationService.GetLocalizedAsync(tvChannelAvailabilityRange, range => range.Name));
                         break;
                 }
             }
@@ -400,28 +400,28 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Reserve the given quantity in the warehouses.
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="quantity">Quantity, must be negative</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task ReserveInventoryAsync(TvChannel tvchannel, int quantity)
+        protected virtual async Task ReserveInventoryAsync(TvChannel tvChannel, int quantity)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (quantity >= 0)
                 throw new ArgumentException("Value must be negative.", nameof(quantity));
 
             var qty = -quantity;
 
-            var tvchannelInventory = _tvchannelWarehouseInventoryRepository.Table.Where(pwi => pwi.TvChannelId == tvchannel.Id)
+            var tvChannelInventory = _tvChannelWarehouseInventoryRepository.Table.Where(pwi => pwi.TvChannelId == tvChannel.Id)
                 .OrderByDescending(pwi => pwi.StockQuantity - pwi.ReservedQuantity)
                 .ToList();
 
-            if (tvchannelInventory.Count <= 0)
+            if (tvChannelInventory.Count <= 0)
                 return;
 
             // 1st pass: Applying reserved
-            foreach (var item in tvchannelInventory)
+            foreach (var item in tvChannelInventory)
             {
                 var selectQty = Math.Min(Math.Max(0, item.StockQuantity - item.ReservedQuantity), qty);
                 item.ReservedQuantity += selectQty;
@@ -434,38 +434,38 @@ namespace TvProgViewer.Services.Catalog
             if (qty > 0)
             {
                 // 2rd pass: Booking negative stock!
-                var pwi = tvchannelInventory[0];
+                var pwi = tvChannelInventory[0];
                 pwi.ReservedQuantity += qty;
             }
 
-            await UpdateTvChannelWarehouseInventoryAsync(tvchannelInventory);
+            await UpdateTvChannelWarehouseInventoryAsync(tvChannelInventory);
         }
 
         /// <summary>
         /// Unblocks the given quantity reserved items in the warehouses
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="quantity">Quantity, must be positive</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task UnblockReservedInventoryAsync(TvChannel tvchannel, int quantity)
+        protected virtual async Task UnblockReservedInventoryAsync(TvChannel tvChannel, int quantity)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (quantity < 0)
                 throw new ArgumentException("Value must be positive.", nameof(quantity));
 
-            var tvchannelInventory = await _tvchannelWarehouseInventoryRepository.Table.Where(pwi => pwi.TvChannelId == tvchannel.Id)
+            var tvChannelInventory = await _tvChannelWarehouseInventoryRepository.Table.Where(pwi => pwi.TvChannelId == tvChannel.Id)
                 .OrderByDescending(pwi => pwi.ReservedQuantity)
                 .ThenByDescending(pwi => pwi.StockQuantity)
                 .ToListAsync();
 
-            if (!tvchannelInventory.Any())
+            if (!tvChannelInventory.Any())
                 return;
 
             var qty = quantity;
 
-            foreach (var item in tvchannelInventory)
+            foreach (var item in tvChannelInventory)
             {
                 var selectQty = Math.Min(item.ReservedQuantity, qty);
                 item.ReservedQuantity -= selectQty;
@@ -477,30 +477,30 @@ namespace TvProgViewer.Services.Catalog
 
             if (qty > 0)
             {
-                var pwi = tvchannelInventory[0];
+                var pwi = tvChannelInventory[0];
                 pwi.StockQuantity += qty;
             }
 
-            await UpdateTvChannelWarehouseInventoryAsync(tvchannelInventory);
+            await UpdateTvChannelWarehouseInventoryAsync(tvChannelInventory);
         }
 
         /// <summary>
-        /// Gets cross-sell tvchannels by tvchannel identifier
+        /// Gets cross-sell tvChannels by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelIds">The first tvchannel identifiers</param>
+        /// <param name="tvChannelIds">The first tvChannel identifiers</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the cross-sell tvchannels
+        /// The task result contains the cross-sell tvChannels
         /// </returns>
-        protected virtual async Task<IList<CrossSellTvChannel>> GetCrossSellTvChannelsByTvChannelIdsAsync(int[] tvchannelIds, bool showHidden = false)
+        protected virtual async Task<IList<CrossSellTvChannel>> GetCrossSellTvChannelsByTvChannelIdsAsync(int[] tvChannelIds, bool showHidden = false)
         {
-            if (tvchannelIds == null || tvchannelIds.Length == 0)
+            if (tvChannelIds == null || tvChannelIds.Length == 0)
                 return new List<CrossSellTvChannel>();
 
             var query = from csp in _crossSellTvChannelRepository.Table
-                        join p in _tvchannelRepository.Table on csp.TvChannelId2 equals p.Id
-                        where tvchannelIds.Contains(csp.TvChannelId1) &&
+                        join p in _tvChannelRepository.Table on csp.TvChannelId2 equals p.Id
+                        where tvChannelIds.Contains(csp.TvChannelId1) &&
                               !p.Deleted &&
                               (showHidden || p.Published)
                         orderby csp.Id
@@ -511,32 +511,32 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets ratio of useful and not useful tvchannel reviews 
+        /// Gets ratio of useful and not useful tvChannel reviews 
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        protected virtual async Task<(int usefulCount, int notUsefulCount)> GetHelpfulnessCountsAsync(TvChannelReview tvchannelReview)
+        protected virtual async Task<(int usefulCount, int notUsefulCount)> GetHelpfulnessCountsAsync(TvChannelReview tvChannelReview)
         {
-            if (tvchannelReview is null)
-                throw new ArgumentNullException(nameof(tvchannelReview));
+            if (tvChannelReview is null)
+                throw new ArgumentNullException(nameof(tvChannelReview));
 
-            var tvchannelReviewHelpfulness = _tvchannelReviewHelpfulnessRepository.Table.Where(prh => prh.TvChannelReviewId == tvchannelReview.Id);
+            var tvChannelReviewHelpfulness = _tvChannelReviewHelpfulnessRepository.Table.Where(prh => prh.TvChannelReviewId == tvChannelReview.Id);
 
-            return (await tvchannelReviewHelpfulness.CountAsync(prh => prh.WasHelpful),
-                await tvchannelReviewHelpfulness.CountAsync(prh => !prh.WasHelpful));
+            return (await tvChannelReviewHelpfulness.CountAsync(prh => prh.WasHelpful),
+                await tvChannelReviewHelpfulness.CountAsync(prh => !prh.WasHelpful));
         }
 
         /// <summary>
-        /// Inserts a tvchannel review helpfulness record
+        /// Inserts a tvChannel review helpfulness record
         /// </summary>
-        /// <param name="tvchannelReviewHelpfulness">TvChannel review helpfulness record</param>
+        /// <param name="tvChannelReviewHelpfulness">TvChannel review helpfulness record</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        protected virtual async Task InsertTvChannelReviewHelpfulnessAsync(TvChannelReviewHelpfulness tvchannelReviewHelpfulness)
+        protected virtual async Task InsertTvChannelReviewHelpfulnessAsync(TvChannelReviewHelpfulness tvChannelReviewHelpfulness)
         {
-            await _tvchannelReviewHelpfulnessRepository.InsertAsync(tvchannelReviewHelpfulness);
+            await _tvChannelReviewHelpfulnessRepository.InsertAsync(tvChannelReviewHelpfulness);
         }
 
         #endregion
@@ -546,23 +546,23 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannels
 
         /// <summary>
-        /// Delete a tvchannel
+        /// Delete a tvChannel
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelAsync(TvChannel tvchannel)
+        public virtual async Task DeleteTvChannelAsync(TvChannel tvChannel)
         {
-            await _tvchannelRepository.DeleteAsync(tvchannel);
+            await _tvChannelRepository.DeleteAsync(tvChannel);
         }
 
         /// <summary>
-        /// Delete tvchannels
+        /// Delete tvChannels
         /// </summary>
-        /// <param name="tvchannels">TvChannels</param>
+        /// <param name="tvChannels">TvChannels</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelsAsync(IList<TvChannel> tvchannels)
+        public virtual async Task DeleteTvChannelsAsync(IList<TvChannel> tvChannels)
         {
-            await _tvchannelRepository.DeleteAsync(tvchannels);
+            await _tvChannelRepository.DeleteAsync(tvChannels);
         }
 
         /// <summary>
@@ -574,7 +574,7 @@ namespace TvProgViewer.Services.Catalog
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetAllTvChannelsAsync()
         {
-            var tvchannels = await _tvchannelRepository.GetAllAsync(query =>
+            var tvChannels = await _tvChannelRepository.GetAllAsync(query =>
             {
                 return from p in query
                        orderby p.DisplayOrder, p.Id
@@ -582,19 +582,19 @@ namespace TvProgViewer.Services.Catalog
                        select p;
             });
 
-            return tvchannels;
+            return tvChannels;
         }
 
         /// <summary>
-        /// Gets all tvchannels displayed on the home page
+        /// Gets all tvChannels displayed on the home page
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetAllTvChannelsDisplayedOnHomepageAsync()
         {
-            var tvchannels = await _tvchannelRepository.GetAllAsync(query =>
+            var tvChannels = await _tvChannelRepository.GetAllAsync(query =>
             {
                 return from p in query
                        orderby p.DisplayOrder, p.Id
@@ -604,53 +604,53 @@ namespace TvProgViewer.Services.Catalog
                        select p;
             }, cache => cache.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelsHomepageCacheKey));
 
-            return tvchannels;
+            return tvChannels;
         }
 
         /// <summary>
-        /// Gets tvchannel
+        /// Gets tvChannel
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel
+        /// The task result contains the tvChannel
         /// </returns>
-        public virtual async Task<TvChannel> GetTvChannelByIdAsync(int tvchannelId)
+        public virtual async Task<TvChannel> GetTvChannelByIdAsync(int tvChannelId)
         {
-            return await _tvchannelRepository.GetByIdAsync(tvchannelId, cache => default);
+            return await _tvChannelRepository.GetByIdAsync(tvChannelId, cache => default);
         }
 
         /// <summary>
-        /// Get tvchannels by identifiers
+        /// Get tvChannels by identifiers
         /// </summary>
-        /// <param name="tvchannelIds">TvChannel identifiers</param>
+        /// <param name="tvChannelIds">TvChannel identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
-        public virtual async Task<IList<TvChannel>> GetTvChannelsByIdsAsync(int[] tvchannelIds)
+        public virtual async Task<IList<TvChannel>> GetTvChannelsByIdsAsync(int[] tvChannelIds)
         {
-            return await _tvchannelRepository.GetByIdsAsync(tvchannelIds, cache => default, false);
+            return await _tvChannelRepository.GetByIdsAsync(tvChannelIds, cache => default, false);
         }
 
         /// <summary>
-        /// Inserts a tvchannel
+        /// Inserts a tvChannel
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelAsync(TvChannel tvchannel)
+        public virtual async Task InsertTvChannelAsync(TvChannel tvChannel)
         {
-            await _tvchannelRepository.InsertAsync(tvchannel);
+            await _tvChannelRepository.InsertAsync(tvChannel);
         }
 
         /// <summary>
         /// Обновление телеканала детали
         /// </summary>
-        /// <param name="tvchannel">Телеканал детали</param>
+        /// <param name="tvChannel">Телеканал детали</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelAsync(TvChannel tvchannel)
+        public virtual async Task UpdateTvChannelAsync(TvChannel tvChannel)
         {
-            await _tvchannelRepository.UpdateAsync(tvchannel);
+            await _tvChannelRepository.UpdateAsync(tvChannel);
         }
 
         /// <summary>
@@ -660,17 +660,17 @@ namespace TvProgViewer.Services.Catalog
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelListAsync(IList<TvChannel> tvChannels)
         {
-            await _tvchannelRepository.UpdateAsync(tvChannels);
+            await _tvChannelRepository.UpdateAsync(tvChannels);
         }
 
         /// <summary>
-        /// Gets featured tvchannels by a category identifier
+        /// Gets featured tvChannels by a category identifier
         /// </summary>
         /// <param name="categoryId">Category identifier</param>
         /// <param name="storeId">Store identifier; 0 if you want to get all records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list of featured tvchannels
+        /// The task result contains the list of featured tvChannels
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetCategoryFeaturedTvChannelsAsync(int categoryId, int storeId = 0)
         {
@@ -685,8 +685,8 @@ namespace TvProgViewer.Services.Catalog
 
             var featuredTvChannelIds = await _staticCacheManager.GetAsync(cacheKey, async () =>
             {
-                var query = from p in _tvchannelRepository.Table
-                            join pc in _tvchannelCategoryRepository.Table on p.Id equals pc.TvChannelId
+                var query = from p in _tvChannelRepository.Table
+                            join pc in _tvChannelCategoryRepository.Table on p.Id equals pc.TvChannelId
                             where p.Published && !p.Deleted && p.VisibleIndividually &&
                                 (!p.AvailableStartDateTimeUtc.HasValue || p.AvailableStartDateTimeUtc.Value < DateTime.UtcNow) &&
                                 (!p.AvailableEndDateTimeUtc.HasValue || p.AvailableEndDateTimeUtc.Value > DateTime.UtcNow) &&
@@ -705,19 +705,19 @@ namespace TvProgViewer.Services.Catalog
             });
 
             if (featuredTvChannels.Count == 0 && featuredTvChannelIds.Count > 0)
-                featuredTvChannels = await _tvchannelRepository.GetByIdsAsync(featuredTvChannelIds, cache => default, false);
+                featuredTvChannels = await _tvChannelRepository.GetByIdsAsync(featuredTvChannelIds, cache => default, false);
 
             return featuredTvChannels;
         }
 
         /// <summary>
-        /// Gets featured tvchannels by manufacturer identifier
+        /// Gets featured tvChannels by manufacturer identifier
         /// </summary>
         /// <param name="manufacturerId">Manufacturer identifier</param>
         /// <param name="storeId">Store identifier; 0 if you want to get all records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list of featured tvchannels
+        /// The task result contains the list of featured tvChannels
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetManufacturerFeaturedTvChannelsAsync(int manufacturerId, int storeId = 0)
         {
@@ -732,8 +732,8 @@ namespace TvProgViewer.Services.Catalog
 
             var featuredTvChannelIds = await _staticCacheManager.GetAsync(cacheKey, async () =>
             {
-                var query = from p in _tvchannelRepository.Table
-                            join pm in _tvchannelManufacturerRepository.Table on p.Id equals pm.TvChannelId
+                var query = from p in _tvChannelRepository.Table
+                            join pm in _tvChannelManufacturerRepository.Table on p.Id equals pm.TvChannelId
                             where p.Published && !p.Deleted && p.VisibleIndividually &&
                                 (!p.AvailableStartDateTimeUtc.HasValue || p.AvailableStartDateTimeUtc.Value < DateTime.UtcNow) &&
                                 (!p.AvailableEndDateTimeUtc.HasValue || p.AvailableEndDateTimeUtc.Value > DateTime.UtcNow) &&
@@ -752,24 +752,24 @@ namespace TvProgViewer.Services.Catalog
             });
 
             if (featuredTvChannels.Count == 0 && featuredTvChannelIds.Count > 0)
-                featuredTvChannels = await _tvchannelRepository.GetByIdsAsync(featuredTvChannelIds, cache => default, false);
+                featuredTvChannels = await _tvChannelRepository.GetByIdsAsync(featuredTvChannelIds, cache => default, false);
 
             return featuredTvChannels;
         }
 
         /// <summary>
-        /// Gets tvchannels which marked as new
+        /// Gets tvChannels which marked as new
         /// </summary>
         /// <param name="storeId">Store identifier; 0 if you want to get all records</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list of new tvchannels
+        /// The task result contains the list of new tvChannels
         /// </returns>
         public virtual async Task<IPagedList<TvChannel>> GetTvChannelsMarkedAsNewAsync(int storeId = 0, int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var query = from p in _tvchannelRepository.Table
+            var query = from p in _tvChannelRepository.Table
                         where p.Published && p.VisibleIndividually && p.MarkAsNew && !p.Deleted &&
                             DateTime.UtcNow >= (p.MarkAsNewStartDateTimeUtc ?? DateTime.MinValue) &&
                             DateTime.UtcNow <= (p.MarkAsNewEndDateTimeUtc ?? DateTime.MaxValue)
@@ -788,13 +788,13 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get number of tvchannel (published and visible) in certain category
+        /// Get number of tvChannel (published and visible) in certain category
         /// </summary>
         /// <param name="categoryIds">Category identifiers</param>
         /// <param name="storeId">Store identifier; 0 to load all records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the number of tvchannels
+        /// The task result contains the number of tvChannels
         /// </returns>
         public virtual async Task<int> GetNumberOfTvChannelsInCategoryAsync(IList<int> categoryIds = null, int storeId = 0)
         {
@@ -802,7 +802,7 @@ namespace TvProgViewer.Services.Catalog
             if (categoryIds != null && categoryIds.Contains(0))
                 categoryIds.Remove(0);
 
-            var query = _tvchannelRepository.Table.Where(p => p.Published && !p.Deleted && p.VisibleIndividually);
+            var query = _tvChannelRepository.Table.Where(p => p.Published && !p.Deleted && p.VisibleIndividually);
 
             //apply store mapping constraints
             query = await _storeMappingService.ApplyStoreMapping(query, storeId);
@@ -816,7 +816,7 @@ namespace TvProgViewer.Services.Catalog
             if (categoryIds != null && categoryIds.Any())
             {
                 query = from p in query
-                        join pc in _tvchannelCategoryRepository.Table on p.Id equals pc.TvChannelId
+                        join pc in _tvChannelCategoryRepository.Table on p.Id equals pc.TvChannelId
                         where categoryIds.Contains(pc.CategoryId)
                         select p;
             }
@@ -824,12 +824,12 @@ namespace TvProgViewer.Services.Catalog
             var cacheKey = _staticCacheManager
                 .PrepareKeyForDefaultCache(TvProgCatalogDefaults.CategoryTvChannelsNumberCacheKey, userRoleIds, storeId, categoryIds);
 
-            //only distinct tvchannels
+            //only distinct tvChannels
             return await _staticCacheManager.GetAsync(cacheKey, () => query.Select(p => p.Id).Count());
         }
 
         /// <summary>
-        /// Search tvchannels
+        /// Search tvChannels
         /// </summary>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
@@ -838,29 +838,29 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="storeId">Store identifier; 0 to load all records</param>
         /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
         /// <param name="warehouseId">Warehouse identifier; 0 to load all records</param>
-        /// <param name="tvchannelType">TvChannel type; 0 to load all records</param>
-        /// <param name="visibleIndividuallyOnly">A values indicating whether to load only tvchannels marked as "visible individually"; "false" to load all records; "true" to load "visible individually" only</param>
-        /// <param name="excludeFeaturedTvChannels">A value indicating whether loaded tvchannels are marked as featured (relates only to categories and manufacturers); "false" (by default) to load all records; "true" to exclude featured tvchannels from results</param>
+        /// <param name="tvChannelType">TvChannel type; 0 to load all records</param>
+        /// <param name="visibleIndividuallyOnly">A values indicating whether to load only tvChannels marked as "visible individually"; "false" to load all records; "true" to load "visible individually" only</param>
+        /// <param name="excludeFeaturedTvChannels">A value indicating whether loaded tvChannels are marked as featured (relates only to categories and manufacturers); "false" (by default) to load all records; "true" to exclude featured tvChannels from results</param>
         /// <param name="priceMin">Minimum price; null to load all records</param>
         /// <param name="priceMax">Maximum price; null to load all records</param>
-        /// <param name="tvchannelTagId">TvChannel tag identifier; 0 to load all records</param>
+        /// <param name="tvChannelTagId">TvChannel tag identifier; 0 to load all records</param>
         /// <param name="keywords">Keywords</param>
-        /// <param name="searchDescriptions">A value indicating whether to search by a specified "keyword" in tvchannel descriptions</param>
+        /// <param name="searchDescriptions">A value indicating whether to search by a specified "keyword" in tvChannel descriptions</param>
         /// <param name="searchManufacturerPartNumber">A value indicating whether to search by a specified "keyword" in manufacturer part number</param>
-        /// <param name="searchSku">A value indicating whether to search by a specified "keyword" in tvchannel SKU</param>
-        /// <param name="searchTvChannelTags">A value indicating whether to search by a specified "keyword" in tvchannel tags</param>
+        /// <param name="searchSku">A value indicating whether to search by a specified "keyword" in tvChannel SKU</param>
+        /// <param name="searchTvChannelTags">A value indicating whether to search by a specified "keyword" in tvChannel tags</param>
         /// <param name="languageId">Language identifier (search for text searching)</param>
-        /// <param name="filteredSpecOptions">Specification options list to filter tvchannels; null to load all records</param>
+        /// <param name="filteredSpecOptions">Specification options list to filter tvChannels; null to load all records</param>
         /// <param name="orderBy">Order by</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="overridePublished">
         /// null - process "Published" property according to "showHidden" parameter
-        /// true - load only "Published" tvchannels
-        /// false - load only "Unpublished" tvchannels
+        /// true - load only "Published" tvChannels
+        /// false - load only "Unpublished" tvChannels
         /// </param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
         public virtual async Task<IPagedList<TvChannel>> SearchTvChannelsAsync(
             int pageIndex = 0,
@@ -870,12 +870,12 @@ namespace TvProgViewer.Services.Catalog
             int storeId = 0,
             int vendorId = 0,
             int warehouseId = 0,
-            TvChannelType? tvchannelType = null,
+            TvChannelType? tvChannelType = null,
             bool visibleIndividuallyOnly = false,
             bool excludeFeaturedTvChannels = false,
             decimal? priceMin = null,
             decimal? priceMax = null,
-            int tvchannelTagId = 0,
+            int tvChannelTagId = 0,
             string keywords = null,
             bool searchDescriptions = false,
             bool searchManufacturerPartNumber = true,
@@ -891,25 +891,25 @@ namespace TvProgViewer.Services.Catalog
             if (pageSize == int.MaxValue)
                 pageSize = int.MaxValue - 1;
 
-            var tvchannelsQuery = _tvchannelRepository.Table;
+            var tvChannelsQuery = _tvChannelRepository.Table;
 
             if (!showHidden)
-                tvchannelsQuery = tvchannelsQuery.Where(p => p.Published);
+                tvChannelsQuery = tvChannelsQuery.Where(p => p.Published);
             else if (overridePublished.HasValue)
-                tvchannelsQuery = tvchannelsQuery.Where(p => p.Published == overridePublished.Value);
+                tvChannelsQuery = tvChannelsQuery.Where(p => p.Published == overridePublished.Value);
 
             if (!showHidden)
             {
                 //apply store mapping constraints
-                tvchannelsQuery = await _storeMappingService.ApplyStoreMapping(tvchannelsQuery, storeId);
+                tvChannelsQuery = await _storeMappingService.ApplyStoreMapping(tvChannelsQuery, storeId);
 
                 //apply ACL constraints
                 var user = await _workContext.GetCurrentUserAsync();
-                tvchannelsQuery = await _aclService.ApplyAcl(tvchannelsQuery, user);
+                tvChannelsQuery = await _aclService.ApplyAcl(tvChannelsQuery, user);
             }
 
-            tvchannelsQuery =
-                from p in tvchannelsQuery
+            tvChannelsQuery =
+                from p in tvChannelsQuery
                 where !p.Deleted &&
                     (!visibleIndividuallyOnly || p.VisibleIndividually) &&
                     (vendorId == 0 || p.VendorId == vendorId) &&
@@ -917,10 +917,10 @@ namespace TvProgViewer.Services.Catalog
                         warehouseId == 0 ||
                         (
                             !p.UseMultipleWarehouses ? p.WarehouseId == warehouseId :
-                                _tvchannelWarehouseInventoryRepository.Table.Any(pwi => pwi.WarehouseId == warehouseId && pwi.TvChannelId == p.Id)
+                                _tvChannelWarehouseInventoryRepository.Table.Any(pwi => pwi.WarehouseId == warehouseId && pwi.TvChannelId == p.Id)
                         )
                     ) &&
-                    (tvchannelType == null || p.TvChannelTypeId == (int)tvchannelType) &&
+                    (tvChannelType == null || p.TvChannelTypeId == (int)tvChannelType) &&
                     (showHidden ||
                             DateTime.UtcNow >= (p.AvailableStartDateTimeUtc ?? DateTime.MinValue) &&
                             DateTime.UtcNow <= (p.AvailableEndDateTimeUtc ?? DateTime.MaxValue)
@@ -935,19 +935,19 @@ namespace TvProgViewer.Services.Catalog
 
                 //Set a flag which will to points need to search in localized properties. If showHidden doesn't set to true should be at least two published languages.
                 var searchLocalizedValue = languageId > 0 && langs.Count >= 2 && (showHidden || langs.Count(l => l.Published) >= 2);
-                IQueryable<int> tvchannelsByKeywords;
+                IQueryable<int> tvChannelsByKeywords;
 
                 var user = await _workContext.GetCurrentUserAsync();
                 var activeSearchProvider = await _searchPluginManager.LoadPrimaryPluginAsync(user, storeId);
 
                 if (activeSearchProvider is not null)
                 {
-                    tvchannelsByKeywords = (await activeSearchProvider.SearchTvChannelsAsync(keywords, searchLocalizedValue)).AsQueryable();
+                    tvChannelsByKeywords = (await activeSearchProvider.SearchTvChannelsAsync(keywords, searchLocalizedValue)).AsQueryable();
                 }
                 else
                 {
-                    tvchannelsByKeywords =
-                        from p in _tvchannelRepository.Table
+                    tvChannelsByKeywords =
+                        from p in _tvChannelRepository.Table
                         where p.Name.Contains(keywords) ||
                             (searchDescriptions &&
                                 (p.ShortDescription.Contains(keywords) || p.FullDescription.Contains(keywords))) ||
@@ -957,7 +957,7 @@ namespace TvProgViewer.Services.Catalog
 
                     if (searchLocalizedValue)
                     {
-                        tvchannelsByKeywords = tvchannelsByKeywords.Union(
+                        tvChannelsByKeywords = tvChannelsByKeywords.Union(
                             from lp in _localizedPropertyRepository.Table
                             let checkName = lp.LocaleKey == nameof(TvChannel.Name) &&
                                             lp.LocaleValue.Contains(keywords)
@@ -974,8 +974,8 @@ namespace TvProgViewer.Services.Catalog
                 //search by SKU for TvChannelAttributeCombination
                 if (searchSku)
                 {
-                    tvchannelsByKeywords = tvchannelsByKeywords.Union(
-                        from pac in _tvchannelAttributeCombinationRepository.Table
+                    tvChannelsByKeywords = tvChannelsByKeywords.Union(
+                        from pac in _tvChannelAttributeCombinationRepository.Table
                         where pac.Sku == keywords
                         select pac.TvChannelId);
                 }
@@ -983,8 +983,8 @@ namespace TvProgViewer.Services.Catalog
                 //search by category name if admin allows
                 if (_catalogSettings.AllowUsersToSearchWithCategoryName)
                 {
-                    tvchannelsByKeywords = tvchannelsByKeywords.Union(
-                        from pc in _tvchannelCategoryRepository.Table
+                    tvChannelsByKeywords = tvChannelsByKeywords.Union(
+                        from pc in _tvChannelCategoryRepository.Table
                         join c in _categoryRepository.Table on pc.CategoryId equals c.Id
                         where c.Name.Contains(keywords)
                         select pc.TvChannelId
@@ -992,8 +992,8 @@ namespace TvProgViewer.Services.Catalog
 
                     if (searchLocalizedValue)
                     {
-                        tvchannelsByKeywords = tvchannelsByKeywords.Union(
-                        from pc in _tvchannelCategoryRepository.Table
+                        tvChannelsByKeywords = tvChannelsByKeywords.Union(
+                        from pc in _tvChannelCategoryRepository.Table
                         join lp in _localizedPropertyRepository.Table on pc.CategoryId equals lp.EntityId
                         where lp.LocaleKeyGroup == nameof(Category) &&
                               lp.LocaleKey == nameof(Category.Name) &&
@@ -1006,8 +1006,8 @@ namespace TvProgViewer.Services.Catalog
                 //search by manufacturer name if admin allows
                 if (_catalogSettings.AllowUsersToSearchWithManufacturerName)
                 {
-                    tvchannelsByKeywords = tvchannelsByKeywords.Union(
-                        from pm in _tvchannelManufacturerRepository.Table
+                    tvChannelsByKeywords = tvChannelsByKeywords.Union(
+                        from pm in _tvChannelManufacturerRepository.Table
                         join m in _manufacturerRepository.Table on pm.ManufacturerId equals m.Id
                         where m.Name.Contains(keywords)
                         select pm.TvChannelId
@@ -1015,8 +1015,8 @@ namespace TvProgViewer.Services.Catalog
 
                     if (searchLocalizedValue)
                     {
-                        tvchannelsByKeywords = tvchannelsByKeywords.Union(
-                        from pm in _tvchannelManufacturerRepository.Table
+                        tvChannelsByKeywords = tvChannelsByKeywords.Union(
+                        from pm in _tvChannelManufacturerRepository.Table
                         join lp in _localizedPropertyRepository.Table on pm.ManufacturerId equals lp.EntityId
                         where lp.LocaleKeyGroup == nameof(Manufacturer) &&
                               lp.LocaleKey == nameof(Manufacturer.Name) &&
@@ -1028,17 +1028,17 @@ namespace TvProgViewer.Services.Catalog
 
                 if (searchTvChannelTags)
                 {
-                    tvchannelsByKeywords = tvchannelsByKeywords.Union(
-                        from pptm in _tvchannelTagMappingRepository.Table
-                        join pt in _tvchannelTagRepository.Table on pptm.TvChannelTagId equals pt.Id
+                    tvChannelsByKeywords = tvChannelsByKeywords.Union(
+                        from pptm in _tvChannelTagMappingRepository.Table
+                        join pt in _tvChannelTagRepository.Table on pptm.TvChannelTagId equals pt.Id
                         where pt.Name.Contains(keywords)
                         select pptm.TvChannelId
                     );
 
                     if (searchLocalizedValue)
                     {
-                        tvchannelsByKeywords = tvchannelsByKeywords.Union(
-                        from pptm in _tvchannelTagMappingRepository.Table
+                        tvChannelsByKeywords = tvChannelsByKeywords.Union(
+                        from pptm in _tvChannelTagMappingRepository.Table
                         join lp in _localizedPropertyRepository.Table on pptm.TvChannelTagId equals lp.EntityId
                         where lp.LocaleKeyGroup == nameof(TvChannelTag) &&
                               lp.LocaleKey == nameof(TvChannelTag.Name) &&
@@ -1048,9 +1048,9 @@ namespace TvProgViewer.Services.Catalog
                     }
                 }
 
-                tvchannelsQuery =
-                    from p in tvchannelsQuery
-                    join pbk in tvchannelsByKeywords on p.Id equals pbk
+                tvChannelsQuery =
+                    from p in tvChannelsQuery
+                    join pbk in tvChannelsByKeywords on p.Id equals pbk
                     select p;
             }
 
@@ -1061,8 +1061,8 @@ namespace TvProgViewer.Services.Catalog
 
                 if (categoryIds.Any())
                 {
-                    var tvchannelCategoryQuery =
-                        from pc in _tvchannelCategoryRepository.Table
+                    var tvChannelCategoryQuery =
+                        from pc in _tvChannelCategoryRepository.Table
                         where (!excludeFeaturedTvChannels || !pc.IsFeaturedTvChannel) &&
                             categoryIds.Contains(pc.CategoryId)
                         group pc by pc.TvChannelId into pc
@@ -1072,9 +1072,9 @@ namespace TvProgViewer.Services.Catalog
                             DisplayOrder = pc.First().DisplayOrder
                         };
 
-                    tvchannelsQuery =
-                        from p in tvchannelsQuery
-                        join pc in tvchannelCategoryQuery on p.Id equals pc.TvChannelId
+                    tvChannelsQuery =
+                        from p in tvChannelsQuery
+                        join pc in tvChannelCategoryQuery on p.Id equals pc.TvChannelId
                         orderby pc.DisplayOrder, p.Name
                         select p;
                 }
@@ -1087,8 +1087,8 @@ namespace TvProgViewer.Services.Catalog
 
                 if (manufacturerIds.Any())
                 {
-                    var tvchannelManufacturerQuery =
-                        from pm in _tvchannelManufacturerRepository.Table
+                    var tvChannelManufacturerQuery =
+                        from pm in _tvChannelManufacturerRepository.Table
                         where (!excludeFeaturedTvChannels || !pm.IsFeaturedTvChannel) &&
                             manufacturerIds.Contains(pm.ManufacturerId)
                         group pm by pm.TvChannelId into pm
@@ -1098,20 +1098,20 @@ namespace TvProgViewer.Services.Catalog
                             DisplayOrder = pm.First().DisplayOrder
                         };
 
-                    tvchannelsQuery =
-                        from p in tvchannelsQuery
-                        join pm in tvchannelManufacturerQuery on p.Id equals pm.TvChannelId
+                    tvChannelsQuery =
+                        from p in tvChannelsQuery
+                        join pm in tvChannelManufacturerQuery on p.Id equals pm.TvChannelId
                         orderby pm.DisplayOrder, p.Name
                         select p;
                 }
             }
 
-            if (tvchannelTagId > 0)
+            if (tvChannelTagId > 0)
             {
-                tvchannelsQuery =
-                    from p in tvchannelsQuery
-                    join ptm in _tvchannelTagMappingRepository.Table on p.Id equals ptm.TvChannelId
-                    where ptm.TvChannelTagId == tvchannelTagId
+                tvChannelsQuery =
+                    from p in tvChannelsQuery
+                    join ptm in _tvChannelTagMappingRepository.Table on p.Id equals ptm.TvChannelId
+                    where ptm.TvChannelTagId == tvChannelTagId
                     select p;
             }
 
@@ -1127,38 +1127,38 @@ namespace TvProgViewer.Services.Catalog
                         .Where(o => o.SpecificationAttributeId == specificationAttributeId)
                         .Select(o => o.Id);
 
-                    var tvchannelSpecificationQuery =
-                        from psa in _tvchannelSpecificationAttributeRepository.Table
+                    var tvChannelSpecificationQuery =
+                        from psa in _tvChannelSpecificationAttributeRepository.Table
                         where psa.AllowFiltering && optionIdsBySpecificationAttribute.Contains(psa.SpecificationAttributeOptionId)
                         select psa;
 
-                    tvchannelsQuery =
-                        from p in tvchannelsQuery
-                        where tvchannelSpecificationQuery.Any(pc => pc.TvChannelId == p.Id)
+                    tvChannelsQuery =
+                        from p in tvChannelsQuery
+                        where tvChannelSpecificationQuery.Any(pc => pc.TvChannelId == p.Id)
                         select p;
                 }
             }
 
-            return await tvchannelsQuery.OrderBy(_localizedPropertyRepository, await _workContext.GetWorkingLanguageAsync(), orderBy).ToPagedListAsync(pageIndex, pageSize);
+            return await tvChannelsQuery.OrderBy(_localizedPropertyRepository, await _workContext.GetWorkingLanguageAsync(), orderBy).ToPagedListAsync(pageIndex, pageSize);
         }
 
         /// <summary>
-        /// Gets tvchannels by tvchannel attribute
+        /// Gets tvChannels by tvChannel attribute
         /// </summary>
-        /// <param name="tvchannelAttributeId">TvChannel attribute identifier</param>
+        /// <param name="tvChannelAttributeId">TvChannel attribute identifier</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
-        public virtual async Task<IPagedList<TvChannel>> GetTvChannelsByTvChannelAttributeIdAsync(int tvchannelAttributeId,
+        public virtual async Task<IPagedList<TvChannel>> GetTvChannelsByTvChannelAttributeIdAsync(int tvChannelAttributeId,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var query = from p in _tvchannelRepository.Table
-                        join pam in _tvchannelAttributeMappingRepository.Table on p.Id equals pam.TvChannelId
+            var query = from p in _tvChannelRepository.Table
+                        join pam in _tvChannelAttributeMappingRepository.Table on p.Id equals pam.TvChannelId
                         where
-                            pam.TvChannelAttributeId == tvchannelAttributeId &&
+                            pam.TvChannelAttributeId == tvChannelAttributeId &&
                             !p.Deleted
                         orderby p.Name
                         select p;
@@ -1167,20 +1167,20 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets associated tvchannels
+        /// Gets associated tvChannels
         /// </summary>
-        /// <param name="parentGroupedTvChannelId">Parent tvchannel identifier (used with grouped tvchannels)</param>
+        /// <param name="parentGroupedTvChannelId">Parent tvChannel identifier (used with grouped tvChannels)</param>
         /// <param name="storeId">Store identifier; 0 to load all records</param>
         /// <param name="vendorId">Vendor identifier; 0 to load all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
         public virtual async Task<IList<TvChannel>> GetAssociatedTvChannelsAsync(int parentGroupedTvChannelId,
             int storeId = 0, int vendorId = 0, bool showHidden = false)
         {
-            var query = _tvchannelRepository.Table;
+            var query = _tvChannelRepository.Table;
             query = query.Where(x => x.ParentGroupedTvChannelId == parentGroupedTvChannelId);
             if (!showHidden)
             {
@@ -1200,36 +1200,36 @@ namespace TvProgViewer.Services.Catalog
             query = query.Where(x => !x.Deleted);
             query = query.OrderBy(x => x.DisplayOrder).ThenBy(x => x.Id);
 
-            var tvchannels = await query.ToListAsync();
+            var tvChannels = await query.ToListAsync();
 
             //ACL mapping
             if (!showHidden)
-                tvchannels = await tvchannels.WhereAwait(async x => await _aclService.AuthorizeAsync(x)).ToListAsync();
+                tvChannels = await tvChannels.WhereAwait(async x => await _aclService.AuthorizeAsync(x)).ToListAsync();
 
             //Store mapping
             if (!showHidden && storeId > 0)
-                tvchannels = await tvchannels.WhereAwait(async x => await _storeMappingService.AuthorizeAsync(x, storeId)).ToListAsync();
+                tvChannels = await tvChannels.WhereAwait(async x => await _storeMappingService.AuthorizeAsync(x, storeId)).ToListAsync();
 
-            return tvchannels;
+            return tvChannels;
         }
 
         /// <summary>
-        /// Update tvchannel review totals
+        /// Update tvChannel review totals
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelReviewTotalsAsync(TvChannel tvchannel)
+        public virtual async Task UpdateTvChannelReviewTotalsAsync(TvChannel tvChannel)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var approvedRatingSum = 0;
             var notApprovedRatingSum = 0;
             var approvedTotalReviews = 0;
             var notApprovedTotalReviews = 0;
 
-            var reviews = await _tvchannelReviewRepository.Table
-                .Where(r => r.TvChannelId == tvchannel.Id)
+            var reviews = await _tvChannelReviewRepository.Table
+                .Where(r => r.TvChannelId == tvChannel.Id)
                 .ToListAsync();
             foreach (var pr in reviews)
                 if (pr.IsApproved)
@@ -1243,86 +1243,86 @@ namespace TvProgViewer.Services.Catalog
                     notApprovedTotalReviews++;
                 }
 
-            tvchannel.ApprovedRatingSum = approvedRatingSum;
-            tvchannel.NotApprovedRatingSum = notApprovedRatingSum;
-            tvchannel.ApprovedTotalReviews = approvedTotalReviews;
-            tvchannel.NotApprovedTotalReviews = notApprovedTotalReviews;
-            await UpdateTvChannelAsync(tvchannel);
+            tvChannel.ApprovedRatingSum = approvedRatingSum;
+            tvChannel.NotApprovedRatingSum = notApprovedRatingSum;
+            tvChannel.ApprovedTotalReviews = approvedTotalReviews;
+            tvChannel.NotApprovedTotalReviews = notApprovedTotalReviews;
+            await UpdateTvChannelAsync(tvChannel);
         }
 
         /// <summary>
-        /// Get low stock tvchannels
+        /// Get low stock tvChannels
         /// </summary>
         /// <param name="vendorId">Vendor identifier; pass null to load all records</param>
-        /// <param name="loadPublishedOnly">Whether to load published tvchannels only; pass null to load all tvchannels, pass true to load only published tvchannels, pass false to load only unpublished tvchannels</param>
+        /// <param name="loadPublishedOnly">Whether to load published tvChannels only; pass null to load all tvChannels, pass true to load only published tvChannels, pass false to load only unpublished tvChannels</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
         public virtual async Task<IPagedList<TvChannel>> GetLowStockTvChannelsAsync(int? vendorId = null, bool? loadPublishedOnly = true,
             int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
         {
-            var query = _tvchannelRepository.Table;
+            var query = _tvChannelRepository.Table;
 
-            //filter by tvchannels with tracking inventory
-            query = query.Where(tvchannel => tvchannel.ManageInventoryMethodId == (int)ManageInventoryMethod.ManageStock);
+            //filter by tvChannels with tracking inventory
+            query = query.Where(tvChannel => tvChannel.ManageInventoryMethodId == (int)ManageInventoryMethod.ManageStock);
 
-            //filter by tvchannels with stock quantity less than the minimum
-            query = query.Where(tvchannel =>
-                (tvchannel.UseMultipleWarehouses ? _tvchannelWarehouseInventoryRepository.Table.Where(pwi => pwi.TvChannelId == tvchannel.Id).Sum(pwi => pwi.StockQuantity - pwi.ReservedQuantity)
-                    : tvchannel.StockQuantity) <= tvchannel.MinStockQuantity);
+            //filter by tvChannels with stock quantity less than the minimum
+            query = query.Where(tvChannel =>
+                (tvChannel.UseMultipleWarehouses ? _tvChannelWarehouseInventoryRepository.Table.Where(pwi => pwi.TvChannelId == tvChannel.Id).Sum(pwi => pwi.StockQuantity - pwi.ReservedQuantity)
+                    : tvChannel.StockQuantity) <= tvChannel.MinStockQuantity);
 
-            //ignore deleted tvchannels
-            query = query.Where(tvchannel => !tvchannel.Deleted);
+            //ignore deleted tvChannels
+            query = query.Where(tvChannel => !tvChannel.Deleted);
 
-            //ignore grouped tvchannels
-            query = query.Where(tvchannel => tvchannel.TvChannelTypeId != (int)TvChannelType.GroupedTvChannel);
+            //ignore grouped tvChannels
+            query = query.Where(tvChannel => tvChannel.TvChannelTypeId != (int)TvChannelType.GroupedTvChannel);
 
             //filter by vendor
             if (vendorId.HasValue && vendorId.Value > 0)
-                query = query.Where(tvchannel => tvchannel.VendorId == vendorId.Value);
+                query = query.Where(tvChannel => tvChannel.VendorId == vendorId.Value);
 
-            //whether to load published tvchannels only
+            //whether to load published tvChannels only
             if (loadPublishedOnly.HasValue)
-                query = query.Where(tvchannel => tvchannel.Published == loadPublishedOnly.Value);
+                query = query.Where(tvChannel => tvChannel.Published == loadPublishedOnly.Value);
 
-            query = query.OrderBy(tvchannel => tvchannel.MinStockQuantity).ThenBy(tvchannel => tvchannel.DisplayOrder).ThenBy(tvchannel => tvchannel.Id);
+            query = query.OrderBy(tvChannel => tvChannel.MinStockQuantity).ThenBy(tvChannel => tvChannel.DisplayOrder).ThenBy(tvChannel => tvChannel.Id);
 
             return await query.ToPagedListAsync(pageIndex, pageSize, getOnlyTotalCount);
         }
 
         /// <summary>
-        /// Get low stock tvchannel combinations
+        /// Get low stock tvChannel combinations
         /// </summary>
         /// <param name="vendorId">Vendor identifier; pass null to load all records</param>
-        /// <param name="loadPublishedOnly">Whether to load combinations of published tvchannels only; pass null to load all tvchannels, pass true to load only published tvchannels, pass false to load only unpublished tvchannels</param>
+        /// <param name="loadPublishedOnly">Whether to load combinations of published tvChannels only; pass null to load all tvChannels, pass true to load only published tvChannels, pass false to load only unpublished tvChannels</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <param name="getOnlyTotalCount">A value in indicating whether you want to load only total number of records. Set to "true" if you don't want to load data from database</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel combinations
+        /// The task result contains the tvChannel combinations
         /// </returns>
         public virtual async Task<IPagedList<TvChannelAttributeCombination>> GetLowStockTvChannelCombinationsAsync(int? vendorId = null, bool? loadPublishedOnly = true,
             int pageIndex = 0, int pageSize = int.MaxValue, bool getOnlyTotalCount = false)
         {
-            var combinations = from pac in _tvchannelAttributeCombinationRepository.Table
-                               join p in _tvchannelRepository.Table on pac.TvChannelId equals p.Id
+            var combinations = from pac in _tvChannelAttributeCombinationRepository.Table
+                               join p in _tvChannelRepository.Table on pac.TvChannelId equals p.Id
                                where
                                    //filter by combinations with stock quantity less than the minimum
                                    pac.StockQuantity <= pac.MinStockQuantity &&
-                                   //filter by tvchannels with tracking inventory by attributes
+                                   //filter by tvChannels with tracking inventory by attributes
                                    p.ManageInventoryMethodId == (int)ManageInventoryMethod.ManageStockByAttributes &&
-                                   //ignore deleted tvchannels
+                                   //ignore deleted tvChannels
                                    !p.Deleted &&
-                                   //ignore grouped tvchannels
+                                   //ignore grouped tvChannels
                                    p.TvChannelTypeId != (int)TvChannelType.GroupedTvChannel &&
                                    //filter by vendor
                                    ((vendorId ?? 0) == 0 || p.VendorId == vendorId) &&
-                                   //whether to load published tvchannels only
+                                   //whether to load published tvChannels only
                                    (loadPublishedOnly == null || p.Published == loadPublishedOnly)
                                orderby pac.TvChannelId, pac.Id
                                select pac;
@@ -1331,12 +1331,12 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a tvchannel by SKU
+        /// Gets a tvChannel by SKU
         /// </summary>
         /// <param name="sku">SKU</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel
+        /// The task result contains the tvChannel
         /// </returns>
         public virtual async Task<TvChannel> GetTvChannelBySkuAsync(string sku)
         {
@@ -1345,31 +1345,31 @@ namespace TvProgViewer.Services.Catalog
 
             sku = sku.Trim();
 
-            var query = from p in _tvchannelRepository.Table
+            var query = from p in _tvChannelRepository.Table
                         orderby p.Id
                         where !p.Deleted &&
                         p.Sku == sku
                         select p;
-            var tvchannel = await query.FirstOrDefaultAsync();
+            var tvChannel = await query.FirstOrDefaultAsync();
 
-            return tvchannel;
+            return tvChannel;
         }
 
         /// <summary>
-        /// Gets a tvchannels by SKU array
+        /// Gets a tvChannels by SKU array
         /// </summary>
         /// <param name="skuArray">SKU array</param>
         /// <param name="vendorId">Vendor ID; 0 to load all records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
         public async Task<IList<TvChannel>> GetTvChannelsBySkuAsync(string[] skuArray, int vendorId = 0)
         {
             if (skuArray == null)
                 throw new ArgumentNullException(nameof(skuArray));
 
-            var query = _tvchannelRepository.Table;
+            var query = _tvChannelRepository.Table;
             query = query.Where(p => !p.Deleted && skuArray.Contains(p.Sku));
 
             if (vendorId != 0)
@@ -1381,63 +1381,63 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Update HasTierPrices property (used for performance optimization)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateHasTierPricesPropertyAsync(TvChannel tvchannel)
+        public virtual async Task UpdateHasTierPricesPropertyAsync(TvChannel tvChannel)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            tvchannel.HasTierPrices = (await GetTierPricesByTvChannelAsync(tvchannel.Id)).Any();
-            await UpdateTvChannelAsync(tvchannel);
+            tvChannel.HasTierPrices = (await GetTierPricesByTvChannelAsync(tvChannel.Id)).Any();
+            await UpdateTvChannelAsync(tvChannel);
         }
 
         /// <summary>
         /// Update HasDiscountsApplied property (used for performance optimization)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateHasDiscountsAppliedAsync(TvChannel tvchannel)
+        public virtual async Task UpdateHasDiscountsAppliedAsync(TvChannel tvChannel)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            tvchannel.HasDiscountsApplied = _discountTvChannelMappingRepository.Table.Any(dpm => dpm.EntityId == tvchannel.Id);
-            await UpdateTvChannelAsync(tvchannel);
+            tvChannel.HasDiscountsApplied = _discountTvChannelMappingRepository.Table.Any(dpm => dpm.EntityId == tvChannel.Id);
+            await UpdateTvChannelAsync(tvChannel);
         }
 
         /// <summary>
-        /// Gets number of tvchannels by vendor identifier
+        /// Gets number of tvChannels by vendor identifier
         /// </summary>
         /// <param name="vendorId">Vendor identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the number of tvchannels
+        /// The task result contains the number of tvChannels
         /// </returns>
         public async Task<int> GetNumberOfTvChannelsByVendorIdAsync(int vendorId)
         {
             if (vendorId == 0)
                 return 0;
 
-            return await _tvchannelRepository.Table.CountAsync(p => p.VendorId == vendorId && !p.Deleted);
+            return await _tvChannelRepository.Table.CountAsync(p => p.VendorId == vendorId && !p.Deleted);
         }
 
         /// <summary>
-        /// Parse "required tvchannel Ids" property
+        /// Parse "required tvChannel Ids" property
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <returns>A list of required tvchannel IDs</returns>
-        public virtual int[] ParseRequiredTvChannelIds(TvChannel tvchannel)
+        /// <param name="tvChannel">TvChannel</param>
+        /// <returns>A list of required tvChannel IDs</returns>
+        public virtual int[] ParseRequiredTvChannelIds(TvChannel tvChannel)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            if (string.IsNullOrEmpty(tvchannel.RequiredTvChannelIds))
+            if (string.IsNullOrEmpty(tvChannel.RequiredTvChannelIds))
                 return Array.Empty<int>();
 
             var ids = new List<int>();
 
-            foreach (var idStr in tvchannel.RequiredTvChannelIds
+            foreach (var idStr in tvChannel.RequiredTvChannelIds
                 .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim()))
                 if (int.TryParse(idStr, out var id))
@@ -1447,22 +1447,22 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get a value indicating whether a tvchannel is available now (availability dates)
+        /// Get a value indicating whether a tvChannel is available now (availability dates)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="dateTime">Datetime to check; pass null to use current date</param>
         /// <returns>Result</returns>
-        public virtual bool TvChannelIsAvailable(TvChannel tvchannel, DateTime? dateTime = null)
+        public virtual bool TvChannelIsAvailable(TvChannel tvChannel, DateTime? dateTime = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             dateTime ??= DateTime.UtcNow;
 
-            if (tvchannel.AvailableStartDateTimeUtc.HasValue && tvchannel.AvailableStartDateTimeUtc.Value > dateTime)
+            if (tvChannel.AvailableStartDateTimeUtc.HasValue && tvChannel.AvailableStartDateTimeUtc.Value > dateTime)
                 return false;
 
-            if (tvchannel.AvailableEndDateTimeUtc.HasValue && tvchannel.AvailableEndDateTimeUtc.Value < dateTime)
+            if (tvChannel.AvailableEndDateTimeUtc.HasValue && tvChannel.AvailableEndDateTimeUtc.Value < dateTime)
                 return false;
 
             return true;
@@ -1471,17 +1471,17 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Get a list of allowed quantities (parse 'AllowedQuantities' property)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <returns>Result</returns>
-        public virtual int[] ParseAllowedQuantities(TvChannel tvchannel)
+        public virtual int[] ParseAllowedQuantities(TvChannel tvChannel)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var result = new List<int>();
-            if (!string.IsNullOrWhiteSpace(tvchannel.AllowedQuantities))
+            if (!string.IsNullOrWhiteSpace(tvChannel.AllowedQuantities))
             {
-                var quantities = tvchannel.AllowedQuantities
+                var quantities = tvChannel.AllowedQuantities
                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                    .ToList();
                 foreach(var qtyStr in quantities)
@@ -1497,7 +1497,7 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Get total quantity
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="useReservedQuantity">
         /// A value indicating whether we should consider "Reserved Quantity" property 
         /// when "multiple warehouses" are used
@@ -1510,19 +1510,19 @@ namespace TvProgViewer.Services.Catalog
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        public virtual async Task<int> GetTotalStockQuantityAsync(TvChannel tvchannel, bool useReservedQuantity = true, int warehouseId = 0)
+        public virtual async Task<int> GetTotalStockQuantityAsync(TvChannel tvChannel, bool useReservedQuantity = true, int warehouseId = 0)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            if (tvchannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock)
+            if (tvChannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock)
                 //We can calculate total stock quantity when 'Manage inventory' property is set to 'Track inventory'
                 return 0;
 
-            if (!tvchannel.UseMultipleWarehouses)
-                return tvchannel.StockQuantity;
+            if (!tvChannel.UseMultipleWarehouses)
+                return tvChannel.StockQuantity;
 
-            var pwi = _tvchannelWarehouseInventoryRepository.Table.Where(wi => wi.TvChannelId == tvchannel.Id);
+            var pwi = _tvChannelWarehouseInventoryRepository.Table.Where(wi => wi.TvChannelId == tvChannel.Id);
 
             if (warehouseId > 0)
                 pwi = pwi.Where(x => x.WarehouseId == warehouseId);
@@ -1537,28 +1537,28 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Get number of rental periods (price ratio)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="startDate">Start date</param>
         /// <param name="endDate">End date</param>
         /// <returns>Number of rental periods</returns>
-        public virtual int GetRentalPeriods(TvChannel tvchannel, DateTime startDate, DateTime endDate)
+        public virtual int GetRentalPeriods(TvChannel tvChannel, DateTime startDate, DateTime endDate)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            if (!tvchannel.IsRental)
+            if (!tvChannel.IsRental)
                 return 1;
 
             if (startDate.CompareTo(endDate) >= 0)
                 return 1;
 
             int totalPeriods;
-            switch (tvchannel.RentalPricePeriod)
+            switch (tvChannel.RentalPricePeriod)
             {
                 case RentalPricePeriod.Days:
                     {
                         var totalDaysToRent = Math.Max((endDate - startDate).TotalDays, 1);
-                        var configuredPeriodDays = tvchannel.RentalPriceLength;
+                        var configuredPeriodDays = tvChannel.RentalPriceLength;
                         totalPeriods = Convert.ToInt32(Math.Ceiling(totalDaysToRent / configuredPeriodDays));
                     }
 
@@ -1566,7 +1566,7 @@ namespace TvProgViewer.Services.Catalog
                 case RentalPricePeriod.Weeks:
                     {
                         var totalDaysToRent = Math.Max((endDate - startDate).TotalDays, 1);
-                        var configuredPeriodDays = 7 * tvchannel.RentalPriceLength;
+                        var configuredPeriodDays = 7 * tvChannel.RentalPriceLength;
                         totalPeriods = Convert.ToInt32(Math.Ceiling(totalDaysToRent / configuredPeriodDays));
                     }
 
@@ -1579,7 +1579,7 @@ namespace TvProgViewer.Services.Catalog
                             //several days added (not full month)
                             totalMonthsToRent++;
 
-                        var configuredPeriodMonths = tvchannel.RentalPriceLength;
+                        var configuredPeriodMonths = tvChannel.RentalPriceLength;
                         totalPeriods = Convert.ToInt32(Math.Ceiling((double)totalMonthsToRent / configuredPeriodMonths));
                     }
 
@@ -1587,7 +1587,7 @@ namespace TvProgViewer.Services.Catalog
                 case RentalPricePeriod.Years:
                     {
                         var totalDaysToRent = Math.Max((endDate - startDate).TotalDays, 1);
-                        var configuredPeriodDays = 365 * tvchannel.RentalPriceLength;
+                        var configuredPeriodDays = 365 * tvChannel.RentalPriceLength;
                         totalPeriods = Convert.ToInt32(Math.Ceiling(totalDaysToRent / configuredPeriodDays));
                     }
 
@@ -1602,26 +1602,26 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Formats the stock availability/quantity message
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="attributesXml">Selected tvchannel attributes in XML format (if specified)</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="attributesXml">Selected tvChannel attributes in XML format (if specified)</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the stock message
         /// </returns>
-        public virtual async Task<string> FormatStockMessageAsync(TvChannel tvchannel, string attributesXml)
+        public virtual async Task<string> FormatStockMessageAsync(TvChannel tvChannel, string attributesXml)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var stockMessage = string.Empty;
 
-            switch (tvchannel.ManageInventoryMethod)
+            switch (tvChannel.ManageInventoryMethod)
             {
                 case ManageInventoryMethod.ManageStock:
-                    stockMessage = await GetStockMessageAsync(tvchannel);
+                    stockMessage = await GetStockMessageAsync(tvChannel);
                     break;
                 case ManageInventoryMethod.ManageStockByAttributes:
-                    stockMessage = await GetStockMessageForAttributesAsync(tvchannel, attributesXml);
+                    stockMessage = await GetStockMessageForAttributesAsync(tvChannel, attributesXml);
                     break;
             }
 
@@ -1631,18 +1631,18 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Formats SKU
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the sKU
         /// </returns>
-        public virtual async Task<string> FormatSkuAsync(TvChannel tvchannel, string attributesXml = null)
+        public virtual async Task<string> FormatSkuAsync(TvChannel tvChannel, string attributesXml = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            var (sku, _, _) = await GetSkuMpnGtinAsync(tvchannel, attributesXml);
+            var (sku, _, _) = await GetSkuMpnGtinAsync(tvChannel, attributesXml);
 
             return sku;
         }
@@ -1650,18 +1650,18 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Formats manufacturer part number
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the manufacturer part number
         /// </returns>
-        public virtual async Task<string> FormatMpnAsync(TvChannel tvchannel, string attributesXml = null)
+        public virtual async Task<string> FormatMpnAsync(TvChannel tvChannel, string attributesXml = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            var (_, manufacturerPartNumber, _) = await GetSkuMpnGtinAsync(tvchannel, attributesXml);
+            var (_, manufacturerPartNumber, _) = await GetSkuMpnGtinAsync(tvChannel, attributesXml);
 
             return manufacturerPartNumber;
         }
@@ -1669,50 +1669,50 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Formats GTIN
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the gTIN
         /// </returns>
-        public virtual async Task<string> FormatGtinAsync(TvChannel tvchannel, string attributesXml = null)
+        public virtual async Task<string> FormatGtinAsync(TvChannel tvChannel, string attributesXml = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            var (_, _, gtin) = await GetSkuMpnGtinAsync(tvchannel, attributesXml);
+            var (_, _, gtin) = await GetSkuMpnGtinAsync(tvChannel, attributesXml);
 
             return gtin;
         }
 
         /// <summary>
-        /// Formats start/end date for rental tvchannel
+        /// Formats start/end date for rental tvChannel
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="date">Date</param>
         /// <returns>Formatted date</returns>
-        public virtual string FormatRentalDate(TvChannel tvchannel, DateTime date)
+        public virtual string FormatRentalDate(TvChannel tvChannel, DateTime date)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            if (!tvchannel.IsRental)
+            if (!tvChannel.IsRental)
                 return null;
 
             return date.ToShortDateString();
         }
 
         /// <summary>
-        /// Update tvchannel store mappings
+        /// Update tvChannel store mappings
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="limitedToStoresIds">A list of store ids for mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelStoreMappingsAsync(TvChannel tvchannel, IList<int> limitedToStoresIds)
+        public virtual async Task UpdateTvChannelStoreMappingsAsync(TvChannel tvChannel, IList<int> limitedToStoresIds)
         {
-            tvchannel.LimitedToStores = limitedToStoresIds.Any();
+            tvChannel.LimitedToStores = limitedToStoresIds.Any();
 
-            var existingStoreMappings = await _storeMappingService.GetStoreMappingsAsync(tvchannel);
+            var existingStoreMappings = await _storeMappingService.GetStoreMappingsAsync(tvChannel);
             var allStores = await _storeService.GetAllStoresAsync();
             foreach (var store in allStores)
             {
@@ -1720,7 +1720,7 @@ namespace TvProgViewer.Services.Catalog
                 {
                     //new store
                     if (!existingStoreMappings.Any(sm => sm.StoreId == store.Id))
-                        await _storeMappingService.InsertStoreMappingAsync(tvchannel, store.Id);
+                        await _storeMappingService.InsertStoreMappingAsync(tvChannel, store.Id);
                 }
                 else
                 {
@@ -1733,62 +1733,62 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets the value whether the sequence contains downloadable tvchannels
+        /// Gets the value whether the sequence contains downloadable tvChannels
         /// </summary>
-        /// <param name="tvchannelIds">TvChannel identifiers</param>
+        /// <param name="tvChannelIds">TvChannel identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        public virtual async Task<bool> HasAnyDownloadableTvChannelAsync(int[] tvchannelIds)
+        public virtual async Task<bool> HasAnyDownloadableTvChannelAsync(int[] tvChannelIds)
         {
-            return await _tvchannelRepository.Table
-                .AnyAsync(p => tvchannelIds.Contains(p.Id) && p.IsDownload);
+            return await _tvChannelRepository.Table
+                .AnyAsync(p => tvChannelIds.Contains(p.Id) && p.IsDownload);
         }
 
         /// <summary>
-        /// Gets the value whether the sequence contains gift card tvchannels
+        /// Gets the value whether the sequence contains gift card tvChannels
         /// </summary>
-        /// <param name="tvchannelIds">TvChannel identifiers</param>
+        /// <param name="tvChannelIds">TvChannel identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        public virtual async Task<bool> HasAnyGiftCardTvChannelAsync(int[] tvchannelIds)
+        public virtual async Task<bool> HasAnyGiftCardTvChannelAsync(int[] tvChannelIds)
         {
-            return await _tvchannelRepository.Table
-                .AnyAsync(p => tvchannelIds.Contains(p.Id) && p.IsGiftCard);
+            return await _tvChannelRepository.Table
+                .AnyAsync(p => tvChannelIds.Contains(p.Id) && p.IsGiftCard);
         }
 
         /// <summary>
-        /// Gets the value whether the sequence contains recurring tvchannels
+        /// Gets the value whether the sequence contains recurring tvChannels
         /// </summary>
-        /// <param name="tvchannelIds">TvChannel identifiers</param>
+        /// <param name="tvChannelIds">TvChannel identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        public virtual async Task<bool> HasAnyRecurringTvChannelAsync(int[] tvchannelIds)
+        public virtual async Task<bool> HasAnyRecurringTvChannelAsync(int[] tvChannelIds)
         {
-            return await _tvchannelRepository.Table
-                .AnyAsync(p => tvchannelIds.Contains(p.Id) && p.IsRecurring);
+            return await _tvChannelRepository.Table
+                .AnyAsync(p => tvChannelIds.Contains(p.Id) && p.IsRecurring);
         }
 
         /// <summary>
-        /// Returns a list of sku of not existing tvchannels
+        /// Returns a list of sku of not existing tvChannels
         /// </summary>
-        /// <param name="tvchannelSku">The sku of the tvchannels to check</param>
+        /// <param name="tvChannelSku">The sku of the tvChannels to check</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list of sku not existing tvchannels
+        /// The task result contains the list of sku not existing tvChannels
         /// </returns>
-        public virtual async Task<string[]> GetNotExistingTvChannelsAsync(string[] tvchannelSku)
+        public virtual async Task<string[]> GetNotExistingTvChannelsAsync(string[] tvChannelSku)
         {
-            if (tvchannelSku == null)
-                throw new ArgumentNullException(nameof(tvchannelSku));
+            if (tvChannelSku == null)
+                throw new ArgumentNullException(nameof(tvChannelSku));
 
-            var query = _tvchannelRepository.Table;
-            var queryFilter = tvchannelSku.Distinct().ToArray();
+            var query = _tvChannelRepository.Table;
+            var queryFilter = tvChannelSku.Distinct().ToArray();
             //filtering by SKU
             var filter = await query.Select(p => p.Sku)
                 .Where(p => queryFilter.Contains(p))
@@ -1804,72 +1804,72 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Adjust inventory
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="quantityToChange">Quantity to increase or decrease</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="message">Message for the stock quantity history</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task AdjustInventoryAsync(TvChannel tvchannel, int quantityToChange, string attributesXml = "", string message = "")
+        public virtual async Task AdjustInventoryAsync(TvChannel tvChannel, int quantityToChange, string attributesXml = "", string message = "")
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (quantityToChange == 0)
                 return;
 
-            if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock)
+            if (tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock)
             {
                 //update stock quantity
-                if (tvchannel.UseMultipleWarehouses)
+                if (tvChannel.UseMultipleWarehouses)
                 {
                     //use multiple warehouses
                     if (quantityToChange < 0)
-                        await ReserveInventoryAsync(tvchannel, quantityToChange);
+                        await ReserveInventoryAsync(tvChannel, quantityToChange);
                     else
-                        await UnblockReservedInventoryAsync(tvchannel, quantityToChange);
+                        await UnblockReservedInventoryAsync(tvChannel, quantityToChange);
                 }
                 else
                 {
                     //do not use multiple warehouses
                     //simple inventory management
-                    tvchannel.StockQuantity += quantityToChange;
-                    await UpdateTvChannelAsync(tvchannel);
+                    tvChannel.StockQuantity += quantityToChange;
+                    await UpdateTvChannelAsync(tvChannel);
 
                     //quantity change history
-                    await AddStockQuantityHistoryEntryAsync(tvchannel, quantityToChange, tvchannel.StockQuantity, tvchannel.WarehouseId, message);
+                    await AddStockQuantityHistoryEntryAsync(tvChannel, quantityToChange, tvChannel.StockQuantity, tvChannel.WarehouseId, message);
                 }
 
-                var totalStock = await GetTotalStockQuantityAsync(tvchannel);
+                var totalStock = await GetTotalStockQuantityAsync(tvChannel);
 
-                await ApplyLowStockActivityAsync(tvchannel, totalStock);
+                await ApplyLowStockActivityAsync(tvChannel, totalStock);
 
                 //send email notification
-                if (quantityToChange < 0 && totalStock < tvchannel.NotifyAdminForQuantityBelow)
+                if (quantityToChange < 0 && totalStock < tvChannel.NotifyAdminForQuantityBelow)
                 {
                     //do not inject IWorkflowMessageService via constructor because it'll cause circular references
                     var workflowMessageService = EngineContext.Current.Resolve<IWorkflowMessageService>();
-                    await workflowMessageService.SendQuantityBelowStoreOwnerNotificationAsync(tvchannel, _localizationSettings.DefaultAdminLanguageId);
+                    await workflowMessageService.SendQuantityBelowStoreOwnerNotificationAsync(tvChannel, _localizationSettings.DefaultAdminLanguageId);
                 }
             }
 
-            if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStockByAttributes)
+            if (tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStockByAttributes)
             {
-                var combination = await _tvchannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvchannel, attributesXml);
+                var combination = await _tvChannelAttributeParser.FindTvChannelAttributeCombinationAsync(tvChannel, attributesXml);
                 if (combination != null)
                 {
                     combination.StockQuantity += quantityToChange;
-                    await _tvchannelAttributeService.UpdateTvChannelAttributeCombinationAsync(combination);
+                    await _tvChannelAttributeService.UpdateTvChannelAttributeCombinationAsync(combination);
 
                     //quantity change history
-                    await AddStockQuantityHistoryEntryAsync(tvchannel, quantityToChange, combination.StockQuantity, message: message, combinationId: combination.Id);
+                    await AddStockQuantityHistoryEntryAsync(tvChannel, quantityToChange, combination.StockQuantity, message: message, combinationId: combination.Id);
 
-                    if (tvchannel.AllowAddingOnlyExistingAttributeCombinations)
+                    if (tvChannel.AllowAddingOnlyExistingAttributeCombinations)
                     {
-                        var totalStockByAllCombinations = await (await _tvchannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvchannel.Id))
+                        var totalStockByAllCombinations = await (await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id))
                             .ToAsyncEnumerable()
                             .SumAsync(c => c.StockQuantity);
 
-                        await ApplyLowStockActivityAsync(tvchannel, totalStockByAllCombinations);
+                        await ApplyLowStockActivityAsync(tvChannel, totalStockByAllCombinations);
                     }
 
                     //send email notification
@@ -1882,14 +1882,14 @@ namespace TvProgViewer.Services.Catalog
                 }
             }
 
-            //bundled tvchannels
-            var attributeValues = await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
+            //bundled tvChannels
+            var attributeValues = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml);
             foreach (var attributeValue in attributeValues)
             {
                 if (attributeValue.AttributeValueType != AttributeValueType.AssociatedToTvChannel)
                     continue;
 
-                //associated tvchannel (bundle)
+                //associated tvChannel (bundle)
                 var associatedTvChannel = await GetTvChannelByIdAsync(attributeValue.AssociatedTvChannelId);
                 if (associatedTvChannel != null)
                 {
@@ -1901,26 +1901,26 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Book the reserved quantity
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="warehouseId">Warehouse identifier</param>
         /// <param name="quantity">Quantity, must be negative</param>
         /// <param name="message">Message for the stock quantity history</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task BookReservedInventoryAsync(TvChannel tvchannel, int warehouseId, int quantity, string message = "")
+        public virtual async Task BookReservedInventoryAsync(TvChannel tvChannel, int warehouseId, int quantity, string message = "")
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (quantity >= 0)
                 throw new ArgumentException("Value must be negative.", nameof(quantity));
 
-            //only tvchannels with "use multiple warehouses" are handled this way
-            if (tvchannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock || !tvchannel.UseMultipleWarehouses)
+            //only tvChannels with "use multiple warehouses" are handled this way
+            if (tvChannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock || !tvChannel.UseMultipleWarehouses)
                 return;
 
-            var pwi = await _tvchannelWarehouseInventoryRepository.Table
+            var pwi = await _tvChannelWarehouseInventoryRepository.Table
 
-                .FirstOrDefaultAsync(wi => wi.TvChannelId == tvchannel.Id && wi.WarehouseId == warehouseId);
+                .FirstOrDefaultAsync(wi => wi.TvChannelId == tvChannel.Id && wi.WarehouseId == warehouseId);
             if (pwi == null)
                 return;
 
@@ -1930,34 +1930,34 @@ namespace TvProgViewer.Services.Catalog
             await UpdateTvChannelWarehouseInventoryAsync(pwi);
 
             //quantity change history
-            await AddStockQuantityHistoryEntryAsync(tvchannel, quantity, pwi.StockQuantity, warehouseId, message);
+            await AddStockQuantityHistoryEntryAsync(tvChannel, quantity, pwi.StockQuantity, warehouseId, message);
         }
 
         /// <summary>
         /// Reverse booked inventory (if acceptable)
         /// </summary>
-        /// <param name="tvchannel">tvchannel</param>
+        /// <param name="tvChannel">tvChannel</param>
         /// <param name="shipmentItem">Shipment item</param>
         /// <param name="message">Message for the stock quantity history</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the quantity reversed
         /// </returns>
-        public virtual async Task<int> ReverseBookedInventoryAsync(TvChannel tvchannel, ShipmentItem shipmentItem, string message = "")
+        public virtual async Task<int> ReverseBookedInventoryAsync(TvChannel tvChannel, ShipmentItem shipmentItem, string message = "")
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (shipmentItem == null)
                 throw new ArgumentNullException(nameof(shipmentItem));
 
-            //only tvchannels with "use multiple warehouses" are handled this way
-            if (tvchannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock || !tvchannel.UseMultipleWarehouses)
+            //only tvChannels with "use multiple warehouses" are handled this way
+            if (tvChannel.ManageInventoryMethod != ManageInventoryMethod.ManageStock || !tvChannel.UseMultipleWarehouses)
                 return 0;
 
-            var pwi = await _tvchannelWarehouseInventoryRepository.Table
+            var pwi = await _tvChannelWarehouseInventoryRepository.Table
 
-                .FirstOrDefaultAsync(wi => wi.TvChannelId == tvchannel.Id && wi.WarehouseId == shipmentItem.WarehouseId);
+                .FirstOrDefaultAsync(wi => wi.TvChannelId == tvChannel.Id && wi.WarehouseId == shipmentItem.WarehouseId);
             if (pwi == null)
                 return 0;
 
@@ -1975,19 +1975,19 @@ namespace TvProgViewer.Services.Catalog
             await UpdateTvChannelWarehouseInventoryAsync(pwi);
 
             //quantity change history
-            await AddStockQuantityHistoryEntryAsync(tvchannel, qty, pwi.StockQuantity, shipmentItem.WarehouseId, message);
+            await AddStockQuantityHistoryEntryAsync(tvChannel, qty, pwi.StockQuantity, shipmentItem.WarehouseId, message);
 
             return qty;
         }
 
         #endregion
 
-        #region Related tvchannels
+        #region Related tvChannels
 
         /// <summary>
-        /// Deletes a related tvchannel
+        /// Deletes a related tvChannel
         /// </summary>
-        /// <param name="relatedTvChannel">Related tvchannel</param>
+        /// <param name="relatedTvChannel">Related tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteRelatedTvChannelAsync(RelatedTvChannel relatedTvChannel)
         {
@@ -1995,36 +1995,36 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets related tvchannels by tvchannel identifier
+        /// Gets related tvChannels by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">The first tvchannel identifier</param>
+        /// <param name="tvChannelId">The first tvChannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the related tvchannels
+        /// The task result contains the related tvChannels
         /// </returns>
-        public virtual async Task<IList<RelatedTvChannel>> GetRelatedTvChannelsByTvChannelId1Async(int tvchannelId, bool showHidden = false)
+        public virtual async Task<IList<RelatedTvChannel>> GetRelatedTvChannelsByTvChannelId1Async(int tvChannelId, bool showHidden = false)
         {
             var query = from rp in _relatedTvChannelRepository.Table
-                        join p in _tvchannelRepository.Table on rp.TvChannelId2 equals p.Id
-                        where rp.TvChannelId1 == tvchannelId &&
+                        join p in _tvChannelRepository.Table on rp.TvChannelId2 equals p.Id
+                        where rp.TvChannelId1 == tvChannelId &&
                         !p.Deleted &&
                         (showHidden || p.Published)
                         orderby rp.DisplayOrder, rp.Id
                         select rp;
 
-            var relatedTvChannels = await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.RelatedTvChannelsCacheKey, tvchannelId, showHidden), async () => await query.ToListAsync());
+            var relatedTvChannels = await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.RelatedTvChannelsCacheKey, tvChannelId, showHidden), async () => await query.ToListAsync());
 
             return relatedTvChannels;
         }
 
         /// <summary>
-        /// Gets a related tvchannel
+        /// Gets a related tvChannel
         /// </summary>
-        /// <param name="relatedTvChannelId">Related tvchannel identifier</param>
+        /// <param name="relatedTvChannelId">Related tvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the related tvchannel
+        /// The task result contains the related tvChannel
         /// </returns>
         public virtual async Task<RelatedTvChannel> GetRelatedTvChannelByIdAsync(int relatedTvChannelId)
         {
@@ -2032,9 +2032,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Inserts a related tvchannel
+        /// Inserts a related tvChannel
         /// </summary>
-        /// <param name="relatedTvChannel">Related tvchannel</param>
+        /// <param name="relatedTvChannel">Related tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertRelatedTvChannelAsync(RelatedTvChannel relatedTvChannel)
         {
@@ -2042,9 +2042,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Updates a related tvchannel
+        /// Updates a related tvChannel
         /// </summary>
-        /// <param name="relatedTvChannel">Related tvchannel</param>
+        /// <param name="relatedTvChannel">Related tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateRelatedTvChannelAsync(RelatedTvChannel relatedTvChannel)
         {
@@ -2052,26 +2052,26 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Finds a related tvchannel item by specified identifiers
+        /// Finds a related tvChannel item by specified identifiers
         /// </summary>
         /// <param name="source">Source</param>
-        /// <param name="tvchannelId1">The first tvchannel identifier</param>
-        /// <param name="tvchannelId2">The second tvchannel identifier</param>
-        /// <returns>Related tvchannel</returns>
-        public virtual RelatedTvChannel FindRelatedTvChannel(IList<RelatedTvChannel> source, int tvchannelId1, int tvchannelId2)
+        /// <param name="tvChannelId1">The first tvChannel identifier</param>
+        /// <param name="tvChannelId2">The second tvChannel identifier</param>
+        /// <returns>Related tvChannel</returns>
+        public virtual RelatedTvChannel FindRelatedTvChannel(IList<RelatedTvChannel> source, int tvChannelId1, int tvChannelId2)
         {
             foreach (var relatedTvChannel in source)
-                if (relatedTvChannel.TvChannelId1 == tvchannelId1 && relatedTvChannel.TvChannelId2 == tvchannelId2)
+                if (relatedTvChannel.TvChannelId1 == tvChannelId1 && relatedTvChannel.TvChannelId2 == tvChannelId2)
                     return relatedTvChannel;
             return null;
         }
 
         #endregion
 
-        #region Cross-sell tvchannels
+        #region Cross-sell tvChannels
 
         /// <summary>
-        /// Deletes a cross-sell tvchannel
+        /// Deletes a cross-sell tvChannel
         /// </summary>
         /// <param name="crossSellTvChannel">Cross-sell identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
@@ -2081,26 +2081,26 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets cross-sell tvchannels by tvchannel identifier
+        /// Gets cross-sell tvChannels by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId1">The first tvchannel identifier</param>
+        /// <param name="tvChannelId1">The first tvChannel identifier</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the cross-sell tvchannels
+        /// The task result contains the cross-sell tvChannels
         /// </returns>
-        public virtual async Task<IList<CrossSellTvChannel>> GetCrossSellTvChannelsByTvChannelId1Async(int tvchannelId1, bool showHidden = false)
+        public virtual async Task<IList<CrossSellTvChannel>> GetCrossSellTvChannelsByTvChannelId1Async(int tvChannelId1, bool showHidden = false)
         {
-            return await GetCrossSellTvChannelsByTvChannelIdsAsync(new[] { tvchannelId1 }, showHidden);
+            return await GetCrossSellTvChannelsByTvChannelIdsAsync(new[] { tvChannelId1 }, showHidden);
         }
 
         /// <summary>
-        /// Gets a cross-sell tvchannel
+        /// Gets a cross-sell tvChannel
         /// </summary>
-        /// <param name="crossSellTvChannelId">Cross-sell tvchannel identifier</param>
+        /// <param name="crossSellTvChannelId">Cross-sell tvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the cross-sell tvchannel
+        /// The task result contains the cross-sell tvChannel
         /// </returns>
         public virtual async Task<CrossSellTvChannel> GetCrossSellTvChannelByIdAsync(int crossSellTvChannelId)
         {
@@ -2108,9 +2108,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Inserts a cross-sell tvchannel
+        /// Inserts a cross-sell tvChannel
         /// </summary>
-        /// <param name="crossSellTvChannel">Cross-sell tvchannel</param>
+        /// <param name="crossSellTvChannel">Cross-sell tvChannel</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertCrossSellTvChannelAsync(CrossSellTvChannel crossSellTvChannel)
         {
@@ -2121,7 +2121,7 @@ namespace TvProgViewer.Services.Catalog
         /// Gets a cross-sells
         /// </summary>
         /// <param name="cart">Shopping cart</param>
-        /// <param name="numberOfTvChannels">Number of tvchannels to return</param>
+        /// <param name="numberOfTvChannels">Number of tvChannels to return</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the cross-sells
@@ -2144,22 +2144,22 @@ namespace TvProgViewer.Services.Catalog
                     cartTvChannelIds.Add(prodId);
             }
 
-            var tvchannelIds = cart.Select(sci => sci.TvChannelId).ToArray();
-            var crossSells = await GetCrossSellTvChannelsByTvChannelIdsAsync(tvchannelIds);
+            var tvChannelIds = cart.Select(sci => sci.TvChannelId).ToArray();
+            var crossSells = await GetCrossSellTvChannelsByTvChannelIdsAsync(tvChannelIds);
             foreach (var crossSell in crossSells)
             {
-                //validate that this tvchannel is not added to result yet
-                //validate that this tvchannel is not in the cart
+                //validate that this tvChannel is not added to result yet
+                //validate that this tvChannel is not in the cart
                 if (result.Find(p => p.Id == crossSell.TvChannelId2) != null || cartTvChannelIds.Contains(crossSell.TvChannelId2))
                     continue;
 
-                var tvchannelToAdd = await GetTvChannelByIdAsync(crossSell.TvChannelId2);
-                //validate tvchannel
-                if (tvchannelToAdd == null || tvchannelToAdd.Deleted || !tvchannelToAdd.Published)
+                var tvChannelToAdd = await GetTvChannelByIdAsync(crossSell.TvChannelId2);
+                //validate tvChannel
+                if (tvChannelToAdd == null || tvChannelToAdd.Deleted || !tvChannelToAdd.Published)
                     continue;
 
-                //add a tvchannel to result
-                result.Add(tvchannelToAdd);
+                //add a tvChannel to result
+                result.Add(tvChannelToAdd);
                 if (result.Count >= numberOfTvChannels)
                     return result;
             }
@@ -2168,16 +2168,16 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Finds a cross-sell tvchannel item by specified identifiers
+        /// Finds a cross-sell tvChannel item by specified identifiers
         /// </summary>
         /// <param name="source">Source</param>
-        /// <param name="tvchannelId1">The first tvchannel identifier</param>
-        /// <param name="tvchannelId2">The second tvchannel identifier</param>
-        /// <returns>Cross-sell tvchannel</returns>
-        public virtual CrossSellTvChannel FindCrossSellTvChannel(IList<CrossSellTvChannel> source, int tvchannelId1, int tvchannelId2)
+        /// <param name="tvChannelId1">The first tvChannel identifier</param>
+        /// <param name="tvChannelId2">The second tvChannel identifier</param>
+        /// <returns>Cross-sell tvChannel</returns>
+        public virtual CrossSellTvChannel FindCrossSellTvChannel(IList<CrossSellTvChannel> source, int tvChannelId1, int tvChannelId2)
         {
             foreach (var crossSellTvChannel in source)
-                if (crossSellTvChannel.TvChannelId1 == tvchannelId1 && crossSellTvChannel.TvChannelId2 == tvchannelId2)
+                if (crossSellTvChannel.TvChannelId1 == tvChannelId1 && crossSellTvChannel.TvChannelId2 == tvChannelId2)
                     return crossSellTvChannel;
             return null;
         }
@@ -2187,25 +2187,25 @@ namespace TvProgViewer.Services.Catalog
         #region Tier prices
 
         /// <summary>
-        /// Gets a tvchannel tier prices for user
+        /// Gets a tvChannel tier prices for user
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <param name="store">Store</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task<IList<TierPrice>> GetTierPricesAsync(TvChannel tvchannel, User user, Store store)
+        public virtual async Task<IList<TierPrice>> GetTierPricesAsync(TvChannel tvChannel, User user, Store store)
         {
-            if (tvchannel is null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel is null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (user is null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (!tvchannel.HasTierPrices)
+            if (!tvChannel.HasTierPrices)
                 return null;
 
             //get actual tier prices
-            return (await GetTierPricesByTvChannelAsync(tvchannel.Id))
+            return (await GetTierPricesByTvChannelAsync(tvChannel.Id))
                 .OrderBy(price => price.Quantity)
                 .FilterByStore(store)
                 .FilterByUserRole(await _userService.GetUserRoleIdsAsync(user))
@@ -2215,15 +2215,15 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a tier prices by tvchannel identifier
+        /// Gets a tier prices by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task<IList<TierPrice>> GetTierPricesByTvChannelAsync(int tvchannelId)
+        public virtual async Task<IList<TierPrice>> GetTierPricesByTvChannelAsync(int tvChannelId)
         {
-            var query = _tierPriceRepository.Table.Where(tp => tp.TvChannelId == tvchannelId);
+            var query = _tierPriceRepository.Table.Where(tp => tp.TvChannelId == tvChannelId);
 
-            return await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TierPricesByTvChannelCacheKey, tvchannelId), async () => await query.ToListAsync());
+            return await _staticCacheManager.GetAsync(_staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TierPricesByTvChannelCacheKey, tvChannelId), async () => await query.ToListAsync());
         }
 
         /// <summary>
@@ -2272,7 +2272,7 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Gets a preferred tier price
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="user">User</param>
         /// <param name="store">Store</param>
         /// <param name="quantity">Quantity</param>
@@ -2280,19 +2280,19 @@ namespace TvProgViewer.Services.Catalog
         /// Задача представляет асинхронную операцию
         /// The task result contains the tier price
         /// </returns>
-        public virtual async Task<TierPrice> GetPreferredTierPriceAsync(TvChannel tvchannel, User user, Store store, int quantity)
+        public virtual async Task<TierPrice> GetPreferredTierPriceAsync(TvChannel tvChannel, User user, Store store, int quantity)
         {
-            if (tvchannel is null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel is null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (user is null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (!tvchannel.HasTierPrices)
+            if (!tvChannel.HasTierPrices)
                 return null;
 
             //get the most suitable tier price based on the passed quantity
-            return (await GetTierPricesAsync(tvchannel, user, store))?.LastOrDefault(price => quantity >= price.Quantity);
+            return (await GetTierPricesAsync(tvChannel, user, store))?.LastOrDefault(price => quantity >= price.Quantity);
         }
 
         #endregion
@@ -2300,113 +2300,113 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel pictures
 
         /// <summary>
-        /// Deletes a tvchannel picture
+        /// Deletes a tvChannel picture
         /// </summary>
-        /// <param name="tvchannelPicture">TvChannel picture</param>
+        /// <param name="tvChannelPicture">TvChannel picture</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelPictureAsync(TvChannelPicture tvchannelPicture)
+        public virtual async Task DeleteTvChannelPictureAsync(TvChannelPicture tvChannelPicture)
         {
-            await _tvchannelPictureRepository.DeleteAsync(tvchannelPicture);
+            await _tvChannelPictureRepository.DeleteAsync(tvChannelPicture);
         }
 
         /// <summary>
-        /// Gets a tvchannel pictures by tvchannel identifier
+        /// Gets a tvChannel pictures by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">The tvchannel identifier</param>
+        /// <param name="tvChannelId">The tvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel pictures
+        /// The task result contains the tvChannel pictures
         /// </returns>
-        public virtual async Task<IList<TvChannelPicture>> GetTvChannelPicturesByTvChannelIdAsync(int tvchannelId)
+        public virtual async Task<IList<TvChannelPicture>> GetTvChannelPicturesByTvChannelIdAsync(int tvChannelId)
         {
-            var query = from pp in _tvchannelPictureRepository.Table
-                        where pp.TvChannelId == tvchannelId
+            var query = from pp in _tvChannelPictureRepository.Table
+                        where pp.TvChannelId == tvChannelId
                         orderby pp.DisplayOrder, pp.Id
                         select pp;
 
-            var tvchannelPictures = await query.ToListAsync();
+            var tvChannelPictures = await query.ToListAsync();
 
-            return tvchannelPictures;
+            return tvChannelPictures;
         }
 
         /// <summary>
-        /// Gets a tvchannel picture
+        /// Gets a tvChannel picture
         /// </summary>
-        /// <param name="tvchannelPictureId">TvChannel picture identifier</param>
+        /// <param name="tvChannelPictureId">TvChannel picture identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel picture
+        /// The task result contains the tvChannel picture
         /// </returns>
-        public virtual async Task<TvChannelPicture> GetTvChannelPictureByIdAsync(int tvchannelPictureId)
+        public virtual async Task<TvChannelPicture> GetTvChannelPictureByIdAsync(int tvChannelPictureId)
         {
-            return await _tvchannelPictureRepository.GetByIdAsync(tvchannelPictureId, cache => default);
+            return await _tvChannelPictureRepository.GetByIdAsync(tvChannelPictureId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a tvchannel picture
+        /// Inserts a tvChannel picture
         /// </summary>
-        /// <param name="tvchannelPicture">TvChannel picture</param>
+        /// <param name="tvChannelPicture">TvChannel picture</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelPictureAsync(TvChannelPicture tvchannelPicture)
+        public virtual async Task InsertTvChannelPictureAsync(TvChannelPicture tvChannelPicture)
         {
-            await _tvchannelPictureRepository.InsertAsync(tvchannelPicture);
+            await _tvChannelPictureRepository.InsertAsync(tvChannelPicture);
         }
 
         /// <summary>
-        /// Updates a tvchannel picture
+        /// Updates a tvChannel picture
         /// </summary>
-        /// <param name="tvchannelPicture">TvChannel picture</param>
+        /// <param name="tvChannelPicture">TvChannel picture</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelPictureAsync(TvChannelPicture tvchannelPicture)
+        public virtual async Task UpdateTvChannelPictureAsync(TvChannelPicture tvChannelPicture)
         {
-            await _tvchannelPictureRepository.UpdateAsync(tvchannelPicture);
+            await _tvChannelPictureRepository.UpdateAsync(tvChannelPicture);
         }
 
         /// <summary>
-        /// Get the IDs of all tvchannel images 
+        /// Get the IDs of all tvChannel images 
         /// </summary>
-        /// <param name="tvchannelsIds">TvChannels IDs</param>
+        /// <param name="tvChannelsIds">TvChannels IDs</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the all picture identifiers grouped by tvchannel ID
+        /// The task result contains the all picture identifiers grouped by tvChannel ID
         /// </returns>
-        public async Task<IDictionary<int, int[]>> GetTvChannelsImagesIdsAsync(int[] tvchannelsIds)
+        public async Task<IDictionary<int, int[]>> GetTvChannelsImagesIdsAsync(int[] tvChannelsIds)
         {
-            var tvchannelPictures = await _tvchannelPictureRepository.Table
-                .Where(p => tvchannelsIds.Contains(p.TvChannelId))
+            var tvChannelPictures = await _tvChannelPictureRepository.Table
+                .Where(p => tvChannelsIds.Contains(p.TvChannelId))
                 .ToListAsync();
 
-            return tvchannelPictures.GroupBy(p => p.TvChannelId).ToDictionary(p => p.Key, p => p.Select(p1 => p1.PictureId).ToArray());
+            return tvChannelPictures.GroupBy(p => p.TvChannelId).ToDictionary(p => p.Key, p => p.Select(p1 => p1.PictureId).ToArray());
         }
 
         /// <summary>
-        /// Get tvchannels for which a discount is applied
+        /// Get tvChannels for which a discount is applied
         /// </summary>
         /// <param name="discountId">Discount identifier; pass null to load all records</param>
-        /// <param name="showHidden">A value indicating whether to load deleted tvchannels</param>
+        /// <param name="showHidden">A value indicating whether to load deleted tvChannels</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list of tvchannels
+        /// The task result contains the list of tvChannels
         /// </returns>
         public virtual async Task<IPagedList<TvChannel>> GetTvChannelsWithAppliedDiscountAsync(int? discountId = null,
             bool showHidden = false, int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var tvchannels = _tvchannelRepository.Table.Where(tvchannel => tvchannel.HasDiscountsApplied);
+            var tvChannels = _tvChannelRepository.Table.Where(tvChannel => tvChannel.HasDiscountsApplied);
 
             if (discountId.HasValue)
-                tvchannels = from tvchannel in tvchannels
-                           join dpm in _discountTvChannelMappingRepository.Table on tvchannel.Id equals dpm.EntityId
+                tvChannels = from tvChannel in tvChannels
+                           join dpm in _discountTvChannelMappingRepository.Table on tvChannel.Id equals dpm.EntityId
                            where dpm.DiscountId == discountId.Value
-                           select tvchannel;
+                           select tvChannel;
 
             if (!showHidden)
-                tvchannels = tvchannels.Where(tvchannel => !tvchannel.Deleted);
+                tvChannels = tvChannels.Where(tvChannel => !tvChannel.Deleted);
 
-            tvchannels = tvchannels.OrderBy(tvchannel => tvchannel.DisplayOrder).ThenBy(tvchannel => tvchannel.Id);
+            tvChannels = tvChannels.OrderBy(tvChannel => tvChannel.DisplayOrder).ThenBy(tvChannel => tvChannel.Id);
 
-            return await tvchannels.ToPagedListAsync(pageIndex, pageSize);
+            return await tvChannels.ToPagedListAsync(pageIndex, pageSize);
         }
 
         #endregion
@@ -2414,66 +2414,66 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel videos
 
         /// <summary>
-        /// Deletes a tvchannel video
+        /// Deletes a tvChannel video
         /// </summary>
-        /// <param name="tvchannelVideo">TvChannel video</param>
+        /// <param name="tvChannelVideo">TvChannel video</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelVideoAsync(TvChannelVideo tvchannelVideo)
+        public virtual async Task DeleteTvChannelVideoAsync(TvChannelVideo tvChannelVideo)
         {
-            await _tvchannelVideoRepository.DeleteAsync(tvchannelVideo);
+            await _tvChannelVideoRepository.DeleteAsync(tvChannelVideo);
         }
 
         /// <summary>
-        /// Gets a tvchannel videos by tvchannel identifier
+        /// Gets a tvChannel videos by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">The tvchannel identifier</param>
+        /// <param name="tvChannelId">The tvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel videos
+        /// The task result contains the tvChannel videos
         /// </returns>
-        public virtual async Task<IList<TvChannelVideo>> GetTvChannelVideosByTvChannelIdAsync(int tvchannelId)
+        public virtual async Task<IList<TvChannelVideo>> GetTvChannelVideosByTvChannelIdAsync(int tvChannelId)
         {
-            var query = from pvm in _tvchannelVideoRepository.Table
-                        where pvm.TvChannelId == tvchannelId
+            var query = from pvm in _tvChannelVideoRepository.Table
+                        where pvm.TvChannelId == tvChannelId
                         orderby pvm.DisplayOrder, pvm.Id
                         select pvm;
 
-            var tvchannelVideos = await query.ToListAsync();
+            var tvChannelVideos = await query.ToListAsync();
 
-            return tvchannelVideos;
+            return tvChannelVideos;
         }
 
         /// <summary>
-        /// Gets a tvchannel video
+        /// Gets a tvChannel video
         /// </summary>
-        /// <param name="tvchannelPictureId">TvChannel video identifier</param>
+        /// <param name="tvChannelPictureId">TvChannel video identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel video
+        /// The task result contains the tvChannel video
         /// </returns>
-        public virtual async Task<TvChannelVideo> GetTvChannelVideoByIdAsync(int tvchannelVideoId)
+        public virtual async Task<TvChannelVideo> GetTvChannelVideoByIdAsync(int tvChannelVideoId)
         {
-            return await _tvchannelVideoRepository.GetByIdAsync(tvchannelVideoId, cache => default);
+            return await _tvChannelVideoRepository.GetByIdAsync(tvChannelVideoId, cache => default);
         }
 
         /// <summary>
-        /// Inserts a tvchannel video
+        /// Inserts a tvChannel video
         /// </summary>
-        /// <param name="tvchannelVideo">TvChannel picture</param>
+        /// <param name="tvChannelVideo">TvChannel picture</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelVideoAsync(TvChannelVideo tvchannelVideo)
+        public virtual async Task InsertTvChannelVideoAsync(TvChannelVideo tvChannelVideo)
         {
-            await _tvchannelVideoRepository.InsertAsync(tvchannelVideo);
+            await _tvChannelVideoRepository.InsertAsync(tvChannelVideo);
         }
 
         /// <summary>
-        /// Updates a tvchannel video
+        /// Updates a tvChannel video
         /// </summary>
-        /// <param name="tvchannelVideo">TvChannel video</param>
+        /// <param name="tvChannelVideo">TvChannel video</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelVideoAsync(TvChannelVideo tvchannelVideo)
+        public virtual async Task UpdateTvChannelVideoAsync(TvChannelVideo tvChannelVideo)
         {
-            await _tvchannelVideoRepository.UpdateAsync(tvchannelVideo);
+            await _tvChannelVideoRepository.UpdateAsync(tvChannelVideo);
         }
 
         #endregion
@@ -2481,7 +2481,7 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel reviews
 
         /// <summary>
-        /// Gets all tvchannel reviews
+        /// Gets all tvChannel reviews
         /// </summary>
         /// <param name="userId">User identifier (who wrote a review); 0 to load all records</param>
         /// <param name="approved">A value indicating whether to content is approved; null to load all records</param> 
@@ -2489,8 +2489,8 @@ namespace TvProgViewer.Services.Catalog
         /// <param name="toUtc">Item item creation to; null to load all records</param>
         /// <param name="message">Search title or review text; null to load all records</param>
         /// <param name="storeId">The store identifier, where a review has been created; pass 0 to load all records</param>
-        /// <param name="tvchannelId">The tvchannel identifier; pass 0 to load all records</param>
-        /// <param name="vendorId">The vendor identifier (limit to tvchannels of this vendor); pass 0 to load all records</param>
+        /// <param name="tvChannelId">The tvChannel identifier; pass 0 to load all records</param>
+        /// <param name="vendorId">The vendor identifier (limit to tvChannels of this vendor); pass 0 to load all records</param>
         /// <param name="showHidden">A value indicating whether to show hidden records</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
@@ -2500,23 +2500,23 @@ namespace TvProgViewer.Services.Catalog
         /// </returns>
         public virtual async Task<IPagedList<TvChannelReview>> GetAllTvChannelReviewsAsync(int userId = 0, bool? approved = null,
             DateTime? fromUtc = null, DateTime? toUtc = null,
-            string message = null, int storeId = 0, int tvchannelId = 0, int vendorId = 0, bool showHidden = false,
+            string message = null, int storeId = 0, int tvChannelId = 0, int vendorId = 0, bool showHidden = false,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            var tvchannelReviews = await _tvchannelReviewRepository.GetAllPagedAsync(async query =>
+            var tvChannelReviews = await _tvChannelReviewRepository.GetAllPagedAsync(async query =>
             {
                 if (!showHidden)
                 {
-                    var tvchannelsQuery = _tvchannelRepository.Table.Where(p => p.Published);
+                    var tvChannelsQuery = _tvChannelRepository.Table.Where(p => p.Published);
 
                     //apply store mapping constraints
-                    tvchannelsQuery = await _storeMappingService.ApplyStoreMapping(tvchannelsQuery, storeId);
+                    tvChannelsQuery = await _storeMappingService.ApplyStoreMapping(tvChannelsQuery, storeId);
 
                     //apply ACL constraints
                     var user = await _workContext.GetCurrentUserAsync();
-                    tvchannelsQuery = await _aclService.ApplyAcl(tvchannelsQuery, user);
+                    tvChannelsQuery = await _aclService.ApplyAcl(tvChannelsQuery, user);
 
-                    query = query.Where(review => tvchannelsQuery.Any(tvchannel => tvchannel.Id == review.TvChannelId));
+                    query = query.Where(review => tvChannelsQuery.Any(tvChannel => tvChannel.Id == review.TvChannelId));
                 }
 
                 if (approved.HasValue)
@@ -2531,16 +2531,16 @@ namespace TvProgViewer.Services.Catalog
                     query = query.Where(pr => pr.Title.Contains(message) || pr.ReviewText.Contains(message));
                 if (storeId > 0)
                     query = query.Where(pr => pr.StoreId == storeId);
-                if (tvchannelId > 0)
-                    query = query.Where(pr => pr.TvChannelId == tvchannelId);
+                if (tvChannelId > 0)
+                    query = query.Where(pr => pr.TvChannelId == tvChannelId);
 
-                query = from tvchannelReview in query
-                        join tvchannel in _tvchannelRepository.Table on tvchannelReview.TvChannelId equals tvchannel.Id
+                query = from tvChannelReview in query
+                        join tvChannel in _tvChannelRepository.Table on tvChannelReview.TvChannelId equals tvChannel.Id
                         where
-                            (vendorId == 0 || tvchannel.VendorId == vendorId) &&
-                            //ignore deleted tvchannels
-                            !tvchannel.Deleted
-                        select tvchannelReview;
+                            (vendorId == 0 || tvChannel.VendorId == vendorId) &&
+                            //ignore deleted tvChannels
+                            !tvChannel.Deleted
+                        select tvChannelReview;
 
                 query = _catalogSettings.TvChannelReviewsSortByCreatedDateAscending
                     ? query.OrderBy(pr => pr.CreatedOnUtc).ThenBy(pr => pr.Id)
@@ -2549,86 +2549,86 @@ namespace TvProgViewer.Services.Catalog
                 return query;
             }, pageIndex, pageSize);
 
-            return tvchannelReviews;
+            return tvChannelReviews;
         }
 
         /// <summary>
-        /// Gets tvchannel review
+        /// Gets tvChannel review
         /// </summary>
-        /// <param name="tvchannelReviewId">TvChannel review identifier</param>
+        /// <param name="tvChannelReviewId">TvChannel review identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel review
+        /// The task result contains the tvChannel review
         /// </returns>
-        public virtual async Task<TvChannelReview> GetTvChannelReviewByIdAsync(int tvchannelReviewId)
+        public virtual async Task<TvChannelReview> GetTvChannelReviewByIdAsync(int tvChannelReviewId)
         {
-            return await _tvchannelReviewRepository.GetByIdAsync(tvchannelReviewId, cache => default);
+            return await _tvChannelReviewRepository.GetByIdAsync(tvChannelReviewId, cache => default);
         }
 
         /// <summary>
-        /// Get tvchannel reviews by identifiers
+        /// Get tvChannel reviews by identifiers
         /// </summary>
-        /// <param name="tvchannelReviewIds">TvChannel review identifiers</param>
+        /// <param name="tvChannelReviewIds">TvChannel review identifiers</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel reviews
+        /// The task result contains the tvChannel reviews
         /// </returns>
-        public virtual async Task<IList<TvChannelReview>> GetTvChannelReviewsByIdsAsync(int[] tvchannelReviewIds)
+        public virtual async Task<IList<TvChannelReview>> GetTvChannelReviewsByIdsAsync(int[] tvChannelReviewIds)
         {
-            return await _tvchannelReviewRepository.GetByIdsAsync(tvchannelReviewIds);
+            return await _tvChannelReviewRepository.GetByIdsAsync(tvChannelReviewIds);
         }
 
         /// <summary>
-        /// Inserts a tvchannel review
+        /// Inserts a tvChannel review
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelReviewAsync(TvChannelReview tvchannelReview)
+        public virtual async Task InsertTvChannelReviewAsync(TvChannelReview tvChannelReview)
         {
-            await _tvchannelReviewRepository.InsertAsync(tvchannelReview);
+            await _tvChannelReviewRepository.InsertAsync(tvChannelReview);
         }
 
         /// <summary>
-        /// Deletes a tvchannel review
+        /// Deletes a tvChannel review
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelReviewAsync(TvChannelReview tvchannelReview)
+        public virtual async Task DeleteTvChannelReviewAsync(TvChannelReview tvChannelReview)
         {
-            await _tvchannelReviewRepository.DeleteAsync(tvchannelReview);
+            await _tvChannelReviewRepository.DeleteAsync(tvChannelReview);
         }
 
         /// <summary>
-        /// Deletes tvchannel reviews
+        /// Deletes tvChannel reviews
         /// </summary>
-        /// <param name="tvchannelReviews">TvChannel reviews</param>
+        /// <param name="tvChannelReviews">TvChannel reviews</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelReviewsAsync(IList<TvChannelReview> tvchannelReviews)
+        public virtual async Task DeleteTvChannelReviewsAsync(IList<TvChannelReview> tvChannelReviews)
         {
-            await _tvchannelReviewRepository.DeleteAsync(tvchannelReviews);
+            await _tvChannelReviewRepository.DeleteAsync(tvChannelReviews);
         }
 
         /// <summary>
-        /// Sets or create a tvchannel review helpfulness record
+        /// Sets or create a tvChannel review helpfulness record
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <param name="helpfulness">Value indicating whether a review a helpful</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task SetTvChannelReviewHelpfulnessAsync(TvChannelReview tvchannelReview, bool helpfulness)
+        public virtual async Task SetTvChannelReviewHelpfulnessAsync(TvChannelReview tvChannelReview, bool helpfulness)
         {
-            if (tvchannelReview is null)
-                throw new ArgumentNullException(nameof(tvchannelReview));
+            if (tvChannelReview is null)
+                throw new ArgumentNullException(nameof(tvChannelReview));
 
             var user = await _workContext.GetCurrentUserAsync();
-            var prh = _tvchannelReviewHelpfulnessRepository.Table
-                .SingleOrDefault(h => h.TvChannelReviewId == tvchannelReview.Id && h.UserId == user.Id);
+            var prh = _tvChannelReviewHelpfulnessRepository.Table
+                .SingleOrDefault(h => h.TvChannelReviewId == tvChannelReview.Id && h.UserId == user.Id);
 
             if (prh is null)
             {
                 //insert new helpfulness
                 prh = new TvChannelReviewHelpfulness
                 {
-                    TvChannelReviewId = tvchannelReview.Id,
+                    TvChannelReviewId = tvChannelReview.Id,
                     UserId = user.Id,
                     WasHelpful = helpfulness,
                 };
@@ -2640,53 +2640,53 @@ namespace TvProgViewer.Services.Catalog
                 //existing one
                 prh.WasHelpful = helpfulness;
 
-                await _tvchannelReviewHelpfulnessRepository.UpdateAsync(prh);
+                await _tvChannelReviewHelpfulnessRepository.UpdateAsync(prh);
             }
         }
 
         /// <summary>
-        /// Updates a tvchannel review
+        /// Updates a tvChannel review
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelReviewAsync(TvChannelReview tvchannelReview)
+        public virtual async Task UpdateTvChannelReviewAsync(TvChannelReview tvChannelReview)
         {
-            await _tvchannelReviewRepository.UpdateAsync(tvchannelReview);
+            await _tvChannelReviewRepository.UpdateAsync(tvChannelReview);
         }
 
         /// <summary>
-        /// Updates a totals helpfulness count for tvchannel review
+        /// Updates a totals helpfulness count for tvChannel review
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        public virtual async Task UpdateTvChannelReviewHelpfulnessTotalsAsync(TvChannelReview tvchannelReview)
+        public virtual async Task UpdateTvChannelReviewHelpfulnessTotalsAsync(TvChannelReview tvChannelReview)
         {
-            if (tvchannelReview is null)
-                throw new ArgumentNullException(nameof(tvchannelReview));
+            if (tvChannelReview is null)
+                throw new ArgumentNullException(nameof(tvChannelReview));
 
-            (tvchannelReview.HelpfulYesTotal, tvchannelReview.HelpfulNoTotal) = await GetHelpfulnessCountsAsync(tvchannelReview);
+            (tvChannelReview.HelpfulYesTotal, tvChannelReview.HelpfulNoTotal) = await GetHelpfulnessCountsAsync(tvChannelReview);
 
-            await _tvchannelReviewRepository.UpdateAsync(tvchannelReview);
+            await _tvChannelReviewRepository.UpdateAsync(tvChannelReview);
         }
 
         /// <summary>
         /// Check possibility added review for current user
         /// </summary>
-        /// <param name="tvchannelId">Current tvchannel</param>
+        /// <param name="tvChannelId">Current tvChannel</param>
         /// <param name="storeId">The store identifier; pass 0 to load all records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the 
         /// </returns>
-        public virtual async Task<bool> CanAddReviewAsync(int tvchannelId, int storeId = 0)
+        public virtual async Task<bool> CanAddReviewAsync(int tvChannelId, int storeId = 0)
         {
             var user = await _workContext.GetCurrentUserAsync();
 
             if (_catalogSettings.OneReviewPerTvChannelFromUser)
-                return (await GetAllTvChannelReviewsAsync(userId: user.Id, tvchannelId: tvchannelId, storeId: storeId)).TotalCount == 0;
+                return (await GetAllTvChannelReviewsAsync(userId: user.Id, tvChannelId: tvChannelId, storeId: storeId)).TotalCount == 0;
 
             return true;
         }
@@ -2696,53 +2696,53 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel warehouses
 
         /// <summary>
-        /// Get a tvchannel warehouse-inventory records by tvchannel identifier
+        /// Get a tvChannel warehouse-inventory records by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task<IList<TvChannelWarehouseInventory>> GetAllTvChannelWarehouseInventoryRecordsAsync(int tvchannelId)
+        public virtual async Task<IList<TvChannelWarehouseInventory>> GetAllTvChannelWarehouseInventoryRecordsAsync(int tvChannelId)
         {
-            return await _tvchannelWarehouseInventoryRepository.GetAllAsync(query => query.Where(pwi => pwi.TvChannelId == tvchannelId));
+            return await _tvChannelWarehouseInventoryRepository.GetAllAsync(query => query.Where(pwi => pwi.TvChannelId == tvChannelId));
         }
 
         /// <summary>
-        /// Deletes a record to manage tvchannel inventory per warehouse
+        /// Deletes a record to manage tvChannel inventory per warehouse
         /// </summary>
-        /// <param name="pwi">Record to manage tvchannel inventory per warehouse</param>
+        /// <param name="pwi">Record to manage tvChannel inventory per warehouse</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteTvChannelWarehouseInventoryAsync(TvChannelWarehouseInventory pwi)
         {
-            await _tvchannelWarehouseInventoryRepository.DeleteAsync(pwi);
+            await _tvChannelWarehouseInventoryRepository.DeleteAsync(pwi);
         }
 
         /// <summary>
-        /// Inserts a record to manage tvchannel inventory per warehouse
+        /// Inserts a record to manage tvChannel inventory per warehouse
         /// </summary>
-        /// <param name="pwi">Record to manage tvchannel inventory per warehouse</param>
+        /// <param name="pwi">Record to manage tvChannel inventory per warehouse</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelWarehouseInventoryAsync(TvChannelWarehouseInventory pwi)
         {
-            await _tvchannelWarehouseInventoryRepository.InsertAsync(pwi);
+            await _tvChannelWarehouseInventoryRepository.InsertAsync(pwi);
         }
 
         /// <summary>
-        /// Updates a record to manage tvchannel inventory per warehouse
+        /// Updates a record to manage tvChannel inventory per warehouse
         /// </summary>
-        /// <param name="pwi">Record to manage tvchannel inventory per warehouse</param>
+        /// <param name="pwi">Record to manage tvChannel inventory per warehouse</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelWarehouseInventoryAsync(TvChannelWarehouseInventory pwi)
         {
-            await _tvchannelWarehouseInventoryRepository.UpdateAsync(pwi);
+            await _tvChannelWarehouseInventoryRepository.UpdateAsync(pwi);
         }
 
         /// <summary>
-        /// Updates a records to manage tvchannel inventory per warehouse
+        /// Updates a records to manage tvChannel inventory per warehouse
         /// </summary>
-        /// <param name="pwis">Records to manage tvchannel inventory per warehouse</param>
+        /// <param name="pwis">Records to manage tvChannel inventory per warehouse</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task UpdateTvChannelWarehouseInventoryAsync(IList<TvChannelWarehouseInventory> pwis)
         {
-            await _tvchannelWarehouseInventoryRepository.UpdateAsync(pwis);
+            await _tvChannelWarehouseInventoryRepository.UpdateAsync(pwis);
         }
 
         #endregion
@@ -2752,25 +2752,25 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Add stock quantity change entry
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="quantityAdjustment">Quantity adjustment</param>
         /// <param name="stockQuantity">Current stock quantity</param>
         /// <param name="warehouseId">Warehouse identifier</param>
         /// <param name="message">Message</param>
         /// <param name="combinationId">TvChannel attribute combination identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task AddStockQuantityHistoryEntryAsync(TvChannel tvchannel, int quantityAdjustment, int stockQuantity,
+        public virtual async Task AddStockQuantityHistoryEntryAsync(TvChannel tvChannel, int quantityAdjustment, int stockQuantity,
             int warehouseId = 0, string message = "", int? combinationId = null)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             if (quantityAdjustment == 0)
                 return;
 
             var historyEntry = new StockQuantityHistory
             {
-                TvChannelId = tvchannel.Id,
+                TvChannelId = tvChannel.Id,
                 CombinationId = combinationId,
                 WarehouseId = warehouseId > 0 ? (int?)warehouseId : null,
                 QuantityAdjustment = quantityAdjustment,
@@ -2783,9 +2783,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get the history of the tvchannel stock quantity changes
+        /// Get the history of the tvChannel stock quantity changes
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="warehouseId">Warehouse identifier; pass 0 to load all entries</param>
         /// <param name="combinationId">TvChannel attribute combination identifier; pass 0 to load all entries</param>
         /// <param name="pageIndex">Page index</param>
@@ -2794,13 +2794,13 @@ namespace TvProgViewer.Services.Catalog
         /// Задача представляет асинхронную операцию
         /// The task result contains the list of stock quantity change entries
         /// </returns>
-        public virtual async Task<IPagedList<StockQuantityHistory>> GetStockQuantityHistoryAsync(TvChannel tvchannel, int warehouseId = 0, int combinationId = 0,
+        public virtual async Task<IPagedList<StockQuantityHistory>> GetStockQuantityHistoryAsync(TvChannel tvChannel, int warehouseId = 0, int combinationId = 0,
             int pageIndex = 0, int pageSize = int.MaxValue)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
-            var query = _stockQuantityHistoryRepository.Table.Where(historyEntry => historyEntry.TvChannelId == tvchannel.Id);
+            var query = _stockQuantityHistoryRepository.Table.Where(historyEntry => historyEntry.TvChannelId == tvChannel.Id);
 
             if (warehouseId > 0)
                 query = query.Where(historyEntry => historyEntry.WarehouseId == warehouseId);
@@ -2818,7 +2818,7 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel discounts
 
         /// <summary>
-        /// Clean up tvchannel references for a specified discount
+        /// Clean up tvChannel references for a specified discount
         /// </summary>
         /// <param name="discount">Discount</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
@@ -2829,48 +2829,48 @@ namespace TvProgViewer.Services.Catalog
 
             var mappingsWithTvChannels =
                 from dcm in _discountTvChannelMappingRepository.Table
-                join p in _tvchannelRepository.Table on dcm.EntityId equals p.Id
+                join p in _tvChannelRepository.Table on dcm.EntityId equals p.Id
                 where dcm.DiscountId == discount.Id
-                select new { tvchannel = p, dcm };
+                select new { tvChannel = p, dcm };
 
             foreach (var pdcm in await mappingsWithTvChannels.ToListAsync())
             {
                 await _discountTvChannelMappingRepository.DeleteAsync(pdcm.dcm);
 
                 //update "HasDiscountsApplied" property
-                await UpdateHasDiscountsAppliedAsync(pdcm.tvchannel);
+                await UpdateHasDiscountsAppliedAsync(pdcm.tvChannel);
             }
         }
 
         /// <summary>
-        /// Get a discount-tvchannel mapping records by tvchannel identifier
+        /// Get a discount-tvChannel mapping records by tvChannel identifier
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task<IList<DiscountTvChannelMapping>> GetAllDiscountsAppliedToTvChannelAsync(int tvchannelId)
+        public virtual async Task<IList<DiscountTvChannelMapping>> GetAllDiscountsAppliedToTvChannelAsync(int tvChannelId)
         {
-            return await _discountTvChannelMappingRepository.GetAllAsync(query => query.Where(dcm => dcm.EntityId == tvchannelId));
+            return await _discountTvChannelMappingRepository.GetAllAsync(query => query.Where(dcm => dcm.EntityId == tvChannelId));
         }
 
         /// <summary>
-        /// Get a discount-tvchannel mapping record
+        /// Get a discount-tvChannel mapping record
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="discountId">Discount identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the result
         /// </returns>
-        public virtual async Task<DiscountTvChannelMapping> GetDiscountAppliedToTvChannelAsync(int tvchannelId, int discountId)
+        public virtual async Task<DiscountTvChannelMapping> GetDiscountAppliedToTvChannelAsync(int tvChannelId, int discountId)
         {
             return await _discountTvChannelMappingRepository.Table
-                .FirstOrDefaultAsync(dcm => dcm.EntityId == tvchannelId && dcm.DiscountId == discountId);
+                .FirstOrDefaultAsync(dcm => dcm.EntityId == tvChannelId && dcm.DiscountId == discountId);
         }
 
         /// <summary>
-        /// Inserts a discount-tvchannel mapping record
+        /// Inserts a discount-tvChannel mapping record
         /// </summary>
-        /// <param name="discountTvChannelMapping">Discount-tvchannel mapping</param>
+        /// <param name="discountTvChannelMapping">Discount-tvChannel mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertDiscountTvChannelMappingAsync(DiscountTvChannelMapping discountTvChannelMapping)
         {
@@ -2878,9 +2878,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Deletes a discount-tvchannel mapping record
+        /// Deletes a discount-tvChannel mapping record
         /// </summary>
-        /// <param name="discountTvChannelMapping">Discount-tvchannel mapping</param>
+        /// <param name="discountTvChannelMapping">Discount-tvChannel mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteDiscountTvChannelMappingAsync(DiscountTvChannelMapping discountTvChannelMapping)
         {

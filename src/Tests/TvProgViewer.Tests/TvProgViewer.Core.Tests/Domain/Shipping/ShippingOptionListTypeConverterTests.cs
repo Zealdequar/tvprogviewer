@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using FluentAssertions;
-using Nop.Core.Domain.Shipping;
+using TvProgViewer.Core.Domain.Shipping;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests.Domain.Shipping
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests.Domain.Shipping
 {
     [TestFixture]
     public class ShippingOptionListTypeConverterTests

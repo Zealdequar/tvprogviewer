@@ -6,7 +6,7 @@ using TvProgViewer.Data.Extensions;
 namespace TvProgViewer.Data.Mapping.Builders.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel warehouse inventory entity builder
+    /// Represents a tvChannel warehouse inventory entity builder
     /// </summary>
     public partial class TvChannelWarehouseInventoryBuilder : TvProgEntityBuilder<TvChannelWarehouseInventory>
     {

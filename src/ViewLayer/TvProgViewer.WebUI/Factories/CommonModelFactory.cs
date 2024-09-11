@@ -553,7 +553,7 @@ namespace TvProgViewer.WebUI.Factories
                 RecentlyViewedTvChannelsEnabled = _catalogSettings.RecentlyViewedTvChannelsEnabled,
                 NewTvChannelsEnabled = _catalogSettings.NewTvChannelsEnabled,
                 DisplayTaxShippingInfoFooter = _catalogSettings.DisplayTaxShippingInfoFooter,
-                HidePoweredByNopCommerce = _storeInformationSettings.HidePoweredByTvProgViewer,
+                HidePoweredByNopCommerce = _storeInformationSettings.HidePoweredByNopCommerce,
                 IsHomePage = _webHelper.GetStoreLocation().Equals(_webHelper.GetThisPageUrl(false), StringComparison.InvariantCultureIgnoreCase),
                 AllowUsersToApplyForVendorAccount = _vendorSettings.AllowUsersToApplyForVendorAccount,
                 AllowUsersToCheckGiftCardBalance = _userSettings.AllowUsersToCheckGiftCardBalance && _captchaSettings.Enabled,

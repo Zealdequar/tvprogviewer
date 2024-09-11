@@ -850,7 +850,7 @@ namespace TvProgViewer.Web.Framework.UI
             public bool IsLocal { get; init; }
 
             /// <summary>
-            /// Src for tvchannelion
+            /// Src for tvChannelion
             /// </summary>
             public string Src { get; init; }
         }
@@ -866,7 +866,7 @@ namespace TvProgViewer.Web.Framework.UI
             public bool ExcludeFromBundle { get; init; }
 
             /// <summary>
-            /// Src for tvchannelion
+            /// Src for tvChannelion
             /// </summary>
             public string Src { get; init; }
 

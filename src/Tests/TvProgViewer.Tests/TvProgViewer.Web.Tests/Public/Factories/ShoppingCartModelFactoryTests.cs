@@ -2,18 +2,18 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core;
-using Nop.Core.Domain.Orders;
-using Nop.Data;
-using Nop.Services.Catalog;
-using Nop.Services.Customers;
-using Nop.Services.Localization;
-using Nop.Services.Orders;
-using Nop.Web.Factories;
-using Nop.Web.Models.ShoppingCart;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Localization;
+using TvProgViewer.Services.Orders;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.ShoppingCart;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
     public class ShoppingCartModelFactoryTests : WebTest
@@ -21,11 +21,11 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         private IShoppingCartModelFactory _shoppingCartModelFactory;
         private IShoppingCartService _shoppingCartService;
         private IWorkContext _workContext;
-        private IProductService _producService;
+        private ITvChannelService _producService;
         private ILocalizationService _localizationService;
         private ShoppingCartItem _shoppingCartItem;
         private ShoppingCartItem _wishlistItem;
-        private ICustomerService _customerService;
+        private IUserService _userService;
 
         [OneTimeSetUp]
         public async Task SetUp()
@@ -33,28 +33,28 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             _shoppingCartModelFactory = GetService<IShoppingCartModelFactory>();
             _shoppingCartService = GetService<IShoppingCartService>();
             _workContext = GetService<IWorkContext>();
-            _producService = GetService<IProductService>();
+            _producService = GetService<ITvChannelService>();
             _localizationService = GetService<ILocalizationService>();
-            _customerService = GetService<ICustomerService>();
+            _userService = GetService<IUserService>();
 
             var store = await GetService<IStoreContext>().GetCurrentStoreAsync();
 
-            var customer = await _workContext.GetCurrentCustomerAsync();
+            var user = await _workContext.GetCurrentUserAsync();
 
             _shoppingCartItem = new ShoppingCartItem
             {
-                ProductId = 1,
+                TvChannelId = 1,
                 Quantity = 1,
-                CustomerId = customer.Id,
+                UserId = user.Id,
                 ShoppingCartType = ShoppingCartType.ShoppingCart,
                 StoreId = store.Id
             };
 
             _wishlistItem = new ShoppingCartItem
             {
-                ProductId = 2,
+                TvChannelId = 2,
                 Quantity = 1,
-                CustomerId = customer.Id,
+                UserId = user.Id,
                 ShoppingCartType = ShoppingCartType.Wishlist
             };
 
@@ -62,9 +62,9 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
 
             await shoppingCartRepo.InsertAsync(new List<ShoppingCartItem> {_shoppingCartItem, _wishlistItem});
 
-            var currentCustomer = await _workContext.GetCurrentCustomerAsync();
-            currentCustomer.HasShoppingCartItems = true;
-            await _customerService.UpdateCustomerAsync(currentCustomer);
+            var currentUser = await _workContext.GetCurrentUserAsync();
+            currentUser.HasShoppingCartItems = true;
+            await _userService.UpdateUserAsync(currentUser);
         }
 
         [OneTimeTearDown]
@@ -73,15 +73,15 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             await _shoppingCartService.DeleteShoppingCartItemAsync(_shoppingCartItem);
             await _shoppingCartService.DeleteShoppingCartItemAsync(_wishlistItem);
 
-            var customer = await _workContext.GetCurrentCustomerAsync();
-            customer.HasShoppingCartItems = false;
-            await _customerService.UpdateCustomerAsync(customer);
+            var user = await _workContext.GetCurrentUserAsync();
+            user.HasShoppingCartItems = false;
+            await _userService.UpdateUserAsync(user);
         }
 
         [Test]
         public async Task CanPrepareEstimateShippingModel()
         {
-            var model = await _shoppingCartModelFactory.PrepareEstimateShippingModelAsync(await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentCustomerAsync()));
+            var model = await _shoppingCartModelFactory.PrepareEstimateShippingModelAsync(await _shoppingCartService.GetShoppingCartAsync(await _workContext.GetCurrentUserAsync()));
             
             model.AvailableCountries.Any().Should().BeTrue();
             model.AvailableStates.Any().Should().BeTrue();
@@ -109,10 +109,10 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             var model = await _shoppingCartModelFactory.PrepareWishlistModelAsync(new WishlistModel(),
                 new List<ShoppingCartItem> {_wishlistItem});
 
-            var customer = await _workContext.GetCurrentCustomerAsync();
+            var user = await _workContext.GetCurrentUserAsync();
 
-            model.CustomerFullname.Should().Be("John Smith");
-            model.CustomerGuid.Should().Be(customer.CustomerGuid);
+            model.UserFullname.Should().Be("Smith John Johnovich");
+            model.UserGuid.Should().Be(user.UserGuid);
             model.EmailWishlistEnabled.Should().BeTrue();
             model.IsEditable.Should().BeTrue();
             model.Items.Any().Should().BeTrue();
@@ -125,10 +125,10 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _shoppingCartModelFactory.PrepareMiniShoppingCartModelAsync();
 
-            model.CurrentCustomerIsGuest.Should().BeFalse();
+            model.CurrentUserIsGuest.Should().BeFalse();
             model.Items.Any().Should().BeTrue();
             model.Items.Count.Should().Be(1);
-            model.TotalProducts.Should().Be(1);
+            model.TotalTvChannels.Should().Be(1);
             model.SubTotal.Should().Be("$1,200.00");
         }
 
@@ -159,19 +159,19 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             var model = await _shoppingCartModelFactory.PrepareWishlistEmailAFriendModelAsync(new WishlistEmailAFriendModel(),
                 false);
 
-            model.YourEmailAddress.Should().Be(NopTestsDefaults.AdminEmail);
+            model.YourEmailAddress.Should().Be(TvProgTestsDefaults.AdminEmail);
         }
 
         [Test]
         public async Task CanPrepareCartItemPictureModel()
         {
-            var product = await _producService.GetProductByIdAsync(_shoppingCartItem.ProductId);
+            var tvChannel = await _producService.GetTvChannelByIdAsync(_shoppingCartItem.TvChannelId);
 
-            var model = await _shoppingCartModelFactory.PrepareCartItemPictureModelAsync(_shoppingCartItem, 100, true, await _localizationService.GetLocalizedAsync(product, x => x.Name));
+            var model = await _shoppingCartModelFactory.PrepareCartItemPictureModelAsync(_shoppingCartItem, 100, true, await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name));
 
             model.AlternateText.Should().Be("Picture of Build your own computer");
             model.ImageUrl.Should()
-                .Be($"http://{NopTestsDefaults.HostIpAddress}/images/thumbs/0000020_build-your-own-computer_100.jpeg");
+                .Be($"http://{TvProgTestsDefaults.HostIpAddress}/images/thumbs/0000020_build-your-own-computer_100.jpeg");
             model.Title.Should().Be("Show details for Build your own computer");
 
             model.FullSizeImageUrl.Should().BeNull();

@@ -13,15 +13,15 @@ namespace TvProgViewer.Services.Catalog
     {
         #region Fields
 
-        private readonly IRepository<TvChannelTemplate> _tvchannelTemplateRepository;
+        private readonly IRepository<TvChannelTemplate> _tvChannelTemplateRepository;
 
         #endregion
 
         #region Ctor
 
-        public TvChannelTemplateService(IRepository<TvChannelTemplate> tvchannelTemplateRepository)
+        public TvChannelTemplateService(IRepository<TvChannelTemplate> tvChannelTemplateRepository)
         {
-            _tvchannelTemplateRepository = tvchannelTemplateRepository;
+            _tvChannelTemplateRepository = tvChannelTemplateRepository;
         }
 
         #endregion
@@ -29,25 +29,25 @@ namespace TvProgViewer.Services.Catalog
         #region Methods
 
         /// <summary>
-        /// Delete tvchannel template
+        /// Delete tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplate">TvChannel template</param>
+        /// <param name="tvChannelTemplate">TvChannel template</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate)
+        public virtual async Task DeleteTvChannelTemplateAsync(TvChannelTemplate tvChannelTemplate)
         {
-            await _tvchannelTemplateRepository.DeleteAsync(tvchannelTemplate);
+            await _tvChannelTemplateRepository.DeleteAsync(tvChannelTemplate);
         }
 
         /// <summary>
-        /// Gets all tvchannel templates
+        /// Gets all tvChannel templates
         /// </summary>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel templates
+        /// The task result contains the tvChannel templates
         /// </returns>
         public virtual async Task<IList<TvChannelTemplate>> GetAllTvChannelTemplatesAsync()
         {
-            var templates = await _tvchannelTemplateRepository.GetAllAsync(query =>
+            var templates = await _tvChannelTemplateRepository.GetAllAsync(query =>
             {
                 return from pt in query
                     orderby pt.DisplayOrder, pt.Id
@@ -58,36 +58,36 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets a tvchannel template
+        /// Gets a tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplateId">TvChannel template identifier</param>
+        /// <param name="tvChannelTemplateId">TvChannel template identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel template
+        /// The task result contains the tvChannel template
         /// </returns>
-        public virtual async Task<TvChannelTemplate> GetTvChannelTemplateByIdAsync(int tvchannelTemplateId)
+        public virtual async Task<TvChannelTemplate> GetTvChannelTemplateByIdAsync(int tvChannelTemplateId)
         {
-            return await _tvchannelTemplateRepository.GetByIdAsync(tvchannelTemplateId, cache => default);
+            return await _tvChannelTemplateRepository.GetByIdAsync(tvChannelTemplateId, cache => default);
         }
 
         /// <summary>
-        /// Inserts tvchannel template
+        /// Inserts tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplate">TvChannel template</param>
+        /// <param name="tvChannelTemplate">TvChannel template</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate)
+        public virtual async Task InsertTvChannelTemplateAsync(TvChannelTemplate tvChannelTemplate)
         {
-            await _tvchannelTemplateRepository.InsertAsync(tvchannelTemplate);
+            await _tvChannelTemplateRepository.InsertAsync(tvChannelTemplate);
         }
 
         /// <summary>
-        /// Updates the tvchannel template
+        /// Updates the tvChannel template
         /// </summary>
-        /// <param name="tvchannelTemplate">TvChannel template</param>
+        /// <param name="tvChannelTemplate">TvChannel template</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelTemplateAsync(TvChannelTemplate tvchannelTemplate)
+        public virtual async Task UpdateTvChannelTemplateAsync(TvChannelTemplate tvChannelTemplate)
         {
-            await _tvchannelTemplateRepository.UpdateAsync(tvchannelTemplate);
+            await _tvChannelTemplateRepository.UpdateAsync(tvChannelTemplate);
         }
 
         #endregion

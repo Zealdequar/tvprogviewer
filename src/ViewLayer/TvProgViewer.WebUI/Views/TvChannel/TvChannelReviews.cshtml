@@ -13,9 +13,9 @@
     TvProgHtml.AddTitleParts(Model.TvChannelName);
     TvProgHtml.AddTitleParts(T("PageTitle.TvChannelReviews").Text);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-tvchannel-reviews-page");
+    TvProgHtml.AppendPageCssClassParts("html-tvChannel-reviews-page");
 }
-<div class="page tvchannel-reviews-page">
+<div class="page tvChannel-reviews-page">
     <div class="page-title">
         <h1>@T("Reviews.TvChannelReviewsFor") <a href="@(Url.RouteUrl<TvChannel>(new { SeName = Model.TvChannelSeName }))">@Model.TvChannelName</a></h1>
     </div>
@@ -62,12 +62,12 @@
                                 <div class="rating-wrapper">
                                     <div class="label first">@T("Reviews.Fields.Rating.Bad")</div>
                                     <div class="rating-options">
-                                        <input asp-for="AddTvChannelReview.Rating" value="0" type="radio" id="addtvchannelrating_0" style="display: none;"/>
-                                        <input asp-for="AddTvChannelReview.Rating" value="1" type="radio" id="addtvchannelrating_1" aria-label="@T("Reviews.Fields.Rating.Bad")" />
-                                        <input asp-for="AddTvChannelReview.Rating" value="2" type="radio" id="addtvchannelrating_2" aria-label="@T("Reviews.Fields.Rating.NotGood")" />
-                                        <input asp-for="AddTvChannelReview.Rating" value="3" type="radio" id="addtvchannelrating_3" aria-label="@T("Reviews.Fields.Rating.NotBadNotExcellent")" />
-                                        <input asp-for="AddTvChannelReview.Rating" value="4" type="radio" id="addtvchannelrating_4" aria-label="@T("Reviews.Fields.Rating.Good")" />
-                                        <input asp-for="AddTvChannelReview.Rating" value="5" type="radio" id="addtvchannelrating_5" aria-label="@T("Reviews.Fields.Rating.Excellent")" />
+                                        <input asp-for="AddTvChannelReview.Rating" value="0" type="radio" id="addtvChannelrating_0" style="display: none;"/>
+                                        <input asp-for="AddTvChannelReview.Rating" value="1" type="radio" id="addtvChannelrating_1" aria-label="@T("Reviews.Fields.Rating.Bad")" />
+                                        <input asp-for="AddTvChannelReview.Rating" value="2" type="radio" id="addtvChannelrating_2" aria-label="@T("Reviews.Fields.Rating.NotGood")" />
+                                        <input asp-for="AddTvChannelReview.Rating" value="3" type="radio" id="addtvChannelrating_3" aria-label="@T("Reviews.Fields.Rating.NotBadNotExcellent")" />
+                                        <input asp-for="AddTvChannelReview.Rating" value="4" type="radio" id="addtvChannelrating_4" aria-label="@T("Reviews.Fields.Rating.Good")" />
+                                        <input asp-for="AddTvChannelReview.Rating" value="5" type="radio" id="addtvChannelrating_5" aria-label="@T("Reviews.Fields.Rating.Excellent")" />
                                     </div>                                    
                                     <div class="label last">@T("Reviews.Fields.Rating.Excellent")</div>
                                 </div>
@@ -93,12 +93,12 @@
                                                 <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].DisplayOrder" value="@(additionalReview.DisplayOrder)" type="hidden" />
                                                 <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].IsRequired" value="@(additionalReview.IsRequired)" type="hidden" />
 
-                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="0" type="radio" id="addtvchannelratingext_0_@(additionalReview.ReviewTypeId)" style="display: none;" />
-                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="1" type="radio" id="addtvchannelratingext_1_@(additionalReview.ReviewTypeId)" />
-                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="2" type="radio" id="addtvchannelratingext_2_@(additionalReview.ReviewTypeId)" />
-                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="3" type="radio" id="addtvchannelratingext_3_@(additionalReview.ReviewTypeId)" />
-                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="4" type="radio" id="addtvchannelratingext_4_@(additionalReview.ReviewTypeId)" />
-                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="5" type="radio" id="addtvchannelratingext_5_@(additionalReview.ReviewTypeId)" />
+                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="0" type="radio" id="addtvChannelratingext_0_@(additionalReview.ReviewTypeId)" style="display: none;" />
+                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="1" type="radio" id="addtvChannelratingext_1_@(additionalReview.ReviewTypeId)" />
+                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="2" type="radio" id="addtvChannelratingext_2_@(additionalReview.ReviewTypeId)" />
+                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="3" type="radio" id="addtvChannelratingext_3_@(additionalReview.ReviewTypeId)" />
+                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="4" type="radio" id="addtvChannelratingext_4_@(additionalReview.ReviewTypeId)" />
+                                                <input asp-for="@Model.AddAdditionalTvChannelReviewList[curAdditionalReview].Rating" value="5" type="radio" id="addtvChannelratingext_5_@(additionalReview.ReviewTypeId)" />
                                             </div>
                                             <div class="label last">@T("Reviews.Fields.Rating.Excellent")</div>
                                         </div>
@@ -113,26 +113,26 @@
                         </div>
                     </div>
                     <div class="buttons">
-                        <button type="submit" name="add-review" class="button-1 write-tvchannel-review-button">@T("Reviews.SubmitButton")</button>
+                        <button type="submit" name="add-review" class="button-1 write-tvChannel-review-button">@T("Reviews.SubmitButton")</button>
                     </div>
                 </form>
             </div>
         }
         @if (Model.Items.Count > 0)
         {
-            <div class="tvchannel-review-list">
+            <div class="tvChannel-review-list">
                 <div class="title">
                     <strong>@T("Reviews.ExistingReviews")</strong>
                 </div>
                 @foreach (var review in Model.Items)
                 {
                     var ratingPercent = review.Rating * 20;
-                    <div class="tvchannel-review-item">
+                    <div class="tvChannel-review-item">
                         <div class="review-item-head">
                             <div class="review-title">
                                 <strong>@review.Title</strong>
                             </div>
-                            <div class="tvchannel-review-box">
+                            <div class="tvChannel-review-box">
                                 <div class="rating">
                                     <div style="width: @(ratingPercent)%">
                                     </div>
@@ -167,7 +167,7 @@
                                     <div class="review-title">
                                         <i>@reviewType.Name</i>
                                     </div>
-                                    <div class="tvchannel-review-box">
+                                    <div class="tvChannel-review-box">
                                         <div class="rating">
                                             <div style="width: @(ratingExtPercent)%">
                                             </div>

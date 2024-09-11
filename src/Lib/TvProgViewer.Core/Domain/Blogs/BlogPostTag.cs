@@ -11,7 +11,7 @@ namespace TvProgViewer.Core.Domain.Blogs
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the tagged tvchannel count
+        /// Gets or sets the tagged tvChannel count
         /// </summary>
         public int BlogPostCount { get; set; }
     }

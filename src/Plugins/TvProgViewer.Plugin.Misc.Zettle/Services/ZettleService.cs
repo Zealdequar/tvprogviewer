@@ -15,7 +15,7 @@ using TvProgViewer.Plugin.Misc.Zettle.Domain.Api;
 using TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Image;
 using TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Inventory;
 using TvProgViewer.Plugin.Misc.Zettle.Domain.Api.OAuth;
-using TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product;
+using TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel;
 using TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Pusher;
 using TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Secure;
 using TvProgViewer.Services.Catalog;
@@ -39,9 +39,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         private readonly IDiscountService _discountService;
         private readonly ILogger _logger;
         private readonly IPictureService _pictureService;
-        private readonly IProductAttributeParser _productAttributeParser;
-        private readonly IProductAttributeService _productAttributeService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly ISettingService _settingService;
         private readonly IWorkContext _workContext;
         private readonly MediaSettings _mediaSettings;
@@ -60,9 +60,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             IDiscountService discountService,
             ILogger logger,
             IPictureService pictureService,
-            IProductAttributeParser productAttributeParser,
-            IProductAttributeService productAttributeService,
-            IProductService productService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
             ISettingService settingService,
             IWorkContext workContext,
             MediaSettings mediaSettings,
@@ -75,9 +75,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             _discountService = discountService;
             _logger = logger;
             _pictureService = pictureService;
-            _productAttributeParser = productAttributeParser;
-            _productAttributeService = productAttributeService;
-            _productService = productService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
             _settingService = settingService;
             _workContext = workContext;
             _mediaSettings = mediaSettings;
@@ -158,7 +158,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                 };
                 if (!discount.UsePercentage)
                 {
-                    request.Amount = new Domain.Api.Product.Discount.DiscountAmount
+                    request.Amount = new Domain.Api.TvChannel.Discount.DiscountAmount
                     {
                         CurrencyId = storeCurrency.CurrencyCode.ToUpper(),
                         Amount = storeCurrency.CurrencyCode.ToUpper() switch
@@ -178,53 +178,53 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         }
 
         /// <summary>
-        /// Delete products from Zettle library
+        /// Delete tvChannels from Zettle library
         /// </summary>
         /// <param name="log">Log message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
         private async Task ImportDeletedAsync(StringBuilder log)
         {
-            log.AppendLine("Delete products...");
+            log.AppendLine("Delete tvChannels...");
 
             //get records to delete
             var records = await _zettleRecordService
                 .GetAllRecordsAsync(active: true, operationTypes: new List<OperationType> { OperationType.Delete });
             var idsToDelete = records
-                .Where(record => !string.IsNullOrEmpty(record.Uuid) && record.ProductId > 0 && record.CombinationId == 0)
+                .Where(record => !string.IsNullOrEmpty(record.Uuid) && record.TvChannelId > 0 && record.CombinationId == 0)
                 .Select(record => record.Uuid)
                 .Distinct()
                 .ToList();
 
             if (idsToDelete.Any())
-                log.AppendLine($"\tDelete {idsToDelete.Count} products (#{string.Join(", #", idsToDelete)})");
+                log.AppendLine($"\tDelete {idsToDelete.Count} tvChannels (#{string.Join(", #", idsToDelete)})");
 
-            //if needed, also delete all existing products
+            //if needed, also delete all existing tvChannels
             if (_zettleSettings.DeleteBeforeImport)
             {
-                var idsToKeep = (await _zettleRecordService.GetAllRecordsAsync(productOnly: true, active: true))
+                var idsToKeep = (await _zettleRecordService.GetAllRecordsAsync(tvChannelOnly: true, active: true))
                     .Where(record => !string.IsNullOrEmpty(record.Uuid))
                     .Select(record => record.Uuid)
                     .Distinct()
                     .Except(idsToDelete)
                     .ToList();
 
-                var products = await _zettleHttpClient.RequestAsync<GetProductsRequest, ProductList>(new());
-                var existingIds = products.Select(product => product.Uuid).ToList();
+                var tvChannels = await _zettleHttpClient.RequestAsync<GetTvChannelsRequest, TvChannelList>(new());
+                var existingIds = tvChannels.Select(tvChannel => tvChannel.Uuid).ToList();
 
                 idsToDelete.AddRange(existingIds.Except(idsToKeep).ToList());
 
-                log.AppendLine($"\tAlso delete all existing library items before importing products");
+                log.AppendLine($"\tAlso delete all existing library items before importing tvChannels");
             }
 
             idsToDelete = idsToDelete.Distinct().ToList();
             if (idsToDelete.Any())
-                await _zettleHttpClient.RequestAsync<DeleteProductsRequest, ApiResponse>(new DeleteProductsRequest { ProductUuids = idsToDelete });
+                await _zettleHttpClient.RequestAsync<DeleteTvChannelsRequest, ApiResponse>(new DeleteTvChannelsRequest { TvChannelUuids = idsToDelete });
 
             await _zettleRecordService.DeleteRecordsAsync(records.Select(record => record.Id).ToList());
         }
 
         /// <summary>
-        /// Change product images in Zettle library
+        /// Change tvChannel images in Zettle library
         /// </summary>
         /// <param name="log">Log message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
@@ -239,45 +239,45 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                 .ToList();
             await UploadImagesAsync(records, true, log);
 
-            //then update appropriate products
-            var products = records
-                .GroupBy(record => record.ProductId)
+            //then update appropriate tvChannels
+            var tvChannels = records
+                .GroupBy(record => record.TvChannelId)
                 .Select(group => new
                 {
-                    ProductRecord = group.FirstOrDefault(record => record.CombinationId == 0),
+                    TvChannelRecord = group.FirstOrDefault(record => record.CombinationId == 0),
                     CombinationRecords = group.Where(record => record.CombinationId > 0 && !string.IsNullOrEmpty(record.VariantUuid)).ToList()
                 })
                 .ToList();
-            foreach (var product in products)
+            foreach (var tvChannel in tvChannels)
             {
-                var existingProduct = await _zettleHttpClient
-                    .RequestAsync<GetProductRequest, Product>(new GetProductRequest { Uuid = product.ProductRecord.Uuid });
-                var request = new UpdateProductRequest
+                var existingTvChannel = await _zettleHttpClient
+                    .RequestAsync<GetTvChannelRequest, TvChannel>(new GetTvChannelRequest { Uuid = tvChannel.TvChannelRecord.Uuid });
+                var request = new UpdateTvChannelRequest
                 {
-                    Uuid = existingProduct.Uuid,
-                    Name = existingProduct.Name,
-                    ETag = $"\"{existingProduct.ETag}\""
+                    Uuid = existingTvChannel.Uuid,
+                    Name = existingTvChannel.Name,
+                    ETag = $"\"{existingTvChannel.ETag}\""
                 };
-                if (!product.CombinationRecords.Any())
+                if (!tvChannel.CombinationRecords.Any())
                 {
-                    request.Presentation = new Product.ProductPresentation { ImageUrl = product.ProductRecord?.ImageUrl };
-                    request.Variants = new List<Product.ProductVariant>
+                    request.Presentation = new TvChannel.TvChannelPresentation { ImageUrl = tvChannel.TvChannelRecord?.ImageUrl };
+                    request.Variants = new List<TvChannel.TvChannelVariant>
                     {
-                        new Product.ProductVariant { Uuid = product.ProductRecord.VariantUuid }
+                        new TvChannel.TvChannelVariant { Uuid = tvChannel.TvChannelRecord.VariantUuid }
                     };
                 }
                 else
                 {
-                    request.Variants = product.CombinationRecords.Select(record => new Product.ProductVariant
+                    request.Variants = tvChannel.CombinationRecords.Select(record => new TvChannel.TvChannelVariant
                     {
                         Uuid = record.VariantUuid,
-                        Presentation = new Product.ProductPresentation { ImageUrl = record.ImageUrl }
+                        Presentation = new TvChannel.TvChannelPresentation { ImageUrl = record.ImageUrl }
                     }).ToList();
                 }
 
-                log.AppendLine($"\tAdd image to product #{product.ProductRecord.ProductId}");
+                log.AppendLine($"\tAdd image to tvChannel #{tvChannel.TvChannelRecord.TvChannelId}");
 
-                await _zettleHttpClient.RequestAsync<UpdateProductRequest, ApiResponse>(request);
+                await _zettleHttpClient.RequestAsync<UpdateTvChannelRequest, ApiResponse>(request);
             }
         }
 
@@ -299,53 +299,53 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
 
             var storeBalance = await _zettleHttpClient.RequestAsync<GetLocationInventoryBalanceRequest, LocationInventoryBalance>(new());
 
-            var products = records
-                .GroupBy(record => record.ProductId)
+            var tvChannels = records
+                .GroupBy(record => record.TvChannelId)
                 .Select(group => new
                 {
-                    ProductRecord = group.FirstOrDefault(record => record.CombinationId == 0),
+                    TvChannelRecord = group.FirstOrDefault(record => record.CombinationId == 0),
                     CombinationRecords = group.Where(record => record.CombinationId > 0 && !string.IsNullOrEmpty(record.VariantUuid)).ToList()
                 })
-                .Where(product => !storeBalance.TrackedProducts?.Contains(product.ProductRecord.Uuid, StringComparer.InvariantCultureIgnoreCase) ?? true)
+                .Where(tvChannel => !storeBalance.TrackedTvChannels?.Contains(tvChannel.TvChannelRecord.Uuid, StringComparer.InvariantCultureIgnoreCase) ?? true)
                 .ToList();
-            if (!products.Any())
+            if (!tvChannels.Any())
                 return;
 
-            var productChanges = new List<CreateTrackingRequest.ProductBalanceChange>();
-            foreach (var product in products)
+            var tvChannelChanges = new List<CreateTrackingRequest.TvChannelBalanceChange>();
+            foreach (var tvChannel in tvChannels)
             {
-                log.AppendLine($"\tStart inventory tracking for product #{product.ProductRecord.ProductId}");
+                log.AppendLine($"\tStart inventory tracking for tvChannel #{tvChannel.TvChannelRecord.TvChannelId}");
 
                 //get current quantity if exists
-                var productQuantity = storeBalance.Variants
-                    ?.FirstOrDefault(balance => balance.ProductUuid == product.ProductRecord.Uuid && balance.VariantUuid == product.ProductRecord.VariantUuid)
+                var tvChannelQuantity = storeBalance.Variants
+                    ?.FirstOrDefault(balance => balance.TvChannelUuid == tvChannel.TvChannelRecord.Uuid && balance.VariantUuid == tvChannel.TvChannelRecord.VariantUuid)
                     ?.Balance ?? 0;
-                (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) productRecordToStart = (product.ProductRecord, productQuantity, null);
+                (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) tvChannelRecordToStart = (tvChannel.TvChannelRecord, tvChannelQuantity, null);
                 var combinationRecordsToStart = new List<(ZettleRecord Record, int StockQuantity, int? QuantityAdjustment)>();
-                foreach (var combinationRecord in product.CombinationRecords)
+                foreach (var combinationRecord in tvChannel.CombinationRecords)
                 {
                     //get current quantity if exists
                     var combinationQuantity = storeBalance.Variants
-                        ?.FirstOrDefault(balance => balance.ProductUuid == combinationRecord.Uuid && balance.VariantUuid == combinationRecord.VariantUuid)
+                        ?.FirstOrDefault(balance => balance.TvChannelUuid == combinationRecord.Uuid && balance.VariantUuid == combinationRecord.VariantUuid)
                         ?.Balance ?? 0;
                     combinationRecordsToStart.Add((combinationRecord, combinationQuantity, null));
                 }
-                var productChange = await PrepareInventoryBalanceChangeAsync(InventoryBalanceChangeType.StartTracking,
-                    productRecordToStart, combinationRecordsToStart);
-                if (productChange is not null)
-                    productChanges.Add(productChange);
+                var tvChannelChange = await PrepareInventoryBalanceChangeAsync(InventoryBalanceChangeType.StartTracking,
+                    tvChannelRecordToStart, combinationRecordsToStart);
+                if (tvChannelChange is not null)
+                    tvChannelChanges.Add(tvChannelChange);
             }
-            await UpdateInventoryBalanceAsync(InventoryBalanceChangeType.StartTracking, productChanges);
+            await UpdateInventoryBalanceAsync(InventoryBalanceChangeType.StartTracking, tvChannelChanges);
         }
 
         /// <summary>
-        /// Create or update products in Zettle library
+        /// Create or update tvChannels in Zettle library
         /// </summary>
         /// <param name="log">Log message</param>
         /// <returns>A task that represents the asynchronous operation</returns>
         private async Task<Import> ImportCreatedOrUpdatedAsync(StringBuilder log)
         {
-            log.AppendLine("Create and update products...");
+            log.AppendLine("Create and update tvChannels...");
 
             //check currency match
             var storeCurrency = await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId);
@@ -363,11 +363,11 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             var pageIndex = 0;
             while (true)
             {
-                //we can add up to 2000 products per request, but when uploading images, this may be too much
+                //we can add up to 2000 tvChannels per request, but when uploading images, this may be too much
                 var records = await _zettleRecordService.GetAllRecordsAsync(active: true,
                     operationTypes: new List<OperationType> { OperationType.Create, OperationType.Update },
                     pageIndex: pageIndex++,
-                    pageSize: _zettleSettings.ImportProductsNumber);
+                    pageSize: _zettleSettings.ImportTvChannelsNumber);
                 if (!records.Any())
                     return import;
 
@@ -376,26 +376,26 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                 //upload images if needed
                 await UploadImagesAsync(records.ToList(), false, log);
 
-                //prepare products to import
-                var products = await _zettleRecordService.PrepareToSyncRecords(records.ToList()).SelectAwait(async product =>
+                //prepare tvChannels to import
+                var tvChannels = await _zettleRecordService.PrepareToSyncRecords(records.ToList()).SelectAwait(async tvChannel =>
                 {
-                    var request = new Product
+                    var request = new TvChannel
                     {
-                        Uuid = product.Uuid,
-                        ExternalReference = product.Sku,
-                        Name = product.Name,
-                        Id = product.Id,
-                        Description = product.Description,
+                        Uuid = tvChannel.Uuid,
+                        ExternalReference = tvChannel.Sku,
+                        Name = tvChannel.Name,
+                        Id = tvChannel.Id,
+                        Description = tvChannel.Description,
                         CreateWithDefaultTax = _zettleSettings.DefaultTaxEnabled,
-                        Category = new Product.ProductCategory
+                        Category = new TvChannel.TvChannelCategory
                         {
-                            Name = product.CategoryName,
+                            Name = tvChannel.CategoryName,
                             Uuid = GuidGenerator.GenerateTimeBasedGuid().ToString()
                         },
-                        Metadata = new Product.ProductMetadata
+                        Metadata = new TvChannel.TvChannelMetadata
                         {
                             InPos = true,
-                            Source = new Product.ProductMetadata.ProductSource
+                            Source = new TvChannel.TvChannelMetadata.TvChannelSource
                             {
                                 External = true,
                                 Name = ZettleDefaults.PartnerIdentifier
@@ -404,29 +404,29 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                     };
 
                     //set image
-                    if (product.ImageSyncEnabled && !string.IsNullOrEmpty(product.ImageUrl))
-                        request.Presentation = new Product.ProductPresentation { ImageUrl = product.ImageUrl };
+                    if (tvChannel.ImageSyncEnabled && !string.IsNullOrEmpty(tvChannel.ImageUrl))
+                        request.Presentation = new TvChannel.TvChannelPresentation { ImageUrl = tvChannel.ImageUrl };
 
                     var combinationRecords = records
-                        .Where(record => record.ProductId == product.Id && record.CombinationId != 0)
+                        .Where(record => record.TvChannelId == tvChannel.Id && record.CombinationId != 0)
                         .ToList();
                     if (!combinationRecords.Any())
                     {
                         //a single variant
-                        request.Variants = new List<Product.ProductVariant>
+                        request.Variants = new List<TvChannel.TvChannelVariant>
                         {
-                            new Product.ProductVariant
+                            new TvChannel.TvChannelVariant
                             {
-                                Uuid = product.VariantUuid,
-                                Name = product.Name,
-                                Sku = product.Sku,
-                                Description = product.Description,
+                                Uuid = tvChannel.VariantUuid,
+                                Name = tvChannel.Name,
+                                Sku = tvChannel.Sku,
+                                Description = tvChannel.Description,
 
                                 //set the price if available
-                                Price = product.PriceSyncEnabled && priceSyncAvailable
-                                    ? new Product.ProductVariant.ProductPrice
+                                Price = tvChannel.PriceSyncEnabled && priceSyncAvailable
+                                    ? new TvChannel.TvChannelVariant.TvChannelPrice
                                     {
-                                        Amount = preparePrice(product.Price),
+                                        Amount = preparePrice(tvChannel.Price),
                                         CurrencyId =  accountInfo.Currency
                                     } : null
                             }
@@ -435,21 +435,21 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                     else
                     {
                         //or multi variants
-                        var productCombinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
-                        var productAttributMappings = await _productAttributeService.GetProductAttributeMappingsByProductIdAsync(product.Id);
-                        var productAttributes = await productAttributMappings.SelectAwait(async mapping =>
+                        var tvChannelCombinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
+                        var tvChannelAttributMappings = await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
+                        var tvChannelAttributes = await tvChannelAttributMappings.SelectAwait(async mapping =>
                         {
-                            var productAttribute = await _productAttributeService.GetProductAttributeByIdAsync(mapping.ProductAttributeId);
-                            var productAttributeValues = await _productAttributeService.GetProductAttributeValuesAsync(mapping.Id);
-                            return new { Name = productAttribute.Name, Values = productAttributeValues.Select(value => value.Name).ToList() };
+                            var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(mapping.TvChannelAttributeId);
+                            var tvChannelAttributeValues = await _tvChannelAttributeService.GetTvChannelAttributeValuesAsync(mapping.Id);
+                            return new { Name = tvChannelAttribute.Name, Values = tvChannelAttributeValues.Select(value => value.Name).ToList() };
                         }).ToListAsync();
 
-                        request.VariantOptionDefinitions = new Product.ProductVariantDefinitions
+                        request.VariantOptionDefinitions = new TvChannel.TvChannelVariantDefinitions
                         {
-                            Definitions = productAttributes.Select(attribute => new Product.ProductVariantDefinitions.ProductVariantOptionDefinition
+                            Definitions = tvChannelAttributes.Select(attribute => new TvChannel.TvChannelVariantDefinitions.TvChannelVariantOptionDefinition
                             {
                                 Name = attribute.Name,
-                                Properties = attribute.Values.Select(value => new Product.ProductVariantDefinitions.ProductVariantOptionDefinition.ProductVariantOptionProperty
+                                Properties = attribute.Values.Select(value => new TvChannel.TvChannelVariantDefinitions.TvChannelVariantOptionDefinition.TvChannelVariantOptionProperty
                                 {
                                     Value = value
                                 }).ToList()
@@ -457,41 +457,41 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                         };
 
                         var combinations = combinationRecords
-                            .Join(productCombinations,
+                            .Join(tvChannelCombinations,
                                 record => record.CombinationId,
                                 combination => combination.Id,
                                 (record, combination) => new { Record = record, Combination = combination })
                             .ToList();
                         request.Variants = await combinations.SelectAwait(async combination =>
                         {
-                            var variant = new Product.ProductVariant
+                            var variant = new TvChannel.TvChannelVariant
                             {
                                 Uuid = combination.Record.VariantUuid,
-                                Name = product.Name,
+                                Name = tvChannel.Name,
                                 Sku = combination.Combination.Sku,
-                                Description = product.Description
+                                Description = tvChannel.Description
                             };
 
                             //set image
                             if (combination.Record.ImageSyncEnabled && !string.IsNullOrEmpty(combination.Record.ImageUrl))
-                                variant.Presentation = new Product.ProductPresentation { ImageUrl = combination.Record.ImageUrl };
+                                variant.Presentation = new TvChannel.TvChannelPresentation { ImageUrl = combination.Record.ImageUrl };
 
                             //set the price if available
                             if (combination.Record.PriceSyncEnabled && priceSyncAvailable)
                             {
-                                variant.Price = new Product.ProductVariant.ProductPrice
+                                variant.Price = new TvChannel.TvChannelVariant.TvChannelPrice
                                 {
-                                    Amount = preparePrice(combination.Combination.OverriddenPrice ?? product.Price),
+                                    Amount = preparePrice(combination.Combination.OverriddenPrice ?? tvChannel.Price),
                                     CurrencyId = accountInfo.Currency
                                 };
                             }
 
-                            variant.Options = await (await _productAttributeParser.ParseProductAttributeMappingsAsync(combination.Combination.AttributesXml))
+                            variant.Options = await (await _tvChannelAttributeParser.ParseTvChannelAttributeMappingsAsync(combination.Combination.AttributesXml))
                                 .SelectAwait(async mapping =>
                                 {
-                                    var attribute = await _productAttributeService.GetProductAttributeByIdAsync(mapping.ProductAttributeId);
-                                    var values = await _productAttributeParser.ParseProductAttributeValuesAsync(combination.Combination.AttributesXml, mapping.Id);
-                                    return new Product.ProductVariant.ProductVariantOption { Name = attribute.Name, Value = values.FirstOrDefault()?.Name };
+                                    var attribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(mapping.TvChannelAttributeId);
+                                    var values = await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(combination.Combination.AttributesXml, mapping.Id);
+                                    return new TvChannel.TvChannelVariant.TvChannelVariantOption { Name = attribute.Name, Value = values.FirstOrDefault()?.Name };
                                 })
                                 .ToListAsync();
 
@@ -501,9 +501,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                     return request;
                 }).ToListAsync();
 
-                log.AppendLine($"\tImport {products.Count} products (#{string.Join(", #", products.Select(product => product.Id).ToList())})");
+                log.AppendLine($"\tImport {tvChannels.Count} tvChannels (#{string.Join(", #", tvChannels.Select(tvChannel => tvChannel.Id).ToList())})");
 
-                import = await _zettleHttpClient.RequestAsync<CreateImportRequest, Import>(new CreateImportRequest { Products = products });
+                import = await _zettleHttpClient.RequestAsync<CreateImportRequest, Import>(new CreateImportRequest { TvChannels = tvChannels });
 
                 log.AppendLine($"\t\tImport ({import.Uuid}) created at {import.Created?.ToLongTimeString()}");
             }
@@ -527,9 +527,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                .Where(record => record.ImageSyncEnabled && (update || string.IsNullOrEmpty(record.ImageUrl)))
                .SelectAwait(async record =>
                {
-                   var product = await _productService.GetProductByIdAsync(record.ProductId);
-                   var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(record.CombinationId);
-                   var picture = await _pictureService.GetProductPictureAsync(product, combination?.AttributesXml);
+                   var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(record.TvChannelId);
+                   var combination = await _tvChannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(record.CombinationId);
+                   var picture = await _pictureService.GetTvChannelPictureAsync(tvChannel, combination?.AttributesXml);
                    var ext = await _pictureService.GetFileExtensionFromMimeTypeAsync(picture.MimeType);
                    var (url, _) = await _pictureService.GetPictureUrlAsync(picture);
                    return new { Record = record, Url = url, Format = ext };
@@ -574,31 +574,31 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         #region Inventory
 
         /// <summary>
-        /// Prepare product inventory balance changes
+        /// Prepare tvChannel inventory balance changes
         /// </summary>
         /// <param name="changeType">Inventory balance change type</param>
-        /// <param name="productRecord">Product record with initial stock quantity and qunatity adjustment</param>
+        /// <param name="tvChannelRecord">TvChannel record with initial stock quantity and qunatity adjustment</param>
         /// <param name="combinationRecords">Combination records with initial stock quantity and qunatity adjustment</param>
         /// <returns>
         /// A task that represents the asynchronous operation
         /// The task result contains list of balance changes
         /// </returns>
-        private async Task<CreateTrackingRequest.ProductBalanceChange> PrepareInventoryBalanceChangeAsync(InventoryBalanceChangeType changeType,
-            (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) productRecord,
+        private async Task<CreateTrackingRequest.TvChannelBalanceChange> PrepareInventoryBalanceChangeAsync(InventoryBalanceChangeType changeType,
+            (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) tvChannelRecord,
             List<(ZettleRecord Record, int StockQuantity, int? QuantityAdjustment)> combinationRecords)
         {
-            //ensure that inventory is tracked for the product
-            var product = await _productService.GetProductByIdAsync(productRecord.Record?.ProductId ?? 0);
-            if (product is null || product.ManageInventoryMethod == Core.Domain.Catalog.ManageInventoryMethod.DontManageStock)
+            //ensure that inventory is tracked for the tvChannel
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelRecord.Record?.TvChannelId ?? 0);
+            if (tvChannel is null || tvChannel.ManageInventoryMethod == Core.Domain.Catalog.ManageInventoryMethod.DontManageStock)
                 return null;
 
-            var productChange = new CreateTrackingRequest.ProductBalanceChange
+            var tvChannelChange = new CreateTrackingRequest.TvChannelBalanceChange
             {
-                ProductUuid = productRecord.Record.Uuid,
+                TvChannelUuid = tvChannelRecord.Record.Uuid,
                 TrackingStatusChange = changeType == InventoryBalanceChangeType.StartTracking ? "START_TRACKING" : "NO_CHANGE"
             };
 
-            //Zettle Inventory service keeps track of inventory balances by moving product items between so-called locations
+            //Zettle Inventory service keeps track of inventory balances by moving tvChannel items between so-called locations
             var fromLocation = await (changeType switch
             {
                 InventoryBalanceChangeType.StartTracking or InventoryBalanceChangeType.Restock => GetLocationAsync("SUPPLIER"),
@@ -617,17 +617,17 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             {
                 //get initial quantity
                 var quantity = changeType == InventoryBalanceChangeType.StartTracking
-                    ? product.StockQuantity - productRecord.StockQuantity
-                    : productRecord.QuantityAdjustment ?? 0;
+                    ? tvChannel.StockQuantity - tvChannelRecord.StockQuantity
+                    : tvChannelRecord.QuantityAdjustment ?? 0;
                 if (quantity != 0)
                 {
-                    productChange.VariantChanges = new List<CreateTrackingRequest.VariantBalanceChange>
+                    tvChannelChange.VariantChanges = new List<CreateTrackingRequest.VariantBalanceChange>
                     {
                         new CreateTrackingRequest.VariantBalanceChange
                         {
                             FromLocationUuid = quantity > 0 ? fromLocation : toLocation,
                             ToLocationUuid = quantity > 0 ? toLocation : fromLocation,
-                            VariantUuid = productRecord.Record.VariantUuid,
+                            VariantUuid = tvChannelRecord.Record.VariantUuid,
                             Change = Math.Abs(quantity)
                         }
                     };
@@ -635,16 +635,16 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             }
             else
             {
-                var combinations = await _productAttributeService.GetAllProductAttributeCombinationsAsync(product.Id);
-                productChange.VariantChanges = await combinationRecords.SelectAwait(async combinationRecord =>
+                var combinations = await _tvChannelAttributeService.GetAllTvChannelAttributeCombinationsAsync(tvChannel.Id);
+                tvChannelChange.VariantChanges = await combinationRecords.SelectAwait(async combinationRecord =>
                 {
-                    var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(combinationRecord.Record.CombinationId);
+                    var combination = await _tvChannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(combinationRecord.Record.CombinationId);
 
                     //get initial quantity
                     var quantity = changeType == InventoryBalanceChangeType.StartTracking
-                        ? (product.ManageInventoryMethod == Core.Domain.Catalog.ManageInventoryMethod.ManageStockByAttributes
+                        ? (tvChannel.ManageInventoryMethod == Core.Domain.Catalog.ManageInventoryMethod.ManageStockByAttributes
                         ? (combination?.StockQuantity ?? 0) - combinationRecord.StockQuantity
-                        : (product.StockQuantity / combinations.Count) - combinationRecord.StockQuantity)
+                        : (tvChannel.StockQuantity / combinations.Count) - combinationRecord.StockQuantity)
                         : combinationRecord.QuantityAdjustment ?? 0;
                     if (quantity == 0)
                         return null;
@@ -659,24 +659,24 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                 }).Where(variantChange => variantChange is not null).ToListAsync();
             }
 
-            return productChange;
+            return tvChannelChange;
         }
 
         /// <summary>
         /// Update inventory balance
         /// </summary>
         /// <param name="changeType">Inventory balance change type</param>
-        /// <param name="productChanges">List of product changes</param>
+        /// <param name="tvChannelChanges">List of tvChannel changes</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        private async Task UpdateInventoryBalanceAsync(InventoryBalanceChangeType changeType, List<CreateTrackingRequest.ProductBalanceChange> productChanges)
+        private async Task UpdateInventoryBalanceAsync(InventoryBalanceChangeType changeType, List<CreateTrackingRequest.TvChannelBalanceChange> tvChannelChanges)
         {
-            if (!productChanges.Any())
+            if (!tvChannelChanges.Any())
                 return;
 
             var inventoryRequest = new CreateTrackingRequest
             {
                 ReturnLocationUuid = await GetLocationAsync("STORE"),
-                ProductChanges = productChanges,
+                TvChannelChanges = tvChannelChanges,
                 ExternalUuid = GuidGenerator.GenerateTimeBasedGuid().ToString()
             };
 
@@ -902,38 +902,38 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                                 var balanceBefore = balanceInfo.BalanceBefore?.ElementAtOrDefault(i);
                                 var balanceAfter = balanceInfo.BalanceAfter?.ElementAtOrDefault(i);
 
-                                if (string.IsNullOrEmpty(balanceBefore?.ProductUuid) || string.IsNullOrEmpty(balanceAfter?.ProductUuid))
+                                if (string.IsNullOrEmpty(balanceBefore?.TvChannelUuid) || string.IsNullOrEmpty(balanceAfter?.TvChannelUuid))
                                     continue;
 
-                                if (balanceBefore.ProductUuid != balanceAfter.ProductUuid || balanceBefore.VariantUuid != balanceAfter.VariantUuid)
+                                if (balanceBefore.TvChannelUuid != balanceAfter.TvChannelUuid || balanceBefore.VariantUuid != balanceAfter.VariantUuid)
                                     continue;
 
                                 if (!balanceBefore.Balance.HasValue || !balanceAfter.Balance.HasValue)
                                     continue;
 
-                                var records = await _zettleRecordService.GetAllRecordsAsync(productUuid: balanceAfter.ProductUuid);
-                                var productRecord = records.FirstOrDefault(record => string.Equals(record.VariantUuid, balanceAfter.VariantUuid, StringComparison.InvariantCultureIgnoreCase));
-                                if (productRecord is null || !productRecord.Active || !productRecord.InventoryTrackingEnabled)
+                                var records = await _zettleRecordService.GetAllRecordsAsync(tvChannelUuid: balanceAfter.TvChannelUuid);
+                                var tvChannelRecord = records.FirstOrDefault(record => string.Equals(record.VariantUuid, balanceAfter.VariantUuid, StringComparison.InvariantCultureIgnoreCase));
+                                if (tvChannelRecord is null || !tvChannelRecord.Active || !tvChannelRecord.InventoryTrackingEnabled)
                                     continue;
 
                                 //adjust inventory
-                                var product = await _productService.GetProductByIdAsync(productRecord.ProductId);
-                                var combination = await _productAttributeService.GetProductAttributeCombinationByIdAsync(productRecord.CombinationId);
+                                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelRecord.TvChannelId);
+                                var combination = await _tvChannelAttributeService.GetTvChannelAttributeCombinationByIdAsync(tvChannelRecord.CombinationId);
                                 var quantityToChange = balanceAfter.Balance.Value - balanceBefore.Balance.Value;
                                 var logMessage = $"{ZettleDefaults.SystemName} update. Inventory balance changed at {balanceAfter.Created?.ToLongTimeString()}";
-                                await _productService.AdjustInventoryAsync(product, quantityToChange, combination?.AttributesXml, logMessage);
+                                await _tvChannelService.AdjustInventoryAsync(tvChannel, quantityToChange, combination?.AttributesXml, logMessage);
                             }
 
                             break;
                         }
                     case "InventoryTrackingStopped":
                         {
-                            var inventoryTrackingInfo = JsonConvert.DeserializeAnonymousType(message.Payload, new { ProductUuid = string.Empty });
-                            if (string.IsNullOrEmpty(inventoryTrackingInfo.ProductUuid))
+                            var inventoryTrackingInfo = JsonConvert.DeserializeAnonymousType(message.Payload, new { TvChannelUuid = string.Empty });
+                            if (string.IsNullOrEmpty(inventoryTrackingInfo.TvChannelUuid))
                                 break;
 
                             //stop tracking
-                            var records = (await _zettleRecordService.GetAllRecordsAsync(productUuid: inventoryTrackingInfo.ProductUuid)).ToList();
+                            var records = (await _zettleRecordService.GetAllRecordsAsync(tvChannelUuid: inventoryTrackingInfo.TvChannelUuid)).ToList();
                             foreach (var record in records)
                             {
                                 record.InventoryTrackingEnabled = false;
@@ -944,19 +944,19 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                             break;
                         }
 
-                    case "ProductCreated":
+                    case "TvChannelCreated":
                         {
-                            //use this event only to start inventory tracking for product
-                            var productInfo = JsonConvert.DeserializeObject<Product>(message.Payload);
-                            var records = await _zettleRecordService.GetAllRecordsAsync(productUuid: productInfo.Uuid);
-                            var productRecord = records.FirstOrDefault(record => record.CombinationId == 0);
-                            if (productRecord is null || !productRecord.Active || !productRecord.InventoryTrackingEnabled)
+                            //use this event only to start inventory tracking for tvChannel
+                            var tvChannelInfo = JsonConvert.DeserializeObject<TvChannel>(message.Payload);
+                            var records = await _zettleRecordService.GetAllRecordsAsync(tvChannelUuid: tvChannelInfo.Uuid);
+                            var tvChannelRecord = records.FirstOrDefault(record => record.CombinationId == 0);
+                            if (tvChannelRecord is null || !tvChannelRecord.Active || !tvChannelRecord.InventoryTrackingEnabled)
                                 break;
 
                             var storeBalance = await _zettleHttpClient
                                 .RequestAsync<GetLocationInventoryBalanceRequest, LocationInventoryBalance>(new());
-                            var trackingStarted = storeBalance.TrackedProducts
-                                ?.Contains(productRecord.Uuid, StringComparer.InvariantCultureIgnoreCase);
+                            var trackingStarted = storeBalance.TrackedTvChannels
+                                ?.Contains(tvChannelRecord.Uuid, StringComparer.InvariantCultureIgnoreCase);
                             if (trackingStarted ?? true)
                                 break;
 
@@ -966,13 +966,13 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
                             {
                                 combinationRecordsToStart.Add((combinationRecord, 0, null));
                             }
-                            (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) productRecordToStart = (productRecord, 0, null);
-                            var productChange = await PrepareInventoryBalanceChangeAsync(InventoryBalanceChangeType.StartTracking,
-                                productRecordToStart, combinationRecordsToStart);
-                            if (productChange is null)
+                            (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) tvChannelRecordToStart = (tvChannelRecord, 0, null);
+                            var tvChannelChange = await PrepareInventoryBalanceChangeAsync(InventoryBalanceChangeType.StartTracking,
+                                tvChannelRecordToStart, combinationRecordsToStart);
+                            if (tvChannelChange is null)
                                 break;
 
-                            await UpdateInventoryBalanceAsync(InventoryBalanceChangeType.StartTracking, new List<CreateTrackingRequest.ProductBalanceChange> { productChange });
+                            await UpdateInventoryBalanceAsync(InventoryBalanceChangeType.StartTracking, new List<CreateTrackingRequest.TvChannelBalanceChange> { tvChannelChange });
 
                             break;
                         }
@@ -1030,7 +1030,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         }
 
         /// <summary>
-        /// Start products import
+        /// Start tvChannels import
         /// </summary>
         /// <returns>
         /// A task that represents the asynchronous operation
@@ -1085,19 +1085,19 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
         /// <summary>
         /// Change inventory balance
         /// </summary>
-        /// <param name="productId">Product identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="combinationId">Combination identifier</param>
         /// <param name="quantityAdjustment">Stock quantity adjustment</param>
         /// <returns>A task that represents the asynchronous operation</returns>
-        public async Task ChangeInventoryBalanceAsync(int productId, int combinationId, int quantityAdjustment)
+        public async Task ChangeInventoryBalanceAsync(int tvChannelId, int combinationId, int quantityAdjustment)
         {
             var records = (await _zettleRecordService.GetAllRecordsAsync(active: true))
-                .Where(record => record.ProductId == productId && record.InventoryTrackingEnabled && !string.IsNullOrEmpty(record.Uuid))
+                .Where(record => record.TvChannelId == tvChannelId && record.InventoryTrackingEnabled && !string.IsNullOrEmpty(record.Uuid))
                 .ToList();
             if (!records.Any())
                 return;
 
-            var productRecord = records.FirstOrDefault(record => record.CombinationId == 0);
+            var tvChannelRecord = records.FirstOrDefault(record => record.CombinationId == 0);
             var combinationRecords = combinationId > 0
                 ? records.Where(record => record.CombinationId == combinationId && record.InventoryTrackingEnabled && !string.IsNullOrEmpty(record.VariantUuid)).ToList()
                 : new List<ZettleRecord>();
@@ -1109,12 +1109,12 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Services
             {
                 combinationRecordsToUpdate.Add((combinationRecord, 0, Math.Abs(quantityAdjustment)));
             }
-            (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) productRecordToUpdate = (productRecord, 0, Math.Abs(quantityAdjustment));
-            var productChange = await PrepareInventoryBalanceChangeAsync(changeType, productRecordToUpdate, combinationRecordsToUpdate);
-            if (productChange is null)
+            (ZettleRecord Record, int StockQuantity, int? QuantityAdjustment) tvChannelRecordToUpdate = (tvChannelRecord, 0, Math.Abs(quantityAdjustment));
+            var tvChannelChange = await PrepareInventoryBalanceChangeAsync(changeType, tvChannelRecordToUpdate, combinationRecordsToUpdate);
+            if (tvChannelChange is null)
                 return;
 
-            await UpdateInventoryBalanceAsync(changeType, new List<CreateTrackingRequest.ProductBalanceChange> { productChange });
+            await UpdateInventoryBalanceAsync(changeType, new List<CreateTrackingRequest.TvChannelBalanceChange> { tvChannelChange });
         }
 
         #endregion

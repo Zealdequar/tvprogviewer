@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Models.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel specification model
+    /// Represents a tvChannel specification model
     /// </summary>
     public partial record TvChannelSpecificationModel : BaseTvProgModel
     {

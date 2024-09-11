@@ -4,21 +4,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Humanizer;
-using Nop.Core.Domain.Localization;
-using Nop.Core.Events;
-using Nop.Data;
-using Nop.Services.Events;
-using Nop.Services.Localization;
+using TvProgViewer.Core.Domain.Localization;
+using TvProgViewer.Core.Events;
+using TvProgViewer.Data;
+using TvProgViewer.Services.Events;
+using TvProgViewer.Services.Localization;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Localization
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Localization
 {
     [TestFixture]
     public class LocalizationServiceTests : ServiceTest
     {
         private ILocalizationService _localizationService;
         private IRepository<LocaleStringResource> _lsrRepository;
-        private const string PREFIX = "Nop.Tests.Nop.Services.Tests.Localization";
+        private const string PREFIX = "TvProgViewer.Tests.TvProgViewer.Services.Tests.Localization";
         private Dictionary<string, string> _resources;
 
         [OneTimeSetUp]

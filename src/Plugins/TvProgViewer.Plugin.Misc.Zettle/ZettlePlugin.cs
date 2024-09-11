@@ -126,7 +126,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle
                 AutoSyncEnabled = false,
                 AutoSyncPeriod = ZettleDefaults.SynchronizationTask.Period / 60,
                 RequestTimeout = ZettleDefaults.RequestTimeout,
-                ImportProductsNumber = ZettleDefaults.ImportProductsNumber,
+                ImportTvChannelsNumber = ZettleDefaults.ImportTvChannelsNumber,
                 AutoAddRecordsEnabled = true,
                 LogSyncMessages = true,
                 CategorySyncEnabled = true,
@@ -167,22 +167,22 @@ namespace TvProgViewer.Plugin.Misc.Zettle
                 ["Plugins.Misc.Zettle.Configuration.Fields.DisconnectOnUninstall"] = "Disconnect on uninstall",
                 ["Plugins.Misc.Zettle.Configuration.Fields.DisconnectOnUninstall.Hint"] = "Determine whether to disconnect an app (Revoke Access) from an associated PayPal Zettle organisation when the plugin is uninstalled. In this case you will need to go through the signing-up process again. If disabled, you can use the same credentials after reinstalling the plugin.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.AutoSyncEnabled"] = "Enable auto synchronization",
-                ["Plugins.Misc.Zettle.Configuration.Fields.AutoSyncEnabled.Hint"] = "Determine whether to enable auto synchronization. This will automatically synchronize changes for the selected products and add new ones. If disabled, synchronization must be started manually on this page.",
+                ["Plugins.Misc.Zettle.Configuration.Fields.AutoSyncEnabled.Hint"] = "Determine whether to enable auto synchronization. This will automatically synchronize changes for the selected tvChannels and add new ones. If disabled, synchronization must be started manually on this page.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.AutoSyncPeriod"] = "Auto synchronization period",
                 ["Plugins.Misc.Zettle.Configuration.Fields.AutoSyncPeriod.Hint"] = "Set the period (in minutes) for auto synchronization.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.AutoSyncPeriod.Invalid"] = "Period is invalid",
-                ["Plugins.Misc.Zettle.Configuration.Fields.DeleteBeforeImport"] = "Delete products before sync",
-                ["Plugins.Misc.Zettle.Configuration.Fields.DeleteBeforeImport.Hint"] = "Determine whether to delete existing library items before importing products to PayPal Zettle. It may be required on the first synchronization if you want to keep only products from tvProgViewer catalog. After that, it's recommended to disable this setting.",
+                ["Plugins.Misc.Zettle.Configuration.Fields.DeleteBeforeImport"] = "Delete tvChannels before sync",
+                ["Plugins.Misc.Zettle.Configuration.Fields.DeleteBeforeImport.Hint"] = "Determine whether to delete existing library items before importing tvChannels to PayPal Zettle. It may be required on the first synchronization if you want to keep only tvChannels from tvProgViewer catalog. After that, it's recommended to disable this setting.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.SyncEnabled"] = "Sync enabled",
-                ["Plugins.Misc.Zettle.Configuration.Fields.SyncEnabled.Hint"] = "Determine whether to synchronize the selected products by default. If disabled, the selected products will be inactive and will not be imported until you enable them.",
+                ["Plugins.Misc.Zettle.Configuration.Fields.SyncEnabled.Hint"] = "Determine whether to synchronize the selected tvChannels by default. If disabled, the selected tvChannels will be inactive and will not be imported until you enable them.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.PriceSyncEnabled"] = "Price sync enabled",
-                ["Plugins.Misc.Zettle.Configuration.Fields.PriceSyncEnabled.Hint"] = "Determine whether to synchronize prices of the selected products by default. If disabled, prices will have to be set manually in PayPal Zettle.",
+                ["Plugins.Misc.Zettle.Configuration.Fields.PriceSyncEnabled.Hint"] = "Determine whether to synchronize prices of the selected tvChannels by default. If disabled, prices will have to be set manually in PayPal Zettle.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.ImageSyncEnabled"] = "Image sync enabled",
-                ["Plugins.Misc.Zettle.Configuration.Fields.ImageSyncEnabled.Hint"] = "Determine whether to synchronize images of the selected products by default. A product in PayPal Zettle library can have a single image assigned.",
+                ["Plugins.Misc.Zettle.Configuration.Fields.ImageSyncEnabled.Hint"] = "Determine whether to synchronize images of the selected tvChannels by default. A tvChannel in PayPal Zettle library can have a single image assigned.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.InventoryTrackingEnabled"] = "Inventory tracking enabled",
-                ["Plugins.Misc.Zettle.Configuration.Fields.InventoryTrackingEnabled.Hint"] = "Determine whether to track inventory balance for products by default. The product in tvProgViewer catalog must also have the appropriate inventory method selected. Tracking is enabled on sync. Then when tracking is enabled for a product, the inventory data on both sides is updated immediately and doesn't require synchronization.",
+                ["Plugins.Misc.Zettle.Configuration.Fields.InventoryTrackingEnabled.Hint"] = "Determine whether to track inventory balance for tvChannels by default. The tvChannel in tvProgViewer catalog must also have the appropriate inventory method selected. Tracking is enabled on sync. Then when tracking is enabled for a tvChannel, the inventory data on both sides is updated immediately and doesn't require synchronization.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.DefaultTaxEnabled"] = "Use default tax",
-                ["Plugins.Misc.Zettle.Configuration.Fields.DefaultTaxEnabled.Hint"] = "Determine whether to use the country's default VAT rate or default sales tax rate for new products. If disabled, taxes will have to be set manually in PayPal Zettle.",
+                ["Plugins.Misc.Zettle.Configuration.Fields.DefaultTaxEnabled.Hint"] = "Determine whether to use the country's default VAT rate or default sales tax rate for new tvChannels. If disabled, taxes will have to be set manually in PayPal Zettle.",
                 ["Plugins.Misc.Zettle.Configuration.Fields.DiscountSyncEnabled"] = "Add discounts",
                 ["Plugins.Misc.Zettle.Configuration.Fields.DiscountSyncEnabled.Hint"] = "Determine whether to import discounts from tvProgViewer catalog (assigned to order subtotal only) to PayPal Zettle.",
                 ["Plugins.Misc.Zettle.Configuration.Webhook.Warning"] = "Webhook was not created (see details in the <a href=\"{0}\" target=\"_blank\">log</a>), so some functions may not work correctly. Please ensure that your store is under SSL, PayPal Zettle doesn't send requests to unsecured sites.",
@@ -194,11 +194,11 @@ namespace TvProgViewer.Plugin.Misc.Zettle
                 ["Plugins.Misc.Zettle.Account.Fields.Currency.Hint"] = "Displays the currency of the connected account.",
                 ["Plugins.Misc.Zettle.Account.Fields.Currency.Warning"] = "The <a href=\"{2}\" target=\"_blank\">primary store currency</a> ({0}) doesn't match the currency of the merchant's PayPal Zettle account ({1}). In this case, prices will not be synchronized and will have to be set manually",
                 ["Plugins.Misc.Zettle.Account.Fields.TaxationType"] = "Tax type",
-                ["Plugins.Misc.Zettle.Account.Fields.TaxationType.Hint"] = "Displays the taxation type of the connected account. This setting determines which VAT/tax model is used for products and their prices.",
+                ["Plugins.Misc.Zettle.Account.Fields.TaxationType.Hint"] = "Displays the taxation type of the connected account. This setting determines which VAT/tax model is used for tvChannels and their prices.",
                 ["Plugins.Misc.Zettle.Account.Fields.TaxationType.Vat.Warning"] = "The VAT settings don't match the settings of the merchant's PayPal Zettle account. See <a href=\"{0}\" target=\"_blank\">Tax settings</a>",
-                ["Plugins.Misc.Zettle.Account.Fields.TaxationType.SalesTax.Warning"] = "Default sales tax rate not set. Please complete your PayPal Zettle account setup before continuing, otherwise, no sales tax information will be applied to the imported products.",
+                ["Plugins.Misc.Zettle.Account.Fields.TaxationType.SalesTax.Warning"] = "Default sales tax rate not set. Please complete your PayPal Zettle account setup before continuing, otherwise, no sales tax information will be applied to the imported tvChannels.",
                 ["Plugins.Misc.Zettle.Account.Fields.TaxationMode"] = "Price type",
-                ["Plugins.Misc.Zettle.Account.Fields.TaxationMode.Hint"] = "Displays the taxation mode of the connected account. Product prices may be inclusive taxes (net prices) or exclusive taxes (gross prices). This setting only provides information how product prices are stored.",
+                ["Plugins.Misc.Zettle.Account.Fields.TaxationMode.Hint"] = "Displays the taxation mode of the connected account. TvChannel prices may be inclusive taxes (net prices) or exclusive taxes (gross prices). This setting only provides information how tvChannel prices are stored.",
                 ["Plugins.Misc.Zettle.Account.Fields.TaxationMode.Warning"] = "The store price type doesn't match the price type of the merchant's PayPal Zettle account. See 'Prices include tax' in <a href=\"{0}\" target=\"_blank\">Tax settings</a>",
 
                 ["Plugins.Misc.Zettle.Import.Fields.StartDate"] = "Start date",
@@ -211,12 +211,12 @@ namespace TvProgViewer.Plugin.Misc.Zettle
                 ["Plugins.Misc.Zettle.Import.Fields.Items.Hint"] = "Displays the number of imported items.",
 
                 ["Plugins.Misc.Zettle.Sync"] = "Synchronization",
-                ["Plugins.Misc.Zettle.Sync.AddProduct"] = "Add product",
-                ["Plugins.Misc.Zettle.Sync.AddProduct.Success"] = "Products successfully added",
-                ["Plugins.Misc.Zettle.Sync.AddProduct.Warning"] = "{0} products were not added because their SKU are not specified",
+                ["Plugins.Misc.Zettle.Sync.AddTvChannel"] = "Add tvChannel",
+                ["Plugins.Misc.Zettle.Sync.AddTvChannel.Success"] = "TvChannels successfully added",
+                ["Plugins.Misc.Zettle.Sync.AddTvChannel.Warning"] = "{0} tvChannels were not added because their SKU are not specified",
                 ["Plugins.Misc.Zettle.Sync.DeleteSelected"] = "Delete selected",
                 ["Plugins.Misc.Zettle.Sync.Fields.Active"] = "Active",
-                ["Plugins.Misc.Zettle.Sync.Fields.Product"] = "Product",
+                ["Plugins.Misc.Zettle.Sync.Fields.TvChannel"] = "TvChannel",
                 ["Plugins.Misc.Zettle.Sync.Fields.PriceSyncEnabled"] = "Price sync enabled",
                 ["Plugins.Misc.Zettle.Sync.Fields.ImageSyncEnabled"] = "Image sync enabled",
                 ["Plugins.Misc.Zettle.Sync.Fields.InventoryTrackingEnabled"] = "Inventory tracking enabled",
@@ -229,10 +229,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle
                     </p>
                     <ol>
                         <li>Discounts assigned to order subtotal will be added if the setting is enabled.</li>
-                        <li>Existing library items will be removed before products are imported if the setting is enabled.</li>
-                        <li>Products removed from the catalog will be removed.</li>
+                        <li>Existing library items will be removed before tvChannels are imported if the setting is enabled.</li>
+                        <li>TvChannels removed from the catalog will be removed.</li>
                         <li>Updated images will be replaced.</li>
-                        <li>Added and updated products will be imported with the appropriate settings (prices, images, inventory tracking, default tax).</li>
+                        <li>Added and updated tvChannels will be imported with the appropriate settings (prices, images, inventory tracking, default tax).</li>
                     </ol>
                     <p>
                         Synchronization may take some time.

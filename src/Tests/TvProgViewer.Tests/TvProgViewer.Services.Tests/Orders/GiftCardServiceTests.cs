@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Orders;
-using Nop.Services.Orders;
+using TvProgViewer.Core.Domain.Orders;
+using TvProgViewer.Services.Orders;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Orders
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Orders
 {
     [TestFixture]
     public class GiftCardServiceTests : ServiceTest

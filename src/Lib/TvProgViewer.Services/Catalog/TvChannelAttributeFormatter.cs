@@ -28,8 +28,8 @@ namespace TvProgViewer.Services.Catalog
         private readonly ILocalizationService _localizationService;
         private readonly IPriceCalculationService _priceCalculationService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
         private readonly ITaxService _taxService;
         private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
@@ -46,8 +46,8 @@ namespace TvProgViewer.Services.Catalog
             ILocalizationService localizationService,
             IPriceCalculationService priceCalculationService,
             IPriceFormatter priceFormatter,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelAttributeService tvchannelAttributeService,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
             ITaxService taxService,
             IWebHelper webHelper,
             IWorkContext workContext,
@@ -60,8 +60,8 @@ namespace TvProgViewer.Services.Catalog
             _localizationService = localizationService;
             _priceCalculationService = priceCalculationService;
             _priceFormatter = priceFormatter;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelAttributeService = tvchannelAttributeService;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
             _taxService = taxService;
             _webHelper = webHelper;
             _workContext = workContext;
@@ -76,38 +76,38 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Formats attributes
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the attributes
         /// </returns>
-        public virtual async Task<string> FormatAttributesAsync(TvChannel tvchannel, string attributesXml)
+        public virtual async Task<string> FormatAttributesAsync(TvChannel tvChannel, string attributesXml)
         {
             var user = await _workContext.GetCurrentUserAsync();
             var currentStore = await _storeContext.GetCurrentStoreAsync();
             
-            return await FormatAttributesAsync(tvchannel, attributesXml, user, currentStore);
+            return await FormatAttributesAsync(tvChannel, attributesXml, user, currentStore);
         }
 
         /// <summary>
         /// Formats attributes
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="attributesXml">Attributes in XML format</param>
         /// <param name="user">User</param>
         /// <param name="store">Store</param>
         /// <param name="separator">Separator</param>
         /// <param name="htmlEncode">A value indicating whether to encode (HTML) values</param>
         /// <param name="renderPrices">A value indicating whether to render prices</param>
-        /// <param name="renderTvChannelAttributes">A value indicating whether to render tvchannel attributes</param>
+        /// <param name="renderTvChannelAttributes">A value indicating whether to render tvChannel attributes</param>
         /// <param name="renderGiftCardAttributes">A value indicating whether to render gift card attributes</param>
         /// <param name="allowHyperlinks">A value indicating whether to HTML hyperink tags could be rendered (if required)</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the attributes
         /// </returns>
-        public virtual async Task<string> FormatAttributesAsync(TvChannel tvchannel, string attributesXml,
+        public virtual async Task<string> FormatAttributesAsync(TvChannel tvChannel, string attributesXml,
             User user, Store store, string separator = "<br />", bool htmlEncode = true, bool renderPrices = true,
             bool renderTvChannelAttributes = true, bool renderGiftCardAttributes = true,
             bool allowHyperlinks = true)
@@ -117,15 +117,15 @@ namespace TvProgViewer.Services.Catalog
             //attributes
             if (renderTvChannelAttributes)
             {
-                foreach (var attribute in await _tvchannelAttributeParser.ParseTvChannelAttributeMappingsAsync(attributesXml))
+                foreach (var attribute in await _tvChannelAttributeParser.ParseTvChannelAttributeMappingsAsync(attributesXml))
                 {
-                    var tvchannelAttribute = await _tvchannelAttributeService.GetTvChannelAttributeByIdAsync(attribute.TvChannelAttributeId);
-                    var attributeName = await _localizationService.GetLocalizedAsync(tvchannelAttribute, a => a.Name, currentLanguage.Id);
+                    var tvChannelAttribute = await _tvChannelAttributeService.GetTvChannelAttributeByIdAsync(attribute.TvChannelAttributeId);
+                    var attributeName = await _localizationService.GetLocalizedAsync(tvChannelAttribute, a => a.Name, currentLanguage.Id);
 
                     //attributes without values
                     if (!attribute.ShouldHaveValues())
                     {
-                        foreach (var value in _tvchannelAttributeParser.ParseValues(attributesXml, attribute.Id))
+                        foreach (var value in _tvChannelAttributeParser.ParseValues(attributesXml, attribute.Id))
                         {
                             var formattedAttribute = string.Empty;
                             if (attribute.AttributeControlType == AttributeControlType.MultilineTextbox)
@@ -178,10 +178,10 @@ namespace TvProgViewer.Services.Catalog
                             result.Append(formattedAttribute);
                         }
                     }
-                    //tvchannel attribute values
+                    //tvChannel attribute values
                     else
                     {
-                        foreach (var attributeValue in await _tvchannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml, attribute.Id))
+                        foreach (var attributeValue in await _tvChannelAttributeParser.ParseTvChannelAttributeValuesAsync(attributesXml, attribute.Id))
                         {
                             var formattedAttribute = $"{attributeName}: {await _localizationService.GetLocalizedAsync(attributeValue, a => a.Name, currentLanguage.Id)}";
 
@@ -204,8 +204,8 @@ namespace TvProgViewer.Services.Catalog
                                 }
                                 else
                                 {
-                                    var attributeValuePriceAdjustment = await _priceCalculationService.GetTvChannelAttributeValuePriceAdjustmentAsync(tvchannel, attributeValue, user, store);
-                                    var (priceAdjustmentBase, _) = await _taxService.GetTvChannelPriceAsync(tvchannel, attributeValuePriceAdjustment, user);
+                                    var attributeValuePriceAdjustment = await _priceCalculationService.GetTvChannelAttributeValuePriceAdjustmentAsync(tvChannel, attributeValue, user, store);
+                                    var (priceAdjustmentBase, _) = await _taxService.GetTvChannelPriceAsync(tvChannel, attributeValuePriceAdjustment, user);
                                     var priceAdjustment = await _currencyService.ConvertFromPrimaryStoreCurrencyAsync(priceAdjustmentBase, await _workContext.GetWorkingCurrencyAsync());
 
                                     if (priceAdjustmentBase > decimal.Zero)
@@ -250,17 +250,17 @@ namespace TvProgViewer.Services.Catalog
             if (!renderGiftCardAttributes)
                 return result.ToString();
 
-            if (!tvchannel.IsGiftCard)
+            if (!tvChannel.IsGiftCard)
                 return result.ToString();
 
-            _tvchannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName, out var giftCardRecipientEmail, out var giftCardSenderName, out var giftCardSenderEmail, out var _);
+            _tvChannelAttributeParser.GetGiftCardAttribute(attributesXml, out var giftCardRecipientName, out var giftCardRecipientEmail, out var giftCardSenderName, out var giftCardSenderEmail, out var _);
 
             //sender
-            var giftCardFrom = tvchannel.GiftCardType == GiftCardType.Virtual ?
+            var giftCardFrom = tvChannel.GiftCardType == GiftCardType.Virtual ?
                 string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.From.Virtual"), giftCardSenderName, giftCardSenderEmail) :
                 string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.From.Physical"), giftCardSenderName);
             //recipient
-            var giftCardFor = tvchannel.GiftCardType == GiftCardType.Virtual ?
+            var giftCardFor = tvChannel.GiftCardType == GiftCardType.Virtual ?
                 string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.For.Virtual"), giftCardRecipientName, giftCardRecipientEmail) :
                 string.Format(await _localizationService.GetResourceAsync("GiftCardAttribute.For.Physical"), giftCardRecipientName);
 

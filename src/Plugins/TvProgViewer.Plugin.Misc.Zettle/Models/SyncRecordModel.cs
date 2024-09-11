@@ -12,9 +12,9 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Models
 
         public bool Active { get; set; }
 
-        public int ProductId { get; set; }
+        public int TvChannelId { get; set; }
 
-        public string ProductName { get; set; }
+        public string TvChannelName { get; set; }
 
         public bool PriceSyncEnabled { get; set; }
 

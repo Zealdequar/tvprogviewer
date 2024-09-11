@@ -9,34 +9,36 @@ using TvProgViewer.Core.Configuration;
 namespace TvProgViewer.Services.Caching
 {
     /// <summary>
-    /// Represents a MsSql server distributed cache 
+    /// Представляет mssqlserver распределённый кэш 
     /// </summary>
     public class MsSqlServerCacheManager : DistributedCacheManager
     {
-        #region Fields
+        #region Поля
 
         private readonly DistributedCacheConfig _distributedCacheConfig;
 
         #endregion
 
-        #region Ctor
+        #region Конструктор
 
-        public MsSqlServerCacheManager(AppSettings appSettings, IDistributedCache distributedCache) : base(appSettings,
-            distributedCache)
+        public MsSqlServerCacheManager(AppSettings appSettings, 
+            IDistributedCache distributedCache,
+            CacheKeyManager cacheKeyManager)
+            : base(appSettings, distributedCache, cacheKeyManager)
         {
             _distributedCacheConfig = appSettings.Get<DistributedCacheConfig>();
         }
 
         #endregion
 
-        #region Utilities
+        #region Утилиты
 
         protected async Task PerformActionAsync(SqlCommand command, params SqlParameter[] parameters)
         {
             var conn = new SqlConnection(_distributedCacheConfig.ConnectionString);
             try
             {
-                conn.Open();
+                await conn.OpenAsync();
                 command.Connection = conn;
                 if (parameters.Any())
                     command.Parameters.AddRange(parameters);
@@ -45,37 +47,19 @@ namespace TvProgViewer.Services.Caching
             }
             finally
             {
-                conn.Close();
-            }
-        }
-
-        protected void PerformAction(SqlCommand command, params SqlParameter[] parameters)
-        {
-            var conn = new SqlConnection(_distributedCacheConfig.ConnectionString);
-            try
-            {
-                conn.Open();
-                command.Connection = conn;
-                if (parameters.Any())
-                    command.Parameters.AddRange(parameters);
-
-                command.ExecuteNonQuery();
-            }
-            finally
-            {
-                conn.Close();
+                await conn.CloseAsync();
             }
         }
 
         #endregion
 
-        #region Methods
+        #region Методы
 
         /// <summary>
-        /// Remove items by cache key prefix
+        /// Удалить элементы по префиксу ключа кэша
         /// </summary>
-        /// <param name="prefix">Cache key prefix</param>
-        /// <param name="prefixParameters">Parameters to create cache key prefix</param>
+        /// <param name="prefix">Префикс ключа кэша</param>
+        /// <param name="prefixParameters">Параметры для создания префикса ключа кэша</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public override async Task RemoveByPrefixAsync(string prefix, params object[] prefixParameters)
         {
@@ -87,29 +71,11 @@ namespace TvProgViewer.Services.Caching
 
             await PerformActionAsync(command, new SqlParameter("Prefix", SqlDbType.NVarChar) { Value = prefix });
 
-            await RemoveByPrefixInstanceDataAsync(prefix);
-        }
-
-        /// <summary>
-        /// Remove items by cache key prefix
-        /// </summary>
-        /// <param name="prefix">Cache key prefix</param>
-        /// <param name="prefixParameters">Parameters to create cache key prefix</param>
-        public override void RemoveByPrefix(string prefix, params object[] prefixParameters)
-        {
-            prefix = PrepareKeyPrefix(prefix, prefixParameters);
-
-            var command =
-                new SqlCommand(
-                    $"DELETE FROM {_distributedCacheConfig.SchemaName}.{_distributedCacheConfig.TableName} WHERE Id LIKE @Prefix + '%'");
-
-            PerformAction(command, new SqlParameter("Prefix", SqlDbType.NVarChar) { Value = prefix });
-
             RemoveByPrefixInstanceData(prefix);
         }
 
         /// <summary>
-        /// Clear all cache data
+        /// Очистить все кэшированные данные
         /// </summary>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public override async Task ClearAsync()

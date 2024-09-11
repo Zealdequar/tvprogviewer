@@ -59,10 +59,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly IPdfService _pdfService;
         private readonly IPermissionService _permissionService;
         private readonly IPriceCalculationService _priceCalculationService;
-        private readonly ITvChannelAttributeFormatter _tvchannelAttributeFormatter;
-        private readonly ITvChannelAttributeParser _tvchannelAttributeParser;
-        private readonly ITvChannelAttributeService _tvchannelAttributeService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelAttributeFormatter _tvChannelAttributeFormatter;
+        private readonly ITvChannelAttributeParser _tvChannelAttributeParser;
+        private readonly ITvChannelAttributeService _tvChannelAttributeService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IShipmentService _shipmentService;
         private readonly IShippingService _shippingService;
         private readonly IShoppingCartService _shoppingCartService;
@@ -95,10 +95,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             IPdfService pdfService,
             IPermissionService permissionService,
             IPriceCalculationService priceCalculationService,
-            ITvChannelAttributeFormatter tvchannelAttributeFormatter,
-            ITvChannelAttributeParser tvchannelAttributeParser,
-            ITvChannelAttributeService tvchannelAttributeService,
-            ITvChannelService tvchannelService,
+            ITvChannelAttributeFormatter tvChannelAttributeFormatter,
+            ITvChannelAttributeParser tvChannelAttributeParser,
+            ITvChannelAttributeService tvChannelAttributeService,
+            ITvChannelService tvChannelService,
             IShipmentService shipmentService,
             IShippingService shippingService,
             IShoppingCartService shoppingCartService,
@@ -127,10 +127,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _pdfService = pdfService;
             _permissionService = permissionService;
             _priceCalculationService = priceCalculationService;
-            _tvchannelAttributeFormatter = tvchannelAttributeFormatter;
-            _tvchannelAttributeParser = tvchannelAttributeParser;
-            _tvchannelAttributeService = tvchannelAttributeService;
-            _tvchannelService = tvchannelService;
+            _tvChannelAttributeFormatter = tvChannelAttributeFormatter;
+            _tvChannelAttributeParser = tvChannelAttributeParser;
+            _tvChannelAttributeService = tvChannelAttributeService;
+            _tvChannelService = tvChannelService;
             _shipmentService = shipmentService;
             _shippingService = shippingService;
             _shoppingCartService = shoppingCartService;
@@ -177,7 +177,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             var vendorId = currentVendor.Id;
 
-            return (await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId))?.VendorId == vendorId;
+            return (await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId))?.VendorId == vendorId;
         }
 
         protected virtual async ValueTask<bool> HasAccessToShipmentAsync(Shipment shipment)
@@ -278,7 +278,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var endDateValue = model.EndDate == null ? null
                             : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
@@ -296,14 +296,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 : null;
 
             var filterByTvChannelId = 0;
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId);
-            if (tvchannel != null && (currentVendor == null || tvchannel.VendorId == currentVendor.Id))
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId);
+            if (tvChannel != null && (currentVendor == null || tvChannel.VendorId == currentVendor.Id))
                 filterByTvChannelId = model.TvChannelId;
 
             //load orders
             var orders = await _orderService.SearchOrdersAsync(storeId: model.StoreId,
                 vendorId: model.VendorId,
-                tvchannelId: filterByTvChannelId,
+                tvChannelId: filterByTvChannelId,
                 warehouseId: model.WarehouseId,
                 paymentMethodSystemName: model.PaymentMethodSystemName,
                 createdFromUtc: startDateValue,
@@ -378,7 +378,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var endDateValue = model.EndDate == null ? null
                             : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
@@ -396,14 +396,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 : null;
 
             var filterByTvChannelId = 0;
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId);
-            if (tvchannel != null && (currentVendor == null || tvchannel.VendorId == currentVendor.Id))
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId);
+            if (tvChannel != null && (currentVendor == null || tvChannel.VendorId == currentVendor.Id))
                 filterByTvChannelId = model.TvChannelId;
 
             //load orders
             var orders = await _orderService.SearchOrdersAsync(storeId: model.StoreId,
                 vendorId: model.VendorId,
-                tvchannelId: filterByTvChannelId,
+                tvChannelId: filterByTvChannelId,
                 warehouseId: model.WarehouseId,
                 paymentMethodSystemName: model.PaymentMethodSystemName,
                 createdFromUtc: startDateValue,
@@ -931,7 +931,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await HasAccessToOrderAsync(orderId))
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
 
             var order = await _orderService.GetOrderByIdAsync(orderId);
@@ -952,7 +952,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
                 return AccessDeniedView();
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
@@ -976,14 +976,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 : null;
 
             var filterByTvChannelId = 0;
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(model.TvChannelId);
-            if (tvchannel != null && (currentVendor == null || tvchannel.VendorId == currentVendor.Id))
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(model.TvChannelId);
+            if (tvChannel != null && (currentVendor == null || tvChannel.VendorId == currentVendor.Id))
                 filterByTvChannelId = model.TvChannelId;
 
             //load orders
             var orders = await _orderService.SearchOrdersAsync(storeId: model.StoreId,
                 vendorId: model.VendorId,
-                tvchannelId: filterByTvChannelId,
+                tvChannelId: filterByTvChannelId,
                 warehouseId: model.WarehouseId,
                 paymentMethodSystemName: model.PaymentMethodSystemName,
                 createdFromUtc: startDateValue,
@@ -1038,7 +1038,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 orders.AddRange(await _orderService.GetOrdersByIdsAsync(ids));
             }
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null)
             {
@@ -1063,26 +1063,26 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
         }
 
-        //currently we use this method on the add tvchannel to order details pages
+        //currently we use this method on the add tvChannel to order details pages
         [HttpPost]
-        public virtual async Task<IActionResult> TvChannelDetails_AttributeChange(int tvchannelId, bool validateAttributeConditions, IFormCollection form)
+        public virtual async Task<IActionResult> TvChannelDetails_AttributeChange(int tvChannelId, bool validateAttributeConditions, IFormCollection form)
         {
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId);
-            if (tvchannel == null)
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId);
+            if (tvChannel == null)
                 return new NullJsonResult();
 
             var errors = new List<string>();
-            var attributeXml = await _tvchannelAttributeParser.ParseTvChannelAttributesAsync(tvchannel, form, errors);
+            var attributeXml = await _tvChannelAttributeParser.ParseTvChannelAttributesAsync(tvChannel, form, errors);
 
             //conditional attributes
             var enabledAttributeMappingIds = new List<int>();
             var disabledAttributeMappingIds = new List<int>();
             if (validateAttributeConditions)
             {
-                var attributes = await _tvchannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvchannel.Id);
+                var attributes = await _tvChannelAttributeService.GetTvChannelAttributeMappingsByTvChannelIdAsync(tvChannel.Id);
                 foreach (var attribute in attributes)
                 {
-                    var conditionMet = await _tvchannelAttributeParser.IsConditionMetAsync(attribute, attributeXml);
+                    var conditionMet = await _tvChannelAttributeParser.IsConditionMetAsync(attribute, attributeXml);
                     if (!conditionMet.HasValue)
                         continue;
 
@@ -1270,7 +1270,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!decimal.TryParse(form["pvPriceExclTax" + orderItemId], out var priceExclTax))
                 priceExclTax = orderItem.PriceExclTax;
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
             if (quantity > 0)
             {
@@ -1289,13 +1289,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 }
 
                 //adjust inventory
-                await _tvchannelService.AdjustInventoryAsync(tvchannel, qtyDifference, orderItem.AttributesXml,
+                await _tvChannelService.AdjustInventoryAsync(tvChannel, qtyDifference, orderItem.AttributesXml,
                     string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.EditOrder"), order.Id));
             }
             else
             {
                 //adjust inventory
-                await _tvchannelService.AdjustInventoryAsync(tvchannel, orderItem.Quantity, orderItem.AttributesXml,
+                await _tvChannelService.AdjustInventoryAsync(tvChannel, orderItem.Quantity, orderItem.AttributesXml,
                     string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.DeleteOrderItem"), order.Id));
 
                 //delete item
@@ -1330,7 +1330,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 _notificationService.WarningNotification(warning);
 
             //selected card
-            SaveSelectedCardName("order-tvchannels");
+            SaveSelectedCardName("order-tvChannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1369,10 +1369,10 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
             else
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
                 //adjust inventory
-                await _tvchannelService.AdjustInventoryAsync(tvchannel, orderItem.Quantity, orderItem.AttributesXml,
+                await _tvChannelService.AdjustInventoryAsync(tvChannel, orderItem.Quantity, orderItem.AttributesXml,
                     string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.DeleteOrderItem"), order.Id));
 
                 //delete item
@@ -1398,7 +1398,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //selected card
-            SaveSelectedCardName("order-tvchannels");
+            SaveSelectedCardName("order-tvChannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1424,7 +1424,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var orderItem = await _orderService.GetOrderItemByIdAsync(orderItemId)
                 ?? throw new ArgumentException("No order item found with the specified id");
 
-            //ensure a vendor has access only to his tvchannels 
+            //ensure a vendor has access only to his tvChannels 
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToTvChannelAsync(orderItem))
                 return RedirectToAction("List");
 
@@ -1433,7 +1433,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             await LogEditOrderAsync(order.Id);
 
             //selected card
-            SaveSelectedCardName("order-tvchannels");
+            SaveSelectedCardName("order-tvChannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1459,7 +1459,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var orderItem = await _orderService.GetOrderItemByIdAsync(orderItemId)
                 ?? throw new ArgumentException("No order item found with the specified id");
 
-            //ensure a vendor has access only to his tvchannels 
+            //ensure a vendor has access only to his tvChannels 
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToTvChannelAsync(orderItem))
                 return RedirectToAction("List");
 
@@ -1469,7 +1469,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             await LogEditOrderAsync(order.Id);
 
             //selected card
-            SaveSelectedCardName("order-tvchannels");
+            SaveSelectedCardName("order-tvChannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1488,13 +1488,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var orderItem = await _orderService.GetOrderItemByIdAsync(orderItemId)
                 ?? throw new ArgumentException("No order item found with the specified id");
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified order item id");
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified order item id");
 
-            if (!tvchannel.IsDownload)
+            if (!tvChannel.IsDownload)
                 throw new ArgumentException("TvChannel is not downloadable");
 
-            //ensure a vendor has access only to his tvchannels 
+            //ensure a vendor has access only to his tvChannels 
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToTvChannelAsync(orderItem))
                 return RedirectToAction("List");
 
@@ -1519,7 +1519,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var orderItem = await _orderService.GetOrderItemByIdAsync(model.OrderItemId)
                 ?? throw new ArgumentException("No order item found with the specified id");
 
-            //ensure a vendor has access only to his tvchannels 
+            //ensure a vendor has access only to his tvChannels 
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToTvChannelAsync(orderItem))
                 return RedirectToAction("List");
 
@@ -1554,7 +1554,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var orderItem = await _orderService.GetOrderItemByIdAsync(model.OrderItemId)
                 ?? throw new ArgumentException("No order item found with the specified id");
 
-            //ensure a vendor has access only to his tvchannels 
+            //ensure a vendor has access only to his tvChannels 
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToTvChannelAsync(orderItem))
                 return RedirectToAction("List");
 
@@ -1611,7 +1611,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             return Json(model);
         }
 
-        public virtual async Task<IActionResult> AddTvChannelToOrderDetails(int orderId, int tvchannelId)
+        public virtual async Task<IActionResult> AddTvChannelToOrderDetails(int orderId, int tvChannelId)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
                 return AccessDeniedView();
@@ -1620,22 +1620,22 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var order = await _orderService.GetOrderByIdAsync(orderId)
                 ?? throw new ArgumentException("No order found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
             //a vendor does not have access to this functionality
             if (await _workContext.GetCurrentVendorAsync() != null)
                 return RedirectToAction("Edit", "Order", new { id = orderId });
 
             //prepare model
-            var model = await _orderModelFactory.PrepareAddTvChannelToOrderModelAsync(new AddTvChannelToOrderModel(), order, tvchannel);
+            var model = await _orderModelFactory.PrepareAddTvChannelToOrderModelAsync(new AddTvChannelToOrderModel(), order, tvChannel);
 
             return View(model);
         }
 
         [HttpPost]
-        public virtual async Task<IActionResult> AddTvChannelToOrderDetails(int orderId, int tvchannelId, IFormCollection form)
+        public virtual async Task<IActionResult> AddTvChannelToOrderDetails(int orderId, int tvChannelId, IFormCollection form)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageOrders))
                 return AccessDeniedView();
@@ -1648,9 +1648,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var order = await _orderService.GetOrderByIdAsync(orderId)
                 ?? throw new ArgumentException("No order found with the specified id");
 
-            //try to get a tvchannel with the specified id
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(tvchannelId)
-                ?? throw new ArgumentException("No tvchannel found with the specified id");
+            //try to get a tvChannel with the specified id
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(tvChannelId)
+                ?? throw new ArgumentException("No tvChannel found with the specified id");
 
             //try to get a user with the specified id
             var user = await _userService.GetUserByIdAsync(order.UserId)
@@ -1667,37 +1667,37 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var warnings = new List<string>();
 
             //attributes
-            var attributesXml = await _tvchannelAttributeParser.ParseTvChannelAttributesAsync(tvchannel, form, warnings);
+            var attributesXml = await _tvChannelAttributeParser.ParseTvChannelAttributesAsync(tvChannel, form, warnings);
 
-            //rental tvchannel
-            _tvchannelAttributeParser.ParseRentalDates(tvchannel, form, out var rentalStartDate, out var rentalEndDate);
+            //rental tvChannel
+            _tvChannelAttributeParser.ParseRentalDates(tvChannel, form, out var rentalStartDate, out var rentalEndDate);
 
             //warnings
-            warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(user, ShoppingCartType.ShoppingCart, tvchannel, quantity, attributesXml));
-            warnings.AddRange(await _shoppingCartService.GetShoppingCartItemGiftCardWarningsAsync(ShoppingCartType.ShoppingCart, tvchannel, attributesXml));
-            warnings.AddRange(await _shoppingCartService.GetRentalTvChannelWarningsAsync(tvchannel, rentalStartDate, rentalEndDate));
+            warnings.AddRange(await _shoppingCartService.GetShoppingCartItemAttributeWarningsAsync(user, ShoppingCartType.ShoppingCart, tvChannel, quantity, attributesXml));
+            warnings.AddRange(await _shoppingCartService.GetShoppingCartItemGiftCardWarningsAsync(ShoppingCartType.ShoppingCart, tvChannel, attributesXml));
+            warnings.AddRange(await _shoppingCartService.GetRentalTvChannelWarningsAsync(tvChannel, rentalStartDate, rentalEndDate));
             if (!warnings.Any())
             {
                 //no errors
                 var currentStore = await _storeContext.GetCurrentStoreAsync();
 
                 //attributes
-                var attributeDescription = await _tvchannelAttributeFormatter.FormatAttributesAsync(tvchannel, attributesXml, user, currentStore);
+                var attributeDescription = await _tvChannelAttributeFormatter.FormatAttributesAsync(tvChannel, attributesXml, user, currentStore);
 
                 //weight
-                var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(tvchannel, attributesXml);
+                var itemWeight = await _shippingService.GetShoppingCartItemWeightAsync(tvChannel, attributesXml);
 
                 //save item
                 var orderItem = new OrderItem
                 {
                     OrderItemGuid = Guid.NewGuid(),
                     OrderId = order.Id,
-                    TvChannelId = tvchannel.Id,
+                    TvChannelId = tvChannel.Id,
                     UnitPriceInclTax = unitPriceInclTax,
                     UnitPriceExclTax = unitPriceExclTax,
                     PriceInclTax = priceInclTax,
                     PriceExclTax = priceExclTax,
-                    OriginalTvChannelCost = await _priceCalculationService.GetTvChannelCostAsync(tvchannel, attributesXml),
+                    OriginalTvChannelCost = await _priceCalculationService.GetTvChannelCostAsync(tvChannel, attributesXml),
                     AttributeDescription = attributeDescription,
                     AttributesXml = attributesXml,
                     Quantity = quantity,
@@ -1714,7 +1714,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 await _orderService.InsertOrderItemAsync(orderItem);
 
                 //adjust inventory
-                await _tvchannelService.AdjustInventoryAsync(tvchannel, -orderItem.Quantity, orderItem.AttributesXml,
+                await _tvChannelService.AdjustInventoryAsync(tvChannel, -orderItem.Quantity, orderItem.AttributesXml,
                     string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.EditOrder"), order.Id));
 
                 //update order totals
@@ -1740,16 +1740,16 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 await LogEditOrderAsync(order.Id);
 
                 //gift cards
-                if (tvchannel.IsGiftCard)
+                if (tvChannel.IsGiftCard)
                 {
-                    _tvchannelAttributeParser.GetGiftCardAttribute(
+                    _tvChannelAttributeParser.GetGiftCardAttribute(
                         attributesXml, out var recipientName, out var recipientEmail, out var senderName, out var senderEmail, out var giftCardMessage);
 
                     for (var i = 0; i < orderItem.Quantity; i++)
                     {
                         var gc = new GiftCard
                         {
-                            GiftCardType = tvchannel.GiftCardType,
+                            GiftCardType = tvChannel.GiftCardType,
                             PurchasedWithOrderItemId = orderItem.Id,
                             Amount = unitPriceExclTax,
                             IsGiftCardActivated = false,
@@ -1771,12 +1771,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     _notificationService.WarningNotification(warning);
 
                 //selected card
-                SaveSelectedCardName("order-tvchannels");
+                SaveSelectedCardName("order-tvChannels");
                 return RedirectToAction("Edit", new { id = order.Id });
             }
 
             //prepare model
-            var model = await _orderModelFactory.PrepareAddTvChannelToOrderModelAsync(new AddTvChannelToOrderModel(), order, tvchannel);
+            var model = await _orderModelFactory.PrepareAddTvChannelToOrderModelAsync(new AddTvChannelToOrderModel(), order, tvChannel);
             model.Warnings.AddRange(warnings);
 
             return View(model);
@@ -1905,7 +1905,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var order = await _orderService.GetOrderByIdAsync(searchModel.OrderId)
                 ?? throw new ArgumentException("No order found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToOrderAsync(order))
                 return Content(string.Empty);
 
@@ -1925,7 +1925,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var shipment = await _shipmentService.GetShipmentByIdAsync(searchModel.ShipmentId)
                 ?? throw new ArgumentException("No shipment found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null && !await HasAccessToShipmentAsync(shipment))
                 return Content(string.Empty);
@@ -1934,7 +1934,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var order = await _orderService.GetOrderByIdAsync(shipment.OrderId)
                 ?? throw new ArgumentException("No order found with the specified id");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (currentVendor != null && !await HasAccessToOrderAsync(order))
                 return Content(string.Empty);
 
@@ -1955,7 +1955,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (order == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToOrderAsync(order))
                 return RedirectToAction("List");
 
@@ -1977,13 +1977,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (order == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             if (currentVendor != null && !await HasAccessToOrderAsync(order))
                 return RedirectToAction("List");
 
             var orderItems = await _orderService.GetOrderItemsAsync(order.Id, isShipEnabled: true);
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (currentVendor != null)
             {
                 orderItems = await orderItems.WhereAwait(HasAccessToTvChannelAsync).ToListAsync();
@@ -2004,9 +2004,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             foreach (var orderItem in orderItems)
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                //ensure that this tvchannel can be shipped (have at least one item to ship)
+                //ensure that this tvChannel can be shipped (have at least one item to ship)
                 var maxQtyToAdd = await _orderService.GetTotalNumberOfItemsCanBeAddedToShipmentAsync(orderItem);
                 if (maxQtyToAdd <= 0)
                     continue;
@@ -2020,8 +2020,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     }
 
                 var warehouseId = 0;
-                if (tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
-                    tvchannel.UseMultipleWarehouses)
+                if (tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock &&
+                    tvChannel.UseMultipleWarehouses)
                 {
                     //multiple warehouses supported
                     //warehouse is chosen by a store owner
@@ -2035,7 +2035,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 else
                 {
                     //multiple warehouses are not supported
-                    warehouseId = tvchannel.WarehouseId;
+                    warehouseId = tvChannel.WarehouseId;
                 }
 
                 //validate quantity
@@ -2120,7 +2120,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2141,7 +2141,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2151,9 +2151,9 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 if (orderItem == null)
                     continue;
 
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-                await _tvchannelService.ReverseBookedInventoryAsync(tvchannel, shipmentItem,
+                await _tvChannelService.ReverseBookedInventoryAsync(tvChannel, shipmentItem,
                     string.Format(await _localizationService.GetResourceAsync("Admin.StockQuantityHistory.Messages.DeleteShipment"), shipment.OrderId));
             }
 
@@ -2188,7 +2188,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2210,7 +2210,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2232,7 +2232,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2262,7 +2262,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2297,7 +2297,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2327,7 +2327,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2359,7 +2359,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2389,7 +2389,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2422,7 +2422,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (shipment == null)
                 return RedirectToAction("List");
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null && !await HasAccessToShipmentAsync(shipment))
                 return RedirectToAction("List");
 
@@ -2449,7 +2449,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             var endDateValue = model.EndDate == null ? null
                             : (DateTime?)_dateTimeHelper.ConvertToUtcTime(model.EndDate.Value, await _dateTimeHelper.GetCurrentTimeZoneAsync()).AddDays(1);
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             var currentVendor = await _workContext.GetCurrentVendorAsync();
             var vendorId = 0;
             if (currentVendor != null)
@@ -2508,7 +2508,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     .ToArray();
                 shipments.AddRange(await _shipmentService.GetShipmentsByIdsAsync(ids));
             }
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null)
             {
                 shipments = await shipments.WhereAwait(HasAccessToShipmentAsync).ToListAsync();
@@ -2543,7 +2543,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             var shipments = await _shipmentService.GetShipmentsByIdsAsync(selectedIds.ToArray());
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null)
             {
                 shipments = await shipments.WhereAwait(HasAccessToShipmentAsync).ToListAsync();
@@ -2575,7 +2575,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             var shipments = await _shipmentService.GetShipmentsByIdsAsync(selectedIds.ToArray());
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null)
             {
                 shipments = await shipments.WhereAwait(HasAccessToShipmentAsync).ToListAsync();
@@ -2607,7 +2607,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
 
             var shipments = await _shipmentService.GetShipmentsByIdsAsync(selectedIds.ToArray());
 
-            //a vendor should have access only to his tvchannels
+            //a vendor should have access only to his tvChannels
             if (await _workContext.GetCurrentVendorAsync() != null)
             {
                 shipments = await shipments.WhereAwait(HasAccessToShipmentAsync).ToListAsync();

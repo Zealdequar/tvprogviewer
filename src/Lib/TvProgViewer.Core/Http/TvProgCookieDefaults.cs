@@ -41,12 +41,12 @@
         public static string InstallationLanguageCookie => ".InstallationLanguage";
 
         /// <summary>
-        /// Gets a cookie name of the compared tvchannels
+        /// Gets a cookie name of the compared tvChannels
         /// </summary>
         public static string ComparedTvChannelsCookie => ".ComparedTvChannels";
 
         /// <summary>
-        /// Gets a cookie name of the recently viewed tvchannels
+        /// Gets a cookie name of the recently viewed tvChannels
         /// </summary>
         public static string RecentlyViewedTvChannelsCookie => ".RecentlyViewedTvChannels";
 

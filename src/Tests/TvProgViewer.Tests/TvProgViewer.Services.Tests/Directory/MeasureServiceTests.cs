@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Directory;
-using Nop.Services.Directory;
+using TvProgViewer.Core.Domain.Directory;
+using TvProgViewer.Services.Directory;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Directory
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Directory
 {
     [TestFixture]
     public class MeasureServiceTests : ServiceTest

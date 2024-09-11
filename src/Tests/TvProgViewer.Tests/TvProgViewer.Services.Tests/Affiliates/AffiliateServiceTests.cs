@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Affiliates;
-using Nop.Services.Affiliates;
-using Nop.Services.Common;
+using TvProgViewer.Core.Domain.Affiliates;
+using TvProgViewer.Services.Affiliates;
+using TvProgViewer.Services.Common;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Affiliates
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Affiliates
 {
     [TestFixture]
     public class AffiliateServiceTests : ServiceTest
@@ -114,18 +114,18 @@ namespace Nop.Tests.Nop.Services.Tests.Affiliates
             var fullName = await _affiliateService.GetAffiliateFullNameAsync(_activeAffiliate1);
             var address = await _addressService.GetAddressByIdAsync(1);
 
-            fullName.Should().Be($"{address.FirstName} {address.LastName}");
+            fullName.Should().Be($"{address.LastName} {address.FirstName} {address.MiddleName}");
         }
 
         [Test]
         public async Task CanGenerateUrl()
         {
             var url = await _affiliateService.GenerateUrlAsync(_activeAffiliate1);
-            url.Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?{NopAffiliateDefaults.AffiliateQueryParameter}={_activeAffiliate1.FriendlyUrlName}");
+            url.Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?{TvProgAffiliateDefaults.AffiliateQueryParameter}={_activeAffiliate1.FriendlyUrlName}");
 
             _notActiveDeletedAffiliate.FriendlyUrlName = string.Empty;
             url = await _affiliateService.GenerateUrlAsync(_notActiveDeletedAffiliate);
-            url.Should().Be($"http://{NopTestsDefaults.HostIpAddress}/?{NopAffiliateDefaults.AffiliateIdQueryParameter}={_notActiveDeletedAffiliate.Id}");
+            url.Should().Be($"http://{TvProgTestsDefaults.HostIpAddress}/?{TvProgAffiliateDefaults.AffiliateIdQueryParameter}={_notActiveDeletedAffiliate.Id}");
         }
 
         [Test]

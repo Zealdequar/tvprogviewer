@@ -1,15 +1,15 @@
 ﻿using FluentValidation.TestHelper;
-using Nop.Core.Domain.Customers;
-using Nop.Services.Directory;
-using Nop.Services.Localization;
-using Nop.Web.Models.Customer;
-using Nop.Web.Validators.Customer;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Services.Directory;
+using TvProgViewer.Services.Localization;
+using TvProgViewer.WebUI.Models.User;
+using TvProgViewer.WebUI.Validators.User;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Validators.User
 {
     [TestFixture]
-    public class RegisterValidatorTests : BaseNopTest
+    public class RegisterValidatorTests : BaseTvProgTest
     {
         private RegisterValidator _validator;
 
@@ -54,13 +54,13 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer
         [Test]
         public void ShouldHaveErrorWhenFirstnameIsNullOrEmpty()
         {
-            var customerSettings = new CustomerSettings
+            var userSettings = new UserSettings
             {
                 FirstNameEnabled = true,
                 FirstNameRequired = true
             };
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
+            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), userSettings);
             var model = new RegisterModel
             {
                 FirstName = null
@@ -73,12 +73,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer
         [Test]
         public void ShouldNotHaveErrorWhenFirstnameIsSpecified()
         {
-            var customerSettings = new CustomerSettings
+            var userSettings = new UserSettings
             {
                 FirstNameEnabled = true
             };
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
+            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), userSettings);
 
             var model = new RegisterModel
             {
@@ -90,13 +90,13 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer
         [Test]
         public void ShouldHaveErrorWhenLastNameIsNullOrEmpty()
         {
-            var customerSettings = new CustomerSettings
+            var userSettings = new UserSettings
             {
                 LastNameEnabled = true,
                 LastNameRequired = true
             };
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
+            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), userSettings);
 
             var model = new RegisterModel
             {
@@ -111,12 +111,12 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Validators.Customer
         [Test]
         public void ShouldNotHaveErrorWhenLastNameIsSpecified()
         {
-            var customerSettings = new CustomerSettings
+            var userSettings = new UserSettings
             {
                 LastNameEnabled = true
             };
 
-            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), customerSettings);
+            var validator = new RegisterValidator(GetService<ILocalizationService>(), GetService<IStateProvinceService>(), userSettings);
 
             var model = new RegisterModel
             {

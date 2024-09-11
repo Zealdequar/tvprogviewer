@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Settings
 {
     /// <summary>
-    /// Represents a tvchannel editor settings model
+    /// Represents a tvChannel editor settings model
     /// </summary>
     public partial record TvChannelEditorSettingsModel : BaseTvProgModel, ISettingsModel
     {

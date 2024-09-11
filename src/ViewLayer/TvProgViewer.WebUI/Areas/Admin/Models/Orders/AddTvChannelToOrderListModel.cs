@@ -4,7 +4,7 @@ using TvProgViewer.Web.Framework.Models;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
 {
     /// <summary>
-    /// Represents a tvchannel list model to add to the order
+    /// Represents a tvChannel list model to add to the order
     /// </summary>
     public partial record AddTvChannelToOrderListModel : BasePagedListModel<TvChannelModel>
     {

@@ -7,10 +7,10 @@
 
 @{ 
     var isAssociatedTvChannel = ViewData.ContainsKey("isAccessoryOrSparePartFor");
-    var tvchannelUrl = isAssociatedTvChannel && ViewData.ContainsKey("parentURL")
+    var tvChannelUrl = isAssociatedTvChannel && ViewData.ContainsKey("parentURL")
         ? ViewData["parentURL"]
         : Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-    var tvchannelPrice = Model.AssociatedTvChannels.Any()
+    var tvChannelPrice = Model.AssociatedTvChannels.Any()
         ? Model.AssociatedTvChannels.Min(associatedTvChannel => associatedTvChannel.TvChannelPrice.PriceValue)
         : Model.TvChannelPrice.PriceValue;
 }
@@ -45,8 +45,8 @@
         </div>
     }    
     <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-        <meta itemprop="url" content="@tvchannelUrl"/>
-        <meta itemprop="price" content="@(Model.TvChannelPrice.CallForPrice ? null : tvchannelPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))"/>
+        <meta itemprop="url" content="@tvChannelUrl"/>
+        <meta itemprop="price" content="@(Model.TvChannelPrice.CallForPrice ? null : tvChannelPrice.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))"/>
         <meta itemprop="priceCurrency" content="@Model.TvChannelPrice.CurrencyCode"/>
         <meta itemprop="priceValidUntil" content="@Model.AvailableEndDate"/>
         <meta itemprop="availability" content="http://schema.org/@(Model.InStock ? "InStock" : "OutOfStock")" />
@@ -57,18 +57,18 @@
             <div itemprop="author" itemtype="https://schema.org/Person" itemscope>
                 <meta itemprop="name" content="ALL" />
             </div>
-            <meta itemprop="url" content="@Url.RouteUrl("TvChannelReviews", new { tvchannelId = Model.TvChannelReviewOverview.TvChannelId })"/>
+            <meta itemprop="url" content="@Url.RouteUrl("TvChannelReviews", new { tvChannelId = Model.TvChannelReviewOverview.TvChannelId })"/>
         </div>
     }
-    @foreach (var tvchannel in Model.AssociatedTvChannels)
+    @foreach (var tvChannel in Model.AssociatedTvChannels)
     {
         var viewDataDictionary = new ViewDataDictionary(ViewData);
         viewDataDictionary.Add("isAccessoryOrSparePartFor", "true");
-        if (!tvchannel.VisibleIndividually)
+        if (!tvChannel.VisibleIndividually)
         {
-            viewDataDictionary.Add("parentURL", tvchannelUrl);
+            viewDataDictionary.Add("parentURL", tvChannelUrl);
         }
         
-        @await Html.PartialAsync("_Microdata", tvchannel, viewDataDictionary)        
+        @await Html.PartialAsync("_Microdata", tvChannel, viewDataDictionary)        
     }
 </div>

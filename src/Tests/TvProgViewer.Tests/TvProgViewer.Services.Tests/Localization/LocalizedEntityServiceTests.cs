@@ -1,15 +1,15 @@
 ﻿using System.Globalization;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Catalog;
-using Nop.Services.Catalog;
-using Nop.Services.Localization;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Services.Catalog;
+using TvProgViewer.Services.Localization;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Localization
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Localization
 {
     [TestFixture]
-    public class LocalizedEntityServiceTests : BaseNopTest
+    public class LocalizedEntityServiceTests : BaseTvProgTest
     {
         private ILocalizedEntityService _localizedEntityService;
 
@@ -22,23 +22,23 @@ namespace Nop.Tests.Nop.Services.Tests.Localization
         [Test]
         public async Task CanSaveLocalizedValueAsync()
         {
-            var product = await GetService<IProductService>().GetProductByIdAsync(1);
+            var tvChannel = await GetService<ITvChannelService>().GetTvChannelByIdAsync(1);
 
-            await _localizedEntityService.SaveLocalizedValueAsync(product, p => p.Name, "test lang 1", 1);
-            await _localizedEntityService.SaveLocalizedValueAsync(product, p => p.BasepriceAmount, 1.0M, 1);
+            await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.Name, "test lang 1", 1);
+            await _localizedEntityService.SaveLocalizedValueAsync(tvChannel, p => p.BasepriceAmount, 1.0M, 1);
 
-            var name = await _localizedEntityService.GetLocalizedValueAsync(1, 1, nameof(Product),
-                nameof(Product.Name));
+            var name = await _localizedEntityService.GetLocalizedValueAsync(1, 1, nameof(TvChannel),
+                nameof(TvChannel.Name));
 
             name.Should().Be("test lang 1");
 
-            var basePriceAmount = await _localizedEntityService.GetLocalizedValueAsync(1, 1, nameof(Product),
-                nameof(Product.BasepriceAmount));
+            var basePriceAmount = await _localizedEntityService.GetLocalizedValueAsync(1, 1, nameof(TvChannel),
+                nameof(TvChannel.BasepriceAmount));
 
             decimal.Parse(basePriceAmount, CultureInfo.InvariantCulture).Should().Be(1M);
 
-            basePriceAmount = await _localizedEntityService.GetLocalizedValueAsync(2, 1, nameof(Product),
-                nameof(Product.BasepriceAmount));
+            basePriceAmount = await _localizedEntityService.GetLocalizedValueAsync(2, 1, nameof(TvChannel),
+                nameof(TvChannel.BasepriceAmount));
 
             basePriceAmount.Should().BeNullOrEmpty();
         }

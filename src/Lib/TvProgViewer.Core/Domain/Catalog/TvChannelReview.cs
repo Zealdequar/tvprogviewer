@@ -3,7 +3,7 @@
 namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvchannel review
+    /// Represents a tvChannel review
     /// </summary>
     public partial class TvChannelReview : BaseEntity
     {
@@ -13,7 +13,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public int UserId { get; set; }
 
         /// <summary>
-        /// Gets or sets the tvchannel identifier
+        /// Gets or sets the tvChannel identifier
         /// </summary>
         public int TvChannelId { get; set; }
 

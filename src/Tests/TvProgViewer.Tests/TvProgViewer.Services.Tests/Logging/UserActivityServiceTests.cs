@@ -1,36 +1,36 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Services.Customers;
-using Nop.Services.Logging;
+using TvProgViewer.Services.Users;
+using TvProgViewer.Services.Logging;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Logging
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Logging
 {
     [TestFixture]
-    public class CustomerActivityServiceTests : ServiceTest
+    public class UserActivityServiceTests : ServiceTest
     {
-        private ICustomerActivityService _customerActivityService;
-        private ICustomerService _customerService;
+        private IUserActivityService _userActivityService;
+        private IUserService _userService;
 
         [OneTimeSetUp]
         public void SetUp()
         {
-            _customerActivityService = GetService<ICustomerActivityService>();
-            _customerService = GetService<ICustomerService>();
+            _userActivityService = GetService<IUserActivityService>();
+            _userService = GetService<IUserService>();
         }
 
         [Test]
         public async Task CanFindActivities()
         {
-            var customer = await _customerService.GetCustomerByEmailAsync(NopTestsDefaults.AdminEmail);
+            var user = await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail);
 
-            var activities = await _customerActivityService.GetAllActivitiesAsync(customerId: customer.Id, pageSize: 10);
+            var activities = await _userActivityService.GetAllActivitiesAsync(userId: user.Id, pageSize: 10);
             activities.Any().Should().BeTrue();
 
-            customer = await _customerService.GetCustomerByEmailAsync("builtin@search_engine_record.com");
+            user = await _userService.GetUserByEmailAsync("builtin@search_engine_record.com");
 
-            activities = await _customerActivityService.GetAllActivitiesAsync(customerId: customer.Id, pageSize: 10);
+            activities = await _userActivityService.GetAllActivitiesAsync(userId: user.Id, pageSize: 10);
             activities.Any().Should().BeFalse();
         }
     }

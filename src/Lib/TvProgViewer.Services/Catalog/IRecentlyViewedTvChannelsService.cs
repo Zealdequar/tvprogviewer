@@ -5,25 +5,25 @@ using TvProgViewer.Core.Domain.Catalog;
 namespace TvProgViewer.Services.Catalog
 {
     /// <summary>
-    /// Recently viewed tvchannels service
+    /// Recently viewed tvChannels service
     /// </summary>
     public partial interface IRecentlyViewedTvChannelsService
     {
         /// <summary>
-        /// Gets a "recently viewed tvchannels" list
+        /// Gets a "recently viewed tvChannels" list
         /// </summary>
-        /// <param name="number">Number of tvchannels to load</param>
+        /// <param name="number">Number of tvChannels to load</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the "recently viewed tvchannels" list
+        /// The task result contains the "recently viewed tvChannels" list
         /// </returns>
         Task<IList<TvChannel>> GetRecentlyViewedTvChannelsAsync(int number);
 
         /// <summary>
-        /// Adds a tvchannel to a recently viewed tvchannels list
+        /// Adds a tvChannel to a recently viewed tvChannels list
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        Task AddTvChannelToRecentlyViewedListAsync(int tvchannelId);
+        Task AddTvChannelToRecentlyViewedListAsync(int tvChannelId);
     }
 }

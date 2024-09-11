@@ -42,7 +42,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Controllers
         private readonly ILocalizationService _localizationService;
         private readonly INotificationService _notificationService;
         private readonly IPermissionService _permissionService;
-        private readonly IProductService _productService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IScheduleTaskService _scheduleTaskService;
         private readonly ISettingService _settingService;
         private readonly IStoreContext _storeContext;
@@ -62,7 +62,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Controllers
             ILocalizationService localizationService,
             INotificationService notificationService,
             IPermissionService permissionService,
-            IProductService productService,
+            ITvChannelService tvChannelService,
             IScheduleTaskService scheduleTaskService,
             ISettingService settingService,
             IStoreContext storeContext,
@@ -78,7 +78,7 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Controllers
             _localizationService = localizationService;
             _notificationService = notificationService;
             _permissionService = permissionService;
-            _productService = productService;
+            _tvChannelService = tvChannelService;
             _scheduleTaskService = scheduleTaskService;
             _settingService = settingService;
             _storeContext = storeContext;
@@ -346,17 +346,17 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
                 return await AccessDeniedDataTablesJson();
 
-            var records = await _zettleRecordService.GetAllRecordsAsync(productOnly: true,
+            var records = await _zettleRecordService.GetAllRecordsAsync(tvChannelOnly: true,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
-            var products = await _productService.GetProductsByIdsAsync(records.Select(record => record.ProductId).Distinct().ToArray());
+            var tvChannels = await _tvChannelService.GetTvChannelsByIdsAsync(records.Select(record => record.TvChannelId).Distinct().ToArray());
             var model = await new SyncRecordListModel().PrepareToGridAsync(searchModel, records, () =>
             {
                 return records.SelectAwait(async record => new SyncRecordModel
                 {
                     Id = record.Id,
                     Active = record.Active,
-                    ProductId = record.ProductId,
-                    ProductName = products.FirstOrDefault(product => product.Id == record.ProductId)?.Name ?? "Not found",
+                    TvChannelId = record.TvChannelId,
+                    TvChannelName = tvChannels.FirstOrDefault(tvChannel => tvChannel.Id == record.TvChannelId)?.Name ?? "Not found",
                     PriceSyncEnabled = record.PriceSyncEnabled,
                     ImageSyncEnabled = record.ImageSyncEnabled,
                     InventoryTrackingEnabled = record.InventoryTrackingEnabled,
@@ -375,10 +375,10 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Controllers
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
                 return await AccessDeniedDataTablesJson();
 
-            var productRecord = await _zettleRecordService.GetRecordByIdAsync(model.Id)
+            var tvChannelRecord = await _zettleRecordService.GetRecordByIdAsync(model.Id)
                 ?? throw new ArgumentException("No record found");
 
-            var records = (await _zettleRecordService.GetAllRecordsAsync(productUuid: productRecord.Uuid)).ToList();
+            var records = (await _zettleRecordService.GetAllRecordsAsync(tvChannelUuid: tvChannelRecord.Uuid)).ToList();
             foreach (var record in records)
             {
                 record.Active = model.Active;
@@ -403,63 +403,63 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Controllers
 
             foreach (var id in selectedIds)
             {
-                var productRecord = await _zettleRecordService.GetRecordByIdAsync(id);
-                if (productRecord is null)
+                var tvChannelRecord = await _zettleRecordService.GetRecordByIdAsync(id);
+                if (tvChannelRecord is null)
                     continue;
 
-                var records = (await _zettleRecordService.GetAllRecordsAsync(productUuid: productRecord.Uuid)).ToList();
+                var records = (await _zettleRecordService.GetAllRecordsAsync(tvChannelUuid: tvChannelRecord.Uuid)).ToList();
                 await _zettleRecordService.DeleteRecordsAsync(records.Select(record => record.Id).ToList());
             }
 
             return new NullJsonResult();
         }
 
-        public async Task<IActionResult> ProductToSync()
+        public async Task<IActionResult> TvChannelToSync()
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
                 return AccessDeniedView();
 
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var model = new AddProductToSyncSearchModel();
-            await _baseAdminModelFactory.PrepareProductTypesAsync(model.AvailableProductTypes);
+            var model = new AddTvChannelToSyncSearchModel();
+            await _baseAdminModelFactory.PrepareTvChannelTypesAsync(model.AvailableTvChannelTypes);
             await _baseAdminModelFactory.PrepareCategoriesAsync(model.AvailableCategories);
             await _baseAdminModelFactory.PrepareManufacturersAsync(model.AvailableManufacturers);
             await _baseAdminModelFactory.PrepareStoresAsync(model.AvailableStores);
             await _baseAdminModelFactory.PrepareVendorsAsync(model.AvailableVendors);
             model.SetPopupGridPageSize();
 
-            return View("~/Plugins/Misc.Zettle/Views/ProductToSync.cshtml", model);
+            return View("~/Plugins/Misc.Zettle/Views/TvChannelToSync.cshtml", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> ProductListToSync(AddProductToSyncSearchModel searchModel)
+        public async Task<IActionResult> TvChannelListToSync(AddTvChannelToSyncSearchModel searchModel)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
                 return await AccessDeniedDataTablesJson();
 
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return await AccessDeniedDataTablesJson();
 
-            var products = await _productService.SearchProductsAsync(showHidden: true,
-                keywords: searchModel.SearchProductName,
-                productType: searchModel.SearchProductTypeId > 0 ? (ProductType?)searchModel.SearchProductTypeId : null,
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(showHidden: true,
+                keywords: searchModel.SearchTvChannelName,
+                tvChannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },
                 storeId: searchModel.SearchStoreId,
                 vendorId: searchModel.SearchVendorId,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
-            var model = new AddProductToSyncListModel().PrepareToGrid(searchModel, products, () =>
+            var model = new AddTvChannelToSyncListModel().PrepareToGrid(searchModel, tvChannels, () =>
             {
-                return products.Select(product => new ProductModel
+                return tvChannels.Select(tvChannel => new TvChannelModel
                 {
-                    Id = product.Id,
-                    Name = product.Name,
-                    Sku = product.Sku,
-                    Price = product.Price,
-                    Published = product.Published
+                    Id = tvChannel.Id,
+                    Name = tvChannel.Name,
+                    Sku = tvChannel.Sku,
+                    Price = tvChannel.Price,
+                    Published = tvChannel.Published
                 }).ToList();
             });
 
@@ -468,26 +468,26 @@ namespace TvProgViewer.Plugin.Misc.Zettle.Controllers
 
         [HttpPost]
         [FormValueRequired("save")]
-        public async Task<IActionResult> ProductToSync(AddProductToSyncModel model)
+        public async Task<IActionResult> TvChannelToSync(AddTvChannelToSyncModel model)
         {
             if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManagePlugins))
                 return AccessDeniedView();
 
-            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageProducts))
+            if (!await _permissionService.AuthorizeAsync(StandardPermissionProvider.ManageTvChannels))
                 return AccessDeniedView();
 
-            var invalidProducts = await _zettleRecordService.AddRecordsAsync(model.SelectedProductIds?.ToList());
-            if (invalidProducts > 0)
+            var invalidTvChannels = await _zettleRecordService.AddRecordsAsync(model.SelectedTvChannelIds?.ToList());
+            if (invalidTvChannels > 0)
             {
-                var warning = await _localizationService.GetResourceAsync("Plugins.Misc.Zettle.Sync.AddProduct.Warning");
-                _notificationService.WarningNotification(string.Format(warning, invalidProducts));
+                var warning = await _localizationService.GetResourceAsync("Plugins.Misc.Zettle.Sync.AddTvChannel.Warning");
+                _notificationService.WarningNotification(string.Format(warning, invalidTvChannels));
             }
             else
-                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Plugins.Misc.Zettle.Sync.AddProduct.Success"));
+                _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Plugins.Misc.Zettle.Sync.AddTvChannel.Success"));
 
             ViewBag.RefreshPage = true;
 
-            return View("~/Plugins/Misc.Zettle/Views/ProductToSync.cshtml", new AddProductToSyncSearchModel());
+            return View("~/Plugins/Misc.Zettle/Views/TvChannelToSync.cshtml", new AddTvChannelToSyncSearchModel());
         }
 
         public async Task<IActionResult> SyncStart()

@@ -88,7 +88,7 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IPermissionService _permissionService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStateProvinceService _stateProvinceService;
         private readonly IStoreContext _storeContext;
         private readonly ITaxService _taxService;
@@ -139,7 +139,7 @@ namespace TvProgViewer.WebUI.Controllers
             IPermissionService permissionService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IStateProvinceService stateProvinceService,
             IStoreContext storeContext,
             ITaxService taxService,
@@ -186,7 +186,7 @@ namespace TvProgViewer.WebUI.Controllers
             _permissionService = permissionService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _stateProvinceService = stateProvinceService;
             _storeContext = storeContext;
             _taxService = taxService;
@@ -1593,7 +1593,7 @@ namespace TvProgViewer.WebUI.Controllers
 
         #endregion
 
-        #region My account / Downloadable tvchannels
+        #region My account / Downloadable tvChannels
 
         public virtual async Task<IActionResult> DownloadableTvChannels()
         {
@@ -1616,12 +1616,12 @@ namespace TvProgViewer.WebUI.Controllers
             if (orderItem == null)
                 return RedirectToRoute("Homepage");
 
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
 
-            if (tvchannel == null || !tvchannel.HasUserAgreement)
+            if (tvChannel == null || !tvChannel.HasUserAgreement)
                 return RedirectToRoute("Homepage");
 
-            var model = await _userModelFactory.PrepareUserAgreementModelAsync(orderItem, tvchannel);
+            var model = await _userModelFactory.PrepareUserAgreementModelAsync(orderItem, tvChannel);
 
             return View(model);
         }

@@ -66,11 +66,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare search model of tvchannels that use the specification attribute
+        /// Prepare search model of tvChannels that use the specification attribute
         /// </summary>
-        /// <param name="searchModel">Search model of tvchannels that use the specification attribute</param>
+        /// <param name="searchModel">Search model of tvChannels that use the specification attribute</param>
         /// <param name="specificationAttribute">Specification attribute</param>
-        /// <returns>Search model of tvchannels that use the specification attribute</returns>
+        /// <returns>Search model of tvChannels that use the specification attribute</returns>
         protected virtual SpecificationAttributeTvChannelSearchModel PrepareSpecificationAttributeTvChannelSearchModel(
             SpecificationAttributeTvChannelSearchModel searchModel, SpecificationAttribute specificationAttribute)
         {
@@ -281,7 +281,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                     //fill in model values from the entity
                     var optionModel = option.ToModel<SpecificationAttributeOptionModel>();
 
-                    //in order to save performance to do not check whether a tvchannel is deleted, etc
+                    //in order to save performance to do not check whether a tvChannel is deleted, etc
                     optionModel.NumberOfAssociatedTvChannels = await _specificationAttributeService
                         .GetTvChannelSpecificationAttributeCountAsync(specificationAttributeOptionId: option.Id);
 
@@ -336,13 +336,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged list model of tvchannels that use the specification attribute
+        /// Prepare paged list model of tvChannels that use the specification attribute
         /// </summary>
-        /// <param name="searchModel">Search model of tvchannels that use the specification attribute</param>
+        /// <param name="searchModel">Search model of tvChannels that use the specification attribute</param>
         /// <param name="specificationAttribute">Specification attribute</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the list model of tvchannels that use the specification attribute
+        /// The task result contains the list model of tvChannels that use the specification attribute
         /// </returns>
         public virtual async Task<SpecificationAttributeTvChannelListModel> PrepareSpecificationAttributeTvChannelListModelAsync(
             SpecificationAttributeTvChannelSearchModel searchModel, SpecificationAttribute specificationAttribute)
@@ -353,20 +353,20 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (specificationAttribute == null)
                 throw new ArgumentNullException(nameof(specificationAttribute));
 
-            //get tvchannels
-            var tvchannels = await _specificationAttributeService.GetTvChannelsBySpecificationAttributeIdAsync(
+            //get tvChannels
+            var tvChannels = await _specificationAttributeService.GetTvChannelsBySpecificationAttributeIdAsync(
                 specificationAttributeId: specificationAttribute.Id,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare list model
-            var model = new SpecificationAttributeTvChannelListModel().PrepareToGrid(searchModel, tvchannels, () =>
+            var model = new SpecificationAttributeTvChannelListModel().PrepareToGrid(searchModel, tvChannels, () =>
             {
                 //fill in model values from the entity
-                return tvchannels.Select(tvchannel =>
+                return tvChannels.Select(tvChannel =>
                 {
-                    var specificationAttributeTvChannelModel = tvchannel.ToModel<SpecificationAttributeTvChannelModel>();
-                    specificationAttributeTvChannelModel.TvChannelId = tvchannel.Id;
-                    specificationAttributeTvChannelModel.TvChannelName = tvchannel.Name;
+                    var specificationAttributeTvChannelModel = tvChannel.ToModel<SpecificationAttributeTvChannelModel>();
+                    specificationAttributeTvChannelModel.TvChannelId = tvChannel.Id;
+                    specificationAttributeTvChannelModel.TvChannelName = tvChannel.Name;
                     specificationAttributeTvChannelModel.SpecificationAttributeId = specificationAttribute.Id;
 
                     return specificationAttributeTvChannelModel;

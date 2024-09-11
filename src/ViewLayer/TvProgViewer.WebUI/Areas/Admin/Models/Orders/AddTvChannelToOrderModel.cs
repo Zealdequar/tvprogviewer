@@ -7,7 +7,7 @@ using TvProgViewer.Web.Framework.Mvc.ModelBinding;
 namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
 {
     /// <summary>
-    /// Represents a tvchannel model to add to the order
+    /// Represents a tvChannel model to add to the order
     /// </summary>
     public partial record AddTvChannelToOrderModel : BaseTvProgModel
     {
@@ -45,7 +45,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Models.Orders
         [TvProgResourceDisplayName("Admin.Orders.TvChannels.AddNew.SubTotalExclTax")]
         public decimal SubTotalExclTax { get; set; }
 
-        //tvchannel attributes
+        //tvChannel attributes
         public IList<TvChannelAttributeModel> TvChannelAttributes { get; set; }
         //gift card info
         public GiftCardModel GiftCard { get; set; }

@@ -14,9 +14,9 @@ namespace TvProgViewer.Services.ExportImport
         public int SpecificationAttributeId { get; set; }
 
         /// <summary>
-        /// Create data to export the tvchannel specification attribute
+        /// Create data to export the tvChannel specification attribute
         /// </summary>
-        /// <param name="specificationAttribute">The tvchannel specification attribute to export</param>
+        /// <param name="specificationAttribute">The tvChannel specification attribute to export</param>
         /// <param name="specificationAttributeService">Specification attribute service</param>
         /// <param name="localizationService"></param>
         /// <returns></returns>

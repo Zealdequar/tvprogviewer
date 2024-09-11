@@ -124,15 +124,15 @@ namespace TvProgViewer.Services.Catalog
             Currency targetCurrency, int languageId, bool priceIncludesTax, bool showTax);
 
         /// <summary>
-        /// Formats the price of rental tvchannel (with rental period)
+        /// Formats the price of rental tvChannel (with rental period)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="price">Price</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the rental tvchannel price with period
+        /// The task result contains the rental tvChannel price with period
         /// </returns>
-        Task<string> FormatRentalTvChannelPeriodAsync(TvChannel tvchannel, string price);
+        Task<string> FormatRentalTvChannelPeriodAsync(TvChannel tvChannel, string price);
 
         /// <summary>
         /// Formats the shipping price
@@ -226,13 +226,13 @@ namespace TvProgViewer.Services.Catalog
         /// <summary>
         /// Format base price (PAngV)
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
-        /// <param name="tvchannelPrice">TvChannel price (in primary currency). Pass null if you want to use a default produce price</param>
-        /// <param name="totalWeight">Total weight of tvchannel (with attribute weight adjustment). Pass null if you want to use a default produce weight</param>
+        /// <param name="tvChannel">TvChannel</param>
+        /// <param name="tvChannelPrice">TvChannel price (in primary currency). Pass null if you want to use a default produce price</param>
+        /// <param name="totalWeight">Total weight of tvChannel (with attribute weight adjustment). Pass null if you want to use a default produce weight</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the base price
         /// </returns>
-        Task<string> FormatBasePriceAsync(TvChannel tvchannel, decimal? tvchannelPrice, decimal? totalWeight = null);
+        Task<string> FormatBasePriceAsync(TvChannel tvChannel, decimal? tvChannelPrice, decimal? totalWeight = null);
     }
 }

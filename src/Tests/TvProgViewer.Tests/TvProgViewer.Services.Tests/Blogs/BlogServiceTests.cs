@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Domain.Blogs;
-using Nop.Services.Blogs;
+using TvProgViewer.Core.Domain.Blogs;
+using TvProgViewer.Services.Blogs;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.Blogs
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.Blogs
 {
     [TestFixture]
     public class BlogServiceTests: ServiceTest
@@ -123,7 +123,7 @@ namespace Nop.Tests.Nop.Services.Tests.Blogs
             blogPosts = await _blogService.GetAllBlogPostsByTagAsync(tag: "e-commerce");
             blogPosts.TotalCount.Should().Be(2);
 
-            blogPosts = await _blogService.GetAllBlogPostsByTagAsync(tag: "nopCommerce");
+            blogPosts = await _blogService.GetAllBlogPostsByTagAsync(tag: "tvProgViewer");
             blogPosts.TotalCount.Should().Be(1);
 
             blogPosts = await _blogService.GetAllBlogPostsByTagAsync(tag: "blog");
@@ -202,7 +202,7 @@ namespace Nop.Tests.Nop.Services.Tests.Blogs
             testPost.Body.Should().NotBeEmpty();
             testPost.Body.Should().BeEquivalentTo(post.Body);
 
-            var comment = new BlogComment {BlogPostId = postId, StoreId = 1, CustomerId = 1};
+            var comment = new BlogComment {BlogPostId = postId, StoreId = 1, UserId = 1};
 
             await _blogService.InsertBlogCommentAsync(comment);
             var commentId = comment.Id;
@@ -222,9 +222,9 @@ namespace Nop.Tests.Nop.Services.Tests.Blogs
             
             var comments = new List<BlogComment>
             {
-                new() {BlogPostId = postId, StoreId = 1, CustomerId = 1},
-                new() {BlogPostId = postId, StoreId = 1, CustomerId = 1},
-                new() {BlogPostId = postId, StoreId = 1, CustomerId = 1}
+                new() {BlogPostId = postId, StoreId = 1, UserId = 1},
+                new() {BlogPostId = postId, StoreId = 1, UserId = 1},
+                new() {BlogPostId = postId, StoreId = 1, UserId = 1}
             } as IList<BlogComment>;
 
             foreach (var blogComment in comments) 

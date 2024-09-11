@@ -60,7 +60,7 @@ namespace TvProgViewer.Services.Common
         private readonly IPaymentService _paymentService;
         private readonly IPictureService _pictureService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IRewardPointService _rewardPointService;
         private readonly ISettingService _settingService;
         private readonly IShipmentService _shipmentService;
@@ -96,7 +96,7 @@ namespace TvProgViewer.Services.Common
             IPaymentService paymentService,
             IPictureService pictureService,
             IPriceFormatter priceFormatter,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IRewardPointService rewardPointService,
             ISettingService settingService,
             IShipmentService shipmentService,
@@ -128,7 +128,7 @@ namespace TvProgViewer.Services.Common
             _paymentService = paymentService;
             _pictureService = pictureService;
             _priceFormatter = priceFormatter;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _rewardPointService = rewardPointService;
             _settingService = settingService;
             _shipmentService = shipmentService;
@@ -342,12 +342,12 @@ namespace TvProgViewer.Services.Common
         }
 
         /// <summary>
-        /// Get tvchannel entries for document data source
+        /// Get tvChannel entries for document data source
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="orderItems">Collection of order items</param>
         /// <param name="language">Language</param>
-        /// <returns>A task that contains collection of tvchannel entries</returns>
+        /// <returns>A task that contains collection of tvChannel entries</returns>
         protected virtual async Task<List<TvChannelItem>> GetOrderTvChannelItemsAsync(Order order, IList<OrderItem> orderItems, Language language)
         {
             var vendors = _vendorSettings.ShowVendorOnOrderDetailsPage ? await _vendorService.GetVendorsByTvChannelIdsAsync(orderItems.Select(item => item.TvChannelId).ToArray()) : new List<Vendor>();
@@ -356,26 +356,26 @@ namespace TvProgViewer.Services.Common
 
             foreach (var oi in orderItems)
             {
-                var tvchannelItem = new TvChannelItem();
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(oi.TvChannelId);
+                var tvChannelItem = new TvChannelItem();
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(oi.TvChannelId);
 
-                //tvchannel name
-                tvchannelItem.Name = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name, language.Id);
+                //tvChannel name
+                tvChannelItem.Name = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name, language.Id);
 
                 //attributes
                 if (!string.IsNullOrEmpty(oi.AttributeDescription))
                 {
                     var attributes = _htmlFormatter.ConvertHtmlToPlainText(oi.AttributeDescription, true, true);
-                    tvchannelItem.TvChannelAttributes = attributes.Split('\n').ToList();
+                    tvChannelItem.TvChannelAttributes = attributes.Split('\n').ToList();
                 }
 
                 //SKU
                 if (_catalogSettings.ShowSkuOnTvChannelDetailsPage)
-                    tvchannelItem.Sku = await _tvchannelService.FormatSkuAsync(tvchannel, oi.AttributesXml);
+                    tvChannelItem.Sku = await _tvChannelService.FormatSkuAsync(tvChannel, oi.AttributesXml);
 
                 //Vendor name
                 if (_vendorSettings.ShowVendorOnOrderDetailsPage)
-                    tvchannelItem.VendorName = vendors.FirstOrDefault(v => v.Id == tvchannel.VendorId)?.Name ?? string.Empty;
+                    tvChannelItem.VendorName = vendors.FirstOrDefault(v => v.Id == tvChannel.VendorId)?.Name ?? string.Empty;
 
                 //price
                 string unitPrice;
@@ -396,10 +396,10 @@ namespace TvProgViewer.Services.Common
                         order.UserCurrencyCode, language.Id, false);
                 }
 
-                tvchannelItem.Price = unitPrice;
+                tvChannelItem.Price = unitPrice;
 
                 //qty
-                tvchannelItem.Quantity = oi.Quantity.ToString();
+                tvChannelItem.Quantity = oi.Quantity.ToString();
 
                 //total
                 string subTotal;
@@ -420,9 +420,9 @@ namespace TvProgViewer.Services.Common
                         language.Id, false);
                 }
 
-                tvchannelItem.Total = subTotal;
+                tvChannelItem.Total = subTotal;
 
-                result.Add(tvchannelItem);
+                result.Add(tvChannelItem);
             }
 
             return result;
@@ -623,7 +623,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="order">Order</param>
         /// <param name="language">Language; null to use a language used when placing an order</param>
         /// <param name="store">Store</param>
-        /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
+        /// <param name="vendor">Vendor to limit tvChannels; null to print all tvChannels. If specified, then totals won't be printed</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// </returns>
@@ -667,7 +667,7 @@ namespace TvProgViewer.Services.Common
 
             var date = await _dateTimeHelper.ConvertToUserTimeAsync(order.CreatedOnUtc, DateTimeKind.Utc);
 
-            //a vendor should have access only to tvchannels
+            //a vendor should have access only to tvChannels
             var orderItems = await _orderService.GetOrderItemsAsync(order.Id, vendorId: vendor?.Id ?? 0);
 
             var column1Lines = string.IsNullOrEmpty(pdfSettingsByStore.InvoiceFooterTextColumn1) ?
@@ -717,7 +717,7 @@ namespace TvProgViewer.Services.Common
         /// <param name="stream">Stream</param>
         /// <param name="orders">Orders</param>
         /// <param name="language">Language; null to use a language used when placing an order</param>
-        /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
+        /// <param name="vendor">Vendor to limit tvChannels; null to print all tvChannels. If specified, then totals won't be printed</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task PrintOrdersToPdfAsync(Stream stream, IList<Order> orders, Language language = null, Vendor vendor = null)
         {
@@ -835,48 +835,48 @@ namespace TvProgViewer.Services.Common
         /// Write PDF catalog to the specified stream
         /// </summary>
         /// <param name="stream">Stream</param>
-        /// <param name="tvchannels">TvChannels</param>
+        /// <param name="tvChannels">TvChannels</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task PrintTvChannelsToPdfAsync(Stream stream, IList<TvChannel> tvchannels)
+        public virtual async Task PrintTvChannelsToPdfAsync(Stream stream, IList<TvChannel> tvChannels)
         {
             if (stream == null)
                 throw new ArgumentNullException(nameof(stream));
 
-            if (tvchannels == null)
-                throw new ArgumentNullException(nameof(tvchannels));
+            if (tvChannels == null)
+                throw new ArgumentNullException(nameof(tvChannels));
 
             var currentStore = await _storeContext.GetCurrentStoreAsync();
             var pdfSettingsByStore = await _settingService.LoadSettingAsync<PdfSettings>(currentStore.Id);
             var lang = await _workContext.GetWorkingLanguageAsync();
 
-            var tvchannelItems = new List<CatalogItem>();
+            var tvChannelItems = new List<CatalogItem>();
 
-            foreach (var tvchannel in tvchannels)
+            foreach (var tvChannel in tvChannels)
             {
-                var priceStr = $"{tvchannel.Price:0.00} {(await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId)).CurrencyCode}";
-                if (tvchannel.IsRental)
-                    priceStr = await _priceFormatter.FormatRentalTvChannelPeriodAsync(tvchannel, priceStr);
+                var priceStr = $"{tvChannel.Price:0.00} {(await _currencyService.GetCurrencyByIdAsync(_currencySettings.PrimaryStoreCurrencyId)).CurrencyCode}";
+                if (tvChannel.IsRental)
+                    priceStr = await _priceFormatter.FormatRentalTvChannelPeriodAsync(tvChannel, priceStr);
 
-                var rawDescription = await _localizationService.GetLocalizedAsync(tvchannel, x => x.FullDescription, lang.Id);
+                var rawDescription = await _localizationService.GetLocalizedAsync(tvChannel, x => x.FullDescription, lang.Id);
 
-                var tvchannelNumber = tvchannels.IndexOf(tvchannel) + 1;
-                var tvchannelName = await _localizationService.GetLocalizedAsync(tvchannel, x => x.Name, lang.Id);
+                var tvChannelNumber = tvChannels.IndexOf(tvChannel) + 1;
+                var tvChannelName = await _localizationService.GetLocalizedAsync(tvChannel, x => x.Name, lang.Id);
 
                 var item = new CatalogItem()
                 {
-                    Name = $"{tvchannelNumber}. {tvchannelName}",
+                    Name = $"{tvChannelNumber}. {tvChannelName}",
                     Description = _htmlFormatter.StripTags(_htmlFormatter.ConvertHtmlToPlainText(rawDescription, decode: true)),
                     Price = priceStr,
-                    Sku = tvchannel.Sku,
-                    Weight = tvchannel.IsShipEnabled && tvchannel.Weight > decimal.Zero ?
-                        $"{tvchannel.Weight:0.00} {(await _measureService.GetMeasureWeightByIdAsync(_measureSettings.BaseWeightId)).Name}" :
+                    Sku = tvChannel.Sku,
+                    Weight = tvChannel.IsShipEnabled && tvChannel.Weight > decimal.Zero ?
+                        $"{tvChannel.Weight:0.00} {(await _measureService.GetMeasureWeightByIdAsync(_measureSettings.BaseWeightId)).Name}" :
                         string.Empty,
-                    Stock = tvchannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock ?
-                        $"{await _tvchannelService.GetTotalStockQuantityAsync(tvchannel)}" :
+                    Stock = tvChannel.ManageInventoryMethod == ManageInventoryMethod.ManageStock ?
+                        $"{await _tvChannelService.GetTotalStockQuantityAsync(tvChannel)}" :
                         string.Empty
                 };
 
-                var pictures = await _pictureService.GetPicturesByTvChannelIdAsync(tvchannel.Id);
+                var pictures = await _pictureService.GetPicturesByTvChannelIdAsync(tvChannel.Id);
 
                 if (pictures.Any())
                 {
@@ -894,7 +894,7 @@ namespace TvProgViewer.Services.Common
                     item.PicturePaths = picturePaths;
                 }
 
-                tvchannelItems.Add(item);
+                tvChannelItems.Add(item);
             }
 
             var source = new CatalogSource
@@ -902,7 +902,7 @@ namespace TvProgViewer.Services.Common
                 Language = lang,
                 PageSize = pdfSettingsByStore.LetterPageSizeEnabled ? PageSizes.Letter : PageSizes.A4,
                 FontFamily = pdfSettingsByStore.FontFamily,
-                TvChannels = tvchannelItems
+                TvChannels = tvChannelItems
             };
 
             await using var pdfStream = new MemoryStream();
@@ -919,7 +919,7 @@ namespace TvProgViewer.Services.Common
         /// </summary>
         /// <param name="order">Order</param>
         /// <param name="language">Language identifier; null to use a language used when placing an order</param>
-        /// <param name="vendor">Vendor to limit tvchannels; null to print all tvchannels. If specified, then totals won't be printed</param>
+        /// <param name="vendor">Vendor to limit tvChannels; null to print all tvChannels. If specified, then totals won't be printed</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains a path of generated file

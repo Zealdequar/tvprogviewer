@@ -9,7 +9,7 @@
 @{
     var stores = await storeService.GetAllStoresAsync();
 }
-    @* resources for tvchannel tags input *@
+    @* resources for tvChannel tags input *@
     <script src="~/lib_npm/jquery-tageditor/jquery.caret.min.js"></script>
     <script src="~/lib_npm/jquery-tageditor/jquery.tag-editor.min.js"></script>
     <link rel="stylesheet" href="~/lib_npm/jquery-tageditor/jquery.tag-editor.css">
@@ -43,55 +43,55 @@
 
         var selectedTvChannelTypeId = $("#@Html.IdFor(model => model.TvChannelTypeId)").val();
         if (!selectedTvChannelTypeId || selectedTvChannelTypeId == simpleTvChannelId) {
-            $('#group-required-other-tvchannels').showElement();
+            $('#group-required-other-tvChannels').showElement();
             $('#group-visible-individually').showElement();
-            $('#group-associated-tvchannels').hideElement();
+            $('#group-associated-tvChannels').hideElement();
 
-            $('[data-card-name=tvchannel-price]').showElement();
-            $('[data-card-name=tvchannel-shipping]').showElement();
-            $('[data-card-name=tvchannel-inventory]').showElement();
-            $('[data-card-name=tvchannel-giftcard]').showElement();
-            $('[data-card-name=tvchannel-downloadable]').showElement();
-            $('[data-card-name=tvchannel-rental]').showElement();
-            $('[data-card-name=tvchannel-recurring]').showElement();
+            $('[data-card-name=tvChannel-price]').showElement();
+            $('[data-card-name=tvChannel-shipping]').showElement();
+            $('[data-card-name=tvChannel-inventory]').showElement();
+            $('[data-card-name=tvChannel-giftcard]').showElement();
+            $('[data-card-name=tvChannel-downloadable]').showElement();
+            $('[data-card-name=tvChannel-rental]').showElement();
+            $('[data-card-name=tvChannel-recurring]').showElement();
         } else if (selectedTvChannelTypeId == groupedTvChannelId) {
-            $('#group-required-other-tvchannels').hideElement();
+            $('#group-required-other-tvChannels').hideElement();
             $('#group-visible-individually').hideElement();
-            $('#group-associated-tvchannels').showElement();
-            updateTableWidth('#associatedtvchannels-grid');
+            $('#group-associated-tvChannels').showElement();
+            updateTableWidth('#associatedtvChannels-grid');
 
             $('#@Html.IdFor(model => model.VisibleIndividually)').prop('checked', true);
             
 
-            $('[data-card-name=tvchannel-price]').hideElement();
-            $('[data-card-name=tvchannel-shipping]').hideElement();
-            $('[data-card-name=tvchannel-inventory]').hideElement();
-            $('[data-card-name=tvchannel-giftcard]').hideElement();
-            $('[data-card-name=tvchannel-downloadable]').hideElement();
-            $('[data-card-name=tvchannel-rental]').hideElement();
-            $('[data-card-name=tvchannel-recurring]').hideElement();
+            $('[data-card-name=tvChannel-price]').hideElement();
+            $('[data-card-name=tvChannel-shipping]').hideElement();
+            $('[data-card-name=tvChannel-inventory]').hideElement();
+            $('[data-card-name=tvChannel-giftcard]').hideElement();
+            $('[data-card-name=tvChannel-downloadable]').hideElement();
+            $('[data-card-name=tvChannel-rental]').hideElement();
+            $('[data-card-name=tvChannel-recurring]').hideElement();
         }
 
         //templates
-        var tvchannelTypeSupportedValues = {};
+        var tvChannelTypeSupportedValues = {};
         @foreach (var kvp in Model.TvChannelsTypesSupportedByTvChannelTemplates)
         {
-            <text>tvchannelTypeSupportedValues['@(kvp.Key)'] = {};</text>
+            <text>tvChannelTypeSupportedValues['@(kvp.Key)'] = {};</text>
             foreach (var item in kvp.Value)
             {
-                <text>tvchannelTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
+                <text>tvChannelTypeSupportedValues['@(kvp.Key)']['@(item.Value)'] = '@Html.Raw(JavaScriptEncoder.Default.Encode((item.Text)))';</text>
             }
         }
-        var tvchannelTemplateDropddown = $("#@Html.IdFor(model => model.TvChannelTemplateId)");
-        var tvchannelTemplateSelectedValue = tvchannelTemplateDropddown.val();
-        tvchannelTemplateDropddown.empty();
-        for (var name in tvchannelTypeSupportedValues[selectedTvChannelTypeId]) {
-            tvchannelTemplateDropddown.append($("<option></option>").attr("value", name).text(tvchannelTypeSupportedValues[selectedTvChannelTypeId][name]));
+        var tvChannelTemplateDropddown = $("#@Html.IdFor(model => model.TvChannelTemplateId)");
+        var tvChannelTemplateSelectedValue = tvChannelTemplateDropddown.val();
+        tvChannelTemplateDropddown.empty();
+        for (var name in tvChannelTypeSupportedValues[selectedTvChannelTypeId]) {
+            tvChannelTemplateDropddown.append($("<option></option>").attr("value", name).text(tvChannelTypeSupportedValues[selectedTvChannelTypeId][name]));
         }
         //previously selected value
         $('#@Html.IdFor(model => model.TvChannelTemplateId) option').each(function(){
-            if (this.value == tvchannelTemplateSelectedValue) {
-                tvchannelTemplateDropddown.val(tvchannelTemplateSelectedValue);
+            if (this.value == tvChannelTemplateSelectedValue) {
+                tvChannelTemplateDropddown.val(tvChannelTemplateSelectedValue);
             }
         });
 
@@ -116,7 +116,7 @@
         });
     });
 
-    //required tvchannel friendly names
+    //required tvChannel friendly names
     $(document).ready(function() {
         loadRequiredTvChannelFriendlyNames();
     });
@@ -135,10 +135,10 @@
         var inputValue = $('#@Html.IdFor(model => model.RequiredTvChannelIds)').val();
         if (inputValue) {
             //load friendly names
-            $('#required-tvchannels-check-progress').show();
+            $('#required-tvChannels-check-progress').show();
 
             var postData = {
-                tvchannelIds: inputValue
+                tvChannelIds: inputValue
             };
             addAntiForgeryToken(postData);
 
@@ -149,34 +149,34 @@
                 data: postData,
                 dataType: "json",
                 success: function (data, textStatus, jqXHR) {
-                    $('#required-tvchannel-names').text(data.Text);
+                    $('#required-tvChannel-names').text(data.Text);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    $('#required-tvchannel-names').text('');
+                    $('#required-tvChannel-names').text('');
                 },
                 complete: function (jqXHR, textStatus) {
-                    $('#required-tvchannels-check-progress').hide();
+                    $('#required-tvChannels-check-progress').hide();
                 }
             });
         } else {
-            $('#required-tvchannel-names').text('');
+            $('#required-tvChannel-names').text('');
         }
     }
 
     $(document).ready(function () {
         if ('@Model.Sku') {
-            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvchannelId: @Model.Id, sku: '@Model.Sku' });
+            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvChannelId: @Model.Id, sku: '@Model.Sku' });
         }
         $('#@Html.IdFor(model => model.Sku)').on('input change', function () {
-            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvchannelId: @Model.Id, sku: $(this).val() });
+            warningValidation('@Url.Action("SkuReservedWarning")', '@Html.NameFor(model => model.Sku)', { tvChannelId: @Model.Id, sku: $(this).val() });
         });
     });
     </script>
 
 
 <div class="card-body">
-    <div id="tvchannel-details-area">
-        @(await Html.LocalizedEditorAsync<TvChannelModel, TvChannelLocalizedModel>("tvchannel-info-localized",
+    <div id="tvChannel-details-area">
+        @(await Html.LocalizedEditorAsync<TvChannelModel, TvChannelLocalizedModel>("tvChannel-info-localized",
     @<div>
         <div class="form-group row">
             <div class="col-md-3">
@@ -392,7 +392,7 @@
             </div>
         </div>
     }
-    <div class="card card-default margin-bottom" id="group-associated-tvchannels">
+    <div class="card card-default margin-bottom" id="group-associated-tvChannels">
         <div class="card-header">
             @T("Admin.Catalog.TvChannels.AssociatedTvChannels")
         </div>
@@ -410,7 +410,7 @@
 
             @await Html.PartialAsync("Table", new DataTablesModel
             {
-                Name = "associatedtvchannels-grid",
+                Name = "associatedtvChannels-grid",
                 UrlRead = new DataUrl("AssociatedTvChannelList", "TvChannel", new RouteValueDictionary { [nameof(Model.AssociatedTvChannelSearchModel.TvChannelId)] = Model.AssociatedTvChannelSearchModel.TvChannelId }),
                 UrlDelete = new DataUrl("AssociatedTvChannelDelete", "TvChannel", null),
                 UrlUpdate = new DataUrl("AssociatedTvChannelUpdate", "TvChannel", null),
@@ -455,7 +455,7 @@
                 })
             </div>
             <div class="card-footer">
-                <button type="submit" id="btnAddNewAssociatedTvChannel" onclick="javascript:OpenWindow('@(Url.Action("AssociatedTvChannelAddPopup", "TvChannel", new {tvchannelId = Model.Id, btnId = "btnRefreshAssociatedTvChannels", formId = "tvchannel-form"}))', 800, 800, true); return false;" class="btn btn-primary">
+                <button type="submit" id="btnAddNewAssociatedTvChannel" onclick="javascript:OpenWindow('@(Url.Action("AssociatedTvChannelAddPopup", "TvChannel", new {tvChannelId = Model.Id, btnId = "btnRefreshAssociatedTvChannels", formId = "tvChannel-form"}))', 800, 800, true); return false;" class="btn btn-primary">
                     @T("Admin.Catalog.TvChannels.AssociatedTvChannels.AddNew")
                 </button>
                 <button type="submit" id="btnRefreshAssociatedTvChannels" style="display: none"></button>
@@ -463,7 +463,7 @@
                     $(document).ready(function () {
                         $('#btnRefreshAssociatedTvChannels').click(function () {
                             //refresh grid
-                            updateTable('#associatedtvchannels-grid');
+                            updateTable('#associatedtvChannels-grid');
 
                             //return false to don't reload a page
                             return false;
@@ -579,7 +579,7 @@
             <span asp-validation-for="VendorId"></span>
         </div>
     </div>
-    <div class="form-group row @(Model.TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart ? null : "advanced-setting")" id="group-required-other-tvchannels">
+    <div class="form-group row @(Model.TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart ? null : "advanced-setting")" id="group-required-other-tvChannels">
         <div class="col-md-3">
             <tvprog-label asp-for="RequireOtherTvChannels" />
         </div>
@@ -592,7 +592,7 @@
         <div class="form-group row @(Model.TvChannelEditorSettingsModel.RequireOtherTvChannelsAddedToCart ? null : "advanced-setting")">
             <div class="col-md-3">
                 <tvprog-label asp-for="RequiredTvChannelIds" />
-                <span id="required-tvchannels-check-progress" style="display: none; float: right; clear: both" class="please-wait">
+                <span id="required-tvChannels-check-progress" style="display: none; float: right; clear: both" class="please-wait">
                     @T("Common.Wait")
                 </span>
             </div>
@@ -604,7 +604,7 @@
                         <script>
                             $(document).ready(function () {
                                 $('#btnRefreshRequiredTvChannels').click(function () {
-                                    //refresh tvchannel list
+                                    //refresh tvChannel list
                                     loadRequiredTvChannelFriendlyNames();
 
                                     //return false to don't reload a page
@@ -612,12 +612,12 @@
                                 });
                             });
                         </script>
-                        <button type="submit" id="btnAddNewRequiredTvChannel" onclick="javascript:OpenWindow('@(Url.Action("RequiredTvChannelAddPopup", "TvChannel", new {btnId = "btnRefreshRequiredTvChannels", tvchannelIdsInput = "RequiredTvChannelIds"}))', 800, 850, true); return false;" class="btn btn-info">
+                        <button type="submit" id="btnAddNewRequiredTvChannel" onclick="javascript:OpenWindow('@(Url.Action("RequiredTvChannelAddPopup", "TvChannel", new {btnId = "btnRefreshRequiredTvChannels", tvChannelIdsInput = "RequiredTvChannelIds"}))', 800, 850, true); return false;" class="btn btn-info">
                             @T("Admin.Catalog.TvChannels.Fields.RequiredTvChannelIds.AddNew")
                         </button>
                     </div>
                 </div>
-                <span id="required-tvchannel-names"></span>
+                <span id="required-tvChannel-names"></span>
                 @Html.ValidationMessageFor(model => model.RequiredTvChannelIds)
             </div>
         </div>

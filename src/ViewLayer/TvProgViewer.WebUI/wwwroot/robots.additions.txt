@@ -1,6 +1,6 @@
 Clean-param: returnurl 
 Clean-param: etext 
-Clean-param: utm
+Clean-param: utmylcld
 Clean-param: ReturnUrl
 Clean-param: pagenumber
 Clean-param: yhyd
@@ -25,6 +25,14 @@ Clean-param: yqpil
 Clean-param: ypqpil
 Clean-param: ypppil
 Clean-param: ylcyd
+Clean-param: yyclyd
+Clean-param: yclid
+Clean-param: ylcld
+Clean-param: ykilt
+Clean-param: yklid
+Clean-param: yclud
+Clean-param: ypppel
+Clean-param: ybqpil
 Clean-param: _ym_debug
 Clean-param: newsitemid
 Clean-param: viewmode

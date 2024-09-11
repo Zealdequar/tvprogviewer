@@ -36,7 +36,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly IDiscountSupportedModelFactory _discountSupportedModelFactory;
         private readonly ILocalizationService _localizationService;
         private readonly ILocalizedModelFactory _localizedModelFactory;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStoreMappingSupportedModelFactory _storeMappingSupportedModelFactory;
         private readonly IUrlRecordService _urlRecordService;
 
@@ -54,7 +54,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             IDiscountSupportedModelFactory discountSupportedModelFactory,
             ILocalizationService localizationService,
             ILocalizedModelFactory localizedModelFactory,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IStoreMappingSupportedModelFactory storeMappingSupportedModelFactory,
             IUrlRecordService urlRecordService)
         {
@@ -68,7 +68,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _discountSupportedModelFactory = discountSupportedModelFactory;
             _localizationService = localizationService;
             _localizedModelFactory = localizedModelFactory;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _storeMappingSupportedModelFactory = storeMappingSupportedModelFactory;
             _urlRecordService = urlRecordService;
         }
@@ -78,11 +78,11 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         #region Utilities
 
         /// <summary>
-        /// Prepare manufacturer tvchannel search model
+        /// Prepare manufacturer tvChannel search model
         /// </summary>
-        /// <param name="searchModel">Manufacturer tvchannel search model</param>
+        /// <param name="searchModel">Manufacturer tvChannel search model</param>
         /// <param name="manufacturer">Manufacturer</param>
-        /// <returns>Manufacturer tvchannel search model</returns>
+        /// <returns>Manufacturer tvChannel search model</returns>
         protected virtual ManufacturerTvChannelSearchModel PrepareManufacturerTvChannelSearchModel(ManufacturerTvChannelSearchModel searchModel,
             Manufacturer manufacturer)
         {
@@ -257,13 +257,13 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged manufacturer tvchannel list model
+        /// Prepare paged manufacturer tvChannel list model
         /// </summary>
-        /// <param name="searchModel">Manufacturer tvchannel search model</param>
+        /// <param name="searchModel">Manufacturer tvChannel search model</param>
         /// <param name="manufacturer">Manufacturer</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the manufacturer tvchannel list model
+        /// The task result contains the manufacturer tvChannel list model
         /// </returns>
         public virtual async Task<ManufacturerTvChannelListModel> PrepareManufacturerTvChannelListModelAsync(ManufacturerTvChannelSearchModel searchModel,
             Manufacturer manufacturer)
@@ -274,21 +274,21 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             if (manufacturer == null)
                 throw new ArgumentNullException(nameof(manufacturer));
 
-            //get tvchannel manufacturers
-            var tvchannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByManufacturerIdAsync(showHidden: true,
+            //get tvChannel manufacturers
+            var tvChannelManufacturers = await _manufacturerService.GetTvChannelManufacturersByManufacturerIdAsync(showHidden: true,
                 manufacturerId: manufacturer.Id,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-            var model = await new ManufacturerTvChannelListModel().PrepareToGridAsync(searchModel, tvchannelManufacturers, () =>
+            var model = await new ManufacturerTvChannelListModel().PrepareToGridAsync(searchModel, tvChannelManufacturers, () =>
             {
-                return tvchannelManufacturers.SelectAwait(async tvchannelManufacturer =>
+                return tvChannelManufacturers.SelectAwait(async tvChannelManufacturer =>
                 {
                     //fill in model values from the entity
-                    var manufacturerTvChannelModel = tvchannelManufacturer.ToModel<ManufacturerTvChannelModel>();
+                    var manufacturerTvChannelModel = tvChannelManufacturer.ToModel<ManufacturerTvChannelModel>();
 
                     //fill in additional values (not existing in the entity)
-                    manufacturerTvChannelModel.TvChannelName = (await _tvchannelService.GetTvChannelByIdAsync(tvchannelManufacturer.TvChannelId))?.Name;
+                    manufacturerTvChannelModel.TvChannelName = (await _tvChannelService.GetTvChannelByIdAsync(tvChannelManufacturer.TvChannelId))?.Name;
 
                     return manufacturerTvChannelModel;
                 });
@@ -298,12 +298,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare tvchannel search model to add to the manufacturer
+        /// Prepare tvChannel search model to add to the manufacturer
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the manufacturer
+        /// The task result contains the tvChannel search model to add to the manufacturer
         /// </returns>
         public virtual async Task<AddTvChannelToManufacturerSearchModel> PrepareAddTvChannelToManufacturerSearchModelAsync(AddTvChannelToManufacturerSearchModel searchModel)
         {
@@ -322,7 +322,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             //prepare available vendors
             await _baseAdminModelFactory.PrepareVendorsAsync(searchModel.AvailableVendors);
 
-            //prepare available tvchannel types
+            //prepare available tvChannel types
             await _baseAdminModelFactory.PrepareTvChannelTypesAsync(searchModel.AvailableTvChannelTypes);
 
             //prepare page parameters
@@ -332,38 +332,38 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged tvchannel list model to add to the manufacturer
+        /// Prepare paged tvChannel list model to add to the manufacturer
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the manufacturer</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel list model to add to the manufacturer
+        /// The task result contains the tvChannel list model to add to the manufacturer
         /// </returns>
         public virtual async Task<AddTvChannelToManufacturerListModel> PrepareAddTvChannelToManufacturerListModelAsync(AddTvChannelToManufacturerSearchModel searchModel)
         {
             if (searchModel == null)
                 throw new ArgumentNullException(nameof(searchModel));
 
-            //get tvchannels
-            var tvchannels = await _tvchannelService.SearchTvChannelsAsync(showHidden: true,
+            //get tvChannels
+            var tvChannels = await _tvChannelService.SearchTvChannelsAsync(showHidden: true,
                 categoryIds: new List<int> { searchModel.SearchCategoryId },
                 manufacturerIds: new List<int> { searchModel.SearchManufacturerId },
                 storeId: searchModel.SearchStoreId,
                 vendorId: searchModel.SearchVendorId,
-                tvchannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
+                tvChannelType: searchModel.SearchTvChannelTypeId > 0 ? (TvChannelType?)searchModel.SearchTvChannelTypeId : null,
                 keywords: searchModel.SearchTvChannelName,
                 pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
             //prepare grid model
-            var model = await new AddTvChannelToManufacturerListModel().PrepareToGridAsync(searchModel, tvchannels, () =>
+            var model = await new AddTvChannelToManufacturerListModel().PrepareToGridAsync(searchModel, tvChannels, () =>
             {
-                return tvchannels.SelectAwait(async tvchannel =>
+                return tvChannels.SelectAwait(async tvChannel =>
                 {
-                    var tvchannelModel = tvchannel.ToModel<TvChannelModel>();
+                    var tvChannelModel = tvChannel.ToModel<TvChannelModel>();
 
-                    tvchannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvchannel, 0, true, false);
+                    tvChannelModel.SeName = await _urlRecordService.GetSeNameAsync(tvChannel, 0, true, false);
 
-                    return tvchannelModel;
+                    return tvChannelModel;
                 });
             });
 

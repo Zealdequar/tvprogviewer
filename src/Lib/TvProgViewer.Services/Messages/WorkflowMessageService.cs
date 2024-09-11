@@ -44,7 +44,7 @@ namespace TvProgViewer.Services.Messages
         private readonly IMessageTemplateService _messageTemplateService;
         private readonly IMessageTokenProvider _messageTokenProvider;
         private readonly IOrderService _orderService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IQueuedEmailService _queuedEmailService;
         private readonly IStoreContext _storeContext;
         private readonly IStoreService _storeService;
@@ -67,7 +67,7 @@ namespace TvProgViewer.Services.Messages
             IMessageTemplateService messageTemplateService,
             IMessageTokenProvider messageTokenProvider,
             IOrderService orderService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IQueuedEmailService queuedEmailService,
             IStoreContext storeContext,
             IStoreService storeService,
@@ -86,7 +86,7 @@ namespace TvProgViewer.Services.Messages
             _messageTemplateService = messageTemplateService;
             _messageTokenProvider = messageTokenProvider;
             _orderService = orderService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _queuedEmailService = queuedEmailService;
             _storeContext = storeContext;
             _storeService = storeService;
@@ -1483,7 +1483,7 @@ namespace TvProgViewer.Services.Messages
         /// </summary>
         /// <param name="user">User instance</param>
         /// <param name="languageId">Message language identifier</param>
-        /// <param name="tvchannel">TvChannel instance</param>
+        /// <param name="tvChannel">TvChannel instance</param>
         /// <param name="userEmail">User's email</param>
         /// <param name="friendsEmail">Friend's email</param>
         /// <param name="personalMessage">Personal message</param>
@@ -1492,13 +1492,13 @@ namespace TvProgViewer.Services.Messages
         /// The task result contains the queued email identifier
         /// </returns>
         public virtual async Task<IList<int>> SendTvChannelEmailAFriendMessageAsync(User user, int languageId,
-            TvChannel tvchannel, string userEmail, string friendsEmail, string personalMessage)
+            TvChannel tvChannel, string userEmail, string friendsEmail, string personalMessage)
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var store = await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
@@ -1510,7 +1510,7 @@ namespace TvProgViewer.Services.Messages
             //tokens
             var commonTokens = new List<Token>();
             await _messageTokenProvider.AddUserTokensAsync(commonTokens, user);
-            await _messageTokenProvider.AddTvChannelTokensAsync(commonTokens, tvchannel, languageId);
+            await _messageTokenProvider.AddTvChannelTokensAsync(commonTokens, tvChannel, languageId);
             commonTokens.Add(new Token("EmailAFriend.PersonalMessage", personalMessage, true));
             commonTokens.Add(new Token("EmailAFriend.Email", userEmail));
 
@@ -2035,18 +2035,18 @@ namespace TvProgViewer.Services.Messages
         }
 
         /// <summary>
-        /// Sends a tvchannel review notification message to a store owner
+        /// Sends a tvChannel review notification message to a store owner
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
-        public virtual async Task<IList<int>> SendTvChannelReviewStoreOwnerNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId)
+        public virtual async Task<IList<int>> SendTvChannelReviewStoreOwnerNotificationMessageAsync(TvChannelReview tvChannelReview, int languageId)
         {
-            if (tvchannelReview == null)
-                throw new ArgumentNullException(nameof(tvchannelReview));
+            if (tvChannelReview == null)
+                throw new ArgumentNullException(nameof(tvChannelReview));
 
             var store = await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
@@ -2057,8 +2057,8 @@ namespace TvProgViewer.Services.Messages
 
             //tokens
             var commonTokens = new List<Token>();
-            await _messageTokenProvider.AddTvChannelReviewTokensAsync(commonTokens, tvchannelReview);
-            await _messageTokenProvider.AddUserTokensAsync(commonTokens, tvchannelReview.UserId);
+            await _messageTokenProvider.AddTvChannelReviewTokensAsync(commonTokens, tvChannelReview);
+            await _messageTokenProvider.AddUserTokensAsync(commonTokens, tvChannelReview.UserId);
 
             return await messageTemplates.SelectAwait(async messageTemplate =>
             {
@@ -2078,27 +2078,27 @@ namespace TvProgViewer.Services.Messages
         }
 
         /// <summary>
-        /// Sends a tvchannel review reply notification message to a user
+        /// Sends a tvChannel review reply notification message to a user
         /// </summary>
-        /// <param name="tvchannelReview">TvChannel review</param>
+        /// <param name="tvChannelReview">TvChannel review</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
-        public virtual async Task<IList<int>> SendTvChannelReviewReplyUserNotificationMessageAsync(TvChannelReview tvchannelReview, int languageId)
+        public virtual async Task<IList<int>> SendTvChannelReviewReplyUserNotificationMessageAsync(TvChannelReview tvChannelReview, int languageId)
         {
-            if (tvchannelReview == null)
-                throw new ArgumentNullException(nameof(tvchannelReview));
+            if (tvChannelReview == null)
+                throw new ArgumentNullException(nameof(tvChannelReview));
 
-            var store = await _storeService.GetStoreByIdAsync(tvchannelReview.StoreId) ?? await _storeContext.GetCurrentStoreAsync();
+            var store = await _storeService.GetStoreByIdAsync(tvChannelReview.StoreId) ?? await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
 
             var messageTemplates = await GetActiveMessageTemplatesAsync(MessageTemplateSystemNames.TvChannelReviewReplyUserNotification, store.Id);
             if (!messageTemplates.Any())
                 return new List<int>();
 
-            var user = await _userService.GetUserByIdAsync(tvchannelReview.UserId);
+            var user = await _userService.GetUserByIdAsync(tvChannelReview.UserId);
 
             //We should not send notifications to guests
             if (await _userService.IsGuestAsync(user))
@@ -2110,7 +2110,7 @@ namespace TvProgViewer.Services.Messages
 
             //tokens
             var commonTokens = new List<Token>();
-            await _messageTokenProvider.AddTvChannelReviewTokensAsync(commonTokens, tvchannelReview);
+            await _messageTokenProvider.AddTvChannelReviewTokensAsync(commonTokens, tvChannelReview);
             await _messageTokenProvider.AddUserTokensAsync(commonTokens, user);
 
             return await messageTemplates.SelectAwait(async messageTemplate =>
@@ -2134,16 +2134,16 @@ namespace TvProgViewer.Services.Messages
         /// <summary>
         /// Sends a "quantity below" notification to a store owner
         /// </summary>
-        /// <param name="tvchannel">TvChannel</param>
+        /// <param name="tvChannel">TvChannel</param>
         /// <param name="languageId">Message language identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the queued email identifier
         /// </returns>
-        public virtual async Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannel tvchannel, int languageId)
+        public virtual async Task<IList<int>> SendQuantityBelowStoreOwnerNotificationAsync(TvChannel tvChannel, int languageId)
         {
-            if (tvchannel == null)
-                throw new ArgumentNullException(nameof(tvchannel));
+            if (tvChannel == null)
+                throw new ArgumentNullException(nameof(tvChannel));
 
             var store = await _storeContext.GetCurrentStoreAsync();
             languageId = await EnsureLanguageIsActiveAsync(languageId, store.Id);
@@ -2153,7 +2153,7 @@ namespace TvProgViewer.Services.Messages
                 return new List<int>();
 
             var commonTokens = new List<Token>();
-            await _messageTokenProvider.AddTvChannelTokensAsync(commonTokens, tvchannel, languageId);
+            await _messageTokenProvider.AddTvChannelTokensAsync(commonTokens, tvChannel, languageId);
 
             return await messageTemplates.SelectAwait(async messageTemplate =>
             {
@@ -2194,9 +2194,9 @@ namespace TvProgViewer.Services.Messages
                 return new List<int>();
 
             var commonTokens = new List<Token>();
-            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(combination.TvChannelId);
+            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(combination.TvChannelId);
 
-            await _messageTokenProvider.AddTvChannelTokensAsync(commonTokens, tvchannel, languageId);
+            await _messageTokenProvider.AddTvChannelTokensAsync(commonTokens, tvChannel, languageId);
             await _messageTokenProvider.AddAttributeCombinationTokensAsync(commonTokens, combination, languageId);
 
             return await messageTemplates.SelectAwait(async messageTemplate =>

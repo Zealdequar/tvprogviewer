@@ -68,33 +68,33 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             Discount discount);
 
         /// <summary>
-        /// Prepare paged discount tvchannel list model
+        /// Prepare paged discount tvChannel list model
         /// </summary>
-        /// <param name="searchModel">Discount tvchannel search model</param>
+        /// <param name="searchModel">Discount tvChannel search model</param>
         /// <param name="discount">Discount</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the discount tvchannel list model
+        /// The task result contains the discount tvChannel list model
         /// </returns>
         Task<DiscountTvChannelListModel> PrepareDiscountTvChannelListModelAsync(DiscountTvChannelSearchModel searchModel, Discount discount);
 
         /// <summary>
-        /// Prepare tvchannel search model to add to the discount
+        /// Prepare tvChannel search model to add to the discount
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel search model to add to the discount
+        /// The task result contains the tvChannel search model to add to the discount
         /// </returns>
         Task<AddTvChannelToDiscountSearchModel> PrepareAddTvChannelToDiscountSearchModelAsync(AddTvChannelToDiscountSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged tvchannel list model to add to the discount
+        /// Prepare paged tvChannel list model to add to the discount
         /// </summary>
         /// <param name="searchModel">TvChannel search model to add to the discount</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel list model to add to the discount
+        /// The task result contains the tvChannel list model to add to the discount
         /// </returns>
         Task<AddTvChannelToDiscountListModel> PrepareAddTvChannelToDiscountListModelAsync(AddTvChannelToDiscountSearchModel searchModel);
 

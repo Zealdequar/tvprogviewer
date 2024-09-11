@@ -21,10 +21,10 @@ namespace TvProgViewer.Services.Catalog
         private readonly CatalogSettings _catalogSettings;
         private readonly IAclService _aclService;
         private readonly ICategoryService _categoryService;
-        private readonly IRepository<TvChannel> _tvchannelRepository;
-        private readonly IRepository<TvChannelCategory> _tvchannelCategoryRepository;
-        private readonly IRepository<TvChannelManufacturer> _tvchannelManufacturerRepository;
-        private readonly IRepository<TvChannelSpecificationAttribute> _tvchannelSpecificationAttributeRepository;
+        private readonly IRepository<TvChannel> _tvChannelRepository;
+        private readonly IRepository<TvChannelCategory> _tvChannelCategoryRepository;
+        private readonly IRepository<TvChannelManufacturer> _tvChannelManufacturerRepository;
+        private readonly IRepository<TvChannelSpecificationAttribute> _tvChannelSpecificationAttributeRepository;
         private readonly IRepository<SpecificationAttribute> _specificationAttributeRepository;
         private readonly IRepository<SpecificationAttributeOption> _specificationAttributeOptionRepository;
         private readonly IRepository<SpecificationAttributeGroup> _specificationAttributeGroupRepository;
@@ -41,10 +41,10 @@ namespace TvProgViewer.Services.Catalog
             CatalogSettings catalogSettings,
             IAclService aclService,
             ICategoryService categoryService,
-            IRepository<TvChannel> tvchannelRepository,
-            IRepository<TvChannelCategory> tvchannelCategoryRepository,
-            IRepository<TvChannelManufacturer> tvchannelManufacturerRepository,
-            IRepository<TvChannelSpecificationAttribute> tvchannelSpecificationAttributeRepository,
+            IRepository<TvChannel> tvChannelRepository,
+            IRepository<TvChannelCategory> tvChannelCategoryRepository,
+            IRepository<TvChannelManufacturer> tvChannelManufacturerRepository,
+            IRepository<TvChannelSpecificationAttribute> tvChannelSpecificationAttributeRepository,
             IRepository<SpecificationAttribute> specificationAttributeRepository,
             IRepository<SpecificationAttributeOption> specificationAttributeOptionRepository,
             IRepository<SpecificationAttributeGroup> specificationAttributeGroupRepository,
@@ -56,10 +56,10 @@ namespace TvProgViewer.Services.Catalog
             _catalogSettings = catalogSettings;
             _aclService = aclService;
             _categoryService = categoryService;
-            _tvchannelRepository = tvchannelRepository;
-            _tvchannelCategoryRepository = tvchannelCategoryRepository;
-            _tvchannelManufacturerRepository = tvchannelManufacturerRepository;
-            _tvchannelSpecificationAttributeRepository = tvchannelSpecificationAttributeRepository;
+            _tvChannelRepository = tvChannelRepository;
+            _tvChannelCategoryRepository = tvChannelCategoryRepository;
+            _tvChannelManufacturerRepository = tvChannelManufacturerRepository;
+            _tvChannelSpecificationAttributeRepository = tvChannelSpecificationAttributeRepository;
             _specificationAttributeRepository = specificationAttributeRepository;
             _specificationAttributeOptionRepository = specificationAttributeOptionRepository;
             _specificationAttributeGroupRepository = specificationAttributeGroupRepository;
@@ -76,8 +76,8 @@ namespace TvProgViewer.Services.Catalog
         /// <returns>Задача представляет асинхронную операцию</returns>
         protected virtual async Task<IQueryable<TvChannel>> GetAvailableTvChannelsQueryAsync()
         {
-            var tvchannelsQuery = 
-                from p in _tvchannelRepository.Table
+            var tvChannelsQuery = 
+                from p in _tvChannelRepository.Table
                 where !p.Deleted && p.Published &&
                       (p.ParentGroupedTvChannelId == 0 || p.VisibleIndividually) &&
                       (!p.AvailableStartDateTimeUtc.HasValue || p.AvailableStartDateTimeUtc <= DateTime.UtcNow) &&
@@ -88,12 +88,12 @@ namespace TvProgViewer.Services.Catalog
             var currentUser = await _workContext.GetCurrentUserAsync();
 
             //apply store mapping constraints
-            tvchannelsQuery = await _storeMappingService.ApplyStoreMapping(tvchannelsQuery, store.Id);
+            tvChannelsQuery = await _storeMappingService.ApplyStoreMapping(tvChannelsQuery, store.Id);
 
             //apply ACL constraints
-            tvchannelsQuery = await _aclService.ApplyAcl(tvchannelsQuery, currentUser);
+            tvChannelsQuery = await _aclService.ApplyAcl(tvChannelsQuery, currentUser);
 
-            return tvchannelsQuery;
+            return tvChannelsQuery;
         }
 
         #endregion
@@ -134,30 +134,30 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Gets tvchannel specification attribute groups
+        /// Gets tvChannel specification attribute groups
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier</param>
+        /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the specification attribute groups
         /// </returns>
-        public virtual async Task<IList<SpecificationAttributeGroup>> GetTvChannelSpecificationAttributeGroupsAsync(int tvchannelId)
+        public virtual async Task<IList<SpecificationAttributeGroup>> GetTvChannelSpecificationAttributeGroupsAsync(int tvChannelId)
         {
-            var tvchannelAttributesForGroupQuery =
+            var tvChannelAttributesForGroupQuery =
                 from sa in _specificationAttributeRepository.Table
                 join sao in _specificationAttributeOptionRepository.Table
                     on sa.Id equals sao.SpecificationAttributeId
-                join psa in _tvchannelSpecificationAttributeRepository.Table
+                join psa in _tvChannelSpecificationAttributeRepository.Table
                     on sao.Id equals psa.SpecificationAttributeOptionId
-                where psa.TvChannelId == tvchannelId && psa.ShowOnTvChannelPage
+                where psa.TvChannelId == tvChannelId && psa.ShowOnTvChannelPage
                 select sa.SpecificationAttributeGroupId;
 
             var availableGroupsQuery =
                 from sag in _specificationAttributeGroupRepository.Table
-                where tvchannelAttributesForGroupQuery.Any(groupId => groupId == sag.Id)
+                where tvChannelAttributesForGroupQuery.Any(groupId => groupId == sag.Id)
                 select sag;
 
-            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.SpecificationAttributeGroupByTvChannelCacheKey, tvchannelId);
+            var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.SpecificationAttributeGroupByTvChannelCacheKey, tvChannelId);
 
             return await _staticCacheManager.GetAsync(key, async () => await availableGroupsQuery.ToListAsync());
         }
@@ -434,7 +434,7 @@ namespace TvProgViewer.Services.Catalog
             if (categoryId <= 0)
                 return new List<SpecificationAttributeOption>();
 
-            var tvchannelsQuery = await GetAvailableTvChannelsQueryAsync();
+            var tvChannelsQuery = await GetAvailableTvChannelsQueryAsync();
 
             IList<int> subCategoryIds = null;
 
@@ -444,17 +444,17 @@ namespace TvProgViewer.Services.Catalog
                 subCategoryIds = await _categoryService.GetChildCategoryIdsAsync(categoryId, store.Id);
             }
             
-            var tvchannelCategoryQuery = 
-                from pc in _tvchannelCategoryRepository.Table
+            var tvChannelCategoryQuery = 
+                from pc in _tvChannelCategoryRepository.Table
                 where (pc.CategoryId == categoryId || (_catalogSettings.ShowTvChannelsFromSubcategories && subCategoryIds.Contains(pc.CategoryId))) &&
                       (_catalogSettings.IncludeFeaturedTvChannelsInNormalLists || !pc.IsFeaturedTvChannel)
                 select pc;
 
             var result = 
                 from sao in _specificationAttributeOptionRepository.Table
-                join psa in _tvchannelSpecificationAttributeRepository.Table on sao.Id equals psa.SpecificationAttributeOptionId
-                join p in tvchannelsQuery on psa.TvChannelId equals p.Id
-                join pc in tvchannelCategoryQuery on p.Id equals pc.TvChannelId
+                join psa in _tvChannelSpecificationAttributeRepository.Table on sao.Id equals psa.SpecificationAttributeOptionId
+                join p in tvChannelsQuery on psa.TvChannelId equals p.Id
+                join pc in tvChannelCategoryQuery on p.Id equals pc.TvChannelId
                 join sa in _specificationAttributeRepository.Table on sao.SpecificationAttributeId equals sa.Id
                 where psa.AllowFiltering
                 orderby
@@ -483,19 +483,19 @@ namespace TvProgViewer.Services.Catalog
             if (manufacturerId <= 0)
                 return new List<SpecificationAttributeOption>();
 
-            var tvchannelsQuery = await GetAvailableTvChannelsQueryAsync();
+            var tvChannelsQuery = await GetAvailableTvChannelsQueryAsync();
 
-            var tvchannelManufacturerQuery = 
-                from pm in _tvchannelManufacturerRepository.Table
+            var tvChannelManufacturerQuery = 
+                from pm in _tvChannelManufacturerRepository.Table
                 where pm.ManufacturerId == manufacturerId && 
                       (_catalogSettings.IncludeFeaturedTvChannelsInNormalLists || !pm.IsFeaturedTvChannel)
                 select pm;
 
             var result = 
                 from sao in _specificationAttributeOptionRepository.Table
-                join psa in _tvchannelSpecificationAttributeRepository.Table on sao.Id equals psa.SpecificationAttributeOptionId
-                join p in tvchannelsQuery on psa.TvChannelId equals p.Id
-                join pm in tvchannelManufacturerQuery on p.Id equals pm.TvChannelId
+                join psa in _tvChannelSpecificationAttributeRepository.Table on sao.Id equals psa.SpecificationAttributeOptionId
+                join p in tvChannelsQuery on psa.TvChannelId equals p.Id
+                join pm in tvChannelManufacturerQuery on p.Id equals pm.TvChannelId
                 join sa in _specificationAttributeRepository.Table on sao.SpecificationAttributeId equals sa.Id
                 where psa.AllowFiltering
                 orderby
@@ -516,28 +516,28 @@ namespace TvProgViewer.Services.Catalog
         #region TvChannel specification attribute
 
         /// <summary>
-        /// Deletes a tvchannel specification attribute mapping
+        /// Deletes a tvChannel specification attribute mapping
         /// </summary>
-        /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute</param>
+        /// <param name="tvChannelSpecificationAttribute">TvChannel specification attribute</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task DeleteTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute)
+        public virtual async Task DeleteTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvChannelSpecificationAttribute)
         {
-            await _tvchannelSpecificationAttributeRepository.DeleteAsync(tvchannelSpecificationAttribute);
+            await _tvChannelSpecificationAttributeRepository.DeleteAsync(tvChannelSpecificationAttribute);
         }
 
         /// <summary>
-        /// Gets a tvchannel specification attribute mapping collection
+        /// Gets a tvChannel specification attribute mapping collection
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier; 0 to load all records</param>
+        /// <param name="tvChannelId">TvChannel identifier; 0 to load all records</param>
         /// <param name="specificationAttributeOptionId">Specification attribute option identifier; 0 to load all records</param>
         /// <param name="allowFiltering">0 to load attributes with AllowFiltering set to false, 1 to load attributes with AllowFiltering set to true, null to load all attributes</param>
         /// <param name="showOnTvChannelPage">0 to load attributes with ShowOnTvChannelPage set to false, 1 to load attributes with ShowOnTvChannelPage set to true, null to load all attributes</param>
         /// <param name="specificationAttributeGroupId">Specification attribute group identifier; 0 to load all records; null to load attributes without group</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel specification attribute mapping collection
+        /// The task result contains the tvChannel specification attribute mapping collection
         /// </returns>
-        public virtual async Task<IList<TvChannelSpecificationAttribute>> GetTvChannelSpecificationAttributesAsync(int tvchannelId = 0,
+        public virtual async Task<IList<TvChannelSpecificationAttribute>> GetTvChannelSpecificationAttributesAsync(int tvChannelId = 0,
             int specificationAttributeOptionId = 0, bool? allowFiltering = null, bool? showOnTvChannelPage = null, int? specificationAttributeGroupId = 0)
         {
             var allowFilteringCacheStr = allowFiltering.HasValue ? allowFiltering.ToString() : "null";
@@ -545,11 +545,11 @@ namespace TvProgViewer.Services.Catalog
             var specificationAttributeGroupIdCacheStr = specificationAttributeGroupId.HasValue ? specificationAttributeGroupId.ToString() : "null";
 
             var key = _staticCacheManager.PrepareKeyForDefaultCache(TvProgCatalogDefaults.TvChannelSpecificationAttributeByTvChannelCacheKey,
-                tvchannelId, specificationAttributeOptionId, allowFilteringCacheStr, showOnTvChannelPageCacheStr, specificationAttributeGroupIdCacheStr);
+                tvChannelId, specificationAttributeOptionId, allowFilteringCacheStr, showOnTvChannelPageCacheStr, specificationAttributeGroupIdCacheStr);
 
-            var query = _tvchannelSpecificationAttributeRepository.Table;
-            if (tvchannelId > 0)
-                query = query.Where(psa => psa.TvChannelId == tvchannelId);
+            var query = _tvChannelSpecificationAttributeRepository.Table;
+            if (tvChannelId > 0)
+                query = query.Where(psa => psa.TvChannelId == tvChannelId);
             if (specificationAttributeOptionId > 0)
                 query = query.Where(psa => psa.SpecificationAttributeOptionId == specificationAttributeOptionId);
             if (allowFiltering.HasValue)
@@ -568,58 +568,58 @@ namespace TvProgViewer.Services.Catalog
                 query = query.Where(psa => psa.ShowOnTvChannelPage == showOnTvChannelPage.Value);
             query = query.OrderBy(psa => psa.DisplayOrder).ThenBy(psa => psa.Id);
 
-            var tvchannelSpecificationAttributes = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
+            var tvChannelSpecificationAttributes = await _staticCacheManager.GetAsync(key, async () => await query.ToListAsync());
 
-            return tvchannelSpecificationAttributes;
+            return tvChannelSpecificationAttributes;
         }
 
         /// <summary>
-        /// Gets a tvchannel specification attribute mapping 
+        /// Gets a tvChannel specification attribute mapping 
         /// </summary>
-        /// <param name="tvchannelSpecificationAttributeId">TvChannel specification attribute mapping identifier</param>
+        /// <param name="tvChannelSpecificationAttributeId">TvChannel specification attribute mapping identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel specification attribute mapping
+        /// The task result contains the tvChannel specification attribute mapping
         /// </returns>
-        public virtual async Task<TvChannelSpecificationAttribute> GetTvChannelSpecificationAttributeByIdAsync(int tvchannelSpecificationAttributeId)
+        public virtual async Task<TvChannelSpecificationAttribute> GetTvChannelSpecificationAttributeByIdAsync(int tvChannelSpecificationAttributeId)
         {
-            return await _tvchannelSpecificationAttributeRepository.GetByIdAsync(tvchannelSpecificationAttributeId);
+            return await _tvChannelSpecificationAttributeRepository.GetByIdAsync(tvChannelSpecificationAttributeId);
         }
 
         /// <summary>
-        /// Inserts a tvchannel specification attribute mapping
+        /// Inserts a tvChannel specification attribute mapping
         /// </summary>
-        /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute mapping</param>
+        /// <param name="tvChannelSpecificationAttribute">TvChannel specification attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task InsertTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute)
+        public virtual async Task InsertTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvChannelSpecificationAttribute)
         {
-            await _tvchannelSpecificationAttributeRepository.InsertAsync(tvchannelSpecificationAttribute);
+            await _tvChannelSpecificationAttributeRepository.InsertAsync(tvChannelSpecificationAttribute);
         }
 
         /// <summary>
-        /// Updates the tvchannel specification attribute mapping
+        /// Updates the tvChannel specification attribute mapping
         /// </summary>
-        /// <param name="tvchannelSpecificationAttribute">TvChannel specification attribute mapping</param>
+        /// <param name="tvChannelSpecificationAttribute">TvChannel specification attribute mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
-        public virtual async Task UpdateTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvchannelSpecificationAttribute)
+        public virtual async Task UpdateTvChannelSpecificationAttributeAsync(TvChannelSpecificationAttribute tvChannelSpecificationAttribute)
         {
-            await _tvchannelSpecificationAttributeRepository.UpdateAsync(tvchannelSpecificationAttribute);
+            await _tvChannelSpecificationAttributeRepository.UpdateAsync(tvChannelSpecificationAttribute);
         }
 
         /// <summary>
-        /// Gets a count of tvchannel specification attribute mapping records
+        /// Gets a count of tvChannel specification attribute mapping records
         /// </summary>
-        /// <param name="tvchannelId">TvChannel identifier; 0 to load all records</param>
+        /// <param name="tvChannelId">TvChannel identifier; 0 to load all records</param>
         /// <param name="specificationAttributeOptionId">The specification attribute option identifier; 0 to load all records</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
         /// The task result contains the count
         /// </returns>
-        public virtual async Task<int> GetTvChannelSpecificationAttributeCountAsync(int tvchannelId = 0, int specificationAttributeOptionId = 0)
+        public virtual async Task<int> GetTvChannelSpecificationAttributeCountAsync(int tvChannelId = 0, int specificationAttributeOptionId = 0)
         {
-            var query = _tvchannelSpecificationAttributeRepository.Table;
-            if (tvchannelId > 0)
-                query = query.Where(psa => psa.TvChannelId == tvchannelId);
+            var query = _tvChannelSpecificationAttributeRepository.Table;
+            if (tvChannelId > 0)
+                query = query.Where(psa => psa.TvChannelId == tvChannelId);
             if (specificationAttributeOptionId > 0)
                 query = query.Where(psa => psa.SpecificationAttributeOptionId == specificationAttributeOptionId);
 
@@ -627,23 +627,23 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get mapped tvchannels for specification attribute
+        /// Get mapped tvChannels for specification attribute
         /// </summary>
         /// <param name="specificationAttributeId">The specification attribute identifier</param>
         /// <param name="pageIndex">Page index</param>
         /// <param name="pageSize">Page size</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannels
+        /// The task result contains the tvChannels
         /// </returns>
         public virtual async Task<IPagedList<TvChannel>> GetTvChannelsBySpecificationAttributeIdAsync(int specificationAttributeId, int pageIndex, int pageSize)
         {
-            var query = from tvchannel in _tvchannelRepository.Table
-                join psa in _tvchannelSpecificationAttributeRepository.Table on tvchannel.Id equals psa.TvChannelId
+            var query = from tvChannel in _tvChannelRepository.Table
+                join psa in _tvChannelSpecificationAttributeRepository.Table on tvChannel.Id equals psa.TvChannelId
                 join spao in _specificationAttributeOptionRepository.Table on psa.SpecificationAttributeOptionId equals spao.Id
                 where spao.SpecificationAttributeId == specificationAttributeId
-                orderby tvchannel.Name
-                select tvchannel;
+                orderby tvChannel.Name
+                select tvChannel;
 
             return await query.ToPagedListAsync(pageIndex, pageSize);
         }

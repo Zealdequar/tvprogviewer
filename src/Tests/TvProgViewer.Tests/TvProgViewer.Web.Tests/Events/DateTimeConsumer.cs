@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Nop.Services.Events;
+using TvProgViewer.Services.Events;
 
-namespace Nop.Tests.Nop.Web.Tests.Events
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Events
 {
     public class DateTimeConsumer : IConsumer<DateTime>
     {

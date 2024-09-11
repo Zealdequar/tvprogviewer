@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
-using Nop.Core;
+using TvProgViewer.Core;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Core.Tests
+namespace TvProgViewer.Tests.TvProgViewer.Core.Tests
 {
     [TestFixture]
     public class CommonHelperTests

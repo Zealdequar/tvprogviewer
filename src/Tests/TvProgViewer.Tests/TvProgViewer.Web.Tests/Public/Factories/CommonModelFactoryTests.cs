@@ -2,29 +2,29 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core;
-using Nop.Core.Domain;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Common;
-using Nop.Core.Domain.Customers;
-using Nop.Core.Domain.Forums;
-using Nop.Core.Domain.Localization;
-using Nop.Core.Domain.News;
-using Nop.Core.Domain.Vendors;
-using Nop.Services.Vendors;
-using Nop.Web.Factories;
-using Nop.Web.Models.Common;
+using TvProgViewer.Core;
+using TvProgViewer.Core.Domain;
+using TvProgViewer.Core.Domain.Catalog;
+using TvProgViewer.Core.Domain.Common;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Core.Domain.Forums;
+using TvProgViewer.Core.Domain.Localization;
+using TvProgViewer.Core.Domain.News;
+using TvProgViewer.Core.Domain.Vendors;
+using TvProgViewer.Services.Vendors;
+using TvProgViewer.WebUI.Factories;
+using TvProgViewer.WebUI.Models.Common;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Web.Tests.Public.Factories
+namespace TvProgViewer.Tests.TvProgViewer.WebUI.Tests.Public.Factories
 {
     [TestFixture]
-    public class CommonModelFactoryTests : BaseNopTest
+    public class CommonModelFactoryTests : BaseTvProgTest
     {
         private ICommonModelFactory _commonModelFactory;
         private LocalizationSettings _localizationSettings;
         private IWorkContext _workContext;
-        private CustomerSettings _customerSettings;
+        private UserSettings _userSettings;
         private ForumSettings _forumSettings;
         private StoreInformationSettings _storeInformationSettings;
         private NewsSettings _newsSettings;
@@ -39,7 +39,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             _commonModelFactory = GetService<ICommonModelFactory>();
             _localizationSettings = GetService<LocalizationSettings>();
             _workContext = GetService<IWorkContext>();
-            _customerSettings = GetService<CustomerSettings>();
+            _userSettings = GetService<UserSettings>();
             _forumSettings = GetService<ForumSettings>();
             _storeInformationSettings = GetService<StoreInformationSettings>();
             _newsSettings = GetService<NewsSettings>();
@@ -55,10 +55,10 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _commonModelFactory.PrepareLogoModelAsync();
             model.StoreName.Should().NotBeNullOrEmpty();
-            model.StoreName.Should().Be("Your store name");
+            model.StoreName.Should().Be("TvProgViewer");
             model.LogoPath.Should().NotBeNullOrEmpty();
             model.LogoPath.Should()
-                .Be($"http://{NopTestsDefaults.HostIpAddress}/Themes/DefaultClean/Content/images/logo.png");
+                .Be($"http://{TvProgTestsDefaults.HostIpAddress}/Themes/DefaultClean/Content/images/logo.png");
         }
 
         [Test]
@@ -97,9 +97,9 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _commonModelFactory.PrepareHeaderLinksModelAsync();
 
-            model.RegistrationType.Should().Be(_customerSettings.UserRegistrationType);
+            model.RegistrationType.Should().Be(_userSettings.UserRegistrationType);
             model.IsAuthenticated.Should().BeTrue();
-            model.CustomerName.Should().Be("John");
+            model.UserName.Should().Be("John");
             model.ShoppingCartEnabled.Should().BeTrue();
             model.WishlistEnabled.Should().BeTrue();
             model.AllowPrivateMessages.Should().Be(_forumSettings.AllowPrivateMessages);
@@ -113,8 +113,8 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         public async Task CanPrepareAdminHeaderLinksModel()
         {
             var model = await _commonModelFactory.PrepareAdminHeaderLinksModelAsync();
-            model.ImpersonatedCustomerName.Should().Be("John");
-            model.IsCustomerImpersonated.Should().BeFalse();
+            model.ImpersonatedUserName.Should().Be("John");
+            model.IsUserImpersonated.Should().BeFalse();
             model.DisplayAdminLink.Should().BeTrue();
             model.EditPageUrl.Should().BeNull();
         }
@@ -137,41 +137,41 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _commonModelFactory.PrepareFooterModelAsync();
 
-            model.StoreName.Should().Be("Your store name");
+            model.StoreName.Should().Be("TvProgViewer");
             model.WishlistEnabled.Should().BeTrue();
             model.ShoppingCartEnabled.Should().BeTrue();
             model.SitemapEnabled.Should().BeTrue();
             model.SearchEnabled.Should().BeTrue();
             model.WorkingLanguageId.Should().Be(1);
             model.BlogEnabled.Should().BeTrue();
-            model.CompareProductsEnabled.Should().Be(_catalogSettings.CompareProductsEnabled);
+            model.CompareTvChannelsEnabled.Should().Be(_catalogSettings.CompareTvChannelsEnabled);
             model.ForumEnabled.Should().Be(_forumSettings.ForumsEnabled);
             model.NewsEnabled.Should().Be(_newsSettings.Enabled);
-            model.RecentlyViewedProductsEnabled.Should().Be(_catalogSettings.RecentlyViewedProductsEnabled);
-            model.NewProductsEnabled.Should().Be(_catalogSettings.NewProductsEnabled);
+            model.RecentlyViewedTvChannelsEnabled.Should().Be(_catalogSettings.RecentlyViewedTvChannelsEnabled);
+            model.NewTvChannelsEnabled.Should().Be(_catalogSettings.NewTvChannelsEnabled);
             model.DisplayTaxShippingInfoFooter.Should().Be(_catalogSettings.DisplayTaxShippingInfoFooter);
             model.HidePoweredByNopCommerce.Should().Be(_storeInformationSettings.HidePoweredByNopCommerce);
-            model.AllowCustomersToApplyForVendorAccount.Should().BeTrue();
-            model.AllowCustomersToCheckGiftCardBalance.Should().BeFalse();
+            model.AllowUsersToApplyForVendorAccount.Should().BeTrue();
+            model.AllowUsersToCheckGiftCardBalance.Should().BeFalse();
             model.DisplaySitemapFooterItem.Should().Be(_displayDefaultFooterItemSettings.DisplaySitemapFooterItem);
             model.DisplayContactUsFooterItem.Should().Be(_displayDefaultFooterItemSettings.DisplayContactUsFooterItem);
-            model.DisplayProductSearchFooterItem.Should()
-                .Be(_displayDefaultFooterItemSettings.DisplayProductSearchFooterItem);
+            model.DisplayTvChannelSearchFooterItem.Should()
+                .Be(_displayDefaultFooterItemSettings.DisplayTvChannelSearchFooterItem);
             model.DisplayNewsFooterItem.Should().Be(_displayDefaultFooterItemSettings.DisplayNewsFooterItem);
             model.DisplayBlogFooterItem.Should().Be(_displayDefaultFooterItemSettings.DisplayBlogFooterItem);
             model.DisplayForumsFooterItem.Should().Be(_displayDefaultFooterItemSettings.DisplayForumsFooterItem);
-            model.DisplayRecentlyViewedProductsFooterItem.Should()
-                .Be(_displayDefaultFooterItemSettings.DisplayRecentlyViewedProductsFooterItem);
-            model.DisplayCompareProductsFooterItem.Should()
-                .Be(_displayDefaultFooterItemSettings.DisplayCompareProductsFooterItem);
-            model.DisplayNewProductsFooterItem.Should()
-                .Be(_displayDefaultFooterItemSettings.DisplayNewProductsFooterItem);
-            model.DisplayCustomerInfoFooterItem.Should()
-                .Be(_displayDefaultFooterItemSettings.DisplayCustomerInfoFooterItem);
-            model.DisplayCustomerOrdersFooterItem.Should()
-                .Be(_displayDefaultFooterItemSettings.DisplayCustomerOrdersFooterItem);
-            model.DisplayCustomerAddressesFooterItem.Should()
-                .Be(_displayDefaultFooterItemSettings.DisplayCustomerAddressesFooterItem);
+            model.DisplayRecentlyViewedTvChannelsFooterItem.Should()
+                .Be(_displayDefaultFooterItemSettings.DisplayRecentlyViewedTvChannelsFooterItem);
+            model.DisplayCompareTvChannelsFooterItem.Should()
+                .Be(_displayDefaultFooterItemSettings.DisplayCompareTvChannelsFooterItem);
+            model.DisplayNewTvChannelsFooterItem.Should()
+                .Be(_displayDefaultFooterItemSettings.DisplayNewTvChannelsFooterItem);
+            model.DisplayUserInfoFooterItem.Should()
+                .Be(_displayDefaultFooterItemSettings.DisplayUserInfoFooterItem);
+            model.DisplayUserOrdersFooterItem.Should()
+                .Be(_displayDefaultFooterItemSettings.DisplayUserOrdersFooterItem);
+            model.DisplayUserAddressesFooterItem.Should()
+                .Be(_displayDefaultFooterItemSettings.DisplayUserAddressesFooterItem);
             model.DisplayShoppingCartFooterItem.Should()
                 .Be(_displayDefaultFooterItemSettings.DisplayShoppingCartFooterItem);
             model.DisplayWishlistFooterItem.Should().Be(_displayDefaultFooterItemSettings.DisplayWishlistFooterItem);
@@ -196,8 +196,8 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
             model = await _commonModelFactory.PrepareContactUsModelAsync(model, false);
             model.SubjectEnabled = _commonSettings.SubjectFieldOnContactUsForm;
             model.DisplayCaptcha.Should().BeFalse();
-            model.Email.Should().Be(NopTestsDefaults.AdminEmail);
-            model.FullName.Should().Be("John Smith");
+            model.Email.Should().Be(TvProgTestsDefaults.AdminEmail);
+            model.FullName.Should().Be("Smith John Johnovich");
         }
 
         [Test]
@@ -225,8 +225,8 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
 
             model = await _commonModelFactory.PrepareContactVendorModelAsync(model, _vendor, false);
 
-            model.Email.Should().Be(NopTestsDefaults.AdminEmail);
-            model.FullName.Should().Be("John Smith");
+            model.Email.Should().Be(TvProgTestsDefaults.AdminEmail);
+            model.FullName.Should().Be("Smith John Johnovich");
 
             model.SubjectEnabled = _commonSettings.SubjectFieldOnContactUsForm;
             model.DisplayCaptcha.Should().BeFalse();
@@ -273,7 +273,7 @@ namespace Nop.Tests.Nop.Web.Tests.Public.Factories
         {
             var model = await _commonModelFactory.PrepareRobotsTextFileAsync();
             model.Should().NotBeNullOrEmpty();
-            model.Trim().Split(Environment.NewLine).Length.Should().Be(74);
+            model.Trim().Split(Environment.NewLine).Length.Should().Be(115);
         }
     }
 }

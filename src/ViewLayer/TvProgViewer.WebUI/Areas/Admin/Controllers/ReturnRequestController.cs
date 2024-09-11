@@ -26,7 +26,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         private readonly ILocalizedEntityService _localizedEntityService;
         private readonly INotificationService _notificationService;
         private readonly IOrderService _orderService;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IPermissionService _permissionService;
         private readonly IReturnRequestModelFactory _returnRequestModelFactory;
         private readonly IReturnRequestService _returnRequestService;
@@ -41,7 +41,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             ILocalizedEntityService localizedEntityService,
             INotificationService notificationService,
             IOrderService orderService,
-            ITvChannelService tvchannelService,
+            ITvChannelService tvChannelService,
             IPermissionService permissionService,
             IReturnRequestModelFactory returnRequestModelFactory,
             IReturnRequestService returnRequestService,
@@ -52,7 +52,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _localizedEntityService = localizedEntityService;
             _notificationService = notificationService;
             _orderService = orderService;
-            _tvchannelService = tvchannelService;
+            _tvChannelService = tvChannelService;
             _permissionService = permissionService;
             _returnRequestModelFactory = returnRequestModelFactory;
             _returnRequestService = returnRequestService;
@@ -157,14 +157,14 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                         var orderItem = await _orderService.GetOrderItemByIdAsync(returnRequest.OrderItemId);
                         if (orderItem != null)
                         {
-                            var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
-                            if (tvchannel != null)
+                            var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(orderItem.TvChannelId);
+                            if (tvChannel != null)
                             {
-                                var tvchannelStockChangedMessage = string.Format(await _localizationService.GetResourceAsync("Admin.ReturnRequests.QuantityReturnedToStock"), quantityToReturn);
+                                var tvChannelStockChangedMessage = string.Format(await _localizationService.GetResourceAsync("Admin.ReturnRequests.QuantityReturnedToStock"), quantityToReturn);
                                 
-                                await _tvchannelService.AdjustInventoryAsync(tvchannel, quantityToReturn, orderItem.AttributesXml, tvchannelStockChangedMessage);
+                                await _tvChannelService.AdjustInventoryAsync(tvChannel, quantityToReturn, orderItem.AttributesXml, tvChannelStockChangedMessage);
 
-                                _notificationService.SuccessNotification(tvchannelStockChangedMessage);
+                                _notificationService.SuccessNotification(tvChannelStockChangedMessage);
                             }
                         }
                     }

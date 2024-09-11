@@ -18,19 +18,19 @@
     TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
     TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-tvchannel-details-page");
+    TvProgHtml.AppendPageCssClassParts("html-tvChannel-details-page");
 
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
     {
-        var tvchannelUrl = Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
-        TvProgHtml.AddCanonicalUrlParts(tvchannelUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
+        var tvChannelUrl = Url.RouteUrl<TvChannel>(new { SeName = Model.SeName }, webHelper.GetCurrentRequestProtocol()).ToLowerInvariant();
+        TvProgHtml.AddCanonicalUrlParts(tvChannelUrl, seoSettings.QueryStringInCanonicalUrlsEnabled);
     }
 
     //open graph META tags
     if (seoSettings.OpenGraphMetaTags)
     {
-        TvProgHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"tvchannel\" />");
+        TvProgHtml.AddHeadCustomParts("<meta property=\"og:type\" content=\"tvChannel\" />");
         TvProgHtml.AddHeadCustomParts("<meta property=\"og:title\" content=\"" + Html.Encode(Model.Name) + "\" />");
         TvProgHtml.AddHeadCustomParts("<meta property=\"og:description\" content=\"" + Html.Encode(htmlFormatter.StripTags(Model.MetaDescription)) + "\" />");
         TvProgHtml.AddHeadCustomParts("<meta property=\"og:image\" content=\"" + Model.DefaultPictureModel.ImageUrl + "\" />");
@@ -50,32 +50,32 @@
         TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
 }
-<!--tvchannel breadcrumb-->
+<!--tvChannel breadcrumb-->
 @section Breadcrumb
     {
     @await Html.PartialAsync("_TvChannelBreadcrumb", Model.Breadcrumb)
 }
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsAfterBreadcrumb, additionalData = Model })
-<div class="page tvchannel-details-page">
+<div class="page tvChannel-details-page">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsTop, additionalData = Model })
-        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvchannel-details-form">
+        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvChannel-details-form">
             @if (seoSettings.MicrodataEnabled)
             {
                 @await Html.PartialAsync("_Microdata", Model)
             }
-            <div data-tvchannelid="@Model.Id">
-                <div class="tvchannel-essential">
+            <div data-tvChannelid="@Model.Id">
+                <div class="tvChannel-essential">
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialTop, additionalData = Model })
                     <div class="gallery">
-                        <!--tvchannel pictures-->
+                        <!--tvChannel pictures-->
                         @await Html.PartialAsync("_TvChannelDetailsPictures", Model)
-                        <!--tvchannel videos-->
+                        <!--tvChannel videos-->
                         @await Html.PartialAsync("_TvChannelDetailsVideos", Model)
                     </div>
                     <div class="overview">
                         @await Html.PartialAsync("_Discontinued", Model)
-                        <div class="tvchannel-name">
+                        <div class="tvChannel-name">
                             <h1>
                                 @Model.Name
                             </h1>
@@ -87,9 +87,9 @@
                             </div>
                         }
                         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewTop, additionalData = Model })
-                        <!--tvchannel reviews-->
+                        <!--tvChannel reviews-->
                         @await Html.PartialAsync("_TvChannelReviewOverview", Model.TvChannelReviewOverview)
-                        <!--tvchannel manufacturers-->
+                        <!--tvChannel manufacturers-->
                         @await Html.PartialAsync("_TvChannelManufacturers", Model.TvChannelManufacturers)
                         <!--compare, email a friend-->
                         <div class="overview-buttons">
@@ -110,17 +110,17 @@
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialBottom, additionalData = Model })
                 </div>
                 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforeCollateral, additionalData = Model })
-                <div class="tvchannel-collateral">
-                    <!--associated tvchannels-->
-                    <div class="tvchannel-variant-list">
+                <div class="tvChannel-collateral">
+                    <!--associated tvChannels-->
+                    <div class="tvChannel-variant-list">
                         @foreach (var variant in Model.AssociatedTvChannels)
                         {
-                            <div class="tvchannel-variant-line" data-tvchannelid="@variant.Id">
+                            <div class="tvChannel-variant-line" data-tvChannelid="@variant.Id">
                                 @if (!string.IsNullOrWhiteSpace(variant.DefaultPictureModel.ImageUrl))
                                 {
                                     <div class="variant-picture">
                                         <img alt="@variant.DefaultPictureModel.AlternateText" src="@variant.DefaultPictureModel.ImageUrl"
-                                             title="@variant.DefaultPictureModel.Title" id="main-tvchannel-img-@variant.Id" />
+                                             title="@variant.DefaultPictureModel.Title" id="main-tvChannel-img-@variant.Id" />
                                     </div>
                                 }
                                 <div class="variant-overview">
@@ -192,7 +192,7 @@
                         }
                         @if (Model.AssociatedTvChannels.Count == 0)
                         {
-                            <div class="no-associated-tvchannels">
+                            <div class="no-associated-tvChannels">
                                 @T("TvChannels.NoAssociatedTvChannels")
                             </div>
                         }
@@ -200,9 +200,9 @@
                     @await Html.PartialAsync("_TvChannelSpecifications", Model.TvChannelSpecificationModel)
                     @await Html.PartialAsync("_TvChannelTags", Model.TvChannelTags)
                 </div>
-                @*we do not display "also purchased" for grouped tvchannels
-                    @await Component.InvokeAsync(typeof(TvChannelsAlsoPurchasedViewComponent), new { tvchannelId = Model.Id })*@
-                @await Component.InvokeAsync(typeof(RelatedTvChannelsViewComponent), new { tvchannelId = Model.Id })
+                @*we do not display "also purchased" for grouped tvChannels
+                    @await Component.InvokeAsync(typeof(TvChannelsAlsoPurchasedViewComponent), new { tvChannelId = Model.Id })*@
+                @await Component.InvokeAsync(typeof(RelatedTvChannelsViewComponent), new { tvChannelId = Model.Id })
             </div>
         </form>
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBottom, additionalData = Model })

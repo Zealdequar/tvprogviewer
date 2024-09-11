@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.Product
+namespace TvProgViewer.Plugin.Misc.Zettle.Domain.Api.TvChannel
 {
     /// <summary>
     /// Represents request to get the import
     /// </summary>
-    public class GetImportRequest : ProductApiRequest
+    public class GetImportRequest : TvChannelApiRequest
     {
         /// <summary>
         /// Gets or sets the import unique identifier as UUID version 1

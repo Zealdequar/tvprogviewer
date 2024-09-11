@@ -39,12 +39,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<ManufacturerTemplateListModel> PrepareManufacturerTemplateListModelAsync(ManufacturerTemplateSearchModel searchModel);
 
         /// <summary>
-        /// Prepare paged tvchannel template list model
+        /// Prepare paged tvChannel template list model
         /// </summary>
         /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel template list model
+        /// The task result contains the tvChannel template list model
         /// </returns>
         Task<TvChannelTemplateListModel> PrepareTvChannelTemplateListModelAsync(TvChannelTemplateSearchModel searchModel);
 
@@ -79,12 +79,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         Task<ManufacturerTemplateSearchModel> PrepareManufacturerTemplateSearchModelAsync(ManufacturerTemplateSearchModel searchModel);
 
         /// <summary>
-        /// Prepare tvchannel template search model
+        /// Prepare tvChannel template search model
         /// </summary>
         /// <param name="searchModel">TvChannel template search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel template search model
+        /// The task result contains the tvChannel template search model
         /// </returns>
         Task<TvChannelTemplateSearchModel> PrepareTvChannelTemplateSearchModelAsync(TvChannelTemplateSearchModel searchModel);
 

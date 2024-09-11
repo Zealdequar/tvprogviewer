@@ -87,10 +87,10 @@ namespace TvProgViewer.Services.Orders
         /// <param name="storeId">Store identifier; null to load all orders</param>
         /// <param name="vendorId">Vendor identifier; null to load all orders</param>
         /// <param name="userId">User identifier; null to load all orders</param>
-        /// <param name="tvchannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
+        /// <param name="tvChannelId">TvChannel identifier which was purchased in an order; 0 to load all orders</param>
         /// <param name="affiliateId">Affiliate identifier; 0 to load all orders</param>
         /// <param name="billingCountryId">Billing country identifier; 0 to load all orders</param>
-        /// <param name="warehouseId">Warehouse identifier, only orders with tvchannels from a specified warehouse will be loaded; 0 to load all orders</param>
+        /// <param name="warehouseId">Warehouse identifier, only orders with tvChannels from a specified warehouse will be loaded; 0 to load all orders</param>
         /// <param name="paymentMethodSystemName">Payment method system name; null to load all records</param>
         /// <param name="createdFromUtc">Created date from (UTC); null to load all records</param>
         /// <param name="createdToUtc">Created date to (UTC); null to load all records</param>
@@ -110,7 +110,7 @@ namespace TvProgViewer.Services.Orders
         /// </returns>
         Task<IPagedList<Order>> SearchOrdersAsync(int storeId = 0,
             int vendorId = 0, int userId = 0,
-            int tvchannelId = 0, int affiliateId = 0, int warehouseId = 0,
+            int tvChannelId = 0, int affiliateId = 0, int warehouseId = 0,
             int billingCountryId = 0, string paymentMethodSystemName = null,
             DateTime? createdFromUtc = null, DateTime? createdToUtc = null,
             List<int> osIds = null, List<int> psIds = null, List<int> ssIds = null,
@@ -194,12 +194,12 @@ namespace TvProgViewer.Services.Orders
         Task<OrderItem> GetOrderItemByIdAsync(int orderItemId);
 
         /// <summary>
-        /// Gets a tvchannel of specify order item
+        /// Gets a tvChannel of specify order item
         /// </summary>
         /// <param name="orderItemId">Order item identifier</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the tvchannel
+        /// The task result contains the tvChannel
         /// </returns>
         Task<TvChannel> GetTvChannelByOrderItemIdAsync(int orderItemId);
 
@@ -207,7 +207,7 @@ namespace TvProgViewer.Services.Orders
         /// Gets a list items of order
         /// </summary>
         /// <param name="orderId">Order identifier</param>
-        /// <param name="isNotReturnable">Value indicating whether this tvchannel is returnable; pass null to ignore</param>
+        /// <param name="isNotReturnable">Value indicating whether this tvChannel is returnable; pass null to ignore</param>
         /// <param name="isShipEnabled">Value indicating whether the entity is ship enabled; pass null to ignore</param>
         /// <param name="vendorId">Vendor identifier; pass 0 to ignore</param>
         /// <returns>

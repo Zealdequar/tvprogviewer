@@ -19,7 +19,7 @@
                 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelTagDetailsTop, additionalData = Model })
                 <div class="card card-default card-popup">
                     <div class="card-body">
-                        @(await Html.LocalizedEditorAsync<TvChannelTagModel, TvChannelTagLocalizedModel>("tvchanneltag-localized",
+                        @(await Html.LocalizedEditorAsync<TvChannelTagModel, TvChannelTagLocalizedModel>("tvChanneltag-localized",
                         @<div>
                             <div class="form-group row">
                                 <div class="col-sm-3">

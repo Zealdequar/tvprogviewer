@@ -8,7 +8,7 @@
     title: AdminTourDataProvider.localized_data.TvChannelSettingsButtonTitle,
     text: AdminTourDataProvider.localized_data.TvChannelSettingsButtonText,
     attachTo: {
-      element: '#tvchannel-editor-settings',
+      element: '#tvChannel-editor-settings',
       on: 'bottom'
     },
     buttons: [AdminTourNextButton]
@@ -19,7 +19,7 @@
     title: AdminTourDataProvider.localized_data.TvChannelDetailsTitle,
     text: AdminTourDataProvider.localized_data.TvChannelDetailsText,
     attachTo: {
-      element: '#tvchannel-details-area',
+      element: '#tvChannel-details-area',
       on: 'bottom'
     },
     classes: 'step-with-image',
@@ -31,7 +31,7 @@
     title: AdminTourDataProvider.localized_data.TvChannelPriceTitle,
     text: AdminTourDataProvider.localized_data.TvChannelPriceText,
     attachTo: {
-      element: '#tvchannel-price-area',
+      element: '#tvChannel-price-area',
       on: 'bottom'
     },
     buttons: [AdminTourBackButton, AdminTourNextButton]
@@ -42,7 +42,7 @@
     title: AdminTourDataProvider.localized_data.TvChannelTaxTitle,
     text: AdminTourDataProvider.localized_data.TvChannelTaxText,
     attachTo: {
-      element: '#tvchannel-tax-area',
+      element: '#tvChannel-tax-area',
       on: 'bottom'
     },
     buttons: [AdminTourBackButton, AdminTourNextButton]
@@ -53,7 +53,7 @@
     title: AdminTourDataProvider.localized_data.TvChannelShippingTitle,
     text: AdminTourDataProvider.localized_data.TvChannelShippingText,
     attachTo: {
-      element: '#tvchannel-shipping-area',
+      element: '#tvChannel-shipping-area',
       on: 'bottom'
     },
     buttons: [AdminTourBackButton, AdminTourNextButton]
@@ -64,7 +64,7 @@
     title: AdminTourDataProvider.localized_data.TvChannelInventoryTitle,
     text: AdminTourDataProvider.localized_data.TvChannelInventoryText,
     attachTo: {
-      element: '#tvchannel-inventory-area',
+      element: '#tvChannel-inventory-area',
       on: 'bottom'
     },
     buttons: [AdminTourBackButton, AdminTourNextButton]
@@ -75,7 +75,7 @@
     title: AdminTourDataProvider.localized_data.TvChannelPicturesTitle,
     text: AdminTourDataProvider.localized_data.TvChannelPicturesText,
     attachTo: {
-      element: '#tvchannel-pictures-area',
+      element: '#tvChannel-pictures-area',
       on: 'bottom'
     },
     buttons: [AdminTourBackButton, AdminTourNextPageButton]

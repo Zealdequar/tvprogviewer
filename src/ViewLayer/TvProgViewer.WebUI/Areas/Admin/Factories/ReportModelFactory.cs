@@ -34,8 +34,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         private readonly ILocalizationService _localizationService;
         private readonly IOrderReportService _orderReportService;
         private readonly IPriceFormatter _priceFormatter;
-        private readonly ITvChannelAttributeFormatter _tvchannelAttributeFormatter;
-        private readonly ITvChannelService _tvchannelService;
+        private readonly ITvChannelAttributeFormatter _tvChannelAttributeFormatter;
+        private readonly ITvChannelService _tvChannelService;
         private readonly IStoreContext _storeContext;
         private readonly IWorkContext _workContext;
 
@@ -51,8 +51,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             ILocalizationService localizationService,
             IOrderReportService orderReportService,
             IPriceFormatter priceFormatter,
-            ITvChannelAttributeFormatter tvchannelAttributeFormatter,
-            ITvChannelService tvchannelService,
+            ITvChannelAttributeFormatter tvChannelAttributeFormatter,
+            ITvChannelService tvChannelService,
             IStoreContext storeContext,
             IWorkContext workContext)
         {
@@ -64,8 +64,8 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             _localizationService = localizationService;
             _orderReportService = orderReportService;
             _priceFormatter = priceFormatter;
-            _tvchannelAttributeFormatter = tvchannelAttributeFormatter;
-            _tvchannelService = tvchannelService;
+            _tvChannelAttributeFormatter = tvChannelAttributeFormatter;
+            _tvChannelService = tvChannelService;
             _storeContext = storeContext;
             _workContext = workContext;
         }
@@ -97,7 +97,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
                 billingCountryId: searchModel.BillingCountryId,
                 groupBy: (GroupByOptions)searchModel.SearchGroupId,
                 categoryId: searchModel.CategoryId,
-                tvchannelId: searchModel.TvChannelId,
+                tvChannelId: searchModel.TvChannelId,
                 manufacturerId: searchModel.ManufacturerId,
                 vendorId: currentVendor?.Id ?? searchModel.VendorId,
                 storeId: searchModel.StoreId,
@@ -233,12 +233,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         #region LowStock
 
         /// <summary>
-        /// Prepare low stock tvchannel search model
+        /// Prepare low stock tvChannel search model
         /// </summary>
-        /// <param name="searchModel">Low stock tvchannel search model</param>
+        /// <param name="searchModel">Low stock tvChannel search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the low stock tvchannel search model
+        /// The task result contains the low stock tvChannel search model
         /// </returns>
         public virtual async Task<LowStockTvChannelSearchModel> PrepareLowStockTvChannelSearchModelAsync(LowStockTvChannelSearchModel searchModel)
         {
@@ -269,12 +269,12 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
         }
 
         /// <summary>
-        /// Prepare paged low stock tvchannel list model
+        /// Prepare paged low stock tvChannel list model
         /// </summary>
-        /// <param name="searchModel">Low stock tvchannel search model</param>
+        /// <param name="searchModel">Low stock tvChannel search model</param>
         /// <returns>
         /// Задача представляет асинхронную операцию
-        /// The task result contains the low stock tvchannel list model
+        /// The task result contains the low stock tvChannel list model
         /// </returns>
         public virtual async Task<LowStockTvChannelListModel> PrepareLowStockTvChannelListModelAsync(LowStockTvChannelSearchModel searchModel)
         {
@@ -286,20 +286,20 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             var vendor = await _workContext.GetCurrentVendorAsync();
             var vendorId = vendor?.Id ?? 0;
 
-            //get low stock tvchannel and tvchannel combinations
-            var tvchannels = await _tvchannelService.GetLowStockTvChannelsAsync(vendorId: vendorId, loadPublishedOnly: publishedOnly);
-            var combinations = await _tvchannelService.GetLowStockTvChannelCombinationsAsync(vendorId: vendorId, loadPublishedOnly: publishedOnly);
+            //get low stock tvChannel and tvChannel combinations
+            var tvChannels = await _tvChannelService.GetLowStockTvChannelsAsync(vendorId: vendorId, loadPublishedOnly: publishedOnly);
+            var combinations = await _tvChannelService.GetLowStockTvChannelCombinationsAsync(vendorId: vendorId, loadPublishedOnly: publishedOnly);
 
-            //prepare low stock tvchannel models
+            //prepare low stock tvChannel models
             var lowStockTvChannelModels = new List<LowStockTvChannelModel>();
-            lowStockTvChannelModels.AddRange(await tvchannels.SelectAwait(async tvchannel => new LowStockTvChannelModel
+            lowStockTvChannelModels.AddRange(await tvChannels.SelectAwait(async tvChannel => new LowStockTvChannelModel
             {
-                Id = tvchannel.Id,
-                Name = tvchannel.Name,
+                Id = tvChannel.Id,
+                Name = tvChannel.Name,
 
-                ManageInventoryMethod = await _localizationService.GetLocalizedEnumAsync(tvchannel.ManageInventoryMethod),
-                StockQuantity = await _tvchannelService.GetTotalStockQuantityAsync(tvchannel),
-                Published = tvchannel.Published
+                ManageInventoryMethod = await _localizationService.GetLocalizedEnumAsync(tvChannel.ManageInventoryMethod),
+                StockQuantity = await _tvChannelService.GetTotalStockQuantityAsync(tvChannel),
+                Published = tvChannel.Published
             }).ToListAsync());
 
             var currentUser = await _workContext.GetCurrentUserAsync();
@@ -307,19 +307,19 @@ namespace TvProgViewer.WebUI.Areas.Admin.Factories
             
             lowStockTvChannelModels.AddRange(await combinations.SelectAwait(async combination =>
             {
-                var tvchannel = await _tvchannelService.GetTvChannelByIdAsync(combination.TvChannelId);
+                var tvChannel = await _tvChannelService.GetTvChannelByIdAsync(combination.TvChannelId);
                     
                 return new LowStockTvChannelModel
                 {
                     Id = combination.TvChannelId,
-                    Name = tvchannel.Name,
+                    Name = tvChannel.Name,
 
-                    Attributes = await _tvchannelAttributeFormatter
-                        .FormatAttributesAsync(tvchannel, combination.AttributesXml, currentUser, currentStore, "<br />", true, true, true, false),
-                    ManageInventoryMethod = await _localizationService.GetLocalizedEnumAsync(tvchannel.ManageInventoryMethod),
+                    Attributes = await _tvChannelAttributeFormatter
+                        .FormatAttributesAsync(tvChannel, combination.AttributesXml, currentUser, currentStore, "<br />", true, true, true, false),
+                    ManageInventoryMethod = await _localizationService.GetLocalizedEnumAsync(tvChannel.ManageInventoryMethod),
 
                     StockQuantity = combination.StockQuantity,
-                    Published = tvchannel.Published
+                    Published = tvChannel.Published
                 };
             }).ToListAsync());
 

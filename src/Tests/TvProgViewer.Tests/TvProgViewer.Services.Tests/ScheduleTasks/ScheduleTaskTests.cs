@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Nop.Core.Caching;
-using Nop.Services.Caching;
+using TvProgViewer.Core.Caching;
+using TvProgViewer.Services.Caching;
 using NUnit.Framework;
 
-namespace Nop.Tests.Nop.Services.Tests.ScheduleTasks
+namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.ScheduleTasks
 {
     [TestFixture]
-    public class ScheduleTaskTests : BaseNopTest
+    public class ScheduleTaskTests : BaseTvProgTest
     {
         private IStaticCacheManager _staticCacheManager;
 
