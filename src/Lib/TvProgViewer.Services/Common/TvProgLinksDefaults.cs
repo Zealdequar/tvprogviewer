@@ -94,22 +94,22 @@
             /// <summary>
             /// Gets a URL of the tvChannel reviews docs page
             /// </summary>
-            public static string TvChannelReviews => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/tvChannel-reviews.html";
+            public static string TvChannelReviews => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/tvchannel-reviews.html";
 
             /// <summary>
             /// Gets a URL of the tvChannel tags docs page
             /// </summary>
-            public static string TvChannelTags => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/tvChannel-tags.html";
+            public static string TvChannelTags => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/tvchannel-tags.html";
 
             /// <summary>
             /// Gets a URL of the tvChannel attributes docs page
             /// </summary>
-            public static string TvChannelAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/tvChannel-attributes.html";
+            public static string TvChannelAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/tvchannel-attributes.html";
 
             /// <summary>
             /// Gets a URL of the specification attributes docs page
             /// </summary>
-            public static string SpecificationAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/specification-attributes.html";
+            public static string SpecificationAttributes => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/specification-attributes.html";
 
             /// <summary>
             /// Gets a URL of the checkout attributes docs page
@@ -134,7 +134,7 @@
             /// <summary>
             /// Gets a URL of the recurring payments docs page
             /// </summary>
-            public static string RecurringPayments => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvChannels/recurring-tvChannels.html";
+            public static string RecurringPayments => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/recurring-tvChannels.html";
 
             /// <summary>
             /// Gets a URL of the shopping carts and wishlists docs page
