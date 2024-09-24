@@ -33,6 +33,8 @@ Clean-param: yklid
 Clean-param: yclud
 Clean-param: ypppel
 Clean-param: ybqpil
+Clean-param: yqppel
+Clean-param: ycyylid
 Clean-param: _ym_debug
 Clean-param: newsitemid
 Clean-param: viewmode
