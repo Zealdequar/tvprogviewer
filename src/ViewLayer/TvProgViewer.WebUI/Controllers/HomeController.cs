@@ -190,7 +190,7 @@ namespace TvProgViewer.WebUI.Controllers
                 await _userService.RemoveUserChannelMappingAsync(user);
                 if (!channels.IsNullOrWhiteSpace())
                 {
-                    var listChannelId = await channels.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+                    var listChannelId = await channels.Split([';'], StringSplitOptions.RemoveEmptyEntries)
                         .Where(ch => int.TryParse(ch, out int id))
                         .Select(ch => { _ = int.TryParse(ch, out int id); return id; }).ToListAsync();
                     await _userService.AddUserChannelMappingAsync(user, listChannelId);

@@ -1182,7 +1182,7 @@ namespace TvProgViewer.Services.Users
         {
             if (user == null)
                 throw new ArgumentNullException(nameof(user));
-            await listChannelId.Select(async id => await AddUserChannelMappingAsync(new UserChannelMapping { UserId = user.Id, ChannelId = id }))
+            await listChannelId.Select(async id => await AddUserChannelMappingAsync(new UserChannelMapping { UserId = user.Id, ChannelId = id, SetDate = DateTime.UtcNow }))
                                .ToListAsync();
         }
 

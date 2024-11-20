@@ -28,7 +28,9 @@ namespace TvProgViewer.Data.Mapping.Builders.Users
                     .AsInt32().ForeignKey<Channels>().PrimaryKey()
                 .WithColumn(NameCompatibilityManager.GetColumnName(typeof(UserChannelMapping), nameof(UserChannelMapping.UserId)))
                     .AsInt32().ForeignKey<User>().PrimaryKey()
-                .WithColumn(nameof(UserChannelMapping.DisplayName)).AsString(255).Nullable();
+                .WithColumn(nameof(UserChannelMapping.DisplayName)).AsString(255).Nullable()
+                .WithColumn(NameCompatibilityManager.GetColumnName(typeof(UserChannelMapping), nameof(UserChannelMapping.SetDate)))
+                    .AsDateTime2().Nullable();
         }
 
         #endregion

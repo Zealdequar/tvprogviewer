@@ -20,6 +20,12 @@ namespace TvProgViewer.Core.Domain.Users
         /// Получает или устанавливает пользовательский телеканал
         /// </summary>
         public int ChannelId { get; set; }
+
+        /// <summary>
+        /// Получает или устанавливает дату и время установки
+        /// </summary>
+
+        public DateTime? SetDate { get; set; }
         
         /// <summary>
         /// Получает или устанавливает логотип телеканала
