@@ -37,6 +37,9 @@ Clean-param: yqppel
 Clean-param: ycyylid
 Clean-param: ykilp
 Clean-param: ydqpqli
+Clean-param: yprqee
+Clean-param: yaqpil
+Clean-param: yqipl
 Clean-param: _ym_debug
 Clean-param: newsitemid
 Clean-param: viewmode
