@@ -40,6 +40,13 @@ Clean-param: ydqpqli
 Clean-param: yprqee
 Clean-param: yaqpil
 Clean-param: yqipl
+Clean-param: yiclyd
+Clean-param: ycllcd
+Clean-param: ykiid
+Clean-param: yclld
+Clean-param: ypqpqel
+Clean-param: amp
+Clean-param: ctime
 Clean-param: _ym_debug
 Clean-param: newsitemid
 Clean-param: viewmode
