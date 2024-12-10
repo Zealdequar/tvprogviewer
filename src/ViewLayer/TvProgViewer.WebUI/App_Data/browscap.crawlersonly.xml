@@ -12045,7 +12045,7 @@
   <browscapitem name="msnbot-NewsBlogs/2.* (+http://search.msn.com/msnbot.htm)">
     <item name="Crawler" value="true" />
   </browscapitem>
-  <browscapitem name="msnbot-tvChannels">
+  <browscapitem name="msnbot-tvchannels">
     <item name="Crawler" value="true" />
   </browscapitem>
   <browscapitem name="msnbot-webmaster/1.0 (*http://search.msn.com/msnbot.htm)">

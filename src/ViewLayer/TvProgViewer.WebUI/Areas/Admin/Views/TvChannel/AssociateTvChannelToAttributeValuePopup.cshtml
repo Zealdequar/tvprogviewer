@@ -20,8 +20,8 @@
 }
 
 <form asp-controller="TvChannel" asp-action="AssociateTvChannelToAttributeValuePopup"
-      asp-route-tvChannelIdInput="@Context.Request.Query["tvChannelIdInput"]"
-      asp-route-tvChannelNameInput="@Context.Request.Query["tvChannelNameInput"]">
+      asp-route-tvchannelIdInput="@Context.Request.Query["tvChannelIdInput"]"
+      asp-route-tvchannelNameInput="@Context.Request.Query["tvChannelNameInput"]">
     <div class="content-header clearfix">
         <h1 class="float-left">
             @T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values.Fields.AssociatedTvChannel.AddNew")
@@ -95,7 +95,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <button type="button" id="search-tvChannels" class="btn btn-primary btn-search">
+                                            <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
                                                 <i class="fas fa-search"></i>
                                                 @T("Admin.Common.Search")
                                             </button>
@@ -108,9 +108,9 @@
                                 <div class="card-body">
                                     @await Html.PartialAsync("Table", new DataTablesModel
                                     {
-                                        Name = "tvChannels-grid",
+                                        Name = "tvchannels-grid",
                                         UrlRead = new DataUrl("AssociateTvChannelToAttributeValuePopupList", "TvChannel", null),
-                                        SearchButtonId = "search-tvChannels",
+                                        SearchButtonId = "search-tvchannels",
                                         Length = Model.PageSize,
                                         LengthMenu = Model.AvailablePageSizes,
                                         Filters = new List<FilterParameter>
@@ -154,8 +154,8 @@
                                 </div>
 
                                 <script>
-                                    function selectAssociatedTvChannel(tvChannelid) {
-                                        $("#@Html.IdFor(model => model.AssociateTvChannelToAttributeValueModel.AssociatedToTvChannelId)").val(tvChannelid);
+                                    function selectAssociatedTvChannel(tvchannelid) {
+                                        $("#@Html.IdFor(model => model.AssociateTvChannelToAttributeValueModel.AssociatedToTvChannelId)").val(tvchannelid);
                                         $('#save').click();
                                     }
                                 </script>

@@ -6,7 +6,7 @@
         <div class="card-body">
             @await Html.PartialAsync("Table", new DataTablesModel
             {
-                Name = "tvChannelattributemappings-grid",
+                Name = "tvchannelattributemappings-grid",
                 UrlRead = new DataUrl("TvChannelAttributeMappingList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelAttributeMappingSearchModel.TvChannelId)] = Model.TvChannelAttributeMappingSearchModel.TvChannelId }),
                 Length = Model.TvChannelPictureSearchModel.PageSize,
                 LengthMenu = Model.TvChannelPictureSearchModel.AvailablePageSizes,
@@ -66,7 +66,7 @@
         </div>
 
         <div class="card-footer">
-            <a asp-action="TvChannelAttributeMappingCreate" asp-route-tvChannelId="@Model.Id" class="btn btn-primary">
+            <a asp-action="TvChannelAttributeMappingCreate" asp-route-tvchannelId="@Model.Id" class="btn btn-primary">
                 <i class="fas fa-plus-square"></i>
                 @T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.AddNew")
             </a>

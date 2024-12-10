@@ -215,7 +215,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
 
                 //#385
                 ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType"] = "TvChannel URL structure type",
-                ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType.Hint"] = "Select the tvChannel URL structure type (e.g. '/tvChannel-seo-name' or '/category-seo-name/tvChannel-seo-name' or '/manufacturer-seo-name/tvChannel-seo-name').",
+                ["Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType.Hint"] = "Select the tvChannel URL structure type (e.g. '/tvchannel-seo-name' or '/category-seo-name/tvchannel-seo-name' or '/manufacturer-seo-name/tvchannel-seo-name').",
                 ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.CategoryTvChannel"] = "/Category/TvChannel",
                 ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.ManufacturerTvChannel"] = "/Manufacturer/TvChannel",
                 ["Enums.TvProg.Core.Domain.Catalog.TvChannelUrlStructureType.TvChannel"] = "/TvChannel",

@@ -18,7 +18,7 @@
     TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
     TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-tvChannel-details-page");
+    TvProgHtml.AppendPageCssClassParts("html-tvchannel-details-page");
 
     //canonical URL
     if (seoSettings.CanonicalUrlsEnabled)
@@ -50,32 +50,32 @@
         TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
 }
-<!--tvChannel breadcrumb-->
+<!--tvchannel breadcrumb-->
 @section Breadcrumb
     {
     @await Html.PartialAsync("_TvChannelBreadcrumb", Model.Breadcrumb)
 }
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsAfterBreadcrumb, additionalData = Model })
-<div class="page tvChannel-details-page">
+<div class="page tvchannel-details-page">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsTop, additionalData = Model })
-        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvChannel-details-form">
+        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvchannel-details-form">
             @if (seoSettings.MicrodataEnabled)
             {
                 @await Html.PartialAsync("_Microdata", Model)
             }
-            <div data-tvChannelid="@Model.Id">
-                <div class="tvChannel-essential">
+            <div data-tvchannelid="@Model.Id">
+                <div class="tvchannel-essential">
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialTop, additionalData = Model })
                     <div class="gallery">
-                        <!--tvChannel pictures-->
+                        <!--tvchannel pictures-->
                         @await Html.PartialAsync("_TvChannelDetailsPictures", Model)
-                        <!--tvChannel videos-->
+                        <!--tvchannel videos-->
                         @await Html.PartialAsync("_TvChannelDetailsVideos", Model)
                     </div>
                     <div class="overview">
                         @await Html.PartialAsync("_Discontinued", Model)
-                        <div class="tvChannel-name">
+                        <div class="tvchannel-name">
                             <h1>
                                 @Model.Name
                             </h1>
@@ -87,9 +87,9 @@
                             </div>
                         }
                         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewTop, additionalData = Model })
-                        <!--tvChannel reviews-->
+                        <!--tvchannel reviews-->
                         @await Html.PartialAsync("_TvChannelReviewOverview", Model.TvChannelReviewOverview)
-                        <!--tvChannel manufacturers-->
+                        <!--tvchannel manufacturers-->
                         @await Html.PartialAsync("_TvChannelManufacturers", Model.TvChannelManufacturers)
                         <!--compare, email a friend-->
                         <div class="overview-buttons">
@@ -110,17 +110,17 @@
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialBottom, additionalData = Model })
                 </div>
                 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforeCollateral, additionalData = Model })
-                <div class="tvChannel-collateral">
-                    <!--associated tvChannels-->
-                    <div class="tvChannel-variant-list">
+                <div class="tvchannel-collateral">
+                    <!--associated tvchannels-->
+                    <div class="tvchannel-variant-list">
                         @foreach (var variant in Model.AssociatedTvChannels)
                         {
-                            <div class="tvChannel-variant-line" data-tvChannelid="@variant.Id">
+                            <div class="tvchannel-variant-line" data-tvchannelid="@variant.Id">
                                 @if (!string.IsNullOrWhiteSpace(variant.DefaultPictureModel.ImageUrl))
                                 {
                                     <div class="variant-picture">
                                         <img alt="@variant.DefaultPictureModel.AlternateText" src="@variant.DefaultPictureModel.ImageUrl"
-                                             title="@variant.DefaultPictureModel.Title" id="main-tvChannel-img-@variant.Id" />
+                                             title="@variant.DefaultPictureModel.Title" id="main-tvchannel-img-@variant.Id" />
                                     </div>
                                 }
                                 <div class="variant-overview">
@@ -192,7 +192,7 @@
                         }
                         @if (Model.AssociatedTvChannels.Count == 0)
                         {
-                            <div class="no-associated-tvChannels">
+                            <div class="no-associated-tvchannels">
                                 @T("TvChannels.NoAssociatedTvChannels")
                             </div>
                         }

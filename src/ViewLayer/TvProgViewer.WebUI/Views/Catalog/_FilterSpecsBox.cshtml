@@ -1,13 +1,13 @@
 ﻿@model SpecificationFilterModel
 
-<div class="tvChannel-filter tvChannel-spec-filter">
+<div class="tvchannel-filter tvchannel-spec-filter">
     <div class="filter-title">
         <strong>@T("Filtering.SpecificationFilter")</strong>
     </div>
     <div class="filter-content">
         @foreach (var attr in Model.Attributes)
         {
-            <ul class="group tvChannel-spec-group @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "tvChannel-spec-color" : null )">
+            <ul class="group tvchannel-spec-group @(attr.Values.Any(x => !string.IsNullOrEmpty(x.ColorSquaresRgb)) ? "tvchannel-spec-color" : null )">
                 <li class="name">
                     <strong>@attr.Name</strong>
                 </li>

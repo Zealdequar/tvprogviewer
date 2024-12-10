@@ -481,7 +481,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
 
                     //tvChannel exemption
                     exemptionCode = tvChannel?.IsTaxExempt ?? false
-                        ? CommonHelper.EnsureMaximumLength($"Exempt-tvChannel-#{tvChannel.Id}", 25)
+                        ? CommonHelper.EnsureMaximumLength($"Exempt-tvchannel-#{tvChannel.Id}", 25)
                         : string.Empty,
 
                     //set SKU as item code
@@ -1237,7 +1237,7 @@ namespace TvProgViewer.Plugin.Tax.Avalara.Services
                             itemCode = CommonHelper.EnsureMaximumLength(taxRateRequest.TvChannel?.Sku, 50),
                             taxCode = CommonHelper.EnsureMaximumLength(taxCategory?.Name, 25),
                             exemptionCode = !_avalaraTaxSettings.GetTaxRateByAddressOnly && (taxRateRequest.TvChannel?.IsTaxExempt ?? false)
-                                ? CommonHelper.EnsureMaximumLength($"Exempt-tvChannel-#{taxRateRequest.TvChannel.Id}", 25)
+                                ? CommonHelper.EnsureMaximumLength($"Exempt-tvchannel-#{taxRateRequest.TvChannel.Id}", 25)
                                 : string.Empty,
                         }
                     };

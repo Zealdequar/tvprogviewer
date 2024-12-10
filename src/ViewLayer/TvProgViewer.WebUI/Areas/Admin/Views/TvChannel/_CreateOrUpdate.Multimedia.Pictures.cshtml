@@ -3,7 +3,7 @@
 <div class="card-body">
     @await Html.PartialAsync("Table", new DataTablesModel
     {
-        Name = "tvChannelpictures-grid",
+        Name = "tvchannelpictures-grid",
         UrlRead = new DataUrl("TvChannelPictureList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelPictureSearchModel.TvChannelId)] = Model.TvChannelPictureSearchModel.TvChannelId }),
         UrlDelete = new DataUrl("TvChannelPictureDelete", "TvChannel", null),
         UrlUpdate = new DataUrl("TvChannelPictureUpdate", "TvChannel", null),
@@ -69,7 +69,7 @@
             <div class="form-group row">
                 @{
                     ViewData["Endpoint"] = this.Url.Action("TvChannelPictureAdd", "TvChannel", new { tvChannelId = Model.Id });
-                    ViewData["TableSelector"] = "#tvChannelpictures-grid";
+                    ViewData["TableSelector"] = "#tvchannelpictures-grid";
                 }
                 <div class="col-md-3">
                     <tvprog-label asp-for="AddPictureModel.PictureId" />

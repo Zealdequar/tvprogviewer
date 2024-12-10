@@ -64,9 +64,9 @@ namespace TvProgViewer.Services.Catalog
         Task<TvChannelTag> GetTvChannelTagByIdAsync(int tvChannelTagId);
 
         /// <summary>
-        /// Inserts a tvChannel-tvChannel tag mapping
+        /// Inserts a tvchannel-tvchannel tag mapping
         /// </summary>
-        /// <param name="tagMapping">TvChannel-tvChannel tag mapping</param>
+        /// <param name="tagMapping">TvChannel-tvchannel tag mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertTvChannelTvChannelTagMappingAsync(TvChannelTvChannelTagMapping tagMapping);
         

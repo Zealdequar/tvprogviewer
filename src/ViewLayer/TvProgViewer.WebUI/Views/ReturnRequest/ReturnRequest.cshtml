@@ -37,7 +37,7 @@
                             </colgroup>
                             <thead>
                                 <tr>
-                                    <th class="tvChannel">
+                                    <th class="tvchannel">
                                         @T("ReturnRequests.TvChannels.Name")
                                     </th>
                                     <th class="unit-price">
@@ -52,7 +52,7 @@
                                 @foreach (var item in Model.Items)
                                 {
                                     <tr>
-                                        <td class="tvChannel">
+                                        <td class="tvchannel">
                                             <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))">@item.TvChannelName</a>
                                             @if (!string.IsNullOrEmpty(item.AttributeInfo))
                                             {

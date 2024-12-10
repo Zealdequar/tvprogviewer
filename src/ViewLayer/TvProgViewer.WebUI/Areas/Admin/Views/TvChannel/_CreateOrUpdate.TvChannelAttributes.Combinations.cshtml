@@ -94,20 +94,20 @@
                 }
 
                 function renderTvChannelAttributesCombinationsColumnEdit(data, type, row, meta) {
-                    return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannel/TvChannelAttributeCombinationEditPopup/")' + data + '?btnId=btnRefreshCombinations&formId=tvChannel-form\', 800, 700, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
+                    return '<button onclick=\"javascript:OpenWindow(\'@Url.Content("~/Admin/TvChannel/TvChannelAttributeCombinationEditPopup/")' + data + '?btnId=btnRefreshCombinations&formId=tvchannel-form\', 800, 700, true); return false;\" class="btn btn-default"><i class="fas fa-pencil-alt"></i>@T("Admin.Common.Edit").Text</button>';
                 }
             </script>
 
         </div>
         <div class="card-footer">
-            <button type="submit" id="btnAddNewCombination" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAttributeCombinationCreatePopup", "TvChannel", new { tvChannelId = Model.Id, btnId = "btnRefreshCombinations", formId = "tvChannel-form" }))', 800, 700, true); return false;" class="btn btn-primary">
+            <button type="submit" id="btnAddNewCombination" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAttributeCombinationCreatePopup", "TvChannel", new { tvChannelId = Model.Id, btnId = "btnRefreshCombinations", formId = "tvchannel-form" }))', 800, 700, true); return false;" class="btn btn-primary">
                 @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.AddNew")
             </button>
             <button type="button" id="btnGenerateAllCombinations" class="btn btn-info">
                 @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.GenerateAll")
             </button>
 
-            <button type="submit" id="btnGenerateSeveralCombination" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAttributeCombinationGeneratePopup", "TvChannel", new { tvChannelId = Model.Id, btnId = "btnRefreshCombinations", formId = "tvChannel-form" }))', 800, 700, true); return false;" class="btn btn-info">
+            <button type="submit" id="btnGenerateSeveralCombination" onclick="javascript:OpenWindow('@(Url.Action("TvChannelAttributeCombinationGeneratePopup", "TvChannel", new { tvChannelId = Model.Id, btnId = "btnRefreshCombinations", formId = "tvchannel-form" }))', 800, 700, true); return false;" class="btn btn-info">
                 @T("Admin.Catalog.TvChannels.TvChannelAttributes.AttributeCombinations.GenerateSeveral")
             </button>
             <tvprog-action-confirmation asp-button-id="btnGenerateAllCombinations" />

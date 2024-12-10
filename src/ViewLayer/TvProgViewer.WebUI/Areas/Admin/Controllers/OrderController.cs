@@ -1330,7 +1330,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 _notificationService.WarningNotification(warning);
 
             //selected card
-            SaveSelectedCardName("order-tvChannels");
+            SaveSelectedCardName("order-tvchannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1398,7 +1398,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //selected card
-            SaveSelectedCardName("order-tvChannels");
+            SaveSelectedCardName("order-tvchannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1433,7 +1433,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             await LogEditOrderAsync(order.Id);
 
             //selected card
-            SaveSelectedCardName("order-tvChannels");
+            SaveSelectedCardName("order-tvchannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1469,7 +1469,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             await LogEditOrderAsync(order.Id);
 
             //selected card
-            SaveSelectedCardName("order-tvChannels");
+            SaveSelectedCardName("order-tvchannels");
 
             return RedirectToAction("Edit", new { id = order.Id });
         }
@@ -1771,7 +1771,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     _notificationService.WarningNotification(warning);
 
                 //selected card
-                SaveSelectedCardName("order-tvChannels");
+                SaveSelectedCardName("order-tvchannels");
                 return RedirectToAction("Edit", new { id = order.Id });
             }
 

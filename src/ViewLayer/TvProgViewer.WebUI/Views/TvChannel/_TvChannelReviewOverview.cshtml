@@ -8,8 +8,8 @@
 }
 @if (Model.AllowUserReviews)
 {
-    <div class="tvChannel-reviews-overview">
-        <div class="tvChannel-review-box">
+    <div class="tvchannel-reviews-overview">
+        <div class="tvchannel-review-box">
             <div class="rating">
                 <div style="width: @(ratingPercent)%">
                 </div>
@@ -18,7 +18,7 @@
 
         @if (Model.TotalReviews > 0)
         {
-            <div class="tvChannel-review-links">
+            <div class="tvchannel-review-links">
                 <a href="@Url.RouteUrl("TvChannelReviews", new { tvChannelId = Model.TvChannelId })">@Model.TotalReviews
                     @T("Reviews.Overview.Reviews")</a>
                 
@@ -31,7 +31,7 @@
         }
         else
         {
-            <div class="tvChannel-no-reviews">
+            <div class="tvchannel-no-reviews">
                 <a href="@Url.RouteUrl("TvChannelReviews", new { tvChannelId = Model.TvChannelId })">@T("Reviews.Overview.First")</a>
             </div>
         }

@@ -49,7 +49,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-8 offset-md-4">
-                                    <button type="button" id="search-tvChannels" class="btn btn-primary btn-search">
+                                    <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
                                         <i class="fas fa-search"></i>
                                         @T("Admin.Common.Search")
                                     </button>
@@ -65,9 +65,9 @@
 
                         @await Html.PartialAsync("Table", new DataTablesModel
                         {
-                            Name = "tvChannels-grid",
+                            Name = "tvchannels-grid",
                             UrlRead = new DataUrl("LowStockList", "Report", null),
-                            SearchButtonId = "search-tvChannels",
+                            SearchButtonId = "search-tvchannels",
                             Length = Model.PageSize,
                             LengthMenu = Model.AvailablePageSizes,
                             Filters = new List<FilterParameter>

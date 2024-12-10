@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="form-group row">
                                         <div class="col-md-8 offset-md-4">
-                                            <button type="button" id="search-tvChannels" class="btn btn-primary btn-search">
+                                            <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
                                                 <i class="fas fa-search"></i>
                                                 @T("Admin.Common.Search")
                                             </button>
@@ -90,9 +90,9 @@
                     <div class="card-body">
                         @await Html.PartialAsync("Table", new DataTablesModel
                         {
-                            Name = "tvChannels-grid",
+                            Name = "tvchannels-grid",
                             UrlRead = new DataUrl("AddTvChannelToOrder", "Order", new RouteValueDictionary { [nameof(Model.OrderId)] = Model.OrderId }),
-                            SearchButtonId = "search-tvChannels",
+                            SearchButtonId = "search-tvchannels",
                             Length = Model.PageSize,
                             LengthMenu = Model.AvailablePageSizes,
                             Filters = new List<FilterParameter>
@@ -130,14 +130,14 @@
                             }
                             function addTvChannelToOrder(tvChannelId) {
                                 //load "tvChannel details page" block
-                                var tvChannelDetailsActionUrl = '@Html.Raw(Url.Action("AddTvChannelToOrderDetails", "Order", new {orderId = Model.OrderId, tvChannelId = "tvChannelidplaceholder"}))';
-                                tvChannelDetailsActionUrl = tvChannelDetailsActionUrl.replace("tvChannelidplaceholder", tvChannelId);
+                                var tvChannelDetailsActionUrl = '@Html.Raw(Url.Action("AddTvChannelToOrderDetails", "Order", new {orderId = Model.OrderId, tvChannelId = "tvchannelidplaceholder"}))';
+                                tvChannelDetailsActionUrl = tvChannelDetailsActionUrl.replace("tvchannelidplaceholder", tvChannelId);
                                 setLocation(tvChannelDetailsActionUrl);
                             }
                         </script>
                     </div>
                 </div>
-                <div id="tvChanneldetails">
+                <div id="tvchanneldetails">
                 </div>
                 <input asp-for="OrderId" type="hidden" />
             </div>

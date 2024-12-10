@@ -42,7 +42,7 @@
 
                 <tvprog-cards id="mediasettings-cards">
                     <tvprog-card asp-name="mediasettings-common" asp-icon="fas fa-info" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.Common")" asp-hide-block-attribute-name="@hideCommonBlockAttributeName" asp-hide="@hideCommonBlock" asp-advanced="false">@await Html.PartialAsync("_Media.Common", Model)</tvprog-card>
-                    <tvprog-card asp-name="mediasettings-tvChannel" asp-icon="fas fa-cube" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.TvChannel")" asp-hide-block-attribute-name="@hideTvChannelBlockAttributeName" asp-hide="@hideTvChannelBlock" asp-advanced="true">@await Html.PartialAsync("_Media.TvChannel", Model)</tvprog-card>
+                    <tvprog-card asp-name="mediasettings-tvchannel" asp-icon="fas fa-cube" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.TvChannel")" asp-hide-block-attribute-name="@hideTvChannelBlockAttributeName" asp-hide="@hideTvChannelBlock" asp-advanced="true">@await Html.PartialAsync("_Media.TvChannel", Model)</tvprog-card>
                     <tvprog-card asp-name="mediasettings-other-pages" asp-icon="fas fa-file" asp-title="@T("Admin.Configuration.Settings.Media.BlockTitle.OtherPages")" asp-hide-block-attribute-name="@hideOtherPagesBlockAttributeName" asp-hide="@hideOtherPagesBlock" asp-advanced="true">@await Html.PartialAsync("_Media.OtherPages", Model)</tvprog-card>
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.MediaSettingsDetailsBlock, additionalData = Model })

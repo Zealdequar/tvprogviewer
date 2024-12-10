@@ -11,13 +11,13 @@
     TvProgHtml.AddTitleParts(T("PageTitle.UserTvChannelReviews").Text);
     //page class
     TvProgHtml.AppendPageCssClassParts("html-account-page");
-    TvProgHtml.AppendPageCssClassParts("html-my-tvChannel-reviews-list-page");
+    TvProgHtml.AppendPageCssClassParts("html-my-tvchannel-reviews-list-page");
 }
 @section left
 {
     @await Component.InvokeAsync(typeof(UserNavigationViewComponent), new { selectedTabId = UserNavigationEnum.TvChannelReviews })
 }
-<div class="page account-page my-tvChannel-reviews-list-page">
+<div class="page account-page my-tvchannel-reviews-list-page">
     <div class="page-title">
         <h1>@T("Account.MyAccount") - @T("Account.UserTvChannelReviews")</h1>
     </div>
@@ -27,12 +27,12 @@
             foreach (var review in Model.TvChannelReviews)
             {
                 var ratingPercent = review.Rating * 20;
-                <div class="tvChannel-review-item">
+                <div class="tvchannel-review-item">
                     <div class="review-item-head">
                         <div class="review-title">
                             <strong>@review.Title</strong>@(!string.IsNullOrEmpty(review.ApprovalStatus) ? $" - {review.ApprovalStatus}" : null)
                         </div>
-                        <div class="tvChannel-review-box">
+                        <div class="tvchannel-review-box">
                             <div class="rating">
                                 <div style="width: @(ratingPercent)%">
                                 </div>
@@ -50,7 +50,7 @@
                                 <div class="review-title">
                                     <i>@reviewType.Name</i>
                                 </div>
-                                <div class="tvChannel-review-box">
+                                <div class="tvchannel-review-box">
                                     <div class="rating">
                                         <div style="width: @(ratingExtPercent)%">
                                         </div>

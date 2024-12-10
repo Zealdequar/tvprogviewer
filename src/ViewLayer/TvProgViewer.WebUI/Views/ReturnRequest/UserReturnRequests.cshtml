@@ -29,7 +29,7 @@
                     <strong>@string.Format(T("Account.UserReturnRequests.Title").Text, item.CustomNumber, item.ReturnRequestStatus)</strong>
                 </div>
                 <ul class="details">
-                    <li class="tvChannel">
+                    <li class="tvchannel">
                         <label>@T("Account.UserReturnRequests.Item")</label>
                         <a href="@(Url.RouteUrl<TvChannel>(new { SeName = item.TvChannelSeName }))">@item.TvChannelName</a>
                         <span>x @item.Quantity</span>

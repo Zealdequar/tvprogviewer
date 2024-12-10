@@ -10,9 +10,9 @@
     
     function toggleRemoveButton() {
         if ($('#@Html.IdFor(model => model.PurchasedWithTvChannelId)').val() > 0) {
-            $('#purchased-with-tvChannel-name-remove').showElement();
+            $('#purchased-with-tvchannel-name-remove').showElement();
         } else {
-            $('#purchased-with-tvChannel-name-remove').hideElement();
+            $('#purchased-with-tvchannel-name-remove').hideElement();
         }
     }
 </script>
@@ -95,20 +95,20 @@
                             </div>
                             <div class="col-md-9">
                                 <input type="hidden" asp-for="PurchasedWithTvChannelId" />
-                                <span id="purchased-with-tvChannel-name">@Model.PurchasedWithTvChannelName</span>
+                                <span id="purchased-with-tvchannel-name">@Model.PurchasedWithTvChannelName</span>
                                 <span asp-validation-for="PurchasedWithTvChannelId"></span>
-                                <button type="submit" onclick="javascript:OpenWindow('@(Url.Action("AssociateTvChannelToUserRolePopup", "UserRole", new {tvChannelIdInput = Html.IdFor(model => model.PurchasedWithTvChannelId), tvChannelNameInput = "purchased-with-tvChannel-name", btnId = "btnRefreshPurchasedWithTvChannel"}))', 800, 850, true); return false;" class="btn btn-primary">
+                                <button type="submit" onclick="javascript:OpenWindow('@(Url.Action("AssociateTvChannelToUserRolePopup", "UserRole", new {tvChannelIdInput = Html.IdFor(model => model.PurchasedWithTvChannelId), tvChannelNameInput = "purchased-with-tvchannel-name", btnId = "btnRefreshPurchasedWithTvChannel"}))', 800, 850, true); return false;" class="btn btn-primary">
                                     @T("Admin.Users.UserRoles.Fields.PurchasedWithTvChannel.Choose")
                                 </button>
-                                <button type="submit" id="purchased-with-tvChannel-name-remove" class="btn btn-danger">
+                                <button type="submit" id="purchased-with-tvchannel-name-remove" class="btn btn-danger">
                                     @T("Admin.Users.UserRoles.Fields.PurchasedWithTvChannel.Remove")
                                 </button>
                                 <button type="submit" id="btnRefreshPurchasedWithTvChannel" style="display: none"></button>
 
                                 <script>
                                 $(document).ready(function () {
-                                    $('#purchased-with-tvChannel-name-remove').click(function () {
-                                        $('#purchased-with-tvChannel-name').text('');
+                                    $('#purchased-with-tvchannel-name-remove').click(function () {
+                                        $('#purchased-with-tvchannel-name').text('');
                                         $("#@Html.IdFor(model => model.PurchasedWithTvChannelId)").val(0);
                                         toggleRemoveButton();
                                         //return false to don't reload a page

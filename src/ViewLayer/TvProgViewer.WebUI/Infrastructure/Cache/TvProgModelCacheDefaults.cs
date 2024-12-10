@@ -126,8 +126,8 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// {1} : is connection SSL secured?
         /// {2} : current store ID
         /// </remarks>
-        public static CacheKey TvChannelAttributePictureModelKey => new("TvProg.pres.tvChannelattribute.picture-{0}-{1}-{2}", TvChannelAttributePicturePrefixCacheKey);
-        public static string TvChannelAttributePicturePrefixCacheKey => "TvProg.pres.tvChannelattribute.picture";
+        public static CacheKey TvChannelAttributePictureModelKey => new("TvProg.pres.tvchannelattribute.picture-{0}-{1}-{2}", TvChannelAttributePicturePrefixCacheKey);
+        public static string TvChannelAttributePicturePrefixCacheKey => "TvProg.pres.tvchannelattribute.picture";
 
         /// <summary>
         /// Key for tvChannel attribute picture caching on the tvChannel details page
@@ -137,8 +137,8 @@ namespace TvProgViewer.WebUI.Infrastructure.Cache
         /// {1} : is connection SSL secured?
         /// {2} : current store ID
         /// </remarks>
-        public static CacheKey TvChannelAttributeImageSquarePictureModelKey => new("TvProg.pres.tvChannelattribute.imagesquare.picture-{0}-{1}-{2}", TvChannelAttributeImageSquarePicturePrefixCacheKey);
-        public static string TvChannelAttributeImageSquarePicturePrefixCacheKey => "TvProg.pres.tvChannelattribute.imagesquare.picture";
+        public static CacheKey TvChannelAttributeImageSquarePictureModelKey => new("TvProg.pres.tvchannelattribute.imagesquare.picture-{0}-{1}-{2}", TvChannelAttributeImageSquarePicturePrefixCacheKey);
+        public static string TvChannelAttributeImageSquarePicturePrefixCacheKey => "TvProg.pres.tvchannelattribute.imagesquare.picture";
 
         /// <summary>
         /// Key for category picture caching

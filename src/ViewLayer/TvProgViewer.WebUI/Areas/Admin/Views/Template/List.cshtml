@@ -40,7 +40,7 @@
             <tvprog-cards id="templates-cards">
                 <tvprog-card asp-name="templates-category" asp-icon="fas fa-sitemap" asp-title="@T("Admin.System.Templates.Category")" asp-hide-block-attribute-name="@hideCategoryBlockAttributeName" asp-hide="@hideCategoryBlock">@await Html.PartialAsync("_List.Category", Model)</tvprog-card>
                 <tvprog-card asp-name="templates-manufacturer" asp-icon="fas fa-industry" asp-title="@T("Admin.System.Templates.Manufacturer")" asp-hide-block-attribute-name="@hideManufacturerBlockAttributeName" asp-hide="@hideManufacturerBlock">@await Html.PartialAsync("_List.Manufacturer", Model)</tvprog-card>
-                <tvprog-card asp-name="templates-tvChannel" asp-icon="fas fa-cube" asp-title="@T("Admin.System.Templates.TvChannel")" asp-hide-block-attribute-name="@hideTvChannelBlockAttributeName" asp-hide="@hideTvChannelBlock">@await Html.PartialAsync("_List.TvChannel", Model)</tvprog-card>
+                <tvprog-card asp-name="templates-tvchannel" asp-icon="fas fa-cube" asp-title="@T("Admin.System.Templates.TvChannel")" asp-hide-block-attribute-name="@hideTvChannelBlockAttributeName" asp-hide="@hideTvChannelBlock">@await Html.PartialAsync("_List.TvChannel", Model)</tvprog-card>
                 <tvprog-card asp-name="templates-topic" asp-icon="fas fa-book" asp-title="@T("Admin.System.Templates.Topic")" asp-hide-block-attribute-name="@hideTopicBlockAttributeName" asp-hide="@hideTopicBlock">@await Html.PartialAsync("_List.Topic", Model)</tvprog-card>
 
                 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TemplatesDetailsBlock, additionalData = Model })

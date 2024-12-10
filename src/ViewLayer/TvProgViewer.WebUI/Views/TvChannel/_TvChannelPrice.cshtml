@@ -11,7 +11,7 @@
         @if (Model.CallForPrice)
         {
             @*call for price*@
-            <div class="tvChannel-price call-for-price">
+            <div class="tvchannel-price call-for-price">
                 <span>@T("TvChannels.CallForPrice")</span>
             </div>
         }
@@ -27,14 +27,14 @@
             if (!string.IsNullOrWhiteSpace(Model.OldPrice))
             {
                 @*old price*@
-                <div class="old-tvChannel-price">
+                <div class="old-tvchannel-price">
                     <span>@T("TvChannels.Price.OldPrice"):</span>
                     <span>@Model.OldPrice</span>
                 </div>
             }
             <div class="@if (string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
                         {
-                            <text>tvChannel-price</text>
+                            <text>tvchannel-price</text>
                         }
                         else
                         {
@@ -53,7 +53,7 @@
             if (!string.IsNullOrWhiteSpace(Model.PriceWithDiscount))
             {
                 @*discounted price*@
-                <div class="tvChannel-price discounted-price">
+                <div class="tvchannel-price discounted-price">
                     <span>@T("TvChannels.Price.WithDiscount"):</span>
                     <span class="price-value-@(Model.TvChannelId)">
                         @Html.Raw(Model.PriceWithDiscount)

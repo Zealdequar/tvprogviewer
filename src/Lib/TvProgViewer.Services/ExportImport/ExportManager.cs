@@ -413,7 +413,7 @@ namespace TvProgViewer.Services.ExportImport
             var tvChannelAdvancedMode = true;
             try
             {
-                tvChannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvChannel-advanced-mode");
+                tvChannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvchannel-advanced-mode");
             }
             catch (ArgumentNullException)
             {
@@ -1662,7 +1662,7 @@ namespace TvProgViewer.Services.ExportImport
             var tvChannelAdvancedMode = true;
             try
             {
-                tvChannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvChannel-advanced-mode");
+                tvChannelAdvancedMode = await _genericAttributeService.GetAttributeAsync<bool>(await _workContext.GetCurrentUserAsync(), "tvchannel-advanced-mode");
             }
             catch (ArgumentNullException)
             {

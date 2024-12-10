@@ -38,7 +38,7 @@
                                     tvChannelId: @Model.TvChannelId,
                                     quantity: $('#tvChannel_enteredQuantity_@Model.TvChannelId').find(":selected").text()
                                 };
-                                $(document).trigger({ type: "tvChannel_quantity_changed", changedData: data });
+                                $(document).trigger({ type: "tvchannel_quantity_changed", changedData: data });
                             });
                         });
                     </script>
@@ -61,7 +61,7 @@
                                     tvChannelId: @Model.TvChannelId,
                                     quantity: $('#tvChannel_enteredQuantity_@Model.TvChannelId').val()
                                 };
-                                $(document).trigger({ type: "tvChannel_quantity_changed", changedData: data });
+                                $(document).trigger({ type: "tvchannel_quantity_changed", changedData: data });
                             });
                         });
                     </script>
@@ -84,7 +84,7 @@
                             addToCartText = T("ShoppingCart.PreOrder").Text;
                         }
                     }
-                    <button type="button" id="add-to-cart-button-@Model.TvChannelId" class="button-1 add-to-cart-button" data-tvChannelid="@Model.TvChannelId" onclick="AjaxCart.addtvChanneltocart_details('@Url.RouteUrl("AddTvChannelToCart-Details", new {tvChannelId = Model.TvChannelId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#tvChannel-details-form');return false;">@addToCartText</button>
+                    <button type="button" id="add-to-cart-button-@Model.TvChannelId" class="button-1 add-to-cart-button" data-tvchannelid="@Model.TvChannelId" onclick="AjaxCart.addtvchanneltocart_details('@Url.RouteUrl("AddTvChannelToCart-Details", new {tvChannelId = Model.TvChannelId, shoppingCartTypeId = (int) ShoppingCartType.ShoppingCart})', '#tvchannel-details-form');return false;">@addToCartText</button>
                 }
             </div>
             if (!string.IsNullOrEmpty(Model.PreOrderAvailabilityStartDateTimeUserTime))

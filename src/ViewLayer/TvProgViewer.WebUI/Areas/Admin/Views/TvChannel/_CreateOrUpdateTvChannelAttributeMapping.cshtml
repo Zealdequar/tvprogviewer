@@ -19,13 +19,13 @@
      <div class="container-fluid">
         <div class="form-horizontal">
         
-            <tvprog-cards id="tvChannel-attribute-mapping-cards">
-                <tvprog-card asp-name="tvChannel-attribute-mapping-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateTvChannelAttributeMapping.Info", Model)</tvprog-card>
-                <tvprog-card asp-name="tvChannel-attribute-mapping-values" asp-icon="fas fa-check-square" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values")" asp-hide-block-attribute-name="@hideValuesBlockAttributeName" asp-hide="@hideValuesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateTvChannelAttributeMapping.Values", Model)</tvprog-card>
+            <tvprog-cards id="tvchannel-attribute-mapping-cards">
+                <tvprog-card asp-name="tvchannel-attribute-mapping-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateTvChannelAttributeMapping.Info", Model)</tvprog-card>
+                <tvprog-card asp-name="tvchannel-attribute-mapping-values" asp-icon="fas fa-check-square" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Values")" asp-hide-block-attribute-name="@hideValuesBlockAttributeName" asp-hide="@hideValuesBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateTvChannelAttributeMapping.Values", Model)</tvprog-card>
 
                 @if (Model.ConditionAllowed)
                 {
-                    <tvprog-card asp-name="tvChannel-attribute-mapping-condition" asp-icon="fas fa-arrow-right" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Condition")" asp-hide-block-attribute-name="@hideConditionBlockAttributeName" asp-hide="@hideConditionBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateTvChannelAttributeMapping.Condition", Model)</tvprog-card>
+                    <tvprog-card asp-name="tvchannel-attribute-mapping-condition" asp-icon="fas fa-arrow-right" asp-title="@T("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Condition")" asp-hide-block-attribute-name="@hideConditionBlockAttributeName" asp-hide="@hideConditionBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdateTvChannelAttributeMapping.Condition", Model)</tvprog-card>
                 }
 
                 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelAttributeMappingDetailsBlock, additionalData = Model })

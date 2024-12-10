@@ -784,7 +784,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost, ActionName("List")]
-        [FormValueRequired("go-to-tvChannel-by-sku")]
+        [FormValueRequired("go-to-tvchannel-by-sku")]
         public virtual async Task<IActionResult> GoToSku(TvChannelSearchModel searchModel)
         {
             //try to load a tvChannel entity, if not found, then try to load a tvChannel attribute combination
@@ -2037,7 +2037,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                     new { tvChannelId = psa.TvChannelId, specificationId = psa.Id });
 
             //select an appropriate card
-            SaveSelectedCardName("tvChannel-specification-attributes");
+            SaveSelectedCardName("tvchannel-specification-attributes");
             return RedirectToAction("Edit", new { id = model.TvChannelId });
         }
 
@@ -2073,7 +2073,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (psa == null)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvChannel-specification-attributes");
+                SaveSelectedCardName("tvchannel-specification-attributes");
                 _notificationService.ErrorNotification("No tvChannel specification attribute found with the specified id");
 
                 return RedirectToAction("Edit", new { id = model.TvChannelId });
@@ -2137,7 +2137,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             }
 
             //select an appropriate card
-            SaveSelectedCardName("tvChannel-specification-attributes");
+            SaveSelectedCardName("tvchannel-specification-attributes");
 
             return RedirectToAction("Edit", new { id = psa.TvChannelId });
         }
@@ -2164,7 +2164,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                 await _notificationService.ErrorNotificationAsync(ex);
 
                 //select an appropriate card
-                SaveSelectedCardName("tvChannel-specification-attributes");
+                SaveSelectedCardName("tvchannel-specification-attributes");
                 return RedirectToAction("Edit", new { id = tvChannelId });
             }
         }
@@ -2180,7 +2180,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (psa == null)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvChannel-specification-attributes");
+                SaveSelectedCardName("tvchannel-specification-attributes");
                 _notificationService.ErrorNotification("No tvChannel specification attribute found with the specified id");
                 return RedirectToAction("Edit", new { id = model.TvChannelId });
             }
@@ -2196,7 +2196,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             await _specificationAttributeService.DeleteTvChannelSpecificationAttributeAsync(psa);
 
             //select an appropriate card
-            SaveSelectedCardName("tvChannel-specification-attributes");
+            SaveSelectedCardName("tvchannel-specification-attributes");
 
             return RedirectToAction("Edit", new { id = psa.TvChannelId });
         }
@@ -2892,7 +2892,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!continueEditing)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvChannel-tvChannel-attributes");
+                SaveSelectedCardName("tvchannel-tvchannel-attributes");
                 return RedirectToAction("Edit", new { id = tvChannel.Id });
             }
 
@@ -2973,7 +2973,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             if (!continueEditing)
             {
                 //select an appropriate card
-                SaveSelectedCardName("tvChannel-tvChannel-attributes");
+                SaveSelectedCardName("tvchannel-tvchannel-attributes");
                 return RedirectToAction("Edit", new { id = tvChannel.Id });
             }
 
@@ -3024,7 +3024,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
             _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Catalog.TvChannels.TvChannelAttributes.Attributes.Deleted"));
 
             //select an appropriate card
-            SaveSelectedCardName("tvChannel-tvChannel-attributes");
+            SaveSelectedCardName("tvchannel-tvchannel-attributes");
             return RedirectToAction("Edit", new { id = tvChannelAttributeMapping.TvChannelId });
         }
 

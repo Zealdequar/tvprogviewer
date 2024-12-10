@@ -21,7 +21,7 @@
     //current tvChannel ID
     var currentTvChannelId = 0;
     if (Url.ActionContext.RouteData.Values["controller"].ToString().Equals("tvChannel", StringComparison.InvariantCultureIgnoreCase) &&
-        Url.ActionContext.RouteData.Values["action"].ToString().Equals("tvChanneldetails", StringComparison.InvariantCultureIgnoreCase))
+        Url.ActionContext.RouteData.Values["action"].ToString().Equals("tvchanneldetails", StringComparison.InvariantCultureIgnoreCase))
     {
         currentTvChannelId = Convert.ToInt32(Url.ActionContext.RouteData.Values["tvChannelId"].ToString());
     }

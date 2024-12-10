@@ -2,7 +2,7 @@
 
 @if (Model.Enabled)
 {
-    <div class="tvChannel-estimate-shipping">
+    <div class="tvchannel-estimate-shipping">
         <a href="#estimate-shipping-popup-@Model.TvChannelId"
            id="open-estimate-shipping-popup-@Model.TvChannelId"
            class="open-estimate-shipping-popup"
@@ -22,7 +22,7 @@
 
             var settings = {
                 opener: '#open-estimate-shipping-popup-@Model.TvChannelId',
-                form: '#tvChannel-details-form',
+                form: '#tvchannel-details-form',
                 contentEl: '#estimate-shipping-popup-@Model.TvChannelId',
                 countryEl: '#@Html.IdFor(model => model.CountryId)',
                 stateProvinceEl: '#@Html.IdFor(model => model.StateProvinceId)',
@@ -137,9 +137,9 @@
             };
             // Prevent double init on load. If tvChannel has attributes then trigger is fires when page is loaded and attributes are loaded.
             setTimeout(function () {
-                $(document).on('tvChannel_attributes_changed', attributeChangedHandler);
+                $(document).on('tvchannel_attributes_changed', attributeChangedHandler);
             }, 500);
-            $(document).on('tvChannel_quantity_changed', attributeChangedHandler);
+            $(document).on('tvchannel_quantity_changed', attributeChangedHandler);
         });
 
     </script>

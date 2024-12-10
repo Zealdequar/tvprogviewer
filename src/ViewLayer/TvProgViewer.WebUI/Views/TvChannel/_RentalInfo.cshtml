@@ -59,8 +59,8 @@
                         <text>
                         $.ajax({
                             cache: false,
-                            url: "@Html.Raw(Url.Action("tvChanneldetails_attributechange", "shoppingcart", new {tvChannelId = tvChannelId, validateAttributeConditions = false, loadPicture = false }))",
-                            data: $('#tvChannel-details-form').serialize(),
+                            url: "@Html.Raw(Url.Action("tvchanneldetails_attributechange", "shoppingcart", new {tvChannelId = tvChannelId, validateAttributeConditions = false, loadPicture = false }))",
+                            data: $('#tvchannel-details-form').serialize(),
                             type: "POST",
                             success: function (data, textStatus, jqXHR) {
                                 if (data.sku) {

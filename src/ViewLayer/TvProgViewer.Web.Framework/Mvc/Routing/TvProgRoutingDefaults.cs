@@ -127,7 +127,7 @@
             /// <summary>
             /// Gets default key for tvChannel id route value
             /// </summary>
-            public static string TvChannelId => "tvChannelid";
+            public static string TvChannelId => "tvchannelid";
 
             /// <summary>
             /// Gets default key for tvChannel tag id route value

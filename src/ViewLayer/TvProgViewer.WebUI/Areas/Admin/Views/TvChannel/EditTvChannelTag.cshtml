@@ -25,7 +25,7 @@
                 <i class="far fa-save"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
-            <span id="tvChanneltag-delete" class="btn bg-red">
+            <span id="tvchanneltag-delete" class="btn bg-red">
                 <i class="far fa-trash-alt"></i>
                 @T("Admin.Common.Delete")
             </span>
@@ -34,4 +34,4 @@
     </div>
     @await Html.PartialAsync("_CreateOrUpdateTvChannelTag", Model)
 </form>
-<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvChanneltag-delete" asp-action="TvChannelTagDelete" /> 
+<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvchanneltag-delete" asp-action="TvChannelTagDelete" /> 

@@ -42,7 +42,7 @@
         url: urlBuilder.addBasePath(this.settings.fetchUrl).build(),
         type: 'GET',
         success: function (response) {
-          $('.tvChannels-wrapper').html(response);
+          $('.tvchannels-wrapper').html(response);
           $('html, body').animate({ scrollTop: $('.center-2 .page').offset().top }, 'slow');
           $(self).trigger({ type: "loaded" });
         },
@@ -57,7 +57,7 @@
   },
 
   setLoadWaiting(enable) {
-    var $busyEl = $('.ajax-tvChannels-busy');
+    var $busyEl = $('.ajax-tvchannels-busy');
     if (enable) {
       $busyEl.show();
     } else {

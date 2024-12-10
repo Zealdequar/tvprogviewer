@@ -61,7 +61,7 @@ namespace TvProgViewer.Services.Catalog
         #region Utilities
 
         /// <summary>
-        /// Delete a tvChannel-tvChannel tag mapping
+        /// Delete a tvchannel-tvchannel tag mapping
         /// </summary>
         /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="tvChannelTagId">TvChannel tag identifier</param>
@@ -220,9 +220,9 @@ namespace TvProgViewer.Services.Catalog
         }
         
         /// <summary>
-        /// Inserts a tvChannel-tvChannel tag mapping
+        /// Inserts a tvchannel-tvchannel tag mapping
         /// </summary>
-        /// <param name="tagMapping">TvChannel-tvChannel tag mapping</param>
+        /// <param name="tagMapping">TvChannel-tvchannel tag mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertTvChannelTvChannelTagMappingAsync(TvChannelTvChannelTagMapping tagMapping)
         {

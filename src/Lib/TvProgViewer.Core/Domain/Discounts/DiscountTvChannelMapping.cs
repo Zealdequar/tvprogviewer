@@ -1,7 +1,7 @@
 ﻿namespace TvProgViewer.Core.Domain.Discounts
 {
     /// <summary>
-    /// Represents a discount-tvChannel mapping class
+    /// Represents a discount-tvchannel mapping class
     /// </summary>
     public partial class DiscountTvChannelMapping : DiscountMapping
     {

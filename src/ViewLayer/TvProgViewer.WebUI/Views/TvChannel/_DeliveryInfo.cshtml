@@ -3,7 +3,7 @@
 {
     <div class="delivery">
         <script asp-location="Footer">
-            $(document).on("tvChannel_attributes_changed", function (data) {
+            $(document).on("tvchannel_attributes_changed", function (data) {
                 if (data.changedData.isFreeShipping) {
                     $("#free-shipping-"+data.changedData.tvChannelId).removeClass("invisible");
                 } else {

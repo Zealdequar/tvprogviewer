@@ -84,7 +84,7 @@ namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.ExportImport
                 .SaveAttributeAsync(await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail), "manufacturer-advanced-mode",
                     true);
             await GetService<IGenericAttributeService>()
-                .SaveAttributeAsync(await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail), "tvChannel-advanced-mode",
+                .SaveAttributeAsync(await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail), "tvchannel-advanced-mode",
                     true);
         }
 
@@ -98,7 +98,7 @@ namespace TvProgViewer.Tests.TvProgViewer.Services.Tests.ExportImport
                 .SaveAttributeAsync(await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail), "manufacturer-advanced-mode",
                     false);
             await GetService<IGenericAttributeService>()
-                .SaveAttributeAsync(await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail), "tvChannel-advanced-mode",
+                .SaveAttributeAsync(await _userService.GetUserByEmailAsync(TvProgTestsDefaults.AdminEmail), "tvchannel-advanced-mode",
                     false);
         }
 

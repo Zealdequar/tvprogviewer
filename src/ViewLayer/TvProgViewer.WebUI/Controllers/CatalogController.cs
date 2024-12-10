@@ -441,8 +441,8 @@ namespace TvProgViewer.WebUI.Controllers
                           select new
                           {
                               label = p.Name,
-                              tvChannelurl = Url.RouteUrl<TvChannel>(new { SeName = p.SeName }),
-                              tvChannelpictureurl = p.PictureModels.FirstOrDefault()?.ImageUrl,
+                              tvchannelurl = Url.RouteUrl<TvChannel>(new { SeName = p.SeName }),
+                              tvchannelpictureurl = p.PictureModels.FirstOrDefault()?.ImageUrl,
                               showlinktoresultsearch = showLinkToResultSearch
                           })
                 .ToList();

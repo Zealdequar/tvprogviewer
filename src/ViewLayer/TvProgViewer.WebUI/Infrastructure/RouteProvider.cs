@@ -204,7 +204,7 @@ namespace TvProgViewer.WebUI.Infrastructure
 
             //downloads (file result)
             endpointRouteBuilder.MapControllerRoute(name: "GetSampleDownload",
-                pattern: $"download/sample/{{tvChannelid:min(0)}}",
+                pattern: $"download/sample/{{tvchannelid:min(0)}}",
                 defaults: new { controller = "Download", action = "Sample" });
 
             //checkout pages

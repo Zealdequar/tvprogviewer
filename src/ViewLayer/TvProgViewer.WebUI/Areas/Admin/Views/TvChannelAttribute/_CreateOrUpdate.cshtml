@@ -22,13 +22,13 @@
 <section class="content">
     <div class="container-fluid">
         <div class="form-horizontal">
-            <div id="tvChannel-attribute-edit">
-                <tvprog-cards id="tvChannel-attribute-cards">
-                    <tvprog-card asp-name="tvChannel-attribute-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>                   
-                    <tvprog-card asp-name="tvChannel-attribute-predefined-values" asp-icon="fas fa-check-square" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.PredefinedValues")" asp-hide-block-attribute-name="@hidePredefinedValuesBlockAttributeName" asp-hide="@hidePredefinedValuesBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.PredefinedValues", Model)</tvprog-card>
+            <div id="tvchannel-attribute-edit">
+                <tvprog-cards id="tvchannel-attribute-cards">
+                    <tvprog-card asp-name="tvchannel-attribute-info" asp-icon="fas fa-info" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.Info")" asp-hide-block-attribute-name="@hideInfoBlockAttributeName" asp-hide="@hideInfoBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.Info", Model)</tvprog-card>                   
+                    <tvprog-card asp-name="tvchannel-attribute-predefined-values" asp-icon="fas fa-check-square" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.PredefinedValues")" asp-hide-block-attribute-name="@hidePredefinedValuesBlockAttributeName" asp-hide="@hidePredefinedValuesBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.PredefinedValues", Model)</tvprog-card>
                     @if (Model.Id > 0)
                     {
-                        <tvprog-card asp-name="tvChannel-attribute-used-by-tvChannels" asp-icon="fas fa-object-group" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.UsedByTvChannels")" asp-hide-block-attribute-name="@hideUsedByTvChannelsBlockAttributeName" asp-hide="@hideUsedByTvChannelsBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.UsedByTvChannels", Model)</tvprog-card>
+                        <tvprog-card asp-name="tvchannel-attribute-used-by-tvchannels" asp-icon="fas fa-object-group" asp-title="@T("Admin.Catalog.Attributes.TvChannelAttributes.UsedByTvChannels")" asp-hide-block-attribute-name="@hideUsedByTvChannelsBlockAttributeName" asp-hide="@hideUsedByTvChannelsBlock" asp-advanced="false">@await Html.PartialAsync("_CreateOrUpdate.UsedByTvChannels", Model)</tvprog-card>
                     }
 
                     @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.TvChannelAttributeDetailsBlock, additionalData = Model })

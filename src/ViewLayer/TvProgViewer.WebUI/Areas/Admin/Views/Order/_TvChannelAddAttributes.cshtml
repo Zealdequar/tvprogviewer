@@ -289,23 +289,23 @@
                 function @(attributeChangeHandlerFuncName)() {
                     $.ajax({
                         cache: false,
-                        url: "@Html.Raw(Url.Action("tvChanneldetails_attributechange", "Order", new {tvChannelId = tvChannelId, validateAttributeConditions = attributesHaveConditions}))",
-                        data: $('#tvChannel-details-form').serialize(),
+                        url: "@Html.Raw(Url.Action("tvchanneldetails_attributechange", "Order", new {tvChannelId = tvChannelId, validateAttributeConditions = attributesHaveConditions}))",
+                        data: $('#tvchannel-details-form').serialize(),
                         type: "POST",
                         success: function (data, textStatus, jqXHR) {
                             if (data.enabledattributemappingids) {
                                 for (var i = 0; i < data.enabledattributemappingids.length; i++) {
-                                    $('#tvChannel_attribute_row_' + data.enabledattributemappingids[i]).show();
+                                    $('#tvchannel_attribute_row_' + data.enabledattributemappingids[i]).show();
                                 }
                             }
                             if (data.disabledattributemappingids) {
                                 for (var i = 0; i < data.disabledattributemappingids.length; i++) {
-                                    $('#tvChannel_attribute_row_' + data.disabledattributemappingids[i]).hide();
+                                    $('#tvchannel_attribute_row_' + data.disabledattributemappingids[i]).hide();
                                 }
                             }
                             if (data.message) {
-                                $('#tvChanneldetails_attributechangeMessage-info').text(data.message);
-                                $("#tvChanneldetails_attributechangeMessage").click();
+                                $('#tvchanneldetails_attributechangeMessage-info').text(data.message);
+                                $("#tvchanneldetails_attributechangeMessage").click();
                             }
                         }
                     });
@@ -316,7 +316,7 @@
                     @Html.Raw(attributeChangeScriptsBuilder.ToString())
                 });
             </script>
-            <tvprog-alert asp-alert-id="tvChanneldetails_attributechangeMessage" />
+            <tvprog-alert asp-alert-id="tvchanneldetails_attributechangeMessage" />
         </div>
 
         <script>

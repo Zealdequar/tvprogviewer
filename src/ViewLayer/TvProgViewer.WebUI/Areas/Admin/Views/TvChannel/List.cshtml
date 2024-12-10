@@ -183,7 +183,7 @@
                                                 <div class="input-group input-group-short">
                                                     <tvprog-editor asp-for="GoDirectlyToSku" />
                                                     <span class="input-group-append">
-                                                        <button type="submit" id="go-to-tvChannel-by-sku" name="go-to-tvChannel-by-sku" class="btn btn-info btn-flat">
+                                                        <button type="submit" id="go-to-tvchannel-by-sku" name="go-to-tvchannel-by-sku" class="btn btn-info btn-flat">
                                                             @T("Admin.Common.Go")
                                                         </button>
                                                     </span>
@@ -194,7 +194,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="text-center col-12">
-                                        <button type="button" id="search-tvChannels" class="btn btn-primary btn-search">
+                                        <button type="button" id="search-tvchannels" class="btn btn-primary btn-search">
                                             <i class="fas fa-search"></i>
                                             @T("Admin.Common.Search")
                                         </button>
@@ -210,9 +210,9 @@
 
                               @await Html.PartialAsync("Table", new DataTablesModel
                          {
-                             Name = "tvChannels-grid",
+                             Name = "tvchannels-grid",
                              UrlRead = new DataUrl("TvChannelList", "TvChannel", null),
-                             SearchButtonId = "search-tvChannels",
+                             SearchButtonId = "search-tvchannels",
                              Length = Model.PageSize,
                              LengthMenu = Model.AvailablePageSizes,
                              Filters = new List<FilterParameter>
@@ -232,7 +232,7 @@
                                       new ColumnProperty(nameof(TvChannelModel.Id))
                                       {
                                           IsMasterCheckBox = true,
-                                          Render = new RenderCheckBox("checkbox_tvChannels"),
+                                          Render = new RenderCheckBox("checkbox_tvchannels"),
                                           ClassName =  TvProgColumnClassDefaults.CenterAll,
                                           Width = "50"
                                       },
@@ -302,7 +302,7 @@
                                                 showAlert('nothingSelectedAlert', '@T("Admin.Common.Alert.NothingSelected")');
                                                 return;
                                             }
-                                            updateTable('#tvChannels-grid');
+                                            updateTable('#tvchannels-grid');
                                         }
                                     });
                                     $('#delete-selected-action-confirmation').modal('toggle');
@@ -323,7 +323,7 @@
         $(document).ready(function () {
             $("#@Html.IdFor(model => model.GoDirectlyToSku)").keydown(function (event) {
                 if (event.keyCode === 13) {
-                    $("#go-to-tvChannel-by-sku").click();
+                    $("#go-to-tvchannel-by-sku").click();
                     return false;
                 }
             });
@@ -432,7 +432,7 @@
             else {
                 $('#export-xml-selected-form #selectedIds').val(ids);
                 $('#export-xml-selected-form').submit();
-                updateTable('#tvChannels-grid');
+                updateTable('#tvchannels-grid');
             }
             return false;
         });
@@ -457,7 +457,7 @@
                 else {
                     $('#export-excel-selected-form #selectedIds').val(ids);
                     $('#export-excel-selected-form').submit();
-                    updateTable('#tvChannels-grid');
+                    updateTable('#tvchannels-grid');
                 }
                 return false;
             });

@@ -209,6 +209,9 @@ namespace TvProgViewer.Services.Common
                 });
         }
 
+        /// <summary>
+        /// Обновление телеканалов программы передач
+        /// </summary>
         public virtual async Task UpdateTvProgrammes()
         {
             _logger.Info(" =========== Начало обновления ============ ");
@@ -221,6 +224,8 @@ namespace TvProgViewer.Services.Common
 
             foreach (WebResources webResource in webResources)
             {
+                _channelQty = 0;
+                _newChannelQty = 0;
                 try
                 {
                     _logger.Info("Обновление для ID='{0}'", webResource.Id);
@@ -271,14 +276,7 @@ namespace TvProgViewer.Services.Common
                                 _dictChanCodeNew[xChan.Element("display-name").Value] = xChan.Attribute("id").Value;
                             }
                         }
-                    }
-                    else if (sourceType == Enums.TypeProg.InterTV)
-                    {
-                        if (webResource.Id == 3)
-                            xDoc = ConverterProg.InterToXml(webResource.FileName, _dictChanCodeOld);
-                        else if (webResource.Id == 4)
-                            xDoc = ConverterProg.InterToXml(webResource.FileName, _dictChanCodeNew);
-                    }
+                    }                   
 
                     _logger.Info("Каналы и тв-программа ID='{0}' подготовлены к запуску обработки", webResource.Id);
                     // Сбор статистики, поиск и загрузка новых телеканалов:
@@ -287,7 +285,8 @@ namespace TvProgViewer.Services.Common
                     _channelQty = docChannels.Count();
                     IEnumerable<XAttribute> internalIds = docChannels.Attributes("id");
                     IList<Channels> channels = await GetAllChannelsAsync();
-                    IEnumerable<int> difference = internalIds.Select(attr => int.Parse(attr.Value)).Except(channels.Select(x => x.InternalId ?? 1));
+                    IEnumerable<int> difference = internalIds.Select(attr => int.Parse(attr.Value))
+                         .Except(channels.Where(q => q.Deleted is null).Select(x => x.InternalId ?? 1));
                     _newChannelQty = difference.Count();
                     int tvProgProviderId = typeProgs.FirstOrDefault(s => s.Id == webResource.TypeProgId).TvProgProviderId;
                     IList<Channels> channelsToInsert = new List<Channels>();
@@ -379,7 +378,7 @@ namespace TvProgViewer.Services.Common
 
                     programmes = await GetAllProgrammesAsync();
 
-                    // Удаление программы передач за две недели ранее последней передачи:
+                    // Удаление программы передач за три недели ранее последней передачи:
                     DateTime maxTsStartMo = programmes.Max(x => x.TsStartMo);
                     int[] days = [0, 1, 2, 3, 4, 5, 6];
                     List<Programmes> deleteTwoWeeksAgo = [];

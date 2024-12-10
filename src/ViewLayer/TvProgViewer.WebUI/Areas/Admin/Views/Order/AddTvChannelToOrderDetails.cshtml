@@ -12,7 +12,7 @@
 @*we add enctype = "multipart/form-data" because "File upload" attribute control type requires it*@
 
 <form asp-controller="Order" asp-action="AddTvChannelToOrderDetails" asp-route-orderId="@Model.OrderId"
-      asp-route-tvChannelId="@Model.TvChannelId" enctype="multipart/form-data" method="post" id="tvChannel-details-form">
+      asp-route-tvchannelId="@Model.TvChannelId" enctype="multipart/form-data" method="post" id="tvchannel-details-form">
     
     <div asp-validation-summary="All"></div>
 

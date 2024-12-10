@@ -581,7 +581,7 @@ namespace TvProgViewer.Core.Domain.Catalog
         public bool DisplayAllPicturesOnCatalogPages { get; set; }
 
         /// <summary>
-        /// Gets or sets the identifier of tvChannel URL structure type (e.g. '/category-seo-name/tvChannel-seo-name' or '/tvChannel-seo-name')
+        /// Gets or sets the identifier of tvChannel URL structure type (e.g. '/category-seo-name/tvchannel-seo-name' or '/tvchannel-seo-name')
         /// </summary>
         /// <remarks>We have TvChannelUrlStructureType enum, but we use int value here so that it can be overridden in third-party plugins</remarks>
         public int TvChannelUrlStructureTypeId { get; set; }

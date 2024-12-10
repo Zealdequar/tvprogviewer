@@ -6,7 +6,7 @@
 <div class="picture-gallery">
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforePictures, additionalData = Model })
     <div class="picture">
-       <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" id="main-tvChannel-img-@Model.Id" />
+       <img alt="@Model.DefaultPictureModel.AlternateText" src="@Model.DefaultPictureModel.ImageUrl" title="@Model.DefaultPictureModel.Title" id="main-tvchannel-img-@Model.Id" />
     </div>
     @if (Model.PictureModels.Count > 1 && Model.DefaultPictureZoomEnabled)
     {
@@ -42,11 +42,11 @@
             $(document).ready(function() {
                 $('.thumb-item > img').on('click',
                     function() {
-                        $('#main-tvChannel-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
-                        $('#main-tvChannel-img-@Model.Id').attr('title', $(this).attr('title'));
-                        $('#main-tvChannel-img-@Model.Id').attr('alt', $(this).attr('alt'));
-                        $('#main-tvChannel-img-lightbox-anchor-@Model.Id').attr('href', $(this).attr('data-fullsize'));
-                        $('#main-tvChannel-img-lightbox-anchor-@Model.Id').attr('title', $(this).attr('title'));
+                        $('#main-tvchannel-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
+                        $('#main-tvchannel-img-@Model.Id').attr('title', $(this).attr('title'));
+                        $('#main-tvchannel-img-@Model.Id').attr('alt', $(this).attr('alt'));
+                        $('#main-tvchannel-img-lightbox-anchor-@Model.Id').attr('href', $(this).attr('data-fullsize'));
+                        $('#main-tvchannel-img-lightbox-anchor-@Model.Id').attr('title', $(this).attr('title'));
                     });
             });
         </script>
@@ -67,12 +67,12 @@
                 $(document).ready(function() {
                     $('.thumb-item img').on('click',
                         function() {
-                            $('#main-tvChannel-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
-                            $('#main-tvChannel-img-@Model.Id').attr('title', $(this).attr('title'));
-                            $('#main-tvChannel-img-@Model.Id').attr('alt', $(this).attr('alt'));
-                            $('#main-tvChannel-img-lightbox-anchor-@Model.Id')
+                            $('#main-tvchannel-img-@Model.Id').attr('src', $(this).attr('data-defaultsize'));
+                            $('#main-tvchannel-img-@Model.Id').attr('title', $(this).attr('title'));
+                            $('#main-tvchannel-img-@Model.Id').attr('alt', $(this).attr('alt'));
+                            $('#main-tvchannel-img-lightbox-anchor-@Model.Id')
                                 .attr('href', $(this).attr('data-fullsize'));
-                            $('#main-tvChannel-img-lightbox-anchor-@Model.Id').attr('title', $(this).attr('title'));
+                            $('#main-tvchannel-img-lightbox-anchor-@Model.Id').attr('title', $(this).attr('title'));
                         });
                 });
             </script>

@@ -2843,7 +2843,7 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get a discount-tvChannel mapping records by tvChannel identifier
+        /// Get a discount-tvchannel mapping records by tvChannel identifier
         /// </summary>
         /// <param name="tvChannelId">TvChannel identifier</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
@@ -2853,7 +2853,7 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Get a discount-tvChannel mapping record
+        /// Get a discount-tvchannel mapping record
         /// </summary>
         /// <param name="tvChannelId">TvChannel identifier</param>
         /// <param name="discountId">Discount identifier</param>
@@ -2868,9 +2868,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Inserts a discount-tvChannel mapping record
+        /// Inserts a discount-tvchannel mapping record
         /// </summary>
-        /// <param name="discountTvChannelMapping">Discount-tvChannel mapping</param>
+        /// <param name="discountTvChannelMapping">Discount-tvchannel mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task InsertDiscountTvChannelMappingAsync(DiscountTvChannelMapping discountTvChannelMapping)
         {
@@ -2878,9 +2878,9 @@ namespace TvProgViewer.Services.Catalog
         }
 
         /// <summary>
-        /// Deletes a discount-tvChannel mapping record
+        /// Deletes a discount-tvchannel mapping record
         /// </summary>
-        /// <param name="discountTvChannelMapping">Discount-tvChannel mapping</param>
+        /// <param name="discountTvChannelMapping">Discount-tvchannel mapping</param>
         /// <returns>Задача представляет асинхронную операцию</returns>
         public virtual async Task DeleteDiscountTvChannelMappingAsync(DiscountTvChannelMapping discountTvChannelMapping)
         {

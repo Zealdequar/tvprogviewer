@@ -62,7 +62,7 @@ namespace TvProgViewer.WebUI.Areas.Admin.Controllers
                             select new
                             {
                                 label = p.Name,
-                                tvChannelid = p.Id
+                                tvchannelid = p.Id
                             }).ToList();
 
             return Json(result);

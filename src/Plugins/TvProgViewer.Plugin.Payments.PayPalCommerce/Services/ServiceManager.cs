@@ -307,7 +307,7 @@ namespace TvProgViewer.Plugin.Payments.PayPalViewer.Services
                 var pageType = widgetZone.Equals(PublicWidgetZones.OrderSummaryContentBefore)
                     ? "cart"
                     : (widgetZone.Equals(PublicWidgetZones.TvChannelDetailsTop)
-                    ? "tvChannel-details"
+                    ? "tvchannel-details"
                     : "checkout");
 
                 return $@"<script src=""{scriptUrl}"" data-partner-attribution-id=""{PayPalViewerDefaults.PartnerCode}"" data-page-type=""{pageType}""></script>";

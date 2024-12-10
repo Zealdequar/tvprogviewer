@@ -8,7 +8,7 @@
     //title
     TvProgHtml.AddTitleParts(T("PageTitle.CompareTvChannels").Text);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-compare-tvChannels-page");
+    TvProgHtml.AppendPageCssClassParts("html-compare-tvchannels-page");
 }
 @{
     var columnWidth = "";
@@ -24,7 +24,7 @@
             uniqueGroupes.Add(group);
     }
 }
-<div class="page compare-tvChannels-page">
+<div class="page compare-tvchannels-page">
     <div class="page-title">
         <h1>@T("TvChannels.Compare.Title")</h1>
     </div>
@@ -33,9 +33,9 @@
         {
             <a href="#" onclick="setLocation('@Url.RouteUrl("ClearCompareList")')" class="clear-list">@T("TvChannels.Compare.Clear")</a>
             <div class="table-wrapper">
-                <table class="compare-tvChannels-table">
+                <table class="compare-tvchannels-table">
                     <tbody>
-                        <tr class="remove-tvChannel">
+                        <tr class="remove-tvchannel">
                             <td class="empty">&nbsp;</td>
                             @foreach (var tvChannel in Model.TvChannels)
                             {
@@ -44,7 +44,7 @@
                                 </td>
                             }
                         </tr>
-                        <tr class="tvChannel-picture">
+                        <tr class="tvchannel-picture">
                             <td class="empty">&nbsp;</td>
                             @foreach (var tvChannel in Model.TvChannels)
                             {
@@ -54,7 +54,7 @@
                                 </td>
                             }
                         </tr>
-                        <tr class="tvChannel-name">
+                        <tr class="tvchannel-name">
                             <td>
                                 <label>@T("TvChannels.Compare.Name")</label>
                             </td>
@@ -65,7 +65,7 @@
                                 </td>
                             }
                         </tr>
-                        <tr class="tvChannel-price">
+                        <tr class="tvchannel-price">
                             <td>
                                 <label>@T("TvChannels.Compare.Price")</label>
                             </td>

@@ -3,7 +3,7 @@
 <div class="card-body">
     @await Html.PartialAsync("Table", new DataTablesModel
     {
-        Name = "tvChannelvideos-grid",
+        Name = "tvchannelvideos-grid",
         UrlRead = new DataUrl("TvChannelVideoList", "TvChannel", new RouteValueDictionary { [nameof(Model.TvChannelVideoSearchModel.TvChannelId)] = Model.TvChannelVideoSearchModel.TvChannelId }),
         UrlDelete = new DataUrl("TvChannelVideoDelete", "TvChannel", null),
         UrlUpdate = new DataUrl("TvChannelVideoUpdate", "TvChannel", null),
@@ -99,7 +99,7 @@
                         success: function (data, textStatus, jqXHR) {
                             if (data.success) {
                                 //reload grid
-                                updateTable('#tvChannelvideos-grid');
+                                updateTable('#tvchannelvideos-grid');
 
                                 //clear input value
                                 $("#@Html.IdFor(model => model.AddVideoModel.VideoUrl)").val('');

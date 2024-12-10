@@ -201,7 +201,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/files/exportimport/",
                     "/country/getstatesbycountryid",
                     "/install",
-                    "/settvChannelreviewhelpfulness",
+                    "/settvchannelreviewhelpfulness",
                     "/*?*returnUrl="
                 });
 
@@ -212,8 +212,8 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             {
                 robotsTxtSettings.LocalizableDisallowPaths.AddRange(new[]
                 {
-                    "/addtvChanneltocart/catalog/",
-                    "/addtvChanneltocart/details/",
+                    "/addtvchanneltocart/catalog/",
+                    "/addtvchanneltocart/details/",
                     "/backinstocksubscriptions/manage",
                     "/boards/forumsubscriptions",
                     "/boards/forumwatch",
@@ -238,16 +238,16 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/checkout/paymentinfo",
                     "/checkout/paymentmethod",
                     "/clearcomparelist",
-                    "/comparetvChannels",
-                    "/comparetvChannels/add/*",
+                    "/comparetvchannels",
+                    "/comparetvchannels/add/*",
                     "/user/avatar",
                     "/user/activation",
                     "/user/addresses",
                     "/user/changepassword",
                     "/user/checkusernameavailability",
-                    "/user/downloadabletvChannels",
+                    "/user/downloadabletvchannels",
                     "/user/info",
-                    "/user/tvChannelreviews",
+                    "/user/tvchannelreviews",
                     "/deletepm",
                     "/emailwishlist",
                     "/eucookielawaccept",
@@ -259,7 +259,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/passwordrecovery/confirm",
                     "/poll/vote",
                     "/privatemessages",
-                    "/recentlyviewedtvChannels",
+                    "/recentlyviewedtvchannels",
                     "/returnrequest",
                     "/returnrequest/history",
                     "/rewardpoints/history",
@@ -272,7 +272,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
                     "/topic/authenticate",
                     "/viewpm",
                     "/uploadfilecheckoutattribute",
-                    "/uploadfiletvChannelattribute",
+                    "/uploadfiletvchannelattribute",
                     "/uploadfilereturnrequest",
                     "/wishlist"
                 });

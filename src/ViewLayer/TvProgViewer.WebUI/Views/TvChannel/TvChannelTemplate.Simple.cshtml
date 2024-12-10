@@ -18,7 +18,7 @@
     TvProgHtml.AddMetaDescriptionParts(Model.MetaDescription);
     TvProgHtml.AddMetaKeywordParts(Model.MetaKeywords);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-tvChannel-details-page");
+    TvProgHtml.AppendPageCssClassParts("html-tvchannel-details-page");
     TvProgHtml.AppendCssFileParts("~/css/jqGrid/ui.jqgrid.css");
     TvProgHtml.AppendCssFileParts("~/css/bootstrap-select/bootstrap-select.css");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/i18n/grid.locale-ru.js");
@@ -74,36 +74,36 @@
         TvProgHtml.AddHeadCustomParts("<meta property=\"twitter:url\" content=\"" + webHelper.GetThisPageUrl(false) + "\" />");
     }
 }
-<!--tvChannel breadcrumb-->
+<!--tvchannel breadcrumb-->
 @section Breadcrumb
 {
     @await Html.PartialAsync("_TvChannelBreadcrumb", Model.Breadcrumb)
 }
 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsAfterBreadcrumb, additionalData = Model })
-<div class="page tvChannel-details-page">
+<div class="page tvchannel-details-page">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsTop, additionalData = Model })
-        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvChannel-details-form">
+        <form asp-route="TvChannel" asp-route-sename="@Model.SeName" method="post" id="tvchannel-details-form">
             @if (seoSettings.MicrodataEnabled)
             {
                 @await Html.PartialAsync("_Microdata", Model)
             }
-            <div data-tvChannelid="@Model.Id">
-                <div class="tvChannel-essential">
+            <div data-tvchannelid="@Model.Id">
+                <div class="tvchannel-essential">
                     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsEssentialTop, additionalData = Model })
                     <div class="gallery">
-                        <!--tvChannel selectpicker days-->
+                        <!--tvchannel selectpicker days-->
                         @await Html.PartialAsync("_TvChannelDetailsDaysSelect", Model)
-                        <!--tvChannel pictures-->
+                        <!--tvchannel pictures-->
                         @await Html.PartialAsync("_TvChannelDetailsPictures", Model)
-                        <!--tvChannel videos-->
+                        <!--tvchannel videos-->
                         @await Html.PartialAsync("_TvChannelDetailsVideos", Model)
                         
                     </div>
                    
                     <div class="overview">
                         @await Html.PartialAsync("_Discontinued", Model)
-                        <div class="tvChannel-name">
+                        <div class="tvchannel-name">
                             <h1>
                                 @Model.Name
                             </h1>
@@ -115,7 +115,7 @@
                             </div>
                         }
                         @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsOverviewTop, additionalData = Model })
-                        <!--tvChannel reviews-->
+                        <!--tvchannel reviews-->
                         @await Html.PartialAsync("_TvChannelReviewOverview", Model.TvChannelReviewOverview)
                         <!--manufacturers-->
                         @await Html.PartialAsync("_TvChannelManufacturers", Model.TvChannelManufacturers)
@@ -188,7 +188,7 @@
                 
                 @await Component.InvokeAsync(typeof(WidgetViewComponent), new { widgetZone = PublicWidgetZones.TvChannelDetailsBeforeCollateral, additionalData = Model })
                 @await Html.PartialAsync("_TvChannelDetailsProgrammeViewer", Model)
-                <div class="tvChannel-collateral">
+                <div class="tvchannel-collateral">
                    @* @await Html.PartialAsync("_TvChannelSpecifications", Model.TvChannelSpecificationModel) *@
                     @await Html.PartialAsync("_TvChannelTags", Model.TvChannelTags)
                 </div>

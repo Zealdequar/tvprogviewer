@@ -1,7 +1,7 @@
 ﻿namespace TvProgViewer.Core.Domain.Catalog
 {
     /// <summary>
-    /// Represents a tvChannel-tvChannel tag mapping class
+    /// Represents a tvchannel-tvchannel tag mapping class
     /// </summary>
     public partial class TvChannelTvChannelTagMapping : BaseEntity
     {

@@ -10,7 +10,7 @@
         <div class="card-body">
             @await Html.PartialAsync("Table", new DataTablesModel
             {
-                Name = "crossselltvChannels-grid",
+                Name = "crossselltvchannels-grid",
                 UrlRead = new DataUrl("CrossSellTvChannelList", "TvChannel", new RouteValueDictionary { [nameof(Model.CrossSellTvChannelSearchModel.TvChannelId)] = Model.CrossSellTvChannelSearchModel.TvChannelId }),
                 UrlDelete = new DataUrl("CrossSellTvChannelDelete", "TvChannel", null),
                 Length = Model.CrossSellTvChannelSearchModel.PageSize,
@@ -39,7 +39,7 @@
             </script>
         </div>
         <div class="card-footer">
-            <button type="submit" id="btnAddNewCrossSellTvChannel" onclick="javascript:OpenWindow('@(Url.Action("CrossSellTvChannelAddPopup", "TvChannel", new {tvChannelId = Model.Id, btnId = "btnRefreshCrossSellTvChannels", formId = "tvChannel-form"}))', 800, 800, true); return false;" class="btn btn-primary">
+            <button type="submit" id="btnAddNewCrossSellTvChannel" onclick="javascript:OpenWindow('@(Url.Action("CrossSellTvChannelAddPopup", "TvChannel", new {tvChannelId = Model.Id, btnId = "btnRefreshCrossSellTvChannels", formId = "tvchannel-form"}))', 800, 800, true); return false;" class="btn btn-primary">
                 @T("Admin.Catalog.TvChannels.CrossSells.AddNew")
             </button>
             <button type="submit" id="btnRefreshCrossSellTvChannels" style="display: none"></button>
@@ -47,7 +47,7 @@
                 $(document).ready(function () {
                     $('#btnRefreshCrossSellTvChannels').click(function () {
                         //refresh grid
-                        updateTable('#crossselltvChannels-grid');
+                        updateTable('#crossselltvchannels-grid');
 
                         //return false to don't reload a page
                         return false;

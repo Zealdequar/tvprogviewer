@@ -62,12 +62,12 @@ namespace TvProgViewer.WebUI.Infrastructure
                 pattern: $"{{{TvProgRoutingDefaults.RouteValue.CatalogSeName}}}/{{{TvProgRoutingDefaults.RouteValue.SeName}}}",
                 defaults: new { controller = "Common", action = "GenericUrl" });
 
-            //routes for entities that support catalog path and slug (e.g. '/category-seo-name/tvChannel-seo-name')
+            //routes for entities that support catalog path and slug (e.g. '/category-seo-name/tvchannel-seo-name')
             endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.TvChannelCatalog,
                 pattern: genericCatalogPattern,
                 defaults: new { controller = "TvChannel", action = "TvChannelDetails" });
 
-            //routes for entities that support single slug (e.g. '/tvChannel-seo-name')
+            //routes for entities that support single slug (e.g. '/tvchannel-seo-name')
             endpointRouteBuilder.MapControllerRoute(name: TvProgRoutingDefaults.RouteName.Generic.TvChannel,
                 pattern: genericPattern,
                 defaults: new { controller = "TvChannel", action = "TvChannelDetails" });

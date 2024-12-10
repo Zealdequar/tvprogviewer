@@ -7,7 +7,7 @@
     TvProgHtml.SetActiveMenuItemSystemName("TvChannel attributes");
 }
 
-<form asp-controller="TvChannelAttribute" asp-action="Edit" method="post" id="tvChannelattribute-form">
+<form asp-controller="TvChannelAttribute" asp-action="Edit" method="post" id="tvchannelattribute-form">
     <div class="content-header clearfix">
         <h1 class="float-left">
             @T("Admin.Catalog.Attributes.TvChannelAttributes.EditAttributeDetails") - @Model.Name
@@ -25,7 +25,7 @@
                 <i class="far fa-save"></i>
                 @T("Admin.Common.SaveContinue")
             </button>
-            <span id="tvChannelattribute-delete" class="btn btn-danger">
+            <span id="tvchannelattribute-delete" class="btn btn-danger">
                 <i class="far fa-trash-alt"></i>
                 @T("Admin.Common.Delete")
             </span>
@@ -34,4 +34,4 @@
     </div>
     @await Html.PartialAsync("_CreateOrUpdate", Model)
 </form>
-<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvChannelattribute-delete" />
+<tvprog-delete-confirmation asp-model-id="@Model.Id" asp-button-id="tvchannelattribute-delete" />

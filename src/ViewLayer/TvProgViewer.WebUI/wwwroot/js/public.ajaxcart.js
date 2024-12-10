@@ -26,7 +26,7 @@ var AjaxCart = {
     },
 
     //add a tvChannel to the cart/wishlist from the catalog pages
-    addtvChanneltocart_catalog: function (urladd) {
+    addtvchanneltocart_catalog: function (urladd) {
         if (this.loadWaiting !== false) {
             return;
         }
@@ -47,7 +47,7 @@ var AjaxCart = {
     },
 
     //add a tvChannel to the cart/wishlist from the tvChannel details page
-    addtvChanneltocart_details: function (urladd, formselector) {
+    addtvchanneltocart_details: function (urladd, formselector) {
         if (this.loadWaiting !== false) {
             return;
         }
@@ -65,7 +65,7 @@ var AjaxCart = {
     },
 
     //add a tvChannel to compare list
-    addtvChanneltocomparelist: function (urladd) {
+    addtvchanneltocomparelist: function (urladd) {
         if (this.loadWaiting !== false) {
             return;
         }

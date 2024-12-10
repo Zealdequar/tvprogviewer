@@ -36,7 +36,7 @@
 
                 @if (Model.Id > 0)
                 {
-                    <tvprog-card asp-name="vendor-tvChannels" asp-icon="fas fa-th-list" asp-title="@T("Admin.Vendors.VendorNotes")" asp-hide-block-attribute-name="@hideVendorNotesBlockAttributeName" asp-hide="@hideVendorNotesBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Notes", Model)</tvprog-card>
+                    <tvprog-card asp-name="vendor-tvchannels" asp-icon="fas fa-th-list" asp-title="@T("Admin.Vendors.VendorNotes")" asp-hide-block-attribute-name="@hideVendorNotesBlockAttributeName" asp-hide="@hideVendorNotesBlock" asp-advanced="true">@await Html.PartialAsync("_CreateOrUpdate.Notes", Model)</tvprog-card>
                 }
 
                 @await Component.InvokeAsync(typeof(AdminWidgetViewComponent), new { widgetZone = AdminWidgetZones.VendorDetailsBlock, additionalData = Model })

@@ -5,7 +5,7 @@
 
     @await Html.PartialAsync("Table", new DataTablesModel
     {
-        Name = "templates-tvChannel-grid",
+        Name = "templates-tvchannel-grid",
         UrlRead = new DataUrl("TvChannelTemplates", "Template", null),
         UrlUpdate = new DataUrl("TvChannelTemplateUpdate", "Template", null),
         UrlDelete = new DataUrl("TvChannelTemplateDelete", "Template", null),
@@ -126,7 +126,7 @@
                         success: function (data, textStatus, jqXHR) {
                             if (data.Result) {
                                 //reload grid
-                                updateTable('#templates-tvChannel-grid');
+                                updateTable('#templates-tvchannel-grid');
 
                                 //clear input value
                                 $("#@Html.IdFor(model => model.AddTvChannelTemplate.Name)").val('');

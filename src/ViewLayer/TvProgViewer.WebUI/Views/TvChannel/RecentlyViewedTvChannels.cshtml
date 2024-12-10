@@ -5,16 +5,16 @@
     //title
     TvProgHtml.AddTitleParts(T("PageTitle.RecentlyViewedTvChannels").Text);
     //page class
-    TvProgHtml.AppendPageCssClassParts("html-recently-viewed-tvChannels-page");
+    TvProgHtml.AppendPageCssClassParts("html-recently-viewed-tvchannels-page");
 }
-<div class="page recently-viewed-tvChannels-page">
+<div class="page recently-viewed-tvchannels-page">
     <div class="page-title">
         <h1>@T("TvChannels.RecentlyViewedTvChannels")</h1>
     </div>
     <div class="page-body">
         @if (Model.Count > 0)
         {
-            <div class="tvChannel-grid">
+            <div class="tvchannel-grid">
                 <div class="item-grid">
                     @foreach (var tvChannel in Model)
                     {

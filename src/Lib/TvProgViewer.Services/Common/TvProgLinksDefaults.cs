@@ -134,7 +134,7 @@
             /// <summary>
             /// Gets a URL of the recurring payments docs page
             /// </summary>
-            public static string RecurringPayments => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/recurring-tvChannels.html";
+            public static string RecurringPayments => "https://docs.tvprogviewer.ru/running-your-store/catalog/tvchannels/recurring-tvchannels.html";
 
             /// <summary>
             /// Gets a URL of the shopping carts and wishlists docs page

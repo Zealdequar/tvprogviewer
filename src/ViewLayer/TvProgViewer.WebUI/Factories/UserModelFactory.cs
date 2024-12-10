@@ -640,7 +640,7 @@ namespace TvProgViewer.WebUI.Factories
                     RouteName = "UserDownloadableTvChannels",
                     Title = await _localizationService.GetResourceAsync("Account.DownloadableTvChannels"),
                     Tab = (int)UserNavigationEnum.DownloadableTvChannels,
-                    ItemClass = "downloadable-tvChannels"
+                    ItemClass = "downloadable-tvchannels"
                 });
             }
 

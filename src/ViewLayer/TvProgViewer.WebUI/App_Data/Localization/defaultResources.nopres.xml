@@ -3334,7 +3334,7 @@
     <Value>Search engine friendly page name</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Catalog.TvChannels.Fields.SeName.Hint">
-    <Value>Set a search engine friendly page name e.g. 'the-best-tvChannel' to make your page URL 'http://www.yourStore.com/the-best-tvChannel'. Leave empty to generate it automatically based on the name of the tvChannel.</Value>
+    <Value>Set a search engine friendly page name e.g. 'the-best-tvchannel' to make your page URL 'http://www.yourStore.com/the-best-tvchannel'. Leave empty to generate it automatically based on the name of the tvChannel.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Catalog.TvChannels.Fields.ShipSeparately">
     <Value>Ship separately</Value>
@@ -6160,7 +6160,7 @@
     <Value>TvChannel URL structure type</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Settings.Catalog.TvChannelUrlStructureType.Hint">
-    <Value>Select the tvChannel URL structure type (e.g. '/tvChannel-seo-name' or '/category-seo-name/tvChannel-seo-name' or '/manufacturer-seo-name/tvChannel-seo-name').</Value>
+    <Value>Select the tvChannel URL structure type (e.g. '/tvchannel-seo-name' or '/category-seo-name/tvchannel-seo-name' or '/manufacturer-seo-name/tvchannel-seo-name').</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.Configuration.Settings.Catalog.RecentlyViewedTvChannelsEnabled">
     <Value>'Recently viewed tvChannels' enabled</Value>
@@ -9937,7 +9937,7 @@
     <Value>“Powered by” link</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.TvChannel.Details.Text">
-    <Value><![CDATA[Enter the relevant tvChannel details in these fields. The screenshot below shows how they will be displayed on the tvChannel page with the default tvprogviewer theme: <div><img src="../../js/admintour/images/tvChannel-page.jpg"/></div>]]></Value>
+    <Value><![CDATA[Enter the relevant tvChannel details in these fields. The screenshot below shows how they will be displayed on the tvChannel page with the default tvprogviewer theme: <div><img src="../../js/admintour/images/tvchannel-page.jpg"/></div>]]></Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.TvChannel.Details.Title">
     <Value>TvChannel details</Value>
@@ -9967,7 +9967,7 @@
     <Value>“Settings” button</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.TvChannel.Shipping.Text">
-    <Value>Define tvChannel-specific shipping details in this panel.</Value>
+    <Value>Define tvchannel-specific shipping details in this panel.</Value>
   </LocaleResource>
   <LocaleResource Name="Admin.ConfigurationSteps.TvChannel.Shipping.Title">
     <Value>TvChannel shipping info</Value>
