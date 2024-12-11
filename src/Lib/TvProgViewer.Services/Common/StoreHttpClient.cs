@@ -218,12 +218,14 @@ namespace TvProgViewer.Services.Common
             Stopwatch sw = Stopwatch.StartNew();
             IList<WebResources> webResources = await GetAllWebResourcesAsync();
             IList<TypeProg> typeProgs = await GetAllTypeProgAsync();
-            _logger.Trace("Ресурсы из базы успешно получены: {0}", string.Join(";", webResources.ToList().Select<WebResources, string>(
+            _logger.Trace("Ресурсы из базы успешно получены: {0}", string.Join(";", webResources.ToList().Select(
                    wr => string.Format("WRID = '{0}', FileName = '{1}', ResourceName = '{2}', ResourceUrl ='{3}'",
                    wr.Id, wr.FileName, wr.ResourceName, wr.ResourceUrl))));
 
             foreach (WebResources webResource in webResources)
             {
+                if (webResource.TypeProgId == 2)
+                    continue;
                 _channelQty = 0;
                 _newChannelQty = 0;
                 try
@@ -327,7 +329,7 @@ namespace TvProgViewer.Services.Common
                     foreach (XElement newProgrammeElement in docProgrammes)
                     {
                         var channelId = channels.FirstOrDefault(x => x.InternalId == int.Parse(newProgrammeElement.Attribute("channel").Value) &&
-                                                                     x.Deleted == null).Id;
+                                                                     x.Deleted is null).Id;
                         var internalChanId = int.Parse(newProgrammeElement.Attribute("channel").Value);
                         var tsStart = GetDateTimeValue(newProgrammeElement.Attribute("start").Value);
                         var tsStop = GetDateTimeValue(newProgrammeElement.Attribute("stop").Value);

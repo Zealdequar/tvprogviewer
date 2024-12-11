@@ -372,7 +372,8 @@ span.ui-jqgrid-cell-wrapper {
 }
 
 .ui-state-highlight {
-    background: rgb(255, 250, 144) !important;
+    background: rgb(255, 250, 144);
+    z-index:0;
 }
 .remain-progress {
     text-align: center;
@@ -952,13 +953,14 @@ tr.jqgrow.ui-row-ltr.ui-widget-content.alt-green-background {
     background: #efffef;
     z-index:0;
 }
-  tr.jqgrow.ui-row-ltr.ui-widget-content.alt-green-background.ui-state-hover {
-    border: 1px solid #999;
-    background: #c1c1c1 url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
-    font-weight: normal;
-    color: #212121;
-    z-index: 99999;
-  }
+    tr.jqgrow.ui-row-ltr.ui-widget-content.alt-green-background.ui-state-highlight.ui-state-hover,
+    tr.jqgrow.ui-row-ltr.ui-widget-content.alt-green-background.ui-state-hover {
+        border: 1px solid #999;
+        background: #c1c1c1 url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
+        font-weight: normal;
+        color: #212121;
+        z-index: 99999;
+    }
   tr.jqgrow.ui-row-ltr.ui-widget-content.ui-state-hover {
     border: 1px solid #999;
     background: #c1c1c1 url("images/ui-bg_glass_75_dadada_1x400.png") 50% 50% repeat-x;
@@ -966,9 +968,11 @@ tr.jqgrow.ui-row-ltr.ui-widget-content.alt-green-background {
     color: #212121;
     z-index: 99999;
   }
-    tr.jqgrow.ui-row-ltr.ui-widget-content.alt-green-background..ui-state-highlightui-state-hover {
-        background: rgb(255, 250, 144) !important;
-    }
+tr.jqgrow.ui-row-ltr.ui-widget-content.grayColor.ui-state-highlight,
+tr.jqgrow.ui-row-ltr.ui-widget-content.alt-green-background.ui-state-highlight {
+    background: rgb(255, 250, 144);
+    z-index: 0;
+}
 /* inline edit actions button*/
 .ui-inline-del.ui-state-hover span, .ui-inline-edit.ui-state-hover span,
 .ui-inline-save.ui-state-hover span, .ui-inline-cancel.ui-state-hover span {
