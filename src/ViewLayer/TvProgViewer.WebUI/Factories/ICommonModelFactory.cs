@@ -28,18 +28,6 @@ namespace TvProgViewer.WebUI.Factories
         Task<LanguageSelectorModel> PrepareLanguageSelectorModelAsync();
 
         /// <summary>
-        /// Подготовка модели для выбора провайдера ТВ-программы
-        /// </summary>
-        /// <returns>Модель для выбора провайдера ТВ-программы</returns>
-        Task<TvProgProviderSelectorModel> PrepareTvProgProviderSelectorModelAsync();
-
-        /// <summary>
-        /// Подготовка модели для выбора типа ТВ-программы
-        /// </summary>
-        /// <returns>Модель для выбора типа ТВ-программы</returns>
-        Task<TvTypeProgSelectorModel> PrepareTvTypeProgSelectorModelAsync();
-
-        /// <summary>
         /// Подготовка модели для выбора категории ТВ-программы
         /// </summary>
         /// <returns>Модель для выбора категории ТВ-программы</returns>

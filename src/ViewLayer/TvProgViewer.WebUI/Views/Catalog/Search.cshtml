@@ -36,22 +36,6 @@
         <h1>@T("Search")</h1>
     </div>
     <div class="page-body">
-        <div class="header-upper">
-            <div class="form-group row">
-                <div class="form-row">
-                    <label for="userProvider" class="col-xs-2 col-form-label header-label">Провайдер ТВ-программы</label>
-                    @await Component.InvokeAsync("TvProgProviderSelector")
-                </div>
-                <div class="form-row">
-                    <label for="userTypeProg" class="col-xs-2 col-form-label header-label">Тип ТВ-программы</label>
-                    @await Component.InvokeAsync("TvTypeProgSelector")
-                </div>
-                <div class="form-row">
-                    <label for="userCategory" class="col-xs-2 col-form-label header-label">Категория</label>
-                    @await Component.InvokeAsync("TvCategorySelector")
-                </div>
-            </div>
-        </div>
         <div class="search-input">
             <div class="fieldset">
                     <div class="form-fields">
@@ -103,6 +87,11 @@
                 <div class="buttons">
                     <button class="button-1 search-button">@T("Search.Button")</button>
                 </div>
+        </div>
+        <div class="header-upper">
+            <div class="form-group row">
+               @await Component.InvokeAsync("TvCategorySelector")
+            </div>
         </div>
         <div class="search-result">
             <div id="mainToolbarSearch" class="height-panel" style="display: none;">

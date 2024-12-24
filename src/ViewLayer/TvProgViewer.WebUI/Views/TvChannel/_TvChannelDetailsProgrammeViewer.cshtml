@@ -1,6 +1,9 @@
 @model TvChannelDetailsModel
 <div class="programme-viewer">
     @await Component.InvokeAsync(typeof(WidgetViewComponent), new { WidgetZone = PublicWidgetZones.TvChannelDetailsBeforeProgrammeViewer, additionData = Model })
+    <div class="form-group row">
+        @await Component.InvokeAsync("TvCategorySelector")
+    </div>
     <div id="mainToolProgrammeViewer" class="height-panel" style="display: none;">
         <button type="button" id="anonsToolProgrammeViewer" class="btn-anons" style="display: none;"><img src="~/images/i/GreenAnons.png" alt="Показать анонс" /></button>
     </div>

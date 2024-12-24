@@ -10,18 +10,14 @@ $(function () {
     
     chansArr = getStorageChannels();
     if (chansArr && chansArr.length > 0) {
-        $("tabNow").addClass("active");
-        $("tabNow").removeClass("disable");
-        $("tabNext").removeClass("disable");
-        $("tabSearch").removeClass("disable");
-        $("tabChannels").removeClass("active");
-        $(".byDays").show();
-        $(".byChannels").show();
+        $(".tabChannels, .tabNow, .tabNext, .tabSearch").removeClass("active disable");
+        $(".tabNow").addClass("active");
+        $(".byDays, .byChannels").show();
+        $("#category-editor").show(500);
     } else {
-        $("tabNow").addClass("disable");
-        $("tabNext").addClass("disable");
-        $("tabSearch").addClass("disable");
-        $("tabChannels").addClass("active");
+        $(".tabNow, .tabNext, .tabSearch").addClass("disable");
+        $(".tabChannels").addClass("active");
+        $("#category-editor").hide(500);
         return;
     }
         
@@ -47,13 +43,17 @@ $(function () {
         },
         activate: function (event, ui) {
             idx = ui.newTab.index();
-
             if (idx === 2 || idx === 3) {
                 setTree(idx);
             }
             if (idx === 4) {
                 var datesToolSearch = document.getElementById("datesToolSearch");
                 datesToolSearch.scrollTop = datesToolSearch.scrollHeight - datesToolSearch.clientHeight;
+            }
+            if (idx === 5) {
+                $("#category-editor").hide(500);
+            } else {
+                $("#category-editor").show(500);
             }
         }
     });
@@ -86,7 +86,7 @@ $(function () {
         $('#anonsDescrByChannels').toggle(100);
     });
     $("#btnSearch").on('click', function () {
-    searchProgramme($('#userTypeProg option:selected').val().split(';')[1], $('#tbContains').val());
+        searchProgramme($('#tbContains').val());
     });
 
     $("#containerByDays")
@@ -133,11 +133,8 @@ $(function () {
 
 // Заполенение подвала
 function fillFooter() {
-    if (!$('#userTypeProg option:selected') || !$('#userTypeProg option:selected').val().split(';')[1])
-        return;
-
     $.ajax({
-        url: "Home/GetSystemProgrammePeriod?progType=" + $('#userTypeProg option:selected').val().split(';')[1],
+        url: "Home/GetSystemProgrammePeriod?progType=1",
         dataType: 'json',
         type: 'GET',
         contentType: 'application/json; charset=utf-8',
@@ -178,7 +175,7 @@ function setGrids() {
     // Табличка сейчас в эфире
     $('#TVProgrammeNowGrid').jqGrid(
         {
-            url: "Home/GetSystemProgrammeAtNow?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+            url: "Home/GetSystemProgrammeAtNow?progType=1&category=" + $('#userCategory option:selected').val().split(';')[1] +
                 "&genres=" + GetGenres(".btn-genre-now.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
             datatype: 'json',
             type: 'GET',
@@ -285,7 +282,7 @@ function setGrids() {
     // Табличка затем в эфире
     $('#TVProgrammeNextGrid').jqGrid(
      {
-            url: "Home/GetSystemProgrammeAtNext?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+            url: "Home/GetSystemProgrammeAtNext?progType=1&category=" + $('#userCategory option:selected').val().split(';')[1] +
                 "&genres=" + GetGenres(".btn-genre-next.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
             datatype: 'json',
             type: 'GET',
@@ -396,12 +393,12 @@ function setGrids() {
 }
 
 // Поиск по всей программе передач
-function searchProgramme(typeProgID, findTitle) {
+function searchProgramme(findTitle) {
     if (incSearch == 1)
     {
         $('#SearchedTVProgramme').jqGrid(
             {
-                url: "Home/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+                url: "Home/SearchProgramme?progType=1&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
                     "&genres=" + getSearchGenres(".chkGenres:checkbox:checked") + "&dates=" + getSearchDates(".chkDates:checkbox:checked") +
                     "&channels=" + getSearchChannels(".chkChannels:checkbox:checked"),
                 datatype: 'json',
@@ -508,7 +505,7 @@ function searchProgramme(typeProgID, findTitle) {
     else
     {
         $("#SearchedTVProgramme").setGridParam({
-            url: "Home/SearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+            url: "Home/SearchProgramme?progType=1&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
                 "&genres=" + getSearchGenres(".chkGenres:checkbox:checked") + "&dates=" + getSearchDates(".chkDates:checkbox:checked") +
                 "&channels=" + getSearchChannels(".chkChannels:checkbox:checked")
         });
@@ -519,9 +516,7 @@ function searchProgramme(typeProgID, findTitle) {
 
 // Установка деревьев
 function setTree(index) {
-    var url = 'Home/GetTreeData?providerId=' + $('#userProvider option:selected').val().split(';')[1] +
-        "&typeProg=" + $('#userTypeProg option:selected').val().split(';')[1] +
-       "&jsonChannels=" + window.localStorage.getItem("optChans") + '&mode=' + (index - 1);
+    var url = "Home/GetTreeData?providerId=1&typeProg=1&jsonChannels=" + window.localStorage.getItem("optChans") + '&mode=' + (index - 1);
     if (index === 2) {
         
         $('#containerByDays').jstree({
@@ -561,7 +556,7 @@ function fillUserByDay(date, channelId) {
     if (incChannelByDay == 1) {
         $("#TVProgrammeByDaysGrid").jqGrid(
             {
-                url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+                url: "Home/GetUserProgrammeOfDay?progTypeID=1&cid=" + channelId + "&tsDate=" +
                     date + "&category=" + $('#userCategory option:selected').val().split(';')[1],
                 datatype: 'json',
                 type: 'GET',
@@ -663,7 +658,7 @@ function fillUserByDay(date, channelId) {
         jQuery("#TVProgrammeByDaysGrid").jqGrid("setGridHeight", 548);
     } else {
         $("#TVProgrammeByDaysGrid").setGridParam({
-            url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+            url: "Home/GetUserProgrammeOfDay?progTypeID=1&cid=" + channelId + "&tsDate=" +
                 date + "&category=" + $('#userCategory option:selected').val().split(';')[1]
         });
         $("#TVProgrammeByDaysGrid").trigger("reloadGrid");
@@ -682,7 +677,7 @@ function fillUserByChannels(date, channelId) {
     if (incDayByChannel == 1) {
         $('#TVProgrammeByChannelsGrid').jqGrid(
             {
-                url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+                url: "Home/GetUserProgrammeOfDay?progTypeID=1&cid=" + channelId + "&tsDate=" +
                     date + "&category=" + $('#userCategory option:selected').val().split(';')[1],
                 datatype: 'json',
                 type: 'GET',
@@ -781,7 +776,7 @@ function fillUserByChannels(date, channelId) {
         jQuery('#TVProgrammeByChannelsGrid').jqGrid('hideCol', "RatingName");
     } else {
         $('#TVProgrammeByChannelsGrid').setGridParam({
-            url: "Home/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+            url: "Home/GetUserProgrammeOfDay?progTypeID=1&cid=" + channelId + "&tsDate=" +
                 date + "&category=" + $('#userCategory option:selected').val().split(';')[1]
         });
         $('#TVProgrammeByChannelsGrid').trigger("reloadGrid");
@@ -844,8 +839,7 @@ function fillGenresToolNow() {
                 e.preventDefault();
                 $(this).toggleClass("active");
                 $("#TVProgrammeNowGrid").setGridParam({
-                    url: "Home/GetSystemProgrammeAtNow?progType=" + $('#userTypeProg option:selected').val().split(';')[1] +
-                        "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-now.active") +
+                    url: "Home/GetSystemProgrammeAtNow?progType=1&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-now.active") +
                         "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : "")
                 });
                 $("#TVProgrammeNowGrid").trigger("reloadGrid");
@@ -887,7 +881,8 @@ function fillGenresToolNext() {
                 var b = $('<button id="' + response[i].GenreId + '" class="btn btn-default btn-genre-next">');
 
                 $('#genresToolNext').append(
-                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" alt="' + response[i].GenreName + '" height="24px" width="24px">'));
+                    b.html('<img src="' + response[i].GenrePath + '" title="' + response[i].GenreName + '" alt="' + response[i].GenreName +
+                        '" height="24px" width="24px">'));
 
 
             }
@@ -895,8 +890,8 @@ function fillGenresToolNext() {
                 e.preventDefault();
                 $(this).toggleClass("active");
                 $("#TVProgrammeNextGrid").setGridParam({
-                    url: "Home/GetSystemProgrammeAtNext?progType=" + $('#userTypeProg option:selected').val().split(';')[1] +
-                        "&category=" + $('#userCategory option:selected').val().split(';')[1] + "&genres=" + GetGenres(".btn-genre-next.active") +
+                    url: "Home/GetSystemProgrammeAtNext?progType=1&category=" + $('#userCategory option:selected').val().split(';')[1] +
+                        "&genres=" + GetGenres(".btn-genre-next.active") +
                         "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
                 });
                 $("#TVProgrammeNextGrid").trigger("reloadGrid");
@@ -964,12 +959,8 @@ function fillGenresToolSearch() {
 }
 
 function fillChannelsToolSearch() {
-    if (!$('#userProvider option:selected') || !$('#userProvider option:selected').val().split(';')[1])
-        return;
-
-    $.ajax({
-        url: "Home/GetChannels?providerId=" + $('#userProvider option:selected').val().split(';')[1] +
-                                                "&jsonChannels=" + window.localStorage.getItem("optChans"),
+   $.ajax({
+        url: "Home/GetChannels?providerId=1&jsonChannels=" + window.localStorage.getItem("optChans"),
         dataType: 'json',
         type: 'GET',
         contentType: 'application/json; charset=utf-8',
@@ -985,11 +976,8 @@ function fillChannelsToolSearch() {
 }
 
 function fillDatesToolSearch() {
-    if (!$('#userTypeProg option:selected') || !$('#userTypeProg option:selected').val().split(';')[1])
-        return;
-
     $.ajax({
-        url: "Home/GetSystemProgrammePeriod?progType=" + $('#userTypeProg option:selected').val().split(';')[1],
+        url: "Home/GetSystemProgrammePeriod?progType=1",
         dataType: 'json',
         type: 'GET',
         contentType: 'application/json; charset=utf-8',

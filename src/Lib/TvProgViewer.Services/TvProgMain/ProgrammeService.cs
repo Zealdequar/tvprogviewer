@@ -1074,6 +1074,7 @@ namespace TvProgViewer.Services.TvProgMain
                                       pr.TsStartMo >= tsStart &&
                                       pr.TsStopMo <= tsEnd &&
                                       pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
+                                      && (category == null || pr.Category == category)
                                       && ch.Deleted == null
                                       select new SystemProgramme
                                       {

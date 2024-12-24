@@ -4,7 +4,8 @@
 
 @if (Model.AvaliableCategories.Count > 0)
 {
-    <div class="category-selector">
+    <label for="userCategory" class="col-sm-1 col-form-label">@T("Category.Selector.Label")</label>
+    <div class="col-sm-11 category-selector">
         @{ 
             var returnUrl = webHelper.GetRawUrl(Context.Request);
             var categories = await Model.AvaliableCategories.SelectAwait(async x => new SelectListItem
@@ -13,7 +14,7 @@
                 Value = Url.RouteUrl("ChangeCategory", new { usercategory = x.Name, returnUrl }, webHelper.GetCurrentRequestProtocol()) + ";" + x.Name,
                 Selected = x.Name.Equals(Model.CurrentCategoryName)
             }).ToListAsync();
-            <select id="userCategory" class="form-control header-select" name="userCategory" asp-items="@categories" onchange="setLocationWithPart(this.value);" aria-label="@T("Category.Selector.Label")"></select>
+            <select id="userCategory" class="form-control" name="userCategory" asp-items="@categories" onchange="setLocationWithPart(this.value);" aria-label="@T("Category.Selector.Label")"></select>
         }
     </div>
 }

@@ -35,40 +35,27 @@
 <div class="page home-page">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })
-        <div class="header-upper">
-            <div class="form-group row">
-                <div class="form-row">
-                    <label for="userProvider" class="col-xs-2 col-form-label header-label">Провайдер ТВ-программы</label>
-                    @await Component.InvokeAsync("TvProgProviderSelector")
-                </div>
-                <div class="form-row">
-                    <label for="userTypeProg" class="col-xs-2 col-form-label header-label">Тип ТВ-программы</label>
-                    @await Component.InvokeAsync("TvTypeProgSelector")
-                </div>
-                <div class="form-row">
-                    <label for="userCategory" class="col-xs-2 col-form-label header-label">Категория</label>
-                    @await Component.InvokeAsync("TvCategorySelector")
-                </div>
-            </div>
+        <div id="category-editor" class="form-group row">
+           @await Component.InvokeAsync("TvCategorySelector")
         </div>
         <div id="tabs">
             <ul class="ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header">
-                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab ui-tabs-active ui-state-active">
+                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab tabNow">
                     <a href="#tabNow">Сейчас в телеэфире</a>
                 </li>
-                <li class="ui-tabs">
+                <li class="ui-tabs tabNext">
                     <a class="ui-tabs-anchor" href="#tabNext">Затем в телеэфире</a>
                 </li>
-                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab byDays" style="display: none;">
+                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab byDays tabByDays" style="display: none;">
                     <a class="ui-tabs-anchor byDays" style="display: none;" href="#tabByDays">По дням</a>
                 </li>
-                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab byChannels" style="display: none;">
+                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab byChannels tabByChannels" style="display: none;">
                     <a class="ui-tabs-anchor byChannels" style="display: none;" href="#tabByChannels">По каналам</a>
                 </li>
-                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab">
+                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab tabSearch">
                     <a class="ui-tabs-anchor" href="#tabSearch">Поиск по телепрограмме</a>
                 </li>
-                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab">
+                <li class="ui-tabs ui-tabs-tab ui-corner-top ui-state-default ui-tab tabChannels">
                     <a class="ui-tabs-anchor" href="#tabChannels">Телеканалы</a>
                 </li>
             </ul>

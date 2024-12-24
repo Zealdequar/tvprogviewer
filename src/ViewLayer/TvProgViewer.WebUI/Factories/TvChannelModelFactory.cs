@@ -1667,9 +1667,7 @@ namespace TvProgViewer.WebUI.Factories
                 model.TierPrices = await PrepareTvChannelTierPriceModelsAsync(tvChannel);
             }
 
-            model.TvTypeProgSelector = await _commonFactory.PrepareTvTypeProgSelectorModelAsync();
-
-            var typeProg = model.TvTypeProgSelector.CurrentTypeProgId;
+            var typeProg = 1;
 
             model.TvChannelDays = await _programmeService.GetDaysAsync(typeProg);
 

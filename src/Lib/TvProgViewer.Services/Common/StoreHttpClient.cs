@@ -328,8 +328,12 @@ namespace TvProgViewer.Services.Common
                     IList<Programmes> programmesToInsert = new List<Programmes>();
                     foreach (XElement newProgrammeElement in docProgrammes)
                     {
-                        var channelId = channels.FirstOrDefault(x => x.InternalId == int.Parse(newProgrammeElement.Attribute("channel").Value) &&
-                                                                     x.Deleted is null).Id;
+                        var channel = channels.FirstOrDefault(x => x.InternalId == int.Parse(newProgrammeElement.Attribute("channel").Value) &&
+                                                                     x.Deleted is null);
+                        if (channel is null)
+                            { continue; }
+                        
+                        var channelId = channel.Id;
                         var internalChanId = int.Parse(newProgrammeElement.Attribute("channel").Value);
                         var tsStart = GetDateTimeValue(newProgrammeElement.Attribute("start").Value);
                         var tsStop = GetDateTimeValue(newProgrammeElement.Attribute("stop").Value);

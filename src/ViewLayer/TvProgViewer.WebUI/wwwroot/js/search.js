@@ -12,21 +12,21 @@ $(function () {
     });
 
     $(".search-button").on('click', function () {
-       globalSearchProgramme($('#userTypeProg option:selected').val().split(';')[1], $('.search-text').val());
+       globalSearchProgramme($('.search-text').val());
     });
 
     $("#dragToolbarGenreSearch").draggable();
 });
 
 // Поиск по всей программе передач
-function globalSearchProgramme(typeProgID, findTitle) {
+function globalSearchProgramme(findTitle) {
     if (findTitle.length == 0 || findTitle == "" || findTitle == null)
         return;
 
     if (incSearch == 1) {
         $('#TvProgrammeGlobalSearchGrid').jqGrid(
             {
-                url: "Catalog/GlobalSearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+                url: "Catalog/GlobalSearchProgramme?progType=1&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
                     "&genres=" + GetGenres(".btn-genre-search.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
                 datatype: 'json',
                 type: 'GET',
@@ -129,7 +129,7 @@ function globalSearchProgramme(typeProgID, findTitle) {
     }
     else {
         $("#TvProgrammeGlobalSearchGrid").setGridParam({
-            url: "Catalog/GlobalSearchProgramme?progType=" + typeProgID + "&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
+            url: "Catalog/GlobalSearchProgramme?progType=1&findTitle=" + findTitle + "&category=" + $('#userCategory option:selected').val().split(';')[1] +
                 "&genres=" + GetGenres(".btn-genre-search.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : "")
         });
         $("#TvProgrammeGlobalSearchGrid").trigger("reloadGrid");
@@ -161,7 +161,7 @@ function fillGenresToolbarSearch() {
                 e.preventDefault();
                 $(this).toggleClass("active");
                 $("#TvProgrammeGlobalSearchGrid").setGridParam({
-                    url: "Catalog/GlobalSearchProgramme?progType=" + $('#userTypeProg option:selected').val().split(';')[1] + "&findTitle=" + $('.search-text').val() +
+                    url: "Catalog/GlobalSearchProgramme?progType=1&findTitle=" + $('.search-text').val() +
                         "&category=" + $('#userCategory option:selected').val().split(';')[1] +
                         "&genres=" + GetGenres(".btn-genre-global-search.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
                 });

@@ -230,7 +230,7 @@ namespace TvProgViewer.WebUI.Factories
                     //use default logo
                     var pathBase = _httpContextAccessor.HttpContext.Request.PathBase.Value ?? string.Empty;
                     var storeLocation = _mediaSettings.UseAbsoluteImagePath ? _webHelper.GetStoreLocation() : $"{pathBase}/";
-                    logo = $"{storeLocation}Themes/{await _themeContext.GetWorkingThemeNameAsync()}/Content/images/logo.png";
+                    logo = $"{storeLocation}Themes/{await _themeContext.GetWorkingThemeNameAsync()}/Content/images/logo-new-year-2025.png";
                 }
 
                 return logo;
@@ -267,61 +267,7 @@ namespace TvProgViewer.WebUI.Factories
 
             return model;
         }
-
-        /// <summary>
-        /// Подготовка модели для выбора провайдера ТВ-программы
-        /// </summary>
-        /// <returns>Модель для выбора провайдера ТВ-программы</returns>
-        public virtual async Task<TvProgProviderSelectorModel> PrepareTvProgProviderSelectorModelAsync()
-        {
-            var avaliableProviders = (await _programmeService
-                .GetAllProvidersAsync()).Select(x =>
-                {
-                    var providerModel = new TvProgProviderModel
-                    {
-                        Id = x.Id,
-                        Name = x.ProviderName
-                    };
-                    return providerModel;
-                }).ToList();
-
-            var model = new TvProgProviderSelectorModel
-            {
-                CurrentProviderId = (await _workContext.GetWorkingProviderAsync()).Id,
-                AvaliableProviders = avaliableProviders
-            };
-            return model;
-        }
-
-        /// <summary>
-        /// Подготовка модели для выбора типа ТВ-программы
-        /// </summary>
-        /// <returns>Модель для выбора типа ТВ-программы</returns>
-        public virtual async Task<TvTypeProgSelectorModel> PrepareTvTypeProgSelectorModelAsync()
-        {
-            int providerId = (await _workContext.GetWorkingProviderAsync()).Id;
-            var avaliableTypes = (await _programmeService
-                .GetAllTypeProgsAsync(false))
-                .Where(x => x.TvProgProviderId == providerId)
-                .Select(x =>
-                {
-                    var typeModel = new TvTypeProgModel
-                    {
-                        Id = x.Id,
-                        Name = x.TypeName
-                    };
-                    return typeModel;
-                }).ToList();
-
-            var model = new TvTypeProgSelectorModel
-            {
-                CurrentTypeProgId = (await _workContext.GetWorkingTypeProgAsync()).Id,
-                AvaliableTypes = avaliableTypes
-            };
-
-            return model;
-        }
-
+        
         /// <summary>
         /// Подготовка модели для выбора категории ТВ-программы
         /// </summary>

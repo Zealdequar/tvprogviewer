@@ -343,18 +343,18 @@ namespace TvProgViewer.WebUI.Controllers
                 if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
                 {
                     return Json(await _programmeService.GetUserAdultProgrammesOfDayListAsync(progTypeID, channelId.Value, dtStart, dtEnd,
-                                   (category != "null") ? category : null));
+                                   (category != "Все категории") ? category : null));
                 }
                 else
                 {
                     return Json(await _programmeService.GetUserProgrammesOfDayListAsync(progTypeID, channelId.Value, dtStart, dtEnd,
-                                   (category != "null") ? category : null));
+                                   (category != "Все категории") ? category : null));
                 }
             }
             else
             {
                 return Json(await _programmeService.GetUserProgrammesOfDayListAsync(progTypeID, channelId.Value, dtStart, dtEnd,
-                (category != "null") ? category : null));
+                (category != "Все категории") ? category : null));
             }
         }
 

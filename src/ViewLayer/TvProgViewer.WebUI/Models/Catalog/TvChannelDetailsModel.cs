@@ -126,8 +126,7 @@ namespace TvProgViewer.WebUI.Models.Catalog
 
         public bool AllowAddingOnlyExistingAttributeCombinations { get; set; }
         public IEnumerable<DaysItem> TvChannelDays {get; set;}
-        public TvTypeProgSelectorModel TvTypeProgSelector { get; set; }
-
+       
         #region Nested Classes
 
         public partial record TvChannelBreadcrumbModel : BaseTvProgModel

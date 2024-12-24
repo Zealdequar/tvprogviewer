@@ -8,7 +8,7 @@ function fillProgrammeViewerByDay(date, channelId) {
     if (incChannelByDay == 1) {
         $("#TVProgrammeViewerGrid").jqGrid(
             {
-                url: "/TvChannel/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+                url: "/TvChannel/GetUserProgrammeOfDay?progTypeID=1&cid=" + channelId + '&tsDate=' +
                     date + "&category=" + $('#userCategory option:selected').val().split(';')[1],
                 datatype: 'json',
                 type: 'GET',
@@ -110,7 +110,7 @@ function fillProgrammeViewerByDay(date, channelId) {
         jQuery("#TVProgrammeViewerGrid").jqGrid("setGridHeight", 548);
     } else {
         $("#TVProgrammeViewerGrid").setGridParam({
-            url: "/TVChannel/GetUserProgrammeOfDay?progTypeID=" + $('#userTypeProg option:selected').val().split(';')[1] + '&cid=' + channelId + '&tsDate=' +
+            url: "/TVChannel/GetUserProgrammeOfDay?progTypeID=1&cid=" + channelId + "&tsDate=" +
                 date + "&category=" + $('#userCategory option:selected').val().split(';')[1]
         });
         $("#TVProgrammeViewerGrid").trigger("reloadGrid");

@@ -74,8 +74,6 @@
     </Content>
     <None Include="bundleconfig.json" />
     <None Include="Views\Shared\Components\TvCategorySelector\Default.cshtml" />
-    <None Include="Views\Shared\Components\TvProgProviderSelector\Default.cshtml" />
-    <None Include="Views\Shared\Components\TvTypeProgSelector\Default.cshtml" />
     <None Include="wwwroot\css\jqGrid\ui.jqgrid.css.bak" />
     <None Include="wwwroot\css\jqGrid\ui.jqgrid.css.bak2" />
     <None Include="wwwroot\images\i\add_to_favorite.psd" />

@@ -69,8 +69,7 @@ function sendStatForChannelRating() {
     let chansArr = getStorageChannels();
     $.ajax({
         url: "Home/SendStatForChannelRating?uuid=" + window.localStorage.getItem("_tv_uuid") +
-            "&progType=" + $('#userTypeProg option:selected').val().split(';')[1] +
-            "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
+            "&progType=1&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
         dataType: 'json',
         type: 'GET',
         contentType: 'application/json; charset=utf-8',
@@ -160,7 +159,7 @@ function setGrid()
     }
     var lastcell;
     $("#tblSystemChannelsGrid").jqGrid({
-        url: "Home/GetSystemChannels?tvProgProvider=" + $('#userProvider option:selected').val().split(';')[1] + "&progType=" + $('#userTypeProg option:selected').val().split(';')[1],
+        url: "Home/GetSystemChannels?tvProgProvider=1&progType=1",
         datatype: "json",
         mtype: "GET",
         success: function () { },
