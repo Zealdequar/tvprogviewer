@@ -1093,7 +1093,7 @@ namespace TvProgViewer.Services.TvProgMain
                                           _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
                                                      null),
                                           Category = pr.Category,
-                                      }).ToListAsync();
+                                      }).OrderBy(o => o.TsStartMo).ToListAsync();
             SetGenres(systemProgrammes, null);
             return systemProgrammes;
         }
@@ -1148,7 +1148,7 @@ namespace TvProgViewer.Services.TvProgMain
                                           _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
                                                      null),
                                           Category = pr.Category,
-                                      }).ToListAsync<SystemProgramme>();
+                                      }).OrderBy(o => o.TsStartMo).ToListAsync();
             SetGenres(systemProgrammes, null);
             return systemProgrammes;
         }
