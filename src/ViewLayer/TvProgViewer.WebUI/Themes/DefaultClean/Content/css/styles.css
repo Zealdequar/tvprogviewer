@@ -15,7 +15,7 @@
      -webkit-text-size-adjust: none;
 }
  body {
-     padding-top: 25px;
+     padding-top: 12px;
      padding-bottom: 12px;
      font-size: 14px;
 }
@@ -29,20 +29,8 @@
      max-width: 1280px;
 }
 
-.new-year-2025 {
-    position: absolute;
-    top: -8px;
-    left: 0;
-    background-image: url("../images/ornament-new-year-2025.png");
-    background-repeat: repeat-x;
-    background-position: top center;
-    height: 88px;
-    width: 100%;
-    z-index: 10;
-}
-
 .navbar {
-    margin: 44px 0 22px 0 !important;
+    margin: 10px 0 26px 0 !important;
     background-image: -webkit-gradient(linear, left top, left bottom, from(#3c3c3c), to(#222));
 }
 
@@ -51,7 +39,7 @@
 }
 
 .tvprog-brand {
-    padding: 2px;
+    padding: 10px 2px 2px 2px;
     height: 40px;
     background-color: transparent;
     display: flex; 
