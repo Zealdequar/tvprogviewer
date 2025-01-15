@@ -45,6 +45,10 @@ Clean-param: ycllcd
 Clean-param: ykiid
 Clean-param: yclld
 Clean-param: ypqpqel
+Clean-param: yqqqel
+Clean-param: ylcd
+Clean-param: ydqpqel
+Clean-param: ydqpqle
 Clean-param: amp
 Clean-param: ctime
 Clean-param: _ym_debug
