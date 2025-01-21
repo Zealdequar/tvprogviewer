@@ -1,4 +1,5 @@
 Clean-param: returnurl 
+Clean-param: from
 Clean-param: etext 
 Clean-param: utmylcld
 Clean-param: ReturnUrl
@@ -49,6 +50,8 @@ Clean-param: yqqqel
 Clean-param: ylcd
 Clean-param: ydqpqel
 Clean-param: ydqpqle
+Clean-param: ylclyd
+Clean-param: yklld
 Clean-param: amp
 Clean-param: ctime
 Clean-param: _ym_debug
