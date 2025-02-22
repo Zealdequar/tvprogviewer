@@ -37,6 +37,7 @@
       "TvProgViewer.Plugin.Misc.WebApi.Frontend/1.0.0": {
         "dependencies": {
           "Microsoft.Data.SqlClient": "5.1.4",
+          "System.Linq.Dynamic.Core": "1.6.0.1",
           "TvProgViewer.Web.Framework": "4.5.0",
           "linq2db": "4.3.0",
           "Microsoft.AspNetCore.Antiforgery": "8.0.0.0",
@@ -2865,11 +2866,11 @@
           "ref/net6.0/System.Linq.Async.dll": {}
         }
       },
-      "System.Linq.Dynamic.Core/1.3.7": {
+      "System.Linq.Dynamic.Core/1.6.0.1": {
         "runtime": {
           "lib/net8.0/System.Linq.Dynamic.Core.dll": {
-            "assemblyVersion": "1.3.7.0",
-            "fileVersion": "1.3.7.0"
+            "assemblyVersion": "1.6.0.1",
+            "fileVersion": "1.6.0.1"
           }
         },
         "compile": {
@@ -3678,7 +3679,7 @@
         },
         "runtime": {
           "TvProgViewer.Core.dll": {
-            "assemblyVersion": "4.5.0",
+            "assemblyVersion": "4.5.0.0",
             "fileVersion": "4.5.0.0"
           }
         },
@@ -3700,7 +3701,7 @@
         },
         "runtime": {
           "TvProgViewer.Data.dll": {
-            "assemblyVersion": "4.5.0",
+            "assemblyVersion": "4.5.0.0",
             "fileVersion": "4.5.0.0"
           }
         },
@@ -3723,7 +3724,7 @@
           "SkiaSharp": "2.88.6",
           "SkiaSharp.NativeAssets.Linux.NoDependencies": "2.88.3",
           "Svg.Skia": "0.5.18",
-          "System.Linq.Dynamic.Core": "1.3.7",
+          "System.Linq.Dynamic.Core": "1.6.0.1",
           "System.ServiceModel.Http": "4.10.0",
           "TvProgViewer.Core": "4.5.0",
           "TvProgViewer.Data": "4.5.0",
@@ -3731,7 +3732,7 @@
         },
         "runtime": {
           "TvProgViewer.Services.dll": {
-            "assemblyVersion": "4.5.0",
+            "assemblyVersion": "4.5.0.0",
             "fileVersion": "4.5.0.0"
           }
         },
@@ -3745,6 +3746,7 @@
           "LigerShark.WebOptimizer.Core": "3.0.386",
           "Microsoft.Data.SqlClient": "5.1.4",
           "NLog": "5.2.3",
+          "System.Linq.Dynamic.Core": "1.6.0.1",
           "TvProgViewer.Core": "4.5.0",
           "TvProgViewer.Data": "4.5.0",
           "TvProgViewer.Services": "4.5.0",
@@ -3754,7 +3756,7 @@
         },
         "runtime": {
           "TvProgViewer.Web.Framework.dll": {
-            "assemblyVersion": "4.5.0",
+            "assemblyVersion": "4.5.0.0",
             "fileVersion": "4.5.0.0"
           }
         },
@@ -7207,12 +7209,12 @@
       "path": "system.linq.async/6.0.1",
       "hashPath": "system.linq.async.6.0.1.nupkg.sha512"
     },
-    "System.Linq.Dynamic.Core/1.3.7": {
+    "System.Linq.Dynamic.Core/1.6.0.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-7J9oS95JCcyOtnKCr0tYUOMAj67Ee3WKal6li20vEeuQFdD7C4XuAABysp3H5dx+wmHkXuUNoxW3+U+OEsx+JQ==",
-      "path": "system.linq.dynamic.core/1.3.7",
-      "hashPath": "system.linq.dynamic.core.1.3.7.nupkg.sha512"
+      "sha512": "sha512-u1ome4HL3OS5lq2QbxIAmHv+i5uewSf2hqosGr8O5FjkseqSx4Fmt1Pn+8fjyex7/rQOOYrXk+iTkxxEgSc9yA==",
+      "path": "system.linq.dynamic.core/1.6.0.1",
+      "hashPath": "system.linq.dynamic.core.1.6.0.1.nupkg.sha512"
     },
     "System.Linq.Expressions/4.3.0": {
       "type": "package",

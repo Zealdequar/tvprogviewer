@@ -196,6 +196,7 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
     <PackageReference Include="popper.js" Version="1.16.1" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.1" />
 
     <None Update="Areas\Admin\sitemap.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
