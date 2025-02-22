@@ -54,7 +54,7 @@ namespace TvProgViewer.Web.Framework.Migrations.UpgradeTo460
             }
 
             //#3511
-            var newTvChannelsNumber = settingService.GetSetting("catalogsettings.newtvChannelsnumber");
+            var newTvChannelsNumber = settingService.GetSetting("catalogsettings.newtvchannelsnumber");
             if (newTvChannelsNumber is not null && int.TryParse(newTvChannelsNumber.Value, out var newTvChannelsPageSize))
             {
                 catalogSettings.NewTvChannelsPageSize = newTvChannelsPageSize;

@@ -158,5 +158,7 @@ namespace TvProgViewer.WebUI.Models.User
         public IList<UserAttributeModel> UserAttributes { get; set; }
 
         public IList<GdprConsentModel> GdprConsents { get; set; }
+        public string MetaKeywords { get; set; }
+        public string MetaDescription { get; set; }
     }
 }

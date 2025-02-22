@@ -508,6 +508,9 @@ namespace TvProgViewer.WebUI.Factories
                 }
             }
 
+            model.MetaKeywords = await _localizationService.GetResourceAsync("PageTitle.Register.MetaKeywords");
+            model.MetaDescription = await _localizationService.GetResourceAsync("PageTitle.Register.MetaDescription");
+
             return model;
         }
 
