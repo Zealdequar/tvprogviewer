@@ -52,6 +52,8 @@ Clean-param: ydqpqel
 Clean-param: ydqpqle
 Clean-param: ylclyd
 Clean-param: yklld
+Clean-param: yqilp
+Clean-param: ydqpqlii
 Clean-param: amp
 Clean-param: ctime
 Clean-param: _ym_debug
