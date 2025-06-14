@@ -27,11 +27,11 @@
     TvProgHtml.AppendCssFileParts("~/css/jqGrid/ui.jqgrid.css");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/i18n/grid.locale-ru.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib/jqGrid/jquery.jqgrid.min.js");
-    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/programmes.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/user-channels.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/jsTree3/jstree.js");
 }
+
 <div class="page home-page">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })

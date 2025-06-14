@@ -7,7 +7,7 @@ let chansArr = [];
 $(function () {
     $.jgrid.no_legacy_api = true;
     $.jgrid.useJSON = true;
-    
+
     chansArr = getStorageChannels();
     if (chansArr && chansArr.length > 0) {
         $(".tabChannels, .tabNow, .tabNext, .tabSearch").removeClass("active disable");

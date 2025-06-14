@@ -24,7 +24,7 @@
     TvProgHtml.AppendScriptParts(ResourceLocation.Head, "~/lib_npm/jquery/jquery.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.countryselect.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.ajaxcart.js");
-    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/public.common.min.js");
     //when jQuery migrate script logging is active you will see the log in the browser console
     if (commonSettings.JqueryMigrateScriptLoggingActive)
     {
@@ -38,6 +38,10 @@
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation/jquery.validate.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/bootstrap/js/bootstrap.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "https://unpkg.com/dayjs@1.11.13/dayjs.min.js");
+    <!-- Плагины UTC и Timezone -->
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "https://unpkg.com/dayjs@1.11.13/plugin/utc.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "https://unpkg.com/dayjs@1.11.13/plugin/timezone.js");
     
     //custom tag(s);
     if (!string.IsNullOrEmpty(seoSettings.CustomHeadTags))
@@ -99,6 +103,10 @@
         gtag('js', new Date());
 
         gtag('config', 'UA-142558739-2');
+    </script>
+    <script>
+        dayjs.extend(dayjs_plugin_utc);
+        dayjs.extend(dayjs_plugin_timezone);
     </script>
     <title>@title</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />

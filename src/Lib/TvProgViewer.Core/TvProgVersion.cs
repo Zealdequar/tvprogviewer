@@ -13,7 +13,7 @@
         /// <summary>
         /// Gets the minor store version
         /// </summary>
-        public const string MINOR_VERSION = "17";
+        public const string MINOR_VERSION = "18";
         
         /// <summary>
         /// Gets the full store version

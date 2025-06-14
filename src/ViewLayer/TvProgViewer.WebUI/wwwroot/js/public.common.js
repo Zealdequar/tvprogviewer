@@ -2,8 +2,6 @@
 ** TvProgViewer custom js functions
 */
 
-
-
 function OpenWindow(query, w, h, scroll) {
     var l = (screen.width - w) / 2;
     var t = (screen.height - h) / 2;
@@ -251,49 +249,42 @@ function imgChannel(cellvalue, options, rowObject) {
         return getImgTag(cellvalue, "Эмблема телеканала " + rowObject.ChannelName);
     return "<img src='/images/i/satellite_25.png' alt='Эмблема телеканала' height='25px' width='25px' />";
 }
+
 // Установка класса для прошедшей, текущей и будущей передачи:
 function getRowClassByDates(startDateStr, stopDateStr) {
-    var dateFrom = new Date(Date.parse(startDateStr));
-    var dateTo = new Date(Date.parse(stopDateStr));
-    // Получаем текущее время в UTC:
-    var todayUTC = new Date();
-    todayUTC = new Date(Date.UTC(
-        todayUTC.getUTCFullYear(),
-        todayUTC.getUTCMonth(),
-        todayUTC.getUTCDate(),
-        todayUTC.getUTCHours(),
-        todayUTC.getUTCMinutes(),
-        todayUTC.getUTCSeconds()
-    ));
+    const dateFrom = new Date(Date.parse(startDateStr));
+    const dateTo = new Date(Date.parse(stopDateStr));
+    dayjs.extend(dayjs_plugin_utc);
+    dayjs.extend(dayjs_plugin_timezone);   
+
+    // Преобразование времени из UTC в MSK:
+    const mskNow = dayjs().utc(new Date()).tz('Europe/Moscow');
+
     // Логика определения класса:
-    if (dateTo < todayUTC) {
+    if (dateTo < mskNow) {
         return { "class": "grayColor" };
     }
-    if (dateFrom <= todayUTC && dateTo > todayUTC) {
+    if (dateFrom <= mskNow && mskNow < dateTo) {
         return { "class": "blackColor" };
     }
-    if (dateFrom > todayUTC) {
+    if (dateFrom > mskNow) {
         return { "class": "greenColor" };
     }
     return {}; // На случай, если ни одно условие не сработало
 }
+
 // Установка класса для прошедшей и будущей передачи:
 function getRowClassBySearches(stopDateStr) {
     var stopDate = new Date(Date.parse(stopDateStr));
-    // Получаем текущее время в UTC:
-    var todayUTC = new Date();
-    todayUTC = new Date(Date.UTC(
-        todayUTC.getUTCFullYear(),
-        todayUTC.getUTCMonth(),
-        todayUTC.getUTCDate(),
-        todayUTC.getUTCHours(),
-        todayUTC.getUTCMinutes(),
-        todayUTC.getUTCSeconds()
-    ));
+    dayjs.extend(dayjs_plugin_utc);
+    dayjs.extend(dayjs_plugin_timezone);
+
+    // Преобразование времени из UTC в MSK:
+    const mskNow = dayjs().utc(new Date()).tz('Europe/Moscow');
+
     // Логика определения класса:
-    if (todayUTC > stopDate)
+    if (mskNow > stopDate)
         return { "class": "grayColor" }
     else
         return { "class": "blackColor" };
-    return {}; // На случай, если ни одно условие не сработало
 }

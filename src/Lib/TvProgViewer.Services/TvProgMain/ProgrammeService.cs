@@ -808,7 +808,7 @@ namespace TvProgViewer.Services.TvProgMain
                                     && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
                                     && (category == null || pr.Category == category)
                                     && (string.IsNullOrWhiteSpace(findTitle) || pr.Title.Contains(findTitle))
-                                    && minDateTime <= pr.TsStartMo && pr.TsStartMo <= maxDateTime
+                                    && minDateTime.ToUniversalTime() <= pr.TsStartMo && pr.TsStartMo <= maxDateTime.ToUniversalTime()
                                     && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
                                          orderby pr.TsStartMo, pr.TsStopMo
                                          select new SystemProgramme
@@ -888,7 +888,7 @@ namespace TvProgViewer.Services.TvProgMain
                                          where pr.TypeProgId == typeProgId
                                     && (category == null || pr.Category == category)
                                     && (string.IsNullOrWhiteSpace(findTitle) || pr.Title.Contains(findTitle))
-                                    && minDateTime <= pr.TsStartMo && pr.TsStartMo <= maxDateTime
+                                    && minDateTime.ToUniversalTime() <= pr.TsStartMo && pr.TsStartMo <= maxDateTime.ToUniversalTime()
                                     && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
                                          orderby pr.TsStartMo, pr.TsStopMo
                                          select new SystemProgramme
@@ -960,7 +960,16 @@ namespace TvProgViewer.Services.TvProgMain
                                          orderby pr.TsStartMo, pr.TsStopMo
                                          select new
                                          {
-                                             Programme = pr   
+                                             pr.Id,
+                                             pr.ChannelId,
+                                             pr.InternalChanId,
+                                             pr.TsStart,      
+                                             pr.TsStop,       
+                                             pr.TsStartMo,    
+                                             pr.TsStopMo,     
+                                             pr.Title,
+                                             pr.Descr,
+                                             pr.Category
                                          }).AsQueryable()
                                            .LimitAndOrderBy(page, rows, sidx, sord)
                                            .ToListAsync();
@@ -970,25 +979,27 @@ namespace TvProgViewer.Services.TvProgMain
             // Затем преобразуем время в памяти:
             var systemProgramme = programmes.Select(x => new SystemProgramme
             {
-                ProgrammesId = x.Programme.Id,
-                Cid = x.Programme.ChannelId,
-                InternalChanId = x.Programme.InternalChanId ?? 0,
-                Start = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStart, MoscowTz),
-                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStop, MoscowTz),
-                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStartMo, MoscowTz),
-                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
-                TelecastTitle = x.Programme.Title,
-                TelecastDescr = x.Programme.Descr,
-                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr) ? anonsImagePath : null,
-                Category = x.Programme.Category,
+                ProgrammesId = x.Id,
+                Cid = x.ChannelId,
+                InternalChanId = x.InternalChanId ?? 0,
+                Start = TimeZoneInfo.ConvertTimeFromUtc(x.TsStart, MoscowTz),
+                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.TsStop, MoscowTz),
+                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.TsStartMo, MoscowTz),
+                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.TsStopMo, MoscowTz),
+                TelecastTitle = x.Title,
+                TelecastDescr = x.Descr,
+                AnonsContent = !string.IsNullOrEmpty(x.Descr) ? anonsImagePath : null,
+                Category = x.Category,
                 Remain = 1
             }).ToList();
 
             systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
-            _ = Parallel.ForEach(systemProgramme, pr =>
+            foreach(var pr in systemProgramme)
             {
-                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru"))}{string.Format("({0:D2}.{1:D2})", pr.TsStartMo.Day, pr.TsStartMo.Month)}";
-            });
+                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru"))}{string.Format("({0:D2}.{1:D2})", 
+                                                                                       pr.TsStartMo.Day, pr.TsStartMo.Month)}";
+            }
+
             SetGenres(systemProgramme, null);
             systemProgramme = await FilterGenresAsync(systemProgramme, genres);
             systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
@@ -1029,7 +1040,16 @@ namespace TvProgViewer.Services.TvProgMain
                                     orderby pr.TsStartMo, pr.TsStopMo
                                     select new 
                                     {
-                                        Programme = pr
+                                        pr.Id,
+                                        pr.ChannelId,
+                                        pr.InternalChanId,
+                                        pr.TsStart,      
+                                        pr.TsStop,       
+                                        pr.TsStartMo,    
+                                        pr.TsStopMo,     
+                                        pr.Title,
+                                        pr.Descr,
+                                        pr.Category
                                     }).AsQueryable()
                                            .LimitAndOrderBy(page, rows, sidx, sord)
                                            .ToListAsync();
@@ -1038,24 +1058,25 @@ namespace TvProgViewer.Services.TvProgMain
 
             // Затем преобразуем время в памяти: 
             var systemProgramme = programmes.Select(x => new SystemProgramme { 
-                ProgrammesId = x.Programme.Id,
-                Cid = x.Programme.ChannelId,
-                InternalChanId = x.Programme.InternalChanId ?? 0,
-                Start = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStart, MoscowTz),
-                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStop, MoscowTz),
-                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStartMo, MoscowTz),
-                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
-                TelecastTitle = x.Programme.Title,
-                TelecastDescr = x.Programme.Descr,
-                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr) ? anonsImagePath : null,
-                Category = x.Programme.Category,
+                ProgrammesId = x.Id,
+                Cid = x.ChannelId,
+                InternalChanId = x.InternalChanId ?? 0,
+                Start = TimeZoneInfo.ConvertTimeFromUtc(x.TsStart, MoscowTz),
+                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.TsStop, MoscowTz),
+                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.TsStartMo, MoscowTz),
+                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.TsStopMo, MoscowTz),
+                TelecastTitle = x.Title,
+                TelecastDescr = x.Descr,
+                AnonsContent = !string.IsNullOrEmpty(x.Descr) ? anonsImagePath : null,
+                Category = x.Category,
                 Remain = 1
             }).ToList();
             systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
-            _ = Parallel.ForEach(systemProgramme, pr =>
+            foreach (var pr in systemProgramme)
             {
-                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru"))}{string.Format("({0:D2}.{1:D2})", pr.TsStartMo.Day, pr.TsStartMo.Month)}";
-            });
+                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru"))}{string.Format("({0:D2}.{1:D2})",
+                                                                                           pr.TsStartMo.Day, pr.TsStartMo.Month)}";
+            }
             SetGenres(systemProgramme, null);
             systemProgramme = await FilterGenresAsync(systemProgramme, genres);
             systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
@@ -1081,8 +1102,8 @@ namespace TvProgViewer.Services.TvProgMain
                                     from mp in chmp.DefaultIfEmpty()
                                     where pr.TypeProgId == typeProgId &&
                                           ch.Id == channelId &&
-                                          pr.TsStartMo >= tsStart &&
-                                          pr.TsStopMo <= tsEnd &&
+                                          pr.TsStartMo >= tsStart.ToUniversalTime() &&
+                                          pr.TsStopMo <= tsEnd.ToUniversalTime() &&
                                           pr.Category != ADULT_USERS &&
                                           !pr.Title.Contains(AGE_18_PLUS) &&
                                           (category == null || pr.Category == category) &&
@@ -1148,8 +1169,8 @@ namespace TvProgViewer.Services.TvProgMain
                                     from mp in chmp.DefaultIfEmpty()
                                     where pr.TypeProgId == typeProgId &&
                                           ch.Id == channelId &&
-                                          pr.TsStartMo >= tsStart &&
-                                          pr.TsStopMo <= tsEnd &&
+                                          pr.TsStartMo >= tsStart.ToUniversalTime() &&
+                                          pr.TsStopMo <= tsEnd.ToUniversalTime() &&
                                           (category == null || pr.Category == category) &&
                                           ch.Deleted == null
                                     select new
