@@ -477,12 +477,7 @@ function searchProgramme(findTitle) {
                 multiselect: true,
                 gridview: true,
                 rowattr: function (rd) {
-                    var stopDate = new Date(Date.parse(rd.Stop));
-                    var today = new Date();
-                    if (today > stopDate)
-                        return { "class": "grayColor" }
-                    else
-                        return { "class": "blackColor" };
+                    return getRowClassBySearches(rd.Stop);
                 }
             }).navGrid('#TVProgrammeSearchPager',
                 {
@@ -629,18 +624,7 @@ function fillUserByDay(date, channelId) {
                 multiselect: true,
                 gridview: true,
                 rowattr: function (rd) {
-                    var dateFrom = new Date(Date.parse(rd.Start));
-                    var dateTo = new Date(Date.parse(rd.Stop));
-                    var today = new Date();
-                    if (dateTo < today) {
-                        return { "class": "grayColor" };
-                    }
-                    if (dateFrom <= today && dateTo > today) {
-                        return { "class": "blackColor" };
-                    }
-                    if (dateFrom > today) {
-                        return { "class": "greenColor" };
-                    }
+                    return getRowClassByDates(rd.Start, rd.Stop);
                 }
             }).navGrid('#TVProgrammeByDaysPager',
                 {
@@ -749,18 +733,7 @@ function fillUserByChannels(date, channelId) {
                 multiselect: true,
                 gridview: true,
                 rowattr: function (rd) {
-                    var dateFrom = new Date(Date.parse(rd.Start));
-                    var dateTo = new Date(Date.parse(rd.Stop));
-                    var today = new Date();
-                    if (dateTo < today) {
-                        return { "class": "grayColor" };
-                    }
-                    if (dateFrom <= today && dateTo > today) {
-                        return { "class": "blackColor" };
-                    }
-                    if (dateFrom > today) {
-                        return { "class": "greenColor" };
-                    }
+                    return getRowClassByDates(rd.Start, rd.Stop);
                 }
             }).navGrid('#TVProgrammeByChannelsPager',
                 {

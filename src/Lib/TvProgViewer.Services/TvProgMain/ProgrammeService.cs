@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Spreadsheet;
 using LinqToDB;
 using Microsoft.Extensions.Azure;
@@ -230,7 +231,7 @@ namespace TvProgViewer.Services.TvProgMain
                                    join mp2 in _mediaPicRepository.Table on r.IconId equals mp2.Id into rmp2
                                    from mp2 in rmp2.DefaultIfEmpty()
                                    where r.UserId == uid && rc.UserId == uid && r.Visible && r.DeleteDate == null &&
-                                      (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.Now)
+                                      (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.UtcNow)
                                    orderby rc.OrderCol
                                    select new { r.Id, r.RatingName, mp2.Path25, mp2.FileName, rc.ContainPhrases, rc.NonContainPhrases })
                                                 .ToList()
@@ -263,7 +264,7 @@ namespace TvProgViewer.Services.TvProgMain
                                           join mp2 in _mediaPicRepository.Table on g.IconId equals mp2.Id into gmp2
                                           from mp2 in gmp2.DefaultIfEmpty()
                                           where sp.Category == g.GenreName && g.UserId == uid && gc.UserId == uid && g.Visible && g.DeleteDate == null &&
-                                           (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
+                                           (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.UtcNow)
                                           orderby gc.OrderCol
                                           select new { g.Id, g.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
                 var genreClassifAttrs = (from gc in _genreClassificatorRepository.Table
@@ -271,7 +272,7 @@ namespace TvProgViewer.Services.TvProgMain
                                          join mp2 in _mediaPicRepository.Table on g.IconId equals mp2.Id into gmp2
                                          from mp2 in gmp2.DefaultIfEmpty()
                                          where g.UserId == uid && gc.UserId == uid && g.Visible && g.DeleteDate == null &&
-                                         (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.Now)
+                                         (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.UtcNow)
                                          orderby gc.OrderCol
                                          select new { g.Id, g.GenreName, mp2.Path25, mp2.FileName, gc.ContainPhrases, gc.NonContainPhrases })
                                                 .ToList()
@@ -399,13 +400,18 @@ namespace TvProgViewer.Services.TvProgMain
         {
             var spRows = new List<SystemProgramme>();
             DateTime minDate = new DateTime(1800, 1, 1);
-            DateTime dateTime = dateTimeOffset.ToUniversalTime().DateTime;
+            DateTime dateTime = dateTimeOffset.DateTime;
             int spCount = 0;
             var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse).ToListAsync();
+            
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
+
             switch (mode)
             {
                 case 1:
+                    dateTime = dateTime.ToUniversalTime();
                     spCount = await (from pr in _programmesRepository.Table
                                          where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
                                          dateTime < pr.TsStopMo && pr.Category != ADULT_USERS &&
@@ -431,7 +437,7 @@ namespace TvProgViewer.Services.TvProgMain
                                         TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                         TelecastTitle = pr.Title,
                                         TelecastDescr = pr.Descr,
-                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? GetAnonsImagePath() : null,
+                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? anonsImagePath : null,
                                         Category = pr.Category,
                                         Remain = CalculateRemainPercentage(pr.TsStartMo, pr.TsStopMo, dateTime),
                                         OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
@@ -478,7 +484,7 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = pr3.TsStopMo, 
                                              TelecastTitle = pr3.Title,
                                              TelecastDescr = pr3.Descr,
-                                             AnonsContent = (pr3.Descr != null && pr3.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                             AnonsContent = !string.IsNullOrEmpty(pr3.Descr) ? anonsImagePath : null,
                                              Category = pr3.Category,
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr3.ChannelId).SysOrderCol
                                          }).ToListAsync();
@@ -537,7 +543,7 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
                                              Category = pr.Category,
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                          }).CountAsync(CancellationToken.None);
@@ -559,7 +565,7 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
                                              Category = pr.Category,
                                              Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
@@ -587,13 +593,18 @@ namespace TvProgViewer.Services.TvProgMain
         {
             var spRows = new List<SystemProgramme>();
             DateTime minDate = new DateTime(1800, 1, 1);
-            DateTime dateTime = dateTimeOffset.ToUniversalTime().DateTime;
+            DateTime dateTime = dateTimeOffset.DateTime;
             int spCount = 0;
             var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse).ToListAsync();
+            
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
+
             switch (mode)
             {
                 case 1:
+                    dateTime = dateTime.ToUniversalTime();
                     spCount = await (from pr in _programmesRepository.Table
                                      where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
                                      dateTime < pr.TsStopMo && (category == null || pr.Category == category) &&
@@ -615,7 +626,7 @@ namespace TvProgViewer.Services.TvProgMain
                                         TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                         TelecastTitle = pr.Title,
                                         TelecastDescr = pr.Descr,
-                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? GetAnonsImagePath() : null,
+                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? anonsImagePath : null,
                                         Category = pr.Category,
                                         Remain = CalculateRemainPercentage(pr.TsStartMo, pr.TsStopMo, dateTime),
                                         OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
@@ -657,7 +668,7 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = pr3.TsStopMo,
                                              TelecastTitle = pr3.Title,
                                              TelecastDescr = pr3.Descr,
-                                             AnonsContent = (pr3.Descr != null && pr3.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                             AnonsContent = !string.IsNullOrEmpty(pr3.Descr) ? anonsImagePath : null,
                                              Category = pr3.Category,
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr3.ChannelId).SysOrderCol
                                          }).ToListAsync();
@@ -700,7 +711,7 @@ namespace TvProgViewer.Services.TvProgMain
                     else if (dateTime > minDate)
                     {
                         spCount = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == TypeProgId && DateTime.Now < pr.TsStartMo && pr.TsStartMo <= dateTime
+                                         where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
                                          && (category == null || pr.Category == category)
                                          && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
                                          orderby pr.InternalChanId, pr.TsStart
@@ -715,13 +726,13 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = pr.TsStopMo,
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
                                              Category = pr.Category,
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                          }).CountAsync(CancellationToken.None);
                         sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
                         spRows = await (from pr in _programmesRepository.Table
-                                        where pr.TypeProgId == TypeProgId && DateTime.Now < pr.TsStartMo && pr.TsStartMo <= dateTime
+                                        where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
                                         && (category == null || pr.Category == category)
                                         && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
                                         orderby pr.InternalChanId, pr.TsStart
@@ -736,7 +747,7 @@ namespace TvProgViewer.Services.TvProgMain
                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                             TelecastTitle = pr.Title,
                                             TelecastDescr = pr.Descr,
-                                            AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                            AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
                                             Category = pr.Category,
                                             Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
@@ -789,6 +800,9 @@ namespace TvProgViewer.Services.TvProgMain
             var maxDateTime = await rawDates.AsQueryable().MaxAsync(CancellationToken.None);
             maxDateTime = maxDateTime.AddDays(1);
 
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
+
             var systemProgramme = await (from pr in _programmesRepository.Table
                                          where pr.TypeProgId == typeProgId
                                     && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
@@ -808,7 +822,7 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
                                              Category = pr.Category,
                                              Remain = 1
                                          }).ToListAsync();
@@ -867,6 +881,9 @@ namespace TvProgViewer.Services.TvProgMain
             var maxDateTime = await rawDates.AsQueryable().MaxAsync(CancellationToken.None);
             maxDateTime = maxDateTime.AddDays(1);
 
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
+
             var systemProgramme = await (from pr in _programmesRepository.Table
                                          where pr.TypeProgId == typeProgId
                                     && (category == null || pr.Category == category)
@@ -885,7 +902,7 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
+                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
                                              Category = pr.Category,
                                              Remain = 1
                                          }).ToListAsync();
@@ -894,7 +911,7 @@ namespace TvProgViewer.Services.TvProgMain
             Parallel.ForEach(systemProgramme, pr =>
             {
                 pr.DayMonth = pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru")) +
-           String.Format("({0:D2}.{1:D2})", pr.TsStartMo.Day, pr.TsStartMo.Month);
+               $"({pr.TsStartMo.Day:D2}.{pr.TsStartMo.Month:D2})";
             });
             systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
             systemProgramme = await FilterExcludeDates(systemProgramme, rawDates);
@@ -932,30 +949,40 @@ namespace TvProgViewer.Services.TvProgMain
                         && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
                              select pr.Id).CountAsync(CancellationToken.None);
             sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : TS_START_MO;
-            var systemProgramme = await (from pr in _programmesRepository.Table
+
+            // Сначала получаем данные из БД без преобразования времени:
+            var programmes = await (from pr in _programmesRepository.Table
                                          where pr.TypeProgId == typeProgId
                                     && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
                                     && (category == null || pr.Category == category)
                                     && pr.Title.Contains(findTitle)
                                     && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
                                          orderby pr.TsStartMo, pr.TsStopMo
-                                         select new SystemProgramme
+                                         select new
                                          {
-                                             ProgrammesId = pr.Id,
-                                             Cid = pr.ChannelId,
-                                             InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
-                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
-                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                             TelecastTitle = pr.Title,
-                                             TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
-                                             Category = pr.Category,
-                                             Remain = 1
+                                             Programme = pr   
                                          }).AsQueryable()
                                            .LimitAndOrderBy(page, rows, sidx, sord)
                                            .ToListAsync();
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
+
+            // Затем преобразуем время в памяти:
+            var systemProgramme = programmes.Select(x => new SystemProgramme
+            {
+                ProgrammesId = x.Programme.Id,
+                Cid = x.Programme.ChannelId,
+                InternalChanId = x.Programme.InternalChanId ?? 0,
+                Start = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStart, MoscowTz),
+                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStop, MoscowTz),
+                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStartMo, MoscowTz),
+                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
+                TelecastTitle = x.Programme.Title,
+                TelecastDescr = x.Programme.Descr,
+                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr) ? anonsImagePath : null,
+                Category = x.Programme.Category,
+                Remain = 1
+            }).ToList();
 
             systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
             _ = Parallel.ForEach(systemProgramme, pr =>
@@ -992,30 +1019,38 @@ namespace TvProgViewer.Services.TvProgMain
                         && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
                              select pr.Id).CountAsync(CancellationToken.None);
             sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : TS_START_MO;
-            var systemProgramme = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == typeProgId
-                                    && (category == null || pr.Category == category)
-                                    && pr.Title.Contains(findTitle)
-                                    && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr.TsStartMo, pr.TsStopMo
-                                         select new SystemProgramme
-                                         {
-                                             ProgrammesId = pr.Id,
-                                             Cid = pr.ChannelId,
-                                             InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
-                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
-                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                             TelecastTitle = pr.Title,
-                                             TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
-                                             Category = pr.Category,
-                                             Remain = 1
-                                         }).AsQueryable()
+
+            // Сначала получаем данные из БД без преобразования времени:
+            var programmes = await (from pr in _programmesRepository.Table
+                                    where pr.TypeProgId == typeProgId
+                               && (category == null || pr.Category == category)
+                               && pr.Title.Contains(findTitle)
+                               && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+                                    orderby pr.TsStartMo, pr.TsStopMo
+                                    select new 
+                                    {
+                                        Programme = pr
+                                    }).AsQueryable()
                                            .LimitAndOrderBy(page, rows, sidx, sord)
                                            .ToListAsync();
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
 
+            // Затем преобразуем время в памяти: 
+            var systemProgramme = programmes.Select(x => new SystemProgramme { 
+                ProgrammesId = x.Programme.Id,
+                Cid = x.Programme.ChannelId,
+                InternalChanId = x.Programme.InternalChanId ?? 0,
+                Start = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStart, MoscowTz),
+                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStop, MoscowTz),
+                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStartMo, MoscowTz),
+                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
+                TelecastTitle = x.Programme.Title,
+                TelecastDescr = x.Programme.Descr,
+                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr) ? anonsImagePath : null,
+                Category = x.Programme.Category,
+                Remain = 1
+            }).ToList();
             systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
             _ = Parallel.ForEach(systemProgramme, pr =>
             {
@@ -1061,6 +1096,9 @@ namespace TvProgViewer.Services.TvProgMain
                                   .OrderBy(x => x.Programme.TsStartMo)
                                   .ToListAsync();
 
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
+
             // Затем преобразуем время в памяти:
             var systemProgrammes = programmes.Select(x => new SystemProgramme
             {
@@ -1074,9 +1112,7 @@ namespace TvProgViewer.Services.TvProgMain
                 TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
                 TelecastTitle = x.Programme.Title,
                 TelecastDescr = x.Programme.Descr,
-                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr)
-                    ? GetAnonsImagePath()
-                    : null,
+                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr) ? anonsImagePath : null,
                 Category = x.Programme.Category,
             }).ToList();
 

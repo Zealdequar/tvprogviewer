@@ -104,12 +104,7 @@ function globalSearchProgramme(findTitle) {
                 multiselect: true,
                 gridview: true,
                 rowattr: function (rd) {
-                    var stopDate = new Date(Date.parse(rd.Stop));
-                    var today = new Date();
-                    if (today > stopDate)
-                        return { "class": "grayColor" }
-                    else
-                        return { "class": "blackColor" };
+                    return getRowClassBySearches(rd.Stop);
                 }
             }).navGrid('#TvProgrammeGlobalSearchPager',
                 {

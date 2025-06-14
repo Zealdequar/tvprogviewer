@@ -251,3 +251,49 @@ function imgChannel(cellvalue, options, rowObject) {
         return getImgTag(cellvalue, "Эмблема телеканала " + rowObject.ChannelName);
     return "<img src='/images/i/satellite_25.png' alt='Эмблема телеканала' height='25px' width='25px' />";
 }
+// Установка класса для прошедшей, текущей и будущей передачи:
+function getRowClassByDates(startDateStr, stopDateStr) {
+    var dateFrom = new Date(Date.parse(startDateStr));
+    var dateTo = new Date(Date.parse(stopDateStr));
+    // Получаем текущее время в UTC:
+    var todayUTC = new Date();
+    todayUTC = new Date(Date.UTC(
+        todayUTC.getUTCFullYear(),
+        todayUTC.getUTCMonth(),
+        todayUTC.getUTCDate(),
+        todayUTC.getUTCHours(),
+        todayUTC.getUTCMinutes(),
+        todayUTC.getUTCSeconds()
+    ));
+    // Логика определения класса:
+    if (dateTo < todayUTC) {
+        return { "class": "grayColor" };
+    }
+    if (dateFrom <= todayUTC && dateTo > todayUTC) {
+        return { "class": "blackColor" };
+    }
+    if (dateFrom > todayUTC) {
+        return { "class": "greenColor" };
+    }
+    return {}; // На случай, если ни одно условие не сработало
+}
+// Установка класса для прошедшей и будущей передачи:
+function getRowClassBySearches(stopDateStr) {
+    var stopDate = new Date(Date.parse(stopDateStr));
+    // Получаем текущее время в UTC:
+    var todayUTC = new Date();
+    todayUTC = new Date(Date.UTC(
+        todayUTC.getUTCFullYear(),
+        todayUTC.getUTCMonth(),
+        todayUTC.getUTCDate(),
+        todayUTC.getUTCHours(),
+        todayUTC.getUTCMinutes(),
+        todayUTC.getUTCSeconds()
+    ));
+    // Логика определения класса:
+    if (todayUTC > stopDate)
+        return { "class": "grayColor" }
+    else
+        return { "class": "blackColor" };
+    return {}; // На случай, если ни одно условие не сработало
+}
