@@ -281,7 +281,7 @@ function setGrids() {
 
     // Табличка затем в эфире
     $('#TVProgrammeNextGrid').jqGrid(
-     {
+        {
             url: "Home/GetSystemProgrammeAtNext?progType=1&category=" + $('#userCategory option:selected').val().split(';')[1] +
                 "&genres=" + GetGenres(".btn-genre-next.active") + "&channels=" + ((chansArr) ? chansArr.map(ch => ch.ChannelId).join(";") : ""),
             datatype: 'json',
@@ -321,16 +321,16 @@ function setGrids() {
                     key: false, name: 'Stop', index: 'Stop', sortable: true, align: "center", width: "3%", sorttype: 'datetime', formatter: "date", formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
                 },
                 {
-                    key: false, name: 'Remain', index: 'Remain', sortable: true, align: "center", width: "5%", sorttype: 'datetime', formatter: function (cellval, opts, rowObject, action) {
-                        return $.fn.fmatter.call(
-                            this,
-                            "date",
-                            new Date(cellval * 1000 - 3*60*60*1000),
-                            opts,
-                            rowObject,
-                            action);
+                    key: false, name: 'Remain', index: 'Remain', sortable: true, align: "center", width: "5%", sorttype: 'datetime', formatter: function (cellval) {
+                        // Преобразуем секунды в часы и минуты
+                        const hours = Math.floor(cellval / 3600);
+                        const minutes = Math.floor((cellval % 3600) / 60);
+
+                        // Форматируем как "ЧЧ:ММ"
+                        const hh = String(hours).padStart(2, '0');
+                        const mm = String(minutes).padStart(2, '0');
+                        return `${hh}:${mm}`;
                     }
-                    , formatoptions: { srcformat: 'ISO8601Long', newformat: 'H:i' }
                 },
                 {
                     key: false, name: 'TelecastDescr', index: 'TelecastDescr', hidden: true

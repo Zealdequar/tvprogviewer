@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TvProgViewer.Data.TvProgMain.ProgObjs;
-using TvProgViewer.Data;
-using TvProgViewer.Core.Domain.TvProgMain;
-using TvProgViewer.Core.Caching;
-using System.Globalization;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Spreadsheet;
 using LinqToDB;
-using TvProgViewer.Data.TvProgMain;
-using System.Threading;
-using DocumentFormat.OpenXml.Bibliography;
 using Microsoft.Extensions.Azure;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
+using System.Globalization;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using TvProgViewer.Core.Caching;
+using TvProgViewer.Core.Domain.TvProgMain;
+using TvProgViewer.Data;
+using TvProgViewer.Data.TvProgMain;
+using TvProgViewer.Data.TvProgMain.ProgObjs;
 
 namespace TvProgViewer.Services.TvProgMain
 {
@@ -51,7 +53,10 @@ namespace TvProgViewer.Services.TvProgMain
                                                            {"saturday", "Sat"},
                                                            {"sunday", "Sun"}
                                                        };
-
+        private static readonly TimeZoneInfo MoscowTz =
+        TimeZoneInfo.FindSystemTimeZoneById(
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+            "Russian Standard Time" : "Europe/Moscow");
         #endregion
 
         #region Конструктор
@@ -176,10 +181,10 @@ namespace TvProgViewer.Services.TvProgMain
         public virtual async Task<List<DaysItem>> GetDaysAsync(int typeProg)
         {
             ProgPeriod periodMinMax = await GetSystemProgrammePeriodAsync(typeProg);
-            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : DateTime.Now;
+            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : DateTime.UtcNow;
             tsMin = new DateTime(tsMin.Year, tsMin.Month, tsMin.Day, 5, 45, 0);
             DateTime tsMiddle = tsMin.AddDays(6);
-            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : DateTime.Now;
+            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : DateTime.UtcNow;
             DateTime dtMax = tsMax.AddDays(-1);
             tsMax = new DateTime(dtMax.Year, dtMax.Month, dtMax.Day, 5, 45, 0, Calendar.CurrentEra);
             IFormatProvider provider = CultureInfo.GetCultureInfo("ru-RU");
@@ -193,7 +198,7 @@ namespace TvProgViewer.Services.TvProgMain
                     Name = tsCurDate.ToString("dd.MM.yyyy", provider),
                     DayOfWeek = tsCurDate.DayOfWeek.ToString(),
                     IconSrc = $"./images/i/{strKey}.png",
-                    Color = (tsCurDate.Date < DateTime.Now.Date) ? GRAY_COLOR : (tsCurDate.Date == DateTime.Now.Date) ? BLACK_COLOR : GREEN_COLOR
+                    Color = (tsCurDate.Date < DateTime.UtcNow.Date) ? GRAY_COLOR : (tsCurDate.Date == DateTime.UtcNow.Date) ? BLACK_COLOR : GREEN_COLOR
                 };
                 daysList.Add(dayItem);
             }
@@ -366,6 +371,24 @@ namespace TvProgViewer.Services.TvProgMain
             return systemProgramme;
         }
         /// <summary>
+        /// Вспомогательный метод для расчета процента оставшегося времени
+        /// </summary>
+        /// <param name="startTime">Дата начала</param>
+        /// <param name="endTime">Дата завершения</param>
+        /// <param name="currentTime">Текущее время</param>
+        /// <returns>Процент</returns>
+        private static int? CalculateRemainPercentage(DateTime startTime, DateTime endTime, DateTime currentTime)
+        {
+            var totalDuration = (endTime - startTime).TotalSeconds;
+            if (totalDuration <= 0) return null;
+
+            var elapsed = (currentTime - startTime).TotalSeconds;
+            var percentage = (elapsed / totalDuration) * 100;
+
+            return (int?)percentage;
+        }
+
+        /// <summary>
         /// Выборка телепрограммы
         /// </summary>
         /// <param name="TypeProgId">Тип программы телепередач</param>
@@ -376,7 +399,7 @@ namespace TvProgViewer.Services.TvProgMain
         {
             var spRows = new List<SystemProgramme>();
             DateTime minDate = new DateTime(1800, 1, 1);
-            DateTime dateTime = dateTimeOffset.DateTime;
+            DateTime dateTime = dateTimeOffset.ToUniversalTime().DateTime;
             int spCount = 0;
             var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse).ToListAsync();
@@ -402,18 +425,15 @@ namespace TvProgViewer.Services.TvProgMain
                                         ProgrammesId = pr.Id,
                                         Cid = pr.ChannelId,
                                         InternalChanId = pr.InternalChanId ?? 0,
-                                        Start = pr.TsStart,
-                                        Stop = pr.TsStop,
-                                        TsStartMo = pr.TsStartMo,
-                                        TsStopMo = pr.TsStopMo,
+                                        Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                        Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                        TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                        TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                         TelecastTitle = pr.Title,
                                         TelecastDescr = pr.Descr,
-                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ?
-                                           _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                           _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                           null,
+                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? GetAnonsImagePath() : null,
                                         Category = pr.Category,
-                                        Remain = (int?)(Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, dateTime) * 1.0 / (Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, pr.TsStartMo) * 1.0) * 100.0),
+                                        Remain = CalculateRemainPercentage(pr.TsStartMo, pr.TsStopMo, dateTime),
                                         OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                     }).ToListAsync();
                     sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
@@ -429,7 +449,7 @@ namespace TvProgViewer.Services.TvProgMain
                     if (dateTime == minDate)
                     {
                         List<TsStopForRemain> stopAfter = await (from pr2 in _programmesRepository.Table
-                                                                 where pr2.TsStartMo <= DateTime.Now && DateTime.Now < pr2.TsStopMo && pr2.TypeProgId == TypeProgId
+                                                                 where pr2.TsStartMo <= DateTime.UtcNow && DateTime.UtcNow < pr2.TsStopMo && pr2.TypeProgId == TypeProgId
                                                                    && pr2.Category != ADULT_USERS && !pr2.Title.Contains(AGE_18_PLUS)
                                                                    && ((intListChannels.Any() && intListChannels.Contains(pr2.ChannelId)) || intListChannels.Count == 0)
                                                                  select new TsStopForRemain
@@ -437,11 +457,12 @@ namespace TvProgViewer.Services.TvProgMain
                                                                      TsStopMoAfter = pr2.TsStopMo.AddSeconds(1),
                                                                      Cid = pr2.ChannelId
                                                                  }).ToListAsync();
-                        DateTime afterTwoDays = DateTime.Now.AddDays(2);
-                        
+                        var nowUtc = DateTime.UtcNow;
+                        var afterTwoDays = nowUtc.AddDays(2);
+                                                
                         var sp2 = await (from pr3 in _programmesRepository.Table
                                          where pr3.TypeProgId == TypeProgId
-                                         && pr3.TsStartMo >= DateTime.Now && afterTwoDays > pr3.TsStopMo
+                                         && pr3.TsStartMo >= nowUtc && afterTwoDays > pr3.TsStopMo
                                          && pr3.Category != ADULT_USERS && !pr3.Title.Contains(AGE_18_PLUS)
                                          && (category == null || pr3.Category == category)
                                          && ((intListChannels.Any() && intListChannels.Contains(pr3.ChannelId)) || intListChannels.Count == 0)
@@ -454,15 +475,11 @@ namespace TvProgViewer.Services.TvProgMain
                                              Start = pr3.TsStart,
                                              Stop = pr3.TsStop,
                                              TsStartMo = pr3.TsStartMo,
-                                             TsStopMo = pr3.TsStopMo,
+                                             TsStopMo = pr3.TsStopMo, 
                                              TelecastTitle = pr3.Title,
                                              TelecastDescr = pr3.Descr,
-                                             AnonsContent = ((pr3.Descr != null && pr3.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                            null),
+                                             AnonsContent = (pr3.Descr != null && pr3.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr3.Category,
-                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr3.TsStartMo),
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr3.ChannelId).SysOrderCol
                                          }).ToListAsync();
 
@@ -484,15 +501,15 @@ namespace TvProgViewer.Services.TvProgMain
                                              ChannelName = pr.ChannelName,
                                              ChannelContent = pr.ChannelContent,
                                              InternalChanId = pr.InternalChanId,
-                                             Start = pr.Start,
-                                             Stop = pr.Stop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
+                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.Start.DateTime, MoscowTz),
+                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.Stop.DateTime, MoscowTz),
+                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.TelecastTitle,
                                              TelecastDescr = pr.TelecastDescr,
                                              AnonsContent = pr.AnonsContent,
                                              Category = pr.Category,
-                                             Remain = pr.Remain,
+                                             Remain = (int) (pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
                                              OrderCol = pr.OrderCol
                                          }).AsQueryable()
                                          .LimitAndOrderBy(page, rows, sidx, sord)
@@ -504,7 +521,7 @@ namespace TvProgViewer.Services.TvProgMain
                     else if (dateTime > minDate)
                     {
                         spCount = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == TypeProgId && DateTime.Now < pr.TsStartMo && pr.TsStartMo <= dateTime
+                                         where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
                                          && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
                                          && (category == null || pr.Category == category)
                                          && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
@@ -514,23 +531,19 @@ namespace TvProgViewer.Services.TvProgMain
                                              ProgrammesId = pr.Id,
                                              Cid = pr.ChannelId,
                                              InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = pr.TsStart,
-                                             Stop = pr.TsStop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
+                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                             null,
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr.Category,
-                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo),
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                          }).CountAsync(CancellationToken.None);
                         sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
                         spRows = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == TypeProgId && DateTime.Now < pr.TsStartMo && pr.TsStartMo <= dateTime
+                                         where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
                                          && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
                                          && (category == null || pr.Category == category)
                                          && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
@@ -540,18 +553,15 @@ namespace TvProgViewer.Services.TvProgMain
                                              ProgrammesId = pr.Id,
                                              Cid = pr.ChannelId,
                                              InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = pr.TsStart,
-                                             Stop = pr.TsStop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
+                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                             null,
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr.Category,
-                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo),
+                                             Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                          }).AsQueryable()
                                            .LimitAndOrderBy(page, rows, sidx, sord)
@@ -577,7 +587,7 @@ namespace TvProgViewer.Services.TvProgMain
         {
             var spRows = new List<SystemProgramme>();
             DateTime minDate = new DateTime(1800, 1, 1);
-            DateTime dateTime = dateTimeOffset.DateTime;
+            DateTime dateTime = dateTimeOffset.ToUniversalTime().DateTime;
             int spCount = 0;
             var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries)
                 .Select(int.Parse).ToListAsync();
@@ -599,18 +609,15 @@ namespace TvProgViewer.Services.TvProgMain
                                         ProgrammesId = pr.Id,
                                         Cid = pr.ChannelId,
                                         InternalChanId = pr.InternalChanId ?? 0,
-                                        Start = pr.TsStart,
-                                        Stop = pr.TsStop,
-                                        TsStartMo = pr.TsStartMo,
-                                        TsStopMo = pr.TsStopMo,
+                                        Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                        Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                        TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                        TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                         TelecastTitle = pr.Title,
                                         TelecastDescr = pr.Descr,
-                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ?
-                                           _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                           _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                           null,
+                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? GetAnonsImagePath() : null,
                                         Category = pr.Category,
-                                        Remain = (int?)(Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, dateTime) * 1.0 / (Sql.DateDiff(Sql.DateParts.Second, pr.TsStopMo, pr.TsStartMo) * 1.0) * 100.0),
+                                        Remain = CalculateRemainPercentage(pr.TsStartMo, pr.TsStopMo, dateTime),
                                         OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                     }).AsQueryable()
                                       .LimitAndOrderBy(page, rows, sidx, sord)
@@ -624,18 +631,18 @@ namespace TvProgViewer.Services.TvProgMain
                     if (dateTime == minDate)
                     {
                         List<TsStopForRemain> stopAfter = await (from pr2 in _programmesRepository.Table
-                                                                 where pr2.TsStartMo <= DateTime.Now && DateTime.Now < pr2.TsStopMo && pr2.TypeProgId == TypeProgId
+                                                                 where pr2.TsStartMo <= DateTime.UtcNow && DateTime.UtcNow < pr2.TsStopMo && pr2.TypeProgId == TypeProgId
                                                                     && ((intListChannels.Any() && intListChannels.Contains(pr2.ChannelId)) || intListChannels.Count == 0)
                                                                  select new TsStopForRemain
                                                                  {
                                                                      TsStopMoAfter = pr2.TsStopMo.AddSeconds(1),
                                                                      Cid = pr2.ChannelId
                                                                  }).ToListAsync();
-                        DateTime afterTwoDays = DateTime.Now.AddDays(2);
+                        DateTime afterTwoDays = DateTime.UtcNow.AddDays(2);
 
                         var sp2 = await (from pr3 in _programmesRepository.Table
                                          where pr3.TypeProgId == TypeProgId
-                                         && pr3.TsStartMo >= DateTime.Now && afterTwoDays > pr3.TsStopMo
+                                         && pr3.TsStartMo >= DateTime.UtcNow && afterTwoDays > pr3.TsStopMo
                                          && (category == null || pr3.Category == category)
                                          && ((intListChannels.Any() && intListChannels.Contains(pr3.ChannelId)) || intListChannels.Count == 0)
                                          orderby pr3.InternalChanId, pr3.TsStartMo
@@ -650,12 +657,8 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = pr3.TsStopMo,
                                              TelecastTitle = pr3.Title,
                                              TelecastDescr = pr3.Descr,
-                                             AnonsContent = ((pr3.Descr != null && pr3.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                            null),
+                                             AnonsContent = (pr3.Descr != null && pr3.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr3.Category,
-                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr3.TsStartMo),
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr3.ChannelId).SysOrderCol
                                          }).ToListAsync();
 
@@ -677,15 +680,15 @@ namespace TvProgViewer.Services.TvProgMain
                                             ChannelName = pr.ChannelName,
                                             ChannelContent = pr.ChannelContent,
                                             InternalChanId = pr.InternalChanId,
-                                            Start = pr.Start,
-                                            Stop = pr.Stop,
-                                            TsStartMo = pr.TsStartMo,
-                                            TsStopMo = pr.TsStopMo,
+                                            Start = TimeZoneInfo.ConvertTimeFromUtc(pr.Start.DateTime, MoscowTz),
+                                            Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.Stop.DateTime, MoscowTz),
+                                            TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                            TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                             TelecastTitle = pr.TelecastTitle,
                                             TelecastDescr = pr.TelecastDescr,
                                             AnonsContent = pr.AnonsContent,
                                             Category = pr.Category,
-                                            Remain = pr.Remain,
+                                            Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
                                             OrderCol = pr.OrderCol
                                         }).AsQueryable()
                                           .LimitAndOrderBy(page, rows, sidx, sord)
@@ -712,12 +715,8 @@ namespace TvProgViewer.Services.TvProgMain
                                              TsStopMo = pr.TsStopMo,
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                             null,
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr.Category,
-                                             Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo),
                                              OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                          }).CountAsync(CancellationToken.None);
                         sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
@@ -731,18 +730,15 @@ namespace TvProgViewer.Services.TvProgMain
                                             ProgrammesId = pr.Id,
                                             Cid = pr.ChannelId,
                                             InternalChanId = pr.InternalChanId ?? 0,
-                                            Start = pr.TsStart,
-                                            Stop = pr.TsStop,
-                                            TsStartMo = pr.TsStartMo,
-                                            TsStopMo = pr.TsStopMo,
+                                            Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                            Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                            TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                            TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                             TelecastTitle = pr.Title,
                                             TelecastDescr = pr.Descr,
-                                            AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
-                                               _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                               _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                            null,
+                                            AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                             Category = pr.Category,
-                                            Remain = Sql.DateDiff(Sql.DateParts.Second, DateTime.Now, pr.TsStartMo),
+                                            Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
                                         }).AsQueryable()
                                           .LimitAndOrderBy(page, rows, sidx, sord)
@@ -806,15 +802,13 @@ namespace TvProgViewer.Services.TvProgMain
                                              ProgrammesId = pr.Id,
                                              Cid = pr.ChannelId,
                                              InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = pr.TsStart,
-                                             Stop = pr.TsStop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
+                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName : null),
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr.Category,
                                              Remain = 1
                                          }).ToListAsync();
@@ -885,15 +879,13 @@ namespace TvProgViewer.Services.TvProgMain
                                              ProgrammesId = pr.Id,
                                              Cid = pr.ChannelId,
                                              InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = pr.TsStart,
-                                             Stop = pr.TsStop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
+                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName : null),
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr.Category,
                                              Remain = 1
                                          }).ToListAsync();
@@ -952,15 +944,13 @@ namespace TvProgViewer.Services.TvProgMain
                                              ProgrammesId = pr.Id,
                                              Cid = pr.ChannelId,
                                              InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = pr.TsStart,
-                                             Stop = pr.TsStop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
+                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName : null,
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr.Category,
                                              Remain = 1
                                          }).AsQueryable()
@@ -1013,15 +1003,13 @@ namespace TvProgViewer.Services.TvProgMain
                                              ProgrammesId = pr.Id,
                                              Cid = pr.ChannelId,
                                              InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = pr.TsStart,
-                                             Stop = pr.TsStop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
+                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
                                              TelecastTitle = pr.Title,
                                              TelecastDescr = pr.Descr,
-                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ?
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                                _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName : null,
+                                             AnonsContent = (pr.Descr != null && pr.Descr != string.Empty) ? GetAnonsImagePath() : null,
                                              Category = pr.Category,
                                              Remain = 1
                                          }).AsQueryable()
@@ -1051,51 +1039,59 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="category">Категория</param>
         public virtual async Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category)
         {
-            List<SystemProgramme> systemProgrammes = [];
-            /*int spCount = 0;
-            spCount = await (from pr in _programmesRepository.Table
-                             join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
-                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
-                             from mp in chmp.DefaultIfEmpty()
-                             where pr.TypeProgId == typeProgId &&
-                             ch.Id == channelId &&
-                             pr.TsStartMo >= tsStart &&
-                             pr.TsStopMo <= tsEnd &&
-                             pr.Category != "Для взрослых" && !pr.Title.Contains("(18+)")
-                             && ch.Deleted == null
-                             select pr.Id).CountAsync(CancellationToken.None);*/
+            // Сначала получаем данные из БД без преобразования времени:
+            var programmes = await (from pr in _programmesRepository.Table
+                                    join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
+                                    join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                                    from mp in chmp.DefaultIfEmpty()
+                                    where pr.TypeProgId == typeProgId &&
+                                          ch.Id == channelId &&
+                                          pr.TsStartMo >= tsStart &&
+                                          pr.TsStopMo <= tsEnd &&
+                                          pr.Category != ADULT_USERS &&
+                                          !pr.Title.Contains(AGE_18_PLUS) &&
+                                          (category == null || pr.Category == category) &&
+                                          ch.Deleted == null
+                                    select new
+                                    {
+                                        Programme = pr,
+                                        Channel = ch,
+                                        Icon = mp
+                                    })
+                                  .OrderBy(x => x.Programme.TsStartMo)
+                                  .ToListAsync();
 
-            systemProgrammes = await (from pr in _programmesRepository.Table
-                                      join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
-                                      join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
-                                      from mp in chmp.DefaultIfEmpty()
-                                      where pr.TypeProgId == typeProgId &&
-                                      ch.Id == channelId &&
-                                      pr.TsStartMo >= tsStart &&
-                                      pr.TsStopMo <= tsEnd &&
-                                      pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
-                                      && (category == null || pr.Category == category)
-                                      && ch.Deleted == null
-                                      select new SystemProgramme
-                                      {
-                                          ProgrammesId = pr.Id,
-                                          Cid = pr.ChannelId,
-                                          ChannelName = ch.TitleChannel,
-                                          InternalChanId = pr.InternalChanId,
-                                          Start = pr.TsStart,
-                                          Stop = pr.TsStop,
-                                          TsStartMo = pr.TsStartMo,
-                                          TsStopMo = pr.TsStopMo,
-                                          TelecastTitle = pr.Title,
-                                          TelecastDescr = pr.Descr,
-                                          AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                          _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                          _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                                     null),
-                                          Category = pr.Category,
-                                      }).OrderBy(o => o.TsStartMo).ToListAsync();
+            // Затем преобразуем время в памяти:
+            var systemProgrammes = programmes.Select(x => new SystemProgramme
+            {
+                ProgrammesId = x.Programme.Id,
+                Cid = x.Programme.ChannelId,
+                ChannelName = x.Channel.TitleChannel,
+                InternalChanId = x.Programme.InternalChanId,
+                Start = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStart, MoscowTz),
+                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStop, MoscowTz),
+                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStartMo, MoscowTz),
+                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
+                TelecastTitle = x.Programme.Title,
+                TelecastDescr = x.Programme.Descr,
+                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr)
+                    ? GetAnonsImagePath()
+                    : null,
+                Category = x.Programme.Category,
+            }).ToList();
+
             SetGenres(systemProgrammes, null);
             return systemProgrammes;
+        }
+
+        /// <summary>
+        /// Получение картинки анонса
+        /// </summary>
+        /// <returns></returns>
+        private string GetAnonsImagePath()
+        {
+            var image = _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG);
+            return image != null ? image.Path25 + image.FileName : null;
         }
 
         /// <summary>
@@ -1109,49 +1105,50 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="category">Категория</param>
         public virtual async Task<List<SystemProgramme>> GetUserAdultProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category)
         {
-            List<SystemProgramme> systemProgrammes = [];
-            /*int spCount = 0;
-            spCount = await (from pr in _programmesRepository.Table
-                             join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
-                             join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
-                             from mp in chmp.DefaultIfEmpty()
-                             where pr.TypeProgId == typeProgId &&
-                             ch.Id == channelId &&
-                             pr.TsStartMo >= tsStart &&
-                             pr.TsStopMo <= tsEnd &&
-                             && ch.Deleted == null
-                             select pr.Id).CountAsync(CancellationToken.None);*/
+            // Сначала получаем данные из БД без преобразования времени:
+            var programmes = await (from pr in _programmesRepository.Table
+                                    join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
+                                    join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                                    from mp in chmp.DefaultIfEmpty()
+                                    where pr.TypeProgId == typeProgId &&
+                                          ch.Id == channelId &&
+                                          pr.TsStartMo >= tsStart &&
+                                          pr.TsStopMo <= tsEnd &&
+                                          (category == null || pr.Category == category) &&
+                                          ch.Deleted == null
+                                    select new
+                                    {
+                                        Programme = pr,
+                                        Channel = ch,
+                                        HasDescription = !string.IsNullOrEmpty(pr.Descr)
+                                    })
+                                  .OrderBy(x => x.Programme.TsStartMo)
+                                  .ToListAsync();
 
-            systemProgrammes = await (from pr in _programmesRepository.Table
-                                      join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
-                                      join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
-                                      from mp in chmp.DefaultIfEmpty()
-                                      where pr.TypeProgId == typeProgId &&
-                                      ch.Id == channelId &&
-                                      pr.TsStartMo >= tsStart &&
-                                      pr.TsStopMo <= tsEnd &&
-                                      ch.Deleted == null
-                                      select new SystemProgramme
-                                      {
-                                          ProgrammesId = pr.Id,
-                                          Cid = pr.ChannelId,
-                                          ChannelName = ch.TitleChannel,
-                                          InternalChanId = pr.InternalChanId,
-                                          Start = pr.TsStart,
-                                          Stop = pr.TsStop,
-                                          TsStartMo = pr.TsStartMo,
-                                          TsStopMo = pr.TsStopMo,
-                                          TelecastTitle = pr.Title,
-                                          TelecastDescr = pr.Descr,
-                                          AnonsContent = ((pr.Descr != null && pr.Descr != string.Empty) ?
-                                          _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).Path25 +
-                                          _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG).FileName :
-                                                     null),
-                                          Category = pr.Category,
-                                      }).OrderBy(o => o.TsStartMo).ToListAsync();
+            // Получаем путь к изображению анонса один раз:
+            var anonsImagePath = GetAnonsImagePath();
+
+            // Затем преобразуем время в памяти:
+            var systemProgrammes = programmes.Select(x => new SystemProgramme
+            {
+                ProgrammesId = x.Programme.Id,
+                Cid = x.Programme.ChannelId,
+                ChannelName = x.Channel.TitleChannel,
+                InternalChanId = x.Programme.InternalChanId,
+                Start = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStart, MoscowTz),
+                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStop, MoscowTz),
+                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStartMo, MoscowTz),
+                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
+                TelecastTitle = x.Programme.Title,
+                TelecastDescr = x.Programme.Descr,
+                AnonsContent = x.HasDescription ? anonsImagePath : null,
+                Category = x.Programme.Category,
+            }).ToList();
+
             SetGenres(systemProgrammes, null);
             return systemProgrammes;
         }
+
 
 
         /// <summary>
@@ -1166,8 +1163,8 @@ namespace TvProgViewer.Services.TvProgMain
                                                                select new GdProgramme
                                                                {
                                                                    InternalChanId = pr.InternalChanId,
-                                                                   TsStartMo = pr.TsStartMo.AddHours(-3),
-                                                                   TsStopMo = pr.TsStopMo.AddHours(-3),
+                                                                   TsStartMo = pr.TsStartMo,
+                                                                   TsStopMo = pr.TsStopMo,
                                                                    TelecastTitle = pr.Title,
                                                                    Category = pr.Category
                                                                }).LimitAndOrderBy(page, rows, "InternalChanId", "asc").ToListAsync();

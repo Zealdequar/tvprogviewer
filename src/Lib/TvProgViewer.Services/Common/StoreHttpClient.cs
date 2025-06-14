@@ -156,8 +156,11 @@ namespace TvProgViewer.Services.Common
             int hour = int.Parse(strDateTime.Substring(8, 2));
             int minute = int.Parse(strDateTime.Substring(10, 2));
             int second = int.Parse(strDateTime.Substring(12, 2));
-            DateTime tsDateTime = new DateTime(year, month, day, hour, minute, second);
-            return tsDateTime;
+            int hourOffset = int.Parse(strDateTime.Substring(15, 3));
+            int minuteOffset = int.Parse(strDateTime.Substring(18, 2));
+            DateTimeOffset tsDateTime = new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(hourOffset, minuteOffset, 0));
+            DateTimeOffset dateTimeUtc =  tsDateTime.ToUniversalTime();
+            return dateTimeUtc.UtcDateTime;
         }
 
         /// <summary>
