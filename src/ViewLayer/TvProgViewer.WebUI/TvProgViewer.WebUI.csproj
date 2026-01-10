@@ -274,6 +274,7 @@
       
       More details here: https://docs.microsoft.com/en-us/dotnet/standard/garbage-collection/fundamentals#concurrent-garbage-collection-->
     <ConcurrentGarbageCollection>false</ConcurrentGarbageCollection>
+    <UserSecretsId>5fac193d-5e04-420c-b1f3-5fb3ec14e18c</UserSecretsId>
   </PropertyGroup>
 
 </Project>

@@ -14,10 +14,9 @@ using LinqToDB;
 using System.Diagnostics;
 using TvProgViewer.Services.TvProgMain;
 using System.Xml.XPath;
-using TVProgViewer.Services.TvProgMain;
 using System.Data;
-using MimeKit.Cryptography;
-using DocumentFormat.OpenXml.Bibliography;
+using System.Collections.Concurrent;
+using TVProgViewer.Services.TvProgMain;
 
 namespace TvProgViewer.Services.Common
 {
@@ -35,14 +34,18 @@ namespace TvProgViewer.Services.Common
         private readonly IRepository<Channels> _channelsRepository;
         private readonly IRepository<Programmes> _programmesRepository;
         private readonly IRepository<UpdateProgLog> _updateProgLogRepository;
-        private static Logger _logger = LogManager.GetLogger("dbupdate");
-        private static Dictionary<string, string> _dictChanCodeOld = new Dictionary<string, string>();
-        private static Dictionary<string, string> _dictChanCodeNew = new Dictionary<string, string>();
-        private int _channelQty = 0;
-        private int _newChannelQty = 0;
-        private int _programmeQty = 0;
-        private DateTime _minProgDate = DateTime.MinValue;
-        private DateTime _maxProgDate = DateTime.MaxValue;
+        private static readonly Logger _logger = LogManager.GetLogger("dbupdate");
+        // Используем ConcurrentDictionary для потокобезопасности
+        private static readonly ConcurrentDictionary<string, string> _dictChanCodeOld = new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> _dictChanCodeNew = new ConcurrentDictionary<string, string>();
+        
+        // Константы для магических чисел
+        private const int WebResourceIdForSpecialProcessing = 6;
+        private const int WebResourceIdForOldChannelMapping = 1;
+        private const int WebResourceIdForNewChannelMapping = 2;
+        private const int TypeProgIdToSkip = 2;
+        private const int DaysToKeepProgrammes = 14;
+        private const int DaysToDeleteOldProgrammes = 21;
 
         #endregion
 
@@ -145,22 +148,36 @@ namespace TvProgViewer.Services.Common
         /// <summary>
         /// Преобразование строки к дате и времени
         /// </summary>
-        /// <param name="rawDateTime">Сырая строка</param>
-        /// <returns>Дата и время</returns>
+        /// <param name="rawDateTime">Сырая строка в формате yyyyMMddHHmmss +HHMM</param>
+        /// <returns>Дата и время в UTC</returns>
+        /// <exception cref="ArgumentException">Если формат строки неверный</exception>
         public DateTime GetDateTimeValue(string rawDateTime)
         {
-            string strDateTime = rawDateTime;
-            int year = int.Parse(strDateTime.Substring(0, 4));
-            int month = int.Parse(strDateTime.Substring(4, 2));
-            int day = int.Parse(strDateTime.Substring(6, 2));
-            int hour = int.Parse(strDateTime.Substring(8, 2));
-            int minute = int.Parse(strDateTime.Substring(10, 2));
-            int second = int.Parse(strDateTime.Substring(12, 2));
-            int hourOffset = int.Parse(strDateTime.Substring(15, 3));
-            int minuteOffset = int.Parse(strDateTime.Substring(18, 2));
-            DateTimeOffset tsDateTime = new DateTimeOffset(year, month, day, hour, minute, second, new TimeSpan(hourOffset, minuteOffset, 0));
-            DateTimeOffset dateTimeUtc =  tsDateTime.ToUniversalTime();
-            return dateTimeUtc.UtcDateTime;
+            if (string.IsNullOrWhiteSpace(rawDateTime))
+                throw new ArgumentException("Строка даты и времени не может быть пустой", nameof(rawDateTime));
+
+            if (rawDateTime.Length < 20)
+                throw new ArgumentException($"Неверный формат строки даты. Ожидается минимум 20 символов, получено: {rawDateTime.Length}", nameof(rawDateTime));
+
+            try
+            {
+                int year = int.Parse(rawDateTime.Substring(0, 4));
+                int month = int.Parse(rawDateTime.Substring(4, 2));
+                int day = int.Parse(rawDateTime.Substring(6, 2));
+                int hour = int.Parse(rawDateTime.Substring(8, 2));
+                int minute = int.Parse(rawDateTime.Substring(10, 2));
+                int second = int.Parse(rawDateTime.Substring(12, 2));
+                int hourOffset = int.Parse(rawDateTime.Substring(15, 3));
+                int minuteOffset = int.Parse(rawDateTime.Substring(18, 2));
+                
+                var timeOffset = new TimeSpan(hourOffset, minuteOffset, 0);
+                var dateTimeOffset = new DateTimeOffset(year, month, day, hour, minute, second, timeOffset);
+                return dateTimeOffset.ToUniversalTime().UtcDateTime;
+            }
+            catch (Exception ex) when (ex is ArgumentOutOfRangeException || ex is FormatException || ex is ArgumentException)
+            {
+                throw new ArgumentException($"Неверный формат строки даты: '{rawDateTime}'", nameof(rawDateTime), ex);
+            }
         }
 
         /// <summary>
@@ -172,287 +189,483 @@ namespace TvProgViewer.Services.Common
         {
             return await _typeProgRepository.GetByIdAsync(typeProgId, cache => default);
         }
-
-        /// <summary>
-        /// Запуск хранимой процедуры обработки и обновления телепрограммы
-        /// </summary>
-        /// <param name="webResourceId">Идентификатор веб-ресурса</param>
-        /// <param name="tvProgXml">Xml-формат телепрограммы</param>
-        /// <returns></returns>
-//        public virtual async Task DelTwoWeekAgo(long irron)
-//        {
-//            await _dataProviderManager.DataProvider.QueryProcAsync<int>("sp_del_two_week_ago",
-//               new DataParameter[] {
-//                new DataParameter("@irron", irron, DataType.Int64)
-//                });
-//        }
-
-        /// <summary>
-        /// Обновление данных о пиктограмме
-        /// </summary>
-        /// <param name="channelId">Идентификатор канала</param>
-        /// <param name="iconWebSrc">Адрес пиктограммы в интернете</param>
-        /// <param name="channelIconName">Название пиктограммы</param>
-        /// <param name="contentType">Тип содержимого (ContentType) пиктограммы</param>
-        /// <param name="contentCoding">Кодировка пиктограммы</param>
-        /// <param name="channelOrigIcon">Оригинальная пиктограмма</param>
-        public virtual async Task UpdateIconAsync(int channelId, string iconWebSrc, string channelIconName, string contentType, string contentCoding
-            , byte[] channelOrigIcon)
-        {
-            await _dataProviderManager.DataProvider.ExecuteNonQueryAsync("spUdtChannelImage",
-                new DataParameter[] {
-                    new DataParameter("@CID", channelId, DataType.Int32),
-                    new DataParameter("@IconWebSrc", iconWebSrc, DataType.NVarChar),
-                    new DataParameter("@ChannelIconName", channelIconName, DataType.NVarChar),
-                    new DataParameter("@ContentType", contentType, DataType.NVarChar),
-                    new DataParameter("@ContentCoding", contentCoding, DataType.NVarChar),
-                    new DataParameter("@ChannelOrigIcon", channelOrigIcon, DataType.VarBinary),
-                    new DataParameter("@IsSystem", 1, DataType.Boolean),
-                    new DataParameter("@ErrCode", DataType.NVarChar){Direction = System.Data.ParameterDirection.Output}
-                });
-        }
-
+               
         /// <summary>
         /// Обновление телеканалов программы передач
         /// </summary>
         public virtual async Task UpdateTvProgrammes()
         {
             _logger.Info(" =========== Начало обновления ============ ");
-            Stopwatch sw = Stopwatch.StartNew();
-            IList<WebResources> webResources = await GetAllWebResourcesAsync();
-            IList<TypeProg> typeProgs = await GetAllTypeProgAsync();
-            _logger.Trace("Ресурсы из базы успешно получены: {0}", string.Join(";", webResources.ToList().Select(
-                   wr => string.Format("WRID = '{0}', FileName = '{1}', ResourceName = '{2}', ResourceUrl ='{3}'",
-                   wr.Id, wr.FileName, wr.ResourceName, wr.ResourceUrl))));
-
-            foreach (WebResources webResource in webResources)
+            var sw = Stopwatch.StartNew();
+            
+            try
             {
-                if (webResource.TypeProgId == 2)
-                    continue;
-                _channelQty = 0;
-                _newChannelQty = 0;
-                try
+                var webResources = await GetAllWebResourcesAsync();
+                var typeProgs = await GetAllTypeProgAsync();
+                
+                _logger.Trace("Ресурсы из базы успешно получены: {0}", 
+                    string.Join(";", webResources.Select(wr => 
+                        $"WRID = '{wr.Id}', FileName = '{wr.FileName}', ResourceName = '{wr.ResourceName}', ResourceUrl ='{wr.ResourceUrl}'")));
+
+                foreach (var webResource in webResources)
                 {
-                    _logger.Info("Обновление для ID='{0}'", webResource.Id);
-                    Stopwatch swLoc = Stopwatch.StartNew();
-                    string fileName = webResource.FileName;
-                    WebPart.GetWebTVProgramm(new Uri(webResource.ResourceUrl), ref fileName);
-                    webResource.FileName = fileName;
-                    XDocument xDoc = new XDocument();
-                    var sourceType = (await GetTypeProgByIdAsync(webResource.TypeProgId))
-                        .TypeName == "Формат XMLTV" ? Enums.TypeProg.XMLTV : Enums.TypeProg.InterTV;
-                    if (sourceType == Enums.TypeProg.XMLTV)
+                    if (webResource.TypeProgId == TypeProgIdToSkip)
+                        continue;
+
+                    await ProcessWebResourceAsync(webResource, typeProgs);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Критическая ошибка при обновлении телепрограммы");
+                throw;
+            }
+            finally
+            {
+                sw.Stop();
+                _logger.Info(" ========== Обновление завершено ========== (Затрачено: {0} сек.)", sw.ElapsedMilliseconds / 1000.0);
+            }
+        }
+
+        /// <summary>
+        /// Обработка одного веб-ресурса
+        /// </summary>
+        private async Task ProcessWebResourceAsync(WebResources webResource, IList<TypeProg> typeProgs)
+        {
+            var swLoc = Stopwatch.StartNew();
+            int channelQty = 0;
+            int newChannelQty = 0;
+            int programmeQty = 0;
+            DateTime minProgDate = DateTime.MinValue;
+            DateTime maxProgDate = DateTime.MaxValue;
+
+            try
+            {
+                _logger.Info("Обновление для ID='{0}'", webResource.Id);
+                
+                var xDoc = await LoadAndPrepareXmlDocumentAsync(webResource);
+                if (xDoc == null)
+                {
+                    _logger.Warn("Не удалось загрузить XML документ для ресурса ID='{0}'", webResource.Id);
+                    return;
+                }
+
+                var sourceType = await GetSourceTypeAsync(webResource.TypeProgId);
+                if (sourceType == Enums.TypeProg.XMLTV)
+                {
+                    ProcessChannelMappings(xDoc, webResource.Id);
+                }
+
+                _logger.Info("Каналы и тв-программа ID='{0}' подготовлены к запуску обработки", webResource.Id);
+                
+                var tsUpdateStart = DateTime.Now;
+                var channels = await GetAllChannelsAsync();
+                
+                // Обработка каналов
+                (channelQty, newChannelQty) = await ProcessChannelsAsync(xDoc, webResource, typeProgs, channels);
+                
+                // Обработка программы передач
+                (programmeQty, minProgDate, maxProgDate) = await ProcessProgrammesAsync(xDoc, webResource, typeProgs, channels);
+                
+                // Очистка дубликатов и старых записей
+                await CleanupProgrammesAsync();
+                
+                // Сохранение отчёта
+                await SaveUpdateLogAsync(webResource.Id, tsUpdateStart, channelQty, newChannelQty, programmeQty, minProgDate, maxProgDate);
+                
+                swLoc.Stop();
+                _logger.Info("Обновление для ID='{0}' успешно завершено. Затрачено '{1}' сек.", 
+                    webResource.Id, swLoc.ElapsedMilliseconds / 1000.0);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Обновление тв-программы для ресурса ID='{0}' прошло неуспешно", webResource.Id);
+                await SaveErrorLogAsync(webResource.Id, ex);
+            }
+        }
+
+        /// <summary>
+        /// Загрузка и подготовка XML документа
+        /// </summary>
+        private async Task<XDocument> LoadAndPrepareXmlDocumentAsync(WebResources webResource)
+        {
+            string fileName = webResource.FileName;
+            var (success, fullFileName) = await WebPart.GetWebTVProgramm(new Uri(webResource.ResourceUrl), fileName);
+            
+            if (!success)
+            {
+                _logger.Error("Не удалось загрузить телепрограмму для ресурса ID='{0}'", webResource.Id);
+                return null;
+            }
+            
+            webResource.FileName = fullFileName;
+            fileName = fullFileName;
+
+            // Специальная обработка для определённого ресурса
+            if (webResource.Id == WebResourceIdForSpecialProcessing)
+            {
+                await CleanupSpecialResourceFileAsync(fileName);
+            }
+
+            var xDoc = XDocument.Load(fileName, LoadOptions.SetLineInfo);
+            return WebPart.ReformatXDoc(xDoc);
+        }
+
+        /// <summary>
+        /// Очистка специального файла ресурса от нежелательных строк
+        /// </summary>
+        private async Task CleanupSpecialResourceFileAsync(string fileName)
+        {
+            string tempFile = Path.GetTempFileName();
+            const string unwantedString = "}{отт@бь)ч";
+
+            try
+            {
+                using (var streamReader = new StreamReader(fileName))
+                using (var streamWriter = new StreamWriter(tempFile))
+                {
+                    string line;
+                    while ((line = await streamReader.ReadLineAsync()) != null)
                     {
-                        if (webResource.Id == 6)
-                        {
-                            string tempFile = Path.GetTempFileName();
+                        if (!line.Contains(unwantedString))
+                            await streamWriter.WriteLineAsync(line);
+                    }
+                }
 
-                            using (var streamReader = new StreamReader(webResource.FileName))
-                            using (var streamWriter = new StreamWriter(tempFile))
-                            {
-                                string line;
+                File.Delete(fileName);
+                File.Move(tempFile, fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Ошибка при очистке файла ресурса: {0}", fileName);
+                if (File.Exists(tempFile))
+                    File.Delete(tempFile);
+                throw;
+            }
+        }
 
-                                while ((line = streamReader.ReadLine()) != null)
-                                {
-                                    if (!line.Contains("}{отт@бь)ч"))
-                                        streamWriter.WriteLine(line);
-                                }
-                            }
+        /// <summary>
+        /// Получение типа источника программы
+        /// </summary>
+        private async Task<Enums.TypeProg> GetSourceTypeAsync(int typeProgId)
+        {
+            var typeProg = await GetTypeProgByIdAsync(typeProgId);
+            return typeProg?.TypeName == "Формат XMLTV" ? Enums.TypeProg.XMLTV : Enums.TypeProg.InterTV;
+        }
 
-                            File.Delete(webResource.FileName);
-                            File.Move(tempFile, webResource.FileName);
-                        }
-
-                        xDoc = XDocument.Load(webResource.FileName, LoadOptions.SetLineInfo);
-                        xDoc = WebPart.ReformatXDoc(xDoc);
-                        if (webResource.Id == 1)
-                        {
-                            foreach (XElement xChan in xDoc.XPathSelectElements("tv/channel"))
-                            {
-                                string id = xChan.Attribute("id").Value;
-                                _dictChanCodeOld[xChan.Element("display-name").Value] = id;
-                            }
-                        }
-                        else if (webResource.Id == 2)
-                        {
-                            foreach (XElement xChan in xDoc.XPathSelectElements("tv/channel"))
-                            {
-                                string id = xChan.Attribute("id").Value;
-                                _dictChanCodeNew[xChan.Element("display-name").Value] = xChan.Attribute("id").Value;
-                            }
-                        }
-                    }                   
-
-                    _logger.Info("Каналы и тв-программа ID='{0}' подготовлены к запуску обработки", webResource.Id);
-                    // Сбор статистики, поиск и загрузка новых телеканалов:
-                    var tsUpdateStart = DateTime.Now;
-                    IEnumerable<XElement> docChannels = xDoc.XPathSelectElements("tv/channel");
-                    _channelQty = docChannels.Count();
-                    IEnumerable<XAttribute> internalIds = docChannels.Attributes("id");
-                    IList<Channels> channels = await GetAllChannelsAsync();
-                    IEnumerable<int> difference = internalIds.Select(attr => int.Parse(attr.Value))
-                         .Except(channels.Where(q => q.Deleted is null).Select(x => x.InternalId ?? 1));
-                    _newChannelQty = difference.Count();
-                    int tvProgProviderId = typeProgs.FirstOrDefault(s => s.Id == webResource.TypeProgId).TvProgProviderId;
-                    IList<Channels> channelsToInsert = new List<Channels>();
-                    // Вставка новых телеканалов:
-                    foreach (int newInternalId in difference)
+        /// <summary>
+        /// Обработка маппингов каналов
+        /// </summary>
+        private void ProcessChannelMappings(XDocument xDoc, long webResourceId)
+        {
+            var channels = xDoc.XPathSelectElements("tv/channel");
+            
+            if (webResourceId == WebResourceIdForOldChannelMapping)
+            {
+                foreach (var xChan in channels)
+                {
+                    var id = xChan.Attribute("id")?.Value;
+                    var displayName = xChan.Element("display-name")?.Value;
+                    if (!string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(displayName))
                     {
-                        XElement xChannel = xDoc.XPathSelectElements("tv/channel").FirstOrDefault(x => x.Attribute("id") != null && (int)x.Attribute("id") == newInternalId);
+                        _dictChanCodeOld.TryAdd(displayName, id);
+                    }
+                }
+            }
+            else if (webResourceId == WebResourceIdForNewChannelMapping)
+            {
+                foreach (var xChan in channels)
+                {
+                    var id = xChan.Attribute("id")?.Value;
+                    var displayName = xChan.Element("display-name")?.Value;
+                    if (!string.IsNullOrWhiteSpace(id) && !string.IsNullOrWhiteSpace(displayName))
+                    {
+                        _dictChanCodeNew.TryAdd(displayName, id);
+                    }
+                }
+            }
+        }
 
+        /// <summary>
+        /// Обработка каналов
+        /// </summary>
+        private async Task<(int channelQty, int newChannelQty)> ProcessChannelsAsync(
+            XDocument xDoc, WebResources webResource, IList<TypeProg> typeProgs, IList<Channels> existingChannels)
+        {
+            var docChannels = xDoc.XPathSelectElements("tv/channel").ToList();
+            var channelQty = docChannels.Count;
+            
+            var internalIds = docChannels
+                .Select(c => c.Attribute("id")?.Value)
+                .Where(id => !string.IsNullOrWhiteSpace(id) && int.TryParse(id, out _))
+                .Select(int.Parse)
+                .ToList();
+            
+            var existingInternalIds = existingChannels
+                .Where(c => c.Deleted == null && c.InternalId.HasValue)
+                .Select(c => c.InternalId.Value)
+                .ToHashSet();
+            
+            var newInternalIds = internalIds.Except(existingInternalIds).ToList();
+            var newChannelQty = newInternalIds.Count;
+            
+            if (newChannelQty > 0)
+            {
+                var typeProg = typeProgs.FirstOrDefault(s => s.Id == webResource.TypeProgId);
+                if (typeProg == null)
+                {
+                    _logger.Warn("Тип программы не найден для TypeProgId={0}", webResource.TypeProgId);
+                    return (channelQty, 0);
+                }
+                
+                var channelsToInsert = new List<Channels>();
+                foreach (var newInternalId in newInternalIds)
+                {
+                    var xChannel = docChannels.FirstOrDefault(x => 
+                        x.Attribute("id")?.Value == newInternalId.ToString());
+                    
+                    if (xChannel != null)
+                    {
+                        var displayName = xChannel.Element("display-name")?.Value ?? $"Канал {newInternalId}";
                         channelsToInsert.Add(new Channels
                         {
-                            TvProgProviderId = tvProgProviderId,
+                            TvProgProviderId = typeProg.TvProgProviderId,
                             InternalId = newInternalId,
                             IconId = null,
                             CreateDate = DateTime.Now,
-                            TitleChannel = xChannel.Element("display-name").Value,
+                            TitleChannel = displayName,
                             IconWebSrc = null,
                             Deleted = null,
                             SysOrderCol = 1000000000
                         });
                     }
-                    if (channelsToInsert.Count > 0)
-                    {
-                        await _channelsRepository.InsertAsync(channelsToInsert);
-                    }
-                    // Сбор статистики и загрузка программы передач:
-                    IEnumerable<XElement> docProgrammes = xDoc.XPathSelectElements("tv/programme");
-                    _programmeQty = docProgrammes.Count();
-                    IEnumerable<XAttribute> startAttribute = docProgrammes.Attributes("start");
-                    IEnumerable<DateTime> startDateTime = startAttribute.Select(x => GetDateTimeValue(x.Value));
-                    _minProgDate = startDateTime.Min();
-                    _maxProgDate = startDateTime.Max();
-                    IList<Programmes> programmes = await GetAllProgrammesAsync();
-                    IList<Programmes> programmesToDelete = programmes.Where(x => x.TsStartMo >= _minProgDate && x.TsStartMo <= _maxProgDate).ToList();
-                    // Удаление ранней из интервала загружаемой телепрограммы:
-                    await _programmesRepository.DeleteAsync(programmesToDelete);
-                    var typeProgId = typeProgs.FirstOrDefault(s => s.Id == webResource.TypeProgId).Id;
-                    IList<Programmes> programmesToInsert = new List<Programmes>();
-                    foreach (XElement newProgrammeElement in docProgrammes)
-                    {
-                        var channel = channels.FirstOrDefault(x => x.InternalId == int.Parse(newProgrammeElement.Attribute("channel").Value) &&
-                                                                     x.Deleted is null);
-                        if (channel is null)
-                            { continue; }
-                        
-                        var channelId = channel.Id;
-                        var internalChanId = int.Parse(newProgrammeElement.Attribute("channel").Value);
-                        var tsStart = GetDateTimeValue(newProgrammeElement.Attribute("start").Value);
-                        var tsStop = GetDateTimeValue(newProgrammeElement.Attribute("stop").Value);
-                        var title = newProgrammeElement.Elements("title").Where(x => x.Attribute("lang") != null && x.Attribute("lang").Value == "ru")
-                                                                         .FirstOrDefault()?.Value;
-                        var descr = newProgrammeElement.Elements("desc").Where(x => x.Attribute("lang") != null && x.Attribute("lang").Value == "ru")
-                                                                         .FirstOrDefault()?.Value;
-                        var category = newProgrammeElement.Elements("category").Where(x => x.Attribute("lang") != null && x.Attribute("lang").Value == "ru")
-                                                                         .FirstOrDefault()?.Value;
-                        programmesToInsert.Add(
-                            new Programmes
-                            {
-                                TypeProgId = typeProgId,
-                                ChannelId = channelId,
-                                InternalChanId = internalChanId,
-                                TsStart = tsStart,
-                                TsStop = tsStop,
-                                TsStartMo = tsStart,
-                                TsStopMo = tsStop,
-                                Title = title,
-                                Descr = descr,
-                                Category = category
-                            });
-                    }
+                }
+                
+                if (channelsToInsert.Count > 0)
+                {
+                    await _channelsRepository.InsertAsync(channelsToInsert);
+                }
+            }
+            
+            return (channelQty, newChannelQty);
+        }
 
-                    if (programmesToInsert.Count > 0)
-                    {
-                        // Вставка новой программы передач
-                        await _programmesRepository.InsertAsync(programmesToInsert);
-                    }
-
-                    programmes = await GetAllProgrammesAsync();
-
-                    // Удаление дубликатов:
-                    var groupProgrammes = programmes.GroupBy(p => new { p.TypeProgId, p.InternalChanId, p.ChannelId, p.TsStartMo, p.TsStopMo })
-                                                                                .SelectMany(g => g.Select((j, i) => new { j, rn = i + 1 }));
-                    List<Programmes> dupleProgToDelete = await (from g in groupProgrammes
-                                                          where g.rn > 1
-                                                          select g.j).ToListAsync();
-
-                    await _programmesRepository.DeleteAsync(dupleProgToDelete);
-
-                    programmes = await GetAllProgrammesAsync();
-
-                    // Удаление программы передач, которая превысила две недели от сегодняшнего дня:
-                    List<Programmes> deleleTwoWeekFuture = await programmes.Where(x => x.TsStartMo >= DateTime.Now.AddDays(14)).ToListAsync();
-                    await _programmesRepository.DeleteAsync(deleleTwoWeekFuture);
-
-                    programmes = await GetAllProgrammesAsync();
-
-                    // Удаление программы передач за три недели ранее последней передачи:
-                    DateTime maxTsStartMo = programmes.Max(x => x.TsStartMo);
-                    int[] days = [0, 1, 2, 3, 4, 5, 6];
-                    List<Programmes> deleteTwoWeeksAgo = [];
-                    foreach (var tsStartMonday in from day in
-                                                      from int day in days
-                                                      where maxTsStartMo.AddDays(-21).AddDays(day).DayOfWeek == DayOfWeek.Monday
-                                                      select day
-                                                  let tsStartMonday = maxTsStartMo.AddDays(-21).AddDays(day)
-                                                  select tsStartMonday)
-                    {
-                        deleteTwoWeeksAgo = await programmes.Where(x => x.TsStartMo < tsStartMonday).ToListAsync();
-                    }
-
-                    await _programmesRepository.DeleteAsync(deleteTwoWeeksAgo);
+        /// <summary>
+        /// Обработка программы передач
+        /// </summary>
+        private async Task<(int programmeQty, DateTime minProgDate, DateTime maxProgDate)> ProcessProgrammesAsync(
+            XDocument xDoc, WebResources webResource, IList<TypeProg> typeProgs, IList<Channels> channels)
+        {
+            var docProgrammes = xDoc.XPathSelectElements("tv/programme").ToList();
+            var programmeQty = docProgrammes.Count;
+            
+            if (programmeQty == 0)
+                return (0, DateTime.MinValue, DateTime.MaxValue);
+            
+            var startDates = docProgrammes
+                .Select(p => p.Attribute("start")?.Value)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(GetDateTimeValue)
+                .ToList();
+            
+            if (!startDates.Any())
+                return (0, DateTime.MinValue, DateTime.MaxValue);
+            
+            var minProgDate = startDates.Min();
+            var maxProgDate = startDates.Max();
+            
+            // Удаление программ в диапазоне загружаемых дат
+            var programmes = await GetAllProgrammesAsync();
+            var programmesToDelete = programmes
+                .Where(x => x.TsStartMo >= minProgDate && x.TsStartMo <= maxProgDate)
+                .ToList();
+            
+            if (programmesToDelete.Count > 0)
+            {
+                await _programmesRepository.DeleteAsync(programmesToDelete);
+            }
+            
+            // Подготовка новых программ для вставки
+            var typeProg = typeProgs.FirstOrDefault(s => s.Id == webResource.TypeProgId);
+            if (typeProg == null)
+            {
+                _logger.Warn("Тип программы не найден для TypeProgId={0}", webResource.TypeProgId);
+                return (programmeQty, minProgDate, maxProgDate);
+            }
+            
+            var channelsDict = channels
+                .Where(c => c.Deleted == null && c.InternalId.HasValue)
+                .ToDictionary(c => c.InternalId.Value, c => c);
+            
+            var programmesToInsert = new List<Programmes>();
+            
+            foreach (var programmeElement in docProgrammes)
+            {
+                try
+                {
+                    var channelAttr = programmeElement.Attribute("channel")?.Value;
+                    if (string.IsNullOrWhiteSpace(channelAttr) || !int.TryParse(channelAttr, out var internalChanId))
+                        continue;
                     
-                    // Отчёт:
-                    TimeSpan tsElapsed = DateTime.Now - tsUpdateStart;
-                    await _updateProgLogRepository.InsertAsync(
-                        new UpdateProgLog
-                        {
-                            WebResourceId = webResource.Id,
-                            TsUpdateStart = tsUpdateStart,
-                            TsUpdateEnd = DateTime.Now,
-                            UdtElapsedSec = (int)tsElapsed.TotalSeconds,
-                            MinProgDate = _minProgDate,
-                            MaxProgDate = _maxProgDate,
-                            QtyChans = _channelQty,
-                            QtyProgrammes = _programmeQty,
-                            QtyNewChans = _newChannelQty,
-                            QtyNewProgrammes = _programmeQty,
-                            IsSuccess = true,
-                            ErrorMessage = null
-                        });
-
-                    if (webResource.Id == 2)
+                    if (!channelsDict.TryGetValue(internalChanId, out var channel))
+                        continue;
+                    
+                    var startAttr = programmeElement.Attribute("start")?.Value;
+                    var stopAttr = programmeElement.Attribute("stop")?.Value;
+                    
+                    if (string.IsNullOrWhiteSpace(startAttr) || string.IsNullOrWhiteSpace(stopAttr))
+                        continue;
+                    
+                    var tsStart = GetDateTimeValue(startAttr);
+                    var tsStop = GetDateTimeValue(stopAttr);
+                    
+                    var title = GetElementValueByLang(programmeElement, "title", "ru");
+                    var descr = GetElementValueByLang(programmeElement, "desc", "ru");
+                    var category = GetElementValueByLang(programmeElement, "category", "ru");
+                    
+                    programmesToInsert.Add(new Programmes
                     {
-                        _logger.Info("Обработка каналов и тв-программы ID='{0}' завершена. Начало загрузки пиктограмм.", webResource.Id);
-                        Stopwatch swPict = Stopwatch.StartNew();
-                        foreach (XElement xChan in xDoc.XPathSelectElements("tv/channel"))
-                        {
-                            string id = xChan.Attribute("id").Value;
-                            if (!string.IsNullOrWhiteSpace(id) && xChan.Element("icon") != null)
-                            {
-                                string src = xChan.Element("icon").Attribute("src").Value;
-                                if (!string.IsNullOrWhiteSpace(src))
-                                {
-                                    byte[] channelIcons = WebPart.GetAndSaveIcon(id, src);
-                                    await UpdateIconAsync(Convert.ToInt32(id), src, id + ".gif", "image/gif", "gzip",
-                                        channelIcons);
-                                }
-                            }
-                        }
-                        swPict.Stop();
-                        _logger.Info("Загрузка пиктограмм завершена. Потребовалось {0} сек.", swPict.ElapsedMilliseconds / 1000.0);
-                    }
-                    swLoc.Stop();
-                    _logger.Info("Обновление для ID='{0}' успешно завершено. Затрачено '{1}' сек.", webResource.Id, swLoc.ElapsedMilliseconds / 1000.0);
+                        TypeProgId = typeProg.Id,
+                        ChannelId = channel.Id,
+                        InternalChanId = internalChanId,
+                        TsStart = tsStart,
+                        TsStop = tsStop,
+                        TsStartMo = tsStart,
+                        TsStopMo = tsStop,
+                        Title = title,
+                        Descr = descr,
+                        Category = category
+                    });
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error("Обновление тв-программы прошло неуспешно: ErrMessage='{0}', StackTrace='{1}'", ex.Message, ex.StackTrace);
+                    _logger.Warn(ex, "Ошибка при обработке элемента программы передач");
                 }
             }
-            sw.Stop();
-            _logger.Info(" ========== Обновление завершено ========== (Затрачено: {0} сек.)", sw.ElapsedMilliseconds / 1000.0);
+            
+            if (programmesToInsert.Count > 0)
+            {
+                await _programmesRepository.InsertAsync(programmesToInsert);
+            }
+            
+            return (programmeQty, minProgDate, maxProgDate);
+        }
+
+        /// <summary>
+        /// Получение значения элемента по языку
+        /// </summary>
+        private string GetElementValueByLang(XElement parent, string elementName, string lang)
+        {
+            return parent.Elements(elementName)
+                .FirstOrDefault(x => x.Attribute("lang")?.Value == lang)?.Value;
+        }
+
+        /// <summary>
+        /// Очистка программ: удаление дубликатов и старых записей
+        /// </summary>
+        private async Task CleanupProgrammesAsync()
+        {
+            var programmes = await GetAllProgrammesAsync();
+            
+            // Удаление дубликатов
+            var duplicateGroups = programmes
+                .GroupBy(p => new { p.TypeProgId, p.InternalChanId, p.ChannelId, p.TsStartMo, p.TsStopMo })
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g.Skip(1))
+                .ToList();
+            
+            if (duplicateGroups.Count > 0)
+            {
+                await _programmesRepository.DeleteAsync(duplicateGroups);
+            }
+            
+            programmes = await GetAllProgrammesAsync();
+            
+            // Удаление программ, которые превысили две недели от сегодняшнего дня
+            var futureDate = DateTime.Now.AddDays(DaysToKeepProgrammes);
+            var futureProgrammes = programmes
+                .Where(x => x.TsStartMo >= futureDate)
+                .ToList();
+            
+            if (futureProgrammes.Count > 0)
+            {
+                await _programmesRepository.DeleteAsync(futureProgrammes);
+            }
+            
+            programmes = await GetAllProgrammesAsync();
+            
+            // Удаление программ за три недели ранее последней передачи
+            if (programmes.Count > 0)
+            {
+                var maxTsStartMo = programmes.Max(x => x.TsStartMo);
+                var cutoffDate = maxTsStartMo.AddDays(-DaysToDeleteOldProgrammes);
+                
+                // Находим ближайший понедельник
+                var daysToMonday = ((int)DayOfWeek.Monday - (int)cutoffDate.DayOfWeek + 7) % 7;
+                var mondayDate = cutoffDate.AddDays(daysToMonday);
+                
+                var oldProgrammes = programmes
+                    .Where(x => x.TsStartMo < mondayDate)
+                    .ToList();
+                
+                if (oldProgrammes.Count > 0)
+                {
+                    await _programmesRepository.DeleteAsync(oldProgrammes);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Сохранение лога обновления
+        /// </summary>
+        private async Task SaveUpdateLogAsync(long webResourceId, DateTime tsUpdateStart, 
+            int channelQty, int newChannelQty, int programmeQty, DateTime minProgDate, DateTime maxProgDate)
+        {
+            var tsElapsed = DateTime.Now - tsUpdateStart;
+            await _updateProgLogRepository.InsertAsync(new UpdateProgLog
+            {
+                WebResourceId = (int)webResourceId,
+                TsUpdateStart = tsUpdateStart,
+                TsUpdateEnd = DateTime.Now,
+                UdtElapsedSec = (int)tsElapsed.TotalSeconds,
+                MinProgDate = minProgDate,
+                MaxProgDate = maxProgDate,
+                QtyChans = channelQty,
+                QtyProgrammes = programmeQty,
+                QtyNewChans = newChannelQty,
+                QtyNewProgrammes = programmeQty,
+                IsSuccess = true,
+                ErrorMessage = null
+            });
+        }
+
+        /// <summary>
+        /// Сохранение лога ошибки
+        /// </summary>
+        private async Task SaveErrorLogAsync(long webResourceId, Exception ex)
+        {
+            try
+            {
+                await _updateProgLogRepository.InsertAsync(new UpdateProgLog
+                {
+                    WebResourceId = (int) webResourceId,
+                    TsUpdateStart = DateTime.Now,
+                    TsUpdateEnd = DateTime.Now,
+                    UdtElapsedSec = 0,
+                    MinProgDate = DateTime.MinValue,
+                    MaxProgDate = DateTime.MaxValue,
+                    QtyChans = 0,
+                    QtyProgrammes = 0,
+                    QtyNewChans = 0,
+                    QtyNewProgrammes = 0,
+                    IsSuccess = false,
+                    ErrorMessage = ex.Message
+                });
+            }
+            catch (Exception logEx)
+            {
+                _logger.Error(logEx, "Ошибка при сохранении лога ошибки для ресурса ID='{0}'", webResourceId);
+            }
         }
     }
     #endregion

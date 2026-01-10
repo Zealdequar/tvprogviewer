@@ -85,31 +85,6 @@ namespace TvProgViewer.Services.TvProgMain
                 });
         }
 
-        /// <summary>
-        /// Обновление данных о пиктограмме
-        /// </summary>
-        /// <param name="channelId">Идентификатор канала</param>
-        /// <param name="iconWebSrc">Адрес пиктограммы в интернете</param>
-        /// <param name="channelIconName">Название пиктограммы</param>
-        /// <param name="contentType">Тип содержимого (ContentType) пиктограммы</param>
-        /// <param name="contentCoding">Кодировка пиктограммы</param>
-        /// <param name="channelOrigIcon">Оригинальная пиктограмма</param>
-        public virtual async Task UpdateIconAsync(int channelId, string iconWebSrc, string channelIconName, string contentType, string contentCoding
-            , byte[] channelOrigIcon)
-        {
-            await _dataProviderManager.DataProvider.ExecuteNonQueryAsync("spUdtChannelImage",
-                new DataParameter[] {
-                    new DataParameter("@CID", channelId, DataType.Int32),
-                    new DataParameter("@IconWebSrc", iconWebSrc, DataType.NVarChar),
-                    new DataParameter("@ChannelIconName", channelIconName, DataType.NVarChar),
-                    new DataParameter("@ContentType", contentType, DataType.NVarChar),
-                    new DataParameter("@ContentCoding", contentCoding, DataType.NVarChar),
-                    new DataParameter("@ChannelOrigIcon", channelOrigIcon, DataType.VarBinary),
-                    new DataParameter("@IsSystem", 1, DataType.Boolean),
-                    new DataParameter("@ErrCode", DataType.NVarChar){Direction = System.Data.ParameterDirection.Output}
-                });
-        }
-
         public virtual async Task UpdateTvProgrammes()
         {
             _logger.Info(" =========== Начало обновления ============ ");
@@ -127,8 +102,14 @@ namespace TvProgViewer.Services.TvProgMain
                     _logger.Info("Обновление для ID='{0}'", webResource.Id);
                     Stopwatch swLoc = Stopwatch.StartNew();
                     string fileName = webResource.FileName;
-                    WebPart.GetWebTVProgramm(new Uri(webResource.ResourceUrl), ref fileName);
-                    webResource.FileName = fileName;
+                    var (success, fullFileName) = await WebPart.GetWebTVProgramm(new Uri(webResource.ResourceUrl), fileName);
+                    if (!success)
+                    {
+                        _logger.Error("Не удалось загрузить телепрограмму для ресурса ID='{0}'", webResource.Id);
+                        continue;
+                    }
+                    webResource.FileName = fullFileName;
+                    fileName = fullFileName;
                     XDocument xDoc = new XDocument();
                     var sourceType = (await GetTypeProgByIdAsync(webResource.TypeProgId))
                         .TypeName == "Формат XMLTV" ? Enums.TypeProg.XMLTV : Enums.TypeProg.InterTV;
@@ -184,27 +165,6 @@ namespace TvProgViewer.Services.TvProgMain
                     _logger.Info("Каналы и тв-программа ID='{0}' подготовлены к запуску обработки в базе", webResource.Id);
                     await RunXmlToDbAsync(webResource.Id, xDoc.ToString());
 
-                    if (webResource.Id == 2)
-                    {
-                        _logger.Info("Обработка каналов и тв-программы ID='{0}' завершена. Начало загрузки пиктограмм.", webResource.Id);
-                        Stopwatch swPict = Stopwatch.StartNew();
-                        foreach (XElement xChan in xDoc.XPathSelectElements("tv/channel"))
-                        {
-                            string id = xChan.Attribute("id").Value;
-                            if (!string.IsNullOrWhiteSpace(id) && xChan.Element("icon") != null)
-                            {
-                                string src = xChan.Element("icon").Attribute("src").Value;
-                                if (!string.IsNullOrWhiteSpace(src))
-                                {
-                                    byte[] channelIcons = WebPart.GetAndSaveIcon(id, src);
-                                    await UpdateIconAsync(Convert.ToInt32(id), src, id + ".gif", "image/gif", "gzip",
-                                        channelIcons);
-                                }
-                            }
-                        }
-                        swPict.Stop();
-                        _logger.Info("Загрузка пиктограмм завершена. Потребовалось {0} сек.", swPict.ElapsedMilliseconds / 1000.0);
-                    }
                     swLoc.Stop();
                     _logger.Info("Обновление для ID='{0}' успешно завершено. Затрачено '{1}' сек.", webResource.Id, swLoc.ElapsedMilliseconds / 1000.0);
                 }

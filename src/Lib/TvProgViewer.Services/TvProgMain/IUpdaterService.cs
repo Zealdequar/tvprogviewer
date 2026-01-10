@@ -34,17 +34,6 @@ namespace TvProgViewer.Services.TvProgMain
         public Task RunXmlToDbAsync(int webResourceId, string tvProgXml);
 
         /// <summary>
-        /// Обновление данных о пиктограмме
-        /// </summary>
-        /// <param name="channelId">Идентификатор канала</param>
-        /// <param name="iconWebSrc">Адрес пиктограммы в интернете</param>
-        /// <param name="channelIconName">Название пиктограммы</param>
-        /// <param name="contentType">Тип содержимого (ContentType) пиктограммы</param>
-        /// <param name="contentCoding">Кодировка пиктограммы</param>
-        /// <param name="channelOrigIcon">Оригинальная пиктограмма</param>
-        public Task UpdateIconAsync(int channelId, string iconWebSrc, string channelIconName, string contentType, string contentCoding, byte[] channelOrigIcon);
-
-        /// <summary>
         /// Обновление телепрограммы
         /// </summary>
         public Task UpdateTvProgrammes();

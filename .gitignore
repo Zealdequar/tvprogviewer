@@ -226,3 +226,9 @@ imgs/469DA11A-5CE2-4C9A-9EAA-13D5A1106443/small/E757E701-2339-45F3-AB88-4CD8CA11
 src/TVProgMvc/TVProgViewer.WebUI/file.txt
 dataSettings.json
 appsettings.json
+/src/ViewLayer/TvProgViewer.WebUI/wwwroot/images/uploaded
+src/nohup.out
+src/cert.crt
+src/certificate.pem
+src/TvProgDataBase_2026-01-01_Thursday.dump
+/src/ViewLayer/TvProgViewer.WebUI/wwwroot/images/thumbs
