@@ -1227,6 +1227,19 @@ namespace TvProgViewer.Services.TvProgMain
                                                                }).LimitAndOrderBy(page, rows, "InternalChanId", "asc").ToListAsync();
             return gdProgrammeList;
         }
+        /// <summary>
+        /// Получение состояния телепрограммы
+        /// </summary>
+        /// <returns></returns>
+        public virtual async Task<GdProgrammeStatus> GetProgrammeStatus()
+        {
+            GdProgrammeStatus status = new GdProgrammeStatus 
+            { 
+                Qty = await _programmesRepository.Table.CountAsync(CancellationToken.None),
+                MaxDateTime = await _programmesRepository.Table.MaxAsync(x => (DateTime?)x.TsStopMo)
+            };
+            return status;
+        }
         #endregion
     }
 }

@@ -142,5 +142,11 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="page">Страница</param>
         /// <param name="rows">Строки</param>
         public Task<List<GdProgramme>> GetAllProgrammes(int page, int rows);
+
+        /// <summary>
+        /// Получение состояния телепрограммы (количества прередач и дату/время последней передачи)
+        /// </summary>
+        /// <returns></returns>
+        public Task<GdProgrammeStatus> GetProgrammeStatus();
     }
 }

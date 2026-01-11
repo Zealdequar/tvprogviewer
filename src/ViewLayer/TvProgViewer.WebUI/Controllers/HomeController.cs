@@ -489,32 +489,60 @@ namespace TvProgViewer.WebUI.Controllers
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> GetAllChannels(string key)
+        public async Task<JsonResult> GetAllChannels(string key, string uuid)
         {
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
-                List<GdChannel> channelList = await _channelService.GetAllChannels();
-                var tvChannelObj = new
+                var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
+                if (user == null || (user.Active && !user.Deleted))
                 {
-                    tvChannels = channelList
-                };
-                return Json(tvChannelObj);
+                    List<GdChannel> channelList = await _channelService.GetAllChannels();
+                    var tvChannelObj = new
+                    {
+                        tvChannels = channelList
+                    };
+                    return Json(tvChannelObj);
+                }
             }
             return Json("{}");
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> GetAllProgrammes(string key, int page, int rows)
+        public async Task<JsonResult> GetAllProgrammes(string key, string uuid, int page, int rows)
         {
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
-                List<GdProgramme> programmeList = await _programmeService.GetAllProgrammes(page, rows);
-                var tvscheduleObj = new
+                var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
+                if (user == null || (user.Active && !user.Deleted))
                 {
-                    tvschedule = programmeList
-                };
-                return Json(tvscheduleObj);
+                    List<GdProgramme> programmeList = await _programmeService.GetAllProgrammes(page, rows);
+                    var tvscheduleObj = new
+                    {
+                        tvschedule = programmeList
+                    };
+                    return Json(tvscheduleObj);
+                }
+            }
+            return Json("{}");
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public async Task<JsonResult> GetProgrammesStatus(string key, string uuid)
+        {
+            if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
+            {
+                var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
+                if (user == null || (user.Active && !user.Deleted))
+                {
+                    GdProgrammeStatus programmeStatus = await _programmeService.GetProgrammeStatus();
+                    var tvschedulestatusObj = new
+                    {
+                        tvshedulestatus = programmeStatus
+                    };
+                    return Json(tvschedulestatusObj);
+                }
             }
             return Json("{}");
         }
