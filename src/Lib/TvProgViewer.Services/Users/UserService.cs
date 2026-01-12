@@ -1,7 +1,9 @@
-﻿using System;
+﻿using StackExchange.Redis;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using TvProgViewer.Core;
@@ -9,13 +11,13 @@ using TvProgViewer.Core.Caching;
 using TvProgViewer.Core.Domain.Blogs;
 using TvProgViewer.Core.Domain.Catalog;
 using TvProgViewer.Core.Domain.Common;
-using TvProgViewer.Core.Domain.Users;
 using TvProgViewer.Core.Domain.Forums;
 using TvProgViewer.Core.Domain.News;
 using TvProgViewer.Core.Domain.Orders;
 using TvProgViewer.Core.Domain.Polls;
 using TvProgViewer.Core.Domain.Shipping;
 using TvProgViewer.Core.Domain.Tax;
+using TvProgViewer.Core.Domain.Users;
 using TvProgViewer.Core.Infrastructure;
 using TvProgViewer.Data;
 using TvProgViewer.Services.Common;
@@ -39,13 +41,15 @@ namespace TvProgViewer.Services.Users
         private readonly IRepository<UserAddressMapping> _userAddressMappingRepository;
         private readonly IRepository<UserChannelMapping> _userChannelMappingRepository;
         private readonly IRepository<UserUserRoleMapping> _userUserRoleMappingRepository;
+        private readonly IRepository<UserGreenDataInfo> _userGreenDataInfoRepository;
+        private readonly IRepository<UserGreenDataOperations> _userGreenDataOperationsRepository;
         private readonly IRepository<UserPassword> _userPasswordRepository;
         private readonly IRepository<UserRole> _userRoleRepository;
         private readonly IRepository<ForumPost> _forumPostRepository;
         private readonly IRepository<ForumTopic> _forumTopicRepository;
         private readonly IRepository<GenericAttribute> _gaRepository;
         private readonly IRepository<NewsComment> _newsCommentRepository;
-        private readonly IRepository<Order> _orderRepository;
+        private readonly IRepository<Core.Domain.Orders.Order> _orderRepository;
         private readonly IRepository<TvChannelReview> _tvChannelReviewRepository;
         private readonly IRepository<TvChannelReviewHelpfulness> _tvChannelReviewHelpfulnessRepository;
         private readonly IRepository<PollVotingRecord> _pollVotingRecordRepository;
@@ -67,13 +71,15 @@ namespace TvProgViewer.Services.Users
             IRepository<UserAddressMapping> userAddressMappingRepository,
             IRepository<UserChannelMapping> userChannelMappingRepository,
             IRepository<UserUserRoleMapping> userUserRoleMappingRepository,
+            IRepository<UserGreenDataInfo> userGreenDataInfoRepository,
+            IRepository<UserGreenDataOperations> userGreenDataOperationsRepository,
             IRepository<UserPassword> userPasswordRepository,
             IRepository<UserRole> userRoleRepository,
             IRepository<ForumPost> forumPostRepository,
             IRepository<ForumTopic> forumTopicRepository,
             IRepository<GenericAttribute> gaRepository,
             IRepository<NewsComment> newsCommentRepository,
-            IRepository<Order> orderRepository,
+            IRepository<Core.Domain.Orders.Order> orderRepository,
             IRepository<TvChannelReview> tvChannelReviewRepository,
             IRepository<TvChannelReviewHelpfulness> tvChannelReviewHelpfulnessRepository,
             IRepository<PollVotingRecord> pollVotingRecordRepository,
@@ -91,6 +97,8 @@ namespace TvProgViewer.Services.Users
             _userAddressMappingRepository = userAddressMappingRepository;
             _userChannelMappingRepository = userChannelMappingRepository;
             _userUserRoleMappingRepository = userUserRoleMappingRepository;
+            _userGreenDataInfoRepository = userGreenDataInfoRepository;
+            _userGreenDataOperationsRepository = userGreenDataOperationsRepository;
             _userPasswordRepository = userPasswordRepository;
             _userRoleRepository = userRoleRepository;
             _forumPostRepository = forumPostRepository;
@@ -611,7 +619,12 @@ namespace TvProgViewer.Services.Users
             var user = await GetUserByGuidAsync(guid);
 
             if (user != null)
+            {
+                user.LastActivityDateUtc = DateTime.UtcNow;
+                user.LastIpAddress = ipAddress;
+                await UpdateUserAsync(user);
                 return user;
+            }
 
             user = new User
             {
@@ -630,6 +643,69 @@ namespace TvProgViewer.Services.Users
             await _userRepository.InsertAsync(user);
 
             await AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = user.Id, UserRoleId = tvGuestRole.Id });
+
+            return user;
+        }
+
+        /// <summary>
+        /// Вставка пользователя с ролью TvGreenData
+        /// </summary>
+        /// <param name="uuid">Уникальный идентификатор пользователя</param>
+        /// <param name="ipAddress">IP-адрес</param>
+        /// <returns>
+        /// Задача представляет асинхронную операцию
+        /// Результат задачи содержит пользователя
+        /// </returns>
+        public virtual async Task<User> InsertTvGreenDataUserAsync(string uuid, string ipAddress)
+        {
+            if (!Guid.TryParse(uuid, out Guid guid))
+                return null;
+
+            var user = await GetUserByGuidAsync(guid);
+            UserRole tvGreenDataRole;
+            
+            if (user != null)
+            {
+                var roles = await GetUserRolesAsync(user, true);
+                var roleTvGuest = roles.FirstOrDefault(r => r.SystemName == TvProgUserDefaults.TvGuestsRoleName);
+                
+                if (roleTvGuest != null)
+                {
+                    // Удалить роль TvGuests:
+                    await RemoveUserRoleMappingAsync(user, roleTvGuest);
+
+                    tvGreenDataRole = await GetUserRoleBySystemNameAsync(TvProgUserDefaults.TvGreenDataRoleName);
+
+                    if (tvGreenDataRole == null)
+                        throw new TvProgException("Роль 'TvGreenData' не cмогла загрузиться");
+
+                    // Добавить роль TvGreenData:
+                    await AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = user.Id, UserRoleId = tvGreenDataRole.Id });
+                }
+                user.LastActivityDateUtc = DateTime.UtcNow;
+                user.LastIpAddress = ipAddress;
+                await UpdateUserAsync(user);
+                return user;
+            }
+
+            user = new User
+            {
+                UserGuid = guid,
+                Active = true,
+                CreatedOnUtc = DateTime.UtcNow,
+                LastActivityDateUtc = DateTime.UtcNow,
+                LastIpAddress = ipAddress
+            };
+
+            // Добавить роль TvGreenData:
+            await _userRepository.InsertAsync(user);
+
+            tvGreenDataRole = await GetUserRoleBySystemNameAsync(TvProgUserDefaults.TvGreenDataRoleName);
+
+            if (tvGreenDataRole == null)
+                throw new TvProgException("Роль 'TvGreenData' не cмогла загрузиться");
+
+            await AddUserRoleMappingAsync(new UserUserRoleMapping { UserId = user.Id, UserRoleId = tvGreenDataRole.Id });
 
             return user;
         }
@@ -1757,6 +1833,78 @@ namespace TvProgViewer.Services.Users
                 throw new ArgumentNullException(nameof(user));
 
             return await GetUserAddressAsync(user.Id, user.ShippingAddressId ?? 0);
+        }
+
+        #endregion
+
+        #region User GreenData info
+
+        public virtual async Task AddUserGreenDataOperationAsync(User user, string greenDataOperation)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            if (string.IsNullOrWhiteSpace(greenDataOperation))
+                throw new ArgumentException("Operation name cannot be null or empty", nameof(greenDataOperation));
+
+            // Получаем операцию один раз
+            var operation = await _userGreenDataOperationsRepository.Table
+                .FirstOrDefaultAsync(op => op.Name == greenDataOperation);
+
+            // Если операция не найдена - создаем новую (по умолчанию активную)
+            if (operation == null)
+            {
+                operation = new UserGreenDataOperations
+                {
+                    Name = greenDataOperation,
+                    Active = true
+                };
+                await _userGreenDataOperationsRepository.InsertAsync(operation);
+            }
+
+            if (operation.Active)
+            {
+                // Ищем существующую запись для пользователя
+                var existingInfo = await _userGreenDataInfoRepository.Table
+                    .FirstOrDefaultAsync(ugdi =>
+                        ugdi.UserId == user.Id && ugdi.OperationId == operation.Id);
+
+                if (existingInfo != null)
+                {
+                    // Обновляем существующую запись
+                    existingInfo.OperationRaiseQty++;
+                    existingInfo.LastOperationRaiseOnUtc = DateTime.UtcNow;
+                    await _userGreenDataInfoRepository.UpdateAsync(existingInfo);
+                }
+                else
+                {
+                    // Создаем новую запись
+                    var newInfo = new UserGreenDataInfo
+                    {
+                        UserId = user.Id,
+                        OperationId = operation.Id,
+                        OperationRaiseQty = 1,
+                        LastOperationRaiseOnUtc = DateTime.UtcNow
+                    };
+
+                    await _userGreenDataInfoRepository.InsertAsync(newInfo);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="greenDataOperation">Операция для GreenData</param>
+        /// <returns></returns>
+        public virtual async Task<bool> GetOperationActiveStatus(string greenDataOperation)
+        {
+            // Получаем операцию:
+            var operation = await _userGreenDataOperationsRepository.Table
+                .FirstOrDefaultAsync(op => op.Name == greenDataOperation);
+            if (operation == null)
+                return true;
+            return operation.Active;
         }
 
         #endregion

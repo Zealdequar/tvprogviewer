@@ -212,6 +212,17 @@ namespace TvProgViewer.Services.Users
         Task<User> InsertTvGuestUserAsync(string uuid, string ipAddress);
 
         /// <summary>
+        /// Вставка пользователя с ролью TvGreenData
+        /// </summary>
+        /// <param name="uuid">Уникальный идентификатор пользователя</param>
+        /// <param name="ipAddress">IP-адрес</param>
+        /// <returns>
+        /// Задача представляет асинхронную операцию
+        /// Результат задачи содержит пользователя
+        /// </returns>
+        Task<User> InsertTvGreenDataUserAsync(string uuid, string ipAddress);
+
+        /// <summary>
         /// Insert a user
         /// </summary>
         /// <param name="user">User</param>
@@ -671,6 +682,24 @@ namespace TvProgViewer.Services.Users
         /// <returns>Задача представляет асинхронную операцию</returns>
         Task InsertUserAddressAsync(User user, Address address);
 
+        #endregion
+
+        #region User GreenData info
+
+        /// <summary>
+        /// Добавить информацию о количестве срабатываний операций для пользователя GreenData
+        /// </summary>
+        /// <param name="user">Пользователь</param>
+        /// <param name="greenDataOperation">Операция для GreenData</param>
+        /// <returns>Задача представляет асинхронную операцию</returns>
+        Task AddUserGreenDataOperationAsync(User user, string greenDataOperation);
+
+        /// <summary>
+        /// Проверка операции на активность
+        /// </summary>
+        /// <param name="greenDataOperation">Операция для GreenData</param>
+        /// <returns></returns>
+        Task<bool> GetOperationActiveStatus(string greenDataOperation);
         #endregion
     }
 }

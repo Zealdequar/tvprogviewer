@@ -1,4 +1,6 @@
-﻿namespace TvProgViewer.Core.Domain.Users
+﻿using Azure.Core;
+
+namespace TvProgViewer.Core.Domain.Users
 {
     /// <summary>
     /// Represents default values related to users data
@@ -31,6 +33,11 @@
         /// Получение системной гостевой роли для работы с программой передач
         /// </summary>
         public static string TvGuestsRoleName => "TvGuests";
+
+        /// <summary>
+        /// Получение системной роли для работы из GreenData
+        /// </summary>
+        public static string TvGreenDataRoleName => "TvGreenData";
 
         /// <summary>
         /// Gets a system name of 'vendors' user role
@@ -199,7 +206,26 @@
         /// Получает название списка атрибутов в Систему со значением 'Category'
         /// </summary>
         public static string CategoryAttribute => "Category";
-        
+
+        #endregion
+
+        #region System GreenData operations
+
+        /// <summary>
+        /// Получает операцию проверки состояния программы передач
+        /// </summary>
+        public static string GetProgrammeStatusOperationName => "GetProgrammeStatus";
+
+        /// <summary>
+        /// Получает операцию получения всех телеканалов
+        /// </summary>
+        public static string GetAllChannelsOperationName => "GetAllChannels";
+
+        /// <summary>
+        /// Получает операцию получения всей программы передач
+        /// </summary>
+        public static string GetAllProgrammesOperationName => "GetAllProgrammes";
+
         #endregion
     }
 }

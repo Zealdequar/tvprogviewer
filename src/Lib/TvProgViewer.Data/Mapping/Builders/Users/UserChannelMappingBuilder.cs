@@ -1,10 +1,4 @@
-﻿using Azure.Storage.Blobs.Models;
-using FluentMigrator.Builders.Create.Table;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FluentMigrator.Builders.Create.Table;
 using TvProgViewer.Core.Domain.TvProgMain;
 using TvProgViewer.Core.Domain.Users;
 using TvProgViewer.Data.Extensions;

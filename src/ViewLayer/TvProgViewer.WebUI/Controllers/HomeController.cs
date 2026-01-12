@@ -11,6 +11,7 @@ using System.Linq;
 using TvProgViewer.Services.Users;
 using NUglify.Helpers;
 using TvProgViewer.Core;
+using TvProgViewer.Core.Domain.Users;
 using System.Globalization;
 using TvProgViewer.Core.Domain.Security;
 
@@ -493,14 +494,19 @@ namespace TvProgViewer.WebUI.Controllers
         {
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
-                var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
-                if (user == null || (user.Active && !user.Deleted))
+                var user = await _userService.InsertTvGreenDataUserAsync(uuid, _webHelper.GetCurrentIpAddress());
+                bool isActiveOperation = await _userService.GetOperationActiveStatus(TvProgUserDefaults.GetAllChannelsOperationName);
+                if ((user == null || (user.Active && !user.Deleted)) && isActiveOperation)
                 {
                     List<GdChannel> channelList = await _channelService.GetAllChannels();
                     var tvChannelObj = new
                     {
                         tvChannels = channelList
                     };
+                    if (user != null)
+                    {
+                        await _userService.AddUserGreenDataOperationAsync(user, TvProgUserDefaults.GetAllChannelsOperationName);
+                    }
                     return Json(tvChannelObj);
                 }
             }
@@ -513,14 +519,19 @@ namespace TvProgViewer.WebUI.Controllers
         {
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
-                var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
-                if (user == null || (user.Active && !user.Deleted))
+                var user = await _userService.InsertTvGreenDataUserAsync(uuid, _webHelper.GetCurrentIpAddress());
+                bool isActiveOperation = await _userService.GetOperationActiveStatus(TvProgUserDefaults.GetAllProgrammesOperationName);
+                if ((user == null || (user.Active && !user.Deleted)) && isActiveOperation)
                 {
                     List<GdProgramme> programmeList = await _programmeService.GetAllProgrammes(page, rows);
                     var tvscheduleObj = new
                     {
                         tvschedule = programmeList
                     };
+                    if (user != null)
+                    {
+                        await _userService.AddUserGreenDataOperationAsync(user, TvProgUserDefaults.GetAllProgrammesOperationName);
+                    }
                     return Json(tvscheduleObj);
                 }
             }
@@ -533,14 +544,19 @@ namespace TvProgViewer.WebUI.Controllers
         {
             if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
             {
-                var user = await _userService.InsertTvGuestUserAsync(uuid, _webHelper.GetCurrentIpAddress());
-                if (user == null || (user.Active && !user.Deleted))
+                var user = await _userService.InsertTvGreenDataUserAsync(uuid, _webHelper.GetCurrentIpAddress());
+                bool isActiveOperation = await _userService.GetOperationActiveStatus(TvProgUserDefaults.GetProgrammeStatusOperationName);
+                if ((user == null || (user.Active && !user.Deleted)) && isActiveOperation)
                 {
                     GdProgrammeStatus programmeStatus = await _programmeService.GetProgrammeStatus();
                     var tvschedulestatusObj = new
                     {
                         tvshedulestatus = programmeStatus
                     };
+                    if (user != null)
+                    {
+                        await _userService.AddUserGreenDataOperationAsync(user, TvProgUserDefaults.GetProgrammeStatusOperationName);
+                    }
                     return Json(tvschedulestatusObj);
                 }
             }
