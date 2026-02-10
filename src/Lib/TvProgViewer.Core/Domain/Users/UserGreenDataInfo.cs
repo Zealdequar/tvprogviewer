@@ -22,12 +22,12 @@ namespace TvProgViewer.Core.Domain.Users
         public int OperationId { get; set; }
 
         /// <summary>
-        /// Количество вызвов операции из GreenData
+        /// Получает или устанавливает количество вызвов операции из GreenData
         /// </summary>
         public long OperationRaiseQty { get; set; }
 
         /// <summary>
-        /// Крайняя дата и время вызова операции
+        /// Получает или устанавливает крайнюю дата и время вызова операции
         /// </summary>
         public DateTime? LastOperationRaiseOnUtc { get; set; }
     }

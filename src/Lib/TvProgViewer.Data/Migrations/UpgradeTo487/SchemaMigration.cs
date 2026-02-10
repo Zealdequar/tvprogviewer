@@ -1,5 +1,4 @@
 ﻿using FluentMigrator;
-using FluentMigrator.Expressions;
 using TvProgViewer.Core.Domain.Users;
 using TvProgViewer.Data.Extensions;
 

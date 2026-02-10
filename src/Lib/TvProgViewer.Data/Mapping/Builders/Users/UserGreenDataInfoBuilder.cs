@@ -10,6 +10,7 @@ namespace TvProgViewer.Data.Mapping.Builders.Users
     public partial class UserGreenDataInfoBuilder: TvProgEntityBuilder<UserGreenDataInfo>
     {
         #region Методы
+
         /// <summary>
         /// Применяет конфигурацию сущности
         /// </summary>

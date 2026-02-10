@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TvProgViewer.Core.Domain.Users
 {
     /// <summary>
-    /// Представляет операции пользователя из GreenData
+    /// Представляет операцию пользователя из GreenData
     /// </summary>
     public partial class UserGreenDataOperations: BaseEntity
     {

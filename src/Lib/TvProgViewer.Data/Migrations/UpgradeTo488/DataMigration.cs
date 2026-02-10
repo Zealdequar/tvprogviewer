@@ -1,9 +1,7 @@
 ﻿using FluentMigrator;
 using System;
 using System.Linq;
-using TvProgViewer.Core.Domain.ScheduleTasks;
 using TvProgViewer.Core.Domain.Users;
-using TvProgViewer.Data.Extensions;
 namespace TvProgViewer.Data.Migrations.UpgradeTo488
 {
     [TvProgMigration("2026-01-12 20:25:00", "4.88.0 Data Update", UpdateMigrationType.Data, MigrationProcessType.Update)]
