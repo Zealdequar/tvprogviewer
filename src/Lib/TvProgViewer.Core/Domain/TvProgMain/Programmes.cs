@@ -8,52 +8,52 @@ namespace TvProgViewer.Core.Domain.TvProgMain
     public partial class Programmes : BaseEntity
     {
         /// <summary>
-        /// Идентификатор типа телепрограммы
+        /// Получает или устанавливает идентификатор типа телепрограммы
         /// </summary>
         public int TypeProgId { get; set; }
         
         /// <summary>
-        /// Идентификатор телеканала
+        /// Получает или устанавливает идентификатор телеканала
         /// </summary>
         public int ChannelId { get; set; }
 
         /// <summary>
-        /// Внутренний идентификатор канала
+        /// Получает или устанавливает внутренний идентификатор канала
         /// </summary>
         public int? InternalChanId { get; set; }
 
         /// <summary>
-        /// Начало телепередачи
+        /// Получает или устанавливает начало телепередачи
         /// </summary>
         public DateTime TsStart { get; set; }
 
         /// <summary>
-        ///  Завершение телепередачи
+        ///  Получает или устанавливает завершение телепередачи
         /// </summary>
         public DateTime TsStop { get; set; }
 
         /// <summary>
-        /// Начало телепередачи по Москве
+        /// Получает или устанавливает начало телепередачи по Москве
         /// </summary>
         public DateTime TsStartMo { get; set; }
 
         /// <summary>
-        /// Окончание телепередачи по Москве
+        /// Получает или устанавливает окончание телепередачи по Москве
         /// </summary>
         public DateTime TsStopMo { get; set; }
 
         /// <summary>
-        /// Название телепередачи
+        /// Получает или устанавливает название телепередачи
         /// </summary>
         public string Title { get; set; }
 
         /// <summary>
-        /// Анонс телепередачи
+        /// Получает или устанавливает анонс телепередачи
         /// </summary>
         public string Descr { get; set; }
 
         /// <summary>
-        /// Категория телепередачи
+        /// Получает или устанавливает категорию телепередачи (устаревшее)
         /// </summary>
         public string Category { get; set; }
     }

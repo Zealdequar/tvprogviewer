@@ -227,5 +227,44 @@ namespace TvProgViewer.Core.Domain.Users
         public static string GetAllProgrammesOperationName => "GetAllProgrammes";
 
         #endregion
+
+        #region TvProgCategories
+
+        /// <summary>
+        /// Все категории
+        /// </summary>
+        public static string GetAllTvProgCategories => "ALL";
+
+        /// <summary>
+        ///  Детям
+        /// </summary>
+        public static string GetChildTvProgCategory => "CHILD";
+
+        /// <summary>
+        /// Художественный фильм
+        /// </summary>
+        public static string GetFeatureFilmCategory => "FEATURE_FILM";
+
+        /// <summary>
+        /// Сериал
+        /// </summary>
+        public static string GetSerialCategory => "SERIAL";
+
+        /// <summary>
+        /// Спорт
+        /// </summary>
+        public static string GetSportCategory => "SPORT";
+
+        /// <summary>
+        /// Для взрослых
+        /// </summary>
+        public static string GetAdultCategory => "ADULT";
+
+        /// <summary>
+        /// Без категории
+        /// </summary>
+        public static string GetNonCategory => "NON_CATEGORY"; 
+
+        #endregion
     }
 }
