@@ -248,8 +248,9 @@ namespace TvProgViewer.Services.TvProgMain
             List<GdChannel> gdch = await (from ch in _channelsRepository.Table
                                            join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
                                            from mp in chmp.DefaultIfEmpty()
-                                           where ch.TvProgProviderId == 1 && ch.Deleted == null && !string.IsNullOrWhiteSpace(ch.TitleChannel)
-                                           select new GdChannel
+                                           where ch.TvProgProviderId == 1 && ch.Deleted == null && !string.IsNullOrWhiteSpace(ch.TitleChannel) &&
+                                           (from pr in _programmesRepository.Table select pr.ChannelId).Contains(ch.Id)
+                                          select new GdChannel
                                            {
                                                InternalId = ch.InternalId,
                                                Title = ch.TitleChannel,

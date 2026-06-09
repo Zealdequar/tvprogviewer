@@ -38,10 +38,10 @@
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/jquery-validation/jquery.validate.min.js");
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/bootstrap/js/bootstrap.min.js");
-    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "https://unpkg.com/dayjs@1.11.13/dayjs.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/dayjs/dayjs.min.js");
     <!-- Плагины UTC и Timezone -->
-    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "https://unpkg.com/dayjs@1.11.13/plugin/utc.js");
-    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "https://unpkg.com/dayjs@1.11.13/plugin/timezone.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/dayjs/plugin/utc.min.js");
+    TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/dayjs/plugin/timezone.min.js");
     
     //custom tag(s);
     if (!string.IsNullOrEmpty(seoSettings.CustomHeadTags))
@@ -95,15 +95,6 @@
     </script>
     <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3487003;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
     <!-- /Top.Mail.Ru counter -->
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-142558739-2"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-142558739-2');
-    </script>
     <script>
         dayjs.extend(dayjs_plugin_utc);
         dayjs.extend(dayjs_plugin_timezone);
