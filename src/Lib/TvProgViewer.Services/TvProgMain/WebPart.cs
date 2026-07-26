@@ -24,6 +24,7 @@ namespace TvProgViewer.Services.TvProgMain
         private const int DefaultBufferSize = 4096;
         private const int ZipBufferSize = 2048;
         private const int RequestTimeoutSeconds = 300; // 5 минут
+        private const int MinProgrammesPerFutureDay = 100;
 
         /// <summary>
         /// Статический конструктор для инициализации HttpClient

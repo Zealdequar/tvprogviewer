@@ -46,6 +46,7 @@ namespace TvProgViewer.Services.Common
         private const int TypeProgIdToSkip = 2;
         private const int DaysToKeepProgrammes = 14;
         private const int DaysToDeleteOldProgrammes = 21;
+        private const int MinProgrammesPerFutureDay = 100;
 
         #endregion
 
@@ -561,7 +562,18 @@ namespace TvProgViewer.Services.Common
         }
 
         /// <summary>
-        /// Очистка программ: удаление дубликатов и старых записей
+        /// Получение ТВ-дня по дате и времени.
+        /// ТВ-день начинается в 02:45 и заканчивается в 02:45 следующего дня.
+        /// Если время до 02:45, ТВ-день — это предыдущий календарный день.
+        /// </summary>
+        private static DateTime GetTvDay(DateTime dateTime)
+        {
+            var boundary = dateTime.Date.AddHours(2).AddMinutes(45);
+            return dateTime >= boundary ? dateTime.Date : dateTime.Date.AddDays(-1);
+        }
+
+        /// <summary>
+        /// Очистка программ: удаление дубликатов, малозначимых и старых записей
         /// </summary>
         private async Task CleanupProgrammesAsync()
         {
@@ -612,6 +624,31 @@ namespace TvProgViewer.Services.Common
                 {
                     await _programmesRepository.DeleteAsync(oldProgrammes);
                 }
+            }
+
+            programmes = await GetAllProgrammesAsync();
+
+            // Удаление дней с малым количеством записей в будущем
+            // ТВ-день: от 02:45 до 02:45 следующего дня
+            var now = DateTime.Now;
+            var currentTvDay = GetTvDay(now);
+
+            var futureSparseGroups = programmes
+                .Where(x => GetTvDay(x.TsStop) > currentTvDay)
+                .GroupBy(x => GetTvDay(x.TsStop))
+                .Where(g => g.Count() < MinProgrammesPerFutureDay)
+                .SelectMany(g => g)
+                .ToList();
+
+            if (futureSparseGroups.Count > 0)
+            {
+                _logger.Info("Удаление дней с малым количеством записей (<{0}): {1} записей в датах: {2}",
+                    MinProgrammesPerFutureDay,
+                    futureSparseGroups.Count,
+                    string.Join(", ", futureSparseGroups
+                        .GroupBy(x => GetTvDay(x.TsStop))
+                        .Select(g => $"{g.Key:yyyy-MM-dd} ({g.Count()} шт.)")));
+                await _programmesRepository.DeleteAsync(futureSparseGroups);
             }
         }
 
