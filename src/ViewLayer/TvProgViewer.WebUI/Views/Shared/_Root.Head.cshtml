@@ -1,10 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Http.Extensions;
+@using TvProgViewer.Core
 @using TvProgViewer.Core.Configuration
 @using TvProgViewer.Core.Domain.Catalog
 @using TvProgViewer.Core.Domain.Common
 @using TvProgViewer.Core.Domain.Seo
-@using TvProgViewer.Services.Security
 @using TvProgViewer.Core.Events
+@using TvProgViewer.Services.Security
 
 @inject CatalogSettings catalogSettings
 @inject CommonSettings commonSettings
@@ -12,8 +13,10 @@
 @inject IPermissionService permissionService
 @inject SeoSettings seoSettings
 @inject AppSettings appSettings
+@inject IWebHelper webHelper
 
 @{
+    var storeUrl = webHelper.GetStoreLocation().TrimEnd('/');
     if (catalogSettings.DisplayAllPicturesOnCatalogPages)
     {
         TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/lib_npm/swiper/swiper-bundle.min.js");
@@ -111,13 +114,13 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="image_src" type="image/png" href="https://tvprogviewer.ru/images/i/tvprogviewer_Vk.png" />
+    <link rel="image_src" type="image/png" href="@($"{storeUrl}/images/i/tvprogviewer_Vk.png")" />
     <meta name="msapplication-TileColor" content="#603cba">
     <meta name="theme-color" content="#ffffff">
     <meta name="title" content="@title" />
     <!-- Open Graph Snippets -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://tvprogviewer.ru/images/i/TvProgViewer_X.png" />
+    <meta name="twitter:image" content="@($"{storeUrl}/images/i/TvProgViewer_X.png")" />
     <meta name="twitter:url" content="@(ViewContext.HttpContext.Request.GetDisplayUrl())" />
     <meta name="twitter:title" content="@title" />
     <meta name="twitter:description" content="@description"/>
@@ -125,8 +128,8 @@
     <meta property="og:title" content="@title">
     <meta property="og:description" content="@description">
     <meta property="og:url" content="@(ViewContext.HttpContext.Request.GetDisplayUrl())" />
-    <meta property="vk:image" content="https://tvprogviewer.ru/images/i/TvProgViewer_Vk.png" />
-    <meta property="og:image" content="https://tvprogviewer.ru/images/i/TvProgViewer_orig.png" />
+    <meta property="vk:image" content="@($"{storeUrl}/images/i/TvProgViewer_Vk.png")" />
+    <meta property="og:image" content="@($"{storeUrl}/images/i/TvProgViewer_orig.png")" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
