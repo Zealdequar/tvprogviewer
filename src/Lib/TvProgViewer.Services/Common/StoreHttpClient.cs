@@ -16,6 +16,7 @@ using TvProgViewer.Services.TvProgMain;
 using System.Xml.XPath;
 using System.Data;
 using System.Collections.Concurrent;
+using System.Threading;
 using TVProgViewer.Services.TvProgMain;
 
 namespace TvProgViewer.Services.Common
@@ -38,6 +39,7 @@ namespace TvProgViewer.Services.Common
         // Используем ConcurrentDictionary для потокобезопасности
         private static readonly ConcurrentDictionary<string, string> _dictChanCodeOld = new ConcurrentDictionary<string, string>();
         private static readonly ConcurrentDictionary<string, string> _dictChanCodeNew = new ConcurrentDictionary<string, string>();
+        private static readonly SemaphoreSlim _updateSemaphore = new SemaphoreSlim(1, 1);
         
         // Константы для магических чисел
         private const int WebResourceIdForSpecialProcessing = 6;
@@ -195,6 +197,24 @@ namespace TvProgViewer.Services.Common
         /// Обновление телеканалов программы передач
         /// </summary>
         public virtual async Task UpdateTvProgrammes()
+        {
+            if (!await _updateSemaphore.WaitAsync(0))
+            {
+                _logger.Info("Обновление уже выполняется, повторный запуск пропущен");
+                return;
+            }
+
+            try
+            {
+                await UpdateTvProgrammesCore();
+            }
+            finally
+            {
+                _updateSemaphore.Release();
+            }
+        }
+
+        private async Task UpdateTvProgrammesCore()
         {
             _logger.Info(" =========== Начало обновления ============ ");
             var sw = Stopwatch.StartNew();
