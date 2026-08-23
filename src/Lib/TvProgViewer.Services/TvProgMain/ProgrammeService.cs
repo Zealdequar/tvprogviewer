@@ -1007,7 +1007,7 @@ namespace TvProgViewer.Services.TvProgMain
             var totalDuration = (endTime - startTime).TotalSeconds;
             if (totalDuration <= 0) return null;
 
-            var elapsed = (currentTime - startTime).TotalSeconds;
+            var elapsed = (endTime - currentTime).TotalSeconds;
             return (int)(elapsed / totalDuration * 100);
         }
 
