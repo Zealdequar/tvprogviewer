@@ -5,7 +5,10 @@ using TvProgViewer.WebUI.Factories;
 
 namespace TvProgViewer.WebUI.Components
 {
-    public class TvCategorySelectorViewComponent: TvProgViewComponent
+    /// <summary>
+    /// Компонент выбора категории ТВ-программы
+    /// </summary>
+    public sealed class TvCategorySelectorViewComponent : TvProgViewComponent
     {
         private readonly ICommonModelFactory _commonModelFactory;
 
@@ -14,10 +17,12 @@ namespace TvProgViewer.WebUI.Components
             _commonModelFactory = commonModelFactory;
         }
 
+        /// <summary>
+        /// Отображает список категорий ТВ-программы
+        /// </summary>
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var model = await _commonModelFactory.PrepareTvCategorySelectorModelAsync();
-            return View(model);
+            return View(await _commonModelFactory.PrepareTvCategorySelectorModelAsync());
         }
     }
 }

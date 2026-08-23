@@ -159,8 +159,26 @@ namespace TvProgViewer.WebUI.Controllers
         public virtual async Task<IActionResult> SetCategory(string userCategory, string returnUrl = "")
         {
             var categories = await _programmeService.GetCategoriesAsync();
-            categories.Insert(0, "Все категории");
-            var category = categories.SingleOrDefault(x => x == userCategory);
+            if (!categories.Any(x => x == "Все категории"))
+                categories.Insert(0, "Все категории");
+
+            // Предопределённые категории всегда валидны
+            var predefinedCategories = new[] { "Детям", "Художественный фильм", "Сериал", "Спорт", "Для взрослых", "Без категории" };
+
+            var allValidCategories = categories.Concat(predefinedCategories).Distinct().ToList();
+            var category = allValidCategories.FirstOrDefault(x => x == userCategory);
+
+            // "Для взрослых" — только для авторизованных пользователей
+            if (userCategory == "Для взрослых")
+            {
+                var user = await _workContext.GetCurrentUserAsync();
+                if (user == null || user.Id == 0)
+                {
+                    // Неавторизованный пользователь — сбрасываем на "Все категории"
+                    category = "Все категории";
+                }
+            }
+
             if (category != null)
                 await _workContext.SetWorkingCategoryAsync(category);
 

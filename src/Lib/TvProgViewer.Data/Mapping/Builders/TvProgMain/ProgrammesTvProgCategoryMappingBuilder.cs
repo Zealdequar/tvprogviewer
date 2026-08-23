@@ -19,9 +19,9 @@ namespace TvProgViewer.Data.Mapping.Builders.TvProgMain
         {
             table
                 .WithColumn(NameCompatibilityManager.GetColumnName(typeof(ProgrammesTvProgCategoryMapping), nameof(ProgrammesTvProgCategoryMapping.TvProgCategoryId)))
-                    .AsInt32().ForeignKey<TvProgCategory>().PrimaryKey()
+                    .AsInt32().ForeignKey<TvProgCategory>().Indexed()
                 .WithColumn(NameCompatibilityManager.GetColumnName(typeof(ProgrammesTvProgCategoryMapping), nameof(ProgrammesTvProgCategoryMapping.ProgrammesId)))
-                    .AsInt32().ForeignKey<Programmes>().PrimaryKey();
+                    .AsInt32().ForeignKey<Programmes>().Indexed();
         }
 
         #endregion

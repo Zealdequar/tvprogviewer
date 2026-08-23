@@ -1,20 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using TvProgViewer.Web.Framework.Models;
 
 namespace TvProgViewer.WebUI.Models.Common
 {
+    /// <summary>
+    /// Модель выбора категории ТВ-программы
+    /// </summary>
     public partial record TvCategorySelectorModel : BaseTvProgModel
     {
-        public TvCategorySelectorModel()
-        {
-            AvaliableCategories = new List<TvCategoryModel>();
-        }
+        /// <summary>
+        /// Доступные категории (включая обобщённую категорию "Все категории")
+        /// </summary>
+        public IList<TvCategoryModel> AvailableCategories { get; set; } = new List<TvCategoryModel>();
 
-        public IList<TvCategoryModel> AvaliableCategories { get; set; }
-
+        /// <summary>
+        /// Текущая выбранная категория
+        /// </summary>
         public string CurrentCategoryName { get; set; }
     }
 }

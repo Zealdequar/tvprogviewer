@@ -232,3 +232,5 @@ src/cert.crt
 src/certificate.pem
 src/TvProgDataBase_2026-01-01_Thursday.dump
 /src/ViewLayer/TvProgViewer.WebUI/wwwroot/images/thumbs
+# AI-Agents
+.gigacode_vsc/

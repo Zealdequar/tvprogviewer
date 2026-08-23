@@ -1,19 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using TvProgViewer.Services.TvProgMain;
-using TvProgViewer.Data.TvProgMain.ProgObjs;
-using System.Threading.Tasks;
-using TvProgViewer.WebUI.Models.Tree;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
+using System.Globalization;
 using System.Linq;
-using TvProgViewer.Services.Users;
+using System.Runtime.Serialization;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using NUglify.Helpers;
 using TvProgViewer.Core;
-using TvProgViewer.Core.Domain.Users;
-using System.Globalization;
 using TvProgViewer.Core.Domain.Security;
+using TvProgViewer.Core.Domain.Users;
+using TvProgViewer.Data.TvProgMain.ProgObjs;
+using TvProgViewer.Services.TvProgMain;
+using TvProgViewer.Services.Users;
+using TvProgViewer.WebUI.Infrastructure;
+using TvProgViewer.WebUI.Models.Tree;
 
 namespace TvProgViewer.WebUI.Controllers
 {
@@ -28,20 +29,6 @@ namespace TvProgViewer.WebUI.Controllers
         private readonly IWebHelper _webHelper;
         private readonly IWorkContext _workContext;
         private readonly SecuritySettings _securitySettings;
-
-        /// <summary>
-        /// Словарь с днями недели для обтображения пиктограмм
-        /// </summary>
-        private readonly Dictionary<string, string> dictWeek = new Dictionary<string, string>()
-                                                       {
-                                                           {"monday", "Mon"},
-                                                           {"tuesday", "Tue"},
-                                                           {"wednesday", "Wen"},
-                                                           {"thursday", "Ths" },
-                                                           {"friday", "Fri" },
-                                                           {"saturday", "Sat"},
-                                                           {"sunday", "Sun"}
-                                                       };
 
         #endregion
 
@@ -108,12 +95,79 @@ namespace TvProgViewer.WebUI.Controllers
         /// <summary>
         /// Получение списка категорий
         /// </summary>
-        /// <returns></returns>
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
         public async Task<JsonResult> GetCategories()
         {
             return Json(await _programmeService.GetCategoriesAsync());
+        }
+
+        /// <summary>
+        /// Определяет, является ли текущий пользователь совершеннолетним
+        /// (для неавторизованных всегда возвращается false)
+        /// </summary>
+        private async Task<bool> IsAdultUserAsync()
+        {
+            return User.Identity.IsAuthenticated &&
+                await _workContext.GetCurrentUserFullYearsOldAsync() >= 18;
+        }
+
+        /// <summary>
+        /// Преобразует имя категории в параметр выборки:
+        /// обобщённая категория "Все категории" заменяется на null (без фильтра по категории)
+        /// </summary>
+        private static string ResolveCategory(string category)
+        {
+            return category != TvProgCategoryDefaults.AllCategoriesName ? category : null;
+        }
+
+        /// <summary>
+        /// Выбирает вариант выборки телепрограммы в зависимости от возраста пользователя
+        /// (совершеннолетним доступны передачи для взрослых)
+        /// </summary>
+        /// <param name="progType">Тип телепрограммы</param>
+        /// <param name="dateTimeOffset">Время</param>
+        /// <param name="mode">Режимы выборки: 1 - сейчас; 2 - следом</param>
+        /// <param name="category">Категория</param>
+        /// <param name="sidx">Поле, по которому включена сортировка</param>
+        /// <param name="sord">Порядок, по которому включена сортировка</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк</param>
+        /// <param name="genres">Жанры</param>
+        /// <param name="channels">Каналы</param>
+        private async Task<KeyValuePair<int, List<SystemProgramme>>> GetProgrammesForCurrentUserAsync(int progType,
+            DateTimeOffset dateTimeOffset, int mode, string category, string sidx, string sord, int page, int rows, string genres, string channels)
+        {
+            var isAdult = await IsAdultUserAsync();
+            return isAdult
+                ? await _programmeService.GetUserAdultProgrammesAsync(progType, dateTimeOffset, mode, category,
+                    sidx, sord, page, rows, genres, channels, User.Identity.IsAuthenticated)
+                : await _programmeService.GetSystemProgrammesAsync(progType, dateTimeOffset, mode, category,
+                    sidx, sord, page, rows, genres, channels, User.Identity.IsAuthenticated);
+        }
+
+        /// <summary>
+        /// Выбирает вариант поиска телепередач в зависимости от возраста пользователя
+        /// </summary>
+        /// <param name="progType">Тип телепрограммы</param>
+        /// <param name="findTitle">Поисковая подстрока</param>
+        /// <param name="category">Категория</param>
+        /// <param name="sidx">Поле сортировки</param>
+        /// <param name="sord">Порядок сортировки</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк</param>
+        /// <param name="genres">Жанры</param>
+        /// <param name="dates">Даты</param>
+        /// <param name="channels">Каналы</param>
+        private async Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammesForCurrentUserAsync(int progType, string findTitle, string category,
+            string sidx, string sord, int page, int rows, string genres, string dates, string channels)
+        {
+            var isAdult = await IsAdultUserAsync();
+            return isAdult
+                ? await _programmeService.SearchAdultProgrammeAsync(progType, findTitle, category,
+                    sidx, sord, page, rows, genres, dates, channels, User.Identity.IsAuthenticated)
+                : await _programmeService.SearchProgrammeAsync(progType, findTitle, category,
+                    sidx, sord, page, rows, genres, dates, channels, User.Identity.IsAuthenticated);
         }
 
         /// <summary>
@@ -126,59 +180,25 @@ namespace TvProgViewer.WebUI.Controllers
         /// <param name="page">Номер страницы</param>
         /// <param name="rows">Количество строк</param>
         /// <param name="genres">Жанры</param>
-        /// <returns></returns>
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
         public async Task<JsonResult> GetSystemProgrammeAtNow(int progType, string category, string sidx, string sord, int page, int rows, string genres, string channels)
         {
-            object jsonData;
-            KeyValuePair<int, List<SystemProgramme>> result = new();
-            if (User.Identity.IsAuthenticated)
-            {
-                if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
-                {
-                    result = await _programmeService.GetUserAdultProgrammesAsync(progType, DateTimeOffset.Now, 1, (category != "Все категории") ? category : null
-                        , sidx, sord, page, rows, genres, channels);
-                } else
-                {
-                    result = await _programmeService.GetSystemProgrammesAsync(progType, DateTimeOffset.Now, 1, (category != "Все категории") ? category : null
-                        , sidx, sord, page, rows, genres, channels);
-                }
-            } else
-            {
-                result = await _programmeService.GetSystemProgrammesAsync(progType, DateTimeOffset.Now, 1, (category != "Все категории") ? category : null
-                        , sidx, sord, page, rows, genres, channels);
-            }
+            var result = await GetProgrammesForCurrentUserAsync(progType, DateTimeOffset.Now, 1, ResolveCategory(category),
+                sidx, sord, page, rows, genres, channels);
 
-            jsonData = GetJsonPagingInfo(page, rows, result);
-            return Json(jsonData);
+            return Json(GetJsonPagingInfo(page, rows, result));
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
         public async Task<JsonResult> GetSystemProgrammeAtNext(int progType, string category, string sidx, string sord, int page, int rows, string genres, string channels)
         {
-            object jsonData;
-            KeyValuePair<int, List<SystemProgramme>> result = new();
-            if (User.Identity.IsAuthenticated)
-            {
-                if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
-                {
-                    result = await _programmeService.GetUserAdultProgrammesAsync(progType, new DateTimeOffset(new DateTime(1800,1,1)), 2
-                        , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
-                }
-                else
-                {
-                    result = await _programmeService.GetSystemProgrammesAsync(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), 2
-                        , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
-                }
-            } else
-            {
-                result = await _programmeService.GetSystemProgrammesAsync(progType, new DateTimeOffset(new DateTime(1800, 1, 1)), 2
-                        , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
-            }
-            jsonData = GetJsonPagingInfo(page, rows, result);
-            return Json(jsonData);
+            var nextStartTime = new DateTimeOffset(new DateTime(1800, 1, 1));
+            var result = await GetProgrammesForCurrentUserAsync(progType, nextStartTime, 2, ResolveCategory(category),
+                sidx, sord, page, rows, genres, channels);
+
+            return Json(GetJsonPagingInfo(page, rows, result));
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
@@ -191,21 +211,20 @@ namespace TvProgViewer.WebUI.Controllers
                 await _userService.RemoveUserChannelMappingAsync(user);
                 if (!channels.IsNullOrWhiteSpace())
                 {
-                    var listChannelId = await channels.Split([';'], StringSplitOptions.RemoveEmptyEntries)
-                        .Where(ch => int.TryParse(ch, out int id))
-                        .Select(ch => { _ = int.TryParse(ch, out int id); return id; }).ToListAsync();
+                    var listChannelId = channels.Split([';'], StringSplitOptions.RemoveEmptyEntries)
+                        .Where(ch => int.TryParse(ch, out _))
+                        .Select(int.Parse)
+                        .ToList();
                     await _userService.AddUserChannelMappingAsync(user, listChannelId);
                 }
             }
         }
 
-        
+
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
         public async Task<JsonResult> GetSystemChannels(int tvProgProvider, string filters, string sidx, string sord, int page, int rows)
         {
-            object jsonData;
-            KeyValuePair<int, List<SystemChannel>> result;
             string filtData = null;
             if (filters != null)
             {
@@ -215,9 +234,8 @@ namespace TvProgViewer.WebUI.Controllers
                     filtData = item?.rules[0]?.data;
                 }
             }
-            result = await _channelService.GetSystemChannelsAsync(tvProgProvider, filtData, sidx, sord, page, rows);
-            jsonData = GetJsonPagingInfo(page, rows, result);
-            return Json(jsonData);
+            var result = await _channelService.GetSystemChannelsAsync(tvProgProvider, filtData, sidx, sord, page, rows);
+            return Json(GetJsonPagingInfo(page, rows, result));
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
@@ -225,27 +243,12 @@ namespace TvProgViewer.WebUI.Controllers
         public async Task<JsonResult> SearchProgramme(int progType, string findTitle, string category,
                                                          string sidx, string sord, int page, int rows, string genres, string dates, string channels)
         {
-            object jsonData;
-            KeyValuePair<int, List<SystemProgramme>> result = new();
-            if (User.Identity.IsAuthenticated)
-            {
-                if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
-                {
-                    result = await _programmeService.SearchAdultProgrammeAsync(progType, findTitle, (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, dates, channels);
-                }
-                else
-                {
-                    result = await _programmeService.SearchProgrammeAsync(progType, findTitle, (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, dates, channels);
-                }
-            }
-            else 
-            {
-                result = await _programmeService.SearchProgrammeAsync(progType, findTitle, (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, dates, channels);
-            }
-            
-            jsonData = GetJsonPagingInfo(page, rows, result);
-            return Json(jsonData);
+            var result = await SearchProgrammesForCurrentUserAsync(progType, findTitle, ResolveCategory(category),
+                sidx, sord, page, rows, genres, dates, channels);
+
+            return Json(GetJsonPagingInfo(page, rows, result));
         }
+
         /// <summary>
         /// Постраничное отображение
         /// </summary>
@@ -302,54 +305,33 @@ namespace TvProgViewer.WebUI.Controllers
                 children = []
             };
 
-            ProgPeriod periodMinMax = await _programmeService.GetSystemProgrammePeriodAsync(typeProg);
-            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : DateTime.Now;
-            tsMin = new DateTime(tsMin.Year, tsMin.Month, tsMin.Day, 5, 45, 0);
-            DateTime tsMiddle1 = tsMin.AddDays(6);
-            DateTime tsMiddle2 = tsMiddle1.AddDays(7); 
-            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : DateTime.Now;
-            tsMax = tsMax.AddDays(-1);
-            tsMax = new DateTime(tsMax.Year, tsMax.Month, tsMax.Day, 5, 45, 0);
+            // Границы трёх частей периода вычисляются общим с сервисом телепрограммы способом
+            var bounds = (await _programmeService.GetSystemProgrammePeriodAsync(typeProg)).GetPeriodBounds();
 
-            List<UserChannel> chanList = await _channelService.GetUserChannelsByLocalStorageAsync(providerId, jsonChannels);
-            TreeNode oneHalfRoot = new()
-            {
-                id = $"({tsMin.ToShortDateString()}—{tsMiddle1.ToShortDateString()})",
-                text = $"({tsMin.ToShortDateString()}—{tsMiddle1.ToShortDateString()})",
-                state = new State(false, false, false),
-                icon = "/images/i/All.png",
-                children = []
-            };
-            TreeNode twoHalfRoot = new()
-            {
-                id = $"({tsMiddle1.AddDays(1).ToShortDateString()}—{tsMiddle2.ToShortDateString()})",
-                text = $"({tsMiddle1.AddDays(1).ToShortDateString()}—{tsMiddle2.ToShortDateString()})",
-                state = new State(false, false, false),
-                icon = "/images/i/All.png",
-                children = []
-            };
-            TreeNode threeHalfRoot = new()
-            {
-                id = $"({tsMiddle2.AddDays(1).ToShortDateString()}—{tsMax.ToShortDateString()})",
-                text = $"({tsMiddle2.AddDays(1).ToShortDateString()}—{tsMax.ToShortDateString()})",
-                state = new State(false, false, false),
-                icon = "/images/i/All.png",
-                children = []
-            };
+            // Каналы сортируются один раз перед построением всех узлов дерева
+            List<UserChannel> chanList = (await _channelService.GetUserChannelsByLocalStorageAsync(providerId, jsonChannels))
+                .OrderBy(o => o.SysOrderCol)
+                .ThenBy(o => o.InternalId)
+                .ToList();
 
-            if (mode == 1) // Группировка по датам:
+            TreeNode oneHalfRoot = CreateHalfRootNode(bounds.TsMin, bounds.Middle1);
+            TreeNode twoHalfRoot = CreateHalfRootNode(bounds.Middle1.AddDays(1), bounds.Middle2);
+            TreeNode threeHalfRoot = CreateHalfRootNode(bounds.Middle2.AddDays(1), bounds.TsMax);
+
+            switch (mode)
             {
-                oneHalfRoot = CreateTreeByDays(chanList, tsMin, tsMiddle1, oneHalfRoot);
-                twoHalfRoot = CreateTreeByDays(chanList, tsMiddle1.AddDays(1), tsMiddle2, twoHalfRoot);
-                threeHalfRoot = CreateTreeByDays(chanList, tsMiddle2.AddDays(1), tsMax, threeHalfRoot);
+                case 1: // Группировка по датам:
+                    oneHalfRoot = CreateTreeByDays(chanList, bounds.TsMin, bounds.Middle1, oneHalfRoot);
+                    twoHalfRoot = CreateTreeByDays(chanList, bounds.Middle1.AddDays(1), bounds.Middle2, twoHalfRoot);
+                    threeHalfRoot = CreateTreeByDays(chanList, bounds.Middle2.AddDays(1), bounds.TsMax, threeHalfRoot);
+                    break;
+                case 2: // Группировка по телеканалам:
+                    oneHalfRoot = CreateTreeByChannels(chanList, bounds.TsMin, bounds.Middle1, oneHalfRoot, 1);
+                    twoHalfRoot = CreateTreeByChannels(chanList, bounds.Middle1.AddDays(1), bounds.Middle2, twoHalfRoot, 2);
+                    threeHalfRoot = CreateTreeByChannels(chanList, bounds.Middle2.AddDays(1), bounds.TsMax, threeHalfRoot, 3);
+                    break;
             }
-            else if (mode == 2) // Группировка по телеканалам:
-            {
-                oneHalfRoot = CreateTreeByChannels(chanList, tsMin, tsMiddle1, oneHalfRoot, 1);
-                twoHalfRoot = CreateTreeByChannels(chanList, tsMiddle1.AddDays(1), tsMiddle2, twoHalfRoot, 2);
-                threeHalfRoot = CreateTreeByChannels(chanList, tsMiddle2.AddDays(1), tsMax, threeHalfRoot, 3);
-            }
-            
+
             root.children.Add(oneHalfRoot);
             root.children.Add(twoHalfRoot);
             root.children.Add(threeHalfRoot);
@@ -357,37 +339,78 @@ namespace TvProgViewer.WebUI.Controllers
         }
 
         /// <summary>
+        /// Создание родительского узла для половины периода телепрограммы
+        /// </summary>
+        /// <param name="left">Левая дата периода</param>
+        /// <param name="right">Правая дата периода</param>
+        /// <returns>Созданный узел</returns>
+        private static TreeNode CreateHalfRootNode(DateTime left, DateTime right)
+        {
+            return new TreeNode
+            {
+                id = $"({left.ToShortDateString()}—{right.ToShortDateString()})",
+                text = $"({left.ToShortDateString()}—{right.ToShortDateString()})",
+                state = new State(false, false, false),
+                icon = "/images/i/All.png",
+                children = []
+            };
+        }
+
+        /// <summary>
+        /// Создание узла телеканала
+        /// </summary>
+        /// <param name="channel">Телеканал</param>
+        /// <param name="id">Идентификатор узла</param>
+        /// <param name="withChildren">Создавать ли коллекцию дочерних узлов</param>
+        /// <returns>Созданный узел</returns>
+        private static TreeNode CreateChannelNode(UserChannel channel, string id, bool withChildren)
+        {
+            return new TreeNode
+            {
+                id = id,
+                text = channel.Title,
+                state = new State(false, false, false),
+                icon = !string.IsNullOrWhiteSpace(channel.FileName25) ? channel.FileName25 : "images/i/satellite_25.png",
+                children = withChildren ? [] : null
+            };
+        }
+
+        /// <summary>
+        /// Создание узла дня недели
+        /// </summary>
+        /// <param name="date">Дата</param>
+        /// <param name="id">Идентификатор узла</param>
+        /// <param name="withChildren">Создавать ли коллекцию дочерних узлов</param>
+        /// <returns>Созданный узел</returns>
+        private static TreeNode CreateDayNode(DateTime date, string id, bool withChildren)
+        {
+            return new TreeNode
+            {
+                id = id,
+                text = $"({date.ToShortDateString()})",
+                state = new State(false, false, false),
+                icon = $"/images/i/{TvProgViewer.Services.TvProgMain.Extensions.GetDayIconName(date.DayOfWeek)}.png",
+                children = withChildren ? [] : null
+            };
+        }
+
+        /// <summary>
         /// Создание дерева по дням недели
         /// </summary>
-        /// <param name="chanList">Список телеканалов</param>
+        /// <param name="chanList">Отсортированный список телеканалов</param>
         /// <param name="left">Левая дата</param>
         /// <param name="right">Правая дата</param>
         /// <param name="node">Родительский узел</param>
         /// <returns>Заполненный родительский узел</returns>
-        private TreeNode CreateTreeByDays(List<UserChannel> chanList, DateTime left, DateTime right, TreeNode node)
+        private static TreeNode CreateTreeByDays(List<UserChannel> chanList, DateTime left, DateTime right, TreeNode node)
         {
             for (DateTime tsCurDate = left; tsCurDate <= right; tsCurDate = tsCurDate.AddDays(1))
             {
-                string strKey = dictWeek[tsCurDate.DayOfWeek.ToString().ToLower()];
-                TreeNode dayNode = new()
-                {
-                    id = tsCurDate.ToShortDateString(),
-                    text = $"({tsCurDate.ToShortDateString()})",
-                    state = new State(false, false, false),
-                    icon = $"/images/i/{strKey}.png",
-                    children = []
-                };
+                TreeNode dayNode = CreateDayNode(tsCurDate, tsCurDate.ToShortDateString(), withChildren: true);
                 node.children.Add(dayNode);
-                foreach (UserChannel channel in chanList.OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId))
+                foreach (UserChannel channel in chanList)
                 {
-                    TreeNode channelNode = new()
-                    {
-                        id = $"{tsCurDate.ToShortDateString()}_{channel.ChannelId}",
-                        text = channel.Title,
-                        state = new State(false, false, false),
-                        icon = $"{(!string.IsNullOrWhiteSpace(channel.FileName25) ? channel.FileName25 : "images/i/satellite_25.png")}"
-                    };
-                    dayNode.children.Add(channelNode);
+                    dayNode.children.Add(CreateChannelNode(channel, $"{tsCurDate.ToShortDateString()}_{channel.ChannelId}", withChildren: false));
                 }
             }
             return node;
@@ -396,39 +419,40 @@ namespace TvProgViewer.WebUI.Controllers
         /// <summary>
         /// Cоздание дерева по каналам
         /// </summary>
-        /// <param name="chanList">Список телеканалов</param>
+        /// <param name="chanList">Отсортированный список телеканалов</param>
         /// <param name="left">Левая дата</param>
         /// <param name="right">Правая дата</param>
         /// <param name="node">Родительский узел</param>
         /// <param name="nodeIndex">Порядковый номер родительского узла</param>
         /// <returns>Заполненный родительский узел</returns>
-        private TreeNode CreateTreeByChannels(List<UserChannel> chanList, DateTime left, DateTime right, TreeNode node, int nodeIndex)
+        private static TreeNode CreateTreeByChannels(List<UserChannel> chanList, DateTime left, DateTime right, TreeNode node, int nodeIndex)
         {
-            foreach (UserChannel channel in chanList.OrderBy(o => o.SysOrderCol).ThenBy(o => o.InternalId))
+            foreach (UserChannel channel in chanList)
             {
-                TreeNode channelNode = new()
-                {
-                    id = $"{nodeIndex}_{channel.ChannelId}",
-                    text = channel.Title,
-                    state = new State(false, false, false),
-                    icon = $"{(!string.IsNullOrWhiteSpace(channel.FileName25) ? channel.FileName25 : "images/i/satellite_25.png")}",
-                    children = []
-                };
+                TreeNode channelNode = CreateChannelNode(channel, $"{nodeIndex}_{channel.ChannelId}", withChildren: true);
                 node.children.Add(channelNode);
                 for (DateTime tsCurDate = left; tsCurDate <= right; tsCurDate = tsCurDate.AddDays(1))
                 {
-                    string strKey = dictWeek[tsCurDate.DayOfWeek.ToString().ToLower()];
-                    TreeNode dayNode = new()
-                    {
-                        id = $"{tsCurDate.ToShortDateString()}_{channel.ChannelId}",
-                        text = $"({tsCurDate.ToShortDateString()})",
-                        state = new State(false, false, false),
-                        icon = $"/images/i/{strKey}.png"
-                    };
-                    channelNode.children.Add(dayNode);
+                    channelNode.children.Add(CreateDayNode(tsCurDate, $"{tsCurDate.ToShortDateString()}_{channel.ChannelId}", withChildren: false));
                 }
             }
             return node;
+        }
+
+        /// <summary>
+        /// Выбор метода получения программы передач за день в зависимости от статуса пользователя
+        /// </summary>
+        /// <param name="progTypeID">Тип телепрограммы</param>
+        /// <param name="cid">Телеканал</param>
+        /// <param name="dtStart">Время начала выборки</param>
+        /// <param name="dtEnd">Время завершения выборки</param>
+        /// <param name="category">Категория</param>
+        private async Task<List<SystemProgramme>> GetUserProgrammesOfDayForCurrentUserAsync(int progTypeID, int cid, DateTime dtStart, DateTime dtEnd, string category)
+        {
+            var isAdult = await IsAdultUserAsync();
+            return isAdult
+                ? await _programmeService.GetUserAdultProgrammesOfDayListAsync(progTypeID, cid, dtStart, dtEnd, category, User.Identity.IsAuthenticated)
+                : await _programmeService.GetUserProgrammesOfDayListAsync(progTypeID, cid, dtStart, dtEnd, category, User.Identity.IsAuthenticated);
         }
 
         /// <summary>
@@ -443,23 +467,8 @@ namespace TvProgViewer.WebUI.Controllers
             IFormatProvider provider = CultureInfo.GetCultureInfo("ru-RU");
             DateTime dtStart = Convert.ToDateTime(tsDate, provider).AddHours(5).AddMinutes(45);
             DateTime dtEnd = Convert.ToDateTime(tsDate, provider).AddDays(1).AddHours(5).AddMinutes(45);
-            if (User.Identity.IsAuthenticated)
-            {
-                if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
-                {
-                    return Json(await _programmeService.GetUserAdultProgrammesOfDayListAsync(progTypeID, cid, dtStart, dtEnd,
-                                   (category != "Все категории") ? category : null));                }
-                else
-                {
-                    return Json(await _programmeService.GetUserProgrammesOfDayListAsync(progTypeID, cid, dtStart, dtEnd,
-                                   (category != "Все категории") ? category : null));
-                }
-            }
-            else
-            {
-                return Json(await _programmeService.GetUserProgrammesOfDayListAsync(progTypeID, cid, dtStart, dtEnd,
-                (category != "Все категории") ? category : null));
-            }
+
+            return Json(await GetUserProgrammesOfDayForCurrentUserAsync(progTypeID, cid, dtStart, dtEnd, ResolveCategory(category)));
         }
 
         /// <summary>
@@ -482,85 +491,62 @@ namespace TvProgViewer.WebUI.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var user = await _workContext.GetCurrentUserAsync();
-                uuid = user.UserGuid.ToString().ToLower(CultureInfo.CurrentCulture);
+                uuid = user.UserGuid.ToString().ToLowerInvariant();
             }
             uuid = !string.IsNullOrWhiteSpace(uuid) ? $"\"{uuid}\"" : "null";
             return Json($"{{\"uuid\":{uuid}}}");
         }
 
-        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-        [HttpGet]
-        public async Task<JsonResult> GetAllChannels(string key, string uuid)
+        /// <summary>
+        /// Выполняет операцию выгрузки данных для внешних потребителей:
+        /// проверяет ключ доступа и статус операции, подготавливает данные
+        /// и регистрирует обращение пользователя
+        /// </summary>
+        /// <param name="key">Ключ доступа к выгрузке данных</param>
+        /// <param name="operationName">Имя операции</param>
+        /// <param name="uuid">Идентификатор пользователя выгрузки</param>
+        /// <param name="prepareDataFunc">Функция подготовки выгружаемых данных</param>
+        private async Task<JsonResult> ExecuteGreenDataOperationAsync(string key, string operationName, string uuid, Func<Task<object>> prepareDataFunc)
         {
-            if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
+            if (!string.Equals(key, _securitySettings.ProgrammesLoadKey, StringComparison.OrdinalIgnoreCase))
+                return Json("{}");
+
+            var user = await _userService.InsertTvGreenDataUserAsync(uuid, _webHelper.GetCurrentIpAddress());
+            bool isActiveOperation = await _userService.GetOperationActiveStatus(operationName);
+            if (!((user == null || (user.Active && !user.Deleted)) && isActiveOperation))
+                return Json("{}");
+
+            var data = await prepareDataFunc();
+            if (user != null)
             {
-                var user = await _userService.InsertTvGreenDataUserAsync(uuid, _webHelper.GetCurrentIpAddress());
-                bool isActiveOperation = await _userService.GetOperationActiveStatus(TvProgUserDefaults.GetAllChannelsOperationName);
-                if ((user == null || (user.Active && !user.Deleted)) && isActiveOperation)
-                {
-                    List<GdChannel> channelList = await _channelService.GetAllChannels();
-                    var tvChannelObj = new
-                    {
-                        tvChannels = channelList
-                    };
-                    if (user != null)
-                    {
-                        await _userService.AddUserGreenDataOperationAsync(user, TvProgUserDefaults.GetAllChannelsOperationName);
-                    }
-                    return Json(tvChannelObj);
-                }
+                await _userService.AddUserGreenDataOperationAsync(user, operationName);
             }
-            return Json("{}");
+
+            return Json(data);
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> GetAllProgrammes(string key, string uuid, int page, int rows)
+        public Task<JsonResult> GetAllChannels(string key, string uuid)
         {
-            if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
-            {
-                var user = await _userService.InsertTvGreenDataUserAsync(uuid, _webHelper.GetCurrentIpAddress());
-                bool isActiveOperation = await _userService.GetOperationActiveStatus(TvProgUserDefaults.GetAllProgrammesOperationName);
-                if ((user == null || (user.Active && !user.Deleted)) && isActiveOperation)
-                {
-                    List<GdProgramme> programmeList = await _programmeService.GetAllProgrammes(page, rows);
-                    var tvscheduleObj = new
-                    {
-                        tvschedule = programmeList
-                    };
-                    if (user != null)
-                    {
-                        await _userService.AddUserGreenDataOperationAsync(user, TvProgUserDefaults.GetAllProgrammesOperationName);
-                    }
-                    return Json(tvscheduleObj);
-                }
-            }
-            return Json("{}");
+            return ExecuteGreenDataOperationAsync(key, TvProgUserDefaults.GetAllChannelsOperationName, uuid, async () =>
+                new { tvChannels = await _channelService.GetAllChannels() });
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet]
-        public async Task<JsonResult> GetProgrammesStatus(string key, string uuid)
+        public Task<JsonResult> GetAllProgrammes(string key, string uuid, int page, int rows)
         {
-            if (key.ToLower() == _securitySettings.ProgrammesLoadKey.ToLower())
-            {
-                var user = await _userService.InsertTvGreenDataUserAsync(uuid, _webHelper.GetCurrentIpAddress());
-                bool isActiveOperation = await _userService.GetOperationActiveStatus(TvProgUserDefaults.GetProgrammeStatusOperationName);
-                if ((user == null || (user.Active && !user.Deleted)) && isActiveOperation)
-                {
-                    GdProgrammeStatus programmeStatus = await _programmeService.GetProgrammeStatus();
-                    var tvschedulestatusObj = new
-                    {
-                        tvshedulestatus = programmeStatus
-                    };
-                    if (user != null)
-                    {
-                        await _userService.AddUserGreenDataOperationAsync(user, TvProgUserDefaults.GetProgrammeStatusOperationName);
-                    }
-                    return Json(tvschedulestatusObj);
-                }
-            }
-            return Json("{}");
+            return ExecuteGreenDataOperationAsync(key, TvProgUserDefaults.GetAllProgrammesOperationName, uuid, async () =>
+                new { tvschedule = await _programmeService.GetAllProgrammes(page, rows) });
+        }
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet]
+        public Task<JsonResult> GetProgrammesStatus(string key, string uuid)
+        {
+            return ExecuteGreenDataOperationAsync(key, TvProgUserDefaults.GetProgrammeStatusOperationName, uuid, async () =>
+                new { tvshedulestatus = await _programmeService.GetProgrammeStatus() });
         }
         #endregion
     }

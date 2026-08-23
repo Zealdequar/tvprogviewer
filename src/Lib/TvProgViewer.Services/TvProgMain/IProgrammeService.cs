@@ -12,98 +12,147 @@ namespace TvProgViewer.Services.TvProgMain
     /// </summary>
     public partial interface IProgrammeService
     {
-        
         /// <summary>
         /// Получение ТВ-провайдера по идентификатору
         /// </summary>
         /// <param name="providerId">Идентификатор ТВ-провайдера</param>
-        public Task<TvProgProviders> GetProviderByIdAsync(int providerId);
+        /// <returns>ТВ-провайдер</returns>
+        Task<TvProgProviders> GetProviderByIdAsync(int providerId);
 
         /// <summary>
         /// Получение всех ТВ-провайдеров
         /// </summary>
-        public Task<IList<TvProgProviders>> GetAllProvidersAsync();
+        /// <returns>Список ТВ-провайдеров</returns>
+        Task<IList<TvProgProviders>> GetAllProvidersAsync();
 
         /// <summary>
         /// Получение типа ТВ-программы по его идентификатору
         /// </summary>
-        /// <returns></returns>
-        public Task<TypeProg> GetTypeProgByIdAsync(int typeProgId);
+        /// <param name="typeProgId">Идентификатор типа программы</param>
+        /// <returns>Тип программы</returns>
+        Task<TypeProg> GetTypeProgByIdAsync(int typeProgId);
 
         /// <summary>
         /// Получение всех типов ТВ-программы
         /// </summary>
         /// <param name="showHidden">Показывать скрытые</param>
-        public Task<IList<TypeProg>> GetAllTypeProgsAsync(bool showHidden);
+        /// <returns>Список типов программ</returns>
+        Task<IList<TypeProg>> GetAllTypeProgsAsync(bool showHidden = false);
 
         /// <summary>
-        /// Получение провайдеров телепрограммы
+        /// Получение провайдеров телепрограммы вместе с их типами программ
         /// </summary>
-        /// <returns></returns>
-        public Task<IList<ProviderType>> GetProviderTypeListAsync();
+        /// <returns>Список пар "провайдер - тип программы"</returns>
+        Task<IList<ProviderType>> GetProviderTypeListAsync();
 
         /// <summary>
         /// Получение периода действия программы телепередач
         /// </summary>
-        /// <param name="TypeProgId">Идентификатор тип программы</param>
-        /// <returns></returns>
-        public Task<ProgPeriod> GetSystemProgrammePeriodAsync(int typeProgId);
-
+        /// <param name="typeProgId">Идентификатор типа программы</param>
+        /// <returns>Период действия программы</returns>
+        Task<ProgPeriod> GetSystemProgrammePeriodAsync(int typeProgId);
 
         /// <summary>
         /// Получение дней доступной программы
         /// </summary>
-        /// <param name="typeProg">Идентификатор типа программы</param>
+        /// <param name="typeProgId">Идентификатор типа программы</param>
         /// <returns>Список дней</returns>
-        public Task<List<DaysItem>> GetDaysAsync(int typeProg);
+        Task<List<DaysItem>> GetDaysAsync(int typeProgId);
 
         /// <summary>
         /// Получение категорий телепередач
         /// </summary>
-        public Task<IList<string>> GetCategoriesAsync();
+        /// <returns>Список категорий</returns>
+        Task<IList<string>> GetCategoriesAsync();
 
         /// <summary>
         /// Выборка телепрограммы
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="dateTimeOffset">Время</param>
-        /// <param name="mode">режимы выборки: 1 - сейчас; 2 - следом</param>
-        public Task<KeyValuePair<int, List<SystemProgramme>>> GetSystemProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels);
+        /// <param name="mode">Режимы выборки: 1 - сейчас; 2 - следом</param>
+        /// <param name="category">Категория</param>
+        /// <param name="sidx">Поле сортировки</param>
+        /// <param name="sord">Порядок сортировки</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк на странице</param>
+        /// <param name="genres">Идентификаторы жанров через ;</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Общее количество записей и страница телепрограммы</returns>
+        Task<KeyValuePair<int, List<SystemProgramme>>> GetSystemProgrammesAsync(int typeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized);
 
         /// <summary>
         /// Выборка телепрограммы для совершеннолетних
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="dateTimeOffset">Время</param>
-        /// <param name="mode">режимы выборки: 1 - сейчас; 2 - следом</param>
-        public Task<KeyValuePair<int, List<SystemProgramme>>> GetUserAdultProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels);
-        
+        /// <param name="mode">Режимы выборки: 1 - сейчас; 2 - следом</param>
+        /// <param name="category">Категория</param>
+        /// <param name="sidx">Поле сортировки</param>
+        /// <param name="sord">Порядок сортировки</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк на странице</param>
+        /// <param name="genres">Идентификаторы жанров через ;</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Общее количество записей и страница телепрограммы</returns>
+        Task<KeyValuePair<int, List<SystemProgramme>>> GetUserAdultProgrammesAsync(int typeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized);
+
         /// <summary>
         /// Поиск телепередачи
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
-        public Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels);
+        /// <param name="category">Категория</param>
+        /// <param name="sidx">Поле сортировки</param>
+        /// <param name="sord">Порядок сортировки</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк на странице</param>
+        /// <param name="genres">Идентификаторы жанров через ;</param>
+        /// <param name="dates">Даты в формате yyyyMMdd через ;</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Общее количество записей и страница телепрограммы</returns>
+        Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels, bool isAuthorized);
+
         /// <summary>
         /// Поиск телепередачи для совершеннолетних
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
-        public Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultProgrammeAsync(int typeProgId, string findTitle, string category
-                                                               , string sidx, string sord, int page, int rows, string genres, string dates, string channels);
+        /// <param name="category">Категория</param>
+        /// <param name="sidx">Поле сортировки</param>
+        /// <param name="sord">Порядок сортировки</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк на странице</param>
+        /// <param name="genres">Идентификаторы жанров через ;</param>
+        /// <param name="dates">Даты в формате yyyyMMdd через ;</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Общее количество записей и страница телепрограммы</returns>
+        Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels, bool isAuthorized);
+
         /// <summary>
         /// Глобальный поиск телепередачи
         /// </summary>
         /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         /// <param name="category">Категория</param>
-        /// <param name="genres">Жанры</param>
-        /// <param name="channels">Каналы</param>
-        public Task<KeyValuePair<int, List<SystemProgramme>>> SearchGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels);
+        /// <param name="sidx">Поле сортировки</param>
+        /// <param name="sord">Порядок сортировки</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк на странице</param>
+        /// <param name="genres">Идентификаторы жанров через ;</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Общее количество записей и страница телепрограммы</returns>
+        Task<KeyValuePair<int, List<SystemProgramme>>> SearchGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized);
 
         /// <summary>
         /// Глобальный поиск телепередачи для совершеннолетних
@@ -111,42 +160,53 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
         /// <param name="category">Категория</param>
-        /// <param name="genres">Жанры</param>
-        /// <param name="channels">Каналы</param>
-        public Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels);
+        /// <param name="sidx">Поле сортировки</param>
+        /// <param name="sord">Порядок сортировки</param>
+        /// <param name="page">Номер страницы</param>
+        /// <param name="rows">Количество строк на странице</param>
+        /// <param name="genres">Идентификаторы жанров через ;</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Общее количество записей и страница телепрограммы</returns>
+        Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized);
 
         /// <summary>
         /// Получение пользовательских телепередач за день
         /// </summary>
-        /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
+        /// <param name="typeProgId">Идентификатор типа программы телепередач</param>
         /// <param name="channelId">Код канала</param>
         /// <param name="tsStart">Время начала выборки</param>
         /// <param name="tsEnd">Время завершения выборки</param>
         /// <param name="category">Категория</param>
-        public Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(int typeProgId, int channeldId, DateTime tsStart, DateTime tsEnd, string category);
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Список телепередач за день</returns>
+        Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category, bool isAuthorized);
 
         /// <summary>
         /// Получение пользовательских телепередач за день для совершеннолетних
         /// </summary>
-        /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
+        /// <param name="typeProgId">Идентификатор типа программы телепередач</param>
         /// <param name="channelId">Код канала</param>
         /// <param name="tsStart">Время начала выборки</param>
         /// <param name="tsEnd">Время завершения выборки</param>
         /// <param name="category">Категория</param>
-        public Task<List<SystemProgramme>> GetUserAdultProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category);
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <returns>Список телепередач за день</returns>
+        Task<List<SystemProgramme>> GetUserAdultProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category, bool isAuthorized);
 
         /// <summary>
         /// Получение всей телепрограммы
         /// </summary>
         /// <param name="page">Страница</param>
         /// <param name="rows">Строки</param>
-        public Task<List<GdProgramme>> GetAllProgrammes(int page, int rows);
+        /// <returns>Страница телепрограммы</returns>
+        Task<List<GdProgramme>> GetAllProgrammes(int page, int rows);
 
         /// <summary>
-        /// Получение состояния телепрограммы (количества прередач и дату/время последней передачи)
+        /// Получение состояния телепрограммы (количества передач и дату/время последней передачи)
         /// </summary>
-        /// <returns></returns>
-        public Task<GdProgrammeStatus> GetProgrammeStatus();
+        /// <returns>Состояние телепрограммы</returns>
+        Task<GdProgrammeStatus> GetProgrammeStatus();
     }
 }

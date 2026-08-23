@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TvProgViewer.Core.Caching;
 using TvProgViewer.Core.Domain.TvProgMain;
-
 namespace TvProgViewer.Services.TvProgMain
 {
     public static class TvProgProgrammeDefaults
@@ -27,5 +26,15 @@ namespace TvProgViewer.Services.TvProgMain
         /// </summary>
         /// {0} : Показывать скрытые записи?
         public static CacheKey WebResourcesAllCacheKey => new CacheKey("TvProg.webresource.all.{0}", TvProgEntityCacheDefaults<WebResources>.Prefix);
+
+        /// <summary>
+        /// Получение ключа для кеширования списка активных категорий телепрограммы
+        /// </summary>
+        public static CacheKey CategoriesAllCacheKey => new CacheKey("TvProg.tvprogcategory.all", TvProgEntityCacheDefaults<TvProgCategory>.Prefix);
+
+        /// <summary>
+        /// Получение ключа для кеширования пути к изображению анонса телепередачи
+        /// </summary>
+        public static CacheKey AnonsImagePathCacheKey => new CacheKey("TvProg.mediaPic.anonsImagePath", TvProgEntityCacheDefaults<MediaPic>.Prefix);
     }
 }

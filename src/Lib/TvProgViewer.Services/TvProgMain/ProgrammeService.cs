@@ -1,14 +1,11 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Spreadsheet;
-using LinqToDB;
-using Microsoft.Extensions.Azure;
+﻿using LinqToDB;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using TvProgViewer.Core.Caching;
@@ -22,9 +19,10 @@ namespace TvProgViewer.Services.TvProgMain
     /// <summary>
     /// Обеспечивает выборку телепрограммы
     /// </summary>
-    public class ProgrammeService: IProgrammeService
+    public partial class ProgrammeService : IProgrammeService
     {
         #region Поля
+
         private const string GRAY_COLOR = "grayColor";
         private const string BLACK_COLOR = "blackColor";
         private const string GREEN_COLOR = "greenColor";
@@ -33,8 +31,43 @@ namespace TvProgViewer.Services.TvProgMain
         private const string AGE_18_PLUS = "(18+)";
         private const string TS_START_MO = "TsStartMo";
         private const string GREEN_ANONS_PNG = "GreenAnons.png";
+        private const string CATEGORY_CHILDREN = "Детям";
+        private const string CATEGORY_MOVIE = "Художественный фильм";
+        private const string CATEGORY_SERIES = "Сериал";
+        private const string CATEGORY_SPORT = "Спорт";
+        private const string CATEGORY_ADULT = "Для взрослых";
+        private const string CATEGORY_NONE = "Без категории";
+        private const string NO_GENRE_NAME = "Без типа";
+        private const string NO_RATING_NAME = "Без рейтинга";
+        private const string XMLTV_TYPE_NAME = "Формат XMLTV";
+
+        private static readonly char[] separator = new[] { ';' };
+
+        /// <summary>
+        /// Русская культура для форматирования дат
+        /// </summary>
+        private static readonly CultureInfo RussianCulture = CultureInfo.GetCultureInfo("ru-RU");
+
+        /// <summary>
+        /// Предопределённые системные категории
+        /// </summary>
+        private static readonly HashSet<string> PredefinedCategories = new(StringComparer.Ordinal)
+        {
+            CATEGORY_CHILDREN,
+            CATEGORY_MOVIE,
+            CATEGORY_SERIES,
+            CATEGORY_SPORT,
+            CATEGORY_ADULT,
+            CATEGORY_NONE
+        };
+
+        /// <summary>
+        /// Шаблон возрастной метки "(X+)" в названии передачи
+        /// </summary>
+        private static readonly Regex AgeFromTitleRegex = new(@"\((\d+)\+\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         private readonly IRepository<TvProgProviders> _providerTypeRepository;
-        private readonly IRepository<TypeProg> _typeProgRespository;
+        private readonly IRepository<TypeProg> _typeProgRepository;
         private readonly IRepository<Programmes> _programmesRepository;
         private readonly IRepository<Channels> _channelsRepository;
         private readonly IRepository<RatingClassificator> _ratingClassificatorRepository;
@@ -42,52 +75,52 @@ namespace TvProgViewer.Services.TvProgMain
         private readonly IRepository<MediaPic> _mediaPicRepository;
         private readonly IRepository<GenreClassificator> _genreClassificatorRepository;
         private readonly IRepository<Genres> _genresRepository;
+        private readonly IRepository<TvProgCategory> _tvProgCategoryRepository;
+        private readonly IRepository<ProgrammesTvProgCategoryMapping> _programmesTvProgCategoryMappingRepository;
         private readonly IStaticCacheManager _cacheManager;
-        private static readonly char[] separator = new[] { ';' };
-        private readonly Dictionary<string, string> dictWeek = new Dictionary<string, string>()
-                                                       {
-                                                           {"monday", "Mon"},
-                                                           {"tuesday", "Tue"},
-                                                           {"wednesday", "Wen"},
-                                                           {"thursday", "Ths" },
-                                                           {"friday", "Fri" },
-                                                           {"saturday", "Sat"},
-                                                           {"sunday", "Sun"}
-                                                       };
+
+        /// <summary>
+        /// Московская часовая зона (кроссплатформенный идентификатор)
+        /// </summary>
         private static readonly TimeZoneInfo MoscowTz =
-        TimeZoneInfo.FindSystemTimeZoneById(
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
-            "Russian Standard Time" : "Europe/Moscow");
+            TimeZoneInfo.FindSystemTimeZoneById(
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                "Russian Standard Time" : "Europe/Moscow");
+
         #endregion
 
         #region Конструктор
 
-        public ProgrammeService( IRepository<TvProgProviders> providerTypeRepository,
-                                 IRepository<TypeProg> typeProgRepository,
-                                 IRepository<Programmes> programmesRepository,
-                                 IRepository<Channels> channelsRepository,
-                                 IRepository<RatingClassificator> ratingClassificatorRepository,
-                                 IRepository<Ratings> ratingsRepository,
-                                 IRepository<MediaPic> mediaPicRepository,
-                                 IRepository<GenreClassificator> genreClassificatorRepository,
-                                 IRepository<Genres> genresRepository,
-                                 IStaticCacheManager cacheManager)
+        public ProgrammeService(IRepository<TvProgProviders> providerTypeRepository,
+                         IRepository<TypeProg> typeProgRepository,
+                         IRepository<Programmes> programmesRepository,
+                         IRepository<Channels> channelsRepository,
+                         IRepository<RatingClassificator> ratingClassificatorRepository,
+                         IRepository<Ratings> ratingsRepository,
+                         IRepository<MediaPic> mediaPicRepository,
+                         IRepository<GenreClassificator> genreClassificatorRepository,
+                         IRepository<Genres> genresRepository,
+                         IRepository<TvProgCategory> tvProgCategoryRepository,
+                         IRepository<ProgrammesTvProgCategoryMapping> programmesTvProgCategoryMappingRepository,
+                         IStaticCacheManager cacheManager)
         {
             _providerTypeRepository = providerTypeRepository;
-            _typeProgRespository = typeProgRepository;
+            _typeProgRepository = typeProgRepository;
             _programmesRepository = programmesRepository;
             _channelsRepository = channelsRepository;
-            _ratingClassificatorRepository = ratingClassificatorRepository;   
+            _ratingClassificatorRepository = ratingClassificatorRepository;
             _ratingsRepository = ratingsRepository;
             _mediaPicRepository = mediaPicRepository;
             _genreClassificatorRepository = genreClassificatorRepository;
             _genresRepository = genresRepository;
+            _tvProgCategoryRepository = tvProgCategoryRepository;
+            _programmesTvProgCategoryMappingRepository = programmesTvProgCategoryMappingRepository;
             _cacheManager = cacheManager;
         }
 
         #endregion
 
-        #region Методы
+        #region Провайдеры и типы программ
 
         /// <summary>
         /// Получение ТВ-провайдера по его идентификатору
@@ -106,11 +139,8 @@ namespace TvProgViewer.Services.TvProgMain
         /// </summary>
         public virtual async Task<IList<TvProgProviders>> GetAllProvidersAsync()
         {
-            var providers = await _providerTypeRepository.GetAllAsync(query =>
-            {
-                return query;
-            }, cache => cache.PrepareKeyForDefaultCache(TvProgProgrammeDefaults.ProvidersAllCacheKey));
-            return await providers.ToListAsync();
+            return await _providerTypeRepository.GetAllAsync(query => query,
+                cache => cache.PrepareKeyForDefaultCache(TvProgProgrammeDefaults.ProvidersAllCacheKey));
         }
 
         /// <summary>
@@ -122,7 +152,7 @@ namespace TvProgViewer.Services.TvProgMain
             if (typeProgId == 0)
                 return null;
 
-            return await _typeProgRespository.GetByIdAsync(typeProgId);
+            return await _typeProgRepository.GetByIdAsync(typeProgId);
         }
 
         /// <summary>
@@ -130,491 +160,170 @@ namespace TvProgViewer.Services.TvProgMain
         /// </summary>
         public virtual async Task<IList<TypeProg>> GetAllTypeProgsAsync(bool showHidden = false)
         {
-            var types = await _typeProgRespository.GetAllAsync(query =>
-            {
-                return query;
-            }, cache => cache.PrepareKeyForDefaultCache(TvProgProgrammeDefaults.TypeProgAllCacheKey, showHidden));
-
-            return await types.ToListAsync();
+            return await _typeProgRepository.GetAllAsync(query => query,
+                cache => cache.PrepareKeyForDefaultCache(TvProgProgrammeDefaults.TypeProgAllCacheKey, showHidden));
         }
 
         /// <summary>
-        /// Получение списка провайдеров телепрограммы
+        /// Получение списка провайдеров телепрограммы вместе с их типами программ
         /// </summary>
-        /// <returns></returns>
         public virtual async Task<IList<ProviderType>> GetProviderTypeListAsync()
         {
             return await (from tpp in _providerTypeRepository.Table
-                    join tp in _typeProgRespository.Table on tpp.Id equals tp.TvProgProviderId
-                    select new ProviderType
-                    {
-                        TvProgProviderId = tpp.Id,
-                        ProviderName = tpp.ProviderName,
-                        ProviderText = tpp.ProviderWebSite,
-                        TypeProgId = tp.Id,
-                        TypeName = tp.TypeName,
-                        TypeEnum = (tp.TypeName == "Формат XMLTV") ? Enums.TypeProg.XMLTV : Enums.TypeProg.InterTV,
-                        FileFormat = tp.FileFormat
-                    }).ToListAsync();
+                          join tp in _typeProgRepository.Table on tpp.Id equals tp.TvProgProviderId
+                          select new ProviderType
+                          {
+                              TvProgProviderId = tpp.Id,
+                              ProviderName = tpp.ProviderName,
+                              ProviderText = tpp.ProviderWebSite,
+                              TypeProgId = tp.Id,
+                              TypeName = tp.TypeName,
+                              TypeEnum = (tp.TypeName == XMLTV_TYPE_NAME) ? Enums.TypeProg.XMLTV : Enums.TypeProg.InterTV,
+                              FileFormat = tp.FileFormat
+                          }).ToListAsync();
         }
 
-        
+        #endregion
+
+        #region Период и дни программы
 
         /// <summary>
-        /// Получение периода действия программы телепередач
+        /// Получение периода действия программы телепередач (минимальное и максимальное время показа одним запросом)
         /// </summary>
-        /// <param name="TypeProgId">Идентификатор тип программы</param>
+        /// <param name="typeProgId">Идентификатор типа программы</param>
         public virtual async Task<ProgPeriod> GetSystemProgrammePeriodAsync(int typeProgId)
         {
-            ProgPeriod progPeriod = new ProgPeriod() { 
-                dtStart = await _programmesRepository.Table.Where(x => x.TypeProgId == typeProgId).MinAsync(x => (DateTimeOffset?)x.TsStartMo),
-                dtEnd = await _programmesRepository.Table.Where(x => x.TypeProgId == typeProgId).MaxAsync(x => (DateTimeOffset?)x.TsStopMo) 
-            };
-            
-            return progPeriod;
+            // Пустая программа возвращает структуру с null-значениями границ
+            return await _programmesRepository.Table
+                .Where(x => x.TypeProgId == typeProgId)
+                .GroupBy(x => x.TypeProgId)
+                .Select(g => new ProgPeriod
+                {
+                    dtStart = g.Min(x => (DateTimeOffset?)x.TsStartMo),
+                    dtEnd = g.Max(x => (DateTimeOffset?)x.TsStopMo)
+                })
+                .FirstOrDefaultAsync(CancellationToken.None);
         }
 
         /// <summary>
         /// Получение дней доступной программы
         /// </summary>
-        /// <param name="typeProg">Идентификатор типа программы</param>
+        /// <param name="typeProgId">Идентификатор типа программы</param>
         /// <returns>Список дней</returns>
-        public virtual async Task<List<DaysItem>> GetDaysAsync(int typeProg)
+        public virtual async Task<List<DaysItem>> GetDaysAsync(int typeProgId)
         {
-            ProgPeriod periodMinMax = await GetSystemProgrammePeriodAsync(typeProg);
-            DateTime tsMin = periodMinMax.dtStart.HasValue ? periodMinMax.dtStart.Value.DateTime : DateTime.UtcNow;
-            tsMin = new DateTime(tsMin.Year, tsMin.Month, tsMin.Day, 5, 45, 0);
-            DateTime tsMiddle = tsMin.AddDays(6);
-            DateTime tsMax = periodMinMax.dtEnd.HasValue ? periodMinMax.dtEnd.Value.DateTime : DateTime.UtcNow;
-            DateTime dtMax = tsMax.AddDays(-1);
-            tsMax = new DateTime(dtMax.Year, dtMax.Month, dtMax.Day, 5, 45, 0, Calendar.CurrentEra);
-            IFormatProvider provider = CultureInfo.GetCultureInfo("ru-RU");
-            List<DaysItem> daysList = [];
-            for (DateTime tsCurDate = tsMiddle.AddDays(1); tsCurDate <= tsMax; tsCurDate = tsCurDate.AddDays(1))
+            var bounds = (await GetSystemProgrammePeriodAsync(typeProgId)).GetPeriodBounds();
+            var todayUtc = DateTime.UtcNow.Date;
+            var daysList = new List<DaysItem>();
+            for (DateTime tsCurDate = bounds.Middle1.AddDays(1); tsCurDate <= bounds.TsMax; tsCurDate = tsCurDate.AddDays(1))
             {
-                string strKey = dictWeek[tsCurDate.DayOfWeek.ToString().ToLower()];
-                
-                DaysItem dayItem = new()
+                daysList.Add(new DaysItem
                 {
-                    Name = tsCurDate.ToString("dd.MM.yyyy", provider),
+                    Name = tsCurDate.ToString("dd.MM.yyyy", RussianCulture),
                     DayOfWeek = tsCurDate.DayOfWeek.ToString(),
-                    IconSrc = $"./images/i/{strKey}.png",
-                    Color = (tsCurDate.Date < DateTime.UtcNow.Date) ? GRAY_COLOR : (tsCurDate.Date == DateTime.UtcNow.Date) ? BLACK_COLOR : GREEN_COLOR
-                };
-                daysList.Add(dayItem);
+                    IconSrc = $"./images/i/{Extensions.GetDayIconName(tsCurDate.DayOfWeek)}.png",
+                    Color = (tsCurDate.Date < todayUtc) ? GRAY_COLOR : (tsCurDate.Date == todayUtc) ? BLACK_COLOR : GREEN_COLOR
+                });
             }
 
-            return await daysList.ToListAsync();
+            return daysList;
         }
+
         /// <summary>
         /// Получение категорий телепередач
         /// </summary>
+        /// <remarks>
+        /// Категории берутся из справочника <see cref="TvProgCategory"/> (включая предопределённые
+        /// системные категории). Порядок вывода определяется полем <see cref="TvProgCategory.Order"/>.
+        /// Список запрашивается практически на каждой странице (компонент выбора категории),
+        /// поэтому результат кешируется; сброс выполняется потребителем событий изменения категорий
+        /// </remarks>
         public virtual async Task<IList<string>> GetCategoriesAsync()
         {
-            return await _programmesRepository.Table.Select(x => x.Category).Distinct().OrderBy(o => o).ToListAsync<string>();
-        }
-
-        /// <summary>
-        /// Установка рейтингов
-        /// </summary>
-        /// <param name="systemProgramme">Программа телепередач</param>
-        /// <param name="uid">Идентификатор пользователя</param>
-        private void SetRatings(List<SystemProgramme> systemProgramme, long? uid)
-        {
-            if (!uid.HasValue)
-                return;
-
-            foreach (SystemProgramme sp in systemProgramme)
+            // Защитная копия: вызывающий код (например, SetCategory) мутирует список,
+            // а закешированный экземпляр должен оставаться неизменным
+            var cachedCategories = await _cacheManager.GetAsync(TvProgProgrammeDefaults.CategoriesAllCacheKey, async () =>
             {
-                var ratingAttrs =  (from rc in _ratingClassificatorRepository.Table
-                                   join r in _ratingsRepository.Table on rc.RatingId equals r.Id
-                                   join mp2 in _mediaPicRepository.Table on r.IconId equals mp2.Id into rmp2
-                                   from mp2 in rmp2.DefaultIfEmpty()
-                                   where r.UserId == uid && rc.UserId == uid && r.Visible && r.DeleteDate == null &&
-                                      (rc.DeleteAfterDate == null || rc.DeleteAfterDate > DateTime.UtcNow)
-                                   orderby rc.OrderCol
-                                   select new { r.Id, r.RatingName, mp2.Path25, mp2.FileName, rc.ContainPhrases, rc.NonContainPhrases })
-                                                .ToList()
-                                                .Where(rc => sp.TelecastTitle.ToUpper().ContainsAny(rc.ContainPhrases.ToUpper().Split(';'))
-                                                        && (string.IsNullOrWhiteSpace(rc.NonContainPhrases) ||
-                                                        (!string.IsNullOrWhiteSpace(rc.NonContainPhrases) &&
-                                                        !sp.TelecastTitle.ToUpper().ContainsAny(rc.NonContainPhrases.ToUpper().Split(';')))))
-                                                .Select(mp2 => new { mp2.Id, mp2.RatingName, RatingContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
-                sp.RatingId = ratingAttrs?.Id ?? (from r in _ratingsRepository.Table
-                                                        where r.UserId == uid && r.RatingName == "Без рейтинга" && r.Visible && r.DeleteDate == null
-                                                        select r.Id).FirstOrDefault();
-                sp.RatingName = ratingAttrs?.RatingName ?? "Без рейтинга";
-                sp.RatingContent = ratingAttrs?.RatingContent ?? (from m in _mediaPicRepository.Table
-                                                                  where m.FileName == "favempty.png" && m.IsSystem
-                                                                  select m.Path25 + m.FileName).FirstOrDefault();
-            }
-        }
+                IList<string> categories = await _tvProgCategoryRepository.Table
+                    .Where(c => c.Active)
+                    .Select(c => new { c.Name, Order = c.Order ?? int.MaxValue })
+                    .Where(x => !string.IsNullOrEmpty(x.Name))
+                    .Distinct()
+                    .OrderBy(x => x.Order)
+                    .ThenBy(x => x.Name)
+                    .Select(x => x.Name)
+                    .ToListAsync<string>();
 
-        /// <summary>
-        /// Установка жанров
-        /// </summary>
-        /// <param name="systemProgramme">Системная телепрограмма</param>
-        /// <param name="Uid">Код пользователя</param>
-        private void SetGenres(List<SystemProgramme> systemProgramme, long? uid)
-        {
-            Parallel.ForEach(systemProgramme, sp =>
-            {
-                var genreCategoryAttrs = (from gc in _genreClassificatorRepository.Table
-                                          join g in _genresRepository.Table on gc.GenreId equals g.Id
-                                          join mp2 in _mediaPicRepository.Table on g.IconId equals mp2.Id into gmp2
-                                          from mp2 in gmp2.DefaultIfEmpty()
-                                          where sp.Category == g.GenreName && g.UserId == uid && gc.UserId == uid && g.Visible && g.DeleteDate == null &&
-                                           (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.UtcNow)
-                                          orderby gc.OrderCol
-                                          select new { g.Id, g.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
-                var genreClassifAttrs = (from gc in _genreClassificatorRepository.Table
-                                         join g in _genresRepository.Table on gc.GenreId equals g.Id
-                                         join mp2 in _mediaPicRepository.Table on g.IconId equals mp2.Id into gmp2
-                                         from mp2 in gmp2.DefaultIfEmpty()
-                                         where g.UserId == uid && gc.UserId == uid && g.Visible && g.DeleteDate == null &&
-                                         (gc.DeleteAfterDate == null || gc.DeleteAfterDate > DateTime.UtcNow)
-                                         orderby gc.OrderCol
-                                         select new { g.Id, g.GenreName, mp2.Path25, mp2.FileName, gc.ContainPhrases, gc.NonContainPhrases })
-                                                .ToList()
-                                                .Where(gc => sp.TelecastTitle.ToUpper().ContainsAny(gc.ContainPhrases.ToUpper().Split(';'))
-                                                       && (string.IsNullOrWhiteSpace(gc.NonContainPhrases) ||
-                                                       (!string.IsNullOrWhiteSpace(gc.NonContainPhrases) &&
-                                                       !sp.TelecastTitle.ToUpper().ContainsAny(gc.NonContainPhrases.ToUpper().Split(';')))))
-                                                .Select(mp2 => new { mp2.Id, mp2.GenreName, GenreContent = mp2.Path25 + mp2.FileName }).FirstOrDefault();
-                sp.GenreId = genreCategoryAttrs?.Id ?? genreClassifAttrs?.Id ?? 1;
-                sp.GenreName = genreCategoryAttrs?.GenreName ?? genreClassifAttrs?.GenreName ?? "Без типа";
-                sp.GenreContent = genreCategoryAttrs?.GenreContent ?? genreClassifAttrs?.GenreContent;
-            });
-        }
-
-        /// <summary>
-        /// Фильтрация по жанрам
-        /// </summary>
-        /// <param name="systemProgramme">Системная программа</param>
-        /// <param name="genres">Идентификаторы жанров через ;</param>
-        private async Task<List<SystemProgramme>> FilterGenresAsync(List<SystemProgramme> systemProgramme, string genres)
-        {
-            if (string.IsNullOrWhiteSpace(genres))
-                return systemProgramme;
-            return await systemProgramme.Where(x => genres.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                                .Any(g => long.TryParse(g, out long Gid) && long.Parse(g) == x.GenreId)).ToListAsync();
-        }
-
-        /// <summary>
-        /// Фильтрация по каналам
-        /// </summary>
-        /// <param name="systemProgramme">Системная программа</param>
-        /// <param name="channels">Идентификаторы каналов через ;</param>
-        private async Task<List<SystemProgramme>> FilterChannelsAsync(List<SystemProgramme> systemProgramme, string channels)
-        {
-            if (string.IsNullOrWhiteSpace(channels))
-                return systemProgramme;
-            return await systemProgramme.Where(x => channels.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
-                                    .Any(c => long.TryParse(c, out long Cid) && long.Parse(c) == x.Cid)).ToListAsync();
-        }
-
-
-        private async Task<List<SystemProgramme>> FilterExcludeDates (List<SystemProgramme> systemProgramme, List<DateTime> rawDates)
-        {
-            DateTime minDateTime = await rawDates.AsQueryable().MinAsync(CancellationToken.None);
-            DateTime maxDateTime = await rawDates.AsQueryable().MaxAsync(CancellationToken.None);
-            maxDateTime = maxDateTime.AddDays(1);
-            rawDates.Add(maxDateTime);
-            return await systemProgramme.Where(x => rawDates.Contains(x.TsStartMo.Date)).ToListAsync(); 
-        }
-
-        /// <summary>
-        /// Получение названия жанра через идентификатор
-        /// </summary>
-        /// <param name="idStr">Идентификатор жанра</param>
-        private async Task<string> GetNameByIdGenre(string idStr, long? Uid)
-        {
-            long id;
-
-            if (!long.TryParse(idStr, out id))
-                return string.Empty;
-
-            return await (from g in _genresRepository.Table
-                    where g.Id == id && g.UserId == Uid && g.Visible && g.DeleteDate == null
-                    select g.GenreName).FirstOrDefaultAsync(CancellationToken.None);
-        }
-
-        /// <summary>
-        /// Получение телеканалов и их иконок
-        /// </summary>
-        /// <param name="systemProgramme">Системный список телепрограммы</param>
-        private async Task<List<SystemProgramme>> ChannelIconJoinAsync(List<SystemProgramme> systemProgramme, int typeProgId, List<int> intListChannels)
-        {
-            var resultChannels = await (from ch in _channelsRepository.Table
-                                        join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
-                                        join pt in _providerTypeRepository.Table on ch.TvProgProviderId equals pt.Id
-                                        join tp in _typeProgRespository.Table on pt.Id equals tp.TvProgProviderId
-                                        from mp in chmp.DefaultIfEmpty()
-                                        where tp.Id == typeProgId && ch.Deleted == null && 
-                                              ((intListChannels.Any() && intListChannels.Contains(ch.Id)) || intListChannels.Count == 0)
-                                        select new
-                                        {
-                                            ChannelId = ch.Id,
-                                            ChannelName = ch.TitleChannel,
-                                            ChannelContent = mp.Path25 + mp.FileName,
-                                        }).ToListAsync();
-
-            Parallel.ForEach(systemProgramme, x =>
-            {
-                var channelItem = resultChannels.Where(ch => ch.ChannelId == x.Cid).FirstOrDefault();
-                if (channelItem != null)
-                {
-                    x.ChannelName = channelItem.ChannelName;
-                    x.ChannelContent = channelItem.ChannelContent;
-                }
+                return categories;
             });
 
-            return systemProgramme;
+            return cachedCategories?.ToList() ?? [];
         }
-        /// <summary>
-        /// Вспомогательный метод для расчета процента оставшегося времени
-        /// </summary>
-        /// <param name="startTime">Дата начала</param>
-        /// <param name="endTime">Дата завершения</param>
-        /// <param name="currentTime">Текущее время</param>
-        /// <returns>Процент</returns>
-        private static int? CalculateRemainPercentage(DateTime startTime, DateTime endTime, DateTime currentTime)
-        {
-            var totalDuration = (endTime - startTime).TotalSeconds;
-            if (totalDuration <= 0) return null;
 
-            var elapsed = (currentTime - startTime).TotalSeconds;
-            var percentage = (elapsed / totalDuration) * 100;
+        #endregion
 
-            return (int?)percentage;
-        }
+        #region Выборка телепрограммы (сейчас / следом)
 
         /// <summary>
         /// Выборка телепрограммы
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="dateTimeOffset">Время</param>
-        /// <param name="mode">режимы выборки: 1 - сейчас; 2 - следом</param>
-        public virtual async Task<KeyValuePair<int, List<SystemProgramme>>> GetSystemProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels)
+        /// <param name="mode">Режимы выборки: 1 - сейчас; 2 - следом</param>
+        public virtual Task<KeyValuePair<int, List<SystemProgramme>>> GetSystemProgrammesAsync(int typeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized)
         {
-            var spRows = new List<SystemProgramme>();
-            DateTime minDate = new DateTime(1800, 1, 1);
-            DateTime dateTime = dateTimeOffset.DateTime;
-            int spCount = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse).ToListAsync();
-            
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
-
-            switch (mode)
-            {
-                case 1:
-                    dateTime = dateTime.ToUniversalTime();
-                    spCount = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
-                                         dateTime < pr.TsStopMo && pr.Category != ADULT_USERS &&
-                                         !pr.Title.Contains(AGE_18_PLUS) &&
-                                         (category == null || pr.Category == category) &&
-                                         ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                         select pr.Id).CountAsync(CancellationToken.None);
-
-                    spRows = await (from pr in _programmesRepository.Table
-                                    where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
-                                    dateTime < pr.TsStopMo && pr.Category != ADULT_USERS &&
-                                    !pr.Title.Contains(AGE_18_PLUS) &&
-                                    (category == null || pr.Category == category) &&
-                                    ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                    select new SystemProgramme
-                                    {
-                                        ProgrammesId = pr.Id,
-                                        Cid = pr.ChannelId,
-                                        InternalChanId = pr.InternalChanId ?? 0,
-                                        Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
-                                        Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
-                                        TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                        TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                        TelecastTitle = pr.Title,
-                                        TelecastDescr = pr.Descr,
-                                        AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? anonsImagePath : null,
-                                        Category = pr.Category,
-                                        Remain = CalculateRemainPercentage(pr.TsStartMo, pr.TsStopMo, dateTime),
-                                        OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                    }).ToListAsync();
-                    sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
-                    spRows = await spRows.AsQueryable()
-                                         .LimitAndOrderBy(page, rows, sidx, sord)
-                                         .ToListAsync();
-                    SetGenres(spRows, null);
-                    spRows = await ChannelIconJoinAsync(spRows, TypeProgId, intListChannels);
-                    spRows = await FilterGenresAsync(spRows, genres);
-                    spRows = await FilterChannelsAsync(spRows, channels);
-                    break;
-                case 2:
-                    if (dateTime == minDate)
-                    {
-                        List<TsStopForRemain> stopAfter = await (from pr2 in _programmesRepository.Table
-                                                                 where pr2.TsStartMo <= DateTime.UtcNow && DateTime.UtcNow < pr2.TsStopMo && pr2.TypeProgId == TypeProgId
-                                                                   && pr2.Category != ADULT_USERS && !pr2.Title.Contains(AGE_18_PLUS)
-                                                                   && ((intListChannels.Any() && intListChannels.Contains(pr2.ChannelId)) || intListChannels.Count == 0)
-                                                                 select new TsStopForRemain
-                                                                 {
-                                                                     TsStopMoAfter = pr2.TsStopMo.AddSeconds(1),
-                                                                     Cid = pr2.ChannelId
-                                                                 }).ToListAsync();
-                        var nowUtc = DateTime.UtcNow;
-                        var afterTwoDays = nowUtc.AddDays(2);
-                                                
-                        var sp2 = await (from pr3 in _programmesRepository.Table
-                                         where pr3.TypeProgId == TypeProgId
-                                         && pr3.TsStartMo >= nowUtc && afterTwoDays > pr3.TsStopMo
-                                         && pr3.Category != ADULT_USERS && !pr3.Title.Contains(AGE_18_PLUS)
-                                         && (category == null || pr3.Category == category)
-                                         && ((intListChannels.Any() && intListChannels.Contains(pr3.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr3.InternalChanId, pr3.TsStartMo
-                                         select new SystemProgramme
-                                         {
-                                             ProgrammesId = pr3.Id,
-                                             Cid = pr3.ChannelId,
-                                             InternalChanId = pr3.InternalChanId,
-                                             Start = pr3.TsStart,
-                                             Stop = pr3.TsStop,
-                                             TsStartMo = pr3.TsStartMo,
-                                             TsStopMo = pr3.TsStopMo, 
-                                             TelecastTitle = pr3.Title,
-                                             TelecastDescr = pr3.Descr,
-                                             AnonsContent = !string.IsNullOrEmpty(pr3.Descr) ? anonsImagePath : null,
-                                             Category = pr3.Category,
-                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr3.ChannelId).SysOrderCol
-                                         }).ToListAsync();
-
-                        sp2 = await ChannelIconJoinAsync(sp2, TypeProgId, intListChannels);
-
-                        spCount = await (from pr in await sp2.ToListAsync()
-                                         join prin in stopAfter on pr.Cid equals prin.Cid
-                                         where pr.TsStartMo <= prin.TsStopMoAfter && prin.TsStopMoAfter < pr.TsStopMo
-                                         select pr.ProgrammesId
-                                         ).AsQueryable().CountAsync(CancellationToken.None);
-                        sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
-                        spRows = await (from pr in await sp2.ToListAsync()
-                                         join prin in stopAfter on pr.Cid equals prin.Cid
-                                         where pr.TsStartMo <= prin.TsStopMoAfter && prin.TsStopMoAfter < pr.TsStopMo
-                                         select new SystemProgramme()
-                                         {
-                                             ProgrammesId = pr.ProgrammesId,
-                                             Cid = pr.Cid,
-                                             ChannelName = pr.ChannelName,
-                                             ChannelContent = pr.ChannelContent,
-                                             InternalChanId = pr.InternalChanId,
-                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.Start.DateTime, MoscowTz),
-                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.Stop.DateTime, MoscowTz),
-                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                             TelecastTitle = pr.TelecastTitle,
-                                             TelecastDescr = pr.TelecastDescr,
-                                             AnonsContent = pr.AnonsContent,
-                                             Category = pr.Category,
-                                             Remain = (int) (pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
-                                             OrderCol = pr.OrderCol
-                                         }).AsQueryable()
-                                         .LimitAndOrderBy(page, rows, sidx, sord)
-                                         .ToListAsync();
-                        SetGenres(spRows, null);
-                        spRows = await FilterGenresAsync(spRows, genres);
-                        spRows = await FilterChannelsAsync(spRows, channels);
-                    }
-                    else if (dateTime > minDate)
-                    {
-                        spCount = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
-                                         && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
-                                         && (category == null || pr.Category == category)
-                                         && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr.InternalChanId, pr.TsStart
-                                         select new SystemProgramme
-                                         {
-                                             ProgrammesId = pr.Id,
-                                             Cid = pr.ChannelId,
-                                             InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
-                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
-                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                             TelecastTitle = pr.Title,
-                                             TelecastDescr = pr.Descr,
-                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
-                                             Category = pr.Category,
-                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                         }).CountAsync(CancellationToken.None);
-                        sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
-                        spRows = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
-                                         && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
-                                         && (category == null || pr.Category == category)
-                                         && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr.InternalChanId, pr.TsStart
-                                         select new SystemProgramme
-                                         {
-                                             ProgrammesId = pr.Id,
-                                             Cid = pr.ChannelId,
-                                             InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
-                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
-                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                             TelecastTitle = pr.Title,
-                                             TelecastDescr = pr.Descr,
-                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
-                                             Category = pr.Category,
-                                             Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
-                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                         }).AsQueryable()
-                                           .LimitAndOrderBy(page, rows, sidx, sord)
-                                           .ToListAsync();
-                        spRows = await ChannelIconJoinAsync(spRows, TypeProgId, intListChannels);
-                        SetGenres(spRows, null);
-                        spRows = await FilterGenresAsync(spRows, genres);
-                        spRows = await FilterChannelsAsync(spRows, channels);
-                    }
-                    break;
-            }
-            return new KeyValuePair<int, List<SystemProgramme>>(spCount, spRows);
+            return GetProgrammesCoreAsync(typeProgId, dateTimeOffset, mode, category,
+                sidx, sord, page, rows, genres, channels, isAuthorized, includeAdult: false);
         }
 
         /// <summary>
         /// Выборка телепрограммы для совершеннолетних
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="dateTimeOffset">Время</param>
-        /// <param name="mode">режимы выборки: 1 - сейчас; 2 - следом</param>
-        public virtual async Task<KeyValuePair<int, List<SystemProgramme>>> GetUserAdultProgrammesAsync(int TypeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels)
+        /// <param name="mode">Режимы выборки: 1 - сейчас; 2 - следом</param>
+        public virtual Task<KeyValuePair<int, List<SystemProgramme>>> GetUserAdultProgrammesAsync(int typeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized)
+        {
+            return GetProgrammesCoreAsync(typeProgId, dateTimeOffset, mode, category,
+                sidx, sord, page, rows, genres, channels, isAuthorized, includeAdult: true);
+        }
+
+        /// <summary>
+        /// Общая выборка телепрограммы для обычных пользователей и совершеннолетних
+        /// </summary>
+        /// <param name="includeAdult">Включать ли передачи для взрослых</param>
+        private async Task<KeyValuePair<int, List<SystemProgramme>>> GetProgrammesCoreAsync(int typeProgId, DateTimeOffset dateTimeOffset, int mode, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized, bool includeAdult)
         {
             var spRows = new List<SystemProgramme>();
-            DateTime minDate = new DateTime(1800, 1, 1);
+            DateTime minDate = new(1800, 1, 1);
             DateTime dateTime = dateTimeOffset.DateTime;
             int spCount = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : await channels.Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse).ToListAsync();
-            
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
+            var channelIds = ParseChannelIds(channels);
+
+            // Путь к изображению анонса получается один раз (кешируется)
+            var anonsImagePath = await GetAnonsImagePathAsync();
 
             switch (mode)
             {
                 case 1:
                     dateTime = dateTime.ToUniversalTime();
-                    spCount = await (from pr in _programmesRepository.Table
-                                     where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
-                                     dateTime < pr.TsStopMo && (category == null || pr.Category == category) &&
-                                     ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                     select pr.Id).CountAsync(CancellationToken.None);
+                    var baseQuery = GetFilteredProgrammesQuery(typeProgId, category, channelIds, includeAdult);
+
+                    spCount = await baseQuery
+                        .Where(pr => pr.TsStartMo <= dateTime && dateTime < pr.TsStopMo)
+                        .Select(pr => pr.Id)
+                        .CountAsync(CancellationToken.None);
+
                     sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
-                    spRows = await (from pr in _programmesRepository.Table
-                                    where pr.TypeProgId == TypeProgId && pr.TsStartMo <= dateTime &&
-                                    dateTime < pr.TsStopMo && (category == null || pr.Category == category) &&
-                                    ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+
+                    // Порядковый номер канала берётся левым соединением вместо подзапроса на каждую строку
+                    spRows = await (from pr in baseQuery
+                                    where pr.TsStartMo <= dateTime && dateTime < pr.TsStopMo
+                                    join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id into prch
+                                    from ch in prch.DefaultIfEmpty()
                                     select new SystemProgramme
                                     {
                                         ProgrammesId = pr.Id,
@@ -629,112 +338,93 @@ namespace TvProgViewer.Services.TvProgMain
                                         AnonsContent = !string.IsNullOrWhiteSpace(pr.Descr) ? anonsImagePath : null,
                                         Category = pr.Category,
                                         Remain = CalculateRemainPercentage(pr.TsStartMo, pr.TsStopMo, dateTime),
-                                        OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                    }).AsQueryable()
-                                      .LimitAndOrderBy(page, rows, sidx, sord)
-                                      .ToListAsync();
-                    SetGenres(spRows, null);
-                    spRows = await ChannelIconJoinAsync(spRows, TypeProgId, intListChannels);
-                    spRows = await FilterGenresAsync(spRows, genres);
-                    spRows = await FilterChannelsAsync(spRows, channels);
+                                        OrderCol = ch.SysOrderCol
+                                    }).LimitAndOrderBy(page, rows, sidx, sord).ToListAsync();
+
+                    await ApplyPostFiltersAsync(spRows, typeProgId, category, isAuthorized, channelIds, genres, channels);
                     break;
                 case 2:
                     if (dateTime == minDate)
                     {
-                        List<TsStopForRemain> stopAfter = await (from pr2 in _programmesRepository.Table
-                                                                 where pr2.TsStartMo <= DateTime.UtcNow && DateTime.UtcNow < pr2.TsStopMo && pr2.TypeProgId == TypeProgId
-                                                                    && ((intListChannels.Any() && intListChannels.Contains(pr2.ChannelId)) || intListChannels.Count == 0)
-                                                                 select new TsStopForRemain
-                                                                 {
-                                                                     TsStopMoAfter = pr2.TsStopMo.AddSeconds(1),
-                                                                     Cid = pr2.ChannelId
-                                                                 }).ToListAsync();
-                        DateTime afterTwoDays = DateTime.UtcNow.AddDays(2);
+                        var nowUtc = DateTime.UtcNow;
+                        var afterTwoDays = nowUtc.AddDays(2);
 
-                        var sp2 = await (from pr3 in _programmesRepository.Table
-                                         where pr3.TypeProgId == TypeProgId
-                                         && pr3.TsStartMo >= DateTime.UtcNow && afterTwoDays > pr3.TsStopMo
-                                         && (category == null || pr3.Category == category)
-                                         && ((intListChannels.Any() && intListChannels.Contains(pr3.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr3.InternalChanId, pr3.TsStartMo
-                                         select new SystemProgramme
-                                         {
-                                             ProgrammesId = pr3.Id,
-                                             Cid = pr3.ChannelId,
-                                             InternalChanId = pr3.InternalChanId,
-                                             Start = pr3.TsStart,
-                                             Stop = pr3.TsStop,
-                                             TsStartMo = pr3.TsStartMo,
-                                             TsStopMo = pr3.TsStopMo,
-                                             TelecastTitle = pr3.Title,
-                                             TelecastDescr = pr3.Descr,
-                                             AnonsContent = !string.IsNullOrEmpty(pr3.Descr) ? anonsImagePath : null,
-                                             Category = pr3.Category,
-                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr3.ChannelId).SysOrderCol
-                                         }).ToListAsync();
+                        // Текущие передачи: конец каждой из них определяет точку отсчёта "следующей" передачи канала
+                        var nextPointsByChannel = (await (from pr2 in GetFilteredProgrammesQuery(typeProgId, null, channelIds, includeAdult)
+                                                          where pr2.TsStartMo <= nowUtc && nowUtc < pr2.TsStopMo
+                                                          select new
+                                                          {
+                                                              Cid = pr2.ChannelId,
+                                                              NextPoint = pr2.TsStopMo.AddSeconds(1)
+                                                          }).ToListAsync())
+                                                  .ToLookup(x => x.Cid, x => x.NextPoint);
 
-                        sp2 = await ChannelIconJoinAsync(sp2, TypeProgId, intListChannels);
-
-                        spCount = await (from pr in await sp2.ToListAsync()
-                                         join prin in stopAfter on pr.Cid equals prin.Cid
-                                         where pr.TsStartMo <= prin.TsStopMoAfter && prin.TsStopMoAfter < pr.TsStopMo
-                                         select pr.ProgrammesId
-                                         ).AsQueryable().CountAsync(CancellationToken.None);
                         sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
-                        spRows = await (from pr in await sp2.ToListAsync()
-                                        join prin in stopAfter on pr.Cid equals prin.Cid
-                                        where pr.TsStartMo <= prin.TsStopMoAfter && prin.TsStopMoAfter < pr.TsStopMo
-                                        select new SystemProgramme()
-                                        {
-                                            ProgrammesId = pr.ProgrammesId,
-                                            Cid = pr.Cid,
-                                            ChannelName = pr.ChannelName,
-                                            ChannelContent = pr.ChannelContent,
-                                            InternalChanId = pr.InternalChanId,
-                                            Start = TimeZoneInfo.ConvertTimeFromUtc(pr.Start.DateTime, MoscowTz),
-                                            Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.Stop.DateTime, MoscowTz),
-                                            TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                            TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                            TelecastTitle = pr.TelecastTitle,
-                                            TelecastDescr = pr.TelecastDescr,
-                                            AnonsContent = pr.AnonsContent,
-                                            Category = pr.Category,
-                                            Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
-                                            OrderCol = pr.OrderCol
-                                        }).AsQueryable()
-                                          .LimitAndOrderBy(page, rows, sidx, sord)
-                                          .ToListAsync();
-                        SetGenres(spRows, null);
-                        spRows = await FilterGenresAsync(spRows, genres);
-                        spRows = await FilterChannelsAsync(spRows, channels);
+
+                        // Данные выбираются без преобразования времени; порядковый номер канала берётся левым соединением вместо подзапроса на каждую строку
+                        var candidates = await (from pr3 in GetFilteredProgrammesQuery(typeProgId, category, channelIds, includeAdult)
+                                                where pr3.TsStartMo >= nowUtc && afterTwoDays > pr3.TsStopMo
+                                                join ch in _channelsRepository.Table on pr3.ChannelId equals ch.Id into prch
+                                                from ch in prch.DefaultIfEmpty()
+                                                orderby pr3.InternalChanId, pr3.TsStartMo
+                                                select new
+                                                {
+                                                    pr3.Id,
+                                                    Cid = pr3.ChannelId,
+                                                    pr3.InternalChanId,
+                                                    pr3.TsStart,
+                                                    pr3.TsStop,
+                                                    pr3.TsStartMo,
+                                                    pr3.TsStopMo,
+                                                    pr3.Title,
+                                                    pr3.Descr,
+                                                    pr3.Category,
+                                                    OrderCol = ch.SysOrderCol
+                                                }).ToListAsync();
+
+                        // Передачи, идущие следом за текущими по каждому каналу (поиск по каналу за O(1))
+                        var following = candidates
+                            .Where(pr => nextPointsByChannel[pr.Cid]
+                                .Any(nextPoint => pr.TsStartMo <= nextPoint && nextPoint < pr.TsStopMo))
+                            .ToList();
+
+                        spCount = following.Count;
+
+                        // Сортировка и постраничное ограничение выполняются до преобразования времени (конвертируется только страница)
+                        spRows = await following.AsQueryable()
+                            .LimitAndOrderBy(page, rows, sidx, sord)
+                            .Select(pr => new SystemProgramme
+                            {
+                                ProgrammesId = pr.Id,
+                                Cid = pr.Cid,
+                                InternalChanId = pr.InternalChanId,
+                                Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
+                                Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
+                                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
+                                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
+                                TelecastTitle = pr.Title,
+                                TelecastDescr = pr.Descr,
+                                AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
+                                Category = pr.Category,
+                                Remain = (int)(pr.TsStartMo - nowUtc).TotalSeconds,
+                                OrderCol = pr.OrderCol
+                            })
+                            .ToListAsync();
+
+                        await ApplyPostFiltersAsync(spRows, typeProgId, category, isAuthorized, channelIds, genres, channels);
                     }
                     else if (dateTime > minDate)
                     {
-                        spCount = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
-                                         && (category == null || pr.Category == category)
-                                         && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr.InternalChanId, pr.TsStart
-                                         select new SystemProgramme
-                                         {
-                                             ProgrammesId = pr.Id,
-                                             Cid = pr.ChannelId,
-                                             InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = pr.TsStart,
-                                             Stop = pr.TsStop,
-                                             TsStartMo = pr.TsStartMo,
-                                             TsStopMo = pr.TsStopMo,
-                                             TelecastTitle = pr.Title,
-                                             TelecastDescr = pr.Descr,
-                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
-                                             Category = pr.Category,
-                                             OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                         }).CountAsync(CancellationToken.None);
+                        var nowUtc = DateTime.UtcNow;
+                        var nextQuery = GetFilteredProgrammesQuery(typeProgId, category, channelIds, includeAdult)
+                            .Where(pr => nowUtc < pr.TsStartMo && pr.TsStartMo <= dateTime);
+
+                        spCount = await nextQuery.Select(pr => pr.Id).CountAsync(CancellationToken.None);
                         sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : ORDER_COL;
-                        spRows = await (from pr in _programmesRepository.Table
-                                        where pr.TypeProgId == TypeProgId && DateTime.UtcNow < pr.TsStartMo && pr.TsStartMo <= dateTime
-                                        && (category == null || pr.Category == category)
-                                        && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+
+                        spRows = await (from pr in nextQuery
+                                        join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id into prch
+                                        from ch in prch.DefaultIfEmpty()
                                         orderby pr.InternalChanId, pr.TsStart
                                         select new SystemProgramme
                                         {
@@ -750,146 +440,84 @@ namespace TvProgViewer.Services.TvProgMain
                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
                                             Category = pr.Category,
                                             Remain = (int)(pr.TsStartMo - DateTime.UtcNow).TotalSeconds,
-                                            OrderCol = _channelsRepository.Table.FirstOrDefault(ch => ch.Id == pr.ChannelId).SysOrderCol
-                                        }).AsQueryable()
-                                          .LimitAndOrderBy(page, rows, sidx, sord)
-                                          .ToListAsync();
-                        spRows = await ChannelIconJoinAsync(spRows, TypeProgId, intListChannels);
-                        SetGenres(spRows, null);
-                        spRows = await FilterGenresAsync(spRows, genres);
-                        spRows = await FilterChannelsAsync(spRows, channels);
+                                            OrderCol = ch.SysOrderCol
+                                        }).LimitAndOrderBy(page, rows, sidx, sord).ToListAsync();
+
+                        await ApplyPostFiltersAsync(spRows, typeProgId, category, isAuthorized, channelIds, genres, channels);
                     }
                     break;
             }
+
             return new KeyValuePair<int, List<SystemProgramme>>(spCount, spRows);
         }
+
+        #endregion
+
+        #region Поиск телепередач
 
         /// <summary>
         /// Поиск телепередачи
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
-        public virtual async Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category
-                                                               , string sidx, string sord, int page, int rows, string genres, string dates, string channels)
-
+        public virtual Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels, bool isAuthorized)
         {
-            int spCount = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : 
-                await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
-            if (string.IsNullOrWhiteSpace(dates))
-                return new KeyValuePair<int, List<SystemProgramme>>();
-            
-            if (genres == null)
-                genres = "";
-
-            List<long> repoGenres = _genresRepository.Table.Where(x => x.Visible && x.UserId == null).Select(x => (long)x.Id).ToList();
-            var setGenres = new HashSet<long>(repoGenres);
-            List<long> userGenres = genres.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Where(g =>
-                    long.TryParse(g, out long Gid)).Select(long.Parse).ToList();
-            if (string.IsNullOrWhiteSpace(findTitle) && (string.IsNullOrWhiteSpace(genres) || setGenres.SetEquals(userGenres)))
-                return new KeyValuePair<int, List<SystemProgramme>>();
-            
-
-            DateTime date;
-            CultureInfo ci = new("Ru-ru");
-            var rawDates = await dates.Split(separator, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => DateTime.TryParseExact(x, "yyyyMMdd", ci, DateTimeStyles.None, out date) ? 
-                DateTime.ParseExact(x, "yyyyMMdd", ci) : 
-                new DateTime()).ToListAsync();
-            var minDateTime = await rawDates.AsQueryable().MinAsync(CancellationToken.None);
-            var maxDateTime = await rawDates.AsQueryable().MaxAsync(CancellationToken.None);
-            maxDateTime = maxDateTime.AddDays(1);
-
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
-
-            var systemProgramme = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == typeProgId
-                                    && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
-                                    && (category == null || pr.Category == category)
-                                    && (string.IsNullOrWhiteSpace(findTitle) || pr.Title.Contains(findTitle))
-                                    && minDateTime.ToUniversalTime() <= pr.TsStartMo && pr.TsStartMo <= maxDateTime.ToUniversalTime()
-                                    && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr.TsStartMo, pr.TsStopMo
-                                         select new SystemProgramme
-                                         {
-                                             ProgrammesId = pr.Id,
-                                             Cid = pr.ChannelId,
-                                             InternalChanId = pr.InternalChanId ?? 0,
-                                             Start = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStart, MoscowTz),
-                                             Stop = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStop, MoscowTz),
-                                             TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStartMo, MoscowTz),
-                                             TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(pr.TsStopMo, MoscowTz),
-                                             TelecastTitle = pr.Title,
-                                             TelecastDescr = pr.Descr,
-                                             AnonsContent = !string.IsNullOrEmpty(pr.Descr) ? anonsImagePath : null,
-                                             Category = pr.Category,
-                                             Remain = 1
-                                         }).ToListAsync();
-            
-            systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
-            Parallel.ForEach(systemProgramme, pr =>
-            {
-                pr.DayMonth = pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru")) +
-               String.Format("({0:D2}.{1:D2})", pr.TsStartMo.Day, pr.TsStartMo.Month);
-            });
-            systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
-            systemProgramme = await FilterExcludeDates(systemProgramme, rawDates);
-            SetGenres(systemProgramme, null);
-            systemProgramme = await FilterGenresAsync(systemProgramme, genres);
-            spCount = systemProgramme.Count;
-            sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : TS_START_MO;
-            systemProgramme = await systemProgramme.AsQueryable()
-                                                   .LimitAndOrderBy(page, rows, sidx, sord)
-                                                   .ToListAsync();
-            return new KeyValuePair<int, List<SystemProgramme>>(spCount, systemProgramme);
+            return SearchProgrammesCoreAsync(typeProgId, findTitle, category,
+                sidx, sord, page, rows, genres, dates, channels, isAuthorized, includeAdult: false);
         }
 
         /// <summary>
         /// Поиск телепередачи для совершеннолетних
         /// </summary>
-        /// <param name="TypeProgId">Тип программы телепередач</param>
+        /// <param name="typeProgId">Тип программы телепередач</param>
         /// <param name="findTitle">Поисковая подстрока</param>
-        public virtual async Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultProgrammeAsync(int typeProgId, string findTitle, string category
-                                                               , string sidx, string sord, int page, int rows, string genres, string dates, string channels)
-
+        public virtual Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels, bool isAuthorized)
         {
-            int spCount = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] :
-                await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
+            return SearchProgrammesCoreAsync(typeProgId, findTitle, category,
+                sidx, sord, page, rows, genres, dates, channels, isAuthorized, includeAdult: true);
+        }
+
+        /// <summary>
+        /// Общий поиск телепередач по датам для обычных пользователей и совершеннолетних
+        /// </summary>
+        /// <param name="includeAdult">Включать ли передачи для взрослых</param>
+        private async Task<KeyValuePair<int, List<SystemProgramme>>> SearchProgrammesCoreAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string dates, string channels, bool isAuthorized, bool includeAdult)
+        {
             if (string.IsNullOrWhiteSpace(dates))
                 return new KeyValuePair<int, List<SystemProgramme>>();
 
-            if (genres == null)
-                genres = "";
-
-            List<long> repoGenres = _genresRepository.Table.Where(x => x.Visible && x.UserId == null).Select(x => (long)x.Id).ToList();
-            var setGenres = new HashSet<long>(repoGenres);
-            List<long> userGenres = genres.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).Where(g =>
-                    long.TryParse(g, out long Gid)).Select(long.Parse).ToList();
-            if (string.IsNullOrWhiteSpace(findTitle) && (string.IsNullOrWhiteSpace(genres) || setGenres.SetEquals(userGenres)))
+            // Без поисковой подстроки поиск имеет смысл только при явном выборе жанров
+            if (string.IsNullOrWhiteSpace(findTitle) && string.IsNullOrWhiteSpace(genres))
                 return new KeyValuePair<int, List<SystemProgramme>>();
 
+            if (string.IsNullOrWhiteSpace(findTitle))
+            {
+                // Если выбранные жанры совпадают с системными - фильтрация не даст результата
+                var repoGenreIds = (await _genresRepository.Table
+                    .Where(x => x.Visible && x.UserId == null)
+                    .Select(x => (long)x.Id)
+                    .ToListAsync(CancellationToken.None))
+                    .ToHashSet();
+                if (repoGenreIds.SetEquals(ParseLongIds(genres)))
+                    return new KeyValuePair<int, List<SystemProgramme>>();
+            }
 
-            DateTime date;
-            CultureInfo ci = new("Ru-ru");
-            var rawDates = await dates.Split(separator, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => DateTime.TryParseExact(x, "yyyyMMdd", ci, DateTimeStyles.None, out date) ?
-                DateTime.ParseExact(x, "yyyyMMdd", ci) :
-                new DateTime()).ToListAsync();
-            var minDateTime = await rawDates.AsQueryable().MinAsync(CancellationToken.None);
-            var maxDateTime = await rawDates.AsQueryable().MaxAsync(CancellationToken.None);
-            maxDateTime = maxDateTime.AddDays(1);
+            var rawDates = dates.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => DateTime.TryParseExact(x, "yyyyMMdd", RussianCulture, DateTimeStyles.None, out var date) ? date : default)
+                .ToList();
+            var minDateTime = rawDates.Min();
+            var maxDateTime = rawDates.Max().AddDays(1);
 
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
+            // Путь к изображению анонса получается один раз (кешируется)
+            var anonsImagePath = await GetAnonsImagePathAsync();
 
-            var systemProgramme = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == typeProgId
-                                    && (category == null || pr.Category == category)
-                                    && (string.IsNullOrWhiteSpace(findTitle) || pr.Title.Contains(findTitle))
-                                    && minDateTime.ToUniversalTime() <= pr.TsStartMo && pr.TsStartMo <= maxDateTime.ToUniversalTime()
-                                    && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
+            var channelIds = ParseChannelIds(channels);
+            var systemProgramme = await (from pr in GetFilteredProgrammesQuery(typeProgId, category, channelIds, includeAdult)
+                                         where (string.IsNullOrWhiteSpace(findTitle) || pr.Title.Contains(findTitle))
+                                           && minDateTime.ToUniversalTime() <= pr.TsStartMo && pr.TsStartMo <= maxDateTime.ToUniversalTime()
                                          orderby pr.TsStartMo, pr.TsStopMo
                                          select new SystemProgramme
                                          {
@@ -907,20 +535,21 @@ namespace TvProgViewer.Services.TvProgMain
                                              Remain = 1
                                          }).ToListAsync();
 
-            systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
-            Parallel.ForEach(systemProgramme, pr =>
-            {
-                pr.DayMonth = pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru")) +
-               $"({pr.TsStartMo.Day:D2}.{pr.TsStartMo.Month:D2})";
-            });
-            systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
-            systemProgramme = await FilterExcludeDates(systemProgramme, rawDates);
-            SetGenres(systemProgramme, null);
-            systemProgramme = await FilterGenresAsync(systemProgramme, genres);
-            spCount = systemProgramme.Count;
+            await JoinChannelIcons(systemProgramme, typeProgId, channelIds);
+            SetDayMonth(systemProgramme);
+            systemProgramme = FilterByIds(systemProgramme, channels, x => x.Cid);
+            systemProgramme = FilterByDates(systemProgramme, rawDates);
+            SetGenres(systemProgramme);
+
+            // Пост-фильтрация по предопределённым категориям
+            if (IsPredefinedCategory(category))
+                ReplaceList(systemProgramme, systemProgramme.Where(x => MatchesPredefinedCategory(x.TelecastTitle, x.GenreName, category, isAuthorized)));
+            ReplaceList(systemProgramme, FilterByIds(systemProgramme, genres, x => x.GenreId.GetValueOrDefault()));
+
+            int spCount = systemProgramme.Count;
             sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : TS_START_MO;
             systemProgramme = await systemProgramme.AsQueryable()
-                                                   .LimitAndOrderBy(page, rows, sidx, sord)                                     
+                                                   .LimitAndOrderBy(page, rows, sidx, sord)
                                                    .ToListAsync();
             return new KeyValuePair<int, List<SystemProgramme>>(spCount, systemProgramme);
         }
@@ -933,50 +562,65 @@ namespace TvProgViewer.Services.TvProgMain
         /// <param name="category">Категория</param>
         /// <param name="genres">Жанры</param>
         /// <param name="channels">Каналы</param>
-        public async Task<KeyValuePair<int, List<SystemProgramme>>> SearchGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels)
+        public virtual Task<KeyValuePair<int, List<SystemProgramme>>> SearchGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized)
         {
-            int spCount = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] : 
-                await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
-            CultureInfo ci = new("Ru-ru");
+            return SearchGlobalProgrammesCoreAsync(typeProgId, findTitle, category,
+                sidx, sord, page, rows, genres, channels, isAuthorized, includeAdult: false);
+        }
 
-            spCount = await (from pr in _programmesRepository.Table
-                             where pr.TypeProgId == typeProgId
-                        && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
-                        && (category == null || pr.Category == category)
-                        && pr.Title.Contains(findTitle)
-                        && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                             select pr.Id).CountAsync(CancellationToken.None);
+        /// <summary>
+        /// Глобальный поиск телепередачи для совершеннолетних
+        /// </summary>
+        /// <param name="typeProgId">Тип программы телепередач</param>
+        /// <param name="findTitle">Поисковая подстрока</param>
+        /// <param name="category">Категория</param>
+        /// <param name="genres">Жанры</param>
+        /// <param name="channels">Каналы</param>
+        public virtual Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized)
+        {
+            return SearchGlobalProgrammesCoreAsync(typeProgId, findTitle, category,
+                sidx, sord, page, rows, genres, channels, isAuthorized, includeAdult: true);
+        }
+
+        /// <summary>
+        /// Общий глобальный поиск для обычных пользователей и совершеннолетних
+        /// </summary>
+        /// <param name="includeAdult">Включать ли передачи для взрослых</param>
+        private async Task<KeyValuePair<int, List<SystemProgramme>>> SearchGlobalProgrammesCoreAsync(int typeProgId, string findTitle, string category,
+                                                         string sidx, string sord, int page, int rows, string genres, string channels, bool isAuthorized, bool includeAdult)
+        {
+            var channelIds = ParseChannelIds(channels);
+            var baseQuery = GetFilteredProgrammesQuery(typeProgId, category, channelIds, includeAdult)
+                .Where(pr => pr.Title.Contains(findTitle));
+
+            int spCount = await baseQuery.Select(pr => pr.Id).CountAsync(CancellationToken.None);
             sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : TS_START_MO;
 
-            // Сначала получаем данные из БД без преобразования времени:
-            var programmes = await (from pr in _programmesRepository.Table
-                                         where pr.TypeProgId == typeProgId
-                                    && pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS)
-                                    && (category == null || pr.Category == category)
-                                    && pr.Title.Contains(findTitle)
-                                    && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                         orderby pr.TsStartMo, pr.TsStopMo
-                                         select new
-                                         {
-                                             pr.Id,
-                                             pr.ChannelId,
-                                             pr.InternalChanId,
-                                             pr.TsStart,      
-                                             pr.TsStop,       
-                                             pr.TsStartMo,    
-                                             pr.TsStopMo,     
-                                             pr.Title,
-                                             pr.Descr,
-                                             pr.Category
-                                         }).AsQueryable()
-                                           .LimitAndOrderBy(page, rows, sidx, sord)
-                                           .ToListAsync();
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
+            // Сначала получаем данные из БД без преобразования времени
+            var programmes = await (from pr in baseQuery
+                                    orderby pr.TsStartMo, pr.TsStopMo
+                                    select new
+                                    {
+                                        pr.Id,
+                                        pr.ChannelId,
+                                        pr.InternalChanId,
+                                        pr.TsStart,
+                                        pr.TsStop,
+                                        pr.TsStartMo,
+                                        pr.TsStopMo,
+                                        pr.Title,
+                                        pr.Descr,
+                                        pr.Category
+                                    }).AsQueryable()
+                                      .LimitAndOrderBy(page, rows, sidx, sord)
+                                      .ToListAsync();
 
-            // Затем преобразуем время в памяти:
+            // Путь к изображению анонса получается один раз (кешируется)
+            var anonsImagePath = await GetAnonsImagePathAsync();
+
+            // Затем преобразуем время в памяти
             var systemProgramme = programmes.Select(x => new SystemProgramme
             {
                 ProgrammesId = x.Id,
@@ -993,186 +637,63 @@ namespace TvProgViewer.Services.TvProgMain
                 Remain = 1
             }).ToList();
 
-            systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
-            foreach(var pr in systemProgramme)
-            {
-                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru"))}{string.Format("({0:D2}.{1:D2})", 
-                                                                                       pr.TsStartMo.Day, pr.TsStartMo.Month)}";
-            }
+            await JoinChannelIcons(systemProgramme, typeProgId, channelIds);
+            SetDayMonth(systemProgramme);
+            SetGenres(systemProgramme);
 
-            SetGenres(systemProgramme, null);
-            systemProgramme = await FilterGenresAsync(systemProgramme, genres);
-            systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
-                       
-            return new KeyValuePair<int, List<SystemProgramme>>(spCount, systemProgramme);
-        }
-
-        /// <summary>
-        /// Глобальный поиск телепередачи для совершеннолетних
-        /// </summary>
-        /// <param name="typeProgId">Тип программы телепередач</param>
-        /// <param name="findTitle">Поисковая подстрока</param>
-        /// <param name="category">Категория</param>
-        /// <param name="genres">Жанры</param>
-        /// <param name="channels">Каналы</param>
-        public async Task<KeyValuePair<int, List<SystemProgramme>>> SearchAdultGlobalProgrammeAsync(int typeProgId, string findTitle, string category,
-                                                         string sidx, string sord, int page, int rows, string genres, string channels)
-        {
-            int spCount = 0;
-            var intListChannels = string.IsNullOrWhiteSpace(channels) ? [] :
-                await channels.Split(';', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToListAsync();
-            CultureInfo ci = new("Ru-ru");
-
-            spCount = await (from pr in _programmesRepository.Table
-                             where pr.TypeProgId == typeProgId
-                        && (category == null || pr.Category == category)
-                        && pr.Title.Contains(findTitle)
-                        && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                             select pr.Id).CountAsync(CancellationToken.None);
-            sidx = !string.IsNullOrWhiteSpace(sidx) ? sidx : TS_START_MO;
-
-            // Сначала получаем данные из БД без преобразования времени:
-            var programmes = await (from pr in _programmesRepository.Table
-                                    where pr.TypeProgId == typeProgId
-                               && (category == null || pr.Category == category)
-                               && pr.Title.Contains(findTitle)
-                               && ((intListChannels.Any() && intListChannels.Contains(pr.ChannelId)) || intListChannels.Count == 0)
-                                    orderby pr.TsStartMo, pr.TsStopMo
-                                    select new 
-                                    {
-                                        pr.Id,
-                                        pr.ChannelId,
-                                        pr.InternalChanId,
-                                        pr.TsStart,      
-                                        pr.TsStop,       
-                                        pr.TsStartMo,    
-                                        pr.TsStopMo,     
-                                        pr.Title,
-                                        pr.Descr,
-                                        pr.Category
-                                    }).AsQueryable()
-                                           .LimitAndOrderBy(page, rows, sidx, sord)
-                                           .ToListAsync();
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
-
-            // Затем преобразуем время в памяти: 
-            var systemProgramme = programmes.Select(x => new SystemProgramme { 
-                ProgrammesId = x.Id,
-                Cid = x.ChannelId,
-                InternalChanId = x.InternalChanId ?? 0,
-                Start = TimeZoneInfo.ConvertTimeFromUtc(x.TsStart, MoscowTz),
-                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.TsStop, MoscowTz),
-                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.TsStartMo, MoscowTz),
-                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.TsStopMo, MoscowTz),
-                TelecastTitle = x.Title,
-                TelecastDescr = x.Descr,
-                AnonsContent = !string.IsNullOrEmpty(x.Descr) ? anonsImagePath : null,
-                Category = x.Category,
-                Remain = 1
-            }).ToList();
-            systemProgramme = await ChannelIconJoinAsync(systemProgramme, typeProgId, intListChannels);
-            foreach (var pr in systemProgramme)
-            {
-                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", new CultureInfo("ru-Ru"))}{string.Format("({0:D2}.{1:D2})",
-                                                                                           pr.TsStartMo.Day, pr.TsStartMo.Month)}";
-            }
-            SetGenres(systemProgramme, null);
-            systemProgramme = await FilterGenresAsync(systemProgramme, genres);
-            systemProgramme = await FilterChannelsAsync(systemProgramme, channels);
+            // Пост-фильтрация по предопределённым категориям
+            if (IsPredefinedCategory(category))
+                ReplaceList(systemProgramme, systemProgramme.Where(x => MatchesPredefinedCategory(x.TelecastTitle, x.GenreName, category, isAuthorized)));
+            systemProgramme = FilterByIds(systemProgramme, genres, x => x.GenreId.GetValueOrDefault());
+            systemProgramme = FilterByIds(systemProgramme, channels, x => x.Cid);
 
             return new KeyValuePair<int, List<SystemProgramme>>(spCount, systemProgramme);
         }
+
+        #endregion
+
+        #region Телепередачи за день
 
         /// <summary>
         /// Получение пользовательских телепередач за день
         /// </summary>
-        /// <param name="uid">Идентификатор пользователя</param>
-        /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
+        /// <param name="typeProgId">Идентификатор типа программы телепередач</param>
         /// <param name="channelId">Код канала</param>
         /// <param name="tsStart">Время начала выборки</param>
         /// <param name="tsEnd">Время завершения выборки</param>
         /// <param name="category">Категория</param>
-        public virtual async Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category)
+        public virtual Task<List<SystemProgramme>> GetUserProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category, bool isAuthorized)
         {
-            // Сначала получаем данные из БД без преобразования времени:
-            var programmes = await (from pr in _programmesRepository.Table
-                                    join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
-                                    join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
-                                    from mp in chmp.DefaultIfEmpty()
-                                    where pr.TypeProgId == typeProgId &&
-                                          ch.Id == channelId &&
-                                          pr.TsStartMo >= tsStart.ToUniversalTime() &&
-                                          pr.TsStopMo <= tsEnd.ToUniversalTime() &&
-                                          pr.Category != ADULT_USERS &&
-                                          !pr.Title.Contains(AGE_18_PLUS) &&
-                                          (category == null || pr.Category == category) &&
-                                          ch.Deleted == null
-                                    select new
-                                    {
-                                        Programme = pr,
-                                        Channel = ch,
-                                        Icon = mp
-                                    })
-                                  .OrderBy(x => x.Programme.TsStartMo)
-                                  .ToListAsync();
-
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
-
-            // Затем преобразуем время в памяти:
-            var systemProgrammes = programmes.Select(x => new SystemProgramme
-            {
-                ProgrammesId = x.Programme.Id,
-                Cid = x.Programme.ChannelId,
-                ChannelName = x.Channel.TitleChannel,
-                InternalChanId = x.Programme.InternalChanId,
-                Start = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStart, MoscowTz),
-                Stop = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStop, MoscowTz),
-                TsStartMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStartMo, MoscowTz),
-                TsStopMo = TimeZoneInfo.ConvertTimeFromUtc(x.Programme.TsStopMo, MoscowTz),
-                TelecastTitle = x.Programme.Title,
-                TelecastDescr = x.Programme.Descr,
-                AnonsContent = !string.IsNullOrEmpty(x.Programme.Descr) ? anonsImagePath : null,
-                Category = x.Programme.Category,
-            }).ToList();
-
-            SetGenres(systemProgrammes, null);
-            return systemProgrammes;
-        }
-
-        /// <summary>
-        /// Получение картинки анонса
-        /// </summary>
-        /// <returns></returns>
-        private string GetAnonsImagePath()
-        {
-            var image = _mediaPicRepository.Table.FirstOrDefault(mp => mp.FileName == GREEN_ANONS_PNG);
-            return image != null ? image.Path25 + image.FileName : null;
+            return GetUserProgrammesOfDayCoreAsync(typeProgId, channelId, tsStart, tsEnd, category, isAuthorized, includeAdult: false);
         }
 
         /// <summary>
         /// Получение пользовательских телепередач за день для совершеннолетних
         /// </summary>
-        /// <param name="uid">Идентификатор пользователя</param>
-        /// <param name="typeProgID">Идентификатор типа программы телепередач</param>
+        /// <param name="typeProgId">Идентификатор типа программы телепередач</param>
         /// <param name="channelId">Код канала</param>
         /// <param name="tsStart">Время начала выборки</param>
         /// <param name="tsEnd">Время завершения выборки</param>
         /// <param name="category">Категория</param>
-        public virtual async Task<List<SystemProgramme>> GetUserAdultProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category)
+        public virtual Task<List<SystemProgramme>> GetUserAdultProgrammesOfDayListAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category, bool isAuthorized)
         {
-            // Сначала получаем данные из БД без преобразования времени:
-            var programmes = await (from pr in _programmesRepository.Table
-                                    join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id
-                                    join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
-                                    from mp in chmp.DefaultIfEmpty()
-                                    where pr.TypeProgId == typeProgId &&
-                                          ch.Id == channelId &&
-                                          pr.TsStartMo >= tsStart.ToUniversalTime() &&
-                                          pr.TsStopMo <= tsEnd.ToUniversalTime() &&
-                                          (category == null || pr.Category == category) &&
-                                          ch.Deleted == null
+            return GetUserProgrammesOfDayCoreAsync(typeProgId, channelId, tsStart, tsEnd, category, isAuthorized, includeAdult: true);
+        }
+
+        /// <summary>
+        /// Общая выборка телепередач за день для обычных пользователей и совершеннолетних
+        /// </summary>
+        /// <param name="includeAdult">Включать ли передачи для взрослых</param>
+        private async Task<List<SystemProgramme>> GetUserProgrammesOfDayCoreAsync(int typeProgId, int channelId, DateTime tsStart, DateTime tsEnd, string category, bool isAuthorized, bool includeAdult)
+        {
+            var baseQuery = GetFilteredProgrammesQuery(typeProgId, category, [], includeAdult)
+                .Where(pr => pr.TsStartMo >= tsStart.ToUniversalTime() && pr.TsStopMo <= tsEnd.ToUniversalTime());
+
+            // Сначала получаем данные из БД без преобразования времени
+            // (фильтр по каналу применён до соединения, неиспользуемое соединение с пиктограммами удалено)
+            var programmes = await (from ch in _channelsRepository.Table
+                                    join pr in baseQuery on ch.Id equals pr.ChannelId
+                                    where ch.Id == channelId && ch.Deleted == null
                                     select new
                                     {
                                         Programme = pr,
@@ -1182,10 +703,10 @@ namespace TvProgViewer.Services.TvProgMain
                                   .OrderBy(x => x.Programme.TsStartMo)
                                   .ToListAsync();
 
-            // Получаем путь к изображению анонса один раз:
-            var anonsImagePath = GetAnonsImagePath();
+            // Путь к изображению анонса получается один раз (кешируется)
+            var anonsImagePath = await GetAnonsImagePathAsync();
 
-            // Затем преобразуем время в памяти:
+            // Затем преобразуем время в памяти
             var systemProgrammes = programmes.Select(x => new SystemProgramme
             {
                 ProgrammesId = x.Programme.Id,
@@ -1202,11 +723,378 @@ namespace TvProgViewer.Services.TvProgMain
                 Category = x.Programme.Category,
             }).ToList();
 
-            SetGenres(systemProgrammes, null);
+            SetGenres(systemProgrammes);
+
+            // Пост-фильтрация по предопределённым категориям
+            if (IsPredefinedCategory(category))
+                ReplaceList(systemProgrammes, systemProgrammes.Where(x => MatchesPredefinedCategory(x.TelecastTitle, x.GenreName, category, isAuthorized)));
+
             return systemProgrammes;
         }
 
+        #endregion
 
+        #region Служебные методы
+
+        /// <summary>
+        /// Разбирает строку идентификаторов каналов, разделённых точкой с запятой
+        /// </summary>
+        private static List<int> ParseChannelIds(string channels)
+        {
+            if (string.IsNullOrWhiteSpace(channels))
+                return [];
+
+            return [.. channels.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                .Where(ch => int.TryParse(ch, out _))
+                .Select(int.Parse)];
+        }
+
+        /// <summary>
+        /// Разбирает строку идентификаторов, разделённых точкой с запятой
+        /// </summary>
+        private static HashSet<long> ParseLongIds(string source)
+        {
+            if (string.IsNullOrWhiteSpace(source))
+                return [];
+
+            return [.. source.Split(separator, StringSplitOptions.RemoveEmptyEntries)
+                .Where(item => long.TryParse(item, out _))
+                .Select(long.Parse)];
+        }
+
+        /// <summary>
+        /// Строит базовый запрос телепрограммы с фильтрами по типу, категории, каналам и взрослым передачам
+        /// </summary>
+        /// <param name="typeProgId">Идентификатор типа программы</param>
+        /// <param name="category">Категория</param>
+        /// <param name="channelIds">Идентификаторы каналов (пустой список - все каналы)</param>
+        /// <param name="includeAdult">Включать ли передачи для взрослых</param>
+        private IQueryable<Programmes> GetFilteredProgrammesQuery(int typeProgId, string category, IReadOnlyCollection<int> channelIds, bool includeAdult)
+        {
+            var query = _programmesRepository.Table
+                .Where(pr => pr.TypeProgId == typeProgId)
+                .Where(CreateChannelFilter(channelIds))
+                .Where(CreateCategoryFilter(category));
+
+            if (!includeAdult)
+                query = query.Where(pr => pr.Category != ADULT_USERS && !pr.Title.Contains(AGE_18_PLUS));
+
+            return query;
+        }
+
+        /// <summary>
+        /// Создаёт фильтр по каналам (пустой список означает отсутствие ограничения)
+        /// </summary>
+        private static Expression<Func<Programmes, bool>> CreateChannelFilter(IReadOnlyCollection<int> channelIds)
+        {
+            if (channelIds.Count == 0)
+                return pr => true;
+
+            return pr => channelIds.Contains(pr.ChannelId);
+        }
+
+        /// <summary>
+        /// Создаёт фильтр по категории: точное совпадение либо совпадение через справочник категорий.
+        /// Для предопределённых категорий фильтрация выполняется в памяти после выборки
+        /// (<see cref="MatchesPredefinedCategory"/>), поэтому ограничение не накладывается
+        /// </summary>
+        /// <param name="category">Категория</param>
+        private Expression<Func<Programmes, bool>> CreateCategoryFilter(string category)
+        {
+            if (category == null || IsPredefinedCategory(category))
+                return pr => true;
+
+            var loweredCategory = category.ToLower();
+            return pr => pr.Category == category ||
+                _programmesTvProgCategoryMappingRepository.Table.Any(m => m.ProgrammesId == pr.Id &&
+                    _tvProgCategoryRepository.Table.Any(c => c.Id == m.TvProgCategoryId && c.Active &&
+                        c.Name.ToLower() == loweredCategory));
+        }
+
+        /// <summary>
+        /// Применяет постобработку выбранных телепередач: жанры, предопределённые категории, пиктограммы каналов и фильтры
+        /// </summary>
+        /// <param name="systemProgramme">Выбранный список телепередач</param>
+        /// <param name="typeProgId">Идентификатор типа программы</param>
+        /// <param name="category">Категория</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        /// <param name="channelIds">Идентификаторы каналов</param>
+        /// <param name="genres">Идентификаторы жанров через ;</param>
+        /// <param name="channels">Идентификаторы каналов через ;</param>
+        private async Task ApplyPostFiltersAsync(List<SystemProgramme> systemProgramme, int typeProgId, string category,
+            bool isAuthorized, IReadOnlyCollection<int> channelIds, string genres, string channels)
+        {
+            SetGenres(systemProgramme);
+
+            // Пост-фильтрация по предопределённым категориям
+            if (IsPredefinedCategory(category))
+                ReplaceList(systemProgramme, systemProgramme.Where(x => MatchesPredefinedCategory(x.TelecastTitle, x.GenreName, category, isAuthorized)));
+
+            await JoinChannelIcons(systemProgramme, typeProgId, channelIds);
+            ReplaceList(systemProgramme, FilterByIds(systemProgramme, genres, x => x.GenreId.GetValueOrDefault()));
+            ReplaceList(systemProgramme, FilterByIds(systemProgramme, channels, x => x.Cid));
+        }
+
+        /// <summary>
+        /// Заменяет содержимое списка отфильтрованной последовательностью.
+        /// Источник предварительно копируется в новый список: он может быть
+        /// ленивой выборкой по target либо самим target, который очищается
+        /// </summary>
+        private static void ReplaceList<T>(List<T> target, IEnumerable<T> source)
+        {
+            var snapshot = source.ToList();
+            target.Clear();
+            target.AddRange(snapshot);
+        }
+
+        /// <summary>
+        /// Установка жанров. Данные справочников загружаются одним запросом,
+        /// сопоставление выполняется в памяти без N+1 запросов
+        /// </summary>
+        /// <param name="systemProgramme">Системная телепрограмма</param>
+        private void SetGenres(List<SystemProgramme> systemProgramme)
+        {
+            if (systemProgramme.Count == 0)
+                return;
+
+            var nowUtc = DateTime.UtcNow;
+
+            // Классификаторы жанров вместе со справочником жанров и пиктограммами одним запросом
+            // (пользовательские жанры с кодом владельца здесь не используются)
+            long? uid = null;
+            var genreItems = (from gc in _genreClassificatorRepository.Table
+                              join g in _genresRepository.Table on gc.GenreId equals g.Id
+                              join mp2 in _mediaPicRepository.Table on g.IconId equals mp2.Id into gmp2
+                              from mp2 in gmp2.DefaultIfEmpty()
+                              where g.UserId == uid && gc.UserId == uid && g.Visible && g.DeleteDate == null &&
+                                (gc.DeleteAfterDate == null || gc.DeleteAfterDate > nowUtc)
+                              orderby gc.OrderCol
+                              select new GenreMatchItem
+                              {
+                                  Id = g.Id,
+                                  GenreName = g.GenreName,
+                                  GenreContent = mp2.Path25 + mp2.FileName,
+                                  ContainPhrases = gc.ContainPhrases,
+                                  NonContainPhrases = gc.NonContainPhrases
+                              }).ToList();
+
+            foreach (var item in genreItems)
+            {
+                item.ContainPhrasesUpper = item.ContainPhrases.ToUpper().Split(';');
+                item.NonContainPhrasesUpper = string.IsNullOrWhiteSpace(item.NonContainPhrases)
+                    ? []
+                    : item.NonContainPhrases.ToUpper().Split(';');
+            }
+
+            foreach (var sp in systemProgramme)
+            {
+                var titleUpper = sp.TelecastTitle.ToUpper();
+
+                // Жанр, назначенный по названию категории
+                var byCategory = genreItems.FirstOrDefault(item => item.GenreName == sp.Category);
+
+                // Жанр, назначенный по фразам-классификаторам в названии передачи
+                var byPhrases = genreItems.FirstOrDefault(item =>
+                    titleUpper.ContainsAny(item.ContainPhrasesUpper) &&
+                    (item.NonContainPhrasesUpper.Length == 0 ||
+                     !titleUpper.ContainsAny(item.NonContainPhrasesUpper)));
+
+                sp.GenreId = byCategory?.Id ?? byPhrases?.Id ?? 1;
+                sp.GenreName = byCategory?.GenreName ?? byPhrases?.GenreName ?? NO_GENRE_NAME;
+                sp.GenreContent = byCategory?.GenreContent ?? byPhrases?.GenreContent;
+            }
+        }
+
+        /// <summary>
+        /// Заполняет подпись "день(число.месяц)" для выбранных телепередач
+        /// </summary>
+        /// <param name="systemProgramme">Системный список телепрограммы</param>
+        private static void SetDayMonth(IEnumerable<SystemProgramme> systemProgramme)
+        {
+            foreach (var pr in systemProgramme)
+            {
+                pr.DayMonth = $"{pr.TsStartMo.ToString("ddd", RussianCulture)}({pr.TsStartMo.Day:D2}.{pr.TsStartMo.Month:D2})";
+            }
+        }
+
+        /// <summary>
+        /// Фильтрует список телепередач по набору идентификаторов (строка через ;)
+        /// </summary>
+        /// <param name="systemProgramme">Системная программа</param>
+        /// <param name="ids">Идентификаторы через ;</param>
+        /// <param name="idSelector">Селектор идентификатора телепередачи</param>
+        private static List<SystemProgramme> FilterByIds(List<SystemProgramme> systemProgramme, string ids, Func<SystemProgramme, long> idSelector)
+        {
+            if (string.IsNullOrWhiteSpace(ids))
+                return systemProgramme;
+
+            var idSet = ParseLongIds(ids);
+            return [.. systemProgramme.Where(x => idSet.Contains(idSelector(x)))];
+        }
+
+        /// <summary>
+        /// Фильтрует список телепередач по датам показа (включая день, следующий за последней выбранной датой)
+        /// </summary>
+        /// <param name="systemProgramme">Системная программа</param>
+        /// <param name="rawDates">Даты показа</param>
+        private static List<SystemProgramme> FilterByDates(List<SystemProgramme> systemProgramme, List<DateTime> rawDates)
+        {
+            if (rawDates.Count == 0)
+                return systemProgramme;
+
+            var allowedDates = rawDates.ToHashSet();
+            allowedDates.Add(rawDates.Max().AddDays(1));
+
+            return [.. systemProgramme.Where(x => allowedDates.Contains(x.TsStartMo.Date))];
+        }
+
+        /// <summary>
+        /// Заполняет названия телеканалов и их иконки одним запросом со словарём вместо перебора
+        /// </summary>
+        /// <param name="systemProgramme">Системный список телепрограммы</param>
+        /// <param name="typeProgId">Идентификатор типа программы</param>
+        /// <param name="channelIds">Ограничение по каналам (пустой список - все)</param>
+        private async Task JoinChannelIcons(List<SystemProgramme> systemProgramme, int typeProgId, IReadOnlyCollection<int> channelIds)
+        {
+            if (systemProgramme.Count == 0)
+                return;
+
+            var channelsQuery = from ch in _channelsRepository.Table
+                                join pt in _providerTypeRepository.Table on ch.TvProgProviderId equals pt.Id
+                                join tp in _typeProgRepository.Table on pt.Id equals tp.TvProgProviderId
+                                join mp in _mediaPicRepository.Table on ch.IconId equals mp.Id into chmp
+                                from mp in chmp.DefaultIfEmpty()
+                                where tp.Id == typeProgId && ch.Deleted == null
+                                select new { ChannelId = ch.Id, ChannelName = ch.TitleChannel, ChannelContent = mp.Path25 + mp.FileName };
+
+            if (channelIds.Count > 0)
+                channelsQuery = channelsQuery.Where(x => channelIds.Contains(x.ChannelId));
+
+            var channelMap = new Dictionary<int, (string Name, string Content)>();
+            foreach (var channel in await channelsQuery.ToListAsync())
+                channelMap.TryAdd(channel.ChannelId, (channel.ChannelName, channel.ChannelContent));
+
+            foreach (var sp in systemProgramme)
+            {
+                if (channelMap.TryGetValue(sp.Cid, out var channelItem))
+                {
+                    sp.ChannelName = channelItem.Name;
+                    sp.ChannelContent = channelItem.Content;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Получение пути к изображению анонса (с кешированием)
+        /// </summary>
+        private Task<string> GetAnonsImagePathAsync() =>
+            _cacheManager.GetAsync(TvProgProgrammeDefaults.AnonsImagePathCacheKey, async () =>
+            {
+                var image = await _mediaPicRepository.Table
+                    .FirstOrDefaultAsync(mp => mp.FileName == GREEN_ANONS_PNG, CancellationToken.None);
+                return image != null ? image.Path25 + image.FileName : null;
+            });
+
+        /// <summary>
+        /// Вспомогательный метод для расчета процента оставшегося времени
+        /// </summary>
+        /// <param name="startTime">Дата начала</param>
+        /// <param name="endTime">Дата завершения</param>
+        /// <param name="currentTime">Текущее время</param>
+        /// <returns>Процент</returns>
+        private static int? CalculateRemainPercentage(DateTime startTime, DateTime endTime, DateTime currentTime)
+        {
+            var totalDuration = (endTime - startTime).TotalSeconds;
+            if (totalDuration <= 0) return null;
+
+            var elapsed = (currentTime - startTime).TotalSeconds;
+            return (int)(elapsed / totalDuration * 100);
+        }
+
+        #endregion
+
+        #region Предопределённые категории
+
+        /// <summary>
+        /// Проверяет, является ли категория предопределённой системной категорией
+        /// </summary>
+        private static bool IsPredefinedCategory(string category)
+        {
+            return category != null && PredefinedCategories.Contains(category);
+        }
+
+        /// <summary>
+        /// Извлекает возрастную метку из названия передачи (например, "(12+)", "(18+)")
+        /// </summary>
+        /// <param name="title">Название передачи</param>
+        /// <returns>Возрастная метка или null, если она не указана</returns>
+        private static int? ExtractAgeFromTitle(string title)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+                return null;
+
+            // Ищем шаблон "(X+)" — X это одна или несколько цифр
+            var match = AgeFromTitleRegex.Match(title);
+            if (match.Success && int.TryParse(match.Groups[1].Value, out var age))
+                return age;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Проверяет, соответствует ли передача запрошенной предопределённой категории
+        /// </summary>
+        /// <param name="title">Название передачи</param>
+        /// <param name="genreName">Название жанра</param>
+        /// <param name="requestedCategory">Запрошенная категория</param>
+        /// <param name="isAuthorized">Авторизован ли пользователь</param>
+        private static bool MatchesPredefinedCategory(string title, string genreName, string requestedCategory, bool isAuthorized)
+        {
+            var age = ExtractAgeFromTitle(title);
+
+            switch (requestedCategory)
+            {
+                case CATEGORY_CHILDREN:
+                    // Дети — возраст 0+, 6+, 12+ (т.е. < 16)
+                    return age.HasValue && age.Value < 16;
+
+                case CATEGORY_MOVIE:
+                    // Художественный фильм — по жанру
+                    return !string.IsNullOrWhiteSpace(genreName) &&
+                        (genreName.IndexOf("художественный", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         genreName.IndexOf("фильм", StringComparison.OrdinalIgnoreCase) >= 0);
+
+                case CATEGORY_SERIES:
+                    // Сериал — по жанру или по названию
+                    if (!string.IsNullOrWhiteSpace(genreName) &&
+                        (genreName.IndexOf("сериал", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         genreName.IndexOf("сезон", StringComparison.OrdinalIgnoreCase) >= 0))
+                        return true;
+                    return !string.IsNullOrWhiteSpace(title) &&
+                        (title.IndexOf("сериал", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                         title.IndexOf("сезон", StringComparison.OrdinalIgnoreCase) >= 0);
+
+                case CATEGORY_SPORT:
+                    // Спорт — по жанру
+                    return !string.IsNullOrWhiteSpace(genreName) &&
+                        genreName.IndexOf("спорт", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                case CATEGORY_ADULT:
+                    // Для взрослых — 18+ И пользователь авторизован
+                    return isAuthorized && age.HasValue && age.Value >= 18;
+
+                case CATEGORY_NONE:
+                    // Без категории — нет жанра (или жанр "Без типа")
+                    return string.IsNullOrWhiteSpace(genreName) || genreName == NO_GENRE_NAME;
+
+                default:
+                    return false;
+            }
+        }
+
+        #endregion
+
+        #region Вся телепрограмма
 
         /// <summary>
         /// Получение всей телепрограммы
@@ -1216,30 +1104,48 @@ namespace TvProgViewer.Services.TvProgMain
         public virtual async Task<List<GdProgramme>> GetAllProgrammes(int page, int rows)
         {
             List<GdProgramme> gdProgrammeList = await (from pr in _programmesRepository.Table
-                                                               orderby pr.InternalChanId, pr.TsStartMo
-                                                               select new GdProgramme
-                                                               {
-                                                                   InternalChanId = pr.InternalChanId,
-                                                                   TsStartMo = pr.TsStartMo,
-                                                                   TsStopMo = pr.TsStopMo,
-                                                                   TelecastTitle = pr.Title,
-                                                                   Category = pr.Category
-                                                               }).LimitAndOrderBy(page, rows, "InternalChanId", "asc").ToListAsync();
+                                                       orderby pr.InternalChanId, pr.TsStartMo
+                                                       select new GdProgramme
+                                                       {
+                                                           InternalChanId = pr.InternalChanId,
+                                                           TsStartMo = pr.TsStartMo,
+                                                           TsStopMo = pr.TsStopMo,
+                                                           TelecastTitle = pr.Title,
+                                                           Category = pr.Category
+                                                       }).LimitAndOrderBy(page, rows, "InternalChanId", "asc").ToListAsync();
             return gdProgrammeList;
         }
+
         /// <summary>
         /// Получение состояния телепрограммы
         /// </summary>
-        /// <returns></returns>
         public virtual async Task<GdProgrammeStatus> GetProgrammeStatus()
         {
-            GdProgrammeStatus status = new GdProgrammeStatus 
-            { 
+            GdProgrammeStatus status = new GdProgrammeStatus
+            {
                 Qty = await _programmesRepository.Table.CountAsync(CancellationToken.None),
                 MaxDateTime = await _programmesRepository.Table.MaxAsync(x => (DateTime?)x.TsStopMo)
             };
             return status;
         }
+        #endregion
+
+        #region Вложенные классы
+
+        /// <summary>
+        /// Элемент классификатора жанров, подготовленный к сопоставлению в памяти
+        /// </summary>
+        private sealed class GenreMatchItem
+        {
+            public long Id { get; init; }
+            public string GenreName { get; init; }
+            public string GenreContent { get; init; }
+            public string ContainPhrases { get; init; }
+            public string NonContainPhrases { get; init; }
+            public string[] ContainPhrasesUpper { get; set; }
+            public string[] NonContainPhrasesUpper { get; set; }
+        }
+
         #endregion
     }
 }

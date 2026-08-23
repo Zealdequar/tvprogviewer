@@ -34,6 +34,7 @@ using TvProgViewer.Services.Topics;
 using TvProgViewer.Services.TvProgMain;
 using TvProgViewer.Web.Framework.Themes;
 using TvProgViewer.Web.Framework.UI;
+using TvProgViewer.WebUI.Infrastructure;
 using TvProgViewer.WebUI.Infrastructure.Cache;
 using TvProgViewer.WebUI.Models.Common;
 using TvProgViewer.WebUI.Models.Catalog;
@@ -274,26 +275,24 @@ namespace TvProgViewer.WebUI.Factories
         /// <returns>Модель для выбора категории ТВ-программы</returns>
         public virtual async Task<TvCategorySelectorModel> PrepareTvCategorySelectorModelAsync()
         {
-            var avaliableCategories = (await _programmeService
-                .GetCategoriesAsync())
+            // Категории из справочника (без пустых имён)
+            var categoryNames = (await _programmeService.GetCategoriesAsync())
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(x =>
-                {
-                    var categoryModel = new TvCategoryModel
-                    {
-                        Name = x
-                    };
-                    return categoryModel;
-                }).ToList();
-            avaliableCategories.Insert(0, new TvCategoryModel { Name = "Все категории" });
+                .ToList();
 
-            var model = new TvCategorySelectorModel
+            var availableCategories = new List<TvCategoryModel>();
+
+            // Обобщённая категория "Все категории" всегда должна присутствовать первой
+            if (!categoryNames.Contains(TvProgCategoryDefaults.AllCategoriesName))
+                availableCategories.Add(new TvCategoryModel { Name = TvProgCategoryDefaults.AllCategoriesName });
+
+            availableCategories.AddRange(categoryNames.Select(name => new TvCategoryModel { Name = name }));
+
+            return new TvCategorySelectorModel
             {
                 CurrentCategoryName = await _workContext.GetWorkingCategoryAsync(),
-                AvaliableCategories = avaliableCategories
+                AvailableCategories = availableCategories
             };
-
-            return model;
         }
 
         /// <summary>

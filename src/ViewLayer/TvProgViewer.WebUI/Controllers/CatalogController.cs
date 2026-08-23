@@ -473,18 +473,18 @@ namespace TvProgViewer.WebUI.Controllers
                 if (await _workContext.GetCurrentUserFullYearsOldAsync() >= 18)
                 {
                     result = await _programmeService.SearchAdultGlobalProgrammeAsync(progType, findTitle
-                            , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
+                            , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels, User.Identity.IsAuthenticated);
                 }
                 else
                 {
                     result = await _programmeService.SearchGlobalProgrammeAsync(progType, findTitle
-                , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
+                , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels, User.Identity.IsAuthenticated);
                 }
             }
             else
             {
                 result = await _programmeService.SearchGlobalProgrammeAsync(progType, findTitle
-                , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels);
+                , (category != "Все категории") ? category : null, sidx, sord, page, rows, genres, channels, User.Identity.IsAuthenticated);
             }
 
             jsonData = GetJsonPagingInfo(page, rows, result);

@@ -1,15 +1,80 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using DynamicExpression.Extensions;
 using DynamicExpression.Entities;
 using DynamicExpression.Enums;
+using TvProgViewer.Data.TvProgMain.ProgObjs;
 
 namespace TvProgViewer.Services.TvProgMain
 {
+    /// <summary>
+    /// Границы доступного периода телепрограммы, разбитого на три части
+    /// с точкой отсчёта 05:45
+    /// </summary>
+    /// <param name="TsMin">Начало первой части периода</param>
+    /// <param name="Middle1">Конец первой части периода</param>
+    /// <param name="Middle2">Конец второй части периода</param>
+    /// <param name="TsMax">Конец третьей части периода</param>
+    public readonly record struct ProgrammePeriodBounds(DateTime TsMin, DateTime Middle1, DateTime Middle2, DateTime TsMax)
+    {
+        /// <summary>
+        /// Время суток, определяющее границу телепрограммного дня
+        /// </summary>
+        public const int DayBoundaryHour = 5;
+        public const int DayBoundaryMinute = 45;
+    }
+
     /// <summary>
     /// Расширения
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Вычисляет границы трёх частей периода действия телепрограммы:
+        /// начало приводится к 05:45, первая часть занимает 7 дней, вторая - ещё 7,
+        /// третья простирается до последнего дня программы
+        /// </summary>
+        /// <param name="period">Период действия программы</param>
+        /// <returns>Границы частей периода</returns>
+        public static ProgrammePeriodBounds GetPeriodBounds(this ProgPeriod period)
+        {
+            var fallback = DateTime.UtcNow;
+
+            var tsMin = period.dtStart.HasValue ? period.dtStart.Value.DateTime : fallback;
+            tsMin = new DateTime(tsMin.Year, tsMin.Month, tsMin.Day,
+                ProgrammePeriodBounds.DayBoundaryHour, ProgrammePeriodBounds.DayBoundaryMinute, 0);
+
+            var middle1 = tsMin.AddDays(6);
+            var middle2 = middle1.AddDays(7);
+
+            var tsMax = period.dtEnd.HasValue ? period.dtEnd.Value.DateTime : fallback;
+            tsMax = tsMax.AddDays(-1);
+            tsMax = new DateTime(tsMax.Year, tsMax.Month, tsMax.Day,
+                ProgrammePeriodBounds.DayBoundaryHour, ProgrammePeriodBounds.DayBoundaryMinute, 0);
+
+            return new ProgrammePeriodBounds(tsMin, middle1, middle2, tsMax);
+        }
+
+        /// <summary>
+        /// Возвращает короткое имя дня недели, используемое в именах файлов пиктограмм
+        /// (например, "Mon" для понедельника)
+        /// </summary>
+        /// <param name="day">День недели</param>
+        /// <returns>Короткое имя дня недели</returns>
+        public static string GetDayIconName(this DayOfWeek day)
+        {
+            return day switch
+            {
+                DayOfWeek.Monday => "Mon",
+                DayOfWeek.Tuesday => "Tue",
+                DayOfWeek.Wednesday => "Wen",
+                DayOfWeek.Thursday => "Ths",
+                DayOfWeek.Friday => "Fri",
+                DayOfWeek.Saturday => "Sat",
+                _ => "Sun"
+            };
+        }
+
         /// <summary>
         /// Содержит любую строку
         /// </summary>

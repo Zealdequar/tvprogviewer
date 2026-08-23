@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NLog;
@@ -35,6 +37,8 @@ namespace TvProgViewer.Services.Common
         private readonly IRepository<Channels> _channelsRepository;
         private readonly IRepository<Programmes> _programmesRepository;
         private readonly IRepository<UpdateProgLog> _updateProgLogRepository;
+        private readonly IRepository<TvProgCategory> _tvProgCategoryRepository;
+        private readonly IRepository<ProgrammesTvProgCategoryMapping> _programmesTvProgCategoryMappingRepository;
         private static readonly Logger _logger = LogManager.GetLogger("dbupdate");
         // Используем ConcurrentDictionary для потокобезопасности
         private static readonly ConcurrentDictionary<string, string> _dictChanCodeOld = new ConcurrentDictionary<string, string>();
@@ -50,6 +54,16 @@ namespace TvProgViewer.Services.Common
         private const int DaysToDeleteOldProgrammes = 21;
         private const int MinProgrammesPerFutureDay = 100;
 
+        // Транслитерация кириллицы для формирования системного идентификатора категории
+        private static readonly Dictionary<char, string> _translitMap = new Dictionary<char, string>
+        {
+            {'а', "a"}, {'б', "b"}, {'в', "v"}, {'г', "g"}, {'д', "d"}, {'е', "e"}, {'ё', "e"},
+            {'ж', "zh"}, {'з', "z"}, {'и', "i"}, {'й', "y"}, {'к', "k"}, {'л', "l"}, {'м', "m"},
+            {'н', "n"}, {'о', "o"}, {'п', "p"}, {'р', "r"}, {'с', "s"}, {'т', "t"}, {'у', "u"},
+            {'ф', "f"}, {'х', "h"}, {'ц', "c"}, {'ч', "ch"}, {'ш', "sh"}, {'щ', "sch"}, {'ъ', ""},
+            {'ы', "y"}, {'ь', ""}, {'э', "e"}, {'ю', "yu"}, {'я', "ya"}
+        };
+
         #endregion
 
         #region Ctor
@@ -62,7 +76,9 @@ namespace TvProgViewer.Services.Common
         , IRepository<TypeProg> typeProgRepository
         , IRepository<Channels> channelsRepository
         , IRepository<Programmes> programmesRepository
-        , IRepository<UpdateProgLog> updateProgLogRepository)
+        , IRepository<UpdateProgLog> updateProgLogRepository
+        , IRepository<TvProgCategory> tvProgCategoryRepository
+        , IRepository<ProgrammesTvProgCategoryMapping> programmesTvProgCategoryMappingRepository)
         {
             //configure client
             client.BaseAddress = new Uri(webHelper.GetStoreLocation());
@@ -75,6 +91,8 @@ namespace TvProgViewer.Services.Common
             _channelsRepository = channelsRepository;
             _programmesRepository = programmesRepository;
             _updateProgLogRepository = updateProgLogRepository;
+            _tvProgCategoryRepository = tvProgCategoryRepository;
+            _programmesTvProgCategoryMappingRepository = programmesTvProgCategoryMappingRepository;
         }
 
         #endregion
@@ -495,7 +513,7 @@ namespace TvProgViewer.Services.Common
             var minProgDate = startDates.Min();
             var maxProgDate = startDates.Max();
             
-            // Удаление программ в диапазоне загружаемых дат
+            // Удаление программ в диапазоне загружаемых дат (вместе с их сопоставлениями категорий)
             var programmes = await GetAllProgrammesAsync();
             var programmesToDelete = programmes
                 .Where(x => x.TsStartMo >= minProgDate && x.TsStartMo <= maxProgDate)
@@ -503,6 +521,7 @@ namespace TvProgViewer.Services.Common
             
             if (programmesToDelete.Count > 0)
             {
+                await DeleteProgrammeMappingsAsync(programmesToDelete.Select(p => p.Id).ToList());
                 await _programmesRepository.DeleteAsync(programmesToDelete);
             }
             
@@ -518,7 +537,7 @@ namespace TvProgViewer.Services.Common
                 .Where(c => c.Deleted == null && c.InternalId.HasValue)
                 .ToDictionary(c => c.InternalId.Value, c => c);
             
-            var programmesToInsert = new List<Programmes>();
+            var programmeCategoryPairs = new List<(Programmes programme, List<string> categories)>();
             
             foreach (var programmeElement in docProgrammes)
             {
@@ -542,9 +561,12 @@ namespace TvProgViewer.Services.Common
                     
                     var title = GetElementValueByLang(programmeElement, "title", "ru");
                     var descr = GetElementValueByLang(programmeElement, "desc", "ru");
-                    var category = GetElementValueByLang(programmeElement, "category", "ru");
+                    var categories = GetElementValuesByLang(programmeElement, "category", "ru")
+                        .Select(NormalizeCategoryName)
+                        .ToList();
+                    var firstCategory = categories.Count > 0 ? categories[0] : null;
                     
-                    programmesToInsert.Add(new Programmes
+                    programmeCategoryPairs.Add((new Programmes
                     {
                         TypeProgId = typeProg.Id,
                         ChannelId = channel.Id,
@@ -555,8 +577,8 @@ namespace TvProgViewer.Services.Common
                         TsStopMo = tsStop,
                         Title = title,
                         Descr = descr,
-                        Category = category
-                    });
+                        Category = firstCategory
+                    }, categories));
                 }
                 catch (Exception ex)
                 {
@@ -564,11 +586,90 @@ namespace TvProgViewer.Services.Common
                 }
             }
             
-            if (programmesToInsert.Count > 0)
-            {
-                await _programmesRepository.InsertAsync(programmesToInsert);
-            }
+            if (programmeCategoryPairs.Count == 0)
+                return (programmeQty, minProgDate, maxProgDate);
             
+            var programmesToInsert = programmeCategoryPairs.Select(p => p.programme).ToList();
+            await _programmesRepository.InsertAsync(programmesToInsert);
+
+            // Обеспечиваем наличие категорий в справочнике TvProgCategory (создаём отсутствующие)
+            var allCategoryNames = programmeCategoryPairs
+                .SelectMany(p => p.categories)
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (allCategoryNames.Count > 0)
+            {
+                var existingCategories = await _tvProgCategoryRepository.GetAllAsync(query => query, default);
+                var existingNames = new HashSet<string>(
+                    existingCategories.Select(c => c.Name?.Trim()).Where(n => n != null),
+                    StringComparer.OrdinalIgnoreCase);
+
+                var toCreate = allCategoryNames.Where(n => !existingNames.Contains(n)).ToList();
+                if (toCreate.Count > 0)
+                {
+                    var maxOrder = existingCategories
+                        .Where(c => c.Order.HasValue && c.Order.Value < 1000000)
+                        .Select(c => c.Order.Value)
+                        .DefaultIfEmpty(5)
+                        .Max();
+
+                    var nextOrder = Math.Max(maxOrder + 1, 6);
+
+                    var newCategories = toCreate.Select(name => new TvProgCategory
+                    {
+                        Name = name,
+                        Ident = GenerateCategoryIdent(name),
+                        Active = true,
+                        CreatedOnUtc = DateTime.UtcNow,
+                        Order = nextOrder++
+                    }).ToList();
+
+                    await _tvProgCategoryRepository.InsertAsync(newCategories);
+                }
+            }
+
+            // Получаем актуальные идентификаторы из БД, не полагаясь на возврат identity при bulk-вставке,
+            // который в данной реализации репозитория не гарантируется.
+            var categoryIdByName = (await _tvProgCategoryRepository.GetAllAsync(query => query, default))
+                .Where(c => !string.IsNullOrWhiteSpace(c.Name))
+                .GroupBy(c => c.Name.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.First().Id, StringComparer.OrdinalIgnoreCase);
+
+            var savedProgrammes = await _programmesRepository.GetAllAsync(
+                query => query.Where(p => p.TsStartMo >= minProgDate && p.TsStartMo <= maxProgDate), default);
+
+            var programmeByKey = savedProgrammes
+                .GroupBy(p => (p.TypeProgId, p.InternalChanId, p.ChannelId, p.TsStartMo, p.TsStopMo, p.Title))
+                .ToDictionary(g => g.Key, g => g.First());
+
+            // Создаём сопоставления многие-ко-многим
+            var mappings = new List<ProgrammesTvProgCategoryMapping>();
+            foreach (var (programme, categories) in programmeCategoryPairs)
+            {
+                var key = (programme.TypeProgId, programme.InternalChanId, programme.ChannelId, programme.TsStartMo, programme.TsStopMo, programme.Title);
+                if (!programmeByKey.TryGetValue(key, out var savedProgramme))
+                    continue;
+
+                foreach (var categoryName in categories)
+                {
+                    if (categoryIdByName.TryGetValue(categoryName, out var categoryId))
+                    {
+                        mappings.Add(new ProgrammesTvProgCategoryMapping
+                        {
+                            ProgrammesId = savedProgramme.Id,
+                            TvProgCategoryId = categoryId
+                        });
+                    }
+                }
+            }
+
+            if (mappings.Count > 0)
+            {
+                await _programmesTvProgCategoryMappingRepository.InsertAsync(mappings);
+            }
+
             return (programmeQty, minProgDate, maxProgDate);
         }
 
@@ -579,6 +680,75 @@ namespace TvProgViewer.Services.Common
         {
             return parent.Elements(elementName)
                 .FirstOrDefault(x => x.Attribute("lang")?.Value == lang)?.Value;
+        }
+
+        /// <summary>
+        /// Приводит наименование категории к виду с заглавной первой буквой
+        /// </summary>
+        private static string NormalizeCategoryName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return name;
+
+            name = name.Trim();
+            if (name.Length == 1)
+                return char.ToUpper(name[0], CultureInfo.InvariantCulture).ToString();
+
+            return char.ToUpper(name[0], CultureInfo.InvariantCulture) + name.Substring(1);
+        }
+
+        /// <summary>
+        /// Получение значений элемента по языку (для множественных категорий)
+        /// </summary>
+        private List<string> GetElementValuesByLang(XElement parent, string elementName, string lang)
+        {
+            if (parent == null)
+                return new List<string>();
+
+            return parent.Elements(elementName)
+                .Where(x =>
+                {
+                    var langAttr = x.Attribute("lang")?.Value;
+                    return langAttr == null || langAttr == lang;
+                })
+                .Select(x => x.Value?.Trim())
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Формирует системный идентификатор категории (транслитерация в латиницу)
+        /// </summary>
+        private static string GenerateCategoryIdent(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+
+            var ident = new StringBuilder();
+            foreach (var ch in name.ToLowerInvariant())
+            {
+                if (_translitMap.TryGetValue(ch, out var latin) && !string.IsNullOrEmpty(latin))
+                    ident.Append(latin);
+                else if (char.IsLetterOrDigit(ch))
+                    ident.Append(ch);
+                else if (ident.Length > 0 && ident[ident.Length - 1] != '-')
+                    ident.Append('-');
+            }
+
+            var result = ident.ToString().Trim('-');
+            return string.IsNullOrEmpty(result) ? null : result.ToUpperInvariant();
+        }
+
+        /// <summary>
+        /// Удаление сопоставлений категорий для указанных передач
+        /// </summary>
+        private async Task DeleteProgrammeMappingsAsync(IList<int> programmeIds)
+        {
+            if (programmeIds == null || programmeIds.Count == 0)
+                return;
+
+            await _programmesTvProgCategoryMappingRepository.DeleteAsync(
+                m => programmeIds.Contains(m.ProgrammesId));
         }
 
         /// <summary>
@@ -608,6 +778,7 @@ namespace TvProgViewer.Services.Common
             
             if (duplicateGroups.Count > 0)
             {
+                await DeleteProgrammeMappingsAsync(duplicateGroups.Select(p => p.Id).ToList());
                 await _programmesRepository.DeleteAsync(duplicateGroups);
             }
             
@@ -621,6 +792,7 @@ namespace TvProgViewer.Services.Common
             
             if (futureProgrammes.Count > 0)
             {
+                await DeleteProgrammeMappingsAsync(futureProgrammes.Select(p => p.Id).ToList());
                 await _programmesRepository.DeleteAsync(futureProgrammes);
             }
             
@@ -642,6 +814,7 @@ namespace TvProgViewer.Services.Common
                 
                 if (oldProgrammes.Count > 0)
                 {
+                    await DeleteProgrammeMappingsAsync(oldProgrammes.Select(p => p.Id).ToList());
                     await _programmesRepository.DeleteAsync(oldProgrammes);
                 }
             }
@@ -668,6 +841,7 @@ namespace TvProgViewer.Services.Common
                     string.Join(", ", futureSparseGroups
                         .GroupBy(x => GetTvDay(x.TsStop))
                         .Select(g => $"{g.Key:yyyy-MM-dd} ({g.Count()} шт.)")));
+                await DeleteProgrammeMappingsAsync(futureSparseGroups.Select(p => p.Id).ToList());
                 await _programmesRepository.DeleteAsync(futureSparseGroups);
             }
         }

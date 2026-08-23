@@ -2,18 +2,19 @@
 
 @inject TvProgViewer.Core.IWebHelper webHelper
 
-@if (Model.AvaliableCategories.Count > 0)
+@if (Model.AvailableCategories.Count > 0)
 {
     <label for="userCategory" class="col-sm-1 col-form-label">@T("Category.Selector.Label")</label>
     <div class="col-sm-11 category-selector">
-        @{ 
+        @{
             var returnUrl = webHelper.GetRawUrl(Context.Request);
-            var categories = await Model.AvaliableCategories.SelectAwait(async x => new SelectListItem
+            var protocol = webHelper.GetCurrentRequestProtocol();
+            var categories = Model.AvailableCategories.Select(x => new SelectListItem
             {
                 Text = x.Name,
-                Value = Url.RouteUrl("ChangeCategory", new { usercategory = x.Name, returnUrl }, webHelper.GetCurrentRequestProtocol()) + ";" + x.Name,
+                Value = Url.RouteUrl("ChangeCategory", new { usercategory = x.Name, returnUrl }, protocol) + ";" + x.Name,
                 Selected = x.Name.Equals(Model.CurrentCategoryName)
-            }).ToListAsync();
+            }).ToList();
             <select id="userCategory" class="form-control" name="userCategory" asp-items="@categories" onchange="setLocationWithPart(this.value);" aria-label="@T("Category.Selector.Label")"></select>
         }
     </div>
