@@ -31,9 +31,11 @@ namespace TvProgViewer.Data.TvProgMain.ProgObjs
         public string TelecastTitle { get; set; }
 
         /// <summary>
-        /// Категория
+        /// Категории передачи (системные идентификаторы категорий)
         /// </summary>
         [DataMember]
-        public string Category { get; set; }
+        public string[] Categories { get; set; } = Array.Empty<string>();
+
+
     }
 }

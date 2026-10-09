@@ -8,8 +8,11 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using DynamicExpression.Entities;
+using DynamicExpression.Extensions;
 using TvProgViewer.Core.Caching;
 using TvProgViewer.Core.Domain.TvProgMain;
+using TvProgViewer.Core.Domain.Users;
 using TvProgViewer.Data;
 using TvProgViewer.Data.TvProgMain;
 using TvProgViewer.Data.TvProgMain.ProgObjs;
@@ -60,6 +63,19 @@ namespace TvProgViewer.Services.TvProgMain
             CATEGORY_ADULT,
             CATEGORY_NONE
         };
+
+        /// <summary>
+        /// Соответствие предопределённых категорий их системным идентификаторам
+        /// </summary>
+        private static readonly IReadOnlyDictionary<string, string> PredefinedCategoryIdents =
+            new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                [CATEGORY_CHILDREN] = TvProgUserDefaults.GetChildTvProgCategory,
+                [CATEGORY_MOVIE] = TvProgUserDefaults.GetFeatureFilmCategory,
+                [CATEGORY_SERIES] = TvProgUserDefaults.GetSerialCategory,
+                [CATEGORY_SPORT] = TvProgUserDefaults.GetSportCategory,
+                [CATEGORY_NONE] = TvProgUserDefaults.GetNonCategory
+            };
 
         /// <summary>
         /// Шаблон возрастной метки "(X+)" в названии передачи
@@ -857,11 +873,26 @@ namespace TvProgViewer.Services.TvProgMain
             if (systemProgramme.Count == 0)
                 return;
 
-            var nowUtc = DateTime.UtcNow;
+            var genreItems = LoadGenreMatchItems();
 
-            // Классификаторы жанров вместе со справочником жанров и пиктограммами одним запросом
-            // (пользовательские жанры с кодом владельца здесь не используются)
+            foreach (var sp in systemProgramme)
+            {
+                var genreMatch = ResolveGenreMatch(sp.TelecastTitle, sp.Category, genreItems);
+                sp.GenreId = genreMatch?.Id ?? 1;
+                sp.GenreName = genreMatch?.GenreName ?? NO_GENRE_NAME;
+                sp.GenreContent = genreMatch?.GenreContent;
+            }
+        }
+
+        /// <summary>
+        /// Загрузка классификаторов жанров одним запросом с подготовкой фраз для сопоставления в памяти.
+        /// Классификаторы вместе со справочником жанров и пиктограммами (пользовательские жанры не используются)
+        /// </summary>
+        private List<GenreMatchItem> LoadGenreMatchItems()
+        {
+            var nowUtc = DateTime.UtcNow;
             long? uid = null;
+
             var genreItems = (from gc in _genreClassificatorRepository.Table
                               join g in _genresRepository.Table on gc.GenreId equals g.Id
                               join mp2 in _mediaPicRepository.Table on g.IconId equals mp2.Id into gmp2
@@ -886,23 +917,29 @@ namespace TvProgViewer.Services.TvProgMain
                     : item.NonContainPhrases.ToUpper().Split(';');
             }
 
-            foreach (var sp in systemProgramme)
-            {
-                var titleUpper = sp.TelecastTitle.ToUpper();
+            return genreItems;
+        }
 
-                // Жанр, назначенный по названию категории
-                var byCategory = genreItems.FirstOrDefault(item => item.GenreName == sp.Category);
+        /// <summary>
+        /// Определяет жанр телепередачи: по названию категории либо по фразам-классификаторам в названии
+        /// </summary>
+        /// <param name="title">Название телепередачи</param>
+        /// <param name="category">Категория (устаревшее поле)</param>
+        /// <param name="genreItems">Классификаторы жанров</param>
+        private static GenreMatchItem ResolveGenreMatch(string title, string category, List<GenreMatchItem> genreItems)
+        {
+            var titleUpper = (title ?? string.Empty).ToUpper();
 
-                // Жанр, назначенный по фразам-классификаторам в названии передачи
-                var byPhrases = genreItems.FirstOrDefault(item =>
-                    titleUpper.ContainsAny(item.ContainPhrasesUpper) &&
-                    (item.NonContainPhrasesUpper.Length == 0 ||
-                     !titleUpper.ContainsAny(item.NonContainPhrasesUpper)));
+            // Жанр, назначенный по названию категории
+            var byCategory = genreItems.FirstOrDefault(item => item.GenreName == category);
 
-                sp.GenreId = byCategory?.Id ?? byPhrases?.Id ?? 1;
-                sp.GenreName = byCategory?.GenreName ?? byPhrases?.GenreName ?? NO_GENRE_NAME;
-                sp.GenreContent = byCategory?.GenreContent ?? byPhrases?.GenreContent;
-            }
+            // Жанр, назначенный по фразам-классификаторам в названии передачи
+            var byPhrases = genreItems.FirstOrDefault(item =>
+                titleUpper.ContainsAny(item.ContainPhrasesUpper) &&
+                (item.NonContainPhrasesUpper.Length == 0 ||
+                 !titleUpper.ContainsAny(item.NonContainPhrasesUpper)));
+
+            return byCategory ?? byPhrases;
         }
 
         /// <summary>
@@ -1084,12 +1121,25 @@ namespace TvProgViewer.Services.TvProgMain
                     return isAuthorized && age.HasValue && age.Value >= 18;
 
                 case CATEGORY_NONE:
-                    // Без категории — нет жанра (или жанр "Без типа")
-                    return string.IsNullOrWhiteSpace(genreName) || genreName == NO_GENRE_NAME;
+                    // Без категории — передача не относится ни к одной другой предопределённой категории
+                    return !MatchesAnyOtherPredefinedCategory(title, genreName, isAuthorized);
 
                 default:
                     return false;
             }
+        }
+
+        /// <summary>
+        /// Проверяет, соответствует ли передача какой-либо другой предопределённой категории (кроме «Без категории»).
+        /// ADULT учитывается только для авторизованных пользователей
+        /// </summary>
+        private static bool MatchesAnyOtherPredefinedCategory(string title, string genreName, bool isAuthorized)
+        {
+            return MatchesPredefinedCategory(title, genreName, CATEGORY_CHILDREN, isAuthorized) ||
+                MatchesPredefinedCategory(title, genreName, CATEGORY_MOVIE, isAuthorized) ||
+                MatchesPredefinedCategory(title, genreName, CATEGORY_SERIES, isAuthorized) ||
+                MatchesPredefinedCategory(title, genreName, CATEGORY_SPORT, isAuthorized) ||
+                MatchesPredefinedCategory(title, genreName, CATEGORY_ADULT, isAuthorized);
         }
 
         #endregion
@@ -1101,18 +1151,79 @@ namespace TvProgViewer.Services.TvProgMain
         /// </summary>
         /// <param name="page">Страница</param>
         /// <param name="rows">Строки</param>
-        public virtual async Task<List<GdProgramme>> GetAllProgrammes(int page, int rows)
+public virtual async Task<List<GdProgramme>> GetAllProgrammes(int page, int rows)
         {
-            List<GdProgramme> gdProgrammeList = await (from pr in _programmesRepository.Table
-                                                       orderby pr.InternalChanId, pr.TsStartMo
-                                                       select new GdProgramme
-                                                       {
-                                                           InternalChanId = pr.InternalChanId,
-                                                           TsStartMo = pr.TsStartMo,
-                                                           TsStopMo = pr.TsStopMo,
-                                                           TelecastTitle = pr.Title,
-                                                           Category = pr.Category
-                                                       }).LimitAndOrderBy(page, rows, "InternalChanId", "asc").ToListAsync();
+            Pagination pagination = new()
+            {
+                Number = page,
+                Count = rows
+            };
+
+            var programmeItems = await (from pr in _programmesRepository.Table
+                                        join ch in _channelsRepository.Table on pr.ChannelId equals ch.Id into prch
+                                        from ch in prch.DefaultIfEmpty()
+                                        orderby ch.SysOrderCol, pr.TsStartMo
+                                        select new
+                                        {
+                                            pr.Id,
+                                            pr.InternalChanId,
+                                            pr.TsStartMo,
+                                            pr.TsStopMo,
+                                            TelecastTitle = pr.Title,
+                                            Category = pr.Category
+                                        }).Limit(pagination).ToListAsync();
+
+            var programmeIds = programmeItems.Select(p => p.Id).ToList();
+
+            // Категории из связующей таблицы одним запросом
+            var categoriesLookup = (await (from m in _programmesTvProgCategoryMappingRepository.Table
+                                           join c in _tvProgCategoryRepository.Table on m.TvProgCategoryId equals c.Id
+                                           where programmeIds.Contains(m.ProgrammesId) && c.Ident != null
+                                           select new { m.ProgrammesId, c.Ident }).ToListAsync())
+                .GroupBy(x => x.ProgrammesId)
+                .ToDictionary(g => g.Key, g => g.Select(x => x.Ident).ToArray());
+
+            // Классификаторы жанров одним запросом для определения предопределённых категорий
+            var genreItems = LoadGenreMatchItems();
+
+            List<GdProgramme> gdProgrammeList = new(programmeItems.Count);
+            foreach (var p in programmeItems)
+            {
+                var categories = categoriesLookup.TryGetValue(p.Id, out var mapped)
+                    ? mapped.ToList()
+                    : new List<string>();
+
+                // Предопределённые категории (кроме ADULT и NON_CATEGORY) по заложенной логике отбора
+                var genreName = ResolveGenreMatch(p.TelecastTitle, p.Category, genreItems)?.GenreName ?? NO_GENRE_NAME;
+                foreach (var categoryName in PredefinedCategoryIdents.Keys)
+                {
+                    if (categoryName == CATEGORY_NONE)
+                        continue;
+
+                    if (MatchesPredefinedCategory(p.TelecastTitle, genreName, categoryName, false) &&
+                        PredefinedCategoryIdents.TryGetValue(categoryName, out var ident))
+                    {
+                        categories.Add(ident);
+                    }
+                }
+
+                // «Без категории» добавляется только если у передачи не оказалось ни одной другой категории
+                if (categories.Count == 0 &&
+                    PredefinedCategoryIdents.TryGetValue(CATEGORY_NONE, out var noneIdent))
+                {
+                    categories.Add(noneIdent);
+                }
+
+                gdProgrammeList.Add(new GdProgramme
+                {
+                    InternalChanId = p.InternalChanId,
+                    TsStartMo = p.TsStartMo,
+                    TsStopMo = p.TsStopMo,
+                    TelecastTitle = p.TelecastTitle,
+                    Categories = categories.Distinct().ToArray()
+                });
+            }
+
             return gdProgrammeList;
         }
 
