@@ -3,6 +3,7 @@ var pairKeys;
 var incSearch = 1;
 var incChannelByDay = 1;
 var incDayByChannel = 1;
+var categoryEditorHideTimer;
 let chansArr = [];
 $(function () {
     $.jgrid.no_legacy_api = true;
@@ -13,11 +14,15 @@ $(function () {
         $(".tabChannels, .tabNow, .tabNext, .tabSearch").removeClass("active disable");
         $(".tabNow").addClass("active");
         $(".byDays, .byChannels").show();
-        $("#category-editor").show(500);
-    } else {
+        $("#category-editor").animate({ opacity: 1}, 300, function () {
+            $(this).css("visibility", "visible").fadeIn(300);
+        })
+      } else {
         $(".tabNow, .tabNext, .tabSearch").addClass("disable");
         $(".tabChannels").addClass("active");
-        $("#category-editor").hide(500);
+        $("#category-editor").animate({ opacity: 0 }, 300, function () {
+            $(this).css("visibility", "hidden");
+        })
         return;
     }
         
@@ -51,9 +56,15 @@ $(function () {
                 datesToolSearch.scrollTop = datesToolSearch.scrollHeight - datesToolSearch.clientHeight;
             }
             if (idx === 5) {
-                $("#category-editor").hide(500);
+                $("#category-editor").css({ opacity: 0 });
+                clearTimeout(categoryEditorHideTimer);
+                categoryEditorHideTimer = setTimeout(function () {
+                    $("#category-editor").css("visibility", "hidden");
+                }, 300);
             } else {
-                $("#category-editor").show(500);
+                clearTimeout(categoryEditorHideTimer);
+                $("#category-editor").css({ visibility: "visible" });
+                $("#category-editor").css({ opacity: 1 });
             }
         }
     });
@@ -231,21 +242,29 @@ function setGrids() {
             beforeSelectRow: function (rowid, e) {
                 $('#TVProgrammeNowGrid').jqGrid('resetSelection');
                 return (true);
-            },            
+            },
+            loadBeforeSend: function () {
+                $('#TVProgrammeNowGrid').closest('.mainwindow').addClass('loading');
+            },
+            loadError: function () {
+                $('#TVProgrammeNowGrid').closest('.mainwindow').removeClass('loading');
+            },
             loadComplete: function () {
                 $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
                 $("tr.jqgrow td input", "#TVProgrammeNowGrid").on('click', function () {
                     if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
-                        $("#mainToolNow").show(50); 
-                        $("#anonsTool").show(50);
+                        $("#mainToolNow").fadeIn(50);
+                        $("#anonsTool").fadeIn(50);
                         $("#anonsDescr").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
                     }
                     else {
-                        $("#anonsTool").hide(50);
-                        $("#mainToolNow").hide(50);
-                        $("#anonsDescr").hide(150);
+                        $("#anonsTool").fadeOut(50);
+                        $("#mainToolNow").fadeOut(50);
+                        $("#anonsDescr").fadeOut(150);
                     }
                 });
+                // Убираем состояние загрузки
+                $(this).closest('.mainwindow').removeClass('loading');
             },
             rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
             height: 'auto',
@@ -344,21 +363,29 @@ function setGrids() {
                 $('#TVProgrammeNextGrid').jqGrid('resetSelection');
                 return (true);
             },
+            loadBeforeSend: function () {
+                $('#TVProgrammeNextGrid').closest('.mainwindow').addClass('loading');
+            },
+            loadError: function () {
+                $('#TVProgrammeNextGrid').closest('.mainwindow').removeClass('loading');
+            },
             loadComplete: function () {
                 $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
 
                 $("tr.jqgrow td input", "#TVProgrammeNextGrid").on('click', function () {
                     if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
-                        $("#mainToolNext").show(50);
-                        $("#anonsToolNext").show(50);
+                        $("#mainToolNext").fadeIn(50);
+                        $("#anonsToolNext").fadeIn(50);
                         $("#anonsDescrNext").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
                     }
                     else {
-                        $("#mainToolNext").hide(50);
-                        $("#anonsToolNext").hide(50);
-                        $("#anonsDescrNext").hide(150);
+                        $("#mainToolNext").fadeOut(50);
+                        $("#anonsToolNext").fadeOut(50);
+                        $("#anonsDescrNext").fadeOut(150);
                     }
                 });
+                // Убираем состояние загрузки
+                $(this).closest('.mainwindow').removeClass('loading');
             },
             rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
             height: 'auto',
@@ -447,21 +474,29 @@ function searchProgramme(findTitle) {
                     $('#SearchedTVProgramme').jqGrid('resetSelection');
                     return (true);
                 },
+                loadBeforeSend: function () {
+                    $('#SearchedTVProgramme').closest('.mainwindow').addClass('loading');
+                },
+                loadError: function () {
+                    $('#SearchedTVProgramme').closest('.mainwindow').removeClass('loading');
+                },
                 loadComplete: function () {
                     $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
 
                     $("tr.jqgrow td input", "#SearchedTVProgramme").on('click', function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
-                            $("#mainToolSearch").show(50);
-                            $("#anonsToolSearch").show(50);
+                            $("#mainToolSearch").fadeIn(50);
+                            $("#anonsToolSearch").fadeIn(50);
                             $("#anonsDescrSearch").html($(this).closest('tr').find('td:nth-child(13)').attr('title'));
                         }
                         else {
-                            $("#anonsToolSearch").hide(50);
-                            $("#mainToolSearch").hide(50);
-                            $("#anonsDescrSearch").hide(150);
+                            $("#anonsToolSearch").fadeOut(50);
+                            $("#mainToolSearch").fadeOut(50);
+                            $("#anonsDescrSearch").fadeOut(150);
                         }
                     });
+                    // Убираем состояние загрузки
+                    $(this).closest('.mainwindow').removeClass('loading');
                 },
                 rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
                 height: 'auto',
@@ -524,6 +559,11 @@ function setTree(index) {
         });
         $('#containerByDays').jstree(true).settings.core.data.url = url;
         $('#containerByDays').jstree('refresh');
+
+        // Убираем skeleton после загрузки дерева
+        $('#containerByDays').on('ready.jstree', function () {
+            $(this).addClass('loaded');
+        });
         
     }
     else if (index === 3) {
@@ -538,6 +578,11 @@ function setTree(index) {
         });
         $('#containerByChannels').jstree(true).settings.core.data.url = url;
         $('#containerByChannels').jstree('refresh');
+
+        // Убираем skeleton после загрузки дерева
+        $('#containerByChannels').on('ready.jstree', function () {
+            $(this).addClass('loaded');
+        });
     }
 }
 
@@ -594,21 +639,29 @@ function fillUserByDay(date, channelId) {
                     $('#TVProgrammeByDaysGrid').jqGrid('resetSelection');
                     return (true);
                 },
+                loadBeforeSend: function () {
+                    $('#TVProgrammeByDaysGrid').closest('.mainwindow').addClass('loading');
+                },
+                loadError: function () {
+                    $('#TVProgrammeByDaysGrid').closest('.mainwindow').removeClass('loading');
+                },
                 loadComplete: function () {
                     $(this).find("tr.jqgrow:odd").addClass("alt-green-background");
 
                     $("tr.jqgrow td input", "#TVProgrammeByDaysGrid").on('click', function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
-                            $("#mainToolByDays").show(50); 
-                            $("#anonsToolByDays").show(50);
+                            $("#mainToolByDays").fadeIn(50);
+                            $("#anonsToolByDays").fadeIn(50);
                             $("#anonsDescrByDays").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
                         }
                         else {
-                            $("#mainToolByDays").hide(50); 
-                            $("#anonsToolByDays").hide(50);
-                            $("#anonsDescrByDays").hide(150);
+                            $("#mainToolByDays").fadeOut(50);
+                            $("#anonsToolByDays").fadeOut(50);
+                            $("#anonsDescrByDays").fadeOut(150);
                         }
                     });
+                    // Убираем состояние загрузки
+                    $(this).closest('.mainwindow').removeClass('loading');
                 },
                 rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
                 height: 'auto',
@@ -704,21 +757,29 @@ function fillUserByChannels(date, channelId) {
                     $('#TVProgrammeByChannelsGrid').jqGrid('resetSelection');
                     return (true);
                 },
+                loadBeforeSend: function () {
+                    $('#TVProgrammeByChannelsGrid').closest('.mainwindow').addClass('loading');
+                },
+                loadError: function () {
+                    $('#TVProgrammeByChannelsGrid').closest('.mainwindow').removeClass('loading');
+                },
                 loadComplete: function () {
                     $("tr.jqgrow:odd").css("background", "#EFFFEF");
 
                     $("tr.jqgrow td input", "#TVProgrammeByChannelsGrid").on('click', function () {
                         if ($(this).closest('tr').find('td:nth-child(6)').find('img').length) {
-                            $("#mainToolByChannels").show(50);
-                            $("#anonsToolByChannels").show(50);
+                            $("#mainToolByChannels").fadeIn(50);
+                            $("#anonsToolByChannels").fadeIn(50);
                             $("#anonsDescrByChannels").html($(this).closest('tr').find('td:nth-child(10)').attr('title'));
                         }
                         else {
-                            $("#mainToolByChannels").hide(50);
-                            $("#anonsToolByChannels").hide(50);
-                            $("#anonsDescrByChannels").hide(150);
+                            $("#mainToolByChannels").fadeOut(50);
+                            $("#anonsToolByChannels").fadeOut(50);
+                            $("#anonsDescrByChannels").fadeOut(150);
                         }
                     });
+                    // Убираем состояние загрузки
+                    $(this).closest('.mainwindow').removeClass('loading');
                 },
                 rowList: [10, 20, 30, 40, 50, 100, 500, 1000],
                 height: 'auto',
@@ -817,7 +878,9 @@ function fillGenresToolNow() {
                 });
                 $("#TVProgrammeNowGrid").trigger("reloadGrid");
             });
-            window.setTimeout(function () { $('#genresToolNow').show(); }, 500);
+            window.setTimeout(function () {
+                $('#genresToolNow').css('visibility', 'visible').fadeIn(300);
+            }, 500);
         },
         error: function (jqXHR, exception) {
             var msg = '';
@@ -869,7 +932,9 @@ function fillGenresToolNext() {
                 });
                 $("#TVProgrammeNextGrid").trigger("reloadGrid");
             });
-            window.setTimeout(function () { $('#genresToolNext').show(); }, 3000);
+            window.setTimeout(function () {
+                $('#genresToolNext').css('visibility', 'visible').fadeIn(300);
+            }, 3000);
             
         },
         error: function (jqXHR, exception) {
@@ -1083,4 +1148,19 @@ function invertSearchAll() {
             $(this).prop('checked', !$(this).is(":checked"));
         });
     }
+}
+
+// Плавная загрузка страницы
+$(window).on('load', function () {
+    // Небольшая задержка для плавности
+    setTimeout(function () {
+        $('#homePage').addClass('loaded');
+    }, 100);
+});
+
+// Если DOM готов раньше, ждём загрузки ресурсов
+if (document.readyState === 'complete') {
+    setTimeout(function () {
+        $('#homePage').addClass('loaded');
+    }, 100);
 }

@@ -133,6 +133,62 @@
         font-size: 12pt !important;
     }
 
+    .page.home-page {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .page.home-page.loaded {
+        opacity: 1;
+    }
+
+    #category-editor {
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .page.home-page.loaded #category-editor {
+        opacity: 1;
+    }
+
+    #mainToolNow {
+       opacity: 0;
+       transition: opacity 0.3s ease-in-out;
+    }
+
+    .page.home-page.loaded #mainToolNow {
+        opacity: 1;
+    }
+.mainwindow table[id$="Grid"]:empty {
+    min-height: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+    .height-panel {
+        transition: all 0.3s ease;
+    }
+
+    .mainwindow.loading {
+        position: relative;
+    }
+
+    .mainwindow.loading::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
     .mainwindow.sticky-day {
         position: sticky;
         top: 0;
@@ -143,6 +199,66 @@
         position: sticky;
         top: 0;
         z-index: 101;
+    }
+
+    #containerByDays,
+    #containerByChannels {
+        min-height: 600px;
+        max-height: 600px;
+        overflow-y: auto;
+        position: relative;
+    }
+
+    #containerByDays::-webkit-scrollbar,
+    #containerByChannels::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #containerByDays::-webkit-scrollbar-track,
+    #containerByChannels::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    #containerByDays::-webkit-scrollbar-thumb,
+    #containerByChannels::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+
+    #containerByDays::-webkit-scrollbar-thumb:hover,
+    #containerByChannels::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    /* Skeleton loader  */
+    #containerByDays::before,
+    #containerByChannels::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient( 90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75% );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    #containerByDays.loaded::before,
+    #containerByChannels.loaded::before {
+        display: none;
+    }
+
+    @keyframes shimmer {
+      0% {
+          background-position: 200% 0;
+      }
+
+      100% {
+          background-position: -200% 0;
+      }
     }
 
     .tv-chan-panel {
@@ -319,7 +435,7 @@
     width: 170px;
 }
 @media (min-width: 1200px) {
-    /* стиль имеет смысл, когда ширина экрана больше 1200px, к тому же не нужно придумывать решения для IE7 и ниже */
+    
     div .allDisplay {
             width: 50vw;
             margin-left: 50%;
@@ -328,7 +444,7 @@
 
             div.allDisplay > div {
                 width: 100vw;
-                /* включает в себя полосу прокрутки от body */
+    
                 margin-left: -100%;
                 height: 680px
             }
@@ -337,6 +453,7 @@
     .drag-tool-genre 
     {
         width: auto;
+        min-height: 34px;
         padding-left: 1px;
         margin-bottom: 4px;
         z-index: 999;

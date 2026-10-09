@@ -32,7 +32,7 @@
     TvProgHtml.AppendScriptParts(ResourceLocation.Footer, "~/js/jsTree3/jstree.js");
 }
 
-<div class="page home-page">
+<div class="page home-page" id="homePage">
     <div class="page-body">
         @await Component.InvokeAsync(typeof(TopicBlockViewComponent), new { systemName = "HomepageText" })
         <div id="category-editor" class="form-group row">
@@ -93,12 +93,10 @@
                     <button id="anonsToolByDays" class="btn-anons" style="display: none;"><img src="~/images/i/GreenAnons.png" alt="Показать анонс"/></button>
                 </div>
                 <div class="row panel">
-                    <div class="col-xs-3">
+                    <div class="col-sm-3">
                         <div id="containerByDays"></div>
                     </div>
-                    <div class="col-xs-1">
-                    </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-9">
                         <div id="mw5" class="mainwindow sticky-day">
                             <div class="tv-chan-panel">
                                 <div id="ct" class="chan-header">
@@ -121,12 +119,10 @@
                     <button id="anonsToolByChannels" class="btn-anons" style="display: none;"><img src="~/images/i/GreenAnons.png" alt="Показать анонс" /></button>
                 </div>
                 <div class="row panel">
-                    <div class="col-xs-3">
+                    <div class="col-sm-3">
                         <div id="containerByChannels"></div>
                     </div>
-                    <div class="col-xs-1">
-                    </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-9">
                         <div id="mw6" class="mainwindow sticky-channel">
                             <aside id="aside2">
                                 <table id="TVProgrammeByChannelsGrid"></table>
